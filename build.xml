@@ -1,0 +1,34 @@
+<project name="CitizensAPI" default="dist" basedir=".">
+	<description>
+            CitizensAPI build file
+        </description>
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="lib" location="lib" />
+	<target name="init">
+		<!-- Create neccesary folders -->
+		<mkdir dir="${build}" />
+	</target>
+
+	<!-- Compile the code -->
+	<target name="dist" depends="init" description="compile the source">
+		<javac srcdir="${src}" destdir="${build}" debug="on" debuglevel="lines,vars,source" includeantruntime="false" encoding="Cp1252">
+			<classpath>
+				<pathelement path="${lib}" />
+				<pathelement location="${lib}/bukkit.jar" />
+			</classpath>
+		</javac>
+		<antcall target="distcore" />
+	</target>
+
+	<!-- Generate the jars -->
+	<target name="distcore" description="generate the distribution">
+		<jar jarfile="CitizensAPI.jar" basedir="${build}" encoding="Cp1252" />
+	</target>
+
+	<target name="clean" description="clean up">
+		<!-- Delete the ${build} directory trees -->
+		<delete dir="${build}" />
+	</target>
+</project>
