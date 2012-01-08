@@ -1,13 +1,15 @@
 package net.citizensnpcs.api.event;
 
 import org.bukkit.Location;
+import org.bukkit.event.Cancellable;
 
 import net.citizensnpcs.api.npc.NPC;
 
-public class NPCSpawnEvent extends NPCEvent {
+public class NPCSpawnEvent extends NPCEvent implements Cancellable {
 	private static final long serialVersionUID = 5459272868175393832L;
 
 	private final Location location;
+	private boolean cancelled = false;
 
 	public NPCSpawnEvent(NPC<?> npc, Location location) {
 		super("NPCSpawnEvent", npc);
@@ -15,11 +17,21 @@ public class NPCSpawnEvent extends NPCEvent {
 	}
 
 	/**
-	 * Gets the location where the NPC was created
+	 * Gets the location where the NPC was spawned
 	 * 
-	 * @return Location where NPC was created
+	 * @return Location where NPC was spawned
 	 */
 	public Location getLocation() {
 		return location;
+	}
+
+	@Override
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
 	}
 }
