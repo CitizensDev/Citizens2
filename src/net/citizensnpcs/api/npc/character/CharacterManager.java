@@ -3,10 +3,11 @@ package net.citizensnpcs.api.npc.character;
 public interface CharacterManager {
 
 	/**
-	 * Registers a Character
+	 * Registers a character
 	 * 
 	 * @param character
 	 *            Character to register
+	 * @return Character that was registered
 	 */
-	public void registerCharacter(Character character);
+	public Character registerCharacter(Character character);
 }

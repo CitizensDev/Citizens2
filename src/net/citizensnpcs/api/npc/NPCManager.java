@@ -23,31 +23,14 @@ public interface NPCManager {
 	public NPC<?> createNPC(Class<? extends Character> character);
 
 	/**
-	 * Attempts to spawn an NPC at the given location
+	 * Spawns an NPC at the given location
 	 * 
 	 * @param npc
 	 *            NPC to spawn
 	 * @param location
 	 *            Location to spawn the NPC
-	 * @return Whether the NPC was able to spawn based on its spawning
-	 *         conditions
 	 */
-	public boolean spawnNPC(NPC<?> npc, Location location);
-
-	/**
-	 * Attempts to spawn an NPC at the given location
-	 * 
-	 * @param npc
-	 *            NPC to spawn
-	 * @param location
-	 *            Location to spawn the NPC
-	 * @param force
-	 *            Whether to force this NPC to spawn even if it does not meet
-	 *            its spawning conditions
-	 * @return Whether the NPC was able to spawn based on its spawning
-	 *         conditions
-	 */
-	public boolean spawnNPC(NPC<?> npc, Location location, boolean force);
+	public void spawnNPC(NPC<?> npc, Location location);
 
 	/**
 	 * Despawns an NPC
@@ -58,7 +41,7 @@ public interface NPCManager {
 	public void despawnNPC(NPC<?> npc);
 
 	/**
-	 * Attempts to despawn an NPC
+	 * Despawns an NPC
 	 * 
 	 * @param id
 	 *            ID of the NPC to despawn
