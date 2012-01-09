@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.npc;
 
-import net.citizensnpcs.api.npc.character.Character;
+import net.citizensnpcs.api.npc.trait.Character;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;

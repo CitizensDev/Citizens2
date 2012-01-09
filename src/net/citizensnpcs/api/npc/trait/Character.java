@@ -1,14 +1,8 @@
-package net.citizensnpcs.api.npc.character;
+package net.citizensnpcs.api.npc.trait;
 
 import net.citizensnpcs.api.npc.NPC;
 
 public interface Character extends Trait {
-	/**
-	 * Gets the unique name of this character
-	 * 
-	 * @return Name of the character
-	 */
-	public String getName();
 
 	/**
 	 * Called when an NPC is left-clicked

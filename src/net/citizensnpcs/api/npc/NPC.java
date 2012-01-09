@@ -2,7 +2,7 @@ package net.citizensnpcs.api.npc;
 
 import java.util.Set;
 
-import net.citizensnpcs.api.npc.character.Trait;
+import net.citizensnpcs.api.npc.trait.Trait;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -10,32 +10,47 @@ import org.bukkit.entity.LivingEntity;
 public interface NPC<T extends LivingEntity> {
 
 	/**
-	 * Gets the unique ID of this NPC.
+	 * Gets the unique ID of this NPC
 	 * 
 	 * @return ID of this NPC
 	 */
 	public int getId();
 
 	/**
-	 * Gets the characters of this NPC
+	 * Gets the character of this NPC
 	 * 
-	 * @return Set of registered characters
+	 * @return Character of this NPC
+	 */
+	public Character getCharacter();
+
+	/**
+	 * Sets the character of this NPC
+	 * 
+	 * @param character
+	 *            Character to set this NPC to
+	 */
+	public void setCharacter(Character character);
+
+	/**
+	 * Gets the traits of this NPC, these are not attached to any character
+	 * 
+	 * @return Set of traits of this NPC
 	 */
 	public Set<Trait> getTraits();
 
 	/**
-	 * Adds a character to this NPC
+	 * Adds a trait to this NPC
 	 * 
-	 * @param character
-	 *            Character to add
+	 * @param trait
+	 *            Trait to add
 	 */
 	public void addTrait(Class<? extends Trait> trait);
 
 	/**
-	 * Removes a character from this NPC
+	 * Removes a trait from this NPC
 	 * 
-	 * @param character
-	 *            Character to remove
+	 * @param trait
+	 *            Trait to remove
 	 */
 	public void removeTrait(Class<? extends Trait> trait);
 
@@ -48,19 +63,14 @@ public interface NPC<T extends LivingEntity> {
 	public void spawn(Location location);
 
 	/**
-	 * Attempts to spawn this NPC
-	 * 
-	 * @param location
-	 * @param force
-	 *            Whether to force this NPC to spawn even if it does not meet
-	 *            its spawning conditions
-	 * @return Whether this NPC was able to spawn based on its spawning
-	 *         conditions
-	 */
-	public boolean spawn(Location location, boolean force);
-
-	/**
 	 * Despawns this NPC
 	 */
 	public void despawn();
+
+	/**
+	 * Gets the Bukkit handle of this NPC
+	 * 
+	 * @return Bukkit handle of this NPC
+	 */
+	public T getHandle();
 }
