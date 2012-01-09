@@ -2,6 +2,9 @@ package net.citizensnpcs.api.npc.trait;
 
 import org.bukkit.configuration.ConfigurationSection;
 
+/**
+ * Represents a Trait with a unique name that can be loaded and saved
+ */
 public interface Trait {
 
 	/**

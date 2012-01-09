@@ -2,6 +2,10 @@ package net.citizensnpcs.api.npc.trait;
 
 import net.citizensnpcs.api.npc.NPC;
 
+/**
+ * Represents a Character with a unique name that can be loaded and saved (one
+ * Character can be attached to an NPC at one time)
+ */
 public interface Character extends Trait {
 
 	/**

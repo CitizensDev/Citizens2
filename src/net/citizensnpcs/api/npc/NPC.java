@@ -7,6 +7,12 @@ import net.citizensnpcs.api.npc.trait.Trait;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
+/**
+ * Represents an NPC with a Character and separate traits
+ * 
+ * @param <T>
+ *            Type of Bukkit entity that this NPC is
+ */
 public interface NPC<T extends LivingEntity> {
 
 	/**

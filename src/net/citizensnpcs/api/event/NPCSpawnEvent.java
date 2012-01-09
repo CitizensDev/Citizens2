@@ -5,6 +5,9 @@ import org.bukkit.event.Cancellable;
 
 import net.citizensnpcs.api.npc.NPC;
 
+/**
+ * Called when an NPC spawns
+ */
 public class NPCSpawnEvent extends NPCEvent implements Cancellable {
 	private static final long serialVersionUID = 5459272868175393832L;
 
