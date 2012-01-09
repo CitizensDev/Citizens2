@@ -1,17 +1,17 @@
 package net.citizensnpcs.api.npc;
 
+import net.citizensnpcs.api.npc.character.Character;
+
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
-import net.citizensnpcs.api.npc.character.Character;
-
-public interface NPCManager {
+public interface NPCManager<T extends NPC<?>> {
 	/**
 	 * Creates an NPC with no attached characters or traits
 	 * 
 	 * @return Created NPC
 	 */
-	public NPC<?> createNPC();
+	public T createNPC();
 
 	/**
 	 * Creates an NPC with the given NPC character
@@ -20,7 +20,7 @@ public interface NPCManager {
 	 *            Character to attach to an NPC
 	 * @return Created NPC with given NPC character
 	 */
-	public NPC<?> createNPC(Class<? extends Character> character);
+	public T createNPC(Class<? extends Character> character);
 
 	/**
 	 * Spawns an NPC at the given location
@@ -30,7 +30,7 @@ public interface NPCManager {
 	 * @param location
 	 *            Location to spawn the NPC
 	 */
-	public void spawnNPC(NPC<?> npc, Location location);
+	public void spawnNPC(T npc, Location location);
 
 	/**
 	 * Despawns an NPC
@@ -38,7 +38,7 @@ public interface NPCManager {
 	 * @param npc
 	 *            NPC to despawn
 	 */
-	public void despawnNPC(NPC<?> npc);
+	public void despawnNPC(T npc);
 
 	/**
 	 * Despawns an NPC
@@ -55,7 +55,7 @@ public interface NPCManager {
 	 *            ID of the NPC
 	 * @return NPC with the given ID
 	 */
-	public NPC<?> getNPC(int id);
+	public T getNPC(int id);
 
 	/**
 	 * Gets an NPC from the given LivingEntity
@@ -65,5 +65,5 @@ public interface NPCManager {
 	 * @return NPC from the given LivingEntity, null if LivingEntity is not an
 	 *         NPC
 	 */
-	public NPC<?> getNPC(LivingEntity livingEntity);
+	public T getNPC(LivingEntity livingEntity);
 }

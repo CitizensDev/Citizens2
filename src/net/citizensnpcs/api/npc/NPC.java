@@ -2,7 +2,7 @@ package net.citizensnpcs.api.npc;
 
 import java.util.Set;
 
-import net.citizensnpcs.api.npc.character.Character;
+import net.citizensnpcs.api.npc.character.Trait;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 public interface NPC<T extends LivingEntity> {
 
 	/**
-	 * Gets the unique ID of this NPC
+	 * Gets the unique ID of this NPC.
 	 * 
 	 * @return ID of this NPC
 	 */
@@ -21,7 +21,7 @@ public interface NPC<T extends LivingEntity> {
 	 * 
 	 * @return Set of registered characters
 	 */
-	public Set<Character> getCharacters();
+	public Set<Trait> getTraits();
 
 	/**
 	 * Adds a character to this NPC
@@ -29,7 +29,7 @@ public interface NPC<T extends LivingEntity> {
 	 * @param character
 	 *            Character to add
 	 */
-	public void addCharacter(Class<? extends Character> character);
+	public void addTrait(Class<? extends Trait> trait);
 
 	/**
 	 * Removes a character from this NPC
@@ -37,7 +37,7 @@ public interface NPC<T extends LivingEntity> {
 	 * @param character
 	 *            Character to remove
 	 */
-	public void removeCharacter(Class<? extends Character> character);
+	public void removeTrait(Class<? extends Trait> trait);
 
 	/**
 	 * Attempts to spawn this NPC

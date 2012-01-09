@@ -10,6 +10,7 @@ public interface Trait {
 	 * @param configurationSection
 	 *            ConfigurationSection to load from
 	 */
+	// DataKey ?
 	public void load(ConfigurationSection configurationSection);
 
 	/**
