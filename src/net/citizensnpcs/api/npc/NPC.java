@@ -61,6 +61,24 @@ public interface NPC<T extends LivingEntity> {
 	public void removeTrait(Class<? extends Trait> trait);
 
 	/**
+	 * Checks if this NPC has the given trait
+	 * 
+	 * @param trait
+	 *            Trait to check
+	 * @return Whether this NPC has the given trait
+	 */
+	public boolean hasTrait(Class<? extends Trait> trait);
+
+	/**
+	 * Checks if this NPC has the given trait
+	 * 
+	 * @param name
+	 *            Name of the trait to check
+	 * @return Whether this NPC has a trait with the given name
+	 */
+	public boolean hasTrait(String name);
+
+	/**
 	 * Attempts to spawn this NPC
 	 * 
 	 * @param location

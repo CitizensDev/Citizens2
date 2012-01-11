@@ -1,17 +1,21 @@
 package net.citizensnpcs.api.npc;
 
 import net.citizensnpcs.api.npc.trait.Character;
+import net.citizensnpcs.api.npc.trait.Trait;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
-public interface NPCManager<T extends NPC<?>> {
+/**
+ * Handles various NPC-related methods
+ */
+public interface NPCManager {
 	/**
 	 * Creates an NPC with no attached characters or traits
 	 * 
 	 * @return Created NPC
 	 */
-	public T createNPC();
+	public NPC<?> createNPC();
 
 	/**
 	 * Creates an NPC with the given NPC character
@@ -20,7 +24,7 @@ public interface NPCManager<T extends NPC<?>> {
 	 *            Character to attach to an NPC
 	 * @return Created NPC with given NPC character
 	 */
-	public T createNPC(Class<? extends Character> character);
+	public NPC<?> createNPC(Class<? extends Character> character);
 
 	/**
 	 * Spawns an NPC at the given location
@@ -30,7 +34,7 @@ public interface NPCManager<T extends NPC<?>> {
 	 * @param location
 	 *            Location to spawn the NPC
 	 */
-	public void spawnNPC(T npc, Location location);
+	public void spawnNPC(NPC<?> npc, Location location);
 
 	/**
 	 * Despawns an NPC
@@ -38,7 +42,7 @@ public interface NPCManager<T extends NPC<?>> {
 	 * @param npc
 	 *            NPC to despawn
 	 */
-	public void despawnNPC(T npc);
+	public void despawnNPC(NPC<?> npc);
 
 	/**
 	 * Despawns an NPC
@@ -55,7 +59,7 @@ public interface NPCManager<T extends NPC<?>> {
 	 *            ID of the NPC
 	 * @return NPC with the given ID
 	 */
-	public T getNPC(int id);
+	public NPC<?> getNPC(int id);
 
 	/**
 	 * Gets an NPC from the given LivingEntity
@@ -65,5 +69,30 @@ public interface NPCManager<T extends NPC<?>> {
 	 * @return NPC from the given LivingEntity, null if LivingEntity is not an
 	 *         NPC
 	 */
-	public T getNPC(LivingEntity livingEntity);
+	public NPC<?> getNPC(LivingEntity livingEntity);
+
+	/**
+	 * Gets all NPCs
+	 * 
+	 * @return All NPCs
+	 */
+	public NPC<?>[] getNPCs();
+
+	/**
+	 * Gets all NPCs with the given trait
+	 * 
+	 * @param name
+	 *            Name of the trait to search for
+	 * @return All NPCs with the given trait
+	 */
+	public NPC<?>[] getNPCs(String name);
+
+	/**
+	 * Gets all NPCs with the given trait
+	 * 
+	 * @param trait
+	 *            Trait to search for
+	 * @return All NPCs with the given trait
+	 */
+	public NPC<?>[] getNPCs(Class<? extends Trait> trait);
 }

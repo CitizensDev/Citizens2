@@ -1,5 +1,8 @@
 package net.citizensnpcs.api.npc.trait;
 
+/**
+ * Handles various trait-related methods
+ */
 public interface TraitManager {
 
 	/**
