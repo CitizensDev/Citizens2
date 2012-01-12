@@ -10,6 +10,7 @@ import org.bukkit.entity.LivingEntity;
  * Handles various NPC-related methods
  */
 public interface NPCManager {
+
 	/**
 	 * Creates an NPC with no attached characters or traits
 	 * 
@@ -95,4 +96,13 @@ public interface NPCManager {
 	 * @return All NPCs with the given trait
 	 */
 	public NPC<?>[] getNPCs(Class<? extends Trait> trait);
+
+	/**
+	 * Checks whether the given Bukkit entity is an NPC
+	 * 
+	 * @param livingEntity
+	 *            LivingEntity to check
+	 * @return Whether the given LivingEntity is an NPC
+	 */
+	public boolean isNPC(LivingEntity livingEntity);
 }

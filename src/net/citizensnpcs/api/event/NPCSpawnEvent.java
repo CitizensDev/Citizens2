@@ -22,7 +22,7 @@ public class NPCSpawnEvent extends NPCEvent implements Cancellable {
 	/**
 	 * Gets the location where the NPC was spawned
 	 * 
-	 * @return Location where NPC was spawned
+	 * @return Location where the NPC was spawned
 	 */
 	public Location getLocation() {
 		return location;
