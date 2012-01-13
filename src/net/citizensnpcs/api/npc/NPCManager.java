@@ -28,6 +28,15 @@ public interface NPCManager {
 	public NPC<?> createNPC(Class<? extends Character> character);
 
 	/**
+	 * Creates an NPC with the given traits
+	 * 
+	 * @param traits
+	 *            Traits to give the NPC
+	 * @return Created NPC with the given traits
+	 */
+	public NPC<?> createNPC(Class<? extends Trait>... traits);
+
+	/**
 	 * Spawns an NPC at the given location
 	 * 
 	 * @param npc

@@ -6,16 +6,16 @@ import net.citizensnpcs.api.npc.trait.TraitManager;
 /**
  * Contains methods used in order to access the Citizens API
  */
-public class Citizens {
-	private static final Citizens instance = new Citizens();
+public class CitizensAPI {
+	private static final CitizensAPI instance = new CitizensAPI();
 
 	private NPCManager npcManager;
 	private TraitManager traitManager;
 
-	private Citizens() {
+	private CitizensAPI() {
 	}
 
-	public static Citizens getInstance() {
+	public static CitizensAPI getInstance() {
 		return instance;
 	}
 
