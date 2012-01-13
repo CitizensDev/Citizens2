@@ -37,14 +37,12 @@ public interface NPCManager {
 	public NPC<?> createNPC(Class<? extends Trait>... traits);
 
 	/**
-	 * Spawns an NPC at the given location
+	 * Despawns an NPC
 	 * 
-	 * @param npc
-	 *            NPC to spawn
-	 * @param location
-	 *            Location to spawn the NPC
+	 * @param id
+	 *            ID of the NPC to despawn
 	 */
-	public void spawnNPC(NPC<?> npc, Location location);
+	public void despawnNPC(int id);
 
 	/**
 	 * Despawns an NPC
@@ -53,14 +51,6 @@ public interface NPCManager {
 	 *            NPC to despawn
 	 */
 	public void despawnNPC(NPC<?> npc);
-
-	/**
-	 * Despawns an NPC
-	 * 
-	 * @param id
-	 *            ID of the NPC to despawn
-	 */
-	public void despawnNPC(int id);
 
 	/**
 	 * Gets an NPC from the given ID
@@ -91,20 +81,20 @@ public interface NPCManager {
 	/**
 	 * Gets all NPCs with the given trait
 	 * 
-	 * @param name
-	 *            Name of the trait to search for
-	 * @return All NPCs with the given trait
-	 */
-	public NPC<?>[] getNPCs(String name);
-
-	/**
-	 * Gets all NPCs with the given trait
-	 * 
 	 * @param trait
 	 *            Trait to search for
 	 * @return All NPCs with the given trait
 	 */
 	public NPC<?>[] getNPCs(Class<? extends Trait> trait);
+
+	/**
+	 * Gets all NPCs with the given trait
+	 * 
+	 * @param name
+	 *            Name of the trait to search for
+	 * @return All NPCs with the given trait
+	 */
+	public NPC<?>[] getNPCs(String name);
 
 	/**
 	 * Checks whether the given Bukkit entity is an NPC
@@ -114,4 +104,14 @@ public interface NPCManager {
 	 * @return Whether the given LivingEntity is an NPC
 	 */
 	public boolean isNPC(LivingEntity livingEntity);
+
+	/**
+	 * Spawns an NPC at the given location
+	 * 
+	 * @param npc
+	 *            NPC to spawn
+	 * @param location
+	 *            Location to spawn the NPC
+	 */
+	public void spawnNPC(NPC<?> npc, Location location);
 }

@@ -5,10 +5,13 @@ import org.bukkit.event.Event;
 
 public class NPCListener extends CustomEventListener {
 
-	/**
-	 * Called when an NPC spawns
-	 */
-	public void onNPCSpawn(NPCSpawnEvent event) {
+	@Override
+	public void onCustomEvent(Event event) {
+		if (event instanceof NPCSpawnEvent) {
+			onNPCSpawn((NPCSpawnEvent) event);
+		} else if (event instanceof NPCDespawnEvent) {
+			onNPCDespawn((NPCDespawnEvent) event);
+		}
 	}
 
 	/**
@@ -17,12 +20,9 @@ public class NPCListener extends CustomEventListener {
 	public void onNPCDespawn(NPCDespawnEvent event) {
 	}
 
-	@Override
-	public void onCustomEvent(Event event) {
-		if (event instanceof NPCSpawnEvent) {
-			onNPCSpawn((NPCSpawnEvent) event);
-		} else if (event instanceof NPCDespawnEvent) {
-			onNPCDespawn((NPCDespawnEvent) event);
-		}
+	/**
+	 * Called when an NPC spawns
+	 */
+	public void onNPCSpawn(NPCSpawnEvent event) {
 	}
 }
