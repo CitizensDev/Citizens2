@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.npc;
 
+import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.pathfinding.Navigator;
 import net.citizensnpcs.api.npc.trait.Trait;
 
@@ -20,7 +21,15 @@ public interface NPC<T extends LivingEntity> {
 	 * @param trait
 	 *            Trait to add
 	 */
-	public void addTrait(Class<? extends Trait> trait);
+	public void addTrait(Trait trait);
+
+	/**
+	 * Adds a trait with the given name to this NPC
+	 * 
+	 * @param name
+	 *            Name of the trait to add
+	 */
+	public void addTrait(String name);
 
 	/**
 	 * Despawns this NPC
@@ -69,7 +78,7 @@ public interface NPC<T extends LivingEntity> {
 	 *            Trait to check
 	 * @return Whether this NPC has the given trait
 	 */
-	public boolean hasTrait(Class<? extends Trait> trait);
+	public boolean hasTrait(Trait trait);
 
 	/**
 	 * Checks if this NPC has the given trait
@@ -86,7 +95,15 @@ public interface NPC<T extends LivingEntity> {
 	 * @param trait
 	 *            Trait to remove
 	 */
-	public void removeTrait(Class<? extends Trait> trait);
+	public void removeTrait(Trait trait);
+
+	/**
+	 * Removes a trait with the given name from this NPC
+	 * 
+	 * @param name
+	 *            Name of the trait to remove
+	 */
+	public void removeTrait(String name);
 
 	/**
 	 * Sets the character of this NPC
