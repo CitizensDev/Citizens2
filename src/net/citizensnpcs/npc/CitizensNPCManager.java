@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -15,7 +14,6 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.LivingEntity;
 
 import net.citizensnpcs.api.Citizens;
-import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
@@ -109,8 +107,6 @@ public class CitizensNPCManager implements NPCManager {
 	}
 
 	public void despawn(NPC npc) {
-		Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(npc));
-
 		CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
 		getWorldServer(((LocationTrait) npc.getTrait("location")).getLocation().getWorld()).removeEntity(mcEntity);
 		spawned.remove(mcEntity.getPlayer());

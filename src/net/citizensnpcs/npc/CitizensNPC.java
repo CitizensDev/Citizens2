@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.citizensnpcs.api.Citizens;
+import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.NPC;
@@ -113,6 +114,8 @@ public class CitizensNPC implements NPC {
 
 	@Override
 	public void despawn() {
+		Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
+
 		mcEntity.die();
 		((CitizensNPCManager) Citizens.getNPCManager()).despawn(this);
 	}
