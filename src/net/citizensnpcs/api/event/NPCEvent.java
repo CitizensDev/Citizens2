@@ -8,9 +8,9 @@ import net.citizensnpcs.api.npc.NPC;
 public class NPCEvent extends CitizensEvent {
 	private static final long serialVersionUID = -4102371616201949781L;
 
-	private final NPC<?> npc;
+	private final NPC npc;
 
-	protected NPCEvent(String name, NPC<?> npc) {
+	protected NPCEvent(String name, NPC npc) {
 		super(name);
 		this.npc = npc;
 	}
@@ -20,7 +20,7 @@ public class NPCEvent extends CitizensEvent {
 	 * 
 	 * @return the npc involved in the event
 	 */
-	public NPC<?> getNPC() {
+	public NPC getNPC() {
 		return npc;
 	}
 }

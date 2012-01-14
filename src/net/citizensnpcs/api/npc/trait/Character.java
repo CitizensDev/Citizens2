@@ -10,19 +10,19 @@ import org.bukkit.entity.Player;
  */
 public interface Character extends Trait {
 
-    /**
-     * Called when an NPC is left-clicked
-     * 
-     * @param npc
-     *            NPC that was left-clicked
-     */
-    public void onLeftClick(NPC<?> npc, Player by);
+	/**
+	 * Called when an NPC is left-clicked
+	 * 
+	 * @param npc
+	 *            NPC that was left-clicked
+	 */
+	public void onLeftClick(NPC npc, Player by);
 
-    /**
-     * Called when an NPC is right-clicked
-     * 
-     * @param npc
-     *            NPC that was right-clicked
-     */
-    public void onRightClick(NPC<?> npc, Player by);
+	/**
+	 * Called when an NPC is right-clicked
+	 * 
+	 * @param npc
+	 *            NPC that was right-clicked
+	 */
+	public void onRightClick(NPC npc, Player by);
 }

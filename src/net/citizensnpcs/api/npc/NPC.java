@@ -5,15 +5,11 @@ import net.citizensnpcs.api.npc.pathfinding.Navigator;
 import net.citizensnpcs.api.npc.trait.Trait;
 
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
 
 /**
  * Represents an NPC with a Character and separate traits
- * 
- * @param <T>
- *            Type of Bukkit entity that this NPC is
  */
-public interface NPC<T extends LivingEntity> {
+public interface NPC {
 
 	/**
 	 * Adds a trait to this NPC
@@ -44,13 +40,6 @@ public interface NPC<T extends LivingEntity> {
 	public Character getCharacter();
 
 	/**
-	 * Gets the Bukkit handle of this NPC
-	 * 
-	 * @return Bukkit handle of this NPC
-	 */
-	public T getHandle();
-
-	/**
 	 * Gets the unique ID of this NPC
 	 * 
 	 * @return ID of this NPC
@@ -63,6 +52,15 @@ public interface NPC<T extends LivingEntity> {
 	 * @return Navigator of this NPC
 	 */
 	public Navigator getNavigator();
+
+	/**
+	 * Gets a trait with the given name for this NPC
+	 * 
+	 * @param name
+	 *            Name of the trait
+	 * @return Trait with the given name
+	 */
+	public Trait getTrait(String name);
 
 	/**
 	 * Gets the traits of this NPC, these are not attached to any character
