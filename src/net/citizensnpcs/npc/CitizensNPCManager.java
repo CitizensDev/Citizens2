@@ -97,8 +97,7 @@ public class CitizensNPCManager implements NPCManager {
 		return count;
 	}
 
-	public CraftNPC spawn(NPC npc) {
-		Location loc = ((LocationTrait) npc.getTrait("location")).getLocation();
+	public CraftNPC spawn(NPC npc, Location loc) {
 		WorldServer ws = getWorldServer(loc.getWorld());
 		CraftNPC mcEntity = new CraftNPC(getMinecraftServer(ws.getServer()), ws, npc.getFullName(),
 				new ItemInWorldManager(ws));
@@ -112,12 +111,14 @@ public class CitizensNPCManager implements NPCManager {
 
 	public void despawn(NPC npc) {
 		CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
+		// TODO send Packet29DestroyEntity
 		getWorldServer(((LocationTrait) npc.getTrait("location")).getLocation().getWorld()).removeEntity(mcEntity);
 		spawned.remove(mcEntity.getPlayer());
 	}
 
 	public void remove(NPC npc) {
-		despawn(npc);
+		if (spawned.containsKey(((CitizensNPC) npc).getHandle()))
+			despawn(npc);
 		byID.remove(npc.getId());
 	}
 

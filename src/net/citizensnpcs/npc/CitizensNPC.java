@@ -146,7 +146,7 @@ public class CitizensNPC implements NPC {
 			return;
 		}
 		addTrait(new LocationTrait(loc));
-		mcEntity = manager.spawn(this);
+		mcEntity = manager.spawn(this, loc);
 	}
 
 	@Override
