@@ -14,23 +14,41 @@ import net.citizensnpcs.api.npc.trait.trait.LocationTrait;
 import net.citizensnpcs.resources.lib.CraftNPC;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
 public class CitizensNPC implements NPC {
 	private final int id;
-	private final Set<Trait> traits = new HashSet<Trait>();
 	private Character character = null;
+	private final Set<Trait> traits = new HashSet<Trait>();
+	private String name;
 	private CraftNPC mcEntity;
 	private boolean spawned;
 	private final CitizensNPCManager manager;
 
-	protected CitizensNPC(Character character, Trait... traits) {
+	protected CitizensNPC(String name, Character character, Trait... traits) {
+		this.name = name;
 		this.character = character;
 		for (Trait trait : traits) {
 			this.traits.add(trait);
 		}
 		manager = (CitizensNPCManager) Citizens.getNPCManager();
 		id = manager.getUniqueID();
+	}
+
+	@Override
+	public String getFullName() {
+		return name;
+	}
+
+	@Override
+	public String getName() {
+		return ChatColor.stripColor(name);
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override

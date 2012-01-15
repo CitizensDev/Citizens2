@@ -29,18 +29,18 @@ public class CitizensNPCManager implements NPCManager {
 	private Map<Integer, NPC> byID = new HashMap<Integer, NPC>();
 
 	@Override
-	public NPC createNPC() {
-		return createNPC(null);
+	public NPC createNPC(String name) {
+		return createNPC(name, null);
 	}
 
 	@Override
-	public NPC createNPC(Character character) {
-		return createNPC(character);
+	public NPC createNPC(String name, Character character) {
+		return createNPC(name, character);
 	}
 
 	@Override
-	public NPC createNPC(Character character, Trait... traits) {
-		CitizensNPC npc = new CitizensNPC(character, traits);
+	public NPC createNPC(String name, Character character, Trait... traits) {
+		CitizensNPC npc = new CitizensNPC(name, character, traits);
 		byID.put(npc.getId(), npc);
 		return npc;
 	}
@@ -100,7 +100,8 @@ public class CitizensNPCManager implements NPCManager {
 	public CraftNPC spawn(NPC npc) {
 		Location loc = ((LocationTrait) npc.getTrait("location")).getLocation();
 		WorldServer ws = getWorldServer(loc.getWorld());
-		CraftNPC mcEntity = new CraftNPC(getMinecraftServer(ws.getServer()), ws, "", new ItemInWorldManager(ws));
+		CraftNPC mcEntity = new CraftNPC(getMinecraftServer(ws.getServer()), ws, npc.getFullName(),
+				new ItemInWorldManager(ws));
 		mcEntity.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 		ws.addEntity(mcEntity);
 		ws.players.remove(mcEntity);
