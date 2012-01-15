@@ -6,7 +6,6 @@ import java.util.Set;
 import net.citizensnpcs.api.Citizens;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
-import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.pathfinding.Navigator;
@@ -23,26 +22,28 @@ public class CitizensNPC implements NPC {
 	private Character character = null;
 	private CraftNPC mcEntity;
 	private boolean spawned;
+	private final CitizensNPCManager manager;
 
 	protected CitizensNPC(Character character, Trait... traits) {
 		this.character = character;
 		for (Trait trait : traits) {
 			this.traits.add(trait);
 		}
-		this.id = ((CitizensNPCManager) Citizens.getNPCManager()).getUniqueID();
+		manager = (CitizensNPCManager) Citizens.getNPCManager();
+		id = manager.getUniqueID();
 	}
 
 	@Override
-	public void addTrait(Trait trait) throws NPCException {
+	public void addTrait(Trait trait) {
 		if (!hasTrait(trait))
 			traits.add(trait);
 		else
-			throw new NPCException("The NPC already has the trait '" + trait.getName() + "'.");
+			System.out.println("The NPC already has the trait '" + trait.getName() + "'.");
 	}
 
 	@Override
-	public void addTrait(String name) throws NPCException {
-		addTrait(Citizens.getTraitManager().getTrait(name));
+	public void addTrait(String name) {
+		addTrait(getTrait(name));
 	}
 
 	@Override
@@ -83,25 +84,29 @@ public class CitizensNPC implements NPC {
 
 	@Override
 	public boolean hasTrait(String name) {
-		return hasTrait(Citizens.getTraitManager().getTrait(name));
+		return hasTrait(getTrait(name));
 	}
 
 	@Override
-	public void removeTrait(Trait trait) throws NPCException {
-		if (!hasTrait(trait))
-			throw new NPCException("The NPC does not have a trait with the name of '" + trait.getName() + ".");
+	public void removeTrait(Trait trait) {
+		if (!hasTrait(trait)) {
+			System.out.println("The NPC does not have a trait with the name of '" + trait.getName() + ".");
+			return;
+		}
 		traits.remove(trait);
 	}
 
 	@Override
-	public void removeTrait(String name) throws NPCException {
-		removeTrait(Citizens.getTraitManager().getTrait(name));
+	public void removeTrait(String name) {
+		removeTrait(getTrait(name));
 	}
 
 	@Override
-	public void setCharacter(Character character) throws NPCException {
-		if (this.character.equals(character))
-			throw new NPCException("The NPC already has the character '" + character.getName() + "'.");
+	public void setCharacter(Character character) {
+		if (this.character.equals(character)) {
+			System.out.println("The NPC already has the character '" + character.getName() + "'.");
+			return;
+		}
 		this.character = character;
 	}
 
@@ -111,9 +116,11 @@ public class CitizensNPC implements NPC {
 	}
 
 	@Override
-	public void spawn(Location loc) throws NPCException {
-		if (spawned)
-			throw new NPCException("The NPC is already spawned.");
+	public void spawn(Location loc) {
+		if (spawned) {
+			System.out.println("The NPC is already spawned.");
+			return;
+		}
 
 		NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, loc);
 		Bukkit.getPluginManager().callEvent(spawnEvent);
@@ -121,23 +128,28 @@ public class CitizensNPC implements NPC {
 			return;
 		}
 		addTrait(new LocationTrait(loc));
-		mcEntity = ((CitizensNPCManager) Citizens.getNPCManager()).spawn(this);
+		mcEntity = manager.spawn(this);
 	}
 
 	@Override
-	public void despawn() throws NPCException {
-		if (!spawned)
-			throw new NPCException("The NPC is already despawned.");
+	public void despawn() {
+		if (!spawned) {
+			System.out.println("The NPC is already despawned.");
+			return;
+		}
 
 		Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
 
 		mcEntity.die();
-		((CitizensNPCManager) Citizens.getNPCManager()).despawn(this);
+		manager.despawn(this);
 	}
 
 	@Override
 	public void remove() {
-		// TODO
+		if (spawned) {
+			despawn();
+		}
+		manager.remove(this);
 	}
 
 	public CraftNPC getHandle() {

@@ -13,7 +13,6 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.LivingEntity;
 
-import net.citizensnpcs.api.Citizens;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
@@ -74,7 +73,13 @@ public class CitizensNPCManager implements NPCManager {
 
 	@Override
 	public Collection<NPC> getNPCs(String name) {
-		return getNPCs(Citizens.getTraitManager().getTrait(name));
+		Set<NPC> npcs = new HashSet<NPC>();
+		for (NPC npc : spawned.values()) {
+			if (npc.hasTrait(name)) {
+				npcs.add(npc);
+			}
+		}
+		return npcs;
 	}
 
 	@Override
@@ -111,14 +116,15 @@ public class CitizensNPCManager implements NPCManager {
 	}
 
 	public void remove(NPC npc) {
+		despawn(npc);
 		byID.remove(npc.getId());
 	}
 
-	private WorldServer getWorldServer(World world) {
+	public WorldServer getWorldServer(World world) {
 		return ((CraftWorld) world).getHandle();
 	}
 
-	private MinecraftServer getMinecraftServer(Server server) {
+	public MinecraftServer getMinecraftServer(Server server) {
 		return ((CraftServer) server).getServer();
 	}
 }
