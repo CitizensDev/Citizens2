@@ -18,7 +18,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
-import net.citizensnpcs.npc.trait.LocationTrait;
+import net.citizensnpcs.api.npc.trait.trait.LocationTrait;
 import net.citizensnpcs.resources.lib.CraftNPC;
 
 import net.minecraft.server.ItemInWorldManager;
@@ -27,6 +27,7 @@ import net.minecraft.server.WorldServer;
 
 public class CitizensNPCManager implements NPCManager {
 	private Map<LivingEntity, NPC> spawned = new HashMap<LivingEntity, NPC>();
+	private Map<Integer, NPC> byID = new HashMap<Integer, NPC>();
 
 	@Override
 	public NPC createNPC() {
@@ -40,7 +41,9 @@ public class CitizensNPCManager implements NPCManager {
 
 	@Override
 	public NPC createNPC(Character character, Trait... traits) {
-		return new CitizensNPC(character, traits);
+		CitizensNPC npc = new CitizensNPC(character, traits);
+		byID.put(npc.getId(), npc);
+		return npc;
 	}
 
 	@Override
