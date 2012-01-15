@@ -12,6 +12,13 @@ import org.bukkit.Location;
 public interface NPC {
 
 	/**
+	 * Gets the unique ID of this NPC
+	 * 
+	 * @return ID of this NPC
+	 */
+	public int getId();
+
+	/**
 	 * Gets the full name of this NPC
 	 * 
 	 * @return Full name of this NPC
@@ -50,25 +57,20 @@ public interface NPC {
 	public void addTrait(String trait);
 
 	/**
-	 * Gets the character of this NPC
+	 * Removes a trait from this NPC
 	 * 
-	 * @return Character of this NPC
+	 * @param trait
+	 *            Trait to remove
 	 */
-	public Character getCharacter();
+	public void removeTrait(Trait trait);
 
 	/**
-	 * Gets the unique ID of this NPC
+	 * Removes a trait with the given name from this NPC
 	 * 
-	 * @return ID of this NPC
+	 * @param trait
+	 *            Name of the trait to remove
 	 */
-	public int getId();
-
-	/**
-	 * Gets the Navigator of this NPC
-	 * 
-	 * @return Navigator of this NPC
-	 */
-	public Navigator getNavigator();
+	public void removeTrait(String trait);
 
 	/**
 	 * Gets a trait with the given name for this NPC
@@ -105,20 +107,11 @@ public interface NPC {
 	public boolean hasTrait(String trait);
 
 	/**
-	 * Removes a trait from this NPC
+	 * Gets the character of this NPC
 	 * 
-	 * @param trait
-	 *            Trait to remove
+	 * @return Character of this NPC
 	 */
-	public void removeTrait(Trait trait);
-
-	/**
-	 * Removes a trait with the given name from this NPC
-	 * 
-	 * @param trait
-	 *            Name of the trait to remove
-	 */
-	public void removeTrait(String trait);
+	public Character getCharacter();
 
 	/**
 	 * Sets the character of this NPC
@@ -127,6 +120,13 @@ public interface NPC {
 	 *            Character to set this NPC to
 	 */
 	public void setCharacter(Character character);
+
+	/**
+	 * Gets the Navigator of this NPC
+	 * 
+	 * @return Navigator of this NPC
+	 */
+	public Navigator getNavigator();
 
 	/**
 	 * Gets whether this NPC is currently spawned
