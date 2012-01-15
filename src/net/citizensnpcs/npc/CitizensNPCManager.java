@@ -120,11 +120,11 @@ public class CitizensNPCManager implements NPCManager {
 		byID.remove(npc.getId());
 	}
 
-	public WorldServer getWorldServer(World world) {
+	private WorldServer getWorldServer(World world) {
 		return ((CraftWorld) world).getHandle();
 	}
 
-	public MinecraftServer getMinecraftServer(Server server) {
+	private MinecraftServer getMinecraftServer(Server server) {
 		return ((CraftServer) server).getServer();
 	}
 }
