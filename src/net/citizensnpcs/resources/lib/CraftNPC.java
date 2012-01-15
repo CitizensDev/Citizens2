@@ -11,9 +11,9 @@ import net.minecraft.server.World;
 
 public class CraftNPC extends EntityPlayer {
 
-	public CraftNPC(MinecraftServer minecraftserver, World world, String s, ItemInWorldManager iteminworldmanager) {
-		super(minecraftserver, world, s, iteminworldmanager);
-		iteminworldmanager.setGameMode(0);
+	public CraftNPC(MinecraftServer minecraftServer, World world, String string, ItemInWorldManager itemInWorldManager) {
+		super(minecraftServer, world, string, itemInWorldManager);
+		itemInWorldManager.setGameMode(0);
 
 		NPCSocket socket = new NPCSocket();
 
@@ -23,8 +23,8 @@ public class CraftNPC extends EntityPlayer {
 				return false;
 			}
 		});
-		this.netServerHandler = new NPCNetHandler(minecraftserver, netMgr, this);
-		netMgr.a(this.netServerHandler);
+		netServerHandler = new NPCNetHandler(minecraftServer, netMgr, this);
+		netMgr.a(netServerHandler);
 
 		try {
 			socket.close();
