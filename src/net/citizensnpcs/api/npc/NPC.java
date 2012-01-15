@@ -12,6 +12,28 @@ import org.bukkit.Location;
 public interface NPC {
 
 	/**
+	 * Gets the full name of this NPC
+	 * 
+	 * @return Full name of this NPC
+	 */
+	public String getFullName();
+
+	/**
+	 * Gets the name of this NPC with color codes stripped
+	 * 
+	 * @return Stripped name of this NPC
+	 */
+	public String getName();
+
+	/**
+	 * Sets the name of this NPC
+	 * 
+	 * @param name
+	 *            Name to give this NPC
+	 */
+	public void setName(String name);
+
+	/**
 	 * Adds a trait to this NPC
 	 * 
 	 * @param trait
@@ -22,10 +44,10 @@ public interface NPC {
 	/**
 	 * Adds a trait with the given name to this NPC
 	 * 
-	 * @param name
+	 * @param trait
 	 *            Name of the trait to add
 	 */
-	public void addTrait(String name);
+	public void addTrait(String trait);
 
 	/**
 	 * Gets the character of this NPC
@@ -51,11 +73,11 @@ public interface NPC {
 	/**
 	 * Gets a trait with the given name for this NPC
 	 * 
-	 * @param name
+	 * @param trait
 	 *            Name of the trait
 	 * @return Trait with the given name
 	 */
-	public Trait getTrait(String name);
+	public Trait getTrait(String trait);
 
 	/**
 	 * Gets the traits of this NPC, these are not attached to any character
@@ -76,11 +98,11 @@ public interface NPC {
 	/**
 	 * Checks if this NPC has the given trait
 	 * 
-	 * @param name
+	 * @param trait
 	 *            Name of the trait to check
 	 * @return Whether this NPC has a trait with the given name
 	 */
-	public boolean hasTrait(String name);
+	public boolean hasTrait(String trait);
 
 	/**
 	 * Removes a trait from this NPC
@@ -93,10 +115,10 @@ public interface NPC {
 	/**
 	 * Removes a trait with the given name from this NPC
 	 * 
-	 * @param name
+	 * @param trait
 	 *            Name of the trait to remove
 	 */
-	public void removeTrait(String name);
+	public void removeTrait(String trait);
 
 	/**
 	 * Sets the character of this NPC
