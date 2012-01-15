@@ -48,12 +48,7 @@ public class CitizensNPCManager implements NPCManager {
 
 	@Override
 	public NPC getNPC(int id) {
-		for (NPC npc : spawned.values()) {
-			if (npc.getId() == id) {
-				return npc;
-			}
-		}
-		return null;
+		return byID.get(id);
 	}
 
 	@Override
@@ -113,6 +108,10 @@ public class CitizensNPCManager implements NPCManager {
 		CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
 		getWorldServer(((LocationTrait) npc.getTrait("location")).getLocation().getWorld()).removeEntity(mcEntity);
 		spawned.remove(mcEntity.getPlayer());
+	}
+
+	public void remove(NPC npc) {
+		byID.remove(npc.getId());
 	}
 
 	private WorldServer getWorldServer(World world) {
