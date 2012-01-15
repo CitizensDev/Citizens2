@@ -1,15 +1,22 @@
 package net.citizensnpcs.api;
 
-public class CitizensAPI {
-	private static CitizensPlugin citizens;
+import net.citizensnpcs.api.npc.NPCManager;
 
-	public static CitizensPlugin getInstance() {
-		return citizens;
+/**
+ * Contains methods used in order to access the Citizens API
+ */
+public class CitizensAPI {
+	private static final CitizensAPI instance = new CitizensAPI();
+
+	private NPCManager npcManager;
+
+	public static NPCManager getNPCManager() {
+		return instance.npcManager;
 	}
 
-	public static void setInstance(CitizensPlugin plugin) {
-		if (citizens != null)
-			throw new IllegalArgumentException("already set");
-		citizens = plugin;
+	public static void setNPCManager(NPCManager npcManager) {
+		if (instance.npcManager == null) {
+			instance.npcManager = npcManager;
+		}
 	}
 }
