@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.npc;
 
-import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.pathfinding.Navigator;
 import net.citizensnpcs.api.npc.trait.Trait;
@@ -17,20 +16,16 @@ public interface NPC {
 	 * 
 	 * @param trait
 	 *            Trait to add
-	 * @throws NPCException
-	 *             Thrown if the trait is already attached to this NPC
 	 */
-	public void addTrait(Trait trait) throws NPCException;
+	public void addTrait(Trait trait);
 
 	/**
 	 * Adds a trait with the given name to this NPC
 	 * 
 	 * @param name
 	 *            Name of the trait to add
-	 * @throws NPCException
-	 *             Thrown if the trait is already attached to this NPC
 	 */
-	public void addTrait(String name) throws NPCException;
+	public void addTrait(String name);
 
 	/**
 	 * Gets the character of this NPC
@@ -92,30 +87,24 @@ public interface NPC {
 	 * 
 	 * @param trait
 	 *            Trait to remove
-	 * @throws NPCException
-	 *             Thrown if the given trait is not attached to this NPC
 	 */
-	public void removeTrait(Trait trait) throws NPCException;
+	public void removeTrait(Trait trait);
 
 	/**
 	 * Removes a trait with the given name from this NPC
 	 * 
 	 * @param name
 	 *            Name of the trait to remove
-	 * @throws NPCException
-	 *             Thrown if the given trait is not attached to this NPC
 	 */
-	public void removeTrait(String name) throws NPCException;
+	public void removeTrait(String name);
 
 	/**
 	 * Sets the character of this NPC
 	 * 
 	 * @param character
 	 *            Character to set this NPC to
-	 * @throws NPCException
-	 *             Thrown if this NPC already is the given character
 	 */
-	public void setCharacter(Character character) throws NPCException;
+	public void setCharacter(Character character);
 
 	/**
 	 * Gets whether this NPC is currently spawned
@@ -129,18 +118,13 @@ public interface NPC {
 	 * 
 	 * @param location
 	 *            Location to spawn this NPC
-	 * @throws NPCException
-	 *             Thrown if this NPC is already spawned
 	 */
-	public void spawn(Location location) throws NPCException;
+	public void spawn(Location location);
 
 	/**
 	 * Despawns this NPC
-	 * 
-	 * @throws NPCException
-	 *             Thrown if this NPC is already despawned
 	 */
-	public void despawn() throws NPCException;
+	public void despawn();
 
 	/**
 	 * Permanently removes this NPC
