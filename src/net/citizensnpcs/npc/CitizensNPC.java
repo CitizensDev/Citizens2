@@ -3,7 +3,7 @@ package net.citizensnpcs.npc;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.citizensnpcs.api.Citizens;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.trait.Character;
@@ -32,7 +32,7 @@ public class CitizensNPC implements NPC {
 		for (Trait trait : traits) {
 			this.traits.add(trait);
 		}
-		manager = (CitizensNPCManager) Citizens.getNPCManager();
+		manager = (CitizensNPCManager) CitizensAPI.getNPCManager();
 		id = manager.getUniqueID();
 	}
 
