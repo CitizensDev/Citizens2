@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 /**
  * Represents a Character with a unique name that can be loaded and saved (one
- * Character can be attached to an NPC at one time)
+ * Character can be attached to an NPC at a time)
  */
 public interface Character extends Trait {
 
@@ -15,6 +15,8 @@ public interface Character extends Trait {
 	 * 
 	 * @param npc
 	 *            NPC that was left-clicked
+	 * @param by
+	 *            Player that clicked the NPC
 	 */
 	public void onLeftClick(NPC npc, Player by);
 
@@ -23,6 +25,8 @@ public interface Character extends Trait {
 	 * 
 	 * @param npc
 	 *            NPC that was right-clicked
+	 * @param by
+	 *            Player that clicked the NPC
 	 */
 	public void onRightClick(NPC npc, Player by);
 }
