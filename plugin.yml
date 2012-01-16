@@ -1,0 +1,4 @@
+name: Citizens
+authors: [aPunch, fullwall]
+version: 2.0
+main: net.citizensnpcs.Citizens
