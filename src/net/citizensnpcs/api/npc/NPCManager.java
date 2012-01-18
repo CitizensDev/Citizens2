@@ -5,7 +5,7 @@ import java.util.Collection;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
 
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 
 /**
  * Handles various NPC-related methods
@@ -59,12 +59,11 @@ public interface NPCManager {
 	/**
 	 * Gets an NPC from the given LivingEntity
 	 * 
-	 * @param livingEntity
-	 *            LivingEntity to get the NPC from
-	 * @return NPC from the given LivingEntity, null if LivingEntity is not an
-	 *         NPC
+	 * @param entity
+	 *            Entity to get the NPC from
+	 * @return NPC from the given entity
 	 */
-	public NPC getNPC(LivingEntity livingEntity);
+	public NPC getNPC(Entity entity);
 
 	/**
 	 * Gets all NPCs
@@ -94,9 +93,9 @@ public interface NPCManager {
 	/**
 	 * Checks whether the given Bukkit entity is an NPC
 	 * 
-	 * @param livingEntity
-	 *            LivingEntity to check
-	 * @return Whether the given LivingEntity is an NPC
+	 * @param entity
+	 *            Entity to check
+	 * @return Whether the given entity is an NPC
 	 */
-	public boolean isNPC(LivingEntity livingEntity);
+	public boolean isNPC(Entity entity);
 }

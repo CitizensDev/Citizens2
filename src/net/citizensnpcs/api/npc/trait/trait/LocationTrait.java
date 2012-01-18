@@ -38,4 +38,9 @@ public class LocationTrait implements Trait {
 	public Location getLocation() {
 		return loc;
 	}
+
+	@Override
+	public String toString() {
+		return "LocationTrait{" + loc + "}";
+	}
 }
