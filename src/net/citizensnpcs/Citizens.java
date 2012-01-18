@@ -36,8 +36,10 @@ public class Citizens extends JavaPlugin {
 			public void run() {
 				setupNPCs();
 			}
-		}, 100) == -1)
+		}, 100) == -1) {
 			Messaging.log("Issue enabling plugin. Disabling.");
+			getServer().getPluginManager().disablePlugin(this);
+		}
 	}
 
 	private void setupNPCs() {
