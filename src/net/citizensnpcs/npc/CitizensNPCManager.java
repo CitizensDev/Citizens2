@@ -11,7 +11,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
@@ -25,7 +25,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldServer;
 
 public class CitizensNPCManager implements NPCManager {
-	private Map<LivingEntity, NPC> spawned = new HashMap<LivingEntity, NPC>();
+	private Map<Entity, NPC> spawned = new HashMap<Entity, NPC>();
 	private Map<Integer, NPC> byID = new HashMap<Integer, NPC>();
 
 	@Override
@@ -51,7 +51,7 @@ public class CitizensNPCManager implements NPCManager {
 	}
 
 	@Override
-	public NPC getNPC(LivingEntity entity) {
+	public NPC getNPC(Entity entity) {
 		return spawned.get(entity);
 	}
 
@@ -83,7 +83,7 @@ public class CitizensNPCManager implements NPCManager {
 	}
 
 	@Override
-	public boolean isNPC(LivingEntity entity) {
+	public boolean isNPC(Entity entity) {
 		return spawned.containsKey(entity);
 	}
 
