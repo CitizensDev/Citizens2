@@ -10,6 +10,11 @@ public class CitizensAPI {
 
 	private NPCManager npcManager;
 
+	/**
+	 * Gets the NPCManager
+	 * 
+	 * @return NPCManager
+	 */
 	public static NPCManager getNPCManager() {
 		return instance.npcManager;
 	}
