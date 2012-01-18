@@ -2,8 +2,8 @@ package net.citizensnpcs.api.npc.trait.trait;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 
+import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.npc.trait.Trait;
 
 public class LocationTrait implements Trait {
@@ -19,20 +19,20 @@ public class LocationTrait implements Trait {
 	}
 
 	@Override
-	public void load(ConfigurationSection cs) {
-		loc = new Location(Bukkit.getWorld(cs.getString("location.world")), cs.getDouble("location.x"),
-				cs.getDouble("location.y"), cs.getDouble("location.z"), (float) cs.getDouble("location.pitch"),
-				(float) cs.getDouble("location.yaw"));
+	public void load(DataKey key) {
+		loc = new Location(Bukkit.getWorld(key.getString("location.world")), key.getDouble("location.x"),
+				key.getDouble("location.y"), key.getDouble("location.z"), (float) key.getDouble("location.pitch"),
+				(float) key.getDouble("location.yaw"));
 	}
 
 	@Override
-	public void save(ConfigurationSection cs) {
-		cs.set("location.world", loc.getWorld());
-		cs.set("location.x", loc.getX());
-		cs.set("location.y", loc.getY());
-		cs.set("location.z", loc.getZ());
-		cs.set("location.pitch", loc.getPitch());
-		cs.set("location.yaw", loc.getYaw());
+	public void save(DataKey key) {
+		key.setString("location.world", loc.getWorld().getName());
+		key.setDouble("location.x", loc.getX());
+		key.setDouble("location.y", loc.getY());
+		key.setDouble("location.z", loc.getZ());
+		key.setDouble("location.pitch", loc.getPitch());
+		key.setDouble("location.yaw", loc.getYaw());
 	}
 
 	public Location getLocation() {

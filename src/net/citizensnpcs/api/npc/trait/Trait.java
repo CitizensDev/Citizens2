@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.npc.trait;
 
-import org.bukkit.configuration.ConfigurationSection;
+import net.citizensnpcs.api.DataKey;
 
 /**
  * Represents a Trait with a unique name that can be loaded and saved
@@ -17,16 +17,16 @@ public interface Trait {
 	/**
 	 * Loads a trait
 	 * 
-	 * @param configurationSection
-	 *            ConfigurationSection to load from
+	 * @param key
+	 *            DataKey to load from
 	 */
-	public void load(ConfigurationSection configurationSection);
+	public void load(DataKey key);
 
 	/**
 	 * Saves a trait
 	 * 
-	 * @param configurationSection
-	 *            ConfigurationSection to save to
+	 * @param key
+	 *            DataKey to save to
 	 */
-	public void save(ConfigurationSection configurationSection);
+	public void save(DataKey key);
 }
