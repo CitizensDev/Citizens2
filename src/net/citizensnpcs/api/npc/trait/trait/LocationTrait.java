@@ -39,6 +39,10 @@ public class LocationTrait implements Trait {
 		return loc;
 	}
 
+	public void setLocation(Location loc) {
+		this.loc = loc;
+	}
+
 	@Override
 	public String toString() {
 		return "LocationTrait{" + loc + "}";

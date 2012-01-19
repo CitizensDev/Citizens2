@@ -46,15 +46,7 @@ public interface NPC {
 	 * @param trait
 	 *            Trait to add
 	 */
-	public void addTrait(Trait trait);
-
-	/**
-	 * Adds a trait with the given name to this NPC
-	 * 
-	 * @param trait
-	 *            Name of the trait to add
-	 */
-	public void addTrait(String trait);
+	public void addTrait(Class<? extends Trait> trait);
 
 	/**
 	 * Removes a trait from this NPC
@@ -62,24 +54,16 @@ public interface NPC {
 	 * @param trait
 	 *            Trait to remove
 	 */
-	public void removeTrait(Trait trait);
+	public void removeTrait(Class<? extends Trait> trait);
 
 	/**
-	 * Removes a trait with the given name from this NPC
+	 * Gets a trait from the given class
 	 * 
 	 * @param trait
-	 *            Name of the trait to remove
-	 */
-	public void removeTrait(String trait);
-
-	/**
-	 * Gets a trait with the given name for this NPC
-	 * 
-	 * @param trait
-	 *            Name of the trait
+	 *            Trait to get
 	 * @return Trait with the given name
 	 */
-	public Trait getTrait(String trait);
+	public <T extends Trait> T getTrait(Class<T> trait);
 
 	/**
 	 * Gets the traits of this NPC, these are not attached to any character
@@ -95,16 +79,7 @@ public interface NPC {
 	 *            Trait to check
 	 * @return Whether this NPC has the given trait
 	 */
-	public boolean hasTrait(Trait trait);
-
-	/**
-	 * Checks if this NPC has the given trait
-	 * 
-	 * @param trait
-	 *            Name of the trait to check
-	 * @return Whether this NPC has a trait with the given name
-	 */
-	public boolean hasTrait(String trait);
+	public boolean hasTrait(Class<? extends Trait> trait);
 
 	/**
 	 * Gets the character of this NPC
