@@ -35,12 +35,7 @@ public class CitizensNPCManager implements NPCManager {
 
 	@Override
 	public NPC createNPC(String name, Character character) {
-		return createNPC(name, character);
-	}
-
-	@Override
-	public NPC createNPC(String name, Character character, Trait... traits) {
-		CitizensNPC npc = new CitizensNPC(name, character, traits);
+		CitizensNPC npc = new CitizensNPC(name, character);
 		byID.put(npc.getId(), npc);
 		return npc;
 	}
@@ -61,23 +56,11 @@ public class CitizensNPCManager implements NPCManager {
 	}
 
 	@Override
-	public Collection<NPC> getNPCs(Trait trait) {
+	public Collection<NPC> getNPCs(Class<? extends Trait> trait) {
 		Set<NPC> npcs = new HashSet<NPC>();
 		for (NPC npc : spawned.values()) {
-			if (npc.hasTrait(trait)) {
+			if (npc.hasTrait(trait))
 				npcs.add(npc);
-			}
-		}
-		return npcs;
-	}
-
-	@Override
-	public Collection<NPC> getNPCs(String name) {
-		Set<NPC> npcs = new HashSet<NPC>();
-		for (NPC npc : spawned.values()) {
-			if (npc.hasTrait(name)) {
-				npcs.add(npc);
-			}
 		}
 		return npcs;
 	}
@@ -112,7 +95,7 @@ public class CitizensNPCManager implements NPCManager {
 	public void despawn(NPC npc) {
 		CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
 		// TODO send Packet29DestroyEntity
-		getWorldServer(((LocationTrait) npc.getTrait("location")).getLocation().getWorld()).removeEntity(mcEntity);
+		getWorldServer(npc.getTrait(LocationTrait.class).getLocation().getWorld()).removeEntity(mcEntity);
 		spawned.remove(mcEntity.getPlayer());
 	}
 
