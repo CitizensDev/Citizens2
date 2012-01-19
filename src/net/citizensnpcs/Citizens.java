@@ -83,8 +83,8 @@ public class Citizens extends JavaPlugin {
             if (character != null) {
                 character.load(key);
             }
-            for (Trait t : npc.getTraits()) {
-                t.load(key);
+            for (Trait trait : npc.getTraits()) {
+                trait.load(key);
             }
             npc.spawn(npc.getTrait(LocationTrait.class).getLocation());
         }
