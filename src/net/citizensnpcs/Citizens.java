@@ -3,13 +3,10 @@ package net.citizensnpcs;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.trait.LocationTrait;
-import net.citizensnpcs.listener.EntityListen;
-import net.citizensnpcs.listener.WorldListen;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Citizens extends JavaPlugin {
@@ -25,7 +22,8 @@ public class Citizens extends JavaPlugin {
 		npcManager = new CitizensNPCManager();
 		CitizensAPI.setNPCManager(npcManager);
 
-		registerEvents(getServer().getPluginManager());
+		// Register events
+		new EventListen(this);
 
 		Messaging.log("v" + getDescription().getVersion() + " enabled.");
 
@@ -48,10 +46,5 @@ public class Citizens extends JavaPlugin {
 			npc.spawn(((LocationTrait) npc.getTrait("location")).getLocation());
 		}
 		Messaging.log("Loaded " + npcManager.getNPCs().size() + " NPCs.");
-	}
-
-	private void registerEvents(PluginManager pm) {
-		pm.registerEvents(new EntityListen(), this);
-		pm.registerEvents(new WorldListen(), this);
 	}
 }
