@@ -2,6 +2,7 @@ package net.citizensnpcs.api.event;
 
 import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.HandlerList;
 
 import net.citizensnpcs.api.npc.NPC;
 
@@ -10,6 +11,7 @@ import net.citizensnpcs.api.npc.NPC;
  */
 public class NPCSpawnEvent extends NPCEvent implements Cancellable {
 	private static final long serialVersionUID = 5459272868175393832L;
+	private static final HandlerList handlers = new HandlerList();
 
 	private final Location location;
 	private boolean cancelled = false;
@@ -36,5 +38,14 @@ public class NPCSpawnEvent extends NPCEvent implements Cancellable {
 	@Override
 	public void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
+	}
+
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
+
+	public static HandlerList getHandlerList() {
+		return handlers;
 	}
 }
