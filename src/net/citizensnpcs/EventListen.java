@@ -18,63 +18,63 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class EventListen implements Listener {
-	private Set<Integer> toRespawn = new HashSet<Integer>();
+    private Set<Integer> toRespawn = new HashSet<Integer>();
 
-	public EventListen(Citizens plugin) {
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-	}
+    public EventListen(Citizens plugin) {
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    }
 
-	/*
-	 * Entity events
-	 */
-	@EventHandler()
-	public void onEntityDamage(EntityDamageEvent event) {
-		if (event.isCancelled() || !CitizensAPI.getNPCManager().isNPC(event.getEntity()))
-			return;
+    /*
+     * Entity events
+     */
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.isCancelled() || !CitizensAPI.getNPCManager().isNPC(event.getEntity()))
+            return;
 
-		if (event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if (e.getDamager() instanceof Player) {
-				NPC npc = CitizensAPI.getNPCManager().getNPC(event.getEntity());
-				npc.getCharacter().onLeftClick(npc, (Player) e.getDamager());
-			}
-		}
-	}
+        if (event instanceof EntityDamageByEntityEvent) {
+            EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
+            if (e.getDamager() instanceof Player) {
+                NPC npc = CitizensAPI.getNPCManager().getNPC(event.getEntity());
+                npc.getCharacter().onLeftClick(npc, (Player) e.getDamager());
+            }
+        }
+    }
 
-	@EventHandler()
-	public void onEntityTarget(EntityTargetEvent event) {
-		if (event.isCancelled() || !CitizensAPI.getNPCManager().isNPC(event.getEntity())
-				|| !(event.getTarget() instanceof Player))
-			return;
+    @EventHandler
+    public void onEntityTarget(EntityTargetEvent event) {
+        if (event.isCancelled() || !CitizensAPI.getNPCManager().isNPC(event.getEntity())
+                || !(event.getTarget() instanceof Player))
+            return;
 
-		NPC npc = CitizensAPI.getNPCManager().getNPC(event.getEntity());
-		npc.getCharacter().onRightClick(npc, (Player) event.getTarget());
-	}
+        NPC npc = CitizensAPI.getNPCManager().getNPC(event.getEntity());
+        npc.getCharacter().onRightClick(npc, (Player) event.getTarget());
+    }
 
-	/*
-	 * World events
-	 */
-	@EventHandler()
-	public void onChunkLoad(ChunkLoadEvent event) {
-		for (int id : toRespawn) {
-			NPC npc = CitizensAPI.getNPCManager().getNPC(id);
-			npc.spawn(npc.getTrait(LocationTrait.class).getLocation());
-			toRespawn.remove(id);
-		}
-	}
+    /*
+     * World events
+     */
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
+        for (int id : toRespawn) {
+            NPC npc = CitizensAPI.getNPCManager().getNPC(id);
+            npc.spawn(npc.getTrait(LocationTrait.class).getLocation());
+            toRespawn.remove(id);
+        }
+    }
 
-	@EventHandler()
-	public void onChunkUnload(ChunkUnloadEvent event) {
-		if (event.isCancelled())
-			return;
+    @EventHandler
+    public void onChunkUnload(ChunkUnloadEvent event) {
+        if (event.isCancelled())
+            return;
 
-		for (NPC npc : CitizensAPI.getNPCManager().getNPCs()) {
-			Location loc = npc.getTrait(LocationTrait.class).getLocation();
-			if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
-					&& event.getChunk().getZ() == loc.getChunk().getZ()) {
-				toRespawn.add(npc.getId());
-				npc.despawn();
-			}
-		}
-	}
+        for (NPC npc : CitizensAPI.getNPCManager().getNPCs()) {
+            Location loc = npc.getTrait(LocationTrait.class).getLocation();
+            if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
+                    && event.getChunk().getZ() == loc.getChunk().getZ()) {
+                toRespawn.add(npc.getId());
+                npc.despawn();
+            }
+        }
+    }
 }
