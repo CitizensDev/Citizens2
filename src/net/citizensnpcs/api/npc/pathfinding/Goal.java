@@ -2,15 +2,15 @@ package net.citizensnpcs.api.npc.pathfinding;
 
 public interface Goal {
 
-	public int getPriority();
+    public int getPriority();
 
-	public void reset();
+    public void reset();
 
-	public boolean shouldBegin();
+    public boolean shouldBegin();
 
-	public boolean shouldContinue();
+    public boolean shouldContinue();
 
-	public void start();
+    public void start();
 
-	public void update();
+    public void update();
 }

@@ -8,29 +8,29 @@ import org.bukkit.entity.Entity;
  */
 public interface Navigator {
 
-	/**
-	 * Creates a path to the given destination
-	 * 
-	 * @param destination
-	 *            Destination of the path
-	 */
-	public void createPath(Location destination);
+    /**
+     * Creates a path to the given destination
+     * 
+     * @param destination
+     *            Destination of the path
+     */
+    public void createPath(Location destination);
 
-	/**
-	 * Registers a callback for this navigator
-	 * 
-	 * @param callback
-	 *            NavigatorCallback to register
-	 */
-	public void registerCallback(NavigatorCallback callback);
+    /**
+     * Registers a callback for this navigator
+     * 
+     * @param callback
+     *            NavigatorCallback to register
+     */
+    public void registerCallback(NavigatorCallback callback);
 
-	/**
-	 * Targets an entity
-	 * 
-	 * @param target
-	 *            Entity to target
-	 * @param aggressive
-	 *            Whether the targeting entity should attack
-	 */
-	public void target(Entity target, boolean aggressive);
+    /**
+     * Targets an entity
+     * 
+     * @param target
+     *            Entity to target
+     * @param aggressive
+     *            Whether the targeting entity should attack
+     */
+    public void target(Entity target, boolean aggressive);
 }

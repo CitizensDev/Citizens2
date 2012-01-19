@@ -7,26 +7,26 @@ import net.citizensnpcs.api.DataKey;
  */
 public interface Trait {
 
-	/**
-	 * Gets the unique name of this trait
-	 * 
-	 * @return Name of the trait
-	 */
-	public String getName();
+    /**
+     * Gets the unique name of this trait
+     * 
+     * @return Name of the trait
+     */
+    public String getName();
 
-	/**
-	 * Loads a trait
-	 * 
-	 * @param key
-	 *            DataKey to load from
-	 */
-	public void load(DataKey key);
+    /**
+     * Loads a trait
+     * 
+     * @param key
+     *            DataKey to load from
+     */
+    public void load(DataKey key);
 
-	/**
-	 * Saves a trait
-	 * 
-	 * @param key
-	 *            DataKey to save to
-	 */
-	public void save(DataKey key);
+    /**
+     * Saves a trait
+     * 
+     * @param key
+     *            DataKey to save to
+     */
+    public void save(DataKey key);
 }

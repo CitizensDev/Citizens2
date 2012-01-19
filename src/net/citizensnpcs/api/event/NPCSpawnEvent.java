@@ -10,42 +10,42 @@ import net.citizensnpcs.api.npc.NPC;
  * Called when an NPC spawns
  */
 public class NPCSpawnEvent extends NPCEvent implements Cancellable {
-	private static final long serialVersionUID = 5459272868175393832L;
-	private static final HandlerList handlers = new HandlerList();
+    private static final long serialVersionUID = 5459272868175393832L;
+    private static final HandlerList handlers = new HandlerList();
 
-	private final Location location;
-	private boolean cancelled = false;
+    private final Location location;
+    private boolean cancelled = false;
 
-	public NPCSpawnEvent(NPC npc, Location location) {
-		super("NPCSpawnEvent", npc);
-		this.location = location;
-	}
+    public NPCSpawnEvent(NPC npc, Location location) {
+        super("NPCSpawnEvent", npc);
+        this.location = location;
+    }
 
-	/**
-	 * Gets the location where the NPC was spawned
-	 * 
-	 * @return Location where the NPC was spawned
-	 */
-	public Location getLocation() {
-		return location;
-	}
+    /**
+     * Gets the location where the NPC was spawned
+     * 
+     * @return Location where the NPC was spawned
+     */
+    public Location getLocation() {
+        return location;
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
-	@Override
-	public void setCancelled(boolean cancelled) {
-		this.cancelled = cancelled;
-	}
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }
