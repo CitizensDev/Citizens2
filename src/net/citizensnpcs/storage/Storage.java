@@ -4,9 +4,9 @@ import net.citizensnpcs.api.DataKey;
 
 public interface Storage {
 
-	public void load();
+    public void load();
 
-	public void save();
+    public void save();
 
-	public DataKey getKey(String root);
+    public DataKey getKey(String root);
 }
