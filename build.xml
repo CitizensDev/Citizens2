@@ -1,7 +1,7 @@
 <project name="CitizensAPI" default="dist" basedir=".">
 	<description>
 		CitizensAPI build file
-        </description>
+    </description>
 	<!-- set global properties for this build -->
 	<property name="src" location="src" />
 	<property name="build" location="build" />
@@ -13,8 +13,7 @@
 
 	<!-- Compile the code -->
 	<target name="dist" depends="init" description="compile the source">
-		<javac srcdir="${src}" destdir="${build}" debug="on"
-			debuglevel="lines,vars,source" includeantruntime="false" encoding="Cp1252">
+		<javac srcdir="${src}" destdir="${build}" debug="on" debuglevel="lines,vars,source" includeantruntime="false" encoding="Cp1252">
 			<classpath>
 				<pathelement path="${lib}" />
 				<pathelement location="${lib}/bukkit-1.1-R1-SNAPSHOT.jar" />

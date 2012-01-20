@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.npc.trait;
 
+import java.util.Collection;
+
 import net.citizensnpcs.api.npc.trait.Character;
 
 public interface CharacterManager {
@@ -20,4 +22,11 @@ public interface CharacterManager {
      * @return Character with the given name
      */
     public Character getCharacter(String name);
+
+    /**
+     * Gets all registered characters
+     * 
+     * @return All registered characters
+     */
+    public Collection<Character> getRegisteredCharacters();
 }
