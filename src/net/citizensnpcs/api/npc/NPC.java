@@ -5,6 +5,7 @@ import net.citizensnpcs.api.npc.pathfinding.Navigator;
 import net.citizensnpcs.api.npc.trait.Trait;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
 /**
  * Represents an NPC with a Character and separate traits
@@ -127,4 +128,11 @@ public interface NPC {
      * Permanently removes this NPC
      */
     public void remove();
+
+    /**
+     * Gets the Bukkit entity associated with this NPC
+     * 
+     * @return Entity associated with this NPC
+     */
+    public Entity getBukkitEntity();
 }

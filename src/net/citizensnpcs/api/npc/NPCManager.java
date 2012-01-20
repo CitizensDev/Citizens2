@@ -37,7 +37,7 @@ public interface NPCManager {
      * 
      * @param id
      *            ID of the NPC
-     * @return NPC with the given ID
+     * @return NPC with the given ID (may or may not be spawned)
      */
     public NPC getNPC(int id);
 
@@ -46,14 +46,14 @@ public interface NPCManager {
      * 
      * @param entity
      *            Entity to get the NPC from
-     * @return NPC from the given entity
+     * @return NPC from the given entity (must be spawned)
      */
     public NPC getNPC(Entity entity);
 
     /**
      * Gets all NPCs
      * 
-     * @return All NPCs
+     * @return All NPCs (may or may not be spawned)
      */
     public Collection<NPC> getNPCs();
 
