@@ -1,10 +1,10 @@
 package net.citizensnpcs.npc;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -29,8 +29,8 @@ import net.minecraft.server.Packet29DestroyEntity;
 import net.minecraft.server.WorldServer;
 
 public class CitizensNPCManager implements NPCManager {
-    private Map<Entity, NPC> spawned = new HashMap<Entity, NPC>();
-    private Map<Integer, NPC> byID = new HashMap<Integer, NPC>();
+    private Map<Entity, NPC> spawned = new ConcurrentHashMap<Entity, NPC>();
+    private Map<Integer, NPC> byID = new ConcurrentHashMap<Integer, NPC>();
 
     @Override
     public NPC createNPC(String name) {
@@ -56,13 +56,13 @@ public class CitizensNPCManager implements NPCManager {
 
     @Override
     public Collection<NPC> getNPCs() {
-        return spawned.values();
+        return byID.values();
     }
 
     @Override
     public Collection<NPC> getNPCs(Class<? extends Trait> trait) {
         Set<NPC> npcs = new HashSet<NPC>();
-        for (NPC npc : spawned.values()) {
+        for (NPC npc : byID.values()) {
             if (npc.hasTrait(trait))
                 npcs.add(npc);
         }
@@ -88,9 +88,11 @@ public class CitizensNPCManager implements NPCManager {
         WorldServer ws = getWorldServer(loc.getWorld());
         CraftNPC mcEntity = new CraftNPC(getMinecraftServer(ws.getServer()), ws, npc.getFullName(),
                 new ItemInWorldManager(ws));
+        mcEntity.removeFromPlayerMap(npc.getFullName());
         mcEntity.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         ws.addEntity(mcEntity);
         ws.players.remove(mcEntity);
+        // mcEntity.removeFromPlayerMap(npc.getFullName());
 
         spawned.put(mcEntity.getPlayer(), npc);
         return mcEntity;

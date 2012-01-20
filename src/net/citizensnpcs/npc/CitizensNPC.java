@@ -17,6 +17,7 @@ import net.citizensnpcs.util.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
 public class CitizensNPC implements NPC {
     private final int id;
@@ -87,10 +88,7 @@ public class CitizensNPC implements NPC {
         if (t != null) {
             return trait.cast(t);
         }
-
-        T create = factory.create(trait);
-        addTrait(trait);
-        return create;
+        return null;
     }
 
     @Override
@@ -171,6 +169,11 @@ public class CitizensNPC implements NPC {
             despawn();
         }
         manager.remove(this);
+    }
+
+    @Override
+    public Entity getBukkitEntity() {
+        return mcEntity.getBukkitEntity();
     }
 
     public CraftNPC getHandle() {
