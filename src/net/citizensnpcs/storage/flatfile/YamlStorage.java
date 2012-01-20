@@ -173,11 +173,7 @@ public class YamlStorage implements Storage {
 
         @Override
         public String getString(String key) {
-            String path = getKeyExt(key);
-            if (keyExists(path)) {
-                return config.get(path).toString();
-            }
-            return "";
+            return config.getString(getKeyExt(key));
         }
 
         @Override
