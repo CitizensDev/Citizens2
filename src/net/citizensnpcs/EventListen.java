@@ -29,14 +29,17 @@ public class EventListen implements Listener {
      */
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (event.isCancelled() || !CitizensAPI.getNPCManager().isNPC(event.getEntity()))
+        if (!CitizensAPI.getNPCManager().isNPC(event.getEntity()))
             return;
 
+        event.setCancelled(true);
         if (event instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
             if (e.getDamager() instanceof Player) {
                 NPC npc = CitizensAPI.getNPCManager().getNPC(event.getEntity());
-                npc.getCharacter().onLeftClick(npc, (Player) e.getDamager());
+                if (npc.getCharacter() != null) {
+                    npc.getCharacter().onLeftClick(npc, (Player) e.getDamager());
+                }
             }
         }
     }

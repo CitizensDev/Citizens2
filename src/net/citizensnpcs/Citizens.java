@@ -70,11 +70,11 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
-        if (args[0].equals("test")) {
+        if (args[0].equals("spawn")) {
             NPC npc = npcManager.createNPC("aPunch");
             npc.spawn(((Player) sender).getLocation());
-        } else if (args[0].equals("testremove")) {
-            for(NPC npc : npcManager.getNPCs()) {
+        } else if (args[0].equals("despawn")) {
+            for (NPC npc : npcManager.getNPCs()) {
                 npc.despawn();
             }
         }
@@ -82,7 +82,6 @@ public class Citizens extends JavaPlugin {
     }
 
     private void setupNPCs() throws NPCLoadException {
-        // TODO needs fixing
         traitManager.registerTrait(LocationTrait.class);
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
