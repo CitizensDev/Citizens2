@@ -143,7 +143,11 @@ public class CitizensNPC implements NPC {
             mcEntity = manager.spawn(this, loc);
         else
             manager.spawn(this, loc);
+
+        // Set the location
+        addTrait(LocationTrait.class);
         getTrait(LocationTrait.class).setLocation(loc);
+
         spawned = true;
     }
 
@@ -156,8 +160,8 @@ public class CitizensNPC implements NPC {
 
         Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
 
-        mcEntity.die();
         manager.despawn(this);
+        mcEntity.die();
         spawned = false;
     }
 
