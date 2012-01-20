@@ -83,6 +83,7 @@ public class Citizens extends JavaPlugin {
 
     private void setupNPCs() throws NPCLoadException {
         traitManager.registerTrait(LocationTrait.class);
+        int spawned = 0;
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name"))
@@ -107,9 +108,13 @@ public class Citizens extends JavaPlugin {
             for (Trait trait : npc.getTraits()) {
                 trait.load(key);
             }
+
             // Spawn the NPC
-            npc.spawn(npc.getTrait(LocationTrait.class).getLocation());
+            if (key.getBoolean("spawned")) {
+                npc.spawn(npc.getTrait(LocationTrait.class).getLocation());
+                spawned++;
+            }
         }
-        Messaging.log("Loaded " + npcManager.getNPCs().size() + " NPCs.");
+        Messaging.log("Loaded " + npcManager.getNPCs().size() + " NPCs (" + spawned + " spawned).");
     }
 }
