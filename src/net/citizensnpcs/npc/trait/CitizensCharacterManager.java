@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.trait;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,5 +38,10 @@ public class CitizensCharacterManager implements CharacterManager {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public Collection<Character> getRegisteredCharacters() {
+        return characters;
     }
 }

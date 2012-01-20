@@ -11,6 +11,7 @@ import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.LocationTrait;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.trait.CitizensCharacterManager;
+import net.citizensnpcs.npc.trait.CitizensTraitManager;
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.storage.flatfile.YamlStorage;
 import net.citizensnpcs.util.Messaging;
@@ -24,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Citizens extends JavaPlugin {
     private CitizensNPCManager npcManager;
     private CitizensCharacterManager characterManager;
+    private CitizensTraitManager traitManager;
     private Storage saves;
 
     @Override
@@ -33,10 +35,13 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Register API managers
         npcManager = new CitizensNPCManager();
         characterManager = new CitizensCharacterManager();
+        traitManager = new CitizensTraitManager();
         CitizensAPI.setNPCManager(npcManager);
         CitizensAPI.setCharacterManager(characterManager);
+        CitizensAPI.setTraitManager(traitManager);
 
         // TODO database support
         saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
@@ -54,10 +59,10 @@ public class Citizens extends JavaPlugin {
                 try {
                     setupNPCs();
                 } catch (NPCLoadException ex) {
-                    ex.printStackTrace();
+                    Messaging.log("Failed to create NPC: " + ex.getMessage());
                 }
             }
-        }, /* TODO how long should delay be? */100) == -1) {
+        }) == -1) {
             Messaging.log("Issue enabling plugin. Disabling.");
             getServer().getPluginManager().disablePlugin(this);
         }
@@ -68,24 +73,42 @@ public class Citizens extends JavaPlugin {
         if (args[0].equals("test")) {
             NPC npc = npcManager.createNPC("aPunch");
             npc.spawn(((Player) sender).getLocation());
+        } else if (args[0].equals("testremove")) {
+            for(NPC npc : npcManager.getNPCs()) {
+                npc.despawn();
+            }
         }
         return true;
     }
 
     private void setupNPCs() throws NPCLoadException {
         // TODO needs fixing
+        traitManager.registerTrait(LocationTrait.class);
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
             Character character = characterManager.getCharacter(key.getString("character"));
             NPC npc = npcManager.createNPC(key.getString("name"), character);
+
+            // Load the character if it exists
             if (character != null) {
                 character.load(key);
+            }
+
+            // Load traits
+            for (DataKey traitKey : key.getSubKeys()) {
+                for (Trait trait : traitManager.getRegisteredTraits()) {
+                    if (trait.getName().equals(traitKey.name())) {
+                        Messaging.debug("Found trait '" + trait.getName() + "' in the NPC with ID '" + id + "'.");
+                        npc.addTrait(trait.getClass());
+                    }
+                }
             }
             for (Trait trait : npc.getTraits()) {
                 trait.load(key);
             }
+            // Spawn the NPC
             npc.spawn(npc.getTrait(LocationTrait.class).getLocation());
         }
         Messaging.log("Loaded " + npcManager.getNPCs().size() + " NPCs.");

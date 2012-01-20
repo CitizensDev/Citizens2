@@ -139,9 +139,12 @@ public class CitizensNPC implements NPC {
             return;
         }
 
-        spawned = true;
+        if (mcEntity == null)
+            mcEntity = manager.spawn(this, loc);
+        else
+            manager.spawn(this, loc);
         getTrait(LocationTrait.class).setLocation(loc);
-        mcEntity = manager.spawn(this, loc);
+        spawned = true;
     }
 
     @Override
@@ -153,9 +156,9 @@ public class CitizensNPC implements NPC {
 
         Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
 
-        spawned = false;
         mcEntity.die();
         manager.despawn(this);
+        spawned = false;
     }
 
     @Override
@@ -174,8 +177,7 @@ public class CitizensNPC implements NPC {
 
         public <T extends Trait> T create(Class<T> clazz) {
             try {
-                Trait trait = clazz.newInstance();
-                return clazz.cast(trait);
+                return clazz.cast(clazz.newInstance());
             } catch (Exception ex) {
                 ex.printStackTrace();
                 return null;
