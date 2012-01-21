@@ -58,7 +58,7 @@ public class Citizens extends JavaPlugin {
         saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
 
         // Register events
-        new EventListen(this);
+        getServer().getPluginManager().registerEvents(new EventListen(), this);
 
         Messaging.log("v" + getDescription().getVersion() + " enabled.");
 
