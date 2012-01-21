@@ -74,4 +74,11 @@ public interface NPCManager {
      * @return Whether the given entity is an NPC
      */
     public boolean isNPC(Entity entity);
+
+    /**
+     * Generates a new unique id for an NPC.
+     * 
+     * @return The unique id
+     */
+    public int generateUniqueId();
 }
