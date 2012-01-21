@@ -30,6 +30,8 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        save();
+
         Messaging.log("v" + getDescription().getVersion() + " disabled.");
     }
 
@@ -81,6 +83,7 @@ public class Citizens extends JavaPlugin {
         return true;
     }
 
+    // TODO possibly separate this out some more
     private void setupNPCs() throws NPCLoadException {
         traitManager.registerTrait(LocationTrait.class);
         int spawned = 0;
@@ -91,9 +94,15 @@ public class Citizens extends JavaPlugin {
             Character character = characterManager.getCharacter(key.getString("character"));
             NPC npc = npcManager.createNPC(key.getString("name"), character);
 
-            // Load the character if it exists
-            if (character != null) {
-                character.load(key);
+            // Load the character if it exists, otherwise remove the character
+            if (character != null)
+                character.load(key.getRelative(character.getName()));
+            else {
+                if (key.keyExists("character")) {
+                    Messaging.debug("Character '" + key.getString("character")
+                            + "' does not exist. Removing character from the NPC with ID '" + npc.getId() + "'.");
+                    key.removeKey("character");
+                }
             }
 
             // Load traits
@@ -106,7 +115,7 @@ public class Citizens extends JavaPlugin {
                 }
             }
             for (Trait trait : npc.getTraits()) {
-                trait.load(key);
+                trait.load(key.getRelative(trait.getName()));
             }
 
             // Spawn the NPC
@@ -116,5 +125,25 @@ public class Citizens extends JavaPlugin {
             }
         }
         Messaging.log("Loaded " + npcManager.getNPCs().size() + " NPCs (" + spawned + " spawned).");
+    }
+
+    private void save() {
+        for (NPC npc : npcManager.getNPCs()) {
+            DataKey root = saves.getKey("npc." + npc.getId());
+            root.setString("name", npc.getFullName());
+            root.setBoolean("spawned", npc.isSpawned());
+
+            // Save the character if it exists
+            if (npc.getCharacter() != null) {
+                root.setString("character", npc.getCharacter().getName());
+                npc.getCharacter().save(root.getRelative(npc.getCharacter().getName()));
+            }
+
+            // Save all existing traits
+            for (Trait trait : npc.getTraits()) {
+                trait.save(root.getRelative(trait.getName()));
+            }
+        }
+        saves.save();
     }
 }

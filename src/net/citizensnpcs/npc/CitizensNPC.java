@@ -63,7 +63,7 @@ public class CitizensNPC implements NPC {
         if (!hasTrait(trait))
             traits.put(trait, factory.create(trait));
         else
-            Messaging.debug("The NPC already has the trait '" + trait.getName() + "'.");
+            Messaging.debug("The NPC already has the trait '" + getTrait(trait).getName() + "'.");
     }
 
     @Override

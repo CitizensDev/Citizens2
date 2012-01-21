@@ -1,0 +1,6 @@
+-Citizens2 TODO List-
+
+-Properly implement commands
+-Finish saving
+-Finish pathfinding API
+-Add database support (MySQL and/or SQLite)
