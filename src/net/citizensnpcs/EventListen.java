@@ -20,10 +20,6 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 public class EventListen implements Listener {
     private Set<Integer> toRespawn = new HashSet<Integer>();
 
-    public EventListen(Citizens plugin) {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
     /*
      * Entity events
      */
