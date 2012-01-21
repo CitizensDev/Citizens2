@@ -8,7 +8,7 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
-import net.citizensnpcs.api.npc.trait.trait.LocationTrait;
+import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.trait.CitizensCharacterManager;
 import net.citizensnpcs.npc.trait.CitizensTraitManager;
@@ -94,7 +94,7 @@ public class Citizens extends JavaPlugin {
 
     // TODO possibly separate this out some more
     private void setupNPCs() throws NPCLoadException {
-        traitManager.registerTrait(LocationTrait.class);
+        traitManager.registerTrait(SpawnLocation.class);
         int spawned = 0;
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
@@ -129,7 +129,7 @@ public class Citizens extends JavaPlugin {
 
             // Spawn the NPC
             if (key.getBoolean("spawned")) {
-                npc.spawn(npc.getTrait(LocationTrait.class).getLocation());
+                npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
                 spawned++;
             }
         }
