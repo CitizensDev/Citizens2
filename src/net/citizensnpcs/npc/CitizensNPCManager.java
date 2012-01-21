@@ -29,8 +29,8 @@ import net.minecraft.server.Packet29DestroyEntity;
 import net.minecraft.server.WorldServer;
 
 public class CitizensNPCManager implements NPCManager {
-    private Map<Entity, NPC> spawned = new ConcurrentHashMap<Entity, NPC>();
-    private Map<Integer, NPC> byID = new ConcurrentHashMap<Integer, NPC>();
+    private final Map<Entity, NPC> spawned = new ConcurrentHashMap<Entity, NPC>();
+    private final Map<Integer, NPC> byID = new ConcurrentHashMap<Integer, NPC>();
 
     @Override
     public NPC createNPC(String name) {

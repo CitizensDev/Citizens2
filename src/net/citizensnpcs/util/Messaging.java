@@ -2,6 +2,8 @@ package net.citizensnpcs.util;
 
 import java.util.logging.Level;
 
+import net.citizensnpcs.Settings.Setting;
+
 import org.bukkit.Bukkit;
 
 public class Messaging {
@@ -15,7 +17,7 @@ public class Messaging {
     }
 
     public static void debug(Object msg) {
-        // TODO add debug setting
-        log(msg);
+        if (Setting.DEBUG_MODE.getBoolean())
+            log(msg);
     }
 }

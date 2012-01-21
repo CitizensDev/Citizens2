@@ -23,20 +23,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Citizens extends JavaPlugin {
-    private CitizensNPCManager npcManager;
-    private CitizensCharacterManager characterManager;
-    private CitizensTraitManager traitManager;
+    private final CitizensNPCManager npcManager;
+    private final CitizensCharacterManager characterManager;
+    private final CitizensTraitManager traitManager;
     private Storage saves;
+    private Settings config;
 
-    @Override
-    public void onDisable() {
-        save();
-
-        Messaging.log("v" + getDescription().getVersion() + " disabled.");
-    }
-
-    @Override
-    public void onEnable() {
+    public Citizens() {
+        super();
         // Register API managers
         npcManager = new CitizensNPCManager();
         characterManager = new CitizensCharacterManager();
@@ -44,6 +38,21 @@ public class Citizens extends JavaPlugin {
         CitizensAPI.setNPCManager(npcManager);
         CitizensAPI.setCharacterManager(characterManager);
         CitizensAPI.setTraitManager(traitManager);
+    }
+
+    @Override
+    public void onDisable() {
+        config.save();
+        saveNPCs();
+
+        Messaging.log("v" + getDescription().getVersion() + " disabled.");
+    }
+
+    @Override
+    public void onEnable() {
+        // Configuration file
+        config = new Settings(this);
+        config.load();
 
         // TODO database support
         saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
@@ -127,7 +136,7 @@ public class Citizens extends JavaPlugin {
         Messaging.log("Loaded " + npcManager.getNPCs().size() + " NPCs (" + spawned + " spawned).");
     }
 
-    private void save() {
+    private void saveNPCs() {
         for (NPC npc : npcManager.getNPCs()) {
             DataKey root = saves.getKey("npc." + npc.getId());
             root.setString("name", npc.getFullName());
