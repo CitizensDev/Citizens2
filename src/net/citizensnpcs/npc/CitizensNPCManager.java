@@ -20,7 +20,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
-import net.citizensnpcs.api.npc.trait.trait.LocationTrait;
+import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.resources.lib.CraftNPC;
 
 import net.minecraft.server.ItemInWorldManager;
@@ -92,7 +92,6 @@ public class CitizensNPCManager implements NPCManager {
         mcEntity.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         ws.addEntity(mcEntity);
         ws.players.remove(mcEntity);
-        // mcEntity.removeFromPlayerMap(npc.getFullName());
 
         spawned.put(mcEntity.getPlayer(), npc);
         return mcEntity;
@@ -103,7 +102,10 @@ public class CitizensNPCManager implements NPCManager {
         for (Player player : Bukkit.getOnlinePlayers()) {
             ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));
         }
-        getWorldServer(npc.getTrait(LocationTrait.class).getLocation().getWorld()).removeEntity(mcEntity);
+        Location loc = npc.getBukkitEntity().getLocation();
+        getWorldServer(loc.getWorld()).removeEntity(mcEntity);
+        npc.getTrait(SpawnLocation.class).setLocation(loc);
+
         spawned.remove(mcEntity.getPlayer());
     }
 

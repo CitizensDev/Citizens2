@@ -5,7 +5,7 @@ import java.util.Set;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.trait.trait.LocationTrait;
+import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -57,7 +57,7 @@ public class EventListen implements Listener {
     public void onChunkLoad(ChunkLoadEvent event) {
         for (int id : toRespawn) {
             NPC npc = CitizensAPI.getNPCManager().getNPC(id);
-            npc.spawn(npc.getTrait(LocationTrait.class).getLocation());
+            npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
             toRespawn.remove(id);
         }
     }
@@ -68,10 +68,11 @@ public class EventListen implements Listener {
             return;
 
         for (NPC npc : CitizensAPI.getNPCManager().getNPCs()) {
-            Location loc = npc.getTrait(LocationTrait.class).getLocation();
+            Location loc = npc.getBukkitEntity().getLocation();
             if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
                     && event.getChunk().getZ() == loc.getChunk().getZ()) {
                 toRespawn.add(npc.getId());
+                npc.getTrait(SpawnLocation.class).setLocation(loc);
                 npc.despawn();
             }
         }

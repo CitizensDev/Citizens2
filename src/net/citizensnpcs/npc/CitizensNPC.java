@@ -10,7 +10,7 @@ import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.pathfinding.Navigator;
 import net.citizensnpcs.api.npc.trait.Trait;
-import net.citizensnpcs.api.npc.trait.trait.LocationTrait;
+import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.resources.lib.CraftNPC;
 import net.citizensnpcs.util.Messaging;
 
@@ -143,8 +143,8 @@ public class CitizensNPC implements NPC {
             manager.spawn(this, loc);
 
         // Set the location
-        addTrait(LocationTrait.class);
-        getTrait(LocationTrait.class).setLocation(loc);
+        addTrait(SpawnLocation.class);
+        getTrait(SpawnLocation.class).setLocation(loc);
 
         spawned = true;
     }
