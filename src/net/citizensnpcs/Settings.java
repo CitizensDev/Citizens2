@@ -8,8 +8,7 @@ import net.citizensnpcs.util.Messaging;
 
 public class Settings {
     public enum Setting {
-        DEBUG_MODE("general.debug-mode", false),
-        TEST_DOUBLE("hi", 3.4);
+        DEBUG_MODE("general.debug-mode", false);
 
         private String path;
         private Object value;
