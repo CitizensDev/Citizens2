@@ -16,19 +16,18 @@ public class LocationTrait implements Trait {
 
     @Override
     public void load(DataKey key) {
-        loc = new Location(Bukkit.getWorld(key.getString("location.world")), key.getDouble("location.x"),
-                key.getDouble("location.y"), key.getDouble("location.z"), (float) key.getDouble("location.pitch"),
-                (float) key.getDouble("location.yaw"));
+        loc = new Location(Bukkit.getWorld(key.getString("world")), key.getDouble("x"), key.getDouble("y"),
+                key.getDouble("z"), (float) key.getDouble("pitch"), (float) key.getDouble("yaw"));
     }
 
     @Override
     public void save(DataKey key) {
-        key.setString("location.world", loc.getWorld().getName());
-        key.setDouble("location.x", loc.getX());
-        key.setDouble("location.y", loc.getY());
-        key.setDouble("location.z", loc.getZ());
-        key.setDouble("location.pitch", loc.getPitch());
-        key.setDouble("location.yaw", loc.getYaw());
+        key.setString("world", loc.getWorld().getName());
+        key.setDouble("x", loc.getX());
+        key.setDouble("y", loc.getY());
+        key.setDouble("z", loc.getZ());
+        key.setDouble("pitch", loc.getPitch());
+        key.setDouble("yaw", loc.getYaw());
     }
 
     public Location getLocation() {
