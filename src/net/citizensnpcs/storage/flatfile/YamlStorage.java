@@ -62,6 +62,10 @@ public class YamlStorage implements Storage {
         }
     }
 
+    private boolean pathExists(String key) {
+        return config.get(key) != null;
+    }
+
     public class YamlKey extends DataKey {
         private final String current;
 
@@ -79,7 +83,13 @@ public class YamlStorage implements Storage {
 
         @Override
         public boolean getBoolean(String key) {
-            return config.getBoolean(getKeyExt(key));
+            String path = getKeyExt(key);
+            if (pathExists(path)) {
+                if (config.getString(path) == null)
+                    return config.getBoolean(path);
+                return Boolean.parseBoolean(config.getString(path));
+            }
+            return false;
         }
 
         @Override
@@ -89,7 +99,16 @@ public class YamlStorage implements Storage {
 
         @Override
         public double getDouble(String key) {
-            return config.getDouble(getKeyExt(key));
+            String path = getKeyExt(key);
+            if (pathExists(path)) {
+                if (config.getString(path) == null) {
+                    if (config.get(path) instanceof Integer)
+                        return config.getInt(path);
+                    return config.getDouble(path);
+                }
+                return Double.parseDouble(config.getString(path));
+            }
+            return 0;
         }
 
         @Override
@@ -99,12 +118,18 @@ public class YamlStorage implements Storage {
 
         @Override
         public int getInt(String key) {
-            return config.getInt(getKeyExt(key));
+            String path = getKeyExt(key);
+            if (pathExists(path)) {
+                if (config.getString(path) == null)
+                    return config.getInt(path);
+                return Integer.parseInt(config.getString(path));
+            }
+            return 0;
         }
 
         @Override
-        public int getInt(String key, int value) {
-            return config.getInt(getKeyExt(key), value);
+        public int getInt(String key, int def) {
+            return config.getInt(getKeyExt(key), def);
         }
 
         @Override
@@ -128,7 +153,16 @@ public class YamlStorage implements Storage {
 
         @Override
         public long getLong(String key) {
-            return config.getLong(getKeyExt(key));
+            String path = getKeyExt(key);
+            if (pathExists(path)) {
+                if (config.getString(path) == null) {
+                    if (config.get(path) instanceof Integer)
+                        return config.getInt(path);
+                    return config.getLong(path);
+                }
+                return Long.parseLong(config.getString(path));
+            }
+            return 0;
         }
 
         @Override
@@ -143,7 +177,11 @@ public class YamlStorage implements Storage {
 
         @Override
         public String getString(String key) {
-            return config.getString(getKeyExt(key));
+            String path = getKeyExt(key);
+            if (pathExists(path)) {
+                return config.get(path).toString();
+            }
+            return "";
         }
 
         @Override
