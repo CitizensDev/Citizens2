@@ -8,8 +8,8 @@ public class ByIdArray<T> implements Iterable<T> {
     private Object[] elementData;
     private int size;
     private int modCount;
-    private int highest;
-    private int lowest;
+    private int highest = Integer.MIN_VALUE;
+    private int lowest = Integer.MAX_VALUE;
 
     public ByIdArray() {
         this(50);
@@ -17,7 +17,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     public ByIdArray(int capacity) {
         if (capacity < 0)
-            throw new IllegalArgumentException("Illegal capacity: cannot be below 0.");
+            throw new IllegalArgumentException("illegal capacity");
         elementData = new Object[capacity];
     }
 
@@ -46,7 +46,7 @@ public class ByIdArray<T> implements Iterable<T> {
     }
 
     private void recalcLowest() {
-        while (elementData.length > lowest && elementData[lowest++] == null)
+        while (elementData.length > lowest && highest > lowest && elementData[lowest++] == null)
             ;
     }
 
@@ -73,9 +73,9 @@ public class ByIdArray<T> implements Iterable<T> {
                 T next = (T) elementData[idx];
                 if (next == null || idx > highest)
                     throw new NoSuchElementException();
-                do
+                do {
                     idx++;
-                while (idx != highest + 1 && elementData[idx] == null);
+                } while (idx != highest + 1 && elementData[idx] == null);
                 return next;
             }
 
@@ -88,7 +88,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     public void put(int index, T t) {
         if (t == null)
-            throw new IllegalArgumentException("'t' cannot be null.");
+            throw new IllegalArgumentException("t cannot be null");
         ++modCount;
         if (index > highest)
             highest = index;
@@ -107,6 +107,8 @@ public class ByIdArray<T> implements Iterable<T> {
     }
 
     public T remove(int index) {
+        if (index > elementData.length || elementData[index] == null)
+            return null;
         ++modCount;
         if (index == lowest)
             recalcLowest();
@@ -131,6 +133,10 @@ public class ByIdArray<T> implements Iterable<T> {
 
     public static <T> ByIdArray<T> create() {
         return new ByIdArray<T>();
+    }
+
+    public static <T> ByIdArray<T> create(int capacity) {
+        return new ByIdArray<T>(capacity);
     }
 
     public boolean contains(int index) {

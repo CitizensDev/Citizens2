@@ -13,8 +13,9 @@ public class CitizensTraitManager implements TraitManager {
 
     @Override
     public Trait getTrait(String name) {
-        if (registered.get(name) == null)
+        if (registered.get(name) == null) {
             return null;
+        }
         return registered.get(name).create();
     }
 
@@ -26,7 +27,7 @@ public class CitizensTraitManager implements TraitManager {
     @Override
     public void registerTraitWithFactory(String name, Factory<? extends Trait> factory) {
         if (registered.get(name) != null)
-            throw new IllegalArgumentException("Trait factory already registered.");
+            throw new IllegalArgumentException("trait factory already registered");
         registered.put(name, factory);
     }
 

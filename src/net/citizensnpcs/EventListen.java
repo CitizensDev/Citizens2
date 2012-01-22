@@ -34,13 +34,14 @@ public class EventListen implements Listener {
         if (!manager.isNPC(event.getEntity()))
             return;
 
-        event.setCancelled(true);
+        event.setCancelled(true); // TODO: implement damage handlers
         if (event instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
             if (e.getDamager() instanceof Player) {
                 NPC npc = manager.getNPC(event.getEntity());
-                if (npc.getCharacter() != null)
+                if (npc.getCharacter() != null) {
                     npc.getCharacter().onLeftClick(npc, (Player) e.getDamager());
+                }
             }
         }
     }
@@ -59,7 +60,8 @@ public class EventListen implements Listener {
      */
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        for (Iterator<Integer> itr = toRespawn.iterator();; itr.hasNext()) {
+        Iterator<Integer> itr = toRespawn.iterator();
+        while (itr.hasNext()) {
             NPC npc = manager.getNPC(itr.next());
             npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
             itr.remove();
