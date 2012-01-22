@@ -14,6 +14,7 @@ import net.citizensnpcs.npc.trait.CitizensCharacterManager;
 import net.citizensnpcs.npc.trait.CitizensTraitManager;
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.storage.flatfile.YamlStorage;
+import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
@@ -92,7 +93,6 @@ public class Citizens extends JavaPlugin {
     // TODO possibly separate this out some more
     private void setupNPCs() throws NPCLoadException {
         traitManager.registerTrait("location", SpawnLocation.class);
-        int spawned = 0;
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name"))
@@ -121,19 +121,18 @@ public class Citizens extends JavaPlugin {
             }
 
             // Spawn the NPC
-            if (key.getBoolean("spawned")) {
+            if (key.getBoolean("spawned"))
                 npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
-                spawned++;
-            }
         }
-        Messaging.log("Loaded " + npcManager.size() + " NPCs (" + spawned + " spawned).");
+        Messaging.log("Loaded " + ((ByIdArray<NPC>) npcManager.getAllNPCs()).size() + " NPCs ("
+                + ((ByIdArray<NPC>) npcManager.getSpawnedNPCs()).size() + " spawned).");
     }
 
     private void saveNPCs() {
         for (NPC npc : npcManager.getAllNPCs()) {
             DataKey root = saves.getKey("npc." + npc.getId());
             root.setString("name", npc.getFullName());
-            root.setBoolean("spawned", npc.isSpawned());
+            root.setBoolean("spawned", npc.getBukkitEntity().isDead());
 
             // Save the character if it exists
             if (npc.getCharacter() != null) {
@@ -142,9 +141,8 @@ public class Citizens extends JavaPlugin {
             }
 
             // Save all existing traits
-            for (Trait trait : npc.getTraits()) {
+            for (Trait trait : npc.getTraits())
                 trait.save(root.getRelative(trait.getName()));
-            }
         }
         saves.save();
     }
