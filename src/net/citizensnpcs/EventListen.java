@@ -52,7 +52,8 @@ public class EventListen implements Listener {
             return;
 
         NPC npc = manager.getNPC(event.getEntity());
-        npc.getCharacter().onRightClick(npc, (Player) event.getTarget());
+        if (npc.getCharacter() != null)
+            npc.getCharacter().onRightClick(npc, (Player) event.getTarget());
     }
 
     /*
