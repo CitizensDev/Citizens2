@@ -27,8 +27,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class CitizensNPCManager implements NPCManager {
-    private final ByIdArray<NPC> spawned = ByIdArray.create();
-    private final ByIdArray<NPC> byID = ByIdArray.create();
+    private final ByIdArray<NPC> spawned = new ByIdArray<NPC>();
+    private final ByIdArray<NPC> byID = new ByIdArray<NPC>();
 
     @Override
     public NPC createNPC(String name) {
@@ -65,7 +65,7 @@ public class CitizensNPCManager implements NPCManager {
     @Override
     public Collection<NPC> getNPCs(Class<? extends Trait> trait) {
         List<NPC> npcs = new ArrayList<NPC>();
-        for (NPC npc : byID) {
+        for (NPC npc : getAllNPCs()) {
             if (npc.hasTrait(trait))
                 npcs.add(npc);
         }
@@ -88,8 +88,6 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public CraftNPC spawn(NPC npc, Location loc) {
-        if (spawned.contains(npc.getBukkitEntity().getEntityId()))
-            throw new IllegalStateException("The NPC with ID '" + npc.getId() + "' is already spawned.");
         WorldServer ws = getWorldServer(loc.getWorld());
         CraftNPC mcEntity = new CraftNPC(getMinecraftServer(ws.getServer()), ws, npc.getFullName(),
                 new ItemInWorldManager(ws));
@@ -103,8 +101,6 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public void despawn(NPC npc) {
-        if (!spawned.contains(npc.getBukkitEntity().getEntityId()))
-            throw new IllegalStateException("The NPC with ID '" + npc.getId() + "' is already despawned.");
         CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
         for (Player player : Bukkit.getOnlinePlayers())
             ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));
@@ -127,9 +123,5 @@ public class CitizensNPCManager implements NPCManager {
 
     private MinecraftServer getMinecraftServer(Server server) {
         return ((CraftServer) server).getServer();
-    }
-
-    public int size() {
-        return byID.size();
     }
 }

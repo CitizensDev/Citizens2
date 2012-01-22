@@ -46,7 +46,7 @@ public class ByIdArray<T> implements Iterable<T> {
     }
 
     private void recalcLowest() {
-        while (elementData.length > lowest && elementData[lowest++] == null)
+        while (elementData.length > lowest && highest > lowest && elementData[lowest++] == null)
             ;
     }
 
@@ -127,10 +127,6 @@ public class ByIdArray<T> implements Iterable<T> {
     public void trimToSize() {
         if (elementData.length > highest)
             elementData = Arrays.copyOf(elementData, highest + 1);
-    }
-
-    public static <T> ByIdArray<T> create() {
-        return new ByIdArray<T>();
     }
 
     public boolean contains(int index) {
