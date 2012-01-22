@@ -9,6 +9,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.trait.CitizensCharacterManager;
 import net.citizensnpcs.npc.trait.CitizensTraitManager;
@@ -18,6 +19,7 @@ import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -80,7 +82,7 @@ public class Citizens extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
         if (args[0].equals("spawn")) {
-            NPC npc = npcManager.createNPC("aPunch");
+            NPC npc = npcManager.createNPC(ChatColor.GREEN + "aPunch");
             npc.spawn(((Player) sender).getLocation());
         } else if (args[0].equals("despawn")) {
             for (NPC npc : npcManager.getSpawnedNPCs())
@@ -89,9 +91,10 @@ public class Citizens extends JavaPlugin {
         return true;
     }
 
-    // TODO possibly separate this out some more
+    // TODO separate this out some more
     private void setupNPCs() throws NPCLoadException {
         traitManager.registerTrait("location", SpawnLocation.class);
+
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name"))
@@ -131,7 +134,8 @@ public class Citizens extends JavaPlugin {
         for (NPC npc : npcManager.getAllNPCs()) {
             DataKey root = saves.getKey("npc." + npc.getId());
             root.setString("name", npc.getFullName());
-            root.setBoolean("spawned", !npc.getBukkitEntity().isDead());
+            if (root.getBoolean("spawned"))
+                root.setBoolean("spawned", !npc.getBukkitEntity().isDead());
 
             // Save the character if it exists
             if (npc.getCharacter() != null) {
@@ -140,7 +144,7 @@ public class Citizens extends JavaPlugin {
             }
 
             // Save all existing traits
-            for (Trait trait : npc.getTraits())
+            for (Trait trait : ((CitizensNPC) npc).getTraits())
                 trait.save(root.getRelative(trait.getName()));
         }
         saves.save();

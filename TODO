@@ -1,5 +1,6 @@
 -Citizens2 TODO List-
 
+-Add proper color parsing for names (separate it into a trait?)
 -Properly implement commands
 -Finish saving
 -Finish pathfinding API
