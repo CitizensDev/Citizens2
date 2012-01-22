@@ -27,8 +27,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class CitizensNPCManager implements NPCManager {
-    private final ByIdArray<NPC> spawned = ByIdArray.create();
-    private final ByIdArray<NPC> byID = ByIdArray.create();
+    private final ByIdArray<NPC> spawned = new ByIdArray<NPC>();
+    private final ByIdArray<NPC> byID = new ByIdArray<NPC>();
 
     @Override
     public NPC createNPC(String name) {
@@ -65,7 +65,7 @@ public class CitizensNPCManager implements NPCManager {
     @Override
     public Collection<NPC> getNPCs(Class<? extends Trait> trait) {
         List<NPC> npcs = new ArrayList<NPC>();
-        for (NPC npc : byID) {
+        for (NPC npc : getAllNPCs()) {
             if (npc.hasTrait(trait))
                 npcs.add(npc);
         }
@@ -128,9 +128,5 @@ public class CitizensNPCManager implements NPCManager {
 
     private MinecraftServer getMinecraftServer(Server server) {
         return ((CraftServer) server).getServer();
-    }
-
-    public int size() {
-        return byID.size();
     }
 }

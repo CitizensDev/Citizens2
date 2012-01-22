@@ -130,16 +130,16 @@ public class ByIdArray<T> implements Iterable<T> {
         if (elementData.length > highest)
             elementData = Arrays.copyOf(elementData, highest + 1);
     }
-
+    
+    public boolean contains(int index) {
+        return elementData.length > index && elementData[index] != null;
+    }
+    
     public static <T> ByIdArray<T> create() {
         return new ByIdArray<T>();
     }
 
     public static <T> ByIdArray<T> create(int capacity) {
         return new ByIdArray<T>(capacity);
-    }
-
-    public boolean contains(int index) {
-        return elementData.length > index && elementData[index] != null;
     }
 }
