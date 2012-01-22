@@ -17,7 +17,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     public ByIdArray(int capacity) {
         if (capacity < 0)
-            throw new IllegalArgumentException("illegal capacity");
+            throw new IllegalArgumentException("Illegal capacity: cannot be below 0.");
         elementData = new Object[capacity];
     }
 
@@ -57,18 +57,6 @@ public class ByIdArray<T> implements Iterable<T> {
         return (T) elementData[index];
     }
 
-    /*@SuppressWarnings("unchecked")
-    public T[] toArray(T[] a) {
-    	if (a.length < size)
-    		// Make a new array of a's runtime type, but my contents:
-    		return (T[]) Arrays.copyOf(elementData, size, a.getClass());
-    	System.arraycopy(elementData, 0, a, 0, size);
-    	if (a.length > size)
-    		a[size] = null;
-    	return a;
-    }
-    */
-
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
@@ -85,9 +73,9 @@ public class ByIdArray<T> implements Iterable<T> {
                 T next = (T) elementData[idx];
                 if (next == null || idx > highest)
                     throw new NoSuchElementException();
-                do {
+                do
                     idx++;
-                } while (idx != highest + 1 && elementData[idx] == null);
+                while (idx != highest + 1 && elementData[idx] == null);
                 return next;
             }
 
@@ -100,7 +88,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     public void put(int index, T t) {
         if (t == null)
-            throw new IllegalArgumentException("t cannot be null");
+            throw new IllegalArgumentException("'t' cannot be null.");
         ++modCount;
         if (index > highest)
             highest = index;
