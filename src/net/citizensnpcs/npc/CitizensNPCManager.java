@@ -88,8 +88,6 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public CraftNPC spawn(NPC npc, Location loc) {
-        if (spawned.contains(npc.getBukkitEntity().getEntityId()))
-            throw new IllegalStateException("already spawned");
         WorldServer ws = getWorldServer(loc.getWorld());
         CraftNPC mcEntity = new CraftNPC(getMinecraftServer(ws.getServer()), ws, npc.getFullName(),
                 new ItemInWorldManager(ws));
@@ -103,8 +101,6 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public void despawn(NPC npc) {
-        if (!spawned.contains(npc.getBukkitEntity().getEntityId()))
-            throw new IllegalStateException("already despawned");
         CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
         for (Player player : Bukkit.getOnlinePlayers()) {
             ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));

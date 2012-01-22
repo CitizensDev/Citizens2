@@ -59,11 +59,10 @@ public class CitizensNPC implements NPC {
 
     @Override
     public void addTrait(Trait trait) {
-        if (!hasTrait(trait.getClass())) {
+        if (!hasTrait(trait.getClass()))
             traits.put(trait.getClass(), trait);
-        } else {
+        else
             Messaging.debug("The NPC already has the trait '" + getTrait(trait.getClass()).getName() + "'.");
-        }
     }
 
     @Override
@@ -130,15 +129,13 @@ public class CitizensNPC implements NPC {
 
         NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, loc);
         Bukkit.getPluginManager().callEvent(spawnEvent);
-        if (spawnEvent.isCancelled()) {
+        if (spawnEvent.isCancelled())
             return;
-        }
 
-        if (mcEntity == null) {
+        if (mcEntity == null)
             mcEntity = manager.spawn(this, loc);
-        } else {
+        else
             manager.spawn(this, loc);
-        }
 
         // Set the location
         addTrait(new SpawnLocation(loc));
@@ -162,9 +159,8 @@ public class CitizensNPC implements NPC {
 
     @Override
     public void remove() {
-        if (isSpawned()) {
+        if (isSpawned())
             despawn();
-        }
         manager.remove(this);
     }
 
