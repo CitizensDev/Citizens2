@@ -131,7 +131,7 @@ public class Citizens extends JavaPlugin {
         for (NPC npc : npcManager.getAllNPCs()) {
             DataKey root = saves.getKey("npc." + npc.getId());
             root.setString("name", npc.getFullName());
-            root.setBoolean("spawned", npc.getBukkitEntity().isDead());
+            root.setBoolean("spawned", !npc.getBukkitEntity().isDead());
 
             // Save the character if it exists
             if (npc.getCharacter() != null) {
