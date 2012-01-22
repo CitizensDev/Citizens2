@@ -51,7 +51,7 @@ public class Settings {
         }
     }
 
-    private YamlStorage config;
+    private final YamlStorage config;
     private final DataKey root;
 
     public Settings(Citizens plugin) {

@@ -1,10 +1,11 @@
 package net.citizensnpcs;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 
 import org.bukkit.Location;
@@ -18,21 +19,26 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class EventListen implements Listener {
-    private Set<Integer> toRespawn = new HashSet<Integer>();
+    private final List<Integer> toRespawn = new ArrayList<Integer>();
+    private final NPCManager manager;
+
+    public EventListen(NPCManager manager) {
+        this.manager = manager;
+    }
 
     /*
      * Entity events
      */
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (!CitizensAPI.getNPCManager().isNPC(event.getEntity()))
+        if (!manager.isNPC(event.getEntity()))
             return;
 
-        event.setCancelled(true);
+        event.setCancelled(true); // TODO: implement damage handlers
         if (event instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
             if (e.getDamager() instanceof Player) {
-                NPC npc = CitizensAPI.getNPCManager().getNPC(event.getEntity());
+                NPC npc = manager.getNPC(event.getEntity());
                 if (npc.getCharacter() != null) {
                     npc.getCharacter().onLeftClick(npc, (Player) e.getDamager());
                 }
@@ -42,11 +48,10 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (event.isCancelled() || !CitizensAPI.getNPCManager().isNPC(event.getEntity())
-                || !(event.getTarget() instanceof Player))
+        if (event.isCancelled() || !manager.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
             return;
 
-        NPC npc = CitizensAPI.getNPCManager().getNPC(event.getEntity());
+        NPC npc = manager.getNPC(event.getEntity());
         npc.getCharacter().onRightClick(npc, (Player) event.getTarget());
     }
 
@@ -55,10 +60,10 @@ public class EventListen implements Listener {
      */
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        for (int id : toRespawn) {
-            NPC npc = CitizensAPI.getNPCManager().getNPC(id);
+        for (Iterator<Integer> itr = toRespawn.iterator();; itr.hasNext()) {
+            NPC npc = manager.getNPC(itr.next());
             npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
-            toRespawn.remove(id);
+            itr.remove();
         }
     }
 
@@ -67,7 +72,7 @@ public class EventListen implements Listener {
         if (event.isCancelled())
             return;
 
-        for (NPC npc : CitizensAPI.getNPCManager().getNPCs()) {
+        for (NPC npc : manager.getSpawnedNPCs()) {
             Location loc = npc.getBukkitEntity().getLocation();
             if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
                     && event.getChunk().getZ() == loc.getChunk().getZ()) {
