@@ -39,9 +39,8 @@ public class EventListen implements Listener {
             EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
             if (e.getDamager() instanceof Player) {
                 NPC npc = manager.getNPC(event.getEntity());
-                if (npc.getCharacter() != null) {
+                if (npc.getCharacter() != null)
                     npc.getCharacter().onLeftClick(npc, (Player) e.getDamager());
-                }
             }
         }
     }
