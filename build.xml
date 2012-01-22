@@ -19,6 +19,8 @@
 				<pathelement location="${lib}/bukkit-1.1-R1-SNAPSHOT.jar" />
 				<pathelement location="${lib}/craftbukkit-1.1-R1-SNAPSHOT.jar" />
 				<pathelement location="${lib}/CitizensAPI.jar" />
+				<pathelement location="${lib}/junit.jar" />
+				<pathelement location="${lib}/hamcrest.jar" />
 				<fileset dir="lib">
 					<include name="CitizensAPI.jar" />
 				</fileset>
