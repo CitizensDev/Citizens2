@@ -52,13 +52,14 @@ public class Settings {
     }
 
     private final YamlStorage config;
+    private final DataKey root;
 
     public Settings(Citizens plugin) {
         config = new YamlStorage(plugin.getDataFolder() + File.separator + "config.yml");
+        root = config.getKey("");
     }
 
     public void load() {
-        DataKey root = config.getKey("");
         for (Setting setting : Setting.values()) {
             if (!root.keyExists(setting.getPath())) {
                 Messaging.log("Writing default setting: '" + setting.getPath() + "'");

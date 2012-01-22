@@ -101,9 +101,9 @@ public class Citizens extends JavaPlugin {
             NPC npc = npcManager.createNPC(key.getString("name"), character);
 
             // Load the character if it exists, otherwise remove the character
-            if (character != null)
+            if (character != null) {
                 character.load(key.getRelative(character.getName()));
-            else {
+            } else {
                 if (key.keyExists("character")) {
                     Messaging.debug("Character '" + key.getString("character")
                             + "' does not exist. Removing character from the NPC with ID '" + npc.getId() + "'.");
