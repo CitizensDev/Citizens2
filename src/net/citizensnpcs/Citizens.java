@@ -4,7 +4,6 @@ import java.io.File;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.DataKey;
-import net.citizensnpcs.api.Factory;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
@@ -92,12 +91,7 @@ public class Citizens extends JavaPlugin {
 
     // TODO possibly separate this out some more
     private void setupNPCs() throws NPCLoadException {
-        traitManager.registerTraitFactory("location", new Factory<SpawnLocation>() {
-            @Override
-            public SpawnLocation create() {
-                return new SpawnLocation();
-            }
-        });
+        traitManager.registerTrait("location", SpawnLocation.class);
         int spawned = 0;
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());

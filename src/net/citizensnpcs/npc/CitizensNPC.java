@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.Factory;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -176,25 +175,5 @@ public class CitizensNPC implements NPC {
 
     public CraftNPC getHandle() {
         return mcEntity;
-    }
-
-    public static class ReflectionTraitFactory implements Factory<Trait> {
-        private final Class<? extends Trait> clazz;
-
-        public ReflectionTraitFactory(Class<? extends Trait> clazz) {
-            this.clazz = clazz;
-        }
-
-        @Override
-        public Trait create() {
-            try {
-                return clazz.newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
     }
 }
