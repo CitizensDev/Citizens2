@@ -9,6 +9,7 @@ public class ByIdArray<T> implements Iterable<T> {
     private int size;
     private int modCount;
     private int highest;
+    private int lowest;
 
     public ByIdArray() {
         this(50);
@@ -21,7 +22,7 @@ public class ByIdArray<T> implements Iterable<T> {
     }
 
     public void clear() {
-        modCount = highest = size = 0;
+        modCount = highest = size = lowest = 0;
         elementData = new Object[50];
     }
 
@@ -36,10 +37,17 @@ public class ByIdArray<T> implements Iterable<T> {
     }
 
     private void fastRemove(int index) {
+        if (index == lowest)
+            recalcLowest();
         if (index == highest)
             recalcHighest();
         elementData[index] = null;
         --size;
+    }
+
+    private void recalcLowest() {
+        while (elementData.length > lowest && elementData[lowest++] == null)
+            ;
     }
 
     @SuppressWarnings("unchecked")
@@ -64,7 +72,7 @@ public class ByIdArray<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            private int idx = 0;
+            private int idx = lowest;
 
             @Override
             public boolean hasNext() {
@@ -96,6 +104,8 @@ public class ByIdArray<T> implements Iterable<T> {
         ++modCount;
         if (index > highest)
             highest = index;
+        if (index < lowest)
+            lowest = index;
 
         ensureCapacity(index + 1);
 
@@ -110,6 +120,8 @@ public class ByIdArray<T> implements Iterable<T> {
 
     public T remove(int index) {
         ++modCount;
+        if (index == lowest)
+            recalcLowest();
         if (index == highest)
             recalcHighest();
         @SuppressWarnings("unchecked")
