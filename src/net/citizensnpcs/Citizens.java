@@ -4,6 +4,7 @@ import java.io.File;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.api.Factory;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
@@ -23,18 +24,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Citizens extends JavaPlugin {
-    private final CitizensNPCManager npcManager;
-    private final CitizensCharacterManager characterManager;
-    private final CitizensTraitManager traitManager;
-    private Storage saves;
+    private static final CitizensNPCManager npcManager = new CitizensNPCManager();
+    private static final CitizensCharacterManager characterManager = new CitizensCharacterManager();
+    private static final CitizensTraitManager traitManager = new CitizensTraitManager();
     private Settings config;
+    private Storage saves;
 
     public Citizens() {
-        super();
         // Register API managers
-        npcManager = new CitizensNPCManager();
-        characterManager = new CitizensCharacterManager();
-        traitManager = new CitizensTraitManager();
         CitizensAPI.setNPCManager(npcManager);
         CitizensAPI.setCharacterManager(characterManager);
         CitizensAPI.setTraitManager(traitManager);
@@ -44,6 +41,7 @@ public class Citizens extends JavaPlugin {
     public void onDisable() {
         config.save();
         saveNPCs();
+        Bukkit.getScheduler().cancelTasks(this);
 
         Messaging.log("v" + getDescription().getVersion() + " disabled.");
     }
@@ -58,7 +56,7 @@ public class Citizens extends JavaPlugin {
         saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
 
         // Register events
-        getServer().getPluginManager().registerEvents(new EventListen(), this);
+        getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
 
         Messaging.log("v" + getDescription().getVersion() + " enabled.");
 
@@ -85,7 +83,7 @@ public class Citizens extends JavaPlugin {
             NPC npc = npcManager.createNPC("aPunch");
             npc.spawn(((Player) sender).getLocation());
         } else if (args[0].equals("despawn")) {
-            for (NPC npc : npcManager.getNPCs()) {
+            for (NPC npc : npcManager.getSpawnedNPCs()) {
                 npc.despawn();
             }
         }
@@ -94,7 +92,12 @@ public class Citizens extends JavaPlugin {
 
     // TODO possibly separate this out some more
     private void setupNPCs() throws NPCLoadException {
-        traitManager.registerTrait(SpawnLocation.class);
+        traitManager.registerTraitFactory("location", new Factory<SpawnLocation>() {
+            @Override
+            public SpawnLocation create() {
+                return new SpawnLocation();
+            }
+        });
         int spawned = 0;
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
@@ -104,9 +107,9 @@ public class Citizens extends JavaPlugin {
             NPC npc = npcManager.createNPC(key.getString("name"), character);
 
             // Load the character if it exists, otherwise remove the character
-            if (character != null)
+            if (character != null) {
                 character.load(key.getRelative(character.getName()));
-            else {
+            } else {
                 if (key.keyExists("character")) {
                     Messaging.debug("Character '" + key.getString("character")
                             + "' does not exist. Removing character from the NPC with ID '" + npc.getId() + "'.");
@@ -116,15 +119,11 @@ public class Citizens extends JavaPlugin {
 
             // Load traits
             for (DataKey traitKey : key.getSubKeys()) {
-                for (Trait trait : traitManager.getRegisteredTraits()) {
-                    if (trait.getName().equals(traitKey.name())) {
-                        Messaging.debug("Found trait '" + trait.getName() + "' in the NPC with ID '" + id + "'.");
-                        npc.addTrait(trait.getClass());
-                    }
-                }
-            }
-            for (Trait trait : npc.getTraits()) {
-                trait.load(key.getRelative(trait.getName()));
+                Trait trait = traitManager.getTrait(traitKey.name());
+                if (trait == null)
+                    continue;
+                trait.load(traitKey);
+                npc.addTrait(trait);
             }
 
             // Spawn the NPC
@@ -133,11 +132,11 @@ public class Citizens extends JavaPlugin {
                 spawned++;
             }
         }
-        Messaging.log("Loaded " + npcManager.getNPCs().size() + " NPCs (" + spawned + " spawned).");
+        Messaging.log("Loaded " + npcManager.size() + " NPCs (" + spawned + " spawned).");
     }
 
     private void saveNPCs() {
-        for (NPC npc : npcManager.getNPCs()) {
+        for (NPC npc : npcManager.getAllNPCs()) {
             DataKey root = saves.getKey("npc." + npc.getId());
             root.setString("name", npc.getFullName());
             root.setBoolean("spawned", npc.isSpawned());
