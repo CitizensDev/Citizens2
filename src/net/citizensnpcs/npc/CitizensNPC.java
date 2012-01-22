@@ -88,11 +88,6 @@ public class CitizensNPC implements NPC {
     }
 
     @Override
-    public Iterable<Trait> getTraits() {
-        return traits.values();
-    }
-
-    @Override
     public boolean hasTrait(Class<? extends Trait> trait) {
         return traits.containsKey(trait);
     }
@@ -153,7 +148,8 @@ public class CitizensNPC implements NPC {
         Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
 
         manager.despawn(this);
-        mcEntity.die();
+        getHandle().die();
+
         spawned = false;
     }
 
@@ -166,7 +162,11 @@ public class CitizensNPC implements NPC {
 
     @Override
     public Entity getBukkitEntity() {
-        return mcEntity.getBukkitEntity();
+        return getHandle().getBukkitEntity();
+    }
+
+    public Iterable<Trait> getTraits() {
+        return traits.values();
     }
 
     public CraftNPC getHandle() {

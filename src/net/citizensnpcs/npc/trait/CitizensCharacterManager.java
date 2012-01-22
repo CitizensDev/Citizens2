@@ -1,47 +1,49 @@
 package net.citizensnpcs.npc.trait;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
+import net.citizensnpcs.api.Factory;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.CharacterManager;
 
 public class CitizensCharacterManager implements CharacterManager {
-    private final Map<String, Class<? extends Character>> registered = new HashMap<String, Class<? extends Character>>();
-    private final Set<Character> characters = new HashSet<Character>();
+    private final Map<String, Factory<? extends Character>> registered = new HashMap<String, Factory<? extends Character>>();
 
     @Override
     public Character getCharacter(String name) {
-        if (registered.get(name) == null) {
+        if (registered.get(name) == null)
             return null;
+        return registered.get(name).create();
+    }
+
+    @Override
+    public void registerCharacter(String name, Class<? extends Character> clazz) {
+        registerCharacterWithFactory(name, new DefaultCharacterFactory(clazz));
+    }
+
+    @Override
+    public void registerCharacterWithFactory(String name, Factory<? extends Character> factory) {
+        if (registered.get(name) != null)
+            throw new IllegalArgumentException("A character factory for the character '" + name
+                    + "' has already been registered.");
+        registered.put(name, factory);
+    }
+
+    private static class DefaultCharacterFactory implements Factory<Character> {
+        private final Class<? extends Character> clazz;
+
+        private DefaultCharacterFactory(Class<? extends Character> clazz) {
+            this.clazz = clazz;
         }
-        for (Character character : characters) {
-            if (character.getName().equals(name)) {
-                return character;
+
+        @Override
+        public Character create() {
+            try {
+                return clazz.newInstance();
+            } catch (Exception ex) {
+                return null;
             }
         }
-        return null;
-    }
-
-    @Override
-    public void registerCharacter(Class<? extends Character> character) {
-        if (registered.containsValue(character)) {
-            return;
-        }
-        try {
-            Character register = character.newInstance();
-            registered.put(register.getName(), character);
-            characters.add(register);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public Collection<Character> getRegisteredCharacters() {
-        return characters;
     }
 }
