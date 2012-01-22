@@ -9,6 +9,14 @@ import org.bukkit.Location;
 public class SpawnLocation implements Trait {
     private Location loc;
 
+    public SpawnLocation() {
+        // no args constructor
+    }
+
+    public SpawnLocation(Location loc) {
+        this.loc = loc;
+    }
+
     @Override
     public String getName() {
         return "location";

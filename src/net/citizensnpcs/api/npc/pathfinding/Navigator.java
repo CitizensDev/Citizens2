@@ -14,7 +14,7 @@ public interface Navigator {
      * @param destination
      *            Destination of the path
      */
-    public void createPath(Location destination);
+    public void setDestination(Location destination);
 
     /**
      * Registers a callback for this navigator
@@ -32,5 +32,5 @@ public interface Navigator {
      * @param aggressive
      *            Whether the targeting entity should attack
      */
-    public void target(Entity target, boolean aggressive);
+    public void setTarget(Entity target, boolean aggressive);
 }

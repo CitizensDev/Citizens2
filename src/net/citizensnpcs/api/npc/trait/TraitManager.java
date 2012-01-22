@@ -1,16 +1,10 @@
 package net.citizensnpcs.api.npc.trait;
 
-import java.util.Collection;
+import net.citizensnpcs.api.Factory;
 
 public interface TraitManager {
 
-    /**
-     * Registers a trait to Citizens
-     * 
-     * @param trait
-     *            Trait to register
-     */
-    public void registerTrait(Class<? extends Trait> trait);
+    public void registerTraitFactory(String name, Factory<? extends Trait> factory);
 
     /**
      * Gets a trait from the given name
@@ -19,11 +13,4 @@ public interface TraitManager {
      *            Trait to register
      */
     public Trait getTrait(String name);
-
-    /**
-     * Gets all registered traits
-     * 
-     * @return All registered traits
-     */
-    public Collection<Trait> getRegisteredTraits();
 }

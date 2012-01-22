@@ -1,7 +1,7 @@
 package net.citizensnpcs.api.npc;
 
-import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.pathfinding.Navigator;
+import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
 
 import org.bukkit.Location;
@@ -47,7 +47,7 @@ public interface NPC {
      * @param trait
      *            Trait to add
      */
-    public void addTrait(Class<? extends Trait> trait);
+    public void addTrait(Trait trait);
 
     /**
      * Removes a trait from this NPC

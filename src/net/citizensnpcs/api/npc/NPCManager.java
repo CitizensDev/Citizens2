@@ -51,11 +51,18 @@ public interface NPCManager {
     public NPC getNPC(Entity entity);
 
     /**
-     * Gets all NPCs
+     * Gets all NPCs (may or may not be spawned)
      * 
-     * @return All NPCs (may or may not be spawned)
+     * @return All NPCs
      */
-    public Collection<NPC> getNPCs();
+    public Iterable<NPC> getAllNPCs();
+
+    /**
+     * Gets all spawned NPCs
+     * 
+     * @return All spawned NPCs
+     */
+    public Iterable<NPC> getSpawnedNPCs();
 
     /**
      * Gets all NPCs with the given trait
