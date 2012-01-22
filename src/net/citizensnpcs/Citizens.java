@@ -83,9 +83,8 @@ public class Citizens extends JavaPlugin {
             NPC npc = npcManager.createNPC("aPunch");
             npc.spawn(((Player) sender).getLocation());
         } else if (args[0].equals("despawn")) {
-            for (NPC npc : npcManager.getSpawnedNPCs()) {
+            for (NPC npc : npcManager.getSpawnedNPCs())
                 npc.despawn();
-            }
         }
         return true;
     }
@@ -101,9 +100,9 @@ public class Citizens extends JavaPlugin {
             NPC npc = npcManager.createNPC(key.getString("name"), character);
 
             // Load the character if it exists, otherwise remove the character
-            if (character != null) {
+            if (character != null)
                 character.load(key.getRelative(character.getName()));
-            } else {
+            else {
                 if (key.keyExists("character")) {
                     Messaging.debug("Character '" + key.getString("character")
                             + "' does not exist. Removing character from the NPC with ID '" + npc.getId() + "'.");

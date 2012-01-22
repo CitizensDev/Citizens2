@@ -73,9 +73,9 @@ public class ByIdArray<T> implements Iterable<T> {
                 T next = (T) elementData[idx];
                 if (next == null || idx > highest)
                     throw new NoSuchElementException();
-                do {
+                do
                     idx++;
-                } while (idx != highest + 1 && elementData[idx] == null);
+                while (idx != highest + 1 && elementData[idx] == null);
                 return next;
             }
 
@@ -88,7 +88,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     public void put(int index, T t) {
         if (t == null)
-            throw new IllegalArgumentException("t cannot be null");
+            throw new IllegalArgumentException("The variable 't' cannot be null.");
         ++modCount;
         if (index > highest)
             highest = index;
@@ -130,16 +130,8 @@ public class ByIdArray<T> implements Iterable<T> {
         if (elementData.length > highest)
             elementData = Arrays.copyOf(elementData, highest + 1);
     }
-    
+
     public boolean contains(int index) {
         return elementData.length > index && elementData[index] != null;
-    }
-    
-    public static <T> ByIdArray<T> create() {
-        return new ByIdArray<T>();
-    }
-
-    public static <T> ByIdArray<T> create(int capacity) {
-        return new ByIdArray<T>(capacity);
     }
 }

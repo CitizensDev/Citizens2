@@ -1,10 +1,10 @@
 package net.citizensnpcs.test;
 
-//import org.junit.Test;
+import org.junit.Test;
 
 public class StorageTest {
 
-   // @Test
+    @Test
     public void testYaml() {
 
     }
