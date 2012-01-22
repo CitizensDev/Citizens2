@@ -3,6 +3,7 @@ package net.citizensnpcs.api.npc.trait;
 import net.citizensnpcs.api.Factory;
 
 public interface TraitManager {
+
     /**
      * Registers a trait with the given name. This will create a factory for
      * instantiating the {@link Trait}s.

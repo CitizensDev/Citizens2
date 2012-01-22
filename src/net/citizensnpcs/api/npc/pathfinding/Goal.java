@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.npc.pathfinding;
 
 public interface Goal {
+
     public void reset();
 
     public boolean shouldBegin();
