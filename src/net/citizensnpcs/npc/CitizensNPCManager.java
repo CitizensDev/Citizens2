@@ -37,7 +37,8 @@ public class CitizensNPCManager implements NPCManager {
 
     @Override
     public NPC createNPC(String name, Character character) {
-        CitizensNPC npc = new CitizensNPC(name, character);
+        CitizensNPC npc = new CitizensNPC(this, getUniqueID(), name);
+        npc.setCharacter(character);
         byID.put(npc.getId(), npc);
         return npc;
     }
@@ -90,11 +91,8 @@ public class CitizensNPCManager implements NPCManager {
 
     public int getUniqueID() {
         int count = 0;
-        while (true) {
-            if (getNPC(count) == null)
-                break;
-            count++;
-        }
+        while (getNPC(count++) != null)
+            ;
         return count;
     }
 
