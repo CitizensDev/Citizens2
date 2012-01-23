@@ -25,7 +25,7 @@ public class SpawnLocation implements Trait {
     @Override
     public void load(DataKey key) {
         loc = new Location(Bukkit.getWorld(key.getString("world")), key.getDouble("x"), key.getDouble("y"),
-                key.getDouble("z"), (float) key.getDouble("pitch"), (float) key.getDouble("yaw"));
+                key.getDouble("z"), (float) key.getDouble("yaw"), (float) key.getDouble("pitch"));
     }
 
     @Override
