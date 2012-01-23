@@ -1,7 +1,10 @@
 package net.citizensnpcs;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -11,9 +14,9 @@ import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
 import net.citizensnpcs.api.npc.trait.InstanceFactory;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.storage.Storage;
+import net.citizensnpcs.storage.database.DatabaseStorage;
 import net.citizensnpcs.storage.flatfile.YamlStorage;
 import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.Messaging;
@@ -23,6 +26,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Citizens extends JavaPlugin {
@@ -66,11 +71,16 @@ public class Citizens extends JavaPlugin {
         config = new Settings(this);
         config.load();
 
-        // TODO database support
-        saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
+        // NPC storage
+        if (Setting.USE_DATABASE.getBoolean())
+            saves = new DatabaseStorage();
+        else
+            saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
 
         // Register events
         getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
+
+        registerPermissions();
 
         Messaging.log("v" + getDescription().getVersion() + " enabled.");
 
@@ -82,7 +92,7 @@ public class Citizens extends JavaPlugin {
                 try {
                     setupNPCs();
                 } catch (NPCLoadException ex) {
-                    Messaging.log("Failed to create NPC: " + ex.getMessage());
+                    Messaging.log("Issue when loading NPCs: " + ex.getMessage());
                 }
             }
         }) == -1) {
@@ -105,13 +115,12 @@ public class Citizens extends JavaPlugin {
             }
 
             // Save all existing traits
-            for (Trait trait : ((CitizensNPC) npc).getTraits())
+            for (Trait trait : npc.getTraits())
                 trait.save(root.getRelative(trait.getName()));
         }
         saves.save();
     }
 
-    // TODO separate this out some more
     private void setupNPCs() throws NPCLoadException {
         traitManager.register("location", SpawnLocation.class);
 
@@ -148,5 +157,13 @@ public class Citizens extends JavaPlugin {
         }
         Messaging.log("Loaded " + ((ByIdArray<NPC>) npcManager.getAllNPCs()).size() + " NPCs ("
                 + ((ByIdArray<NPC>) npcManager.getSpawnedNPCs()).size() + " spawned).");
+    }
+
+    private void registerPermissions() {
+        Map<String, Boolean> children = new HashMap<String, Boolean>();
+        children.put("citizens.npc.select", true);
+
+        Permission perm = new Permission("citizens.*", PermissionDefault.OP, children);
+        getServer().getPluginManager().addPermission(perm);
     }
 }

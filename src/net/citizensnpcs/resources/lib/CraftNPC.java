@@ -36,8 +36,8 @@ public class CraftNPC extends EntityPlayer {
 
         try {
             socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
