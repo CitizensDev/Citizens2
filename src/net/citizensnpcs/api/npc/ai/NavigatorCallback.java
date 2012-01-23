@@ -1,4 +1,4 @@
-package net.citizensnpcs.api.npc.pathfinding;
+package net.citizensnpcs.api.npc.ai;
 
 /**
  * Represents a navigation callback, linked to a {@link Navigator}. Methods

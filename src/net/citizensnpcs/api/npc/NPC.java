@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.npc;
 
-import net.citizensnpcs.api.npc.pathfinding.Navigator;
+import net.citizensnpcs.api.npc.ai.Navigator;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
 

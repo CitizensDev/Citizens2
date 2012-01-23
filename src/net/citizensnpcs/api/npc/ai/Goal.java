@@ -1,7 +1,6 @@
-package net.citizensnpcs.api.npc.pathfinding;
+package net.citizensnpcs.api.npc.ai;
 
 public interface Goal {
-
     public void reset();
 
     public boolean shouldBegin();

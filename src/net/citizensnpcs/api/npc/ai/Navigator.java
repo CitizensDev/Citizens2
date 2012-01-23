@@ -1,4 +1,4 @@
-package net.citizensnpcs.api.npc.pathfinding;
+package net.citizensnpcs.api.npc.ai;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
