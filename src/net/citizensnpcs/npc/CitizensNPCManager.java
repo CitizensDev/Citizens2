@@ -3,7 +3,10 @@ package net.citizensnpcs.npc;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
@@ -11,6 +14,7 @@ import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.resources.lib.CraftNPC;
 import net.citizensnpcs.util.ByIdArray;
+
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Packet29DestroyEntity;
@@ -29,6 +33,7 @@ import org.bukkit.entity.Player;
 public class CitizensNPCManager implements NPCManager {
     private final ByIdArray<NPC> spawned = new ByIdArray<NPC>();
     private final ByIdArray<NPC> byID = new ByIdArray<NPC>();
+    private final Map<String, NPC> selected = new ConcurrentHashMap<String, NPC>();
 
     @Override
     public NPC createNPC(String name) {
@@ -45,9 +50,8 @@ public class CitizensNPCManager implements NPCManager {
 
     public void despawn(NPC npc) {
         CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        for (Player player : Bukkit.getOnlinePlayers())
             ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));
-        }
         Location loc = npc.getBukkitEntity().getLocation();
         getWorldServer(loc.getWorld()).removeEntity(mcEntity);
         npc.getTrait(SpawnLocation.class).setLocation(loc);
@@ -122,5 +126,19 @@ public class CitizensNPCManager implements NPCManager {
 
         spawned.put(mcEntity.getPlayer().getEntityId(), npc);
         return mcEntity;
+    }
+
+    public void selectNPC(Player player, NPC npc) {
+        selected.put(player.getName(), npc);
+    }
+
+    public boolean canSelect(Player player, NPC npc) {
+        if (player.hasPermission("citizens.npc.select")) {
+            if (!selected.containsKey(player.getName()))
+                return true;
+            return selected.get(player.getName()).getId() != npc.getId()
+                    && player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.getInt();
+        }
+        return false;
     }
 }

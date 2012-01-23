@@ -9,13 +9,12 @@ import net.citizensnpcs.util.Messaging;
 public class Settings {
     private final YamlStorage config;
 
-    private final DataKey root;
     public Settings(Citizens plugin) {
         config = new YamlStorage(plugin.getDataFolder() + File.separator + "config.yml");
-        root = config.getKey("");
     }
 
     public void load() {
+        DataKey root = config.getKey("");
         for (Setting setting : Setting.values()) {
             if (!root.keyExists(setting.getPath())) {
                 Messaging.log("Writing default setting: '" + setting.getPath() + "'");
@@ -31,7 +30,10 @@ public class Settings {
     }
 
     public enum Setting {
-        DEBUG_MODE("general.debug-mode", false);
+        DEBUG_MODE("general.debug-mode", false),
+        USE_DATABASE("use-database", false),
+        SELECTION_ITEM("npc.selection.item", 280),
+        SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!");
 
         private String path;
         private Object value;

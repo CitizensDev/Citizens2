@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
+import net.citizensnpcs.npc.CitizensNPCManager;
+import net.citizensnpcs.util.Messaging;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,14 +18,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class EventListen implements Listener {
     private final List<Integer> toRespawn = new ArrayList<Integer>();
-    private final NPCManager manager;
+    private final CitizensNPCManager manager;
 
-    public EventListen(NPCManager manager) {
+    public EventListen(CitizensNPCManager manager) {
         this.manager = manager;
     }
 
@@ -63,7 +68,7 @@ public class EventListen implements Listener {
         if (!manager.isNPC(event.getEntity()))
             return;
 
-        event.setCancelled(true); // TODO: implement damage handlers
+        event.setCancelled(true); // TODO implement damage handlers
         if (event instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
             if (e.getDamager() instanceof Player) {
@@ -76,11 +81,27 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (event.isCancelled() || !manager.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
-            return;
+        if (manager.isNPC(event.getTarget()))
+            if (event.isCancelled() || !manager.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
+                return;
 
         NPC npc = manager.getNPC(event.getEntity());
-        if (npc.getCharacter() != null)
-            npc.getCharacter().onRightClick(npc, (Player) event.getTarget());
+        Player player = (Player) event.getTarget();
+        if (manager.canSelect(player, npc)) {
+            manager.selectNPC(player, npc);
+            Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.getString(), npc);
+        } else {
+            if (npc.getCharacter() != null)
+                npc.getCharacter().onRightClick(npc, player);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (!manager.isNPC(event.getRightClicked()))
+            return;
+
+        Bukkit.getPluginManager().callEvent(
+                new EntityTargetEvent(event.getRightClicked(), event.getPlayer(), TargetReason.CUSTOM));
     }
 }
