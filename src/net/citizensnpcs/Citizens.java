@@ -32,18 +32,11 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Citizens extends JavaPlugin {
-    private static final CitizensNPCManager npcManager = new CitizensNPCManager();
+    private static CitizensNPCManager npcManager;
     private static final InstanceFactory<Character> characterManager = DefaultInstanceFactory.create();
     private static final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create();
     private Settings config;
     private Storage saves;
-
-    public Citizens() {
-        // Register API managers
-        CitizensAPI.setNPCManager(npcManager);
-        CitizensAPI.setCharacterManager(characterManager);
-        CitizensAPI.setTraitManager(traitManager);
-    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
@@ -53,7 +46,7 @@ public class Citizens extends JavaPlugin {
             ((CitizensNPC) npc).save(saves);
         } else if (args[0].equals("despawn")) {
             for (NPC npc : npcManager.getSpawnedNPCs())
-                npc.despawn();
+                npc.remove();
         }
         return true;
     }
@@ -78,6 +71,12 @@ public class Citizens extends JavaPlugin {
             saves = new DatabaseStorage();
         else
             saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
+
+        // Register API managers
+        npcManager = new CitizensNPCManager(saves);
+        CitizensAPI.setNPCManager(npcManager);
+        CitizensAPI.setCharacterManager(characterManager);
+        CitizensAPI.setTraitManager(traitManager);
 
         // Register events
         getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
