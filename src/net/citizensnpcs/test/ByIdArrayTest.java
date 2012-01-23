@@ -17,6 +17,8 @@ public class ByIdArrayTest {
         test.remove(1000); // try illegal remove
         test.clear();
         assert (test.size() == 0);
+        test.add("one");
+        assert (test.get(0).equals("one"));
     }
 
     @Test

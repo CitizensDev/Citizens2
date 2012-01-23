@@ -27,35 +27,6 @@ public class EventListen implements Listener {
     }
 
     /*
-     * Entity events
-     */
-    @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
-        if (!manager.isNPC(event.getEntity()))
-            return;
-
-        event.setCancelled(true); // TODO: implement damage handlers
-        if (event instanceof EntityDamageByEntityEvent) {
-            EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-            if (e.getDamager() instanceof Player) {
-                NPC npc = manager.getNPC(event.getEntity());
-                if (npc.getCharacter() != null)
-                    npc.getCharacter().onLeftClick(npc, (Player) e.getDamager());
-            }
-        }
-    }
-
-    @EventHandler
-    public void onEntityTarget(EntityTargetEvent event) {
-        if (event.isCancelled() || !manager.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
-            return;
-
-        NPC npc = manager.getNPC(event.getEntity());
-        if (npc.getCharacter() != null)
-            npc.getCharacter().onRightClick(npc, (Player) event.getTarget());
-    }
-
-    /*
      * World events
      */
     @EventHandler
@@ -82,5 +53,34 @@ public class EventListen implements Listener {
                 npc.despawn();
             }
         }
+    }
+
+    /*
+     * Entity events
+     */
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (!manager.isNPC(event.getEntity()))
+            return;
+
+        event.setCancelled(true); // TODO: implement damage handlers
+        if (event instanceof EntityDamageByEntityEvent) {
+            EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
+            if (e.getDamager() instanceof Player) {
+                NPC npc = manager.getNPC(event.getEntity());
+                if (npc.getCharacter() != null)
+                    npc.getCharacter().onLeftClick(npc, (Player) e.getDamager());
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityTarget(EntityTargetEvent event) {
+        if (event.isCancelled() || !manager.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
+            return;
+
+        NPC npc = manager.getNPC(event.getEntity());
+        if (npc.getCharacter() != null)
+            npc.getCharacter().onRightClick(npc, (Player) event.getTarget());
     }
 }

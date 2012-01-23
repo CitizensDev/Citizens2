@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 public class ByIdArray<T> implements Iterable<T> {
     private Object[] elementData;
+    private final int capacity;
     private int size;
     private int modCount;
     private int highest = Integer.MIN_VALUE;
@@ -18,15 +19,40 @@ public class ByIdArray<T> implements Iterable<T> {
     public ByIdArray(int capacity) {
         if (capacity < 0)
             throw new IllegalArgumentException("illegal capacity");
+        this.capacity = capacity;
         elementData = new Object[capacity];
+    }
+
+    /**
+     * Uses a linear search to insert an object at the first available space.
+     * 
+     * @param t
+     *            The object to add
+     * @return The index the object was added at
+     */
+    public int add(T t) {
+        int index = 0;
+        while (elementData[index++] != null) {
+            if (index >= elementData.length) {
+                System.out.println(elementData.length + " " + index);
+                ensureCapacity(elementData.length + 1);
+                index = elementData.length - 1;
+            }
+        }
+        put(index, t);
+        return index;
     }
 
     public void clear() {
         modCount = highest = size = lowest = 0;
-        elementData = new Object[50];
+        elementData = new Object[capacity];
     }
 
-    private void ensureCapacity(int minCapacity) { // from ArrayList
+    public boolean contains(int index) {
+        return elementData.length > index && elementData[index] != null;
+    }
+
+    public void ensureCapacity(int minCapacity) { // from ArrayList
         int oldCapacity = elementData.length;
         if (minCapacity > oldCapacity) {
             int newCapacity = (oldCapacity * 3) / 2 + 1;
@@ -43,11 +69,6 @@ public class ByIdArray<T> implements Iterable<T> {
             recalcHighest();
         elementData[index] = null;
         --size;
-    }
-
-    private void recalcLowest() {
-        while (elementData.length > lowest && highest > lowest && elementData[lowest++] == null)
-            ;
     }
 
     @SuppressWarnings("unchecked")
@@ -88,7 +109,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     public void put(int index, T t) {
         if (t == null)
-            throw new IllegalArgumentException("The variable 't' cannot be null.");
+            throw new IllegalArgumentException("can't insert a null object");
         ++modCount;
         if (index > highest)
             highest = index;
@@ -103,6 +124,11 @@ public class ByIdArray<T> implements Iterable<T> {
 
     private void recalcHighest() {
         while (highest != 0 && elementData[highest--] == null)
+            ;
+    }
+
+    private void recalcLowest() {
+        while (elementData.length > lowest && highest > lowest && elementData[lowest++] == null)
             ;
     }
 
@@ -129,9 +155,5 @@ public class ByIdArray<T> implements Iterable<T> {
     public void trimToSize() {
         if (elementData.length > highest)
             elementData = Arrays.copyOf(elementData, highest + 1);
-    }
-
-    public boolean contains(int index) {
-        return elementData.length > index && elementData[index] != null;
     }
 }

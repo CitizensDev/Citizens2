@@ -40,6 +40,18 @@ public class Citizens extends JavaPlugin {
     }
 
     @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
+        if (args[0].equals("spawn")) {
+            NPC npc = npcManager.createNPC(ChatColor.GREEN + "aPunch");
+            npc.spawn(((Player) sender).getLocation());
+        } else if (args[0].equals("despawn")) {
+            for (NPC npc : npcManager.getSpawnedNPCs())
+                npc.despawn();
+        }
+        return true;
+    }
+
+    @Override
     public void onDisable() {
         config.save();
         saveNPCs();
@@ -79,16 +91,24 @@ public class Citizens extends JavaPlugin {
         }
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
-        if (args[0].equals("spawn")) {
-            NPC npc = npcManager.createNPC(ChatColor.GREEN + "aPunch");
-            npc.spawn(((Player) sender).getLocation());
-        } else if (args[0].equals("despawn")) {
-            for (NPC npc : npcManager.getSpawnedNPCs())
-                npc.despawn();
+    private void saveNPCs() {
+        for (NPC npc : npcManager.getAllNPCs()) {
+            DataKey root = saves.getKey("npc." + npc.getId());
+            root.setString("name", npc.getFullName());
+            if (root.getBoolean("spawned"))
+                root.setBoolean("spawned", !npc.getBukkitEntity().isDead());
+
+            // Save the character if it exists
+            if (npc.getCharacter() != null) {
+                root.setString("character", npc.getCharacter().getName());
+                npc.getCharacter().save(root.getRelative(npc.getCharacter().getName()));
+            }
+
+            // Save all existing traits
+            for (Trait trait : ((CitizensNPC) npc).getTraits())
+                trait.save(root.getRelative(trait.getName()));
         }
-        return true;
+        saves.save();
     }
 
     // TODO separate this out some more
@@ -128,25 +148,5 @@ public class Citizens extends JavaPlugin {
         }
         Messaging.log("Loaded " + ((ByIdArray<NPC>) npcManager.getAllNPCs()).size() + " NPCs ("
                 + ((ByIdArray<NPC>) npcManager.getSpawnedNPCs()).size() + " spawned).");
-    }
-
-    private void saveNPCs() {
-        for (NPC npc : npcManager.getAllNPCs()) {
-            DataKey root = saves.getKey("npc." + npc.getId());
-            root.setString("name", npc.getFullName());
-            if (root.getBoolean("spawned"))
-                root.setBoolean("spawned", !npc.getBukkitEntity().isDead());
-
-            // Save the character if it exists
-            if (npc.getCharacter() != null) {
-                root.setString("character", npc.getCharacter().getName());
-                npc.getCharacter().save(root.getRelative(npc.getCharacter().getName()));
-            }
-
-            // Save all existing traits
-            for (Trait trait : ((CitizensNPC) npc).getTraits())
-                trait.save(root.getRelative(trait.getName()));
-        }
-        saves.save();
     }
 }

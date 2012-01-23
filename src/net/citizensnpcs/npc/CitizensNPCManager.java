@@ -42,9 +42,25 @@ public class CitizensNPCManager implements NPCManager {
         return npc;
     }
 
+    public void despawn(NPC npc) {
+        CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));
+        }
+        Location loc = npc.getBukkitEntity().getLocation();
+        getWorldServer(loc.getWorld()).removeEntity(mcEntity);
+        npc.getTrait(SpawnLocation.class).setLocation(loc);
+
+        spawned.remove(mcEntity.getPlayer().getEntityId());
+    }
+
     @Override
-    public NPC getNPC(int id) {
-        return byID.get(id);
+    public Iterable<NPC> getAllNPCs() {
+        return byID;
+    }
+
+    private MinecraftServer getMinecraftServer(Server server) {
+        return ((CraftServer) server).getServer();
     }
 
     @Override
@@ -53,13 +69,8 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     @Override
-    public Iterable<NPC> getAllNPCs() {
-        return byID;
-    }
-
-    @Override
-    public Iterable<NPC> getSpawnedNPCs() {
-        return spawned;
+    public NPC getNPC(int id) {
+        return byID.get(id);
     }
 
     @Override
@@ -73,8 +84,8 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     @Override
-    public boolean isNPC(Entity entity) {
-        return spawned.contains(entity.getEntityId());
+    public Iterable<NPC> getSpawnedNPCs() {
+        return spawned;
     }
 
     public int getUniqueID() {
@@ -85,6 +96,21 @@ public class CitizensNPCManager implements NPCManager {
             count++;
         }
         return count;
+    }
+
+    private WorldServer getWorldServer(World world) {
+        return ((CraftWorld) world).getHandle();
+    }
+
+    @Override
+    public boolean isNPC(Entity entity) {
+        return spawned.contains(entity.getEntityId());
+    }
+
+    public void remove(NPC npc) {
+        if (spawned.contains(npc.getBukkitEntity().getEntityId()))
+            despawn(npc);
+        byID.remove(npc.getId());
     }
 
     public CraftNPC spawn(NPC npc, Location loc) {
@@ -98,31 +124,5 @@ public class CitizensNPCManager implements NPCManager {
 
         spawned.put(mcEntity.getPlayer().getEntityId(), npc);
         return mcEntity;
-    }
-
-    public void despawn(NPC npc) {
-        CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));
-        }
-        Location loc = npc.getBukkitEntity().getLocation();
-        getWorldServer(loc.getWorld()).removeEntity(mcEntity);
-        npc.getTrait(SpawnLocation.class).setLocation(loc);
-
-        spawned.remove(mcEntity.getPlayer().getEntityId());
-    }
-
-    public void remove(NPC npc) {
-        if (spawned.contains(npc.getBukkitEntity().getEntityId()))
-            despawn(npc);
-        byID.remove(npc.getId());
-    }
-
-    private WorldServer getWorldServer(World world) {
-        return ((CraftWorld) world).getHandle();
-    }
-
-    private MinecraftServer getMinecraftServer(Server server) {
-        return ((CraftServer) server).getServer();
     }
 }
