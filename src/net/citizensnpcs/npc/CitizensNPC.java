@@ -7,7 +7,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.pathfinding.Navigator;
+import net.citizensnpcs.api.npc.ai.Navigator;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
@@ -165,6 +165,7 @@ public class CitizensNPC implements NPC {
         return getHandle().getBukkitEntity();
     }
 
+    @Override
     public Iterable<Trait> getTraits() {
         return traits.values();
     }

@@ -7,12 +7,12 @@ import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
+import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
+import net.citizensnpcs.api.npc.trait.InstanceFactory;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.npc.trait.CitizensCharacterManager;
-import net.citizensnpcs.npc.trait.CitizensTraitManager;
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.storage.flatfile.YamlStorage;
 import net.citizensnpcs.util.ByIdArray;
@@ -27,8 +27,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Citizens extends JavaPlugin {
     private static final CitizensNPCManager npcManager = new CitizensNPCManager();
-    private static final CitizensCharacterManager characterManager = new CitizensCharacterManager();
-    private static final CitizensTraitManager traitManager = new CitizensTraitManager();
+    private static final InstanceFactory<Character> characterManager = DefaultInstanceFactory.create();
+    private static final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create();
     private Settings config;
     private Storage saves;
 
@@ -93,13 +93,13 @@ public class Citizens extends JavaPlugin {
 
     // TODO separate this out some more
     private void setupNPCs() throws NPCLoadException {
-        traitManager.registerTrait("location", SpawnLocation.class);
+        traitManager.register("location", SpawnLocation.class);
 
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
-            Character character = characterManager.getCharacter(key.getString("character"));
+            Character character = characterManager.getInstance(key.getString("character"));
             NPC npc = npcManager.createNPC(key.getString("name"), character);
 
             // Load the character if it exists, otherwise remove the character
@@ -115,7 +115,7 @@ public class Citizens extends JavaPlugin {
 
             // Load traits
             for (DataKey traitKey : key.getSubKeys()) {
-                Trait trait = traitManager.getTrait(traitKey.name());
+                Trait trait = traitManager.getInstance(traitKey.name());
                 if (trait == null)
                     continue;
                 trait.load(traitKey);
