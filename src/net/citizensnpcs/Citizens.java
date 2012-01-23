@@ -14,6 +14,7 @@ import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
 import net.citizensnpcs.api.npc.trait.InstanceFactory;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.storage.database.DatabaseStorage;
@@ -49,6 +50,7 @@ public class Citizens extends JavaPlugin {
         if (args[0].equals("spawn")) {
             NPC npc = npcManager.createNPC(ChatColor.GREEN + "aPunch");
             npc.spawn(((Player) sender).getLocation());
+            ((CitizensNPC) npc).save(saves);
         } else if (args[0].equals("despawn")) {
             for (NPC npc : npcManager.getSpawnedNPCs())
                 npc.despawn();
@@ -102,22 +104,8 @@ public class Citizens extends JavaPlugin {
     }
 
     private void saveNPCs() {
-        for (NPC npc : npcManager.getAllNPCs()) {
-            DataKey root = saves.getKey("npc." + npc.getId());
-            root.setString("name", npc.getFullName());
-            if (root.getBoolean("spawned"))
-                root.setBoolean("spawned", !npc.getBukkitEntity().isDead());
-
-            // Save the character if it exists
-            if (npc.getCharacter() != null) {
-                root.setString("character", npc.getCharacter().getName());
-                npc.getCharacter().save(root.getRelative(npc.getCharacter().getName()));
-            }
-
-            // Save all existing traits
-            for (Trait trait : npc.getTraits())
-                trait.save(root.getRelative(trait.getName()));
-        }
+        for (NPC npc : npcManager.getAllNPCs())
+            ((CitizensNPC) npc).save(saves);
         saves.save();
     }
 
@@ -129,7 +117,7 @@ public class Citizens extends JavaPlugin {
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
             Character character = characterManager.getInstance(key.getString("character"));
-            NPC npc = npcManager.createNPC(key.getString("name"), character);
+            NPC npc = npcManager.createNPC(id, key.getString("name"), character);
 
             // Load the character if it exists, otherwise remove the character
             if (character != null)

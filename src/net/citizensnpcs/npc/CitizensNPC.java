@@ -1,11 +1,14 @@
 package net.citizensnpcs.npc;
 
+import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.ai.Navigator;
+import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.resources.lib.CraftNPC;
+import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
@@ -85,5 +88,24 @@ public class CitizensNPC extends AbstractNPC {
         addTrait(new SpawnLocation(loc));
 
         spawned = true;
+    }
+
+    public void save(Storage saves) {
+        DataKey key = saves.getKey("npc." + getId());
+        key.setString("name", getFullName());
+        if (!key.keyExists("spawned"))
+            key.setBoolean("spawned", true);
+        if (key.getBoolean("spawned"))
+            key.setBoolean("spawned", !getBukkitEntity().isDead());
+
+        // Save the character if it exists
+        if (getCharacter() != null) {
+            key.setString("character", getCharacter().getName());
+            getCharacter().save(key.getRelative(getCharacter().getName()));
+        }
+
+        // Save all existing traits
+        for (Trait trait : getTraits())
+            trait.save(key.getRelative(trait.getName()));
     }
 }
