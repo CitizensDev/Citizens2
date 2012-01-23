@@ -32,7 +32,7 @@ public class CraftNPC extends EntityPlayer {
         });
         netServerHandler = new NPCNetHandler(minecraftServer, netMgr, this);
         netMgr.a(netServerHandler);
-        netMgr.a(); // this interrupts the read/write threads
+        netMgr.a();
 
         try {
             socket.close();

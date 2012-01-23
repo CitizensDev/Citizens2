@@ -33,7 +33,7 @@ import org.bukkit.entity.Player;
 public class CitizensNPCManager implements NPCManager {
     private final ByIdArray<NPC> spawned = new ByIdArray<NPC>();
     private final ByIdArray<NPC> byID = new ByIdArray<NPC>();
-    private final Map<String, NPC> selected = new ConcurrentHashMap<String, NPC>();
+    private final Map<String, Integer> selected = new ConcurrentHashMap<String, Integer>();
 
     @Override
     public NPC createNPC(String name) {
@@ -42,7 +42,11 @@ public class CitizensNPCManager implements NPCManager {
 
     @Override
     public NPC createNPC(String name, Character character) {
-        CitizensNPC npc = new CitizensNPC(this, getUniqueID(), name);
+        return createNPC(generateUniqueId(), name, character);
+    }
+
+    public NPC createNPC(int id, String name, Character character) {
+        CitizensNPC npc = new CitizensNPC(this, id, name);
         npc.setCharacter(character);
         byID.put(npc.getId(), npc);
         return npc;
@@ -93,11 +97,11 @@ public class CitizensNPCManager implements NPCManager {
         return spawned;
     }
 
-    public int getUniqueID() {
+    public int generateUniqueId() {
         int count = 0;
         while (getNPC(count++) != null)
             ;
-        return count;
+        return count - 1;
     }
 
     private WorldServer getWorldServer(World world) {
@@ -129,14 +133,14 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public void selectNPC(Player player, NPC npc) {
-        selected.put(player.getName(), npc);
+        selected.put(player.getName(), npc.getId());
     }
 
     public boolean canSelect(Player player, NPC npc) {
         if (player.hasPermission("citizens.npc.select")) {
             if (!selected.containsKey(player.getName()))
                 return true;
-            return selected.get(player.getName()).getId() != npc.getId()
+            return selected.get(player.getName()) != npc.getId()
                     && player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.getInt();
         }
         return false;
