@@ -28,13 +28,6 @@ public class CitizensNPC implements NPC {
     private boolean spawned;
     private final CitizensNPCManager manager;
 
-    public CitizensNPC(String name, Character character) {
-        this.name = name;
-        this.character = character;
-        manager = (CitizensNPCManager) CitizensAPI.getNPCManager();
-        id = manager.getUniqueID();
-    }
-
     public CitizensNPC(int id, String name, Character character) {
         this.name = name;
         this.character = character;
@@ -42,19 +35,11 @@ public class CitizensNPC implements NPC {
         this.id = id;
     }
 
-    @Override
-    public String getFullName() {
-        return name;
-    }
-
-    @Override
-    public String getName() {
-        return ChatColor.stripColor(name);
-    }
-
-    @Override
-    public void setName(String name) {
+    public CitizensNPC(String name, Character character) {
         this.name = name;
+        this.character = character;
+        manager = (CitizensNPCManager) CitizensAPI.getNPCManager();
+        id = manager.getUniqueID();
     }
 
     @Override
@@ -66,13 +51,47 @@ public class CitizensNPC implements NPC {
     }
 
     @Override
+    public void despawn() {
+        if (!isSpawned()) {
+            Messaging.debug("The NPC is already despawned.");
+            return;
+        }
+
+        Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
+
+        manager.despawn(this);
+        getHandle().die();
+
+        spawned = false;
+    }
+
+    @Override
+    public Entity getBukkitEntity() {
+        return getHandle().getBukkitEntity();
+    }
+
+    @Override
     public Character getCharacter() {
         return character;
     }
 
     @Override
+    public String getFullName() {
+        return name;
+    }
+
+    public CraftNPC getHandle() {
+        return mcEntity;
+    }
+
+    @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String getName() {
+        return ChatColor.stripColor(name);
     }
 
     @Override
@@ -88,8 +107,25 @@ public class CitizensNPC implements NPC {
     }
 
     @Override
+    public Iterable<Trait> getTraits() {
+        return traits.values();
+    }
+
+    @Override
     public boolean hasTrait(Class<? extends Trait> trait) {
         return traits.containsKey(trait);
+    }
+
+    @Override
+    public boolean isSpawned() {
+        return spawned;
+    }
+
+    @Override
+    public void remove() {
+        if (isSpawned())
+            despawn();
+        manager.remove(this);
     }
 
     @Override
@@ -111,8 +147,8 @@ public class CitizensNPC implements NPC {
     }
 
     @Override
-    public boolean isSpawned() {
-        return spawned;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -136,41 +172,5 @@ public class CitizensNPC implements NPC {
         addTrait(new SpawnLocation(loc));
 
         spawned = true;
-    }
-
-    @Override
-    public void despawn() {
-        if (!isSpawned()) {
-            Messaging.debug("The NPC is already despawned.");
-            return;
-        }
-
-        Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
-
-        manager.despawn(this);
-        getHandle().die();
-
-        spawned = false;
-    }
-
-    @Override
-    public void remove() {
-        if (isSpawned())
-            despawn();
-        manager.remove(this);
-    }
-
-    @Override
-    public Entity getBukkitEntity() {
-        return getHandle().getBukkitEntity();
-    }
-
-    @Override
-    public Iterable<Trait> getTraits() {
-        return traits.values();
-    }
-
-    public CraftNPC getHandle() {
-        return mcEntity;
     }
 }

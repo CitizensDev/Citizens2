@@ -22,19 +22,15 @@ public class NPCNetworkManager extends NetworkManager {
     }
 
     @Override
+    public void a() {
+    }
+
+    @Override
     public void a(NetHandler netHandler) {
     }
 
     @Override
-    public void queue(Packet packet) {
-    }
-
-    @Override
     public void a(String s, Object... objects) {
-    }
-
-    @Override
-    public void a() {
     }
 
     @Override
@@ -48,5 +44,9 @@ public class NPCNetworkManager extends NetworkManager {
     @Override
     public int e() {
         return 0;
+    }
+
+    @Override
+    public void queue(Packet packet) {
     }
 }

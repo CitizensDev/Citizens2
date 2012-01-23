@@ -8,6 +8,12 @@ import net.citizensnpcs.storage.Storage;
 public class DatabaseStorage implements Storage {
 
     @Override
+    public DataKey getKey(String root) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public void load() {
         // TODO Auto-generated method stub
 
@@ -17,12 +23,6 @@ public class DatabaseStorage implements Storage {
     public void save() {
         // TODO Auto-generated method stub
 
-    }
-
-    @Override
-    public DataKey getKey(String root) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     public class DatabaseKey extends DataKey {
@@ -61,6 +61,12 @@ public class DatabaseStorage implements Storage {
         public long getLong(String key) {
             // TODO Auto-generated method stub
             return 0;
+        }
+
+        @Override
+        public Object getRaw(String key) {
+            // TODO Auto-generated method stub
+            return null;
         }
 
         @Override
@@ -124,19 +130,13 @@ public class DatabaseStorage implements Storage {
         }
 
         @Override
-        public void setString(String key, String value) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public Object getRaw(String key) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
         public void setRaw(String path, Object value) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void setString(String key, String value) {
             // TODO Auto-generated method stub
 
         }
