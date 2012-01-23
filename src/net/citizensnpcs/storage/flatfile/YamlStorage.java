@@ -210,6 +210,7 @@ public class YamlStorage implements Storage {
         @Override
         public void removeKey(String key) {
             config.set(getKeyExt(key), null);
+            save();
         }
 
         @Override

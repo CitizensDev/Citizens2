@@ -13,6 +13,7 @@ import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.resources.lib.CraftNPC;
+import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.util.ByIdArray;
 
 import net.minecraft.server.ItemInWorldManager;
@@ -34,6 +35,11 @@ public class CitizensNPCManager implements NPCManager {
     private final ByIdArray<NPC> spawned = new ByIdArray<NPC>();
     private final ByIdArray<NPC> byID = new ByIdArray<NPC>();
     private final Map<String, Integer> selected = new ConcurrentHashMap<String, Integer>();
+    private final Storage saves;
+
+    public CitizensNPCManager(Storage saves) {
+        this.saves = saves;
+    }
 
     @Override
     public NPC createNPC(String name) {
@@ -117,6 +123,7 @@ public class CitizensNPCManager implements NPCManager {
         if (spawned.contains(npc.getBukkitEntity().getEntityId()))
             despawn(npc);
         byID.remove(npc.getId());
+        saves.getKey("npc").removeKey("" + npc.getId());
     }
 
     public CraftNPC spawn(NPC npc, Location loc) {
