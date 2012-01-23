@@ -1,5 +1,6 @@
 package net.citizensnpcs.resources.lib;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -22,7 +23,8 @@ public class CraftNPC extends EntityPlayer {
         super(minecraftServer, world, string, itemInWorldManager);
         itemInWorldManager.setGameMode(0);
 
-        NetworkManager netMgr = new NPCNetworkManager(new NPCSocket(), "npc mgr", new NetHandler() {
+        NPCSocket socket = new NPCSocket();
+        NetworkManager netMgr = new NPCNetworkManager(socket, "npc mgr", new NetHandler() {
             @Override
             public boolean c() {
                 return false;
@@ -31,6 +33,12 @@ public class CraftNPC extends EntityPlayer {
         netServerHandler = new NPCNetHandler(minecraftServer, netMgr, this);
         netMgr.a(netServerHandler);
         netMgr.a(); // this interrupts the read/write threads
+
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
