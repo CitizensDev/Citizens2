@@ -19,6 +19,7 @@ import net.citizensnpcs.api.npc.trait.InstanceFactory;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.command.CommandManager;
+import net.citizensnpcs.command.Injector;
 import net.citizensnpcs.command.command.NPCCommands;
 import net.citizensnpcs.command.exception.CommandUsageException;
 import net.citizensnpcs.command.exception.MissingNestedCommandException;
@@ -167,6 +168,14 @@ public class Citizens extends JavaPlugin {
         return saves;
     }
 
+    public CitizensNPCManager getNPCManager() {
+        return npcManager;
+    }
+
+    public InstanceFactory<Character> getCharacterManager() {
+        return characterManager;
+    }
+
     private void saveNPCs() {
         for (NPC npc : npcManager.getAllNPCs())
             ((CitizensNPC) npc).save();
@@ -213,6 +222,7 @@ public class Citizens extends JavaPlugin {
 
     private void registerPermissions() {
         Map<String, Boolean> children = new HashMap<String, Boolean>();
+        children.put("citizens.npc.create", true);
         children.put("citizens.npc.spawn", true);
         children.put("citizens.npc.despawn", true);
         children.put("citizens.npc.select", true);
@@ -222,6 +232,8 @@ public class Citizens extends JavaPlugin {
     }
 
     private void registerCommands() {
+        cmdManager.setInjector(new Injector(this));
+
         cmdManager.register(NPCCommands.class);
     }
 

@@ -58,23 +58,23 @@ public class CommandManager {
      * their respective {@link Method}. The child map has the key of the command
      * name (one for each alias) with the method.
      */
-    private Map<Method, Map<CommandIdentifier, Method>> commands = new HashMap<Method, Map<CommandIdentifier, Method>>();
+    private final Map<Method, Map<CommandIdentifier, Method>> commands = new HashMap<Method, Map<CommandIdentifier, Method>>();
 
     // Used to store the instances associated with a method.
-    private Map<Method, Object> instances = new HashMap<Method, Object>();
+    private final Map<Method, Object> instances = new HashMap<Method, Object>();
 
     /*
      * Mapping of commands (not including aliases) with a description. This is
      * only for top level commands.
      */
-    private Map<CommandIdentifier, String> descs = new HashMap<CommandIdentifier, String>();
+    private final Map<CommandIdentifier, String> descs = new HashMap<CommandIdentifier, String>();
 
     // Stores the injector used to getInstance.
     private Injector injector;
 
-    private Map<Method, Requirements> requirements = new HashMap<Method, Requirements>();
+    private final Map<Method, Requirements> requirements = new HashMap<Method, Requirements>();
 
-    private Map<Method, ServerCommand> serverCommands = new HashMap<Method, ServerCommand>();
+    private final Map<Method, ServerCommand> serverCommands = new HashMap<Method, ServerCommand>();
 
     /*
      * Register an class that contains commands (denoted by {@link Command}. If
@@ -82,33 +82,21 @@ public class CommandManager {
      * be registered to be called statically. Otherwise, new instances will be
      * created of the command classes and methods will not be called statically.
      */
-    public void register(Class<?> cls) {
-        registerMethods(cls, null);
+    public void register(Class<?> clazz) {
+        registerMethods(clazz, null);
     }
 
     /*
      * Register the methods of a class. This will automatically construct
      * instances as necessary.
      */
-    private void registerMethods(Class<?> cls, Method parent) {
-        try {
-            if (getInjector() == null)
-                registerMethods(cls, parent, null);
-            else {
-                Object obj = getInjector().getInstance(cls);
-                registerMethods(cls, parent, obj);
-            }
-        } catch (InvocationTargetException e) {
-            logger.log(Level.SEVERE, "Failed to register commands", e);
-        } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Failed to register commands", e);
-        } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Failed to register commands", e);
-        }
+    private void registerMethods(Class<?> clazz, Method parent) {
+        Object obj = injector.getInstance(clazz);
+        registerMethods(clazz, parent, obj);
     }
 
     // Register the methods of a class.
-    private void registerMethods(Class<?> cls, Method parent, Object obj) {
+    private void registerMethods(Class<?> clazz, Method parent, Object obj) {
         Map<CommandIdentifier, Method> map;
 
         // Make a new hash map to cache the commands for this class
@@ -120,7 +108,7 @@ public class CommandManager {
             commands.put(parent, map);
         }
 
-        for (Method method : cls.getMethods()) {
+        for (Method method : clazz.getMethods()) {
             if (!method.isAnnotationPresent(Command.class))
                 continue;
             boolean isStatic = Modifier.isStatic(method.getModifiers());
@@ -157,7 +145,6 @@ public class CommandManager {
                     continue;
 
                 instances.put(method, obj);
-                Messaging.log("Put instance.");
             }
 
             // Build a list of commands and their usage details, at least for
@@ -379,19 +366,6 @@ public class CommandManager {
         return false;
     }
 
-    /*
-     * Get the injector used to create new instances. This can be null, in which
-     * case only classes will be registered statically.
-     */
-    public Injector getInjector() {
-        return injector;
-    }
-
-    // Set the injector for creating new instances.
-    public void setInjector(Injector injector) {
-        this.injector = injector;
-    }
-
     // Returns whether a player has permission.
     private boolean hasPermission(Player player, String perm) {
         return ((Player) player).hasPermission("citizens." + perm);
@@ -407,5 +381,9 @@ public class CommandManager {
             }
         }
         return cmds.toArray(new String[cmds.size()]);
+    }
+
+    public void setInjector(Injector injector) {
+        this.injector = injector;
     }
 }

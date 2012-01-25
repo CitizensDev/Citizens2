@@ -144,6 +144,10 @@ public class CitizensNPCManager implements NPCManager {
         selected.put(player.getName(), npc.getId());
     }
 
+    public void deselectNPC(Player player) {
+        selected.remove(player.getName());
+    }
+
     public boolean npcIsSelectedByPlayer(Player player, NPC npc) {
         if (!selected.containsKey(player.getName()))
             return false;

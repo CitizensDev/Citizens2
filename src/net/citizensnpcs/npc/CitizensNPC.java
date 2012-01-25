@@ -41,6 +41,7 @@ public class CitizensNPC extends AbstractNPC {
         getHandle().die();
 
         spawned = false;
+        save();
     }
 
     @Override
@@ -90,6 +91,7 @@ public class CitizensNPC extends AbstractNPC {
         addTrait(new SpawnLocation(loc));
 
         spawned = true;
+        save();
     }
 
     @Override
