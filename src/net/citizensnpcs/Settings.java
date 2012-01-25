@@ -34,7 +34,8 @@ public class Settings {
         USE_DATABASE("use-database", false),
         SELECTION_ITEM("npc.selection.item", 280),
         SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
-        QUICK_SELECT("npc.selection.quick-select", false);
+        QUICK_SELECT("npc.selection.quick-select", false),
+        PRINT_CHAT_TO_CONSOLE("npc.chat.print-to-console", true);
 
         private String path;
         private Object value;

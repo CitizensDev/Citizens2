@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
@@ -15,6 +16,7 @@ import net.citizensnpcs.util.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 public class CitizensNPC extends AbstractNPC {
     private CraftNPC mcEntity;
@@ -88,6 +90,15 @@ public class CitizensNPC extends AbstractNPC {
         addTrait(new SpawnLocation(loc));
 
         spawned = true;
+    }
+
+    @Override
+    public void chat(String message) {
+        String formatted = "<" + getFullName() + "> " + message;
+        for (Player player : Bukkit.getOnlinePlayers())
+            player.sendMessage(formatted);
+        if (Setting.PRINT_CHAT_TO_CONSOLE.getBoolean())
+            Messaging.log(formatted);
     }
 
     public void save(Storage saves) {
