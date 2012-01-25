@@ -168,14 +168,6 @@ public class Citizens extends JavaPlugin {
         return saves;
     }
 
-    public CitizensNPCManager getNPCManager() {
-        return npcManager;
-    }
-
-    public InstanceFactory<Character> getCharacterManager() {
-        return characterManager;
-    }
-
     private void saveNPCs() {
         for (NPC npc : npcManager.getAllNPCs())
             ((CitizensNPC) npc).save();
@@ -232,7 +224,7 @@ public class Citizens extends JavaPlugin {
     }
 
     private void registerCommands() {
-        cmdManager.setInjector(new Injector(this));
+        cmdManager.setInjector(new Injector(npcManager, characterManager));
 
         cmdManager.register(NPCCommands.class);
     }
