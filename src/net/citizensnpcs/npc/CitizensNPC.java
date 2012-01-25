@@ -96,7 +96,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public void chat(String message) {
-        String formatted = "<" + getFullName() + "> " + message;
+        String formatted = "<" + getName() + "> " + message;
         for (Player player : Bukkit.getOnlinePlayers())
             player.sendMessage(formatted);
         if (Setting.PRINT_CHAT_TO_CONSOLE.getBoolean())
