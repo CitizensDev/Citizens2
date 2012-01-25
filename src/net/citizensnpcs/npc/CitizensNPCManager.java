@@ -143,12 +143,15 @@ public class CitizensNPCManager implements NPCManager {
         selected.put(player.getName(), npc.getId());
     }
 
+    public boolean hasSelected(Player player, NPC npc) {
+        if (!selected.containsKey(player.getName()))
+            return false;
+        return selected.get(player.getName()) == npc.getId();
+    }
+
     public boolean canSelect(Player player, NPC npc) {
         if (player.hasPermission("citizens.npc.select")) {
-            if (!selected.containsKey(player.getName()))
-                return true;
-            return selected.get(player.getName()) != npc.getId()
-                    && player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.getInt();
+            return player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.getInt();
         }
         return false;
     }

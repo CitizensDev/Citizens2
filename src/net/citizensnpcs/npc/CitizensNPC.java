@@ -7,6 +7,7 @@ import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.ai.Navigator;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
+import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.resources.lib.CraftNPC;
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.util.Messaging;
@@ -51,8 +52,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public Navigator getNavigator() {
-        // TODO add default navigator
-        return null;
+        return new CitizensNavigator(this);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class CitizensNPC extends AbstractNPC {
         // Save the character if it exists
         if (getCharacter() != null) {
             key.setString("character", getCharacter().getName());
-            getCharacter().save(key.getRelative(getCharacter().getName()));
+            getCharacter().save(key.getRelative("characters." + getCharacter().getName()));
         }
 
         // Save all existing traits

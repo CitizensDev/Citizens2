@@ -87,15 +87,21 @@ public class EventListen implements Listener {
 
         NPC npc = manager.getNPC(event.getEntity());
         Player player = (Player) event.getTarget();
-        if (manager.canSelect(player, npc)) {
-            manager.selectNPC(player, npc);
-            Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.getString(), npc);
-        } else {
-            if (npc.getCharacter() != null)
-                npc.getCharacter().onRightClick(npc, player);
+        if (!manager.hasSelected(player, npc)) {
+            if (manager.canSelect(player, npc)) {
+                manager.selectNPC(player, npc);
+                Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.getString(), npc);
+                if (!Setting.QUICK_SELECT.getBoolean())
+                    return;
+            }
         }
+        if (npc.getCharacter() != null)
+            npc.getCharacter().onRightClick(npc, player);
     }
 
+    /*
+     * Player events
+     */
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         if (!manager.isNPC(event.getRightClicked()))

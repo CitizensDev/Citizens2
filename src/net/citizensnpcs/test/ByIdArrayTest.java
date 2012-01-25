@@ -7,6 +7,7 @@ import net.citizensnpcs.util.ByIdArray;
 import org.junit.Test;
 
 public class ByIdArrayTest {
+
     @Test
     public void testInsert() {
         ByIdArray<String> test = new ByIdArray<String>();
