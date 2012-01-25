@@ -23,10 +23,6 @@ public class DefaultInstanceFactory<T> implements InstanceFactory<T> {
         registered.put(name, factory);
     }
 
-    public static <T> InstanceFactory<T> create() {
-        return new DefaultInstanceFactory<T>();
-    }
-
     private class DefaultFactory implements Factory<T> {
         private final Class<? extends T> clazz;
 

@@ -3,7 +3,6 @@ package net.citizensnpcs.api.npc;
 import java.util.Collection;
 
 import net.citizensnpcs.api.npc.trait.Character;
-import net.citizensnpcs.api.npc.trait.Trait;
 
 import org.bukkit.entity.Entity;
 
@@ -65,13 +64,13 @@ public interface NPCManager {
     public Iterable<NPC> getSpawnedNPCs();
 
     /**
-     * Gets all NPCs with the given trait
+     * Gets all NPCs with the given character
      * 
-     * @param trait
-     *            Trait to search for
-     * @return All NPCs with the given trait
+     * @param character
+     *            Character to search for
+     * @return All NPCs with the given character
      */
-    public Collection<NPC> getNPCs(Class<? extends Trait> trait);
+    public Collection<NPC> getNPCs(Class<? extends Character> character);
 
     /**
      * Checks whether the given Bukkit entity is an NPC
