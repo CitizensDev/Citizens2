@@ -42,8 +42,6 @@ public class Citizens extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
         if (args[0].equals("spawn")) {
             NPC npc = npcManager.createNPC(ChatColor.GREEN + "aPunch");
-            // TODO remove
-            npc.setCharacter(characterManager.getInstance("test"));
             npc.spawn(((Player) sender).getLocation());
             ((CitizensNPC) npc).save(saves);
         } else if (args[0].equals("despawn")) {
