@@ -10,7 +10,6 @@ public class SpawnLocation implements Trait {
     private Location loc;
 
     public SpawnLocation() {
-        // no args constructor
     }
 
     public SpawnLocation(Location loc) {
@@ -34,8 +33,8 @@ public class SpawnLocation implements Trait {
         key.setDouble("x", loc.getX());
         key.setDouble("y", loc.getY());
         key.setDouble("z", loc.getZ());
-        key.setDouble("pitch", loc.getPitch());
         key.setDouble("yaw", loc.getYaw());
+        key.setDouble("pitch", loc.getPitch());
     }
 
     public Location getLocation() {
