@@ -45,4 +45,8 @@ public class Messaging {
 
         send(player, send);
     }
+
+    public static void sendError(Player player, Object msg) {
+        send(player, "" + ChatColor.RED + msg);
+    }
 }
