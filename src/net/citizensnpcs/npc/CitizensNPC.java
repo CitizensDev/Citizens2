@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
@@ -10,7 +11,6 @@ import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.resources.lib.CraftNPC;
-import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
@@ -31,7 +31,7 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public void despawn() {
         if (!isSpawned()) {
-            Messaging.debug("The NPC is already despawned.");
+            Messaging.debug("The NPC with the ID '" + getId() + "' is already despawned.");
             return;
         }
 
@@ -72,7 +72,7 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public void spawn(Location loc) {
         if (isSpawned()) {
-            Messaging.debug("The NPC is already spawned.");
+            Messaging.debug("The NPC with the ID '" + getId() + "' is already spawned.");
             return;
         }
 
@@ -101,8 +101,8 @@ public class CitizensNPC extends AbstractNPC {
             Messaging.log(formatted);
     }
 
-    public void save(Storage saves) {
-        DataKey key = saves.getKey("npc." + getId());
+    public void save() {
+        DataKey key = Citizens.getNPCStorage().getKey("npc." + getId());
         key.setString("name", getFullName());
         if (!key.keyExists("spawned"))
             key.setBoolean("spawned", true);

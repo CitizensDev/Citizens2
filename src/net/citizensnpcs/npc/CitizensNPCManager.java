@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
-import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.resources.lib.CraftNPC;
 import net.citizensnpcs.storage.Storage;
@@ -89,10 +89,11 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     @Override
-    public Collection<NPC> getNPCs(Class<? extends Trait> trait) {
+    public Collection<NPC> getNPCs(Class<? extends Character> character) {
         List<NPC> npcs = new ArrayList<NPC>();
         for (NPC npc : getAllNPCs()) {
-            if (npc.hasTrait(trait))
+            if (npc.getCharacter() != null
+                    && CitizensAPI.getCharacterManager().getInstance(npc.getCharacter().getName()) != null)
                 npcs.add(npc);
         }
         return npcs;
@@ -143,16 +144,25 @@ public class CitizensNPCManager implements NPCManager {
         selected.put(player.getName(), npc.getId());
     }
 
-    public boolean hasSelected(Player player, NPC npc) {
+    public boolean npcIsSelectedByPlayer(Player player, NPC npc) {
         if (!selected.containsKey(player.getName()))
             return false;
         return selected.get(player.getName()) == npc.getId();
     }
 
-    public boolean canSelect(Player player, NPC npc) {
-        if (player.hasPermission("citizens.npc.select")) {
+    public boolean hasNPCSelected(Player player) {
+        return selected.containsKey(player.getName());
+    }
+
+    public boolean canSelectNPC(Player player, NPC npc) {
+        if (player.hasPermission("citizens.npc.select"))
             return player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.getInt();
-        }
         return false;
+    }
+
+    public NPC getSelectedNPC(Player player) {
+        if (!selected.containsKey(player.getName()))
+            return null;
+        return getNPC(selected.get(player.getName()));
     }
 }
