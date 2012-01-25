@@ -130,6 +130,14 @@ public interface NPC {
     public void remove();
 
     /**
+     * Sends a message to all players online with this NPC's formatted name
+     * 
+     * @param message
+     *            Message to send
+     */
+    public void chat(String message);
+
+    /**
      * Gets the Bukkit entity associated with this NPC
      * 
      * @return Entity associated with this NPC
