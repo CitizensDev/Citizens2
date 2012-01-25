@@ -42,6 +42,8 @@ public class Citizens extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
         if (args[0].equals("spawn")) {
             NPC npc = npcManager.createNPC(ChatColor.GREEN + "aPunch");
+            // TODO remove
+            npc.setCharacter(characterManager.getInstance("test"));
             npc.spawn(((Player) sender).getLocation());
             ((CitizensNPC) npc).save(saves);
         } else if (args[0].equals("despawn")) {
@@ -120,7 +122,7 @@ public class Citizens extends JavaPlugin {
 
             // Load the character if it exists, otherwise remove the character
             if (character != null)
-                character.load(key.getRelative(character.getName()));
+                character.load(key.getRelative("characters." + character.getName()));
             else {
                 if (key.keyExists("character")) {
                     Messaging.debug("Character '" + key.getString("character")

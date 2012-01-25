@@ -33,7 +33,8 @@ public class Settings {
         DEBUG_MODE("general.debug-mode", false),
         USE_DATABASE("use-database", false),
         SELECTION_ITEM("npc.selection.item", 280),
-        SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!");
+        SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
+        QUICK_SELECT("npc.selection.quick-select", false);
 
         private String path;
         private Object value;
