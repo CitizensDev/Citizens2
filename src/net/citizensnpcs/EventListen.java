@@ -49,7 +49,7 @@ public class EventListen implements Listener {
         if (event.isCancelled())
             return;
 
-        for (NPC npc : npcManager.getSpawnedNPCs()) {
+        for (NPC npc : npcManager.getAllNPCs()) {
             Location loc = npc.getBukkitEntity().getLocation();
             if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
                     && event.getChunk().getZ() == loc.getChunk().getZ()) {

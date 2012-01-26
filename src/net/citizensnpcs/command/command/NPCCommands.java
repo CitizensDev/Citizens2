@@ -61,10 +61,12 @@ public class NPCCommands {
             return;
         }
 
-        respawn.spawn(player.getLocation());
-        npcManager.selectNPC(player, respawn);
-        Messaging.send(player, ChatColor.GREEN + "You respawned " + StringHelper.wrap(respawn.getName())
-                + " at your location.");
+        if (respawn.spawn(player.getLocation())) {
+            npcManager.selectNPC(player, respawn);
+            Messaging.send(player, ChatColor.GREEN + "You respawned " + StringHelper.wrap(respawn.getName())
+                    + " at your location.");
+        } else
+            Messaging.sendError(player, respawn.getName() + " is already spawned at another location.");
     }
 
     @Command(

@@ -29,10 +29,10 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public void despawn() {
+    public boolean despawn() {
         if (!isSpawned()) {
             Messaging.debug("The NPC with the ID '" + getId() + "' is already despawned.");
-            return;
+            return false;
         }
 
         Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
@@ -42,6 +42,7 @@ public class CitizensNPC extends AbstractNPC {
 
         spawned = false;
         save();
+        return true;
     }
 
     @Override
@@ -71,16 +72,16 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public void spawn(Location loc) {
+    public boolean spawn(Location loc) {
         if (isSpawned()) {
             Messaging.debug("The NPC with the ID '" + getId() + "' is already spawned.");
-            return;
+            return false;
         }
 
         NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, loc);
         Bukkit.getPluginManager().callEvent(spawnEvent);
         if (spawnEvent.isCancelled())
-            return;
+            return false;
 
         if (mcEntity == null)
             mcEntity = manager.spawn(this, loc);
@@ -92,6 +93,7 @@ public class CitizensNPC extends AbstractNPC {
 
         spawned = true;
         save();
+        return true;
     }
 
     @Override

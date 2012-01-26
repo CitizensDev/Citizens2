@@ -113,10 +113,10 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Save an despawn all NPCs
+        // Save and despawn all NPCs
         config.save();
         saveNPCs();
-        for (NPC npc : npcManager.getSpawnedNPCs())
+        for (NPC npc : npcManager.getAllNPCs())
             npc.despawn();
 
         Bukkit.getScheduler().cancelTasks(this);
