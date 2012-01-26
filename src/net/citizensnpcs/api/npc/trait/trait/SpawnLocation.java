@@ -37,10 +37,21 @@ public class SpawnLocation implements Trait {
         key.setDouble("pitch", loc.getPitch());
     }
 
+    /**
+     * Gets the location where an NPC should spawn upon loading
+     * 
+     * @return NPC's spawn location
+     */
     public Location getLocation() {
         return loc;
     }
 
+    /**
+     * Sets the location where an NPC should spawn upon loading
+     * 
+     * @param loc
+     *            Location to spawn
+     */
     public void setLocation(Location loc) {
         this.loc = loc;
     }
