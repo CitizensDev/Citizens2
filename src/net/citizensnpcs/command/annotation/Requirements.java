@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Requirements {
 
-    boolean requireSelected() default false;
+    boolean selected() default false;
 
-    boolean requireOwnership() default false;
+    boolean ownership() default false;
 }

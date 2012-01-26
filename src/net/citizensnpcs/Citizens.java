@@ -17,6 +17,7 @@ import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
 import net.citizensnpcs.api.npc.trait.InstanceFactory;
 import net.citizensnpcs.api.npc.trait.Trait;
+import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Injector;
@@ -52,7 +53,7 @@ public class Citizens extends JavaPlugin {
     private CitizensNPCManager npcManager;
     private final InstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
     private final InstanceFactory<Trait> traitManager = new DefaultInstanceFactory<Trait>();
-    private final CommandManager cmdManager = new CommandManager();
+    private CommandManager cmdManager;
     private Settings config;
 
     @Override
@@ -180,6 +181,7 @@ public class Citizens extends JavaPlugin {
 
     private void setupNPCs() throws NPCLoadException {
         traitManager.register("location", SpawnLocation.class);
+        traitManager.register("owner", Owner.class);
 
         for (DataKey key : getNPCStorage().getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
@@ -228,8 +230,10 @@ public class Citizens extends JavaPlugin {
     }
 
     private void registerCommands() {
+        cmdManager = new CommandManager(npcManager);
         cmdManager.setInjector(new Injector(npcManager, characterManager));
 
+        // cmdManager.register(AdminCommands.class);
         cmdManager.register(NPCCommands.class);
     }
 
