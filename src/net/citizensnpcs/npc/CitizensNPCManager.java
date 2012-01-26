@@ -11,6 +11,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
+import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.resources.lib.CraftNPC;
 import net.citizensnpcs.storage.Storage;
@@ -160,7 +161,8 @@ public class CitizensNPCManager implements NPCManager {
 
     public boolean canSelectNPC(Player player, NPC npc) {
         if (player.hasPermission("citizens.npc.select"))
-            return player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.getInt();
+            return player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.getInt()
+                    && npc.getTrait(Owner.class).getOwner().equals(player.getName());
         return false;
     }
 

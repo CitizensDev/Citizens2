@@ -6,15 +6,17 @@ import org.bukkit.entity.Player;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
+import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.annotation.Command;
 import net.citizensnpcs.command.annotation.Permission;
+import net.citizensnpcs.command.annotation.Requirements;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
-// TODO add requirements
+@Requirements(selected = true, ownership = true)
 public class NPCCommands {
     private final CitizensNPCManager npcManager;
     private final DefaultInstanceFactory<Character> characterManager;
@@ -32,6 +34,7 @@ public class NPCCommands {
              min = 2,
              max = 3)
     @Permission("npc.create")
+    @Requirements
     public void createNPC(CommandContext args, Player player, NPC npc) {
         CitizensNPC create = (CitizensNPC) npcManager.createNPC(args.getString(1));
         String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
@@ -40,6 +43,10 @@ public class NPCCommands {
             msg += " with the character " + StringHelper.wrap(args.getString(2));
         }
         msg += " at your location.";
+
+        // Set the owner
+        create.addTrait(new Owner(player.getName()));
+        create.getTrait(Owner.class).setOwner(player.getName());
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);
@@ -54,6 +61,7 @@ public class NPCCommands {
              min = 2,
              max = 2)
     @Permission("npc.spawn")
+    @Requirements(ownership = true)
     public void spawnNPC(CommandContext args, Player player, NPC npc) {
         CitizensNPC respawn = (CitizensNPC) npcManager.getNPC(args.getInteger(1));
         if (respawn == null) {
@@ -66,7 +74,8 @@ public class NPCCommands {
             Messaging.send(player, ChatColor.GREEN + "You respawned " + StringHelper.wrap(respawn.getName())
                     + " at your location.");
         } else
-            Messaging.sendError(player, respawn.getName() + " is already spawned at another location.");
+            Messaging.sendError(player, respawn.getName()
+                    + " is already spawned at another location. Use '/npc tp' to teleport the NPC to your location.");
     }
 
     @Command(
@@ -78,9 +87,8 @@ public class NPCCommands {
              max = 1)
     @Permission("npc.despawn")
     public void despawnNPC(CommandContext args, Player player, NPC npc) {
-        CitizensNPC despawn = (CitizensNPC) npcManager.getSelectedNPC(player);
-        despawn.despawn();
+        npc.despawn();
         npcManager.deselectNPC(player);
-        Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(despawn.getName()) + ".");
+        Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
 }

@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.command.annotation.Command;
 import net.citizensnpcs.command.annotation.Requirements;
 import net.citizensnpcs.command.annotation.NestedCommand;
@@ -39,9 +41,11 @@ import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
 import net.citizensnpcs.command.exception.MissingNestedCommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
+import net.citizensnpcs.command.exception.RequirementMissingException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
+import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.command.ConsoleCommandSender;
@@ -55,8 +59,8 @@ public class CommandManager {
     /*
      * Mapping of commands (including aliases) with a description. Root commands
      * are stored under a key of null, whereas child commands are cached under
-     * their respective {@link Method}. The child map has the key of the command
-     * name (one for each alias) with the method.
+     * their respective Method. The child map has the key of the command name
+     * (one for each alias) with the method.
      */
     private final Map<Method, Map<CommandIdentifier, Method>> commands = new HashMap<Method, Map<CommandIdentifier, Method>>();
 
@@ -76,10 +80,16 @@ public class CommandManager {
 
     private final Map<Method, ServerCommand> serverCommands = new HashMap<Method, ServerCommand>();
 
+    private final CitizensNPCManager npcManager;
+
+    public CommandManager(CitizensNPCManager npcManager) {
+        this.npcManager = npcManager;
+    }
+
     /*
-     * Register an class that contains commands (denoted by {@link Command}. If
-     * no dependency injector is specified, then the methods of the class will
-     * be registered to be called statically. Otherwise, new instances will be
+     * Register an class that contains commands (denoted by Command. If no
+     * dependency injector is specified, then the methods of the class will be
+     * registered to be called statically. Otherwise, new instances will be
      * created of the command classes and methods will not be called statically.
      */
     public void register(Class<?> clazz) {
@@ -313,11 +323,19 @@ public class CommandManager {
                 executeMethod(method, args, player, methodArgs, level + 1);
         else if (methodArgs[1] instanceof Player) {
             Requirements cmdRequirements = requirements.get(method);
+            if (cmdRequirements != null) {
+                if (methodArgs[2] instanceof NPC) {
+                    NPC npc = npcManager.getSelectedNPC(player);
+                    if (npc != null)
+                        methodArgs[2] = npc;
 
-            // TODO add requirements
-            if (cmdRequirements != null)
-                Messaging.debug("");
-            else
+                    if (cmdRequirements.selected() && npc == null)
+                        throw new RequirementMissingException("You must have an NPC selected to execute that command.");
+                    if (cmdRequirements.ownership() && !npc.getTrait(Owner.class).getOwner().equals(player.getName()))
+                        throw new RequirementMissingException(
+                                "You must be the owner of this NPC to execute that command.");
+                }
+            } else
                 Messaging.debug("No annotation present.");
         }
 
@@ -368,7 +386,7 @@ public class CommandManager {
 
     // Returns whether a player has permission.
     private boolean hasPermission(Player player, String perm) {
-        return ((Player) player).hasPermission("citizens." + perm);
+        return player.hasPermission("citizens." + perm);
     }
 
     public String[] getAllCommandModifiers(String command) {
