@@ -1,6 +1,7 @@
 package net.citizensnpcs.util;
 
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -18,7 +19,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     public ByIdArray(int capacity) {
         if (capacity < 0)
-            throw new IllegalArgumentException("illegal capacity");
+            throw new IllegalArgumentException("Capacity cannot be less than 0.");
         this.capacity = capacity;
         elementData = new Object[capacity];
     }
@@ -81,6 +82,7 @@ public class ByIdArray<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
+            private final int expected = ByIdArray.this.modCount;
             private int idx = lowest;
 
             @Override
@@ -91,6 +93,8 @@ public class ByIdArray<T> implements Iterable<T> {
             @Override
             @SuppressWarnings("unchecked")
             public T next() {
+                if (ByIdArray.this.modCount != expected)
+                    throw new ConcurrentModificationException();
                 T next = (T) elementData[idx];
                 if (next == null || idx > highest)
                     throw new NoSuchElementException();
