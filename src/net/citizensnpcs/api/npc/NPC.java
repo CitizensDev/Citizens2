@@ -116,13 +116,16 @@ public interface NPC {
      * 
      * @param location
      *            Location to spawn this NPC
+     * @return Whether this NPC was able to spawn at the location
      */
-    public void spawn(Location location);
+    public boolean spawn(Location location);
 
     /**
      * Despawns this NPC
+     * 
+     * @return Whether this NPC was able to despawn
      */
-    public void despawn();
+    public boolean despawn();
 
     /**
      * Permanently removes this NPC
