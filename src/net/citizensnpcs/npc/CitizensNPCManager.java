@@ -2,6 +2,7 @@ package net.citizensnpcs.npc;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +17,6 @@ import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.resources.lib.CraftNPC;
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.util.ByIdArray;
-
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Packet29DestroyEntity;
@@ -71,8 +71,8 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     @Override
-    public Iterable<NPC> getAllNPCs() {
-        return byID;
+    public Iterator<NPC> iterator() {
+        return byID.iterator();
     }
 
     private MinecraftServer getMinecraftServer(Server server) {
@@ -92,9 +92,9 @@ public class CitizensNPCManager implements NPCManager {
     @Override
     public Collection<NPC> getNPCs(Class<? extends Character> character) {
         List<NPC> npcs = new ArrayList<NPC>();
-        for (NPC npc : getAllNPCs()) {
+        for (NPC npc : this) {
             if (npc.getCharacter() != null
-                    && CitizensAPI.getCharacterManager().getInstance(npc.getCharacter().getName()) != null)
+                    && CitizensAPI.getCharacterManager().getInstance(npc.getCharacter().getName(), npc) != null)
                 npcs.add(npc);
         }
         return npcs;
@@ -170,5 +170,9 @@ public class CitizensNPCManager implements NPCManager {
         if (!selected.containsKey(player.getName()))
             return null;
         return getNPC(selected.get(player.getName()));
+    }
+
+    public int size() {
+        return byID.size();
     }
 }

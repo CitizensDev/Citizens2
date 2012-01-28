@@ -1,13 +1,10 @@
 package net.citizensnpcs.npc;
 
-import net.citizensnpcs.Citizens;
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.ai.Navigator;
-import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.resources.lib.CraftNPC;
@@ -16,7 +13,6 @@ import net.citizensnpcs.util.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 public class CitizensNPC extends AbstractNPC {
     private CraftNPC mcEntity;
@@ -41,7 +37,6 @@ public class CitizensNPC extends AbstractNPC {
         getHandle().die();
 
         spawned = false;
-        save();
         return true;
     }
 
@@ -92,35 +87,10 @@ public class CitizensNPC extends AbstractNPC {
         addTrait(new SpawnLocation(loc));
 
         spawned = true;
-        save();
         return true;
     }
 
     @Override
-    public void chat(String message) {
-        String formatted = "<" + getName() + "> " + message;
-        for (Player player : Bukkit.getOnlinePlayers())
-            player.sendMessage(formatted);
-        if (Setting.PRINT_CHAT_TO_CONSOLE.getBoolean())
-            Messaging.log(formatted);
-    }
-
-    public void save() {
-        DataKey key = Citizens.getNPCStorage().getKey("npc." + getId());
-        key.setString("name", getFullName());
-        if (!key.keyExists("spawned"))
-            key.setBoolean("spawned", true);
-        if (key.getBoolean("spawned"))
-            key.setBoolean("spawned", !getBukkitEntity().isDead());
-
-        // Save the character if it exists
-        if (getCharacter() != null) {
-            key.setString("character", getCharacter().getName());
-            getCharacter().save(key.getRelative("characters." + getCharacter().getName()));
-        }
-
-        // Save all existing traits
-        for (Trait trait : getTraits())
-            trait.save(key.getRelative(trait.getName()));
+    public void load(DataKey root) {
     }
 }

@@ -1,8 +1,5 @@
 package net.citizensnpcs.command.command;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
@@ -16,6 +13,9 @@ import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
     private final CitizensNPCManager npcManager;
@@ -26,20 +26,15 @@ public class NPCCommands {
         this.characterManager = characterManager;
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "create [name] (character)",
-             desc = "Create a new NPC",
-             modifiers = { "create" },
-             min = 2,
-             max = 3)
+    @Command(aliases = { "npc" }, usage = "create [name] (character)", desc = "Create a new NPC",
+            modifiers = { "create" }, min = 2, max = 3)
     @Permission("npc.create")
     @Requirements
     public void createNPC(CommandContext args, Player player, NPC npc) {
         CitizensNPC create = (CitizensNPC) npcManager.createNPC(args.getString(1));
         String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
-        if (args.argsLength() == 3 && characterManager.getInstance(args.getString(2)) != null) {
-            create.setCharacter(characterManager.getInstance(args.getString(2)));
+        if (args.argsLength() == 3 && characterManager.getInstance(args.getString(2), create) != null) {
+            create.setCharacter(characterManager.getInstance(args.getString(2), create));
             msg += " with the character " + StringHelper.wrap(args.getString(2));
         }
         msg += " at your location.";
@@ -53,13 +48,8 @@ public class NPCCommands {
         Messaging.send(player, msg);
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "spawn [id]",
-             desc = "Spawn an existing NPC",
-             modifiers = { "spawn" },
-             min = 2,
-             max = 2)
+    @Command(aliases = { "npc" }, usage = "spawn [id]", desc = "Spawn an existing NPC", modifiers = { "spawn" },
+            min = 2, max = 2)
     @Permission("npc.spawn")
     @Requirements(ownership = true)
     public void spawnNPC(CommandContext args, Player player, NPC npc) {
@@ -78,13 +68,8 @@ public class NPCCommands {
                     + " is already spawned at another location. Use '/npc tp' to teleport the NPC to your location.");
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "despawn",
-             desc = "Despawn an NPC",
-             modifiers = { "despawn" },
-             min = 1,
-             max = 1)
+    @Command(aliases = { "npc" }, usage = "despawn", desc = "Despawn an NPC", modifiers = { "despawn" }, min = 1,
+            max = 1)
     @Permission("npc.despawn")
     public void despawnNPC(CommandContext args, Player player, NPC npc) {
         npc.despawn();
