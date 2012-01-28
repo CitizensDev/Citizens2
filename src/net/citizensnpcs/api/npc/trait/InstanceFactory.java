@@ -7,7 +7,7 @@ import net.citizensnpcs.api.npc.NPC;
  * linked to a name, and produce objects on demand.
  * 
  * @param <T>
- *            The type of objects this will produce
+ *            Type of objects this will produce
  */
 public interface InstanceFactory<T> {
     public abstract T getInstance(String name, NPC npc);

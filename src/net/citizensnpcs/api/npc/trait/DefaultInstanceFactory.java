@@ -33,16 +33,16 @@ public class DefaultInstanceFactory<T> implements InstanceFactory<T> {
         private DefaultFactory(Class<? extends T> clazz) {
             this.clazz = clazz;
             try {
-                this.constructor = clazz.getConstructor(NPC.class);
-            } catch (Exception e) {
-                this.constructor = null;
+                constructor = clazz.getConstructor(NPC.class);
+            } catch (Exception ex) {
+                constructor = null;
             }
         }
 
         @Override
         public T create(NPC npc) {
             try {
-                return constructor != null ? constructor.newInstance(npc) : clazz.newInstance();
+                return constructor != null ? (T) constructor.newInstance(npc) : (T) clazz.newInstance();
             } catch (Exception ex) {
                 return null;
             }
