@@ -50,13 +50,6 @@ public interface NPCManager extends Iterable<NPC> {
     public NPC getNPC(Entity entity);
 
     /**
-     * Gets all spawned NPCs
-     * 
-     * @return All spawned NPCs
-     */
-    public Iterable<NPC> getSpawnedNPCs();
-
-    /**
      * Gets all NPCs with the given character
      * 
      * @param character
