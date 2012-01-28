@@ -45,17 +45,14 @@ import net.citizensnpcs.command.exception.RequirementMissingException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandManager {
-
     // Logger for general errors.
     private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
-
     /*
      * Mapping of commands (including aliases) with a description. Root commands
      * are stored under a key of null, whereas child commands are cached under
@@ -63,28 +60,17 @@ public class CommandManager {
      * (one for each alias) with the method.
      */
     private final Map<Method, Map<CommandIdentifier, Method>> commands = new HashMap<Method, Map<CommandIdentifier, Method>>();
-
     // Used to store the instances associated with a method.
     private final Map<Method, Object> instances = new HashMap<Method, Object>();
-
     /*
      * Mapping of commands (not including aliases) with a description. This is
      * only for top level commands.
      */
     private final Map<CommandIdentifier, String> descs = new HashMap<CommandIdentifier, String>();
-
     // Stores the injector used to getInstance.
     private Injector injector;
-
     private final Map<Method, Requirements> requirements = new HashMap<Method, Requirements>();
-
     private final Map<Method, ServerCommand> serverCommands = new HashMap<Method, ServerCommand>();
-
-    private final CitizensNPCManager npcManager;
-
-    public CommandManager(CitizensNPCManager npcManager) {
-        this.npcManager = npcManager;
-    }
 
     /*
      * Register an class that contains commands (denoted by Command. If no
@@ -324,17 +310,13 @@ public class CommandManager {
         else if (methodArgs[1] instanceof Player) {
             Requirements cmdRequirements = requirements.get(method);
             if (cmdRequirements != null) {
-                if (methodArgs[2] instanceof NPC) {
-                    NPC npc = npcManager.getSelectedNPC(player);
-                    if (npc != null)
-                        methodArgs[2] = npc;
+                NPC npc = (NPC) methodArgs[2];
 
-                    if (cmdRequirements.selected() && npc == null)
-                        throw new RequirementMissingException("You must have an NPC selected to execute that command.");
-                    if (cmdRequirements.ownership() && !npc.getTrait(Owner.class).getOwner().equals(player.getName()))
-                        throw new RequirementMissingException(
-                                "You must be the owner of this NPC to execute that command.");
-                }
+                if (cmdRequirements.selected() && npc == null)
+                    throw new RequirementMissingException("You must have an NPC selected to execute that command.");
+                if (cmdRequirements.ownership() && npc != null
+                        && !npc.getTrait(Owner.class).getOwner().equals(player.getName()))
+                    throw new RequirementMissingException("You must be the owner of this NPC to execute that command.");
             } else
                 Messaging.debug("No annotation present.");
         }

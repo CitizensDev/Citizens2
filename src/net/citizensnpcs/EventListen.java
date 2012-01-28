@@ -50,6 +50,8 @@ public class EventListen implements Listener {
             return;
 
         for (NPC npc : npcManager) {
+            if (!npc.isSpawned())
+                return;
             Location loc = npc.getBukkitEntity().getLocation();
             if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
                     && event.getChunk().getZ() == loc.getChunk().getZ()) {
@@ -86,6 +88,8 @@ public class EventListen implements Listener {
                 return;
 
         NPC npc = npcManager.getNPC(event.getEntity());
+        if (npc == null)
+            return;
         Player player = (Player) event.getTarget();
         if (!npcManager.npcIsSelectedByPlayer(player, npc)) {
             if (npcManager.canSelectNPC(player, npc)) {

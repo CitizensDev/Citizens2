@@ -14,7 +14,7 @@ import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
-import net.citizensnpcs.resources.lib.CraftNPC;
+import net.citizensnpcs.resource.lib.CraftNPC;
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.util.ByIdArray;
 import net.minecraft.server.ItemInWorldManager;

@@ -26,8 +26,13 @@ public class NPCCommands {
         this.characterManager = characterManager;
     }
 
-    @Command(aliases = { "npc" }, usage = "create [name] (character)", desc = "Create a new NPC",
-            modifiers = { "create" }, min = 2, max = 3)
+    @Command(
+             aliases = { "npc" },
+             usage = "create [name] (character)",
+             desc = "Create a new NPC",
+             modifiers = { "create" },
+             min = 2,
+             max = 3)
     @Permission("npc.create")
     @Requirements
     public void createNPC(CommandContext args, Player player, NPC npc) {
@@ -48,14 +53,24 @@ public class NPCCommands {
         Messaging.send(player, msg);
     }
 
-    @Command(aliases = { "npc" }, usage = "spawn [id]", desc = "Spawn an existing NPC", modifiers = { "spawn" },
-            min = 2, max = 2)
+    @Command(
+             aliases = { "npc" },
+             usage = "spawn [id]",
+             desc = "Spawn an existing NPC",
+             modifiers = { "spawn" },
+             min = 2,
+             max = 2)
     @Permission("npc.spawn")
-    @Requirements(ownership = true)
+    @Requirements
     public void spawnNPC(CommandContext args, Player player, NPC npc) {
         CitizensNPC respawn = (CitizensNPC) npcManager.getNPC(args.getInteger(1));
         if (respawn == null) {
             Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' exists.");
+            return;
+        }
+
+        if (!respawn.getTrait(Owner.class).getOwner().equals(player.getName())) {
+            Messaging.sendError(player, "You must be the owner of this NPC to execute that command.");
             return;
         }
 
@@ -68,8 +83,13 @@ public class NPCCommands {
                     + " is already spawned at another location. Use '/npc tp' to teleport the NPC to your location.");
     }
 
-    @Command(aliases = { "npc" }, usage = "despawn", desc = "Despawn an NPC", modifiers = { "despawn" }, min = 1,
-            max = 1)
+    @Command(
+             aliases = { "npc" },
+             usage = "despawn",
+             desc = "Despawn an NPC",
+             modifiers = { "despawn" },
+             min = 1,
+             max = 1)
     @Permission("npc.despawn")
     public void despawnNPC(CommandContext args, Player player, NPC npc) {
         npc.despawn();

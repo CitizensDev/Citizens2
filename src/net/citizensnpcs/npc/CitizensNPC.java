@@ -7,7 +7,7 @@ import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.ai.Navigator;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
-import net.citizensnpcs.resources.lib.CraftNPC;
+import net.citizensnpcs.resource.lib.CraftNPC;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;

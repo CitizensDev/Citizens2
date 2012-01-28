@@ -226,7 +226,7 @@ public class Citizens extends JavaPlugin {
     }
 
     private void registerCommands() {
-        cmdManager = new CommandManager(npcManager);
+        cmdManager = new CommandManager();
         cmdManager.setInjector(new Injector(npcManager, characterManager));
 
         // cmdManager.register(AdminCommands.class);
