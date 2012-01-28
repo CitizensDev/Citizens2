@@ -2,17 +2,17 @@ package net.citizensnpcs.npc;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
-import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.resource.lib.CraftNPC;
 import net.citizensnpcs.storage.Storage;
@@ -35,7 +35,7 @@ import org.bukkit.entity.Player;
 public class CitizensNPCManager implements NPCManager {
     private final ByIdArray<NPC> spawned = new ByIdArray<NPC>();
     private final ByIdArray<NPC> byID = new ByIdArray<NPC>();
-    private final Map<String, Integer> selected = new ConcurrentHashMap<String, Integer>();
+    private final Map<Integer, Set<String>> selected = new ConcurrentHashMap<Integer, Set<String>>();
     private final Storage saves;
 
     public CitizensNPCManager(Storage saves) {
@@ -61,13 +61,16 @@ public class CitizensNPCManager implements NPCManager {
 
     public void despawn(NPC npc) {
         CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
-        for (Player player : Bukkit.getOnlinePlayers())
-            ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));
         Location loc = npc.getBukkitEntity().getLocation();
-        getWorldServer(loc.getWorld()).removeEntity(mcEntity);
         npc.getTrait(SpawnLocation.class).setLocation(loc);
 
+        if (selected.get(npc.getId()) != null)
+            selected.get(npc.getId()).clear();
         spawned.remove(mcEntity.getPlayer().getEntityId());
+        for (Player player : Bukkit.getOnlinePlayers())
+            ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));
+        getWorldServer(loc.getWorld()).removeEntity(mcEntity);
+        mcEntity.die();
     }
 
     @Override
@@ -100,12 +103,7 @@ public class CitizensNPCManager implements NPCManager {
         return npcs;
     }
 
-    @Override
-    public Iterable<NPC> getSpawnedNPCs() {
-        return spawned;
-    }
-
-    public int generateUniqueId() {
+    private int generateUniqueId() {
         int count = 0;
         while (getNPC(count++) != null)
             ;
@@ -122,10 +120,11 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public void remove(NPC npc) {
-        if (spawned.contains(npc.getBukkitEntity().getEntityId()))
+        if (spawned.contains(((CitizensNPC) npc).getHandle().getPlayer().getEntityId()))
             despawn(npc);
         byID.remove(npc.getId());
         saves.getKey("npc").removeKey("" + npc.getId());
+        selected.remove(npc.getId());
     }
 
     public CraftNPC spawn(NPC npc, Location loc) {
@@ -142,34 +141,30 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public void selectNPC(Player player, NPC npc) {
-        selected.put(player.getName(), npc.getId());
-    }
+        // Remove existing selection if any
+        NPC select = getSelectedNPC(player);
+        if (select != null)
+            selected.get(select.getId()).remove(player.getName());
 
-    public void deselectNPC(Player player) {
-        selected.remove(player.getName());
+        Set<String> selectors = selected.get(npc.getId());
+        if (selectors == null)
+            selectors = new HashSet<String>();
+        selectors.add(player.getName());
+        selected.put(npc.getId(), selectors);
     }
 
     public boolean npcIsSelectedByPlayer(Player player, NPC npc) {
-        if (!selected.containsKey(player.getName()))
+        if (!selected.containsKey(npc.getId()))
             return false;
-        return selected.get(player.getName()) == npc.getId();
-    }
-
-    public boolean hasNPCSelected(Player player) {
-        return selected.containsKey(player.getName());
-    }
-
-    public boolean canSelectNPC(Player player, NPC npc) {
-        if (player.hasPermission("citizens.npc.select"))
-            return player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.getInt()
-                    && npc.getTrait(Owner.class).getOwner().equals(player.getName());
-        return false;
+        return selected.get(npc.getId()).contains(player.getName());
     }
 
     public NPC getSelectedNPC(Player player) {
-        if (!selected.containsKey(player.getName()))
-            return null;
-        return getNPC(selected.get(player.getName()));
+        for (int id : selected.keySet()) {
+            if (selected.get(id).contains(player.getName()))
+                return getNPC(id);
+        }
+        return null;
     }
 
     public int size() {
