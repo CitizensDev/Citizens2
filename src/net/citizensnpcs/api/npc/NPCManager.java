@@ -9,7 +9,7 @@ import org.bukkit.entity.Entity;
 /**
  * Handles various NPC-related methods
  */
-public interface NPCManager {
+public interface NPCManager extends Iterable<NPC> {
 
     /**
      * Creates an NPC with no attached character (this does not spawn the NPC)
@@ -48,13 +48,6 @@ public interface NPCManager {
      * @return NPC from the given entity (must be spawned)
      */
     public NPC getNPC(Entity entity);
-
-    /**
-     * Gets all NPCs (may or may not be spawned)
-     * 
-     * @return All NPCs
-     */
-    public Iterable<NPC> getAllNPCs();
 
     /**
      * Gets all spawned NPCs

@@ -4,11 +4,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public abstract class AbstractNPC implements NPC {
     protected final int id;
@@ -78,5 +81,31 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void setCharacter(Character character) {
         this.character = character;
+    }
+
+    @Override
+    public void chat(String message) {
+        String formatted = "<" + getName() + "> " + message;
+        for (Player player : Bukkit.getOnlinePlayers())
+            player.sendMessage(formatted);
+    }
+
+    @Override
+    public void save(DataKey root) {
+        root.setString("name", getFullName());
+        if (!root.keyExists("spawned"))
+            root.setBoolean("spawned", true);
+        if (root.getBoolean("spawned"))
+            root.setBoolean("spawned", !getBukkitEntity().isDead());
+
+        // Save the character if it exists
+        if (getCharacter() != null) {
+            root.setString("character", getCharacter().getName());
+            getCharacter().save(root.getRelative("characters." + getCharacter().getName()));
+        }
+
+        // Save all existing traits
+        for (Trait trait : getTraits())
+            trait.save(root.getRelative(trait.getName()));
     }
 }

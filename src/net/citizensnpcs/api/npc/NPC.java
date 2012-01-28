@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.npc;
 
+import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.npc.ai.Navigator;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
@@ -131,6 +132,10 @@ public interface NPC {
      * Permanently removes this NPC
      */
     public void remove();
+
+    public void save(DataKey root);
+
+    public void load(DataKey root);
 
     /**
      * Sends a message to all players online with this NPC's formatted name
