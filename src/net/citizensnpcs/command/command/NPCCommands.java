@@ -37,12 +37,20 @@ public class NPCCommands {
     @Requirements
     public void createNPC(CommandContext args, Player player, NPC npc) {
         CitizensNPC create = (CitizensNPC) npcManager.createNPC(args.getString(1));
-        String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
-        if (args.argsLength() == 3 && characterManager.getInstance(args.getString(2), create) != null) {
-            create.setCharacter(characterManager.getInstance(args.getString(2), create));
-            msg += " with the character " + StringHelper.wrap(args.getString(2));
+        String successMsg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
+        boolean success = true;
+        if (args.argsLength() == 3) {
+            if (characterManager.getInstance(args.getString(2), create) == null) {
+                Messaging.sendError(player,
+                        "The character '" + args.getString(2) + "' does not exist. " + create.getName()
+                                + " was created at your location without a character.");
+                success = false;
+            } else {
+                create.setCharacter(characterManager.getInstance(args.getString(2), create));
+                successMsg += " with the character " + StringHelper.wrap(args.getString(2));
+            }
         }
-        msg += " at your location.";
+        successMsg += " at your location.";
 
         // Set the owner
         create.addTrait(new Owner(player.getName()));
@@ -50,7 +58,8 @@ public class NPCCommands {
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);
-        Messaging.send(player, msg);
+        if (success)
+            Messaging.send(player, successMsg);
     }
 
     @Command(
@@ -93,7 +102,6 @@ public class NPCCommands {
     @Permission("npc.despawn")
     public void despawnNPC(CommandContext args, Player player, NPC npc) {
         npc.despawn();
-        npcManager.deselectNPC(player);
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
 }

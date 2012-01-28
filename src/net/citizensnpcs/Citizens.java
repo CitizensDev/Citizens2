@@ -79,7 +79,7 @@ public class Citizens extends JavaPlugin {
             }
 
             NPC npc = null;
-            if (player != null && npcManager.hasNPCSelected(player))
+            if (player != null)
                 npc = npcManager.getSelectedNPC(player);
 
             try {
@@ -190,13 +190,6 @@ public class Citizens extends JavaPlugin {
             // Load the character if it exists, otherwise remove the character
             if (character != null)
                 character.load(key.getRelative("characters." + character.getName()));
-            else {
-                if (key.keyExists("character")) {
-                    Messaging.debug("Character '" + key.getString("character")
-                            + "' does not exist. Removing character from the NPC with ID '" + npc.getId() + "'.");
-                    key.removeKey("character");
-                }
-            }
 
             // Load traits
             for (DataKey traitKey : key.getSubKeys()) {

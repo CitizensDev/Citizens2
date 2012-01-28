@@ -34,7 +34,6 @@ public class CitizensNPC extends AbstractNPC {
         Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
 
         manager.despawn(this);
-        getHandle().die();
 
         spawned = false;
         return true;
@@ -78,10 +77,7 @@ public class CitizensNPC extends AbstractNPC {
         if (spawnEvent.isCancelled())
             return false;
 
-        if (mcEntity == null)
-            mcEntity = manager.spawn(this, loc);
-        else
-            manager.spawn(this, loc);
+        mcEntity = manager.spawn(this, loc);
 
         // Set the location
         addTrait(new SpawnLocation(loc));

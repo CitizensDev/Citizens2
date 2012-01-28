@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.util.Messaging;
@@ -92,7 +93,9 @@ public class EventListen implements Listener {
             return;
         Player player = (Player) event.getTarget();
         if (!npcManager.npcIsSelectedByPlayer(player, npc)) {
-            if (npcManager.canSelectNPC(player, npc)) {
+            if (player.hasPermission("citizens.npc.select")
+                    && player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.getInt()
+                    && npc.getTrait(Owner.class).getOwner().equals(player.getName())) {
                 npcManager.selectNPC(player, npc);
                 Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.getString(), npc);
                 if (!Setting.QUICK_SELECT.getBoolean())
