@@ -29,12 +29,10 @@ import net.citizensnpcs.command.exception.RequirementMissingException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.storage.database.DatabaseStorage;
 import net.citizensnpcs.storage.flatfile.YamlStorage;
-import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
@@ -50,7 +48,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Citizens extends JavaPlugin {
     private static Storage saves;
 
-    private CitizensNPCManager npcManager;
+    private volatile CitizensNPCManager npcManager;
     private final InstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
     private final InstanceFactory<Trait> traitManager = new DefaultInstanceFactory<Trait>();
     private CommandManager cmdManager;
@@ -117,9 +115,8 @@ public class Citizens extends JavaPlugin {
         // Save and despawn all NPCs
         config.save();
         saveNPCs();
-        for (NPC npc : npcManager.getAllNPCs())
+        for (NPC npc : npcManager)
             npc.despawn();
-
         Bukkit.getScheduler().cancelTasks(this);
 
         Messaging.log("v" + getDescription().getVersion() + " disabled.");
@@ -174,8 +171,8 @@ public class Citizens extends JavaPlugin {
     }
 
     private void saveNPCs() {
-        for (NPC npc : npcManager.getAllNPCs())
-            ((CitizensNPC) npc).save();
+        for (NPC npc : npcManager)
+            npc.save(getNPCStorage().getKey("npc." + npc.getId()));
         getNPCStorage().save();
     }
 
@@ -187,7 +184,7 @@ public class Citizens extends JavaPlugin {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
-            Character character = characterManager.getInstance(key.getString("character"));
+            Character character = characterManager.getInstance(key.getString("character"), null);
             NPC npc = npcManager.createNPC(id, key.getString("name"), character);
 
             // Load the character if it exists, otherwise remove the character
@@ -203,7 +200,7 @@ public class Citizens extends JavaPlugin {
 
             // Load traits
             for (DataKey traitKey : key.getSubKeys()) {
-                Trait trait = traitManager.getInstance(traitKey.name());
+                Trait trait = traitManager.getInstance(traitKey.name(), npc);
                 if (trait == null)
                     continue;
                 trait.load(traitKey);
@@ -214,8 +211,7 @@ public class Citizens extends JavaPlugin {
             if (key.getBoolean("spawned"))
                 npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
         }
-        Messaging.log("Loaded " + ((ByIdArray<NPC>) npcManager.getAllNPCs()).size() + " NPCs ("
-                + ((ByIdArray<NPC>) npcManager.getSpawnedNPCs()).size() + " spawned).");
+        Messaging.log("Loaded " + npcManager.size() + " NPCs");
     }
 
     private void registerPermissions() {

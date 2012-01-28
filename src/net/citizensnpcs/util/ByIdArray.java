@@ -35,7 +35,6 @@ public class ByIdArray<T> implements Iterable<T> {
         int index = 0;
         while (elementData[index++] != null) {
             if (index >= elementData.length) {
-                System.out.println(elementData.length + " " + index);
                 ensureCapacity(elementData.length + 1);
                 index = elementData.length - 1;
             }
@@ -82,11 +81,13 @@ public class ByIdArray<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            private final int expected = ByIdArray.this.modCount;
+            private int expected = ByIdArray.this.modCount;
             private int idx = lowest;
 
             @Override
             public boolean hasNext() {
+                if (ByIdArray.this.modCount != expected)
+                    throw new ConcurrentModificationException();
                 return highest + 1 > idx && size > 0;
             }
 
@@ -106,7 +107,10 @@ public class ByIdArray<T> implements Iterable<T> {
 
             @Override
             public void remove() {
+                if (ByIdArray.this.modCount != expected)
+                    throw new ConcurrentModificationException();
                 ByIdArray.this.fastRemove(idx);
+                expected = ByIdArray.this.modCount;
             }
         };
     }

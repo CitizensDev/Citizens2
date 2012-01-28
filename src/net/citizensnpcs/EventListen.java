@@ -25,7 +25,7 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class EventListen implements Listener {
     private final List<Integer> toRespawn = new ArrayList<Integer>();
-    private final CitizensNPCManager npcManager;
+    private volatile CitizensNPCManager npcManager;
 
     public EventListen(CitizensNPCManager npcManager) {
         this.npcManager = npcManager;
@@ -49,7 +49,7 @@ public class EventListen implements Listener {
         if (event.isCancelled())
             return;
 
-        for (NPC npc : npcManager.getAllNPCs()) {
+        for (NPC npc : npcManager) {
             Location loc = npc.getBukkitEntity().getLocation();
             if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
                     && event.getChunk().getZ() == loc.getChunk().getZ()) {
