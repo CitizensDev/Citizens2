@@ -84,13 +84,10 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (npcManager.isNPC(event.getTarget()))
-            if (event.isCancelled() || !npcManager.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
-                return;
+        if (event.isCancelled() || !npcManager.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
+            return;
 
         NPC npc = npcManager.getNPC(event.getEntity());
-        if (npc == null)
-            return;
         Player player = (Player) event.getTarget();
         if (!npcManager.npcIsSelectedByPlayer(player, npc)) {
             if (player.hasPermission("citizens.npc.select")
