@@ -1,4 +1,4 @@
-package net.citizensnpcs.resources.lib;
+package net.citizensnpcs.resource.lib;
 
 import java.io.InputStream;
 import java.io.OutputStream;

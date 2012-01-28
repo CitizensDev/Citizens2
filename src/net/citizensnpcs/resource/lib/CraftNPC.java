@@ -1,4 +1,4 @@
-package net.citizensnpcs.resources.lib;
+package net.citizensnpcs.resource.lib;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
