@@ -4,9 +4,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
+import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -107,5 +109,29 @@ public abstract class AbstractNPC implements NPC {
         // Save all existing traits
         for (Trait trait : getTraits())
             trait.save(root.getRelative(trait.getName()));
+    }
+
+    @Override
+    public void load(DataKey root) {
+        Character character = CitizensAPI.getCharacterManager().getInstance(root.getString("character"), this);
+
+        // Load the character if it exists, otherwise remove the character
+        if (character != null) {
+            character.load(root.getRelative("characters." + character.getName()));
+            setCharacter(character);
+        }
+
+        // Load traits
+        for (DataKey traitKey : root.getSubKeys()) {
+            Trait trait = CitizensAPI.getTraitManager().getInstance(traitKey.name(), this);
+            if (trait == null)
+                continue;
+            trait.load(traitKey);
+            addTrait(trait);
+        }
+
+        // Spawn the NPC
+        if (root.getBoolean("spawned"))
+            spawn(getTrait(SpawnLocation.class).getLocation());
     }
 }
