@@ -191,11 +191,15 @@ public class Citizens extends JavaPlugin {
     }
 
     private void registerPermissions() {
+        // TODO There has to be a better way than this (maybe use Permission
+        // annotation to register permissions?)
         Map<String, Boolean> children = new HashMap<String, Boolean>();
         children.put("citizens.npc.create", true);
         children.put("citizens.npc.spawn", true);
         children.put("citizens.npc.despawn", true);
         children.put("citizens.npc.select", true);
+        children.put("citizens.npc.tp", true);
+        children.put("citizens.npc.tphere", true);
 
         Permission perm = new Permission("citizens.*", PermissionDefault.OP, children);
         getServer().getPluginManager().addPermission(perm);

@@ -31,9 +31,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
 public class CitizensNPCManager implements NPCManager {
-    // TODO: merge spawned and byID
-    private final ByIdArray<NPC> spawned = new ByIdArray<NPC>();
-    private final ByIdArray<NPC> byID = new ByIdArray<NPC>();
+    private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
     private final SetMultimap<Integer, String> selected = HashMultimap.create();
     private final Storage saves;
 
@@ -52,11 +50,12 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public NPC createNPC(int id, String name, Character character) {
-        if (byID.contains(id))
-            throw new IllegalArgumentException("id already taken");
+        if (npcs.contains(id))
+            throw new IllegalArgumentException("An NPC already has the ID '" + id + "'.");
+
         CitizensNPC npc = new CitizensNPC(this, id, name);
         npc.setCharacter(character);
-        byID.put(npc.getId(), npc);
+        npcs.put(npc.getId(), npc);
         return npc;
     }
 
@@ -66,7 +65,6 @@ public class CitizensNPCManager implements NPCManager {
         npc.getTrait(SpawnLocation.class).setLocation(loc);
 
         selected.removeAll(npc.getId());
-        spawned.remove(mcEntity.getPlayer().getEntityId());
         for (Player player : Bukkit.getOnlinePlayers())
             ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));
         mcEntity.die();
@@ -74,7 +72,7 @@ public class CitizensNPCManager implements NPCManager {
 
     @Override
     public Iterator<NPC> iterator() {
-        return byID.iterator();
+        return npcs.iterator();
     }
 
     private MinecraftServer getMinecraftServer(Server server) {
@@ -83,22 +81,23 @@ public class CitizensNPCManager implements NPCManager {
 
     @Override
     public NPC getNPC(Entity entity) {
-        return spawned.get(entity.getEntityId());
+        for (NPC npc : npcs)
+            if (npc.isSpawned() && npc.getBukkitEntity().getEntityId() == entity.getEntityId())
+                return npc;
+        return null;
     }
 
     @Override
     public NPC getNPC(int id) {
-        return byID.get(id);
+        return npcs.get(id);
     }
 
     @Override
     public Collection<NPC> getNPCs(Class<? extends Character> character) {
         List<NPC> npcs = new ArrayList<NPC>();
-        for (NPC npc : this) {
-            if (npc.getCharacter() != null && npc.getCharacter().getClass().equals(character)) {
+        for (NPC npc : this)
+            if (npc.getCharacter() != null && npc.getCharacter().getClass().equals(character))
                 npcs.add(npc);
-            }
-        }
         return npcs;
     }
 
@@ -115,13 +114,13 @@ public class CitizensNPCManager implements NPCManager {
 
     @Override
     public boolean isNPC(Entity entity) {
-        return spawned.contains(entity.getEntityId());
+        return getNPC(entity) != null;
     }
 
     public void remove(NPC npc) {
-        if (spawned.contains(npc.getBukkitEntity().getEntityId()))
+        if (npc.isSpawned())
             despawn(npc);
-        byID.remove(npc.getId());
+        npcs.remove(npc.getId());
         saves.getKey("npc").removeKey("" + npc.getId());
         selected.removeAll(npc.getId());
     }
@@ -134,16 +133,14 @@ public class CitizensNPCManager implements NPCManager {
         mcEntity.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         ws.addEntity(mcEntity);
         ws.players.remove(mcEntity);
-
-        spawned.put(mcEntity.getPlayer().getEntityId(), npc);
         return mcEntity;
     }
 
     public void selectNPC(Player player, NPC npc) {
         // Remove existing selection if any
-        NPC select = getSelectedNPC(player);
-        if (select != null)
-            selected.get(select.getId()).remove(player.getName());
+        NPC existing = getSelectedNPC(player);
+        if (existing != null)
+            selected.get(existing.getId()).remove(player.getName());
         selected.put(npc.getId(), player.getName());
     }
 
