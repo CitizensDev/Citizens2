@@ -14,7 +14,6 @@ import net.minecraft.server.World;
 
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
 
 @SuppressWarnings("unchecked")
 public class CraftNPC extends EntityPlayer {
@@ -40,7 +39,7 @@ public class CraftNPC extends EntityPlayer {
     }
 
     @Override
-    public Entity getBukkitEntity() {
+    public CraftPlayer getBukkitEntity() {
         if (this.bukkitEntity == null) {
             super.getBukkitEntity();
             removeFromPlayerMap(name);
