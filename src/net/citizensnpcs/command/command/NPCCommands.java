@@ -15,6 +15,7 @@ import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
@@ -89,7 +90,7 @@ public class NPCCommands {
                     + " at your location.");
         } else
             Messaging.sendError(player, respawn.getName()
-                    + " is already spawned at another location. Use '/npc tp' to teleport the NPC to your location.");
+                    + " is already spawned at another location. Use '/npc move' to teleport the NPC to your location.");
     }
 
     @Command(
@@ -103,5 +104,31 @@ public class NPCCommands {
     public void despawnNPC(CommandContext args, Player player, NPC npc) {
         npc.despawn();
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
+    }
+
+    @Command(
+             aliases = { "npc" },
+             usage = "tp",
+             desc = "Teleport to an NPC",
+             modifiers = { "tp", "teleport" },
+             min = 1,
+             max = 1)
+    @Permission("npc.tp")
+    public void teleportToNPC(CommandContext args, Player player, NPC npc) {
+        player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
+        Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
+    }
+
+    @Command(
+             aliases = { "npc" },
+             usage = "tphere",
+             desc = "Teleport an NPC to your location",
+             modifiers = { "tphere" },
+             min = 1,
+             max = 1)
+    @Permission("npc.tphere")
+    public void teleportNPCToPlayer(CommandContext args, Player player, NPC npc) {
+        npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
+        Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
     }
 }
