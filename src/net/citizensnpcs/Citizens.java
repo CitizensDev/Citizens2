@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -36,24 +37,28 @@ import net.citizensnpcs.storage.database.DatabaseStorage;
 import net.citizensnpcs.storage.flatfile.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
+import net.minecraft.server.MinecraftServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Citizens extends JavaPlugin {
-    private static Storage saves;
+    private static final String COMPATIBLE_MC_VERSION = "1.1";
 
     private volatile CitizensNPCManager npcManager;
     private final InstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
     private final InstanceFactory<Trait> traitManager = new DefaultInstanceFactory<Trait>();
     private CommandManager cmdManager;
     private Settings config;
+    private Storage saves;
+    private boolean skipDisable = false;
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
@@ -113,18 +118,30 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Save and despawn all NPCs
-        config.save();
-        saveNPCs();
-        for (NPC npc : npcManager)
-            npc.despawn();
-        Bukkit.getScheduler().cancelTasks(this);
+        // Don't bother with this part if MC versions are not compatible
+        if (!skipDisable) {
+            config.save();
+            saveNPCs();
+            for (NPC npc : npcManager)
+                npc.despawn();
+            Bukkit.getScheduler().cancelTasks(this);
+        }
 
         Messaging.log("v" + getDescription().getVersion() + " disabled.");
     }
 
     @Override
     public void onEnable() {
+        // Disable if the server is not using the compatible Minecraft version
+        String mcVersion = ((MinecraftServer) ((CraftServer) getServer()).getServer()).getVersion();
+        if (!mcVersion.equals(COMPATIBLE_MC_VERSION)) {
+            Messaging.log(Level.SEVERE, "v" + getDescription().getVersion() + " is not compatible with Minecraft v"
+                    + mcVersion + ". Disabling.");
+            skipDisable = true;
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         // Configuration file
         config = new Settings(this);
         config.load();
@@ -158,11 +175,11 @@ public class Citizens extends JavaPlugin {
                 try {
                     setupNPCs();
                 } catch (NPCLoadException ex) {
-                    Messaging.log("Issue when loading NPCs: " + ex.getMessage());
+                    Messaging.log(Level.SEVERE, "Issue when loading NPCs: " + ex.getMessage());
                 }
             }
         }) == -1) {
-            Messaging.log("Issue enabling plugin. Disabling.");
+            Messaging.log(Level.SEVERE, "Issue enabling plugin. Disabling.");
             getServer().getPluginManager().disablePlugin(this);
         }
     }
