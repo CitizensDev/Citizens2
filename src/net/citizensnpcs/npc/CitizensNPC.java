@@ -41,7 +41,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public Player getBukkitEntity() {
-        return getHandle().getPlayer();
+        return getHandle().getBukkitEntity();
     }
 
     public CraftNPC getHandle() {
