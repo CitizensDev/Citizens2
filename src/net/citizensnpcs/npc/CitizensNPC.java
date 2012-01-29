@@ -33,6 +33,7 @@ public class CitizensNPC extends AbstractNPC {
         Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
 
         manager.despawn(this);
+        mcEntity = null;
         getTrait(Spawned.class).setSpawned(false);
 
         return true;
