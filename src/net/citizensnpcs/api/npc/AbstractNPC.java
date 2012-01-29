@@ -9,6 +9,7 @@ import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
+import net.citizensnpcs.api.npc.trait.trait.Spawned;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -98,7 +99,7 @@ public abstract class AbstractNPC implements NPC {
         if (!root.keyExists("spawned"))
             root.setBoolean("spawned", true);
         if (root.getBoolean("spawned"))
-            root.setBoolean("spawned", !getBukkitEntity().isDead());
+            root.setBoolean("spawned", getTrait(Spawned.class).isSpawned());
 
         // Save the character if it exists
         if (getCharacter() != null) {
