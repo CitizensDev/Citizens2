@@ -1,5 +1,6 @@
 package net.citizensnpcs.command.command;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
@@ -65,13 +66,25 @@ public class NPCCommands {
 
     @Command(
              aliases = { "npc" },
+             usage = "despawn",
+             desc = "Despawn an NPC",
+             modifiers = { "despawn" },
+             min = 1,
+             max = 1)
+    @Permission("npc.despawn")
+    public void despawnNPC(CommandContext args, Player player, NPC npc) {
+        npc.despawn();
+        Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
+    }
+
+    @Command(
+             aliases = { "npc" },
              usage = "spawn [id]",
              desc = "Spawn an existing NPC",
              modifiers = { "spawn" },
              min = 2,
              max = 2)
     @Permission("npc.spawn")
-    @Requirements
     public void spawnNPC(CommandContext args, Player player, NPC npc) {
         CitizensNPC respawn = (CitizensNPC) npcManager.getNPC(args.getInteger(1));
         if (respawn == null) {
@@ -89,34 +102,34 @@ public class NPCCommands {
             Messaging.send(player, ChatColor.GREEN + "You respawned " + StringHelper.wrap(respawn.getName())
                     + " at your location.");
         } else
-            Messaging.sendError(player, respawn.getName()
-                    + " is already spawned at another location. Use '/npc move' to teleport the NPC to your location.");
+            Messaging
+                    .sendError(
+                            player,
+                            respawn.getName()
+                                    + " is already spawned at another location. Use '/npc tphere' to teleport the NPC to your location.");
     }
 
     @Command(
              aliases = { "npc" },
-             usage = "despawn",
-             desc = "Despawn an NPC",
-             modifiers = { "despawn" },
-             min = 1,
-             max = 1)
-    @Permission("npc.despawn")
-    public void despawnNPC(CommandContext args, Player player, NPC npc) {
-        npc.despawn();
-        Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
-    }
-
-    @Command(
-             aliases = { "npc" },
-             usage = "tp",
-             desc = "Teleport to an NPC",
-             modifiers = { "tp", "teleport" },
-             min = 1,
-             max = 1)
-    @Permission("npc.tp")
-    public void teleportToNPC(CommandContext args, Player player, NPC npc) {
-        player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
-        Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
+             usage = "select [id]",
+             desc = "Select an NPC",
+             modifiers = { "select" },
+             min = 2,
+             max = 2)
+    @Permission("npc.select")
+    @Requirements(ownership = true)
+    public void selectNPC(CommandContext args, Player player, NPC npc) {
+        NPC toSelect = npcManager.getNPC(args.getInteger(1));
+        if (toSelect == null) {
+            Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' exists.");
+            return;
+        }
+        if (npc != null && toSelect.getId() == npc.getId()) {
+            Messaging.sendError(player, "You already have that NPC selected.");
+            return;
+        }
+        npcManager.selectNPC(player, toSelect);
+        Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.getString(), toSelect);
     }
 
     @Command(
@@ -130,5 +143,18 @@ public class NPCCommands {
     public void teleportNPCToPlayer(CommandContext args, Player player, NPC npc) {
         npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
+    }
+
+    @Command(
+             aliases = { "npc" },
+             usage = "tp",
+             desc = "Teleport to an NPC",
+             modifiers = { "tp", "teleport" },
+             min = 1,
+             max = 1)
+    @Permission("npc.tp")
+    public void teleportToNPC(CommandContext args, Player player, NPC npc) {
+        player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
+        Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
     }
 }
