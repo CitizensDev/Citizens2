@@ -5,6 +5,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
+import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.annotation.Command;
 import net.citizensnpcs.command.annotation.Permission;
@@ -85,6 +86,7 @@ public class NPCCommands {
              min = 2,
              max = 2)
     @Permission("npc.spawn")
+    @Requirements
     public void spawnNPC(CommandContext args, Player player, NPC npc) {
         CitizensNPC respawn = (CitizensNPC) npcManager.getNPC(args.getInteger(1));
         if (respawn == null) {
@@ -120,8 +122,8 @@ public class NPCCommands {
     @Requirements(ownership = true)
     public void selectNPC(CommandContext args, Player player, NPC npc) {
         NPC toSelect = npcManager.getNPC(args.getInteger(1));
-        if (toSelect == null) {
-            Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' exists.");
+        if (toSelect == null || !toSelect.getTrait(Spawned.class).isSpawned()) {
+            Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' is spawned.");
             return;
         }
         if (npc != null && toSelect.getId() == npc.getId()) {

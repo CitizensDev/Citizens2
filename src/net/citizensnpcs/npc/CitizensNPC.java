@@ -5,6 +5,7 @@ import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.ai.Navigator;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
+import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.resource.lib.CraftNPC;
 import net.citizensnpcs.util.Messaging;
@@ -15,7 +16,6 @@ import org.bukkit.entity.Player;
 
 public class CitizensNPC extends AbstractNPC {
     private CraftNPC mcEntity;
-    private boolean spawned;
     private final CitizensNPCManager manager;
 
     public CitizensNPC(CitizensNPCManager manager, int id, String name) {
@@ -33,8 +33,8 @@ public class CitizensNPC extends AbstractNPC {
         Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
 
         manager.despawn(this);
+        getTrait(Spawned.class).setSpawned(false);
 
-        spawned = false;
         return true;
     }
 
@@ -54,7 +54,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean isSpawned() {
-        return spawned;
+        return getHandle() != null;
     }
 
     @Override
@@ -79,9 +79,16 @@ public class CitizensNPC extends AbstractNPC {
         mcEntity = manager.spawn(this, loc);
 
         // Set the location
-        addTrait(new SpawnLocation(loc));
+        if (!hasTrait(SpawnLocation.class))
+            addTrait(new SpawnLocation(loc));
+        else
+            getTrait(SpawnLocation.class).setLocation(loc);
 
-        spawned = true;
+        if (!hasTrait(Spawned.class))
+            addTrait(new Spawned(true));
+        else
+            getTrait(Spawned.class).setSpawned(true);
+
         return true;
     }
 }

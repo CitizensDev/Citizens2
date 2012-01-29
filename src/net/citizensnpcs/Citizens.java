@@ -19,6 +19,7 @@ import net.citizensnpcs.api.npc.trait.InstanceFactory;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
+import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Injector;
 import net.citizensnpcs.command.command.NPCCommands;
@@ -175,6 +176,7 @@ public class Citizens extends JavaPlugin {
     private void setupNPCs() throws NPCLoadException {
         traitManager.register("location", SpawnLocation.class);
         traitManager.register("owner", Owner.class);
+        traitManager.register("spawned", Spawned.class);
 
         int created = 0, spawned = 0;
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
