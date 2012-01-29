@@ -1,6 +1,5 @@
 package net.citizensnpcs.npc;
 
-import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
@@ -12,7 +11,7 @@ import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 public class CitizensNPC extends AbstractNPC {
     private CraftNPC mcEntity;
@@ -40,8 +39,8 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public Entity getBukkitEntity() {
-        return getHandle().getBukkitEntity();
+    public Player getBukkitEntity() {
+        return getHandle().getPlayer();
     }
 
     public CraftNPC getHandle() {
@@ -84,9 +83,5 @@ public class CitizensNPC extends AbstractNPC {
 
         spawned = true;
         return true;
-    }
-
-    @Override
-    public void load(DataKey root) {
     }
 }

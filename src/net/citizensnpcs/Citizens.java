@@ -166,45 +166,28 @@ public class Citizens extends JavaPlugin {
         }
     }
 
-    public static Storage getNPCStorage() {
-        return saves;
-    }
-
     private void saveNPCs() {
         for (NPC npc : npcManager)
-            npc.save(getNPCStorage().getKey("npc." + npc.getId()));
-        getNPCStorage().save();
+            npc.save(saves.getKey("npc." + npc.getId()));
+        saves.save();
     }
 
     private void setupNPCs() throws NPCLoadException {
         traitManager.register("location", SpawnLocation.class);
         traitManager.register("owner", Owner.class);
 
-        for (DataKey key : getNPCStorage().getKey("npc").getIntegerSubKeys()) {
+        int created = 0, spawned = 0;
+        for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
-            Character character = characterManager.getInstance(key.getString("character"), null);
-            NPC npc = npcManager.createNPC(id, key.getString("name"), character);
-
-            // Load the character if it exists, otherwise remove the character
-            if (character != null)
-                character.load(key.getRelative("characters." + character.getName()));
-
-            // Load traits
-            for (DataKey traitKey : key.getSubKeys()) {
-                Trait trait = traitManager.getInstance(traitKey.name(), npc);
-                if (trait == null)
-                    continue;
-                trait.load(traitKey);
-                npc.addTrait(trait);
-            }
-
-            // Spawn the NPC
-            if (key.getBoolean("spawned"))
-                npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
+            NPC npc = npcManager.createNPC(id, key.getString("name"), null);
+            npc.load(key);
+            ++created;
+            if (npc.isSpawned())
+                ++spawned;
         }
-        Messaging.log("Loaded " + npcManager.size() + " NPCs");
+        Messaging.log("Loaded " + created + " NPCs (" + spawned + " spawned)");
     }
 
     private void registerPermissions() {

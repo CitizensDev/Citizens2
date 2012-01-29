@@ -18,7 +18,6 @@ import org.bukkit.entity.Entity;
 
 @SuppressWarnings("unchecked")
 public class CraftNPC extends EntityPlayer {
-
     public CraftNPC(MinecraftServer minecraftServer, World world, String string, ItemInWorldManager itemInWorldManager) {
         super(minecraftServer, world, string, itemInWorldManager);
         itemInWorldManager.setGameMode(0);

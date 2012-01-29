@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 public class CitizensNavigator implements Navigator {
-    private CitizensNPC npc;
+    private final CitizensNPC npc;
 
     public CitizensNavigator(CitizensNPC npc) {
         this.npc = npc;

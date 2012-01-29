@@ -2,14 +2,9 @@ package net.citizensnpcs.npc;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
@@ -32,10 +27,14 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
 public class CitizensNPCManager implements NPCManager {
+    // TODO: merge spawned and byID
     private final ByIdArray<NPC> spawned = new ByIdArray<NPC>();
     private final ByIdArray<NPC> byID = new ByIdArray<NPC>();
-    private final Map<Integer, Set<String>> selected = new ConcurrentHashMap<Integer, Set<String>>();
+    private final SetMultimap<Integer, String> selected = HashMultimap.create();
     private final Storage saves;
 
     public CitizensNPCManager(Storage saves) {
@@ -53,6 +52,8 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public NPC createNPC(int id, String name, Character character) {
+        if (byID.contains(id))
+            throw new IllegalArgumentException("id already taken");
         CitizensNPC npc = new CitizensNPC(this, id, name);
         npc.setCharacter(character);
         byID.put(npc.getId(), npc);
@@ -64,12 +65,10 @@ public class CitizensNPCManager implements NPCManager {
         Location loc = npc.getBukkitEntity().getLocation();
         npc.getTrait(SpawnLocation.class).setLocation(loc);
 
-        if (selected.get(npc.getId()) != null)
-            selected.get(npc.getId()).clear();
+        selected.removeAll(npc.getId());
         spawned.remove(mcEntity.getPlayer().getEntityId());
         for (Player player : Bukkit.getOnlinePlayers())
             ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));
-        getWorldServer(loc.getWorld()).removeEntity(mcEntity);
         mcEntity.die();
     }
 
@@ -96,9 +95,9 @@ public class CitizensNPCManager implements NPCManager {
     public Collection<NPC> getNPCs(Class<? extends Character> character) {
         List<NPC> npcs = new ArrayList<NPC>();
         for (NPC npc : this) {
-            if (npc.getCharacter() != null
-                    && CitizensAPI.getCharacterManager().getInstance(npc.getCharacter().getName(), npc) != null)
+            if (npc.getCharacter() != null && npc.getCharacter().getClass().equals(character)) {
                 npcs.add(npc);
+            }
         }
         return npcs;
     }
@@ -120,11 +119,11 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public void remove(NPC npc) {
-        if (spawned.contains(((CitizensNPC) npc).getHandle().getPlayer().getEntityId()))
+        if (spawned.contains(npc.getBukkitEntity().getEntityId()))
             despawn(npc);
         byID.remove(npc.getId());
         saves.getKey("npc").removeKey("" + npc.getId());
-        selected.remove(npc.getId());
+        selected.removeAll(npc.getId());
     }
 
     public CraftNPC spawn(NPC npc, Location loc) {
@@ -145,12 +144,7 @@ public class CitizensNPCManager implements NPCManager {
         NPC select = getSelectedNPC(player);
         if (select != null)
             selected.get(select.getId()).remove(player.getName());
-
-        Set<String> selectors = selected.get(npc.getId());
-        if (selectors == null)
-            selectors = new HashSet<String>();
-        selectors.add(player.getName());
-        selected.put(npc.getId(), selectors);
+        selected.put(npc.getId(), player.getName());
     }
 
     public boolean npcIsSelectedByPlayer(Player player, NPC npc) {
@@ -165,9 +159,5 @@ public class CitizensNPCManager implements NPCManager {
                 return getNPC(id);
         }
         return null;
-    }
-
-    public int size() {
-        return byID.size();
     }
 }
