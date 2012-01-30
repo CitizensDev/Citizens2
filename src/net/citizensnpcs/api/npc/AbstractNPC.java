@@ -121,7 +121,7 @@ public abstract class AbstractNPC implements NPC {
         }
 
         // Load traits
-        for (DataKey traitKey : root.getSubKeys()) {
+        for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
             Trait trait = CitizensAPI.getTraitManager().getInstance(traitKey.name(), this);
             if (trait == null)
                 continue;
