@@ -4,13 +4,13 @@ import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.npc.trait.Trait;
 
 public class Spawned implements Trait {
-    private boolean spawned;
+    private boolean shouldSpawn;
 
     public Spawned() {
     }
 
-    public Spawned(boolean spawned) {
-        this.spawned = spawned;
+    public Spawned(boolean shouldSpawn) {
+        this.shouldSpawn = shouldSpawn;
     }
 
     @Override
@@ -20,12 +20,12 @@ public class Spawned implements Trait {
 
     @Override
     public void load(DataKey key) {
-        spawned = key.getBoolean("");
+        shouldSpawn = key.getBoolean("");
     }
 
     @Override
     public void save(DataKey key) {
-        key.setBoolean("", spawned);
+        key.setBoolean("", shouldSpawn);
     }
 
     /**
@@ -33,17 +33,17 @@ public class Spawned implements Trait {
      * 
      * @return Whether an NPC should spawn
      */
-    public boolean isSpawned() {
-        return spawned;
+    public boolean shouldSpawn() {
+        return shouldSpawn;
     }
 
     /**
      * Sets whether an NPC should spawn during server starts or reloads
      * 
-     * @param spawned
+     * @param shouldSpawn
      *            Whether an NPC should spawn
      */
-    public void setSpawned(boolean spawned) {
-        this.spawned = spawned;
+    public void setSpawned(boolean shouldSpawn) {
+        this.shouldSpawn = shouldSpawn;
     }
 }

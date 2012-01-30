@@ -96,8 +96,6 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void save(DataKey root) {
         root.setString("name", getFullName());
-        if (root.getBoolean("spawned", true))
-            root.setBoolean("spawned", getTrait(Spawned.class).isSpawned());
 
         // Save the character if it exists
         if (getCharacter() != null) {
@@ -130,7 +128,7 @@ public abstract class AbstractNPC implements NPC {
         }
 
         // Spawn the NPC
-        if (root.getBoolean("spawned"))
+        if (getTrait(Spawned.class).shouldSpawn())
             spawn(getTrait(SpawnLocation.class).getLocation());
     }
 }
