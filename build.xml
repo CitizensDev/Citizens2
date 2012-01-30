@@ -17,7 +17,7 @@
 			<classpath>
 				<pathelement path="${lib}" />
 				<pathelement location="${lib}/bukkit-1.1-R2.jar" />
-				<pathelement location="${lib}/craftbukkit-1.1-R2.jar" />
+				<pathelement location="${lib}/craftbukkit-1.1-R3.jar" />
 				<pathelement location="${lib}/CitizensAPI.jar" />
 				<pathelement location="${lib}/junit.jar" />
 				<pathelement location="${lib}/hamcrest.jar" />
