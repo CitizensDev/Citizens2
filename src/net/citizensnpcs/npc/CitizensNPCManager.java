@@ -12,12 +12,11 @@ import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.resource.lib.CraftNPC;
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.util.ByIdArray;
-import net.citizensnpcs.util.Messaging;
+
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldServer;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -75,7 +74,6 @@ public class CitizensNPCManager implements NPCManager {
 
     @Override
     public NPC getNPC(Entity entity) {
-        Messaging.log("Version: " + getMinecraftServer(Bukkit.getServer()).getVersion());
         for (NPC npc : npcs)
             if (npc.isSpawned() && npc.getBukkitEntity().getEntityId() == entity.getEntityId())
                 return npc;

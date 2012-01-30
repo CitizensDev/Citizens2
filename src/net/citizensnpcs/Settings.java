@@ -19,9 +19,8 @@ public class Settings {
             if (!root.keyExists(setting.path)) {
                 Messaging.log("Writing default setting: '" + setting.path + "'");
                 root.setRaw(setting.path, setting.get());
-            } else {
+            } else
                 setting.set(root.getRaw(setting.path));
-            }
         }
         save();
     }
