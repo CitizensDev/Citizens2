@@ -27,9 +27,8 @@ public class Messaging {
     public static void send(Player player, Object msg) {
         String send = msg.toString();
 
-        for (ChatColor color : ChatColor.values()) {
+        for (ChatColor color : ChatColor.values())
             send = send.replace("<" + color.getChar() + ">", color.toString());
-        }
 
         player.sendMessage(send);
     }

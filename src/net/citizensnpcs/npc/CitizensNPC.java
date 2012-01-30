@@ -34,7 +34,6 @@ public class CitizensNPC extends AbstractNPC {
 
         manager.despawn(this);
         mcEntity = null;
-        getTrait(Spawned.class).setSpawned(false);
 
         return true;
     }
@@ -82,17 +81,16 @@ public class CitizensNPC extends AbstractNPC {
         // Set the location
         // TODO: do this automatically (default traits?)
         // TODO: is spawned as a trait needed? Takes up memory
-        if (!hasTrait(SpawnLocation.class)) {
+        if (!hasTrait(SpawnLocation.class))
             addTrait(new SpawnLocation(loc));
-        } else {
+        else
             getTrait(SpawnLocation.class).setLocation(loc);
-        }
 
-        if (!hasTrait(Spawned.class)) {
+        if (!hasTrait(Spawned.class))
             addTrait(new Spawned(true));
-        } else {
+        else
             getTrait(Spawned.class).setSpawned(true);
-        }
+
         return true;
     }
 }

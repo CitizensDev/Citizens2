@@ -57,8 +57,7 @@ public class Citizens extends JavaPlugin {
     private CommandManager cmdManager;
     private Settings config;
     private Storage saves;
-    private final boolean compatible = ((CraftServer) getServer()).getServer().getVersion()
-            .startsWith(COMPATIBLE_MC_VERSION);
+    private boolean compatible;
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
@@ -133,6 +132,7 @@ public class Citizens extends JavaPlugin {
     @Override
     public void onEnable() {
         // Disable if the server is not using the compatible Minecraft version
+        compatible = ((CraftServer) getServer()).getServer().getVersion().startsWith(COMPATIBLE_MC_VERSION);
         String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
         if (!compatible) {
             Messaging.log(Level.SEVERE, "v" + getDescription().getVersion() + " is not compatible with Minecraft v"
@@ -146,11 +146,10 @@ public class Citizens extends JavaPlugin {
         config.load();
 
         // NPC storage
-        if (Setting.USE_DATABASE.asBoolean()) {
+        if (Setting.USE_DATABASE.asBoolean())
             saves = new DatabaseStorage();
-        } else {
+        else
             saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
-        }
 
         // Register API managers
         npcManager = new CitizensNPCManager(saves);
@@ -206,7 +205,7 @@ public class Citizens extends JavaPlugin {
             if (npc.isSpawned())
                 ++spawned;
         }
-        Messaging.log("Loaded " + created + " NPCs (" + spawned + " spawned)");
+        Messaging.log("Loaded " + created + " NPCs (" + spawned + " spawned).");
     }
 
     private void registerPermissions() {

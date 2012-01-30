@@ -74,6 +74,7 @@ public class NPCCommands {
              max = 1)
     @Permission("npc.despawn")
     public void despawnNPC(CommandContext args, Player player, NPC npc) {
+        npc.getTrait(Spawned.class).setSpawned(false);
         npc.despawn();
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
