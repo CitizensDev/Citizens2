@@ -96,9 +96,7 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void save(DataKey root) {
         root.setString("name", getFullName());
-        if (!root.keyExists("spawned"))
-            root.setBoolean("spawned", true);
-        if (root.getBoolean("spawned"))
+        if (root.getBoolean("spawned", true))
             root.setBoolean("spawned", getTrait(Spawned.class).isSpawned());
 
         // Save the character if it exists
@@ -109,7 +107,7 @@ public abstract class AbstractNPC implements NPC {
 
         // Save all existing traits
         for (Trait trait : getTraits())
-            trait.save(root.getRelative(trait.getName()));
+            trait.save(root.getRelative("traits." + trait.getName()));
     }
 
     @Override
