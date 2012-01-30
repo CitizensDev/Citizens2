@@ -123,7 +123,7 @@ public class NPCCommands {
     @Requirements(ownership = true)
     public void selectNPC(CommandContext args, Player player, NPC npc) {
         NPC toSelect = npcManager.getNPC(args.getInteger(1));
-        if (toSelect == null || !toSelect.getTrait(Spawned.class).isSpawned()) {
+        if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn()) {
             Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' is spawned.");
             return;
         }
