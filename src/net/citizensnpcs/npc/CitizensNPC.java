@@ -80,16 +80,19 @@ public class CitizensNPC extends AbstractNPC {
         mcEntity = manager.spawn(this, loc);
 
         // Set the location
-        if (!hasTrait(SpawnLocation.class))
+        // TODO: do this automatically (default traits?)
+        // TODO: is spawned as a trait needed? Takes up memory
+        if (!hasTrait(SpawnLocation.class)) {
             addTrait(new SpawnLocation(loc));
-        else
+        } else {
             getTrait(SpawnLocation.class).setLocation(loc);
+        }
 
-        if (!hasTrait(Spawned.class))
+        if (!hasTrait(Spawned.class)) {
             addTrait(new Spawned(true));
-        else
+        } else {
             getTrait(Spawned.class).setSpawned(true);
-
+        }
         return true;
     }
 }

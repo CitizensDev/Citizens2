@@ -15,7 +15,6 @@ import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.Packet29DestroyEntity;
 import net.minecraft.server.WorldServer;
 
 import org.bukkit.Bukkit;
@@ -24,7 +23,6 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -61,14 +59,9 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public void despawn(NPC npc) {
-        CraftNPC mcEntity = ((CitizensNPC) npc).getHandle();
-        Location loc = npc.getBukkitEntity().getLocation();
-        npc.getTrait(SpawnLocation.class).setLocation(loc);
-
+        npc.getTrait(SpawnLocation.class).setLocation(npc.getBukkitEntity().getLocation());
         selected.removeAll(npc.getId());
-        for (Player player : Bukkit.getOnlinePlayers())
-            ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(mcEntity.id));
-        mcEntity.die();
+        npc.getBukkitEntity().remove();
     }
 
     @Override

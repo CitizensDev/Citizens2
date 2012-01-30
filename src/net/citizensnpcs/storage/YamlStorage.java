@@ -1,4 +1,4 @@
-package net.citizensnpcs.storage.flatfile;
+package net.citizensnpcs.storage;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,13 +7,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
+import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.util.Messaging;
+
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-
-import net.citizensnpcs.api.DataKey;
-import net.citizensnpcs.storage.Storage;
-import net.citizensnpcs.util.Messaging;
 
 public class YamlStorage implements Storage {
     private final FileConfiguration config;
@@ -172,6 +171,8 @@ public class YamlStorage implements Storage {
 
         @Override
         public DataKey getRelative(String relative) {
+            if (relative == null || relative.isEmpty())
+                return this;
             return new YamlKey(getKeyExt(relative));
         }
 

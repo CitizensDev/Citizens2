@@ -32,12 +32,11 @@ import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.citizensnpcs.storage.DatabaseStorage;
 import net.citizensnpcs.storage.Storage;
-import net.citizensnpcs.storage.database.DatabaseStorage;
-import net.citizensnpcs.storage.flatfile.YamlStorage;
+import net.citizensnpcs.storage.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
-import net.minecraft.server.MinecraftServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -58,7 +57,8 @@ public class Citizens extends JavaPlugin {
     private CommandManager cmdManager;
     private Settings config;
     private Storage saves;
-    private boolean skipDisable = false;
+    private final boolean compatible = ((CraftServer) getServer()).getServer().getVersion()
+            .startsWith(COMPATIBLE_MC_VERSION);
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
@@ -119,7 +119,7 @@ public class Citizens extends JavaPlugin {
     @Override
     public void onDisable() {
         // Don't bother with this part if MC versions are not compatible
-        if (!skipDisable) {
+        if (compatible) {
             config.save();
             saveNPCs();
             for (NPC npc : npcManager)
@@ -133,11 +133,10 @@ public class Citizens extends JavaPlugin {
     @Override
     public void onEnable() {
         // Disable if the server is not using the compatible Minecraft version
-        String mcVersion = ((MinecraftServer) ((CraftServer) getServer()).getServer()).getVersion();
-        if (!mcVersion.equals(COMPATIBLE_MC_VERSION)) {
+        String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
+        if (!compatible) {
             Messaging.log(Level.SEVERE, "v" + getDescription().getVersion() + " is not compatible with Minecraft v"
                     + mcVersion + ". Disabling.");
-            skipDisable = true;
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -147,10 +146,11 @@ public class Citizens extends JavaPlugin {
         config.load();
 
         // NPC storage
-        if (Setting.USE_DATABASE.getBoolean())
+        if (Setting.USE_DATABASE.asBoolean()) {
             saves = new DatabaseStorage();
-        else
+        } else {
             saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
+        }
 
         // Register API managers
         npcManager = new CitizensNPCManager(saves);

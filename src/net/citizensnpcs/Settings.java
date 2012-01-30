@@ -3,7 +3,7 @@ package net.citizensnpcs;
 import java.io.File;
 
 import net.citizensnpcs.api.DataKey;
-import net.citizensnpcs.storage.flatfile.YamlStorage;
+import net.citizensnpcs.storage.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 
 public class Settings {
@@ -16,11 +16,12 @@ public class Settings {
     public void load() {
         DataKey root = config.getKey("");
         for (Setting setting : Setting.values()) {
-            if (!root.keyExists(setting.getPath())) {
-                Messaging.log("Writing default setting: '" + setting.getPath() + "'");
-                root.setRaw(setting.getPath(), setting.get());
-            } else
-                setting.set(root.getRaw(setting.getPath()));
+            if (!root.keyExists(setting.path)) {
+                Messaging.log("Writing default setting: '" + setting.path + "'");
+                root.setRaw(setting.path, setting.get());
+            } else {
+                setting.set(root.getRaw(setting.path));
+            }
         }
         save();
     }
@@ -48,27 +49,23 @@ public class Settings {
             return value;
         }
 
-        public boolean getBoolean() {
+        public boolean asBoolean() {
             return (Boolean) value;
         }
 
-        public double getDouble() {
+        public double asDouble() {
             return (Double) value;
         }
 
-        public int getInt() {
+        public int asInt() {
             return (Integer) value;
         }
 
-        public long getLong() {
+        public long asLong() {
             return (Long) value;
         }
 
-        public String getPath() {
-            return path;
-        }
-
-        public String getString() {
+        public String asString() {
             return value.toString();
         }
 

@@ -91,11 +91,11 @@ public class EventListen implements Listener {
         Player player = (Player) event.getTarget();
         if (!npcManager.npcIsSelectedByPlayer(player, npc)) {
             if (player.hasPermission("citizens.npc.select")
-                    && player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.getInt()
+                    && player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.asInt()
                     && npc.getTrait(Owner.class).getOwner().equals(player.getName())) {
                 npcManager.selectNPC(player, npc);
-                Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.getString(), npc);
-                if (!Setting.QUICK_SELECT.getBoolean())
+                Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), npc);
+                if (!Setting.QUICK_SELECT.asBoolean())
                     return;
             }
         }
