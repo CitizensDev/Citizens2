@@ -1,9 +1,8 @@
-package net.citizensnpcs.storage.database;
+package net.citizensnpcs.storage;
 
 import java.util.List;
 
 import net.citizensnpcs.api.DataKey;
-import net.citizensnpcs.storage.Storage;
 
 public class DatabaseStorage implements Storage {
 

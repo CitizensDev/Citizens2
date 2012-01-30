@@ -131,7 +131,7 @@ public class NPCCommands {
             return;
         }
         npcManager.selectNPC(player, toSelect);
-        Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.getString(), toSelect);
+        Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), toSelect);
     }
 
     @Command(

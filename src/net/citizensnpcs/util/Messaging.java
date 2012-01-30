@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 public class Messaging {
 
     public static void debug(Object msg) {
-        if (Setting.DEBUG_MODE.getBoolean())
+        if (Setting.DEBUG_MODE.asBoolean())
             log(msg);
     }
 
@@ -25,28 +25,25 @@ public class Messaging {
     }
 
     public static void send(Player player, Object msg) {
-        String send = "" + msg;
+        String send = msg.toString();
 
         for (ChatColor color : ChatColor.values()) {
-            if (send.contains("<" + color.getChar() + ">"))
-                send = send.replace("<" + color.getChar() + ">", "" + ChatColor.getByChar(color.getChar()));
+            send = send.replace("<" + color.getChar() + ">", color.toString());
         }
 
         player.sendMessage(send);
     }
 
     public static void sendWithNPC(Player player, Object msg, NPC npc) {
-        String send = "" + msg;
+        String send = msg.toString();
 
-        if (send.contains("<npc>"))
-            send = send.replace("<npc>", npc.getName());
-        if (send.contains("<id>"))
-            send = send.replace("<id>", "" + npc.getId());
+        send = send.replace("<npc>", npc.getName());
+        send = send.replace("<id>", Integer.toString(npc.getId()));
 
         send(player, send);
     }
 
     public static void sendError(Player player, Object msg) {
-        send(player, "" + ChatColor.RED + msg);
+        send(player, ChatColor.RED.toString() + msg);
     }
 }
