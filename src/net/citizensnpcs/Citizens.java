@@ -167,10 +167,10 @@ public class Citizens extends JavaPlugin {
         registerCommands();
         registerPermissions();
 
-        traitManager.register("location", SpawnLocation.class);
-        traitManager.register("owner", Owner.class);
-        traitManager.register("spawned", Spawned.class);
-        traitManager.register("look-close", LookClose.class);
+        traitManager.register(SpawnLocation.class);
+        traitManager.register(Owner.class);
+        traitManager.register(Spawned.class);
+        traitManager.register(LookClose.class);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
 
