@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import net.citizensnpcs.api.npc.trait.Character;
 
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 
 /**
@@ -14,22 +15,26 @@ public interface NPCManager extends Iterable<NPC> {
     /**
      * Creates an NPC with no attached character (this does not spawn the NPC)
      * 
+     * @param type
+     *            Creature type to assign to the NPC
      * @param name
      *            Name to give the NPC
      * @return Created NPC
      */
-    public NPC createNPC(String name);
+    public NPC createNPC(CreatureType type, String name);
 
     /**
      * Creates an NPC with the given character (this does not spawn the NPC)
      * 
+     * @param type
+     *            Creature type to assign to the NPC
      * @param name
      *            Name to give the NPC
      * @param character
      *            Character to attach to an NPC
      * @return Created NPC with the given character
      */
-    public NPC createNPC(String name, Character character);
+    public NPC createNPC(CreatureType type, String name, Character character);
 
     /**
      * Gets an NPC with the given ID

@@ -46,4 +46,9 @@ public class Owner implements Trait {
     public void setOwner(String owner) {
         this.owner = owner;
     }
+
+    @Override
+    public String toString() {
+        return "Owner{" + owner + "}";
+    }
 }

@@ -46,4 +46,9 @@ public class Spawned implements Trait {
     public void setSpawned(boolean shouldSpawn) {
         this.shouldSpawn = shouldSpawn;
     }
+
+    @Override
+    public String toString() {
+        return "Spawned{" + shouldSpawn + "}";
+    }
 }

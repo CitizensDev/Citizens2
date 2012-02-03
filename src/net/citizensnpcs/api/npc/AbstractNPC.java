@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
@@ -44,7 +45,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void setName(String name) {
-        Location prev = this.getBukkitEntity().getLocation();
+        Location prev = getBukkitEntity().getLocation();
         despawn();
         this.name = name;
         spawn(prev);
@@ -123,7 +124,12 @@ public abstract class AbstractNPC implements NPC {
             Trait trait = CitizensAPI.getTraitManager().getInstance(traitKey.name(), this);
             if (trait == null)
                 continue;
-            trait.load(traitKey);
+            try {
+                trait.load(traitKey);
+            } catch (NPCLoadException ex) {
+                System.out.println("[Citizens] The trait '" + traitKey.name()
+                        + "' failed to load properly. Make sure your formatting is correct.");
+            }
             addTrait(trait);
         }
 
