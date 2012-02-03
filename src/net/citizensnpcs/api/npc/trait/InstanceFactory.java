@@ -10,9 +10,9 @@ import net.citizensnpcs.api.npc.NPC;
  *            Type of objects this will produce
  */
 public interface InstanceFactory<T> {
-    public abstract T getInstance(String name, NPC npc);
+    public T getInstance(String name, NPC npc);
 
-    public abstract void register(String name, Class<? extends T> clazz);
+    public void register(Class<? extends T> clazz);
 
-    public abstract void registerWithFactory(String name, Factory<? extends T> factory);
+    public void registerWithFactory(String name, Factory<? extends T> factory);
 }

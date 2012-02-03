@@ -15,8 +15,8 @@ public class DefaultInstanceFactory<T> implements InstanceFactory<T> {
     }
 
     @Override
-    public void register(String name, Class<? extends T> clazz) {
-        registerWithFactory(name, new DefaultFactory(clazz));
+    public void register(Class<? extends T> clazz) {
+        registerWithFactory(clazz.getAnnotation(SaveId.class).value(), new DefaultFactory(clazz));
     }
 
     @Override
