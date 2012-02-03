@@ -1,7 +1,6 @@
 -Citizens2 TODO List-
 
 -Add proper color parsing for names
--Properly implement commands
 -Add NPC templates
 -Finish pathfinding API
 -Add database support (MySQL and/or SQLite)
