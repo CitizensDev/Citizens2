@@ -4,6 +4,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
+import net.citizensnpcs.api.npc.trait.trait.MobType;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.command.CommandContext;
@@ -12,10 +13,12 @@ import net.citizensnpcs.command.annotation.Permission;
 import net.citizensnpcs.command.annotation.Requirements;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -31,33 +34,42 @@ public class NPCCommands {
 
     @Command(
              aliases = { "npc" },
-             usage = "create [name] (character)",
+             usage = "create [name] [type] (character)",
              desc = "Create a new NPC",
              modifiers = { "create" },
-             min = 2,
-             max = 3)
+             min = 3,
+             max = 4)
     @Permission("npc.create")
     @Requirements
     public void createNPC(CommandContext args, Player player, NPC npc) {
-        CitizensNPC create = (CitizensNPC) npcManager.createNPC(args.getString(1));
+        CreatureType type = CreatureType.MONSTER; // Default human type
+        try {
+            type = CreatureType.valueOf(args.getString(2).toUpperCase().replace('-', '_'));
+        } catch (IllegalArgumentException ex) {
+            Messaging.sendError(player, "'" + args.getString(2) + "' is not a valid mob type. Using default NPC.");
+        }
+
+        CitizensNPC create = (CitizensNPC) npcManager.createNPC(type, args.getString(1));
         String successMsg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
         boolean success = true;
-        if (args.argsLength() == 3) {
-            if (characterManager.getInstance(args.getString(2), create) == null) {
+        if (args.argsLength() == 4) {
+            if (characterManager.getInstance(args.getString(3), create) == null) {
                 Messaging.sendError(player,
-                        "The character '" + args.getString(2) + "' does not exist. " + create.getName()
+                        "The character '" + args.getString(3) + "' does not exist. " + create.getName()
                                 + " was created at your location without a character.");
                 success = false;
             } else {
-                create.setCharacter(characterManager.getInstance(args.getString(2), create));
-                successMsg += " with the character " + StringHelper.wrap(args.getString(2));
+                create.setCharacter(characterManager.getInstance(args.getString(3), create));
+                successMsg += " with the character " + StringHelper.wrap(args.getString(3));
             }
         }
         successMsg += " at your location.";
 
         // Set the owner
         create.addTrait(new Owner(player.getName()));
-        create.getTrait(Owner.class).setOwner(player.getName());
+
+        // Set the mob type
+        create.addTrait(new MobType(type == CreatureType.MONSTER ? "DEFAULT" : type.toString()));
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);
@@ -159,5 +171,23 @@ public class NPCCommands {
     public void teleportToNPC(CommandContext args, Player player, NPC npc) {
         player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
         Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
+    }
+    
+    @Command(
+            aliases = { "npc" },
+            usage = "lookclose",
+            desc = "Toggle an NPC's look-close state",
+            modifiers = { "lookclose", "look", "rotate" },
+            min = 1,
+            max = 1)
+    @Permission("npc.look-close")
+    public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
+        npc.getTrait(LookClose.class).setLookClose(!npc.getTrait(LookClose.class).shouldLookClose());
+        String msg = StringHelper.wrap(npc.getName()) + " will ";
+        if (npc.getTrait(LookClose.class).shouldLookClose())
+            msg += "now rotate";
+        else
+            msg += "no longer";
+        Messaging.send(player, msg += " when a player is nearby.");
     }
 }

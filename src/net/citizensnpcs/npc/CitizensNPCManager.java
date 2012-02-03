@@ -9,19 +9,12 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
-import net.citizensnpcs.resource.lib.CraftNPC;
+
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.util.ByIdArray;
+import net.citizensnpcs.util.NPCBuilder;
 
-import net.minecraft.server.ItemInWorldManager;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.WorldServer;
-
-import org.bukkit.Location;
-import org.bukkit.Server;
-import org.bukkit.World;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -32,26 +25,27 @@ public class CitizensNPCManager implements NPCManager {
     private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
     private final SetMultimap<Integer, String> selected = HashMultimap.create();
     private final Storage saves;
+    private final NPCBuilder npcBuilder = new NPCBuilder();
 
     public CitizensNPCManager(Storage saves) {
         this.saves = saves;
     }
 
     @Override
-    public NPC createNPC(String name) {
-        return createNPC(name, null);
+    public NPC createNPC(CreatureType type, String name) {
+        return createNPC(type, name, null);
     }
 
     @Override
-    public NPC createNPC(String name, Character character) {
-        return createNPC(generateUniqueId(), name, character);
+    public NPC createNPC(CreatureType type, String name, Character character) {
+        return createNPC(type, generateUniqueId(), name, character);
     }
 
-    public NPC createNPC(int id, String name, Character character) {
+    public NPC createNPC(CreatureType type, int id, String name, Character character) {
         if (npcs.contains(id))
             throw new IllegalArgumentException("An NPC already has the ID '" + id + "'.");
 
-        CitizensNPC npc = new CitizensNPC(this, id, name);
+        CitizensNPC npc = npcBuilder.getByType(type, this, id, name);
         npc.setCharacter(character);
         npcs.put(npc.getId(), npc);
         return npc;
@@ -66,10 +60,6 @@ public class CitizensNPCManager implements NPCManager {
     @Override
     public Iterator<NPC> iterator() {
         return npcs.iterator();
-    }
-
-    private MinecraftServer getMinecraftServer(Server server) {
-        return ((CraftServer) server).getServer();
     }
 
     @Override
@@ -101,10 +91,6 @@ public class CitizensNPCManager implements NPCManager {
         return count - 1;
     }
 
-    private WorldServer getWorldServer(World world) {
-        return ((CraftWorld) world).getHandle();
-    }
-
     @Override
     public boolean isNPC(Entity entity) {
         return getNPC(entity) != null;
@@ -116,17 +102,6 @@ public class CitizensNPCManager implements NPCManager {
         npcs.remove(npc.getId());
         saves.getKey("npc").removeKey("" + npc.getId());
         selected.removeAll(npc.getId());
-    }
-
-    public CraftNPC spawn(NPC npc, Location loc) {
-        WorldServer ws = getWorldServer(loc.getWorld());
-        CraftNPC mcEntity = new CraftNPC(getMinecraftServer(ws.getServer()), ws, npc.getFullName(),
-                new ItemInWorldManager(ws));
-        mcEntity.removeFromPlayerMap(npc.getFullName());
-        mcEntity.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-        ws.addEntity(mcEntity);
-        ws.players.remove(mcEntity);
-        return mcEntity;
     }
 
     public void selectNPC(Player player, NPC npc) {

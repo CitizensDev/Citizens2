@@ -35,6 +35,7 @@ import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.storage.DatabaseStorage;
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.storage.YamlStorage;
+import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
@@ -43,6 +44,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -164,6 +166,13 @@ public class Citizens extends JavaPlugin {
         registerCommands();
         registerPermissions();
 
+        traitManager.register("location", SpawnLocation.class);
+        traitManager.register("owner", Owner.class);
+        traitManager.register("spawned", Spawned.class);
+        traitManager.register("look-close", LookClose.class);
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
+
         Messaging.log("v" + getDescription().getVersion() + " enabled.");
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
@@ -190,16 +199,18 @@ public class Citizens extends JavaPlugin {
     }
 
     private void setupNPCs() throws NPCLoadException {
-        traitManager.register("location", SpawnLocation.class);
-        traitManager.register("owner", Owner.class);
-        traitManager.register("spawned", Spawned.class);
-
         int created = 0, spawned = 0;
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
-            NPC npc = npcManager.createNPC(id, key.getString("name"), null);
+
+            // TODO better trait exception handling
+            String type = key.getString("traits.type");
+            NPC npc = npcManager.createNPC(
+                    type.equalsIgnoreCase("DEFAULT") ? CreatureType.MONSTER : CreatureType.valueOf(key.getString(
+                            "traits.type").toUpperCase()), id, key.getString("name"), null);
+
             npc.load(key);
             ++created;
             if (npc.isSpawned())
