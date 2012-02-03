@@ -1,11 +1,14 @@
 package net.citizensnpcs.api.npc.trait.trait;
 
 import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+@SaveId("location")
 public class SpawnLocation implements Trait {
     private Location loc;
 
@@ -17,14 +20,16 @@ public class SpawnLocation implements Trait {
     }
 
     @Override
-    public String getName() {
-        return "location";
-    }
+    public void load(DataKey key) throws NPCLoadException {
+        if (Bukkit.getWorld(key.getString("world")) == null)
+            throw new NPCLoadException("'" + key.getString("world") + "' is not a valid world.");
 
-    @Override
-    public void load(DataKey key) {
-        loc = new Location(Bukkit.getWorld(key.getString("world")), key.getDouble("x"), key.getDouble("y"),
-                key.getDouble("z"), (float) key.getDouble("yaw"), (float) key.getDouble("pitch"));
+        try {
+            loc = new Location(Bukkit.getWorld(key.getString("world")), key.getDouble("x"), key.getDouble("y"),
+                    key.getDouble("z"), (float) key.getDouble("yaw"), (float) key.getDouble("pitch"));
+        } catch (Exception ex) {
+            throw new NPCLoadException("Invalid coordinates.");
+        }
     }
 
     @Override

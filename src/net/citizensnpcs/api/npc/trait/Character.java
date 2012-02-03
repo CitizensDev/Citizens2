@@ -6,17 +6,10 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Player;
 
 /**
- * Represents a Character with a unique name that can be loaded and saved (one
- * Character can be attached to an NPC at a time)
+ * Represents a Character that can be loaded and saved (one Character can be
+ * attached to an NPC at a time)
  */
 public interface Character {
-
-    /**
-     * Gets the unique name of this trait
-     * 
-     * @return Name of the trait
-     */
-    public String getName();
 
     /**
      * Loads a trait

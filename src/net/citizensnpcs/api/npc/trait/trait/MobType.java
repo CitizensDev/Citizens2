@@ -1,8 +1,10 @@
 package net.citizensnpcs.api.npc.trait.trait;
 
 import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 
+@SaveId("type")
 public class MobType implements Trait {
     private String type;
 
@@ -14,13 +16,12 @@ public class MobType implements Trait {
     }
 
     @Override
-    public String getName() {
-        return "type";
-    }
-
-    @Override
     public void load(DataKey key) {
-        type = key.getString("").toUpperCase();
+        try {
+            type = key.getString("").toUpperCase();
+        } catch (IllegalArgumentException ex) {
+            type = "DEFAULT";
+        }
     }
 
     @Override

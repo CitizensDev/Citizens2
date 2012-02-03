@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.npc;
 
 import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.ai.Navigator;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
@@ -135,7 +136,7 @@ public interface NPC {
 
     public void save(DataKey root);
 
-    public void load(DataKey root);
+    public void load(DataKey root) throws NPCLoadException;
 
     /**
      * Sends a message to all players online with this NPC's formatted name

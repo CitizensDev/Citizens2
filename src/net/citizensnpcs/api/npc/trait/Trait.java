@@ -4,16 +4,9 @@ import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
 
 /**
- * Represents a Trait with a unique name that can be loaded and saved
+ * Represents a Trait that can be loaded and saved
  */
 public interface Trait {
-
-    /**
-     * Gets the unique name of this trait
-     * 
-     * @return Name of the trait
-     */
-    public String getName();
 
     /**
      * Loads a trait

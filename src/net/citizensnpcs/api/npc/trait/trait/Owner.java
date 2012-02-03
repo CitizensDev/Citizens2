@@ -1,8 +1,11 @@
 package net.citizensnpcs.api.npc.trait.trait;
 
 import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 
+@SaveId("owner")
 public class Owner implements Trait {
     private String owner;
 
@@ -14,13 +17,13 @@ public class Owner implements Trait {
     }
 
     @Override
-    public String getName() {
-        return "owner";
-    }
-
-    @Override
-    public void load(DataKey key) {
-        owner = key.getString("");
+    public void load(DataKey key) throws NPCLoadException {
+        try {
+            owner = key.getString("");
+        } catch (Exception ex) {
+            owner = "notch";
+            throw new NPCLoadException("Invalid owner.");
+        }
     }
 
     @Override

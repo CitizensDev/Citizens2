@@ -1,8 +1,11 @@
 package net.citizensnpcs.api.npc.trait.trait;
 
 import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 
+@SaveId("spawned")
 public class Spawned implements Trait {
     private boolean shouldSpawn;
 
@@ -14,13 +17,13 @@ public class Spawned implements Trait {
     }
 
     @Override
-    public String getName() {
-        return "spawned";
-    }
-
-    @Override
-    public void load(DataKey key) {
-        shouldSpawn = key.getBoolean("");
+    public void load(DataKey key) throws NPCLoadException {
+        try {
+            shouldSpawn = key.getBoolean("");
+        } catch (Exception ex) {
+            shouldSpawn = false;
+            throw new NPCLoadException("Invalid value. Valid values: true or false");
+        }
     }
 
     @Override
