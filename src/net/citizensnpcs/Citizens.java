@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
@@ -205,13 +206,15 @@ public class Citizens extends JavaPlugin {
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
 
-            // TODO better trait exception handling
             String type = key.getString("traits.type");
             NPC npc = npcManager.createNPC(
                     type.equalsIgnoreCase("DEFAULT") ? CreatureType.MONSTER : CreatureType.valueOf(key.getString(
                             "traits.type").toUpperCase()), id, key.getString("name"), null);
-
-            npc.load(key);
+            try {
+                npc.load(key);
+            } catch (NPCException ex) {
+                Messaging.log(ex.getMessage());
+            }
             ++created;
             if (npc.isSpawned())
                 ++spawned;
