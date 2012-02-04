@@ -51,7 +51,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public CitizensAI getAI() {
-        return new CitizensAI(this);
+        return ai;
     }
 
     @Override
