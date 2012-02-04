@@ -21,6 +21,11 @@ public class NPCSpawnEvent extends NPCEvent implements Cancellable {
         this.location = location;
     }
 
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
     /**
      * Gets the location where the NPC was spawned
      * 
@@ -38,11 +43,6 @@ public class NPCSpawnEvent extends NPCEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
     }
 
     public static HandlerList getHandlerList() {

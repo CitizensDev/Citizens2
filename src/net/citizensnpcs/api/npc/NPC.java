@@ -15,11 +15,41 @@ import org.bukkit.entity.Entity;
 public interface NPC {
 
     /**
-     * Gets the unique ID of this NPC
+     * Adds a trait to this NPC
      * 
-     * @return ID of this NPC
+     * @param trait
+     *            Trait to add
      */
-    public int getId();
+    public void addTrait(Trait trait);
+
+    /**
+     * Sends a message to all players online with this NPC's formatted name
+     * 
+     * @param message
+     *            Message to send
+     */
+    public void chat(String message);
+
+    /**
+     * Despawns this NPC
+     * 
+     * @return Whether this NPC was able to despawn
+     */
+    public boolean despawn();
+
+    /**
+     * Gets the Bukkit entity associated with this NPC
+     * 
+     * @return Entity associated with this NPC
+     */
+    public Entity getBukkitEntity();
+
+    /**
+     * Gets the character of this NPC
+     * 
+     * @return Character of this NPC
+     */
+    public Character getCharacter();
 
     /**
      * Gets the full name of this NPC
@@ -29,6 +59,13 @@ public interface NPC {
     public String getFullName();
 
     /**
+     * Gets the unique ID of this NPC
+     * 
+     * @return ID of this NPC
+     */
+    public int getId();
+
+    /**
      * Gets the name of this NPC with color codes stripped
      * 
      * @return Stripped name of this NPC
@@ -36,28 +73,11 @@ public interface NPC {
     public String getName();
 
     /**
-     * Sets the name of this NPC
+     * Gets the Navigator of this NPC
      * 
-     * @param name
-     *            Name to give this NPC
+     * @return Navigator of this NPC
      */
-    public void setName(String name);
-
-    /**
-     * Adds a trait to this NPC
-     * 
-     * @param trait
-     *            Trait to add
-     */
-    public void addTrait(Trait trait);
-
-    /**
-     * Removes a trait from this NPC
-     * 
-     * @param trait
-     *            Trait to remove
-     */
-    public void removeTrait(Class<? extends Trait> trait);
+    public Navigator getNavigator();
 
     /**
      * Gets a trait from the given class
@@ -85,11 +105,28 @@ public interface NPC {
     public boolean hasTrait(Class<? extends Trait> trait);
 
     /**
-     * Gets the character of this NPC
+     * Gets whether this NPC is currently spawned
      * 
-     * @return Character of this NPC
+     * @return Whether this NPC is spawned
      */
-    public Character getCharacter();
+    public boolean isSpawned();
+
+    public void load(DataKey root) throws NPCLoadException;
+
+    /**
+     * Permanently removes this NPC
+     */
+    public void remove();
+
+    /**
+     * Removes a trait from this NPC
+     * 
+     * @param trait
+     *            Trait to remove
+     */
+    public void removeTrait(Class<? extends Trait> trait);
+
+    public void save(DataKey root);
 
     /**
      * Sets the character of this NPC
@@ -100,18 +137,12 @@ public interface NPC {
     public void setCharacter(Character character);
 
     /**
-     * Gets the Navigator of this NPC
+     * Sets the name of this NPC
      * 
-     * @return Navigator of this NPC
+     * @param name
+     *            Name to give this NPC
      */
-    public Navigator getNavigator();
-
-    /**
-     * Gets whether this NPC is currently spawned
-     * 
-     * @return Whether this NPC is spawned
-     */
-    public boolean isSpawned();
+    public void setName(String name);
 
     /**
      * Attempts to spawn this NPC
@@ -121,35 +152,4 @@ public interface NPC {
      * @return Whether this NPC was able to spawn at the location
      */
     public boolean spawn(Location location);
-
-    /**
-     * Despawns this NPC
-     * 
-     * @return Whether this NPC was able to despawn
-     */
-    public boolean despawn();
-
-    /**
-     * Permanently removes this NPC
-     */
-    public void remove();
-
-    public void save(DataKey root);
-
-    public void load(DataKey root) throws NPCLoadException;
-
-    /**
-     * Sends a message to all players online with this NPC's formatted name
-     * 
-     * @param message
-     *            Message to send
-     */
-    public void chat(String message);
-
-    /**
-     * Gets the Bukkit entity associated with this NPC
-     * 
-     * @return Entity associated with this NPC
-     */
-    public Entity getBukkitEntity();
 }

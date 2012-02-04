@@ -37,15 +37,6 @@ public interface NPCManager extends Iterable<NPC> {
     public NPC createNPC(CreatureType type, String name, Character character);
 
     /**
-     * Gets an NPC with the given ID
-     * 
-     * @param id
-     *            ID of the NPC
-     * @return NPC with the given ID (may or may not be spawned)
-     */
-    public NPC getNPC(int id);
-
-    /**
      * Gets an NPC from the given LivingEntity
      * 
      * @param entity
@@ -53,6 +44,15 @@ public interface NPCManager extends Iterable<NPC> {
      * @return NPC from the given entity (must be spawned)
      */
     public NPC getNPC(Entity entity);
+
+    /**
+     * Gets an NPC with the given ID
+     * 
+     * @param id
+     *            ID of the NPC
+     * @return NPC with the given ID (may or may not be spawned)
+     */
+    public NPC getNPC(int id);
 
     /**
      * Gets all NPCs with the given character

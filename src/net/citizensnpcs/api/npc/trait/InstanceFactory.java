@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.npc.trait;
 
+import java.util.Collection;
+
 import net.citizensnpcs.api.npc.NPC;
 
 /**
@@ -13,6 +15,8 @@ public interface InstanceFactory<T> {
     public T getInstance(String name, NPC npc);
 
     public void register(Class<? extends T> clazz);
+
+    public void registerAll(Collection<Class<? extends T>> classes);
 
     public void registerWithFactory(String name, Factory<? extends T> factory);
 }

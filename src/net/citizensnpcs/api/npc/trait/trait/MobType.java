@@ -15,6 +15,15 @@ public class MobType implements Trait {
         this.type = type;
     }
 
+    /**
+     * Gets the type of creature that an NPC is
+     * 
+     * @return Name of the creature type of an NPC
+     */
+    public String getType() {
+        return type;
+    }
+
     @Override
     public void load(DataKey key) {
         try {
@@ -27,15 +36,6 @@ public class MobType implements Trait {
     @Override
     public void save(DataKey key) {
         key.setString("", type);
-    }
-
-    /**
-     * Gets the type of creature that an NPC is
-     * 
-     * @return Name of the creature type of an NPC
-     */
-    public String getType() {
-        return type;
     }
 
     /**

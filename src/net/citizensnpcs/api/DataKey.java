@@ -44,6 +44,8 @@ public abstract class DataKey {
         return value;
     }
 
+    public abstract Object getRaw(String key);
+
     public abstract DataKey getRelative(String relative);
 
     public abstract String getString(String key);
@@ -71,9 +73,7 @@ public abstract class DataKey {
 
     public abstract void setLong(String key, long value);
 
-    public abstract void setString(String key, String value);
-
-    public abstract Object getRaw(String key);
-
     public abstract void setRaw(String path, Object value);
+
+    public abstract void setString(String key, String value);
 }

@@ -31,8 +31,20 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public int getId() {
-        return id;
+    public void addTrait(Trait trait) {
+        traits.put(trait.getClass(), trait);
+    }
+
+    @Override
+    public void chat(String message) {
+        String formatted = "<" + getName() + "> " + message;
+        for (Player player : Bukkit.getOnlinePlayers())
+            player.sendMessage(formatted);
+    }
+
+    @Override
+    public Character getCharacter() {
+        return character;
     }
 
     @Override
@@ -41,26 +53,13 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
     public String getName() {
         return ChatColor.stripColor(name);
-    }
-
-    @Override
-    public void setName(String name) {
-        Location prev = getBukkitEntity().getLocation();
-        despawn();
-        this.name = name;
-        spawn(prev);
-    }
-
-    @Override
-    public void addTrait(Trait trait) {
-        traits.put(trait.getClass(), trait);
-    }
-
-    @Override
-    public void removeTrait(Class<? extends Trait> trait) {
-        traits.remove(trait);
     }
 
     @Override
@@ -77,39 +76,6 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public boolean hasTrait(Class<? extends Trait> trait) {
         return traits.containsKey(trait);
-    }
-
-    @Override
-    public Character getCharacter() {
-        return character;
-    }
-
-    @Override
-    public void setCharacter(Character character) {
-        this.character = character;
-    }
-
-    @Override
-    public void chat(String message) {
-        String formatted = "<" + getName() + "> " + message;
-        for (Player player : Bukkit.getOnlinePlayers())
-            player.sendMessage(formatted);
-    }
-
-    @Override
-    public void save(DataKey root) {
-        root.setString("name", getFullName());
-
-        // Save the character if it exists
-        if (getCharacter() != null) {
-            root.setString("character", getCharacter().getClass().getAnnotation(SaveId.class).value());
-            getCharacter().save(
-                    root.getRelative("characters." + getCharacter().getClass().getAnnotation(SaveId.class).value()));
-        }
-
-        // Save all existing traits
-        for (Trait trait : getTraits())
-            trait.save(root.getRelative("traits." + trait.getClass().getAnnotation(SaveId.class).value()));
     }
 
     @Override
@@ -148,5 +114,39 @@ public abstract class AbstractNPC implements NPC {
         // Spawn the NPC
         if (getTrait(Spawned.class).shouldSpawn())
             spawn(getTrait(SpawnLocation.class).getLocation());
+    }
+
+    @Override
+    public void removeTrait(Class<? extends Trait> trait) {
+        traits.remove(trait);
+    }
+
+    @Override
+    public void save(DataKey root) {
+        root.setString("name", getFullName());
+
+        // Save the character if it exists
+        if (getCharacter() != null) {
+            root.setString("character", getCharacter().getClass().getAnnotation(SaveId.class).value());
+            getCharacter().save(
+                    root.getRelative("characters." + getCharacter().getClass().getAnnotation(SaveId.class).value()));
+        }
+
+        // Save all existing traits
+        for (Trait trait : getTraits())
+            trait.save(root.getRelative("traits." + trait.getClass().getAnnotation(SaveId.class).value()));
+    }
+
+    @Override
+    public void setCharacter(Character character) {
+        this.character = character;
+    }
+
+    @Override
+    public void setName(String name) {
+        Location prev = getBukkitEntity().getLocation();
+        despawn();
+        this.name = name;
+        spawn(prev);
     }
 }

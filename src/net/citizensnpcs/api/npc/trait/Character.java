@@ -20,14 +20,6 @@ public interface Character {
     public void load(DataKey key);
 
     /**
-     * Saves a trait
-     * 
-     * @param key
-     *            DataKey to save to
-     */
-    public void save(DataKey key);
-
-    /**
      * Called when an NPC is left-clicked
      * 
      * @param npc
@@ -46,4 +38,12 @@ public interface Character {
      *            Player that clicked the NPC
      */
     public void onRightClick(NPC npc, Player by);
+
+    /**
+     * Saves a trait
+     * 
+     * @param key
+     *            DataKey to save to
+     */
+    public void save(DataKey key);
 }

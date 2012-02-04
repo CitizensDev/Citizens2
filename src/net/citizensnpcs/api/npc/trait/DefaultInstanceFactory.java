@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.npc.trait;
 
 import java.lang.reflect.Constructor;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,13 @@ public class DefaultInstanceFactory<T> implements InstanceFactory<T> {
     @Override
     public void register(Class<? extends T> clazz) {
         registerWithFactory(clazz.getAnnotation(SaveId.class).value(), new DefaultFactory(clazz));
+    }
+
+    @Override
+    public void registerAll(Collection<Class<? extends T>> classes) {
+        for (Class<? extends T> clazz : classes) {
+            register(clazz);
+        }
     }
 
     @Override

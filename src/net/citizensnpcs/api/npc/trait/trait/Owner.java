@@ -16,6 +16,15 @@ public class Owner implements Trait {
         this.owner = owner;
     }
 
+    /**
+     * Gets the owner of an NPC
+     * 
+     * @return Name of the owner of an NPC
+     */
+    public String getOwner() {
+        return owner;
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         try {
@@ -29,15 +38,6 @@ public class Owner implements Trait {
     @Override
     public void save(DataKey key) {
         key.setString("", owner);
-    }
-
-    /**
-     * Gets the owner of an NPC
-     * 
-     * @return Name of the owner of an NPC
-     */
-    public String getOwner() {
-        return owner;
     }
 
     /**

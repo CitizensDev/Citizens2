@@ -2,6 +2,16 @@ package net.citizensnpcs.api.npc.ai;
 
 public interface Goal {
     /**
+     * Returns whether this and the other {@link Goal} can be run at the same
+     * time.
+     * 
+     * @param other
+     *            The goal to check
+     * @return Whether this goal is compatible
+     */
+    public boolean isCompatibleWith(Goal other);
+
+    /**
      * Resets the goal and any resources or state it is holding.
      */
     public void reset();
@@ -31,14 +41,4 @@ public interface Goal {
      * Updates the goal.
      */
     public void update();
-
-    /**
-     * Returns whether this and the other {@link Goal} can be run at the same
-     * time.
-     * 
-     * @param other
-     *            The goal to check
-     * @return Whether this goal is compatible
-     */
-    public boolean isCompatibleWith(Goal other);
 }

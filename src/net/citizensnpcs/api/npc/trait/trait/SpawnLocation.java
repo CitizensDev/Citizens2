@@ -19,6 +19,15 @@ public class SpawnLocation implements Trait {
         this.loc = loc;
     }
 
+    /**
+     * Gets the location where an NPC should spawn upon loading
+     * 
+     * @return NPC's spawn location
+     */
+    public Location getLocation() {
+        return loc;
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         if (Bukkit.getWorld(key.getString("world")) == null)
@@ -40,15 +49,6 @@ public class SpawnLocation implements Trait {
         key.setDouble("z", loc.getZ());
         key.setDouble("yaw", loc.getYaw());
         key.setDouble("pitch", loc.getPitch());
-    }
-
-    /**
-     * Gets the location where an NPC should spawn upon loading
-     * 
-     * @return NPC's spawn location
-     */
-    public Location getLocation() {
-        return loc;
     }
 
     /**

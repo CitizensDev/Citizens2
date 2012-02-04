@@ -32,15 +32,6 @@ public class Spawned implements Trait {
     }
 
     /**
-     * Gets whether an NPC should spawn during server starts or reloads
-     * 
-     * @return Whether an NPC should spawn
-     */
-    public boolean shouldSpawn() {
-        return shouldSpawn;
-    }
-
-    /**
      * Sets whether an NPC should spawn during server starts or reloads
      * 
      * @param shouldSpawn
@@ -48,6 +39,15 @@ public class Spawned implements Trait {
      */
     public void setSpawned(boolean shouldSpawn) {
         this.shouldSpawn = shouldSpawn;
+    }
+
+    /**
+     * Gets whether an NPC should spawn during server starts or reloads
+     * 
+     * @return Whether an NPC should spawn
+     */
+    public boolean shouldSpawn() {
+        return shouldSpawn;
     }
 
     @Override
