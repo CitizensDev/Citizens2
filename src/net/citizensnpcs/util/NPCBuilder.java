@@ -3,8 +3,6 @@ package net.citizensnpcs.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.entity.CreatureType;
-
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.entity.CitizensBlazeNPC;
@@ -32,10 +30,12 @@ import net.citizensnpcs.npc.entity.CitizensVillagerNPC;
 import net.citizensnpcs.npc.entity.CitizensWolfNPC;
 import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 
-public class NPCBuilder {
-    private final Map<CreatureType, Class<? extends CitizensNPC>> types = new HashMap<CreatureType, Class<? extends CitizensNPC>>();
+import org.bukkit.entity.CreatureType;
 
-    public NPCBuilder() {
+public class NPCBuilder {
+    private static final Map<CreatureType, Class<? extends CitizensNPC>> types = new HashMap<CreatureType, Class<? extends CitizensNPC>>();
+
+    static {
         types.put(CreatureType.BLAZE, CitizensBlazeNPC.class);
         types.put(CreatureType.CAVE_SPIDER, CitizensCaveSpiderNPC.class);
         types.put(CreatureType.CHICKEN, CitizensChickenNPC.class);

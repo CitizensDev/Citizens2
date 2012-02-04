@@ -1,12 +1,30 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.entity.EntityWolfNPC;
+import net.minecraft.server.EntityWolf;
+import net.minecraft.server.World;
 
-public class CitizensWolfNPC extends CitizensNPC {
+import org.bukkit.entity.Wolf;
+
+public class CitizensWolfNPC extends CitizensMobNPC {
 
     public CitizensWolfNPC(CitizensNPCManager manager, int id, String name) {
         super(manager, id, name, EntityWolfNPC.class);
+    }
+
+    @Override
+    public Wolf getBukkitEntity() {
+        return (Wolf) getHandle().getBukkitEntity();
+    }
+
+    public static class EntityWolfNPC extends EntityWolf {
+
+        public EntityWolfNPC(World world) {
+            super(world);
+        }
+
+        @Override
+        public void m_() {
+        }
     }
 }

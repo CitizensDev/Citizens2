@@ -44,10 +44,6 @@ public class Settings {
             this.value = value;
         }
 
-        private Object get() {
-            return value;
-        }
-
         public boolean asBoolean() {
             return (Boolean) value;
         }
@@ -66,6 +62,10 @@ public class Settings {
 
         public String asString() {
             return value.toString();
+        }
+
+        private Object get() {
+            return value;
         }
 
         private void set(Object value) {

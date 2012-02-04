@@ -28,29 +28,6 @@ public class YamlStorage implements Storage {
             load();
     }
 
-    @Override
-    public void load() {
-        try {
-            config.load(file);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public void save() {
-        try {
-            config.save(file);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public DataKey getKey(String root) {
-        return new YamlKey(root);
-    }
-
     private void create() {
         try {
             Messaging.log("Creating file: " + file.getName());
@@ -61,8 +38,31 @@ public class YamlStorage implements Storage {
         }
     }
 
+    @Override
+    public DataKey getKey(String root) {
+        return new YamlKey(root);
+    }
+
+    @Override
+    public void load() {
+        try {
+            config.load(file);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private boolean pathExists(String key) {
         return config.get(key) != null;
+    }
+
+    @Override
+    public void save() {
+        try {
+            config.save(file);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public class YamlKey extends DataKey {
@@ -150,6 +150,14 @@ public class YamlStorage implements Storage {
             return res;
         }
 
+        private String getKeyExt(String from) {
+            if (from.isEmpty())
+                return current;
+            if (from.charAt(0) == '.')
+                return current.isEmpty() ? from.substring(1, from.length()) : current + from;
+            return current.isEmpty() ? from : current + "." + from;
+        }
+
         @Override
         public long getLong(String key) {
             String path = getKeyExt(key);
@@ -167,6 +175,11 @@ public class YamlStorage implements Storage {
         @Override
         public long getLong(String key, long def) {
             return config.getLong(getKeyExt(key), def);
+        }
+
+        @Override
+        public Object getRaw(String key) {
+            return config.get(getKeyExt(key));
         }
 
         @Override
@@ -235,26 +248,13 @@ public class YamlStorage implements Storage {
         }
 
         @Override
-        public void setString(String key, String value) {
-            config.set(getKeyExt(key), value);
-        }
-
-        @Override
-        public Object getRaw(String key) {
-            return config.get(getKeyExt(key));
-        }
-
-        @Override
         public void setRaw(String key, Object value) {
             config.set(getKeyExt(key), value);
         }
 
-        private String getKeyExt(String from) {
-            if (from.isEmpty())
-                return current;
-            if (from.charAt(0) == '.')
-                return current.isEmpty() ? from.substring(1, from.length()) : current + from;
-            return current.isEmpty() ? from : current + "." + from;
+        @Override
+        public void setString(String key, String value) {
+            config.set(getKeyExt(key), value);
         }
     }
 }

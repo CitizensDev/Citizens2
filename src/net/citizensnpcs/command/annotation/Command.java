@@ -26,15 +26,15 @@ public @interface Command {
 
     String[] aliases();
 
-    String usage() default "";
-
     String desc();
 
-    String[] modifiers() default "";
-
-    int min() default 0;
+    String flags() default "";
 
     int max() default -1;
 
-    String flags() default "";
+    int min() default 0;
+
+    String[] modifiers() default "";
+
+    String usage() default "";
 }

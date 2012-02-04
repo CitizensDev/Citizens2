@@ -30,12 +30,12 @@ public class LookClose implements Trait {
         key.setBoolean("", shouldLookClose);
     }
 
-    public boolean shouldLookClose() {
-        return shouldLookClose;
-    }
-
     public void setLookClose(boolean shouldLookClose) {
         this.shouldLookClose = shouldLookClose;
+    }
+
+    public boolean shouldLookClose() {
+        return shouldLookClose;
     }
 
     @Override

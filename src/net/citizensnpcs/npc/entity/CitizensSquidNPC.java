@@ -1,12 +1,30 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.entity.EntitySquidNPC;
+import net.minecraft.server.EntitySquid;
+import net.minecraft.server.World;
 
-public class CitizensSquidNPC extends CitizensNPC {
+import org.bukkit.entity.Squid;
+
+public class CitizensSquidNPC extends CitizensMobNPC {
 
     public CitizensSquidNPC(CitizensNPCManager manager, int id, String name) {
         super(manager, id, name, EntitySquidNPC.class);
+    }
+
+    @Override
+    public Squid getBukkitEntity() {
+        return (Squid) getHandle().getBukkitEntity();
+    }
+
+    public static class EntitySquidNPC extends EntitySquid {
+
+        public EntitySquidNPC(World world) {
+            super(world);
+        }
+
+        @Override
+        public void m_() {
+        }
     }
 }

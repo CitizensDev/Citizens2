@@ -33,9 +33,9 @@ import java.util.logging.Logger;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.command.annotation.Command;
-import net.citizensnpcs.command.annotation.Requirements;
 import net.citizensnpcs.command.annotation.NestedCommand;
 import net.citizensnpcs.command.annotation.Permission;
+import net.citizensnpcs.command.annotation.Requirements;
 import net.citizensnpcs.command.annotation.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
@@ -51,205 +51,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandManager {
-    // Logger for general errors.
-    private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
-    /*
-     * Mapping of commands (including aliases) with a description. Root commands
-     * are stored under a key of null, whereas child commands are cached under
-     * their respective Method. The child map has the key of the command name
-     * (one for each alias) with the method.
-     */
-    private final Map<Method, Map<CommandIdentifier, Method>> commands = new HashMap<Method, Map<CommandIdentifier, Method>>();
-    // Used to store the instances associated with a method.
-    private final Map<Method, Object> instances = new HashMap<Method, Object>();
-    /*
-     * Mapping of commands (not including aliases) with a description. This is
-     * only for top level commands.
-     */
-    private final Map<CommandIdentifier, String> descs = new HashMap<CommandIdentifier, String>();
-    // Stores the injector used to getInstance.
-    private Injector injector;
-    private final Map<Method, Requirements> requirements = new HashMap<Method, Requirements>();
-    private final Map<Method, ServerCommand> serverCommands = new HashMap<Method, ServerCommand>();
-
-    /*
-     * Register an class that contains commands (denoted by Command. If no
-     * dependency injector is specified, then the methods of the class will be
-     * registered to be called statically. Otherwise, new instances will be
-     * created of the command classes and methods will not be called statically.
-     */
-    public void register(Class<?> clazz) {
-        registerMethods(clazz, null);
-    }
-
-    /*
-     * Register the methods of a class. This will automatically construct
-     * instances as necessary.
-     */
-    private void registerMethods(Class<?> clazz, Method parent) {
-        Object obj = injector.getInstance(clazz);
-        registerMethods(clazz, parent, obj);
-    }
-
-    // Register the methods of a class.
-    private void registerMethods(Class<?> clazz, Method parent, Object obj) {
-        Map<CommandIdentifier, Method> map;
-
-        // Make a new hash map to cache the commands for this class
-        // as looking up methods via reflection is fairly slow
-        if (commands.containsKey(parent))
-            map = commands.get(parent);
-        else {
-            map = new HashMap<CommandIdentifier, Method>();
-            commands.put(parent, map);
-        }
-
-        for (Method method : clazz.getMethods()) {
-            if (!method.isAnnotationPresent(Command.class))
-                continue;
-            boolean isStatic = Modifier.isStatic(method.getModifiers());
-
-            Command cmd = method.getAnnotation(Command.class);
-            String[] modifiers = cmd.modifiers();
-
-            // Cache the aliases too
-            for (String alias : cmd.aliases())
-                for (String modifier : modifiers)
-                    map.put(new CommandIdentifier(alias, modifier), method);
-
-            Requirements cmdRequirements = null;
-            if (method.getDeclaringClass().isAnnotationPresent(Requirements.class))
-                cmdRequirements = method.getDeclaringClass().getAnnotation(Requirements.class);
-
-            if (method.isAnnotationPresent(Requirements.class))
-                cmdRequirements = method.getAnnotation(Requirements.class);
-
-            if (requirements != null)
-                requirements.put(method, cmdRequirements);
-
-            ServerCommand serverCommand = null;
-            if (method.isAnnotationPresent(ServerCommand.class))
-                serverCommand = method.getAnnotation(ServerCommand.class);
-
-            if (serverCommand != null)
-                serverCommands.put(method, serverCommand);
-
-            // We want to be able invoke with an instance
-            if (!isStatic) {
-                // Can't register this command if we don't have an instance
-                if (obj == null)
-                    continue;
-
-                instances.put(method, obj);
-            }
-
-            // Build a list of commands and their usage details, at least for
-            // root level commands
-            if (parent == null)
-                if (cmd.usage().length() == 0)
-                    descs.put(new CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]), cmd.desc());
-                else
-                    descs.put(new CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]),
-                            cmd.usage() + " - " + cmd.desc());
-
-            // Look for nested commands -- if there are any, those have
-            // to be cached too so that they can be quickly looked
-            // up when processing commands
-            if (method.isAnnotationPresent(NestedCommand.class)) {
-                NestedCommand nestedCmd = method.getAnnotation(NestedCommand.class);
-
-                for (Class<?> nestedCls : nestedCmd.value())
-                    registerMethods(nestedCls, method);
-            }
-        }
-    }
-
-    /*
-     * Checks to see whether there is a command named such at the root level.
-     * This will check aliases as well.
-     */
-    public boolean hasCommand(String command, String modifier) {
-        return commands.get(null).containsKey(new CommandIdentifier(command.toLowerCase(), modifier.toLowerCase()))
-                || commands.get(null).containsKey(new CommandIdentifier(command.toLowerCase(), "*"));
-    }
-
-    // Get a list of command descriptions. This is only for root commands.
-    public Map<CommandIdentifier, String> getCommands() {
-        return descs;
-    }
-
-    // Get the usage string for a command.
-    private String getUsage(String[] args, int level, Command cmd) {
-        StringBuilder command = new StringBuilder();
-
-        command.append("/");
-
-        for (int i = 0; i <= level; i++)
-            command.append(args[i] + " ");
-
-        // removed arbitrary positioning of flags.
-        command.append(cmd.usage());
-
-        return command.toString();
-    }
-
-    // Get the usage string for a nested command.
-    private String getNestedUsage(String[] args, int level, Method method, Player player) throws CommandException {
-        StringBuilder command = new StringBuilder();
-
-        command.append("/");
-
-        for (int i = 0; i <= level; i++)
-            command.append(args[i] + " ");
-
-        Map<CommandIdentifier, Method> map = commands.get(method);
-        boolean found = false;
-
-        command.append("<");
-
-        Set<String> allowedCommands = new HashSet<String>();
-
-        for (Map.Entry<CommandIdentifier, Method> entry : map.entrySet()) {
-            Method childMethod = entry.getValue();
-            found = true;
-
-            if (hasPermission(childMethod, player)) {
-                Command childCmd = childMethod.getAnnotation(Command.class);
-
-                allowedCommands.add(childCmd.aliases()[0]);
-            }
-        }
-
-        if (allowedCommands.size() > 0)
-            command.append(joinString(allowedCommands, "|", 0));
-        else {
-            if (!found)
-                command.append("?");
-            else
-                throw new NoPermissionsException();
-        }
-
-        command.append(">");
-
-        return command.toString();
-    }
-
-    public static String joinString(Collection<?> str, String delimiter, int initialIndex) {
-        if (str.size() == 0)
-            return "";
-        StringBuilder buffer = new StringBuilder();
-        int i = 0;
-        for (Object o : str) {
-            if (i >= initialIndex) {
-                if (i > 0)
-                    buffer.append(delimiter);
-                buffer.append(o.toString());
-            }
-            i++;
-        }
-        return buffer.toString();
-    }
-
     /*
      * Attempt to execute a command. This version takes a separate command name
      * (for the root command) and then a list of following arguments.
@@ -354,6 +155,79 @@ public class CommandManager {
         }
     }
 
+    public String[] getAllCommandModifiers(String command) {
+        Set<String> cmds = new HashSet<String>();
+        for (Map<CommandIdentifier, Method> enclosing : commands.values()) {
+            for (CommandIdentifier identifier : enclosing.keySet()) {
+                if (identifier.getCommand().equals(command)) {
+                    cmds.add(identifier.getModifier());
+                }
+            }
+        }
+        return cmds.toArray(new String[cmds.size()]);
+    }
+
+    // Get a list of command descriptions. This is only for root commands.
+    public Map<CommandIdentifier, String> getCommands() {
+        return descs;
+    }
+
+    // Get the usage string for a nested command.
+    private String getNestedUsage(String[] args, int level, Method method, Player player) throws CommandException {
+        StringBuilder command = new StringBuilder();
+
+        command.append("/");
+
+        for (int i = 0; i <= level; i++)
+            command.append(args[i] + " ");
+
+        Map<CommandIdentifier, Method> map = commands.get(method);
+        boolean found = false;
+
+        command.append("<");
+
+        Set<String> allowedCommands = new HashSet<String>();
+
+        for (Map.Entry<CommandIdentifier, Method> entry : map.entrySet()) {
+            Method childMethod = entry.getValue();
+            found = true;
+
+            if (hasPermission(childMethod, player)) {
+                Command childCmd = childMethod.getAnnotation(Command.class);
+
+                allowedCommands.add(childCmd.aliases()[0]);
+            }
+        }
+
+        if (allowedCommands.size() > 0)
+            command.append(joinString(allowedCommands, "|", 0));
+        else {
+            if (!found)
+                command.append("?");
+            else
+                throw new NoPermissionsException();
+        }
+
+        command.append(">");
+
+        return command.toString();
+    }
+
+    // Get the usage string for a command.
+    private String getUsage(String[] args, int level, Command cmd) {
+        StringBuilder command = new StringBuilder();
+
+        command.append("/");
+
+        for (int i = 0; i <= level; i++)
+            command.append(args[i] + " ");
+
+        // removed arbitrary positioning of flags.
+        command.append(cmd.usage());
+
+        return command.toString();
+    }
+
     // Returns whether a player has access to a command.
     private boolean hasPermission(Method method, Player player) {
         Permission permission = method.getAnnotation(Permission.class);
@@ -371,19 +245,151 @@ public class CommandManager {
         return player.hasPermission("citizens." + perm);
     }
 
-    public String[] getAllCommandModifiers(String command) {
-        Set<String> cmds = new HashSet<String>();
-        for (Map<CommandIdentifier, Method> enclosing : commands.values()) {
-            for (CommandIdentifier identifier : enclosing.keySet()) {
-                if (identifier.getCommand().equals(command)) {
-                    cmds.add(identifier.getModifier());
-                }
-            }
-        }
-        return cmds.toArray(new String[cmds.size()]);
-    }
-
     public void setInjector(Injector injector) {
         this.injector = injector;
+    }
+
+    // Logger for general errors.
+    private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
+
+    /*
+     * Mapping of commands (including aliases) with a description. Root commands
+     * are stored under a key of null, whereas child commands are cached under
+     * their respective Method. The child map has the key of the command name
+     * (one for each alias) with the method.
+     */
+    private final Map<Method, Map<CommandIdentifier, Method>> commands = new HashMap<Method, Map<CommandIdentifier, Method>>();
+
+    // Used to store the instances associated with a method.
+    private final Map<Method, Object> instances = new HashMap<Method, Object>();
+
+    /*
+     * Mapping of commands (not including aliases) with a description. This is
+     * only for top level commands.
+     */
+    private final Map<CommandIdentifier, String> descs = new HashMap<CommandIdentifier, String>();
+
+    // Stores the injector used to getInstance.
+    private Injector injector;
+
+    private final Map<Method, Requirements> requirements = new HashMap<Method, Requirements>();
+
+    private final Map<Method, ServerCommand> serverCommands = new HashMap<Method, ServerCommand>();
+
+    /*
+     * Checks to see whether there is a command named such at the root level.
+     * This will check aliases as well.
+     */
+    public boolean hasCommand(String command, String modifier) {
+        return commands.get(null).containsKey(new CommandIdentifier(command.toLowerCase(), modifier.toLowerCase()))
+                || commands.get(null).containsKey(new CommandIdentifier(command.toLowerCase(), "*"));
+    }
+
+    /*
+     * Register an class that contains commands (denoted by Command. If no
+     * dependency injector is specified, then the methods of the class will be
+     * registered to be called statically. Otherwise, new instances will be
+     * created of the command classes and methods will not be called statically.
+     */
+    public void register(Class<?> clazz) {
+        registerMethods(clazz, null);
+    }
+
+    /*
+     * Register the methods of a class. This will automatically construct
+     * instances as necessary.
+     */
+    private void registerMethods(Class<?> clazz, Method parent) {
+        Object obj = injector.getInstance(clazz);
+        registerMethods(clazz, parent, obj);
+    }
+
+    // Register the methods of a class.
+    private void registerMethods(Class<?> clazz, Method parent, Object obj) {
+        Map<CommandIdentifier, Method> map;
+
+        // Make a new hash map to cache the commands for this class
+        // as looking up methods via reflection is fairly slow
+        if (commands.containsKey(parent))
+            map = commands.get(parent);
+        else {
+            map = new HashMap<CommandIdentifier, Method>();
+            commands.put(parent, map);
+        }
+
+        for (Method method : clazz.getMethods()) {
+            if (!method.isAnnotationPresent(Command.class))
+                continue;
+            boolean isStatic = Modifier.isStatic(method.getModifiers());
+
+            Command cmd = method.getAnnotation(Command.class);
+            String[] modifiers = cmd.modifiers();
+
+            // Cache the aliases too
+            for (String alias : cmd.aliases())
+                for (String modifier : modifiers)
+                    map.put(new CommandIdentifier(alias, modifier), method);
+
+            Requirements cmdRequirements = null;
+            if (method.getDeclaringClass().isAnnotationPresent(Requirements.class))
+                cmdRequirements = method.getDeclaringClass().getAnnotation(Requirements.class);
+
+            if (method.isAnnotationPresent(Requirements.class))
+                cmdRequirements = method.getAnnotation(Requirements.class);
+
+            if (requirements != null)
+                requirements.put(method, cmdRequirements);
+
+            ServerCommand serverCommand = null;
+            if (method.isAnnotationPresent(ServerCommand.class))
+                serverCommand = method.getAnnotation(ServerCommand.class);
+
+            if (serverCommand != null)
+                serverCommands.put(method, serverCommand);
+
+            // We want to be able invoke with an instance
+            if (!isStatic) {
+                // Can't register this command if we don't have an instance
+                if (obj == null)
+                    continue;
+
+                instances.put(method, obj);
+            }
+
+            // Build a list of commands and their usage details, at least for
+            // root level commands
+            if (parent == null)
+                if (cmd.usage().length() == 0)
+                    descs.put(new CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]), cmd.desc());
+                else
+                    descs.put(new CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]),
+                            cmd.usage() + " - " + cmd.desc());
+
+            // Look for nested commands -- if there are any, those have
+            // to be cached too so that they can be quickly looked
+            // up when processing commands
+            if (method.isAnnotationPresent(NestedCommand.class)) {
+                NestedCommand nestedCmd = method.getAnnotation(NestedCommand.class);
+
+                for (Class<?> nestedCls : nestedCmd.value())
+                    registerMethods(nestedCls, method);
+            }
+        }
+    }
+
+    public static String joinString(Collection<?> str, String delimiter, int initialIndex) {
+        if (str.size() == 0)
+            return "";
+        StringBuilder buffer = new StringBuilder();
+        int i = 0;
+        for (Object o : str) {
+            if (i >= initialIndex) {
+                if (i > 0)
+                    buffer.append(delimiter);
+                buffer.append(o.toString());
+            }
+            i++;
+        }
+        return buffer.toString();
     }
 }

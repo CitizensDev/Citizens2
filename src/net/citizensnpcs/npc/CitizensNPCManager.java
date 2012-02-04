@@ -9,7 +9,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
-
 import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.NPCBuilder;
@@ -31,16 +30,6 @@ public class CitizensNPCManager implements NPCManager {
         this.saves = saves;
     }
 
-    @Override
-    public NPC createNPC(CreatureType type, String name) {
-        return createNPC(type, name, null);
-    }
-
-    @Override
-    public NPC createNPC(CreatureType type, String name, Character character) {
-        return createNPC(type, generateUniqueId(), name, character);
-    }
-
     public NPC createNPC(CreatureType type, int id, String name, Character character) {
         if (npcs.contains(id))
             throw new IllegalArgumentException("An NPC already has the ID '" + id + "'.");
@@ -51,15 +40,27 @@ public class CitizensNPCManager implements NPCManager {
         return npc;
     }
 
+    @Override
+    public NPC createNPC(CreatureType type, String name) {
+        return createNPC(type, name, null);
+    }
+
+    @Override
+    public NPC createNPC(CreatureType type, String name, Character character) {
+        return createNPC(type, generateUniqueId(), name, character);
+    }
+
     public void despawn(NPC npc) {
         npc.getTrait(SpawnLocation.class).setLocation(npc.getBukkitEntity().getLocation());
         selected.removeAll(npc.getId());
         npc.getBukkitEntity().remove();
     }
 
-    @Override
-    public Iterator<NPC> iterator() {
-        return npcs.iterator();
+    private int generateUniqueId() {
+        int count = 0;
+        while (getNPC(count++) != null)
+            ;
+        return count - 1;
     }
 
     @Override
@@ -84,16 +85,28 @@ public class CitizensNPCManager implements NPCManager {
         return npcs;
     }
 
-    private int generateUniqueId() {
-        int count = 0;
-        while (getNPC(count++) != null)
-            ;
-        return count - 1;
+    public NPC getSelectedNPC(Player player) {
+        for (int id : selected.keySet()) {
+            if (selected.get(id).contains(player.getName()))
+                return getNPC(id);
+        }
+        return null;
     }
 
     @Override
     public boolean isNPC(Entity entity) {
         return getNPC(entity) != null;
+    }
+
+    @Override
+    public Iterator<NPC> iterator() {
+        return npcs.iterator();
+    }
+
+    public boolean npcIsSelectedByPlayer(Player player, NPC npc) {
+        if (!selected.containsKey(npc.getId()))
+            return false;
+        return selected.get(npc.getId()).contains(player.getName());
     }
 
     public void remove(NPC npc) {
@@ -110,19 +123,5 @@ public class CitizensNPCManager implements NPCManager {
         if (existing != null)
             selected.get(existing.getId()).remove(player.getName());
         selected.put(npc.getId(), player.getName());
-    }
-
-    public boolean npcIsSelectedByPlayer(Player player, NPC npc) {
-        if (!selected.containsKey(npc.getId()))
-            return false;
-        return selected.get(npc.getId()).contains(player.getName());
-    }
-
-    public NPC getSelectedNPC(Player player) {
-        for (int id : selected.keySet()) {
-            if (selected.get(id).contains(player.getName()))
-                return getNPC(id);
-        }
-        return null;
     }
 }
