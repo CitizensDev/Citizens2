@@ -1,12 +1,30 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.entity.EntityZombieNPC;
+import net.minecraft.server.EntityZombie;
+import net.minecraft.server.World;
 
-public class CitizensZombieNPC extends CitizensNPC {
+import org.bukkit.entity.Zombie;
+
+public class CitizensZombieNPC extends CitizensMobNPC {
 
     public CitizensZombieNPC(CitizensNPCManager manager, int id, String name) {
         super(manager, id, name, EntityZombieNPC.class);
+    }
+
+    @Override
+    public Zombie getBukkitEntity() {
+        return (Zombie) getHandle().getBukkitEntity();
+    }
+
+    public static class EntityZombieNPC extends EntityZombie {
+
+        public EntityZombieNPC(World world) {
+            super(world);
+        }
+
+        @Override
+        public void m_() {
+        }
     }
 }

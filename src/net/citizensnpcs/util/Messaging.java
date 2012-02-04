@@ -33,6 +33,10 @@ public class Messaging {
         player.sendMessage(send);
     }
 
+    public static void sendError(Player player, Object msg) {
+        send(player, ChatColor.RED.toString() + msg);
+    }
+
     public static void sendWithNPC(Player player, Object msg, NPC npc) {
         String send = msg.toString();
 
@@ -40,9 +44,5 @@ public class Messaging {
         send = send.replace("<id>", Integer.toString(npc.getId()));
 
         send(player, send);
-    }
-
-    public static void sendError(Player player, Object msg) {
-        send(player, ChatColor.RED.toString() + msg);
     }
 }

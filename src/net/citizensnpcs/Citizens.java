@@ -2,11 +2,8 @@ package net.citizensnpcs;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
@@ -51,8 +48,15 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.common.collect.Lists;
+
 public class Citizens extends JavaPlugin {
     private static final String COMPATIBLE_MC_VERSION = "1.1";
+
+    @SuppressWarnings("unchecked")
+    private static final List<Class<? extends Trait>> traits = Lists.newArrayList(Owner.class, Spawned.class,
+            LookClose.class, SpawnLocation.class);
+    // TODO: automatically register trait classes in CitizensNPC?
 
     private volatile CitizensNPCManager npcManager;
     private final InstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
@@ -61,6 +65,24 @@ public class Citizens extends JavaPlugin {
     private Settings config;
     private Storage saves;
     private boolean compatible;
+
+    private boolean handleMistake(CommandSender sender, String command, String modifier) {
+        int minDist = Integer.MAX_VALUE;
+        String closest = "";
+        for (String string : cmdManager.getAllCommandModifiers(command)) {
+            int distance = StringHelper.getLevenshteinDistance(modifier, string);
+            if (minDist > distance) {
+                minDist = distance;
+                closest = string;
+            }
+        }
+        if (!closest.isEmpty()) {
+            sender.sendMessage(ChatColor.GRAY + "Unknown command. Did you mean:");
+            sender.sendMessage(StringHelper.wrap(" /") + command + " " + StringHelper.wrap(closest));
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
@@ -149,10 +171,11 @@ public class Citizens extends JavaPlugin {
         config.load();
 
         // NPC storage
-        if (Setting.USE_DATABASE.asBoolean())
+        if (Setting.USE_DATABASE.asBoolean()) {
             saves = new DatabaseStorage();
-        else
+        } else {
             saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
+        }
 
         // Register API managers
         npcManager = new CitizensNPCManager(saves);
@@ -167,10 +190,7 @@ public class Citizens extends JavaPlugin {
         registerCommands();
         registerPermissions();
 
-        traitManager.register(SpawnLocation.class);
-        traitManager.register(Owner.class);
-        traitManager.register(Spawned.class);
-        traitManager.register(LookClose.class);
+        traitManager.registerAll(traits);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
 
@@ -191,6 +211,29 @@ public class Citizens extends JavaPlugin {
             Messaging.log(Level.SEVERE, "Issue enabling plugin. Disabling.");
             getServer().getPluginManager().disablePlugin(this);
         }
+    }
+
+    private void registerCommands() {
+        cmdManager = new CommandManager();
+        cmdManager.setInjector(new Injector(npcManager, characterManager));
+
+        // cmdManager.register(AdminCommands.class);
+        cmdManager.register(NPCCommands.class);
+    }
+
+    private void registerPermissions() {
+        // TODO There has to be a better way than this (maybe use Permission
+        // annotation to register permissions?)
+        Map<String, Boolean> children = new HashMap<String, Boolean>();
+        children.put("citizens.npc.create", true);
+        children.put("citizens.npc.spawn", true);
+        children.put("citizens.npc.despawn", true);
+        children.put("citizens.npc.select", true);
+        children.put("citizens.npc.tp", true);
+        children.put("citizens.npc.tphere", true);
+
+        Permission perm = new Permission("citizens.*", PermissionDefault.OP, children);
+        getServer().getPluginManager().addPermission(perm);
     }
 
     private void saveNPCs() {
@@ -220,56 +263,5 @@ public class Citizens extends JavaPlugin {
                 ++spawned;
         }
         Messaging.log("Loaded " + created + " NPCs (" + spawned + " spawned).");
-    }
-
-    private void registerPermissions() {
-        // TODO There has to be a better way than this (maybe use Permission
-        // annotation to register permissions?)
-        Map<String, Boolean> children = new HashMap<String, Boolean>();
-        children.put("citizens.npc.create", true);
-        children.put("citizens.npc.spawn", true);
-        children.put("citizens.npc.despawn", true);
-        children.put("citizens.npc.select", true);
-        children.put("citizens.npc.tp", true);
-        children.put("citizens.npc.tphere", true);
-
-        Permission perm = new Permission("citizens.*", PermissionDefault.OP, children);
-        getServer().getPluginManager().addPermission(perm);
-    }
-
-    private void registerCommands() {
-        cmdManager = new CommandManager();
-        cmdManager.setInjector(new Injector(npcManager, characterManager));
-
-        // cmdManager.register(AdminCommands.class);
-        cmdManager.register(NPCCommands.class);
-    }
-
-    private boolean handleMistake(CommandSender sender, String command, String modifier) {
-        String[] modifiers = cmdManager.getAllCommandModifiers(command);
-        Map<Integer, String> values = new TreeMap<Integer, String>();
-        int i = 0;
-        for (String string : modifiers) {
-            values.put(StringHelper.getLevenshteinDistance(modifier, string), modifiers[i]);
-            ++i;
-        }
-        int best = 0;
-        boolean stop = false;
-        Set<String> possible = new HashSet<String>();
-        for (Entry<Integer, String> entry : values.entrySet()) {
-            if (!stop) {
-                best = entry.getKey();
-                stop = true;
-            } else if (entry.getKey() > best)
-                break;
-            possible.add(entry.getValue());
-        }
-        if (possible.size() > 0) {
-            sender.sendMessage(ChatColor.GRAY + "Unknown command. Did you mean:");
-            for (String string : possible)
-                sender.sendMessage(StringHelper.wrap(" /") + command + " " + StringHelper.wrap(string));
-            return true;
-        }
-        return false;
     }
 }

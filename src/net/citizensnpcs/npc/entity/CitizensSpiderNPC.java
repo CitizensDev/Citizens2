@@ -1,12 +1,30 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.entity.EntitySpiderNPC;
+import net.minecraft.server.EntitySpider;
+import net.minecraft.server.World;
 
-public class CitizensSpiderNPC extends CitizensNPC {
+import org.bukkit.entity.Spider;
+
+public class CitizensSpiderNPC extends CitizensMobNPC {
 
     public CitizensSpiderNPC(CitizensNPCManager manager, int id, String name) {
         super(manager, id, name, EntitySpiderNPC.class);
+    }
+
+    @Override
+    public Spider getBukkitEntity() {
+        return (Spider) getHandle().getBukkitEntity();
+    }
+
+    public static class EntitySpiderNPC extends EntitySpider {
+
+        public EntitySpiderNPC(World world) {
+            super(world);
+        }
+
+        @Override
+        public void m_() {
+        }
     }
 }

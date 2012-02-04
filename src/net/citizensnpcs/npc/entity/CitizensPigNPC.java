@@ -1,12 +1,30 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.entity.EntityPigNPC;
+import net.minecraft.server.EntityPig;
+import net.minecraft.server.World;
 
-public class CitizensPigNPC extends CitizensNPC {
+import org.bukkit.entity.Pig;
+
+public class CitizensPigNPC extends CitizensMobNPC {
 
     public CitizensPigNPC(CitizensNPCManager manager, int id, String name) {
         super(manager, id, name, EntityPigNPC.class);
+    }
+
+    @Override
+    public Pig getBukkitEntity() {
+        return (Pig) getHandle().getBukkitEntity();
+    }
+
+    public static class EntityPigNPC extends EntityPig {
+
+        public EntityPigNPC(World world) {
+            super(world);
+        }
+
+        @Override
+        public void m_() {
+        }
     }
 }

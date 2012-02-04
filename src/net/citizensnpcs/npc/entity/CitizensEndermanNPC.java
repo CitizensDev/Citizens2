@@ -1,12 +1,30 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.entity.EntityEndermanNPC;
+import net.minecraft.server.EntityEnderman;
+import net.minecraft.server.World;
 
-public class CitizensEndermanNPC extends CitizensNPC {
+import org.bukkit.entity.Enderman;
+
+public class CitizensEndermanNPC extends CitizensMobNPC {
 
     public CitizensEndermanNPC(CitizensNPCManager manager, int id, String name) {
         super(manager, id, name, EntityEndermanNPC.class);
+    }
+
+    @Override
+    public Enderman getBukkitEntity() {
+        return (Enderman) getHandle().getBukkitEntity();
+    }
+
+    public static class EntityEndermanNPC extends EntityEnderman {
+
+        public EntityEndermanNPC(World world) {
+            super(world);
+        }
+
+        @Override
+        public void m_() {
+        }
     }
 }

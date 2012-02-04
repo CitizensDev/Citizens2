@@ -1,12 +1,30 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.entity.EntityMushroomCowNPC;
+import net.minecraft.server.EntityMushroomCow;
+import net.minecraft.server.World;
 
-public class CitizensMushroomCowNPC extends CitizensNPC {
+import org.bukkit.entity.MushroomCow;
+
+public class CitizensMushroomCowNPC extends CitizensMobNPC {
 
     public CitizensMushroomCowNPC(CitizensNPCManager manager, int id, String name) {
         super(manager, id, name, EntityMushroomCowNPC.class);
+    }
+
+    @Override
+    public MushroomCow getBukkitEntity() {
+        return (MushroomCow) getHandle().getBukkitEntity();
+    }
+
+    public static class EntityMushroomCowNPC extends EntityMushroomCow {
+
+        public EntityMushroomCowNPC(World world) {
+            super(world);
+        }
+
+        @Override
+        public void m_() {
+        }
     }
 }

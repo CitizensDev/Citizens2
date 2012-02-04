@@ -1,12 +1,30 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.entity.EntitySkeletonNPC;
+import net.minecraft.server.EntitySkeleton;
+import net.minecraft.server.World;
 
-public class CitizensSkeletonNPC extends CitizensNPC {
+import org.bukkit.entity.Skeleton;
+
+public class CitizensSkeletonNPC extends CitizensMobNPC {
 
     public CitizensSkeletonNPC(CitizensNPCManager manager, int id, String name) {
         super(manager, id, name, EntitySkeletonNPC.class);
+    }
+
+    @Override
+    public Skeleton getBukkitEntity() {
+        return (Skeleton) getHandle().getBukkitEntity();
+    }
+
+    public static class EntitySkeletonNPC extends EntitySkeleton {
+
+        public EntitySkeletonNPC(World world) {
+            super(world);
+        }
+
+        @Override
+        public void m_() {
+        }
     }
 }

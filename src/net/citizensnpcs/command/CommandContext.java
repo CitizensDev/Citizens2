@@ -48,36 +48,12 @@ public class CommandContext {
                 String.class);
     }
 
+    public int argsLength() {
+        return args.length - 1;
+    }
+
     public String getCommand() {
         return args[0];
-    }
-
-    public boolean matches(String command) {
-        return args[0].equalsIgnoreCase(command);
-    }
-
-    public String getString(int index) {
-        return args[index + 1];
-    }
-
-    public String getString(int index, String def) {
-        return index + 1 < args.length ? args[index + 1] : def;
-    }
-
-    public String getJoinedStrings(int initialIndex) {
-        initialIndex = initialIndex + 1;
-        StringBuilder buffer = new StringBuilder(args[initialIndex]);
-        for (int i = initialIndex + 1; i < args.length; i++)
-            buffer.append(" ").append(args[i]);
-        return buffer.toString();
-    }
-
-    public int getInteger(int index) throws NumberFormatException {
-        return Integer.parseInt(args[index + 1]);
-    }
-
-    public int getInteger(int index, int def) throws NumberFormatException {
-        return index + 1 < args.length ? Integer.parseInt(args[index + 1]) : def;
     }
 
     public double getDouble(int index) throws NumberFormatException {
@@ -88,10 +64,24 @@ public class CommandContext {
         return index + 1 < args.length ? Double.parseDouble(args[index + 1]) : def;
     }
 
-    public String[] getSlice(int index) {
-        String[] slice = new String[args.length - index];
-        System.arraycopy(args, index, slice, 0, args.length - index);
-        return slice;
+    public Set<Character> getFlags() {
+        return flags;
+    }
+
+    public int getInteger(int index) throws NumberFormatException {
+        return Integer.parseInt(args[index + 1]);
+    }
+
+    public int getInteger(int index, int def) throws NumberFormatException {
+        return index + 1 < args.length ? Integer.parseInt(args[index + 1]) : def;
+    }
+
+    public String getJoinedStrings(int initialIndex) {
+        initialIndex = initialIndex + 1;
+        StringBuilder buffer = new StringBuilder(args[initialIndex]);
+        for (int i = initialIndex + 1; i < args.length; i++)
+            buffer.append(" ").append(args[i]);
+        return buffer.toString();
     }
 
     public String[] getPaddedSlice(int index, int padding) {
@@ -100,19 +90,29 @@ public class CommandContext {
         return slice;
     }
 
-    public boolean hasFlag(char ch) {
-        return flags.contains(ch);
+    public String[] getSlice(int index) {
+        String[] slice = new String[args.length - index];
+        System.arraycopy(args, index, slice, 0, args.length - index);
+        return slice;
     }
 
-    public Set<Character> getFlags() {
-        return flags;
+    public String getString(int index) {
+        return args[index + 1];
+    }
+
+    public String getString(int index, String def) {
+        return index + 1 < args.length ? args[index + 1] : def;
+    }
+
+    public boolean hasFlag(char ch) {
+        return flags.contains(ch);
     }
 
     public int length() {
         return args.length;
     }
 
-    public int argsLength() {
-        return args.length - 1;
+    public boolean matches(String command) {
+        return args[0].equalsIgnoreCase(command);
     }
 }

@@ -1,12 +1,30 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.entity.EntityMagmaCubeNPC;
+import net.minecraft.server.EntityMagmaCube;
+import net.minecraft.server.World;
 
-public class CitizensMagmaCubeNPC extends CitizensNPC {
+import org.bukkit.entity.MagmaCube;
+
+public class CitizensMagmaCubeNPC extends CitizensMobNPC {
 
     public CitizensMagmaCubeNPC(CitizensNPCManager manager, int id, String name) {
         super(manager, id, name, EntityMagmaCubeNPC.class);
+    }
+
+    @Override
+    public MagmaCube getBukkitEntity() {
+        return (MagmaCube) getHandle().getBukkitEntity();
+    }
+
+    public static class EntityMagmaCubeNPC extends EntityMagmaCube {
+
+        public EntityMagmaCubeNPC(World world) {
+            super(world);
+        }
+
+        @Override
+        public void m_() {
+        }
     }
 }

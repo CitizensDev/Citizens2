@@ -32,13 +32,8 @@ public class NPCCommands {
         this.characterManager = characterManager;
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "create [name] [type] (character)",
-             desc = "Create a new NPC",
-             modifiers = { "create" },
-             min = 3,
-             max = 4)
+    @Command(aliases = { "npc" }, usage = "create [name] [type] (character)", desc = "Create a new NPC",
+            modifiers = { "create" }, min = 3, max = 4)
     @Permission("npc.create")
     @Requirements
     public void createNPC(CommandContext args, Player player, NPC npc) {
@@ -49,7 +44,7 @@ public class NPCCommands {
             Messaging.sendError(player, "'" + args.getString(2) + "' is not a valid mob type. Using default NPC.");
         }
 
-        CitizensNPC create = (CitizensNPC) npcManager.createNPC(type, args.getString(1));
+        NPC create = npcManager.createNPC(type, args.getString(1));
         String successMsg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
         boolean success = true;
         if (args.argsLength() == 4) {
@@ -77,13 +72,8 @@ public class NPCCommands {
             Messaging.send(player, successMsg);
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "despawn",
-             desc = "Despawn an NPC",
-             modifiers = { "despawn" },
-             min = 1,
-             max = 1)
+    @Command(aliases = { "npc" }, usage = "despawn", desc = "Despawn an NPC", modifiers = { "despawn" }, min = 1,
+            max = 1)
     @Permission("npc.despawn")
     public void despawnNPC(CommandContext args, Player player, NPC npc) {
         npc.getTrait(Spawned.class).setSpawned(false);
@@ -91,13 +81,26 @@ public class NPCCommands {
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "spawn [id]",
-             desc = "Spawn an existing NPC",
-             modifiers = { "spawn" },
-             min = 2,
-             max = 2)
+    @Command(aliases = { "npc" }, usage = "select [id]", desc = "Select an NPC", modifiers = { "select" }, min = 2,
+            max = 2)
+    @Permission("npc.select")
+    @Requirements(ownership = true)
+    public void selectNPC(CommandContext args, Player player, NPC npc) {
+        NPC toSelect = npcManager.getNPC(args.getInteger(1));
+        if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn()) {
+            Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' is spawned.");
+            return;
+        }
+        if (npc != null && toSelect.getId() == npc.getId()) {
+            Messaging.sendError(player, "You already have that NPC selected.");
+            return;
+        }
+        npcManager.selectNPC(player, toSelect);
+        Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), toSelect);
+    }
+
+    @Command(aliases = { "npc" }, usage = "spawn [id]", desc = "Spawn an existing NPC", modifiers = { "spawn" },
+            min = 2, max = 2)
     @Permission("npc.spawn")
     @Requirements
     public void spawnNPC(CommandContext args, Player player, NPC npc) {
@@ -124,62 +127,24 @@ public class NPCCommands {
                                     + " is already spawned at another location. Use '/npc tphere' to teleport the NPC to your location.");
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "select [id]",
-             desc = "Select an NPC",
-             modifiers = { "select" },
-             min = 2,
-             max = 2)
-    @Permission("npc.select")
-    @Requirements(ownership = true)
-    public void selectNPC(CommandContext args, Player player, NPC npc) {
-        NPC toSelect = npcManager.getNPC(args.getInteger(1));
-        if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn()) {
-            Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' is spawned.");
-            return;
-        }
-        if (npc != null && toSelect.getId() == npc.getId()) {
-            Messaging.sendError(player, "You already have that NPC selected.");
-            return;
-        }
-        npcManager.selectNPC(player, toSelect);
-        Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), toSelect);
-    }
-
-    @Command(
-             aliases = { "npc" },
-             usage = "tphere",
-             desc = "Teleport an NPC to your location",
-             modifiers = { "tphere" },
-             min = 1,
-             max = 1)
+    @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport an NPC to your location",
+            modifiers = { "tphere" }, min = 1, max = 1)
     @Permission("npc.tphere")
     public void teleportNPCToPlayer(CommandContext args, Player player, NPC npc) {
         npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "tp",
-             desc = "Teleport to an NPC",
-             modifiers = { "tp", "teleport" },
-             min = 1,
-             max = 1)
+    @Command(aliases = { "npc" }, usage = "tp", desc = "Teleport to an NPC", modifiers = { "tp", "teleport" }, min = 1,
+            max = 1)
     @Permission("npc.tp")
     public void teleportToNPC(CommandContext args, Player player, NPC npc) {
         player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
         Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
     }
-    
-    @Command(
-            aliases = { "npc" },
-            usage = "lookclose",
-            desc = "Toggle an NPC's look-close state",
-            modifiers = { "lookclose", "look", "rotate" },
-            min = 1,
-            max = 1)
+
+    @Command(aliases = { "npc" }, usage = "lookclose", desc = "Toggle an NPC's look-close state", modifiers = {
+            "lookclose", "look", "rotate" }, min = 1, max = 1)
     @Permission("npc.look-close")
     public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
         npc.getTrait(LookClose.class).setLookClose(!npc.getTrait(LookClose.class).shouldLookClose());
