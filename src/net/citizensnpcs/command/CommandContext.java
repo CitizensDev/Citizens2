@@ -19,15 +19,18 @@
 package net.citizensnpcs.command;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 public class CommandContext {
     protected String[] args;
-    protected Set<Character> flags = new HashSet<Character>();
+    protected final Map<String, String> valueFlags = Maps.newHashMap();
+    protected final Set<Character> flags = new HashSet<Character>();
 
     public CommandContext(String args) {
         this(args.split(" "));
@@ -38,6 +41,31 @@ public class CommandContext {
         for (; i < args.length; i++) {
             if (args[i].length() == 0) {
                 // Ignore this
+            } else if (args[i].charAt(0) == '\'' || args[i].charAt(0) == '"') {
+                char quote = args[i].charAt(0);
+                for (int inner = i + 1; inner < args.length; inner++) {
+                    if (args[inner].isEmpty())
+                        continue;
+                    String test = args[inner].trim();
+                    args[i] += " " + test;
+                    args[inner] = "";
+                    if (test.charAt(test.length() - 1) == quote) {
+                        break;
+                    }
+                }
+            } else if (i + 1 < args.length && args[i].length() > 2 && args[i].matches("^--[a-zA-Z]+$")) {
+                int inner = i;
+                while (args[inner++].isEmpty()) {
+                    if (inner == args.length) {
+                        inner = -1;
+                        break;
+                    }
+                }
+                if (inner != -1) {
+                    valueFlags.put(args[i].replaceFirst("--", ""), args[inner]);
+                    args[i] = "";
+                    args[inner] = "";
+                }
             } else if (args[i].charAt(0) == '-' && args[i].matches("^-[a-zA-Z]+$")) {
                 for (int k = 1; k < args[i].length(); k++)
                     flags.add(args[i].charAt(k));
