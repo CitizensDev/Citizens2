@@ -1,8 +1,8 @@
 package net.citizensnpcs;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.npc.ai.CitizensNavigator;
 
 public class NPCUpdater implements Runnable {
     private final CitizensNPCManager npcManager;
@@ -14,6 +14,6 @@ public class NPCUpdater implements Runnable {
     @Override
     public void run() {
         for (NPC npc : npcManager)
-            ((CitizensNavigator) npc.getNavigator()).update();
+            ((CitizensNPC) npc).update();
     }
 }

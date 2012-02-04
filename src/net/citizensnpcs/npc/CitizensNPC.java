@@ -3,26 +3,27 @@ package net.citizensnpcs.npc;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
-import net.citizensnpcs.api.npc.ai.Navigator;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
-import net.citizensnpcs.npc.ai.CitizensNavigator;
+import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.util.Messaging;
+import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 public abstract class CitizensNPC extends AbstractNPC {
     protected final CitizensNPCManager manager;
-    protected net.minecraft.server.Entity mcEntity;
+    protected final CitizensAI ai = new CitizensAI(this);
+    protected EntityLiving mcEntity;
 
     protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
         super(id, name);
         this.manager = manager;
     }
 
-    protected abstract net.minecraft.server.Entity createHandle(Location loc);
+    protected abstract EntityLiving createHandle(Location loc);
 
     @Override
     public boolean despawn() {
@@ -40,17 +41,17 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public Entity getBukkitEntity() {
-        return getHandle().getBukkitEntity();
+    public LivingEntity getBukkitEntity() {
+        return (LivingEntity) getHandle().getBukkitEntity();
     }
 
-    public net.minecraft.server.Entity getHandle() {
+    public EntityLiving getHandle() {
         return mcEntity;
     }
 
     @Override
-    public Navigator getNavigator() {
-        return new CitizensNavigator(this);
+    public CitizensAI getAI() {
+        return new CitizensAI(this);
     }
 
     @Override
@@ -85,5 +86,9 @@ public abstract class CitizensNPC extends AbstractNPC {
         // Set the spawned state
         addTrait(new Spawned(true));
         return true;
+    }
+
+    public void update() {
+        ai.update();
     }
 }
