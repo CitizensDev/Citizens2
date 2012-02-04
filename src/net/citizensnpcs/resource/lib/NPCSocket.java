@@ -1,27 +1,20 @@
 package net.citizensnpcs.resource.lib;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
 public class NPCSocket extends Socket {
+
     @Override
     public InputStream getInputStream() {
-        return new InputStream() {
-            @Override
-            public int read() {
-                return 0; // NOP
-            }
-        };
+        return new ByteArrayInputStream(new byte[10]);
     }
 
     @Override
     public OutputStream getOutputStream() {
-        return new OutputStream() {
-            @Override
-            public void write(int b) {
-                // NOP
-            }
-        };
+        return new ByteArrayOutputStream();
     }
 }

@@ -24,6 +24,8 @@ public class CitizensHumanNPC extends CitizensNPC {
     @Override
     public void update() {
         super.update();
+        if (mcEntity == null)
+            return;
         if (mcEntity.noDamageTicks > 0)
             mcEntity.noDamageTicks--;
         if (mcEntity.attackTicks > 0)
