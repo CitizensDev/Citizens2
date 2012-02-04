@@ -11,7 +11,6 @@ import net.minecraft.server.World;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.entity.LivingEntity;
 
 @SuppressWarnings("unchecked")
 public abstract class CitizensMobNPC extends CitizensNPC {
@@ -42,11 +41,6 @@ public abstract class CitizensMobNPC extends CitizensNPC {
         EntityLiving entity = createEntityFromClass(((CraftWorld) loc.getWorld()).getHandle());
         entity.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         return entity;
-    }
-
-    @Override
-    public LivingEntity getBukkitEntity() {
-        return (LivingEntity) getHandle().getBukkitEntity();
     }
 
     private static Map<Class<? extends Entity>, Integer> classToInt;
