@@ -12,6 +12,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class MoveStrategy implements PathStrategy {
+    private static final double JUMP_VELOCITY = 0.49D;
+
     private final EntityLiving handle;
     private final PathEntity path;
     private final Random random = new Random();
@@ -33,11 +35,10 @@ public class MoveStrategy implements PathStrategy {
         lengthSq *= lengthSq;
         while (vec3d != null && vec3d.d(handle.locX, vec3d.b, handle.locZ) < lengthSq) {
             this.path.a(); // Increment path index.
-            if (this.path.b()) { // finished.
+            if (this.path.b())// finished.
                 return null;
-            } else {
+            else
                 vec3d = this.path.a(handle);
-            }
         }
         return vec3d;
     }
@@ -56,18 +57,15 @@ public class MoveStrategy implements PathStrategy {
         double diffZ = vector.c - handle.locZ;
 
         handle.yaw += getYawDifference(diffZ, diffX);
-        if (vector.b - yHeight > 0.0D) {
+        if (vector.b - yHeight > 0.0D)
             jump();
-        }
         handle.d();
         // handle.walk();
 
-        if (handle.positionChanged) {
+        if (handle.positionChanged)
             jump();
-        }
-        if (random.nextFloat() < 0.8F && (inWater || onFire)) {
+        if (random.nextFloat() < 0.8F && (inWater || onFire))
             handle.motY += 0.04D;
-        }
         return false;
     }
 
@@ -81,6 +79,4 @@ public class MoveStrategy implements PathStrategy {
         if (handle.onGround)
             handle.motY = JUMP_VELOCITY;
     }
-
-    private static final double JUMP_VELOCITY = 0.49D;
 }

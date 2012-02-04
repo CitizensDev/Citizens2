@@ -51,6 +51,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandManager {
+
     /*
      * Attempt to execute a command. This version takes a separate command name
      * (for the root command) and then a list of following arguments.

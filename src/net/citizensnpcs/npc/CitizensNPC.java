@@ -7,7 +7,6 @@ import net.citizensnpcs.api.npc.ai.Navigator;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
-import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
@@ -15,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 public abstract class CitizensNPC extends AbstractNPC {
-    private static final double lookRange = 5;
     protected final CitizensNPCManager manager;
     protected net.minecraft.server.Entity mcEntity;
 
@@ -39,29 +37,6 @@ public abstract class CitizensNPC extends AbstractNPC {
         mcEntity = null;
 
         return true;
-    }
-
-    // TODO: is this necessary? it's a helper method...
-    protected void faceEntity(Location target) {
-        if (getBukkitEntity().getWorld() != target.getWorld())
-            return;
-        Location loc = getBukkitEntity().getLocation();
-
-        double xDiff = target.getX() - loc.getX();
-        double yDiff = target.getY() - loc.getY();
-        double zDiff = target.getZ() - loc.getZ();
-
-        double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
-        double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
-
-        double yaw = (Math.acos(xDiff / distanceXZ) * 180 / Math.PI);
-        double pitch = (Math.acos(yDiff / distanceY) * 180 / Math.PI) - 90;
-        if (zDiff < 0.0) {
-            yaw = yaw + (Math.abs(180 - yaw) * 2);
-        }
-
-        mcEntity.yaw = (float) yaw - 90;
-        mcEntity.pitch = (float) pitch;
     }
 
     @Override
@@ -110,15 +85,5 @@ public abstract class CitizensNPC extends AbstractNPC {
         // Set the spawned state
         addTrait(new Spawned(true));
         return true;
-    }
-
-    public void tick() {
-        // TODO: this needs to be less hard-coded... does everyone want this
-        // behaviour?
-        if (mcEntity != null) {
-            if (getTrait(LookClose.class).shouldLookClose()
-                    && mcEntity.world.findNearbyPlayer(mcEntity, lookRange) != null)
-                faceEntity(mcEntity.world.findNearbyPlayer(mcEntity, lookRange).getBukkitEntity().getLocation());
-        }
     }
 }

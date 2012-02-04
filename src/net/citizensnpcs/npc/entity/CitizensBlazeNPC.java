@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.entity;
 
+import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.minecraft.server.EntityBlaze;
 import net.minecraft.server.World;

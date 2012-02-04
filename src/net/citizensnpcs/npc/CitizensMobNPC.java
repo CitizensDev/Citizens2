@@ -1,20 +1,19 @@
-package net.citizensnpcs.npc.entity;
+package net.citizensnpcs.npc;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityTypes;
+import net.minecraft.server.World;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.LivingEntity;
 
+@SuppressWarnings("unchecked")
 public abstract class CitizensMobNPC extends CitizensNPC {
     private final Constructor<? extends EntityLiving> constructor;
 
@@ -29,7 +28,7 @@ public abstract class CitizensMobNPC extends CitizensNPC {
             registerEntityClass(clazz);
     }
 
-    private EntityLiving createEntityFromClass(net.minecraft.server.World world) {
+    private EntityLiving createEntityFromClass(World world) {
         try {
             return constructor.newInstance(world);
         } catch (Exception ex) {
@@ -41,7 +40,7 @@ public abstract class CitizensMobNPC extends CitizensNPC {
     @Override
     protected EntityLiving createHandle(Location loc) {
         EntityLiving entity = createEntityFromClass(((CraftWorld) loc.getWorld()).getHandle());
-        mcEntity.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        entity.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         return entity;
     }
 
@@ -76,8 +75,6 @@ public abstract class CitizensMobNPC extends CitizensNPC {
             classToInt = (Map<Class<? extends Entity>, Integer>) field.get(null);
         } catch (Exception ex) {
             ex.printStackTrace();
-            throw new IllegalStateException(
-                    "Unable to fetch entity class mapping - is Citizens updated for this version of CraftBukkit?");
         }
     }
 }
