@@ -3,18 +3,31 @@ package net.citizensnpcs.api.npc.ai;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
-/**
- * Handles pathfinding for an NPC
- */
-public interface Navigator {
+public interface AI {
+    /**
+     * Registers a {@link Goal} with a given priority.
+     * 
+     * @param priority
+     *            The priority of the goal
+     * @param goal
+     *            The goal
+     */
+    public void addGoal(int priority, Goal goal);
 
     /**
-     * Registers a callback for this navigator
+     * Sets the AI of this {@link AI} as a {@link Runnable}.
+     * 
+     * @param ai
+     */
+    public void setAI(Runnable ai);
+
+    /**
+     * Registers a callback
      * 
      * @param callback
-     *            NavigatorCallback to register
+     *            {@link NavigationCallback} to register
      */
-    public void registerCallback(NavigatorCallback callback);
+    public void registerNavigationCallback(NavigationCallback callback);
 
     /**
      * Creates a path to the given destination

@@ -2,7 +2,7 @@ package net.citizensnpcs.api.npc;
 
 import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.ai.Navigator;
+import net.citizensnpcs.api.npc.ai.AI;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.Trait;
 
@@ -73,11 +73,11 @@ public interface NPC {
     public String getName();
 
     /**
-     * Gets the Navigator of this NPC
+     * Gets the {@link AI} of this NPC
      * 
-     * @return Navigator of this NPC
+     * @return AI of this NPC
      */
-    public Navigator getNavigator();
+    public AI getAI();
 
     /**
      * Gets a trait from the given class
