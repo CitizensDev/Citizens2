@@ -54,9 +54,8 @@ public class Citizens extends JavaPlugin {
     private static final String COMPATIBLE_MC_VERSION = "1.1";
 
     @SuppressWarnings("unchecked")
-    private static final List<Class<? extends Trait>> traits = Lists.newArrayList(Owner.class, Spawned.class,
+    private static final List<Class<? extends Trait>> defaultTraits = Lists.newArrayList(Owner.class, Spawned.class,
             LookClose.class, SpawnLocation.class);
-    // TODO: automatically register trait classes in CitizensNPC?
 
     private volatile CitizensNPCManager npcManager;
     private final InstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
@@ -190,7 +189,8 @@ public class Citizens extends JavaPlugin {
         registerCommands();
         registerPermissions();
 
-        traitManager.registerAll(traits);
+        // Register default traits
+        traitManager.registerAll(defaultTraits);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
 
@@ -217,7 +217,6 @@ public class Citizens extends JavaPlugin {
         cmdManager = new CommandManager();
         cmdManager.setInjector(new Injector(npcManager, characterManager));
 
-        // cmdManager.register(AdminCommands.class);
         cmdManager.register(NPCCommands.class);
     }
 
@@ -231,6 +230,7 @@ public class Citizens extends JavaPlugin {
         children.put("citizens.npc.select", true);
         children.put("citizens.npc.tp", true);
         children.put("citizens.npc.tphere", true);
+        children.put("citizens.npc.look-close", true);
 
         Permission perm = new Permission("citizens.*", PermissionDefault.OP, children);
         getServer().getPluginManager().addPermission(perm);

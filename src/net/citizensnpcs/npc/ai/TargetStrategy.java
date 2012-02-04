@@ -24,15 +24,12 @@ public class TargetStrategy implements PathStrategy {
         if (target == null || target.dead)
             return true;
         current = new MoveStrategy(handle, handle.world.findPath(handle, target, 16F));
-        // NPCManager.faceEntity(handle.getBukkitEntity(),
-        // target.getBukkitEntity());
-        if (aggro) {
-            if (handle instanceof EntityMonster) {
+        if (aggro)
+            if (handle instanceof EntityMonster)
                 ((EntityMonster) handle).d(target);
-            } else if (handle instanceof EntityHuman) {
+            else if (handle instanceof EntityHuman)
                 ((EntityHuman) handle).attack(target);
-            }
-        }
+
         current.update();
         return false;
     }
