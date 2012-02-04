@@ -5,12 +5,9 @@ import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.resource.lib.EntityHumanNPC;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.ItemInWorldManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldServer;
 
 import org.bukkit.Location;
-import org.bukkit.Server;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Player;
 
@@ -24,8 +21,13 @@ public class CitizensHumanNPC extends CitizensNPC {
         return (Player) getHandle().getBukkitEntity();
     }
 
-    protected static MinecraftServer getMinecraftServer(Server server) {
-        return ((CraftServer) server).getServer();
+    @Override
+    public void update() {
+        super.update();
+        if (mcEntity.noDamageTicks > 0)
+            mcEntity.noDamageTicks--;
+        if (mcEntity.attackTicks > 0)
+            mcEntity.attackTicks--;
     }
 
     @Override
