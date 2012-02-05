@@ -39,9 +39,13 @@ public class Inventory implements Trait {
     @Override
     public void save(DataKey key) {
         int index = 0;
-        for (ItemStack item : contents)
+        for (ItemStack item : contents) {
+            // Clear previous items to avoid conflicts
+            key.removeKey(String.valueOf(index));
             if (item != null)
-                saveItem(item, key.getRelative(String.valueOf(index++)));
+                saveItem(item, key.getRelative(String.valueOf(index)));
+            index++;
+        }
     }
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
