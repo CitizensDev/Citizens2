@@ -20,11 +20,12 @@ public abstract class CitizensNPC extends AbstractNPC {
     protected final CitizensNPCManager manager;
     protected final CitizensAI ai = new CitizensAI(this);
     protected EntityLiving mcEntity;
-    protected final NPCInventory inventory = new NPCInventory();
+    protected final NPCInventory inventory;
 
     protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
         super(id, name);
         this.manager = manager;
+        inventory = new NPCInventory(this);
     }
 
     protected abstract EntityLiving createHandle(Location loc);

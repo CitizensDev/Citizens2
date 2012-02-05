@@ -10,11 +10,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 public class NPCInventory implements IInventory {
+    private final int size = 36;
+    private final CitizensNPC npc;
     private final ItemStack[] contents;
     private final Inventory inventory = new CraftInventory(this);
 
-    public NPCInventory() {
-        contents = new ItemStack[36];
+    public NPCInventory(CitizensNPC npc) {
+        this.npc = npc;
+        contents = new ItemStack[size];
     }
 
     @Override
@@ -63,7 +66,7 @@ public class NPCInventory implements IInventory {
 
     @Override
     public boolean a(EntityHuman entityhuman) {
-        return true; // always keep showing ?
+        return true;
     }
 
     @Override
@@ -72,6 +75,14 @@ public class NPCInventory implements IInventory {
 
     @Override
     public void g() {
+        // close
+        org.bukkit.inventory.ItemStack[] bukkitItems = new org.bukkit.inventory.ItemStack[size];
+        int index = 0;
+        for (ItemStack item : contents)
+            if (item != null)
+                bukkitItems[index++] = new org.bukkit.inventory.ItemStack(item.id, item.count, (short) item.getData());
+
+        npc.getTrait(net.citizensnpcs.trait.Inventory.class).setContents(bukkitItems);
     }
 
     @Override
