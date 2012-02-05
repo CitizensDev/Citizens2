@@ -65,8 +65,10 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public <T extends Trait> T getTrait(Class<T> clazz) {
         Trait t = traits.get(clazz);
-        if (t == null)
+        if (t == null) {
             t = CitizensAPI.getTraitManager().getInstance(clazz.getAnnotation(SaveId.class).value(), this);
+            addTrait(t);
+        }
 
         return t != null ? clazz.cast(t) : null;
     }
