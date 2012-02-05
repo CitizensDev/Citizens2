@@ -9,7 +9,7 @@ import net.citizensnpcs.api.npc.trait.Trait;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.Inventory;
 
 /**
  * Represents an NPC with a Character and separate traits
@@ -72,7 +72,7 @@ public interface NPC {
      * 
      * @return Inventory of this NPC
      */
-    public PlayerInventory getInventory();
+    public Inventory getInventory();
 
     /**
      * Gets the name of this NPC with color codes stripped
