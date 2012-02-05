@@ -27,6 +27,10 @@ public class Inventory implements Trait {
         return contents;
     }
 
+    public void setContents(ItemStack[] contents) {
+        this.contents = contents;
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         contents = parseContents(key);
@@ -36,7 +40,8 @@ public class Inventory implements Trait {
     public void save(DataKey key) {
         int index = 0;
         for (ItemStack item : contents)
-            saveItem(item, key.getRelative(String.valueOf(index++)));
+            if (item != null)
+                saveItem(item, key.getRelative(String.valueOf(index++)));
     }
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
