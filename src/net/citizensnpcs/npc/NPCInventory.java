@@ -6,6 +6,7 @@ import net.minecraft.server.ItemStack;
 
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -40,9 +41,8 @@ public class NPCInventory implements IInventory {
             return itemstack;
         } else {
             ItemStack itemstack = contents[i].a(j);
-            if (contents[i].count == 0) {
+            if (contents[i].count == 0)
                 contents[i] = null;
-            }
             return itemstack;
         }
     }
@@ -80,9 +80,11 @@ public class NPCInventory implements IInventory {
         // close
         org.bukkit.inventory.ItemStack[] bukkitItems = new org.bukkit.inventory.ItemStack[size];
         int index = 0;
-        for (ItemStack item : contents)
+        for (ItemStack item : contents) {
             if (item != null)
-                bukkitItems[index++] = new org.bukkit.inventory.ItemStack(item.id, item.count, (short) item.getData());
+                bukkitItems[index] = new CraftItemStack(item);
+            index++;
+        }
 
         npc.getTrait(net.citizensnpcs.trait.Inventory.class).setContents(bukkitItems);
     }
