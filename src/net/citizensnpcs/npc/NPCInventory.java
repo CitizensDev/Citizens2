@@ -12,11 +12,13 @@ import org.bukkit.inventory.Inventory;
 public class NPCInventory implements IInventory {
     private final int size = 36;
     private final CitizensNPC npc;
+    private final String name;
     private final ItemStack[] contents;
     private final Inventory inventory = new CraftInventory(this);
 
     public NPCInventory(CitizensNPC npc) {
         this.npc = npc;
+        name = npc.getName();
         contents = new ItemStack[size];
     }
 
@@ -52,7 +54,7 @@ public class NPCInventory implements IInventory {
 
     @Override
     public String getName() {
-        return "Inventory";
+        return name;
     }
 
     @Override
