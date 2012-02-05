@@ -7,11 +7,14 @@ import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.util.Messaging;
+
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
 
 public abstract class CitizensNPC extends AbstractNPC {
     protected final CitizensNPCManager manager;
@@ -86,6 +89,18 @@ public abstract class CitizensNPC extends AbstractNPC {
         // Set the spawned state
         addTrait(new Spawned(true));
         return true;
+    }
+
+    @Override
+    public PlayerInventory getInventory() {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+
+    @Override
+    public boolean openInventory(Player player) {
+        if (!isSpawned())
+            return false;
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     public void update() {
