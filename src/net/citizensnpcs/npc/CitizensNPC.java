@@ -100,7 +100,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean openInventory(Player player) {
-        if (!isSpawned() || getTrait(Inventory.class).getContents() == null)
+        if (!isSpawned())
             return false;
         getInventory().setContents(getTrait(Inventory.class).getContents());
         inventory.show(player);

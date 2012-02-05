@@ -17,6 +17,7 @@ public class Inventory implements Trait {
     private ItemStack[] contents;
 
     public Inventory() {
+        contents = new ItemStack[36];
     }
 
     public Inventory(org.bukkit.inventory.Inventory inventory) {
