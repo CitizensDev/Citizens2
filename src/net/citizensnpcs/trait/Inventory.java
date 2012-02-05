@@ -65,8 +65,11 @@ public class Inventory implements Trait {
                 Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
                 for (DataKey subKey : key.getRelative("enchantments").getSubKeys()) {
                     Enchantment enchantment = Enchantment.getByName(subKey.name().toUpperCase().replace('-', '_'));
-                    if (enchantment != null)
-                        enchantments.put(enchantment, subKey.getInt(""));
+                    if (enchantment != null && enchantment.canEnchantItem(item))
+                        enchantments.put(
+                                enchantment,
+                                subKey.getInt("") <= enchantment.getMaxLevel() ? subKey.getInt("") : enchantment
+                                        .getMaxLevel());
                 }
                 item.addEnchantments(enchantments);
             }

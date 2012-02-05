@@ -34,26 +34,26 @@ public class NPCCommands {
 
     @Command(
              aliases = { "npc" },
-             usage = "create [name] [type] (character)",
+             usage = "create [name] (type) (character)",
              desc = "Create a new NPC",
              modifiers = { "create" },
-             min = 3,
+             min = 2,
              max = 4)
     @Permission("npc.create")
     @Requirements
     public void createNPC(CommandContext args, Player player, NPC npc) {
-        CreatureType type = CreatureType.MONSTER; // Default human type
-        try {
-            type = CreatureType.valueOf(args.getString(2).toUpperCase().replace('-', '_'));
-        } catch (IllegalArgumentException ex) {
-            Messaging.sendError(player, "'" + args.getString(2) + "' is not a valid mob type. Using default NPC.");
-        }
-
         String name = args.getString(1);
         if (args.getString(1).length() > 16) {
             Messaging.sendError(player, "NPC names cannot be longer than 16 characters. The name has been shortened.");
             name = name.substring(0, 15);
         }
+        CreatureType type = CreatureType.MONSTER; // Default NPC type
+        if (args.argsLength() != 2)
+            try {
+                type = CreatureType.valueOf(args.getString(2).toUpperCase().replace('-', '_'));
+            } catch (IllegalArgumentException ex) {
+                Messaging.sendError(player, "'" + args.getString(2) + "' is not a valid mob type. Using default NPC.");
+            }
         NPC create = npcManager.createNPC(type, name);
         String successMsg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
         boolean success = true;
