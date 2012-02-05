@@ -99,6 +99,7 @@ public class EventListen implements Listener {
                     return;
             }
         }
+        npc.openInventory(player);
         if (npc.getCharacter() != null)
             npc.getCharacter().onRightClick(npc, player);
     }

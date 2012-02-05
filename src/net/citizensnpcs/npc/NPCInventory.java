@@ -1,4 +1,4 @@
-package net.citizensnpcs.util;
+package net.citizensnpcs.npc;
 
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.IInventory;
@@ -9,14 +9,12 @@ import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-public class ShowableInventory implements IInventory {
+public class NPCInventory implements IInventory {
     private final ItemStack[] contents;
     private final Inventory inventory = new CraftInventory(this);
-    private final String name;
 
-    public ShowableInventory(String name, int size) {
-        this.name = name;
-        this.contents = new ItemStack[size];
+    public NPCInventory() {
+        contents = new ItemStack[36];
     }
 
     @Override
@@ -51,7 +49,7 @@ public class ShowableInventory implements IInventory {
 
     @Override
     public String getName() {
-        return name;
+        return "Inventory";
     }
 
     @Override
@@ -87,9 +85,5 @@ public class ShowableInventory implements IInventory {
 
     public void show(Player player) {
         ((CraftPlayer) player).getHandle().a(this);
-    }
-
-    public static Inventory create(String name, int size) {
-        return new ShowableInventory(name, size).asInventory();
     }
 }

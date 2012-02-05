@@ -1,5 +1,6 @@
 -Citizens2 TODO List-
 
+-Better inventory handling/saving
 -Add proper color parsing for names
 -Add NPC templates
 -Finish pathfinding API

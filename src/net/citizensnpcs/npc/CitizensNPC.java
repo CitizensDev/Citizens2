@@ -6,6 +6,7 @@ import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensAI;
+import net.citizensnpcs.trait.Inventory;
 import net.citizensnpcs.util.Messaging;
 
 import net.minecraft.server.EntityLiving;
@@ -14,12 +15,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.PlayerInventory;
 
 public abstract class CitizensNPC extends AbstractNPC {
     protected final CitizensNPCManager manager;
     protected final CitizensAI ai = new CitizensAI(this);
     protected EntityLiving mcEntity;
+    protected final NPCInventory inventory = new NPCInventory();
 
     protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
         super(id, name);
@@ -92,15 +93,17 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public PlayerInventory getInventory() {
-        throw new UnsupportedOperationException("not implemented yet");
+    public org.bukkit.inventory.Inventory getInventory() {
+        return inventory.asInventory();
     }
 
     @Override
     public boolean openInventory(Player player) {
-        if (!isSpawned())
+        if (!isSpawned() || getTrait(Inventory.class).getContents() == null)
             return false;
-        throw new UnsupportedOperationException("not implemented yet");
+        getInventory().setContents(getTrait(Inventory.class).getContents());
+        inventory.show(player);
+        return true;
     }
 
     public void update() {
