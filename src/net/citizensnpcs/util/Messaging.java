@@ -9,19 +9,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class Messaging {
+import com.google.common.base.Joiner;
 
-    public static void debug(Object msg) {
+public class Messaging {
+    private static final Joiner SPACE = Joiner.on(" ");
+
+    public static void debug(Object... msg) {
         if (Setting.DEBUG_MODE.asBoolean())
             log(msg);
     }
 
-    public static void log(Level level, Object msg) {
-        Bukkit.getLogger().log(level, "[Citizens] " + msg);
+    public static void log(Level level, Object... msg) {
+        Bukkit.getLogger().log(level, "[Citizens] " + SPACE.join(msg));
     }
 
-    public static void log(Object msg) {
-        log(Level.INFO, msg);
+    public static void log(Object... msg) {
+        log(Level.INFO, SPACE.join(msg));
     }
 
     public static void send(Player player, Object msg) {
