@@ -8,7 +8,6 @@ import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.trait.Inventory;
 import net.citizensnpcs.util.Messaging;
-
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
@@ -85,6 +84,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
         mcEntity = createHandle(loc);
         mcEntity.world.addEntity(mcEntity);
+        mcEntity.world.players.remove(mcEntity);
 
         // Set the location
         addTrait(new SpawnLocation(loc));

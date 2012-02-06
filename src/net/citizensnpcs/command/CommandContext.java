@@ -19,12 +19,11 @@
 package net.citizensnpcs.command;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class CommandContext {
@@ -39,29 +38,46 @@ public class CommandContext {
     public CommandContext(String[] args) {
         int i = 1;
         for (; i < args.length; i++) {
+            // initial pass for quotes
+            args[i] = args[i].trim();
             if (args[i].length() == 0) {
                 // Ignore this
+                continue;
             } else if (args[i].charAt(0) == '\'' || args[i].charAt(0) == '"') {
                 char quote = args[i].charAt(0);
+                String quoted = args[i].substring(1); // remove initial quote
                 for (int inner = i + 1; inner < args.length; inner++) {
                     if (args[inner].isEmpty())
                         continue;
                     String test = args[inner].trim();
-                    args[i] += " " + test;
-                    args[inner] = "";
+                    quoted += " " + test;
                     if (test.charAt(test.length() - 1) == quote) {
+                        args[i] = quoted.substring(0, quoted.length() - 1);
+                        for (int j = i + 1; j != inner; ++j)
+                            args[j] = "";
+                        // remove ending quote
                         break;
                     }
                 }
-            } else if (i + 1 < args.length && args[i].length() > 2 && args[i].matches("^--[a-zA-Z]+$")) {
-                int inner = i;
-                while (args[inner++].isEmpty()) {
-                    if (inner == args.length) {
+            }
+        }
+        for (i = 1; i < args.length; ++i) {
+            // second pass for flags
+            if (args[i].length() == 0)
+                continue;
+            if (i + 1 < args.length && args[i].length() > 2 && args[i].matches("^--[a-zA-Z]+$")) {
+                int inner = i + 1;
+                while (args[inner].length() == 0) {
+                    // later args may have been quoted
+                    ++inner;
+                    if (inner >= args.length) {
                         inner = -1;
                         break;
                     }
                 }
+
                 if (inner != -1) {
+                    System.out.println(args[inner]);
                     valueFlags.put(args[i].replaceFirst("--", ""), args[inner]);
                     args[i] = "";
                     args[inner] = "";
@@ -72,8 +88,13 @@ public class CommandContext {
                 args[i] = "";
             }
         }
-        this.args = Iterables.toArray(Splitter.on(" ").omitEmptyStrings().split(Joiner.on(" ").skipNulls().join(args)),
-                String.class);
+        List<String> copied = Lists.newArrayList();
+        for (String arg : args) {
+            if (arg == null || arg.isEmpty())
+                continue;
+            copied.add(arg);
+        }
+        this.args = copied.toArray(new String[copied.size()]);
     }
 
     public int argsLength() {
@@ -136,11 +157,58 @@ public class CommandContext {
         return flags.contains(ch);
     }
 
+    public boolean hasValueFlag(String ch) {
+        return valueFlags.containsKey(ch);
+    }
+
     public int length() {
         return args.length;
     }
 
     public boolean matches(String command) {
         return args[0].equalsIgnoreCase(command);
+    }
+
+    public Map<String, String> getValueFlags() {
+        return valueFlags;
+    }
+
+    public String getFlag(String ch) {
+        return valueFlags.get(ch);
+    }
+
+    public String getFlag(String ch, String def) {
+        final String value = valueFlags.get(ch);
+        if (value == null) {
+            return def;
+        }
+
+        return value;
+    }
+
+    public int getFlagInteger(String ch) throws NumberFormatException {
+        return Integer.parseInt(valueFlags.get(ch));
+    }
+
+    public int getFlagInteger(String ch, int def) throws NumberFormatException {
+        final String value = valueFlags.get(ch);
+        if (value == null) {
+            return def;
+        }
+
+        return Integer.parseInt(value);
+    }
+
+    public double getFlagDouble(String ch) throws NumberFormatException {
+        return Double.parseDouble(valueFlags.get(ch));
+    }
+
+    public double getFlagDouble(String ch, double def) throws NumberFormatException {
+        final String value = valueFlags.get(ch);
+        if (value == null) {
+            return def;
+        }
+
+        return Double.parseDouble(value);
     }
 }
