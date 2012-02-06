@@ -56,4 +56,11 @@ public class StringHelper {
     public static String wrap(Object string) {
         return ChatColor.YELLOW + string.toString() + ChatColor.GREEN;
     }
+
+    public static String parseColors(Object string) {
+        String parsed = string.toString();
+        for (ChatColor color : ChatColor.values())
+            parsed = parsed.replace("<" + color.getChar() + ">", color.toString());
+        return parsed;
+    }
 }
