@@ -59,7 +59,10 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getName() {
-        return ChatColor.stripColor(name);
+        String parsed = name;
+        for (ChatColor color : ChatColor.values())
+            parsed = parsed.replace("<" + color.getChar() + ">", "");
+        return parsed;
     }
 
     @Override
