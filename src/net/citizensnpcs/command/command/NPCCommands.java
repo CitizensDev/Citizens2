@@ -55,7 +55,7 @@ public class NPCCommands {
                 Messaging.sendError(player, "'" + args.getString(2) + "' is not a valid mob type. Using default NPC.");
             }
         NPC create = npcManager.createNPC(type, name);
-        String successMsg = ChatColor.GREEN + "You created " + create.getName();
+        String successMsg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
         boolean success = true;
         if (args.argsLength() == 4) {
             if (characterManager.getInstance(args.getString(3), create) == null) {
