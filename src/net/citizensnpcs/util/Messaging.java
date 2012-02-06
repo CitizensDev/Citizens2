@@ -28,12 +28,7 @@ public class Messaging {
     }
 
     public static void send(Player player, Object msg) {
-        String send = msg.toString();
-
-        for (ChatColor color : ChatColor.values())
-            send = send.replace("<" + color.getChar() + ">", color.toString());
-
-        player.sendMessage(send);
+        player.sendMessage(StringHelper.parseColors(msg.toString()));
     }
 
     public static void sendError(Player player, Object msg) {
