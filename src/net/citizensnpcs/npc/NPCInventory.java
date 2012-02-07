@@ -1,6 +1,7 @@
 package net.citizensnpcs.npc;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.StringHelper;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.IInventory;
 import net.minecraft.server.ItemStack;
@@ -20,7 +21,7 @@ public class NPCInventory implements IInventory {
 
     public NPCInventory(NPC npc) {
         this.npc = npc;
-        name = npc.getFullName();
+        name = StringHelper.parseColors(npc.getFullName());
         contents = new ItemStack[size];
     }
 
