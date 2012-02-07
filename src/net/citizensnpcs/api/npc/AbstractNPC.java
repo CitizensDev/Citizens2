@@ -37,9 +37,8 @@ public abstract class AbstractNPC implements NPC {
     public void addTrait(Trait trait) {
         if (trait instanceof Runnable) {
             runnables.add((Runnable) trait);
-            if (traits.containsKey(trait.getClass())) {
+            if (traits.containsKey(trait.getClass()))
                 runnables.remove(traits.get(trait.getClass()));
-            }
         }
         traits.put(trait.getClass(), trait);
     }
@@ -68,7 +67,11 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getName() {
-        return ChatColor.stripColor(name);
+        String parsed = name;
+        for (ChatColor color : ChatColor.values())
+            if (parsed.contains("<" + color.getChar() + ">"))
+                parsed = parsed.replace("<" + color.getChar() + ">", "");
+        return parsed;
     }
 
     @Override
@@ -161,9 +164,8 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void update() {
-        for (Runnable runnable : runnables) {
+        for (Runnable runnable : runnables)
             runnable.run();
-        }
     }
 
     @Override
