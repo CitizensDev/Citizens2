@@ -36,7 +36,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.command.annotation.Command;
 import net.citizensnpcs.command.annotation.NestedCommand;
-import net.citizensnpcs.command.annotation.Permission;
 import net.citizensnpcs.command.annotation.Requirements;
 import net.citizensnpcs.command.annotation.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
@@ -63,13 +62,6 @@ public class CommandManager {
      * (one for each alias) with the method.
      */
     private final Map<Method, Map<CommandIdentifier, Method>> commands = new HashMap<Method, Map<CommandIdentifier, Method>>();
-
-    /*
-     * Mapping of commands (not including aliases) with a description. This is
-     * only for top level commands.
-     */
-    // private final Map<CommandIdentifier, String> descs = new
-    // HashMap<CommandIdentifier, String>();
 
     private final Map<String, List<Command>> subCommands = new HashMap<String, List<Command>>();
 
@@ -199,10 +191,10 @@ public class CommandManager {
         return cmds.toArray(new String[cmds.size()]);
     }
 
-    /*  // Get a list of command descriptions. This is only for root commands.
-      public Map<CommandIdentifier, String> getCommands() {
-          return descs;
-      }*/
+    /*
+     * // Get a list of command descriptions. This is only for root commands.
+     * public Map<CommandIdentifier, String> getCommands() { return descs; }
+     */
 
     // Get the usage string for a nested command.
     private String getNestedUsage(String[] args, int level, Method method, Player player) throws CommandException {
@@ -284,11 +276,11 @@ public class CommandManager {
 
     // Returns whether a player has access to a command.
     private boolean hasPermission(Method method, Player player) {
-        Permission permission = method.getAnnotation(Permission.class);
-        if (permission == null)
+        Command cmd = method.getAnnotation(Command.class);
+        if (cmd.permission().isEmpty())
             return true;
 
-        if (hasPermission(player, permission.value()))
+        if (hasPermission(player, cmd.permission()))
             return true;
 
         return false;
@@ -370,15 +362,15 @@ public class CommandManager {
                 instances.put(method, obj);
             }
 
-            /*// Build a list of commands and their usage details, at least for
-            // root level commands
-            if (parent == null)
-                if (cmd.usage().length() == 0)
-                    descs.put(new CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]), cmd.desc());
-                else
-                    descs.put(new CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]),
-                            cmd.usage() + " - " + cmd.desc());
-                            */
+            /*
+             * // Build a list of commands and their usage details, at least for
+             * // root level commands if (parent == null) if
+             * (cmd.usage().length() == 0) descs.put(new
+             * CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]),
+             * cmd.desc()); else descs.put(new
+             * CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]),
+             * cmd.usage() + " - " + cmd.desc());
+             */
 
             // Look for nested commands -- if there are any, those have
             // to be cached too so that they can be quickly looked
