@@ -39,21 +39,20 @@ public class Inventory implements Trait {
 
     @Override
     public void save(DataKey key) {
-        int index = 0;
+        int slot = 0;
         for (ItemStack item : contents) {
             // Clear previous items to avoid conflicts
-            key.removeKey(String.valueOf(index));
+            key.removeKey(String.valueOf(slot));
             if (item != null)
-                saveItem(item, key.getRelative(String.valueOf(index)));
-            index++;
+                saveItem(item, key.getRelative(String.valueOf(slot)));
+            slot++;
         }
     }
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
         ItemStack[] contents = new ItemStack[36];
-        for (DataKey slotKey : key.getIntegerSubKeys()) {
+        for (DataKey slotKey : key.getIntegerSubKeys())
             contents[Integer.parseInt(slotKey.name())] = getItemStack(slotKey);
-        }
         return contents;
     }
 
@@ -91,6 +90,6 @@ public class Inventory implements Trait {
 
     @Override
     public String toString() {
-        return "Inventory{contents:" + contents + "}";
+        return "Inventory{" + contents + "}";
     }
 }
