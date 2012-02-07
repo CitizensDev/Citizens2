@@ -2,6 +2,7 @@ package net.citizensnpcs.api.npc;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -16,11 +17,13 @@ import net.citizensnpcs.api.npc.trait.trait.Spawned;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import com.google.common.collect.Lists;
 
 public abstract class AbstractNPC implements NPC {
     protected final int id;
+    protected final List<Runnable> runnables = Lists.newArrayList();
     protected final Map<Class<? extends Trait>, Trait> traits = new HashMap<Class<? extends Trait>, Trait>();
     protected String name;
     protected Character character;
@@ -32,6 +35,12 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void addTrait(Trait trait) {
+        if (trait instanceof Runnable) {
+            runnables.add((Runnable) trait);
+            if (traits.containsKey(trait.getClass())) {
+                runnables.remove(traits.get(trait.getClass()));
+            }
+        }
         traits.put(trait.getClass(), trait);
     }
 
@@ -59,10 +68,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getName() {
-        String parsed = name;
-        for (ChatColor color : ChatColor.values())
-            parsed = parsed.replace("<" + color.getChar() + ">", "");
-        return parsed;
+        return ChatColor.stripColor(name);
     }
 
     @Override
@@ -126,6 +132,9 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void removeTrait(Class<? extends Trait> trait) {
+        if (traits.containsKey(trait) && traits.get(trait) instanceof Runnable) {
+            runnables.remove(traits.get(trait));
+        }
         traits.remove(trait);
     }
 
@@ -151,10 +160,14 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public void update() {
+        for (Runnable runnable : runnables) {
+            runnable.run();
+        }
+    }
+
+    @Override
     public void setName(String name) {
-        Location prev = getBukkitEntity().getLocation();
-        despawn();
         this.name = name;
-        spawn(prev);
     }
 }

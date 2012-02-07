@@ -170,4 +170,6 @@ public interface NPC {
      * @return Whether this NPC was able to spawn at the location
      */
     public boolean spawn(Location location);
+
+    public void update();
 }
