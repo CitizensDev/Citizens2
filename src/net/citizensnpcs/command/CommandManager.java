@@ -25,7 +25,9 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +52,36 @@ import net.citizensnpcs.util.Messaging;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.Lists;
+
 public class CommandManager {
+
+    /*
+     * Mapping of commands (including aliases) with a description. Root commands
+     * are stored under a key of null, whereas child commands are cached under
+     * their respective Method. The child map has the key of the command name
+     * (one for each alias) with the method.
+     */
+    private final Map<Method, Map<CommandIdentifier, Method>> commands = new HashMap<Method, Map<CommandIdentifier, Method>>();
+
+    /*
+     * Mapping of commands (not including aliases) with a description. This is
+     * only for top level commands.
+     */
+    // private final Map<CommandIdentifier, String> descs = new
+    // HashMap<CommandIdentifier, String>();
+
+    private final Map<String, List<Command>> subCommands = new HashMap<String, List<Command>>();
+
+    // Stores the injector used to getInstance.
+    private Injector injector;
+
+    // Used to store the instances associated with a method.
+    private final Map<Method, Object> instances = new HashMap<Method, Object>();
+
+    private final Map<Method, Requirements> requirements = new HashMap<Method, Requirements>();
+
+    private final Map<Method, ServerCommand> serverCommands = new HashMap<Method, ServerCommand>();
 
     /*
      * Attempt to execute a command. This version takes a separate command name
@@ -168,10 +199,10 @@ public class CommandManager {
         return cmds.toArray(new String[cmds.size()]);
     }
 
-    // Get a list of command descriptions. This is only for root commands.
-    public Map<CommandIdentifier, String> getCommands() {
-        return descs;
-    }
+    /*  // Get a list of command descriptions. This is only for root commands.
+      public Map<CommandIdentifier, String> getCommands() {
+          return descs;
+      }*/
 
     // Get the usage string for a nested command.
     private String getNestedUsage(String[] args, int level, Method method, Player player) throws CommandException {
@@ -229,6 +260,28 @@ public class CommandManager {
         return command.toString();
     }
 
+    /*
+     * Checks to see whether there is a command named such at the root level.
+     * This will check aliases as well.
+     */
+    public boolean hasCommand(String command, String modifier) {
+        return commands.get(null).containsKey(new CommandIdentifier(command.toLowerCase(), modifier.toLowerCase()))
+                || commands.get(null).containsKey(new CommandIdentifier(command.toLowerCase(), "*"));
+    }
+
+    public List<Command> getCommands(String command) {
+        if (subCommands.containsKey(command))
+            return subCommands.get(command);
+        List<Command> cmds = Lists.newArrayList();
+        for (Entry<CommandIdentifier, Method> entry : commands.get(null).entrySet()) {
+            if (!entry.getKey().getCommand().equalsIgnoreCase(command)
+                    || !entry.getValue().isAnnotationPresent(Command.class))
+                continue;
+            cmds.add(entry.getValue().getAnnotation(Command.class));
+        }
+        return cmds;
+    }
+
     // Returns whether a player has access to a command.
     private boolean hasPermission(Method method, Player player) {
         Permission permission = method.getAnnotation(Permission.class);
@@ -244,46 +297,6 @@ public class CommandManager {
     // Returns whether a player has permission.
     private boolean hasPermission(Player player, String perm) {
         return player.hasPermission("citizens." + perm);
-    }
-
-    public void setInjector(Injector injector) {
-        this.injector = injector;
-    }
-
-    // Logger for general errors.
-    private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
-
-    /*
-     * Mapping of commands (including aliases) with a description. Root commands
-     * are stored under a key of null, whereas child commands are cached under
-     * their respective Method. The child map has the key of the command name
-     * (one for each alias) with the method.
-     */
-    private final Map<Method, Map<CommandIdentifier, Method>> commands = new HashMap<Method, Map<CommandIdentifier, Method>>();
-
-    // Used to store the instances associated with a method.
-    private final Map<Method, Object> instances = new HashMap<Method, Object>();
-
-    /*
-     * Mapping of commands (not including aliases) with a description. This is
-     * only for top level commands.
-     */
-    private final Map<CommandIdentifier, String> descs = new HashMap<CommandIdentifier, String>();
-
-    // Stores the injector used to getInstance.
-    private Injector injector;
-
-    private final Map<Method, Requirements> requirements = new HashMap<Method, Requirements>();
-
-    private final Map<Method, ServerCommand> serverCommands = new HashMap<Method, ServerCommand>();
-
-    /*
-     * Checks to see whether there is a command named such at the root level.
-     * This will check aliases as well.
-     */
-    public boolean hasCommand(String command, String modifier) {
-        return commands.get(null).containsKey(new CommandIdentifier(command.toLowerCase(), modifier.toLowerCase()))
-                || commands.get(null).containsKey(new CommandIdentifier(command.toLowerCase(), "*"));
     }
 
     /*
@@ -357,7 +370,7 @@ public class CommandManager {
                 instances.put(method, obj);
             }
 
-            // Build a list of commands and their usage details, at least for
+            /*// Build a list of commands and their usage details, at least for
             // root level commands
             if (parent == null)
                 if (cmd.usage().length() == 0)
@@ -365,6 +378,7 @@ public class CommandManager {
                 else
                     descs.put(new CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]),
                             cmd.usage() + " - " + cmd.desc());
+                            */
 
             // Look for nested commands -- if there are any, those have
             // to be cached too so that they can be quickly looked
@@ -377,6 +391,13 @@ public class CommandManager {
             }
         }
     }
+
+    public void setInjector(Injector injector) {
+        this.injector = injector;
+    }
+
+    // Logger for general errors.
+    private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
 
     public static String joinString(Collection<?> str, String delimiter, int initialIndex) {
         if (str.size() == 0)

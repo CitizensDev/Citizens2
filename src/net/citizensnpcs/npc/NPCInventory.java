@@ -1,6 +1,6 @@
 package net.citizensnpcs.npc;
 
-import net.citizensnpcs.util.StringHelper;
+import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.IInventory;
 import net.minecraft.server.ItemStack;
@@ -13,14 +13,14 @@ import org.bukkit.inventory.Inventory;
 
 public class NPCInventory implements IInventory {
     private final int size = 36;
-    private final CitizensNPC npc;
+    private final NPC npc;
     private final String name;
     private final ItemStack[] contents;
     private final Inventory inventory = new CraftInventory(this);
 
-    public NPCInventory(CitizensNPC npc) {
+    public NPCInventory(NPC npc) {
         this.npc = npc;
-        name = StringHelper.parseColors(npc.getFullName());
+        name = npc.getFullName();
         contents = new ItemStack[size];
     }
 

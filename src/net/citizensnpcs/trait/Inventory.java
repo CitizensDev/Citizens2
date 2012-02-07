@@ -3,14 +3,14 @@ package net.citizensnpcs.trait;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-
 import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
+
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 
 @SaveId("inventory")
 public class Inventory implements Trait {
@@ -83,9 +83,10 @@ public class Inventory implements Trait {
         key.setInt("amount", item.getAmount());
         key.setLong("data", item.getDurability());
 
-        for (Enchantment enchantment : item.getEnchantments().keySet())
+        for (Enchantment enchantment : item.getEnchantments().keySet()) {
             key.getRelative("enchantments").setInt(enchantment.getName().toLowerCase().replace('_', '-'),
                     item.getEnchantmentLevel(enchantment));
+        }
     }
 
     @Override

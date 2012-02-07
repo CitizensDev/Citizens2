@@ -8,7 +8,7 @@ import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.trait.Inventory;
 import net.citizensnpcs.util.Messaging;
-
+import net.citizensnpcs.util.StringHelper;
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
@@ -23,7 +23,7 @@ public abstract class CitizensNPC extends AbstractNPC {
     protected final NPCInventory inventory;
 
     protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
-        super(id, name);
+        super(id, StringHelper.parseColors(name));
         this.manager = manager;
         inventory = new NPCInventory(this);
     }
@@ -108,7 +108,9 @@ public abstract class CitizensNPC extends AbstractNPC {
         return true;
     }
 
+    @Override
     public void update() {
+        super.update();
         ai.update();
     }
 }
