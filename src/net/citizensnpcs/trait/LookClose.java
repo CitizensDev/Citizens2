@@ -2,18 +2,17 @@ package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 
 @SaveId("look-close")
-public class LookClose implements Trait {
+public class LookClose implements Trait, Runnable {
+    private final NPC npc;
     private boolean shouldLookClose;
 
-    public LookClose() {
-    }
-
-    public LookClose(boolean shouldLookClose) {
-        this.shouldLookClose = shouldLookClose;
+    public LookClose(NPC npc) {
+        this.npc = npc;
     }
 
     @Override
@@ -30,12 +29,22 @@ public class LookClose implements Trait {
         key.setBoolean("", shouldLookClose);
     }
 
+    @Override
+    public void run() {
+        // TODO Auto-generated method stub
+
+    }
+
     public void setLookClose(boolean shouldLookClose) {
         this.shouldLookClose = shouldLookClose;
     }
 
     public boolean shouldLookClose() {
         return shouldLookClose;
+    }
+
+    public void toggle() {
+        shouldLookClose = !shouldLookClose;
     }
 
     @Override

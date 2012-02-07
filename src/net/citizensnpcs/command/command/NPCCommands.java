@@ -11,7 +11,6 @@ import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.annotation.Command;
 import net.citizensnpcs.command.annotation.Permission;
 import net.citizensnpcs.command.annotation.Requirements;
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.util.Messaging;
@@ -32,13 +31,8 @@ public class NPCCommands {
         this.characterManager = characterManager;
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "create [name] (type) (character)",
-             desc = "Create a new NPC",
-             modifiers = { "create" },
-             min = 2,
-             max = 4)
+    @Command(aliases = { "npc" }, usage = "create [name] --type (type) --char (character)", desc = "Create a new NPC",
+            modifiers = { "create" }, min = 2, max = 4)
     @Permission("npc.create")
     @Requirements
     public void createNPC(CommandContext args, Player player, NPC npc) {
@@ -48,24 +42,25 @@ public class NPCCommands {
             name = name.substring(0, 15);
         }
         CreatureType type = CreatureType.MONSTER; // Default NPC type
-        if (args.argsLength() != 2)
+        if (args.hasValueFlag("type"))
             try {
-                type = CreatureType.valueOf(args.getString(2).toUpperCase().replace('-', '_'));
+                type = CreatureType.valueOf(args.getFlag("type").toUpperCase().replace('-', '_'));
             } catch (IllegalArgumentException ex) {
-                Messaging.sendError(player, "'" + args.getString(2) + "' is not a valid mob type. Using default NPC.");
+                Messaging.sendError(player, "'" + args.getFlag("type")
+                        + "' is not a valid mob type. Using default NPC.");
             }
         NPC create = npcManager.createNPC(type, name);
         String successMsg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
         boolean success = true;
-        if (args.argsLength() == 4) {
-            if (characterManager.getInstance(args.getString(3), create) == null) {
+        if (args.hasValueFlag("char")) {
+            if (characterManager.getInstance(args.getFlag("char"), create) == null) {
                 Messaging.sendError(player,
-                        "The character '" + args.getString(3) + "' does not exist. " + create.getName()
+                        "The character '" + args.getFlag("char") + "' does not exist. " + create.getName()
                                 + " was created at your location without a character.");
                 success = false;
             } else {
-                create.setCharacter(characterManager.getInstance(args.getString(3), create));
-                successMsg += " with the character " + StringHelper.wrap(args.getString(3));
+                create.setCharacter(characterManager.getInstance(args.getFlag("char"), create));
+                successMsg += " with the character " + StringHelper.wrap(args.getFlag("char"));
             }
         }
         successMsg += " at your location.";
@@ -82,27 +77,18 @@ public class NPCCommands {
             Messaging.send(player, successMsg);
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "despawn",
-             desc = "Despawn an NPC",
-             modifiers = { "despawn" },
-             min = 1,
-             max = 1)
+    @Command(aliases = { "npc" }, usage = "despawn", desc = "Despawn an NPC", modifiers = { "despawn" }, min = 1,
+            max = 1)
     @Permission("npc.despawn")
     public void despawnNPC(CommandContext args, Player player, NPC npc) {
-        npc.getTrait(Spawned.class).setSpawned(false);
+        npc.getTrait(Spawned.class).setSpawned(false); // TODO: move this to
+                                                       // despawn() / spawn()?
         npc.despawn();
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "select [id]",
-             desc = "Select an NPC",
-             modifiers = { "select" },
-             min = 2,
-             max = 2)
+    @Command(aliases = { "npc" }, usage = "select [id]", desc = "Selects an NPC with the given ID",
+            modifiers = { "select" }, min = 2, max = 2)
     @Permission("npc.select")
     @Requirements(ownership = true)
     public void selectNPC(CommandContext args, Player player, NPC npc) {
@@ -119,17 +105,12 @@ public class NPCCommands {
         Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), toSelect);
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "spawn [id]",
-             desc = "Spawn an existing NPC",
-             modifiers = { "spawn" },
-             min = 2,
-             max = 2)
+    @Command(aliases = { "npc" }, usage = "spawn [id]", desc = "Spawn an existing NPC", modifiers = { "spawn" },
+            min = 2, max = 2)
     @Permission("npc.spawn")
     @Requirements
     public void spawnNPC(CommandContext args, Player player, NPC npc) {
-        CitizensNPC respawn = (CitizensNPC) npcManager.getNPC(args.getInteger(1));
+        NPC respawn = npcManager.getNPC(args.getInteger(1));
         if (respawn == null) {
             Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' exists.");
             return;
@@ -144,34 +125,22 @@ public class NPCCommands {
             npcManager.selectNPC(player, respawn);
             Messaging.send(player, ChatColor.GREEN + "You respawned " + StringHelper.wrap(respawn.getName())
                     + " at your location.");
-        } else
-            Messaging
-                    .sendError(
-                            player,
-                            respawn.getName()
-                                    + " is already spawned at another location. Use '/npc tphere' to teleport the NPC to your location.");
+        } else {
+            Messaging.sendError(player, respawn.getName() + " is already spawned at another location."
+                    + " Use '/npc tphere' to teleport the NPC to your location.");
+        }
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "tphere",
-             desc = "Teleport an NPC to your location",
-             modifiers = { "tphere" },
-             min = 1,
-             max = 1)
+    @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport an NPC to your location",
+            modifiers = { "tphere" }, min = 1, max = 1)
     @Permission("npc.tphere")
     public void teleportNPCToPlayer(CommandContext args, Player player, NPC npc) {
         npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "tp",
-             desc = "Teleport to an NPC",
-             modifiers = { "tp", "teleport" },
-             min = 1,
-             max = 1)
+    @Command(aliases = { "npc" }, usage = "tp", desc = "Teleport to an NPC", modifiers = { "tp", "teleport" }, min = 1,
+            max = 1)
     @Permission("npc.tp")
     public void teleportToNPC(CommandContext args, Player player, NPC npc) {
         player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
@@ -182,12 +151,10 @@ public class NPCCommands {
             "lookclose", "look", "rotate" }, min = 1, max = 1)
     @Permission("npc.look-close")
     public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
-        npc.getTrait(LookClose.class).setLookClose(!npc.getTrait(LookClose.class).shouldLookClose());
-        String msg = StringHelper.wrap(npc.getName()) + " will ";
-        if (npc.getTrait(LookClose.class).shouldLookClose())
-            msg += "now rotate";
-        else
-            msg += "no longer";
+        LookClose trait = npc.getTrait(LookClose.class);
+        trait.toggle();
+        String msg = StringHelper.wrap(npc.getName()) + " will "
+                + (trait.shouldLookClose() ? "now rotate" : "no longer rotate");
         Messaging.send(player, msg += " when a player is nearby.");
     }
 }
