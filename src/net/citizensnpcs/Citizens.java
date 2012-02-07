@@ -171,11 +171,10 @@ public class Citizens extends JavaPlugin {
         config.load();
 
         // NPC storage
-        if (Setting.USE_DATABASE.asBoolean()) {
+        if (Setting.USE_DATABASE.asBoolean())
             saves = new DatabaseStorage();
-        } else {
+        else
             saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
-        }
 
         // Register API managers
         npcManager = new CitizensNPCManager(saves);

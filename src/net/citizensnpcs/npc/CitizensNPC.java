@@ -8,6 +8,7 @@ import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.trait.Inventory;
 import net.citizensnpcs.util.Messaging;
+
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
