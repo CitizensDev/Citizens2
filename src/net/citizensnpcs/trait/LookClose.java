@@ -1,10 +1,15 @@
 package net.citizensnpcs.trait;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+
 import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
+import net.citizensnpcs.npc.CitizensNPC;
+import net.minecraft.server.EntityLiving;
 
 @SaveId("look-close")
 public class LookClose implements Trait, Runnable {
@@ -17,11 +22,7 @@ public class LookClose implements Trait, Runnable {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        try {
-            shouldLookClose = key.getBoolean("");
-        } catch (Exception ex) {
-            throw new NPCLoadException("Invalid value. Valid values: true or false");
-        }
+        shouldLookClose = key.getBoolean("");
     }
 
     @Override
@@ -31,8 +32,10 @@ public class LookClose implements Trait, Runnable {
 
     @Override
     public void run() {
-        // TODO Auto-generated method stub
-
+        EntityLiving search = null;
+        CitizensNPC handle = (CitizensNPC) npc;
+        if ((search = handle.getHandle().world.findNearbyPlayer(handle.getHandle(), 5)) != null && shouldLookClose)
+            faceEntity(handle, search.getBukkitEntity());
     }
 
     public void setLookClose(boolean shouldLookClose) {
@@ -45,6 +48,28 @@ public class LookClose implements Trait, Runnable {
 
     public void toggle() {
         shouldLookClose = !shouldLookClose;
+    }
+
+    private void faceEntity(CitizensNPC npc, Entity target) {
+        if (npc.getBukkitEntity().getWorld() != target.getWorld())
+            return;
+        Location loc = npc.getBukkitEntity().getLocation();
+
+        double xDiff = target.getLocation().getX() - loc.getX();
+        double yDiff = target.getLocation().getY() - loc.getY();
+        double zDiff = target.getLocation().getZ() - loc.getZ();
+
+        double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
+        double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
+
+        double yaw = (Math.acos(xDiff / distanceXZ) * 180 / Math.PI);
+        double pitch = (Math.acos(yDiff / distanceY) * 180 / Math.PI) - 90;
+        if (zDiff < 0.0) {
+            yaw = yaw + (Math.abs(180 - yaw) * 2);
+        }
+
+        npc.getHandle().yaw = (float) yaw - 90;
+        npc.getHandle().pitch = (float) pitch;
     }
 
     @Override
