@@ -37,4 +37,6 @@ public @interface Command {
     String[] modifiers() default "";
 
     String usage() default "";
+    
+    String permission() default "";
 }
