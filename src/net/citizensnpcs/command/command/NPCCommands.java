@@ -120,8 +120,6 @@ public class NPCCommands {
     public void renameNPC(CommandContext args, Player player, NPC npc) {
         String oldName = npc.getName();
         npc.setName(args.getString(1));
-        // Must reselect NPC after it is despawned
-        npcManager.selectNPC(player, npc);
         Messaging.send(
                 player,
                 ChatColor.GREEN + "You renamed " + StringHelper.wrap(oldName) + " to "
