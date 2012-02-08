@@ -12,7 +12,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.minecraft.server.EntityLiving;
 
 @SaveId("look-close")
-public class LookClose implements Trait, Runnable {
+public class LookClose extends Trait implements Runnable {
     private final NPC npc;
     private boolean shouldLookClose;
 
