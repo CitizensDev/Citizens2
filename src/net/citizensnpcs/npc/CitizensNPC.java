@@ -39,7 +39,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
         Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
 
-        manager.despawn(this);
+        manager.despawn(this, getTrait(Spawned.class).shouldSpawn());
         mcEntity = null;
 
         return true;
@@ -112,5 +112,11 @@ public abstract class CitizensNPC extends AbstractNPC {
     public void update() {
         super.update();
         ai.update();
+    }
+
+    @Override
+    public void setName(String name) {
+        super.setName(name);
+        inventory.setName(name);
     }
 }

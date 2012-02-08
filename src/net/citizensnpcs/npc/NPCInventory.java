@@ -15,9 +15,9 @@ import org.bukkit.inventory.Inventory;
 public class NPCInventory implements IInventory {
     private final int size = 36;
     private final NPC npc;
-    private final String name;
     private final ItemStack[] contents;
     private final Inventory inventory = new CraftInventory(this);
+    private String name;
 
     public NPCInventory(NPC npc) {
         this.npc = npc;
@@ -102,5 +102,9 @@ public class NPCInventory implements IInventory {
 
     public void show(Player player) {
         ((CraftPlayer) player).getHandle().a(this);
+    }
+
+    public void setName(String name) {
+        this.name = StringHelper.parseColors(name);
     }
 }

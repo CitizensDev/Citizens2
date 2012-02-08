@@ -67,9 +67,9 @@ public class HelpCommands {
 
         Messaging.send(
                 player,
-                StringHelper.parseColors("<a>=====[ <e>"
+                StringHelper.wrapHeader("<e>"
                         + (baseCommand.equalsIgnoreCase("npc") ? "NPC" : StringHelper.capitalize(baseCommand
-                                .toLowerCase())) + " Help <f>" + page + "/" + pages + " <a>]====="));
+                                .toLowerCase())) + " Help <f>" + page + "/" + pages));
 
         if (lines.size() < endIndex)
             endIndex = lines.size() - 1;
@@ -85,8 +85,8 @@ public class HelpCommands {
         for (Command cmd : cmdManager.getCommands(baseCommand)) {
             if (cmds.contains(cmd) || !player.hasPermission("citizens." + cmd.permission()))
                 continue;
-            lines.add(StringHelper.parseColors("<7>/<c>" + cmd.aliases()[0] + " " + cmd.usage() + " <7>- <e>"
-                    + cmd.desc()));
+            lines.add(StringHelper.parseColors("<7>/<c>" + cmd.aliases()[0]
+                    + (cmd.usage().isEmpty() ? "" : " " + cmd.usage()) + " <7>- <e>" + cmd.desc()));
             if (cmd.modifiers().length > 1)
                 cmds.add(cmd);
         }
