@@ -2,6 +2,7 @@ package net.citizensnpcs.command.command;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.Template;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
@@ -23,21 +24,23 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
+    private final Citizens plugin;
     private final CitizensNPCManager npcManager;
     private final DefaultInstanceFactory<Character> characterManager;
 
     public NPCCommands(Citizens plugin) {
+        this.plugin = plugin;
         npcManager = plugin.getNPCManager();
         characterManager = plugin.getCharacterManager();
     }
 
     @Command(
              aliases = { "npc" },
-             usage = "create [name] --type (type) --char (character)",
+             usage = "create [name] --type (type) --char (character) --temp (template)",
              desc = "Create a new NPC",
              modifiers = { "create" },
              min = 2,
-             max = 4,
+             max = 5,
              permission = "npc.create")
     @Requirements
     public void createNPC(CommandContext args, Player player, NPC npc) {
@@ -67,6 +70,16 @@ public class NPCCommands {
                 create.setCharacter(characterManager.getInstance(args.getFlag("char"), create));
                 successMsg += " with the character " + StringHelper.wrap(args.getFlag("char"));
             }
+        }
+        if (args.hasValueFlag("temp")) {
+            String template = args.getFlag("temp");
+            if (!plugin.getTemplates().getKey("templates").keyExists(template)) {
+                Messaging.sendError(player, "The template '" + template
+                        + "' does not exist. Did you type the name incorrectly?");
+                return;
+            }
+            new Template(plugin.getTemplates().getKey("templates." + template)).apply(plugin.getStorage().getKey(
+                    "npc." + npc.getId()));
         }
         successMsg += " at your location.";
 
@@ -176,14 +189,8 @@ public class NPCCommands {
         Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "lookclose",
-            desc = "Toggle an NPC's look-close state",
-            modifiers = { "lookclose", "look", "rotate" },
-            min = 1,
-            max = 1,
-            permission = "npc.look-close")
+    @Command(aliases = { "npc" }, usage = "lookclose", desc = "Toggle an NPC's look-close state", modifiers = {
+            "lookclose", "look", "rotate" }, min = 1, max = 1, permission = "npc.look-close")
     public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
         LookClose trait = npc.getTrait(LookClose.class);
         trait.toggle();

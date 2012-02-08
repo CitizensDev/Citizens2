@@ -18,11 +18,12 @@ public class YamlStorage implements Storage {
     private final FileConfiguration config;
     private final File file;
 
-    public YamlStorage(String fileName) {
+    public YamlStorage(String fileName, String header) {
         config = new YamlConfiguration();
         file = new File(fileName);
         if (!file.exists()) {
             create();
+            config.options().header(header);
             save();
         } else
             load();
