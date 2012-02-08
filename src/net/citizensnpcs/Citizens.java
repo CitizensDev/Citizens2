@@ -14,13 +14,13 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
-import net.citizensnpcs.api.npc.trait.InstanceFactory;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Injector;
+import net.citizensnpcs.command.command.HelpCommands;
 import net.citizensnpcs.command.command.NPCCommands;
 import net.citizensnpcs.command.exception.CommandUsageException;
 import net.citizensnpcs.command.exception.MissingNestedCommandException;
@@ -59,9 +59,9 @@ public class Citizens extends JavaPlugin {
             LookClose.class, SpawnLocation.class, Inventory.class);
 
     private volatile CitizensNPCManager npcManager;
-    private final InstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
-    private final InstanceFactory<Trait> traitManager = new DefaultInstanceFactory<Trait>();
-    private CommandManager cmdManager;
+    private final DefaultInstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
+    private final DefaultInstanceFactory<Trait> traitManager = new DefaultInstanceFactory<Trait>();
+    private final CommandManager cmdManager = new CommandManager();
     private Settings config;
     private Storage saves;
     private boolean compatible;
@@ -213,11 +213,24 @@ public class Citizens extends JavaPlugin {
         }
     }
 
-    private void registerCommands() {
-        cmdManager = new CommandManager();
-        cmdManager.setInjector(new Injector(npcManager, characterManager));
+    public CitizensNPCManager getNPCManager() {
+        return npcManager;
+    }
 
+    public DefaultInstanceFactory<Character> getCharacterManager() {
+        return characterManager;
+    }
+
+    public CommandManager getCommandManager() {
+        return cmdManager;
+    }
+
+    private void registerCommands() {
+        cmdManager.setInjector(new Injector(this));
+
+        // Register command classes
         cmdManager.register(NPCCommands.class);
+        cmdManager.register(HelpCommands.class);
     }
 
     private void registerPermissions() {

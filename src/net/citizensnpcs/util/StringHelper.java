@@ -57,10 +57,20 @@ public class StringHelper {
         return ChatColor.YELLOW + string.toString() + ChatColor.GREEN;
     }
 
+    public static String wrap(Object string, ChatColor after) {
+        return ChatColor.YELLOW + string.toString() + after;
+    }
+
     public static String parseColors(Object string) {
         String parsed = string.toString();
         for (ChatColor color : ChatColor.values())
             parsed = parsed.replace("<" + color.getChar() + ">", color.toString());
         return parsed;
+    }
+
+    public static String capitalize(Object string) {
+        String capitalize = string.toString();
+        return capitalize.replaceFirst(String.valueOf(capitalize.charAt(0)),
+                String.valueOf(Character.toUpperCase(capitalize.charAt(0))));
     }
 }
