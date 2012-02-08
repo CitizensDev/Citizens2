@@ -52,7 +52,7 @@ public class CitizensNPCManager implements NPCManager {
 
     public void despawn(NPC npc, boolean deselect) {
         npc.getTrait(SpawnLocation.class).setLocation(npc.getBukkitEntity().getLocation());
-        if (deselect)
+        if (!deselect)
             selected.removeAll(npc.getId());
         npc.getBukkitEntity().remove();
     }
