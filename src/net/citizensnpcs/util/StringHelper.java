@@ -73,4 +73,8 @@ public class StringHelper {
         return capitalize.replaceFirst(String.valueOf(capitalize.charAt(0)),
                 String.valueOf(Character.toUpperCase(capitalize.charAt(0))));
     }
+
+    public static String wrapHeader(Object string) {
+        return ChatColor.GREEN + "=====[ " + string.toString() + ChatColor.GREEN + " ]=====";
+    }
 }
