@@ -20,6 +20,7 @@ import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Injector;
+import net.citizensnpcs.command.command.AdminCommands;
 import net.citizensnpcs.command.command.HelpCommands;
 import net.citizensnpcs.command.command.NPCCommands;
 import net.citizensnpcs.command.exception.CommandUsageException;
@@ -239,6 +240,7 @@ public class Citizens extends JavaPlugin {
         cmdManager.setInjector(new Injector(this));
 
         // Register command classes
+        cmdManager.register(AdminCommands.class);
         cmdManager.register(NPCCommands.class);
         cmdManager.register(HelpCommands.class);
     }

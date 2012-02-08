@@ -111,6 +111,25 @@ public class NPCCommands {
 
     @Command(
              aliases = { "npc" },
+             usage = "rename [name]",
+             desc = "Rename an NPC",
+             modifiers = { "rename" },
+             min = 2,
+             max = 2,
+             permission = "npc.rename")
+    public void renameNPC(CommandContext args, Player player, NPC npc) {
+        String oldName = npc.getName();
+        npc.setName(args.getString(1));
+        // Must reselect NPC after it is despawned
+        npcManager.selectNPC(player, npc);
+        Messaging.send(
+                player,
+                ChatColor.GREEN + "You renamed " + StringHelper.wrap(oldName) + " to "
+                        + StringHelper.wrap(args.getString(1)) + ".");
+    }
+
+    @Command(
+             aliases = { "npc" },
              usage = "select [id]",
              desc = "Selects an NPC with the given ID",
              modifiers = { "select" },
@@ -189,8 +208,14 @@ public class NPCCommands {
         Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(aliases = { "npc" }, usage = "lookclose", desc = "Toggle an NPC's look-close state", modifiers = {
-            "lookclose", "look", "rotate" }, min = 1, max = 1, permission = "npc.look-close")
+    @Command(
+            aliases = { "npc" },
+            usage = "lookclose",
+            desc = "Toggle an NPC's look-close state",
+            modifiers = { "lookclose", "look", "rotate" },
+            min = 1,
+            max = 1,
+            permission = "npc.look-close")
     public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
         LookClose trait = npc.getTrait(LookClose.class);
         trait.toggle();

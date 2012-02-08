@@ -13,7 +13,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 @SaveId("inventory")
-public class Inventory implements Trait {
+public class Inventory extends Trait {
     private ItemStack[] contents;
 
     public Inventory() {

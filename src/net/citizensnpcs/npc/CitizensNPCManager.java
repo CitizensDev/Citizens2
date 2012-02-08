@@ -50,9 +50,10 @@ public class CitizensNPCManager implements NPCManager {
         return createNPC(type, generateUniqueId(), name, character);
     }
 
-    public void despawn(NPC npc) {
+    public void despawn(NPC npc, boolean deselect) {
         npc.getTrait(SpawnLocation.class).setLocation(npc.getBukkitEntity().getLocation());
-        selected.removeAll(npc.getId());
+        if (deselect)
+            selected.removeAll(npc.getId());
         npc.getBukkitEntity().remove();
     }
 
@@ -111,7 +112,7 @@ public class CitizensNPCManager implements NPCManager {
 
     public void remove(NPC npc) {
         if (npc.isSpawned())
-            despawn(npc);
+            despawn(npc, true);
         npcs.remove(npc.getId());
         saves.getKey("npc").removeKey("" + npc.getId());
         selected.removeAll(npc.getId());
