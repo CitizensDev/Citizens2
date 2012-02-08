@@ -64,6 +64,7 @@ public class Citizens extends JavaPlugin {
     private final CommandManager cmdManager = new CommandManager();
     private Settings config;
     private Storage saves;
+    private Storage templates;
     private boolean compatible;
 
     private boolean handleMistake(CommandSender sender, String command, String modifier) {
@@ -174,7 +175,11 @@ public class Citizens extends JavaPlugin {
         if (Setting.USE_DATABASE.asBoolean())
             saves = new DatabaseStorage();
         else
-            saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml");
+            saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml", "Citizens NPC Storage");
+
+        // Templates
+        templates = new YamlStorage(getDataFolder() + File.separator + "templates.yml", "NPC Templates");
+        templates.load();
 
         // Register API managers
         npcManager = new CitizensNPCManager(saves);
@@ -223,6 +228,14 @@ public class Citizens extends JavaPlugin {
 
     public CommandManager getCommandManager() {
         return cmdManager;
+    }
+
+    public Storage getStorage() {
+        return saves;
+    }
+
+    public Storage getTemplates() {
+        return templates;
     }
 
     private void registerCommands() {

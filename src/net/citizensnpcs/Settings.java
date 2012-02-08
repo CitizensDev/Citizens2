@@ -10,7 +10,7 @@ public class Settings {
     private final YamlStorage config;
 
     public Settings(Citizens plugin) {
-        config = new YamlStorage(plugin.getDataFolder() + File.separator + "config.yml");
+        config = new YamlStorage(plugin.getDataFolder() + File.separator + "config.yml", "Citizens Configuration");
     }
 
     public void load() {
