@@ -135,8 +135,11 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void removeTrait(Class<? extends Trait> trait) {
-        if (traits.containsKey(trait) && traits.get(trait) instanceof Runnable) {
-            runnables.remove(traits.get(trait));
+        if (traits.containsKey(trait)) {
+            Trait t = traits.get(trait);
+            if (t instanceof Runnable)
+                runnables.remove(t);
+            t.onRemove(this);
         }
         traits.remove(trait);
     }
