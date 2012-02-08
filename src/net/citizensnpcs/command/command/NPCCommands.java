@@ -1,5 +1,6 @@
 package net.citizensnpcs.command.command;
 
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
@@ -25,9 +26,9 @@ public class NPCCommands {
     private final CitizensNPCManager npcManager;
     private final DefaultInstanceFactory<Character> characterManager;
 
-    public NPCCommands(CitizensNPCManager npcManager, DefaultInstanceFactory<Character> characterManager) {
-        this.npcManager = npcManager;
-        this.characterManager = characterManager;
+    public NPCCommands(Citizens plugin) {
+        npcManager = plugin.getNPCManager();
+        characterManager = plugin.getCharacterManager();
     }
 
     @Command(

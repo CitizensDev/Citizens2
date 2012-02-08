@@ -22,6 +22,7 @@ package net.citizensnpcs.command;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,8 +51,6 @@ import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-
-import com.google.common.collect.Lists;
 
 public class CommandManager {
 
@@ -264,7 +263,7 @@ public class CommandManager {
     public List<Command> getCommands(String command) {
         if (subCommands.containsKey(command))
             return subCommands.get(command);
-        List<Command> cmds = Lists.newArrayList();
+        List<Command> cmds = new ArrayList<Command>();
         for (Entry<CommandIdentifier, Method> entry : commands.get(null).entrySet()) {
             if (!entry.getKey().getCommand().equalsIgnoreCase(command)
                     || !entry.getValue().isAnnotationPresent(Command.class))
@@ -361,16 +360,6 @@ public class CommandManager {
 
                 instances.put(method, obj);
             }
-
-            /*
-             * // Build a list of commands and their usage details, at least for
-             * // root level commands if (parent == null) if
-             * (cmd.usage().length() == 0) descs.put(new
-             * CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]),
-             * cmd.desc()); else descs.put(new
-             * CommandIdentifier(cmd.aliases()[0], cmd.modifiers()[0]),
-             * cmd.usage() + " - " + cmd.desc());
-             */
 
             // Look for nested commands -- if there are any, those have
             // to be cached too so that they can be quickly looked

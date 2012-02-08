@@ -16,8 +16,7 @@ public class NPCUpdater implements Runnable {
         for (NPC npc : npcManager) {
             if (!npc.isSpawned())
                 continue;
-            CitizensNPC handle = (CitizensNPC) npc;
-            handle.update();
+            ((CitizensNPC) npc).update();
         }
     }
 }

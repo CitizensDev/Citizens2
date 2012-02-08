@@ -3,5 +3,7 @@ authors: [aPunch, fullwall]
 version: 2.0
 main: net.citizensnpcs.Citizens
 commands:
+  citizens:
+    description: Administration commands
   npc:
     description: Basic commands for all NPC-related things
