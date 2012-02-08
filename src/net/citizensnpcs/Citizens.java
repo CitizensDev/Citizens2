@@ -23,7 +23,6 @@ import net.citizensnpcs.command.Injector;
 import net.citizensnpcs.command.command.HelpCommands;
 import net.citizensnpcs.command.command.NPCCommands;
 import net.citizensnpcs.command.exception.CommandUsageException;
-import net.citizensnpcs.command.exception.MissingNestedCommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.command.exception.RequirementMissingException;
 import net.citizensnpcs.command.exception.ServerCommandException;
@@ -119,8 +118,6 @@ public class Citizens extends JavaPlugin {
                 sender.sendMessage("You must be in-game to execute that command.");
             } catch (NoPermissionsException ex) {
                 Messaging.sendError(player, "You don't have permission to execute that command.");
-            } catch (MissingNestedCommandException ex) {
-                Messaging.sendError(player, ex.getUsage());
             } catch (CommandUsageException ex) {
                 Messaging.sendError(player, ex.getMessage());
                 Messaging.sendError(player, ex.getUsage());
