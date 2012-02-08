@@ -23,7 +23,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,18 +35,15 @@ import java.util.logging.Logger;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.command.annotation.Command;
-import net.citizensnpcs.command.annotation.NestedCommand;
 import net.citizensnpcs.command.annotation.Requirements;
 import net.citizensnpcs.command.annotation.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
-import net.citizensnpcs.command.exception.MissingNestedCommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.command.exception.RequirementMissingException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -60,7 +56,7 @@ public class CommandManager {
      * their respective Method. The child map has the key of the command name
      * (one for each alias) with the method.
      */
-    private final Map<Method, Map<CommandIdentifier, Method>> commands = new HashMap<Method, Map<CommandIdentifier, Method>>();
+    private final Map<CommandIdentifier, Method> commands = new HashMap<CommandIdentifier, Method>();
 
     private final Map<String, List<Command>> subCommands = new HashMap<String, List<Command>>();
 
@@ -85,53 +81,36 @@ public class CommandManager {
         Object[] newMethodArgs = new Object[methodArgs.length + 1];
         System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
 
-        executeMethod(null, newArgs, player, newMethodArgs, 0);
+        executeMethod(null, newArgs, player, newMethodArgs);
     }
 
     // Attempt to execute a command.
     public void execute(String[] args, Player player, Object... methodArgs) throws CommandException {
         Object[] newMethodArgs = new Object[methodArgs.length + 1];
         System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
-        executeMethod(null, args, player, newMethodArgs, 0);
+        executeMethod(null, args, player, newMethodArgs);
     }
 
     // Attempt to execute a command.
-    public void executeMethod(Method parent, String[] args, Player player, Object[] methodArgs, int level)
-            throws CommandException {
-        String cmdName = args[level];
-        String modifier = "";
-        if (args.length > level + 1)
-            modifier = args[level + 1];
+    public void executeMethod(Method parent, String[] args, Player player, Object[] methodArgs) throws CommandException {
+        String cmdName = args[0];
+        String modifier = args.length >= 1 ? args[1] : "";
 
-        Map<CommandIdentifier, Method> map = commands.get(parent);
-        Method method = map.get(new CommandIdentifier(cmdName.toLowerCase(), modifier.toLowerCase()));
+        Method method = commands.get(new CommandIdentifier(cmdName.toLowerCase(), modifier.toLowerCase()));
         if (method == null)
-            method = map.get(new CommandIdentifier(cmdName.toLowerCase(), "*"));
+            method = commands.get(new CommandIdentifier(cmdName.toLowerCase(), "*"));
 
         if (method != null && methodArgs != null && serverCommands.get(method) == null
                 && methodArgs[1] instanceof ConsoleCommandSender)
             throw new ServerCommandException();
 
-        if (method == null)
-            if (parent == null)
-                throw new UnhandledCommandException();
-            else
-                throw new MissingNestedCommandException("Unknown command: " + cmdName, getNestedUsage(args, level - 1,
-                        parent, player));
+        if (method == null && parent == null)
+            throw new UnhandledCommandException();
 
-        if (methodArgs[1] instanceof Player)
-            if (!hasPermission(method, player))
-                throw new NoPermissionsException();
+        if (methodArgs[1] instanceof Player && !hasPermission(method, player))
+            throw new NoPermissionsException();
 
-        int argsCount = args.length - 1 - level;
-
-        if (method.isAnnotationPresent(NestedCommand.class))
-            if (argsCount == 0)
-                throw new MissingNestedCommandException("Sub-command required.", getNestedUsage(args, level, method,
-                        player));
-            else
-                executeMethod(method, args, player, methodArgs, level + 1);
-        else if (methodArgs[1] instanceof Player) {
+        if (methodArgs[1] instanceof Player) {
             Requirements cmdRequirements = requirements.get(method);
             if (cmdRequirements != null) {
                 NPC npc = (NPC) methodArgs[2];
@@ -141,26 +120,22 @@ public class CommandManager {
                 if (cmdRequirements.ownership() && npc != null
                         && !npc.getTrait(Owner.class).getOwner().equals(player.getName()))
                     throw new RequirementMissingException("You must be the owner of this NPC to execute that command.");
-            } else
-                Messaging.debug("No annotation present.");
+            }
         }
 
         Command cmd = method.getAnnotation(Command.class);
 
-        String[] newArgs = new String[args.length - level];
-        System.arraycopy(args, level, newArgs, 0, args.length - level);
-
-        CommandContext context = new CommandContext(newArgs);
+        CommandContext context = new CommandContext(args);
 
         if (context.argsLength() < cmd.min())
-            throw new CommandUsageException("Too few arguments.", getUsage(args, level, cmd));
+            throw new CommandUsageException("Too few arguments.", getUsage(args, cmd));
 
         if (cmd.max() != -1 && context.argsLength() > cmd.max())
-            throw new CommandUsageException("Too many arguments.", getUsage(args, level, cmd));
+            throw new CommandUsageException("Too many arguments.", getUsage(args, cmd));
 
         for (char flag : context.getFlags())
             if (cmd.flags().indexOf(String.valueOf(flag)) == -1)
-                throw new CommandUsageException("Unknown flag: " + flag, getUsage(args, level, cmd));
+                throw new CommandUsageException("Unknown flag: " + flag, getUsage(args, cmd));
 
         methodArgs[0] = context;
         Object instance = instances.get(method);
@@ -180,70 +155,24 @@ public class CommandManager {
 
     public String[] getAllCommandModifiers(String command) {
         Set<String> cmds = new HashSet<String>();
-        for (Map<CommandIdentifier, Method> enclosing : commands.values()) {
-            for (CommandIdentifier identifier : enclosing.keySet()) {
-                if (identifier.getCommand().equals(command)) {
-                    cmds.add(identifier.getModifier());
-                }
+        for (CommandIdentifier identifier : commands.keySet()) {
+            if (identifier.getCommand().equals(command)) {
+                cmds.add(identifier.getModifier());
             }
         }
+
         return cmds.toArray(new String[cmds.size()]);
     }
 
-    /*
-     * // Get a list of command descriptions. This is only for root commands.
-     * public Map<CommandIdentifier, String> getCommands() { return descs; }
-     */
-
-    // Get the usage string for a nested command.
-    private String getNestedUsage(String[] args, int level, Method method, Player player) throws CommandException {
-        StringBuilder command = new StringBuilder();
-
-        command.append("/");
-
-        for (int i = 0; i <= level; i++)
-            command.append(args[i] + " ");
-
-        Map<CommandIdentifier, Method> map = commands.get(method);
-        boolean found = false;
-
-        command.append("<");
-
-        Set<String> allowedCommands = new HashSet<String>();
-
-        for (Map.Entry<CommandIdentifier, Method> entry : map.entrySet()) {
-            Method childMethod = entry.getValue();
-            found = true;
-
-            if (hasPermission(childMethod, player)) {
-                Command childCmd = childMethod.getAnnotation(Command.class);
-
-                allowedCommands.add(childCmd.aliases()[0]);
-            }
-        }
-
-        if (allowedCommands.size() > 0)
-            command.append(joinString(allowedCommands, "|", 0));
-        else {
-            if (!found)
-                command.append("?");
-            else
-                throw new NoPermissionsException();
-        }
-
-        command.append(">");
-
-        return command.toString();
-    }
-
     // Get the usage string for a command.
-    private String getUsage(String[] args, int level, Command cmd) {
+    private String getUsage(String[] args, Command cmd) {
         StringBuilder command = new StringBuilder();
 
         command.append("/");
 
-        for (int i = 0; i <= level; i++)
-            command.append(args[i] + " ");
+        command.append(args[0] + " ");
+        if (args.length > 1)
+            command.append(args[1] + " ");
 
         // removed arbitrary positioning of flags.
         command.append(cmd.usage());
@@ -256,15 +185,15 @@ public class CommandManager {
      * This will check aliases as well.
      */
     public boolean hasCommand(String command, String modifier) {
-        return commands.get(null).containsKey(new CommandIdentifier(command.toLowerCase(), modifier.toLowerCase()))
-                || commands.get(null).containsKey(new CommandIdentifier(command.toLowerCase(), "*"));
+        return commands.containsKey(new CommandIdentifier(command.toLowerCase(), modifier.toLowerCase()))
+                || commands.containsKey(new CommandIdentifier(command.toLowerCase(), "*"));
     }
 
     public List<Command> getCommands(String command) {
         if (subCommands.containsKey(command))
             return subCommands.get(command);
         List<Command> cmds = new ArrayList<Command>();
-        for (Entry<CommandIdentifier, Method> entry : commands.get(null).entrySet()) {
+        for (Entry<CommandIdentifier, Method> entry : commands.entrySet()) {
             if (!entry.getKey().getCommand().equalsIgnoreCase(command)
                     || !entry.getValue().isAnnotationPresent(Command.class))
                 continue;
@@ -311,17 +240,6 @@ public class CommandManager {
 
     // Register the methods of a class.
     private void registerMethods(Class<?> clazz, Method parent, Object obj) {
-        Map<CommandIdentifier, Method> map;
-
-        // Make a new hash map to cache the commands for this class
-        // as looking up methods via reflection is fairly slow
-        if (commands.containsKey(parent))
-            map = commands.get(parent);
-        else {
-            map = new HashMap<CommandIdentifier, Method>();
-            commands.put(parent, map);
-        }
-
         for (Method method : clazz.getMethods()) {
             if (!method.isAnnotationPresent(Command.class))
                 continue;
@@ -333,7 +251,7 @@ public class CommandManager {
             // Cache the aliases too
             for (String alias : cmd.aliases())
                 for (String modifier : modifiers)
-                    map.put(new CommandIdentifier(alias, modifier), method);
+                    commands.put(new CommandIdentifier(alias, modifier), method);
 
             Requirements cmdRequirements = null;
             if (method.getDeclaringClass().isAnnotationPresent(Requirements.class))
@@ -360,16 +278,6 @@ public class CommandManager {
 
                 instances.put(method, obj);
             }
-
-            // Look for nested commands -- if there are any, those have
-            // to be cached too so that they can be quickly looked
-            // up when processing commands
-            if (method.isAnnotationPresent(NestedCommand.class)) {
-                NestedCommand nestedCmd = method.getAnnotation(NestedCommand.class);
-
-                for (Class<?> nestedCls : nestedCmd.value())
-                    registerMethods(nestedCls, method);
-            }
         }
     }
 
@@ -379,20 +287,4 @@ public class CommandManager {
 
     // Logger for general errors.
     private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
-
-    public static String joinString(Collection<?> str, String delimiter, int initialIndex) {
-        if (str.size() == 0)
-            return "";
-        StringBuilder buffer = new StringBuilder();
-        int i = 0;
-        for (Object o : str) {
-            if (i >= initialIndex) {
-                if (i > 0)
-                    buffer.append(delimiter);
-                buffer.append(o.toString());
-            }
-            i++;
-        }
-        return buffer.toString();
-    }
 }
