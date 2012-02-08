@@ -5,7 +5,7 @@ import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 
 @SaveId("type")
-public class MobType implements Trait {
+public class MobType extends Trait {
     private String type;
 
     public MobType() {

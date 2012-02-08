@@ -2,11 +2,12 @@ package net.citizensnpcs.api.npc.trait;
 
 import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.NPC;
 
 /**
  * Represents a Trait that can be loaded and saved
  */
-public interface Trait {
+public abstract class Trait {
 
     /**
      * Loads a trait
@@ -16,7 +17,7 @@ public interface Trait {
      * @throws NPCLoadException
      *             if this trait failed to load properly
      */
-    public void load(DataKey key) throws NPCLoadException;
+    public abstract void load(DataKey key) throws NPCLoadException;
 
     /**
      * Saves a trait
@@ -24,5 +25,14 @@ public interface Trait {
      * @param key
      *            DataKey to save to
      */
-    public void save(DataKey key);
+    public abstract void save(DataKey key);
+
+    /**
+     * Called when a trait is removed from the given NPC
+     * 
+     * @param from
+     *            NPC this trait was removed from
+     */
+    public void onRemove(NPC from) {
+    }
 }

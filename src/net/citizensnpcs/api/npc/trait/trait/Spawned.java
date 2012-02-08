@@ -6,7 +6,7 @@ import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 
 @SaveId("spawned")
-public class Spawned implements Trait {
+public class Spawned extends Trait {
     private boolean shouldSpawn;
 
     public Spawned() {

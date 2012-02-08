@@ -6,7 +6,7 @@ import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 
 @SaveId("owner")
-public class Owner implements Trait {
+public class Owner extends Trait {
     private String owner;
 
     public Owner() {

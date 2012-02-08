@@ -9,7 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 @SaveId("location")
-public class SpawnLocation implements Trait {
+public class SpawnLocation extends Trait {
     private Location loc;
 
     public SpawnLocation() {
