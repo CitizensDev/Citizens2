@@ -108,6 +108,18 @@ public class NPCCommands {
         npc.despawn();
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
+    
+    @Command(
+            aliases = { "npc" },
+            usage = "editor [editor]",
+            desc = "Enter an NPC editor",
+            modifiers = { "editor" },
+            min = 2,
+            max = 2,
+            permission = "npc.editor")
+   public void enterEditor(CommandContext args, Player player, NPC npc) {
+       // TODO
+   }
 
     @Command(
              aliases = { "npc" },
@@ -119,11 +131,15 @@ public class NPCCommands {
              permission = "npc.rename")
     public void renameNPC(CommandContext args, Player player, NPC npc) {
         String oldName = npc.getName();
-        npc.setName(args.getString(1));
-        Messaging.send(
-                player,
-                ChatColor.GREEN + "You renamed " + StringHelper.wrap(oldName) + " to "
-                        + StringHelper.wrap(args.getString(1)) + ".");
+        String newName = args.getString(1);
+        if (newName.length() > 16) {
+            Messaging.sendError(player, "NPC names cannot be longer than 16 characters. The name has been shortened.");
+            newName = newName.substring(0, 15);
+        }
+        npc.setName(newName);
+        Messaging.send(player,
+                ChatColor.GREEN + "You renamed " + StringHelper.wrap(oldName) + " to " + StringHelper.wrap(newName)
+                        + ".");
     }
 
     @Command(
@@ -147,6 +163,18 @@ public class NPCCommands {
         }
         npcManager.selectNPC(player, toSelect);
         Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), toSelect);
+    }
+    
+    @Command(
+            aliases = { "npc" },
+            usage = "character [character]",
+            desc = "Sets the character of an NPC",
+            modifiers = { "character" },
+            min = 2,
+            max = 2,
+            permission = "npc.character")
+    public void setNPCCharacter(CommandContext args, Player player, NPC npc) {
+        // TODO
     }
 
     @Command(
@@ -207,13 +235,13 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "lookclose",
-            desc = "Toggle an NPC's look-close state",
-            modifiers = { "lookclose", "look", "rotate" },
-            min = 1,
-            max = 1,
-            permission = "npc.look-close")
+             aliases = { "npc" },
+             usage = "lookclose",
+             desc = "Toggle an NPC's look-close state",
+             modifiers = { "lookclose", "look", "rotate" },
+             min = 1,
+             max = 1,
+             permission = "npc.look-close")
     public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
         LookClose trait = npc.getTrait(LookClose.class);
         trait.toggle();
