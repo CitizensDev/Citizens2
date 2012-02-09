@@ -6,6 +6,7 @@ import net.citizensnpcs.Template;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
+import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.trait.MobType;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
@@ -108,18 +109,6 @@ public class NPCCommands {
         npc.despawn();
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
-    
-    @Command(
-            aliases = { "npc" },
-            usage = "editor [editor]",
-            desc = "Enter an NPC editor",
-            modifiers = { "editor" },
-            min = 2,
-            max = 2,
-            permission = "npc.editor")
-   public void enterEditor(CommandContext args, Player player, NPC npc) {
-       // TODO
-   }
 
     @Command(
              aliases = { "npc" },
@@ -164,17 +153,31 @@ public class NPCCommands {
         npcManager.selectNPC(player, toSelect);
         Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), toSelect);
     }
-    
+
     @Command(
-            aliases = { "npc" },
-            usage = "character [character]",
-            desc = "Sets the character of an NPC",
-            modifiers = { "character" },
-            min = 2,
-            max = 2,
-            permission = "npc.character")
+             aliases = { "npc" },
+             usage = "character [character]",
+             desc = "Sets the character of an NPC",
+             modifiers = { "character" },
+             min = 2,
+             max = 2,
+             permission = "npc.character")
     public void setNPCCharacter(CommandContext args, Player player, NPC npc) {
-        // TODO
+        Character character = characterManager.getInstance(args.getString(1), npc);
+        if (character == null) {
+            Messaging.sendError(player, "The character '" + args.getString(1) + "' does not exist.");
+            return;
+        }
+        if (npc.getCharacter() != null
+                && npc.getCharacter().getClass().getAnnotation(SaveId.class).value()
+                        .equalsIgnoreCase(character.getClass().getAnnotation(SaveId.class).value())) {
+            Messaging.sendError(player, "The NPC already has the character '" + args.getString(1) + "'.");
+            return;
+        }
+        Messaging.send(player,
+                StringHelper.wrap(npc.getName() + "'s") + " character is now '" + StringHelper.wrap(args.getString(1))
+                        + "'.");
+        npc.setCharacter(character);
     }
 
     @Command(
@@ -234,14 +237,8 @@ public class NPCCommands {
         Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "lookclose",
-             desc = "Toggle an NPC's look-close state",
-             modifiers = { "lookclose", "look", "rotate" },
-             min = 1,
-             max = 1,
-             permission = "npc.look-close")
+    @Command(aliases = { "npc" }, usage = "lookclose", desc = "Toggle an NPC's look-close state", modifiers = {
+            "lookclose", "look", "rotate" }, min = 1, max = 1, permission = "npc.look-close")
     public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
         LookClose trait = npc.getTrait(LookClose.class);
         trait.toggle();
