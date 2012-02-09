@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
  * Represents a Character that can be loaded and saved (one Character can be
  * attached to an NPC at a time)
  */
-public interface Character {
+public abstract class Character {
 
     /**
      * Loads a trait
@@ -17,7 +17,7 @@ public interface Character {
      * @param key
      *            DataKey to load from
      */
-    public void load(DataKey key);
+    public abstract void load(DataKey key);
 
     /**
      * Called when an NPC is left-clicked
@@ -27,7 +27,8 @@ public interface Character {
      * @param by
      *            Player that clicked the NPC
      */
-    public void onLeftClick(NPC npc, Player by);
+    public void onLeftClick(NPC npc, Player by) {
+    }
 
     /**
      * Called when an NPC is right-clicked
@@ -37,7 +38,8 @@ public interface Character {
      * @param by
      *            Player that clicked the NPC
      */
-    public void onRightClick(NPC npc, Player by);
+    public void onRightClick(NPC npc, Player by) {
+    }
 
     /**
      * Saves a trait
@@ -45,5 +47,5 @@ public interface Character {
      * @param key
      *            DataKey to save to
      */
-    public void save(DataKey key);
+    public abstract void save(DataKey key);
 }
