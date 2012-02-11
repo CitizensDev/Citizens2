@@ -7,13 +7,13 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
+import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

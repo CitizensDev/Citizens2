@@ -1,7 +1,8 @@
 package net.citizensnpcs.api.npc.trait;
 
-import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Player;
 
@@ -16,8 +17,10 @@ public abstract class Character {
      * 
      * @param key
      *            DataKey to load from
+     * @throws NPCLoadException
+     *             Thrown if this character fails to load properly
      */
-    public abstract void load(DataKey key);
+    public abstract void load(DataKey key) throws NPCLoadException;
 
     /**
      * Called when an NPC is left-clicked

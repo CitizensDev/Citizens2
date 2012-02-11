@@ -1,8 +1,8 @@
 package net.citizensnpcs.api.npc.trait.trait;
 
-import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
+import net.citizensnpcs.api.util.DataKey;
 
 @SaveId("type")
 public class MobType extends Trait {

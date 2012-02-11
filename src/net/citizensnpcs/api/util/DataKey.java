@@ -1,4 +1,4 @@
-package net.citizensnpcs.api;
+package net.citizensnpcs.api.util;
 
 import java.util.List;
 

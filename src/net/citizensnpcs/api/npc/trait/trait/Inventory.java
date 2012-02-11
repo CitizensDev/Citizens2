@@ -3,10 +3,10 @@ package net.citizensnpcs.api.npc.trait.trait;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
+import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
