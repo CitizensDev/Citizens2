@@ -7,9 +7,10 @@ import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.npc.entity.CitizensHumanNPC;
 
-import net.minecraft.server.DataWatcher;
+import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.Packet40EntityMetadata;
 
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -35,12 +36,11 @@ public class Sneak extends Trait implements Runnable {
     @Override
     public void run() {
         if (npc instanceof CitizensHumanNPC) {
-            ((Player) npc.getBukkitEntity()).setSneaking(sneak);
-            DataWatcher dw = ((CitizensHumanNPC) npc).getHandle().getDataWatcher();
-            dw.watch(1, sneak);
-            for (Player player : npc.getBukkitEntity().getServer().getOnlinePlayers())
-                ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet40EntityMetadata(npc
-                        .getBukkitEntity().getEntityId(), dw));
+            EntityPlayer handle = ((CitizensHumanNPC) npc).getHandle();
+            handle.setSneak(sneak);
+            for (Player player : Bukkit.getOnlinePlayers())
+                ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(new Packet40EntityMetadata(handle.id,
+                        handle.getDataWatcher()));
         }
     }
 
