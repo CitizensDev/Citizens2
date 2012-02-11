@@ -51,7 +51,7 @@ public class NPCCommands {
             Messaging.sendError(player, "NPC names cannot be longer than 16 characters. The name has been shortened.");
             name = name.substring(0, 15);
         }
-        CreatureType type = CreatureType.MONSTER; // Default NPC type
+        CreatureType type = null;
         if (args.hasValueFlag("type"))
             try {
                 type = CreatureType.valueOf(args.getFlag("type").toUpperCase().replace('-', '_'));
@@ -89,7 +89,7 @@ public class NPCCommands {
         create.addTrait(new Owner(player.getName()));
 
         // Set the mob type
-        create.addTrait(new MobType(type == CreatureType.MONSTER ? "DEFAULT" : type.toString()));
+        create.addTrait(new MobType(type == null ? "DEFAULT" : type.toString()));
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);

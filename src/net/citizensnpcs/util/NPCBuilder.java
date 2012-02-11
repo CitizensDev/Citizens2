@@ -46,7 +46,6 @@ public class NPCBuilder {
         types.put(CreatureType.GHAST, CitizensGhastNPC.class);
         types.put(CreatureType.GIANT, CitizensGiantNPC.class);
         types.put(CreatureType.MAGMA_CUBE, CitizensMagmaCubeNPC.class);
-        types.put(CreatureType.MONSTER, CitizensHumanNPC.class);
         types.put(CreatureType.MUSHROOM_COW, CitizensMushroomCowNPC.class);
         types.put(CreatureType.PIG, CitizensPigNPC.class);
         types.put(CreatureType.PIG_ZOMBIE, CitizensPigZombieNPC.class);
@@ -64,6 +63,9 @@ public class NPCBuilder {
 
     public CitizensNPC getByType(CreatureType type, CitizensNPCManager npcManager, int id, String name) {
         Class<? extends CitizensNPC> npcClass = types.get(type);
+        if (npcClass == null)
+            npcClass = CitizensHumanNPC.class;
+
         try {
             return npcClass.getConstructor(CitizensNPCManager.class, int.class, String.class).newInstance(npcManager,
                     id, name);
