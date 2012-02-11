@@ -1,9 +1,7 @@
 package net.citizensnpcs;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
@@ -35,6 +33,7 @@ import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.storage.YamlStorage;
 import net.citizensnpcs.trait.Inventory;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.Sneak;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
@@ -45,8 +44,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Lists;
@@ -56,7 +53,7 @@ public class Citizens extends JavaPlugin {
 
     @SuppressWarnings("unchecked")
     private static final List<Class<? extends Trait>> defaultTraits = Lists.newArrayList(Owner.class, Spawned.class,
-            LookClose.class, SpawnLocation.class, Inventory.class);
+            LookClose.class, SpawnLocation.class, Inventory.class, Sneak.class);
 
     private volatile CitizensNPCManager npcManager;
     private final DefaultInstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
@@ -188,9 +185,8 @@ public class Citizens extends JavaPlugin {
         // Register events
         getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
 
-        // Register commands and permissions
+        // Register commands
         registerCommands();
-        registerPermissions();
 
         // Register default traits
         traitManager.registerAll(defaultTraits);
@@ -243,22 +239,6 @@ public class Citizens extends JavaPlugin {
         cmdManager.register(AdminCommands.class);
         cmdManager.register(NPCCommands.class);
         cmdManager.register(HelpCommands.class);
-    }
-
-    private void registerPermissions() {
-        // TODO There has to be a better way than this (maybe use Permission
-        // annotation to register permissions?)
-        Map<String, Boolean> children = new HashMap<String, Boolean>();
-        children.put("citizens.npc.create", true);
-        children.put("citizens.npc.spawn", true);
-        children.put("citizens.npc.despawn", true);
-        children.put("citizens.npc.select", true);
-        children.put("citizens.npc.tp", true);
-        children.put("citizens.npc.tphere", true);
-        children.put("citizens.npc.look-close", true);
-
-        Permission perm = new Permission("citizens.*", PermissionDefault.OP, children);
-        getServer().getPluginManager().addPermission(perm);
     }
 
     private void saveNPCs() {

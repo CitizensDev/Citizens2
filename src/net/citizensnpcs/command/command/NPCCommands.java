@@ -15,6 +15,7 @@ import net.citizensnpcs.command.annotation.Command;
 import net.citizensnpcs.command.annotation.Requirements;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.Sneak;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
@@ -178,6 +179,22 @@ public class NPCCommands {
                 StringHelper.wrap(npc.getName() + "'s") + " character is now '" + StringHelper.wrap(args.getString(1))
                         + "'.");
         npc.setCharacter(character);
+    }
+
+    @Command(
+             aliases = { "npc" },
+             usage = "sneak",
+             desc = "Toggle whether an NPC should sneak",
+             modifiers = { "sneak" },
+             min = 1,
+             max = 1,
+             permission = "npc.sneak")
+    public void toggleSneak(CommandContext args, Player player, NPC npc) {
+        Sneak trait = npc.getTrait(Sneak.class);
+        trait.toggle();
+        String msg = StringHelper.wrap(npc.getName()) + " will "
+                + (trait.isSneaking() ? "now sneak" : "no longer sneak");
+        Messaging.send(player, msg += ".");
     }
 
     @Command(
