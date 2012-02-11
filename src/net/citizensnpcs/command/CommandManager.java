@@ -171,8 +171,6 @@ public class CommandManager {
         command.append("/");
 
         command.append(args[0] + " ");
-        if (args.length > 1)
-            command.append(args[1] + " ");
 
         // removed arbitrary positioning of flags.
         command.append(cmd.usage());
