@@ -99,12 +99,12 @@ public abstract class AbstractNPC implements NPC {
     public void load(DataKey root) throws NPCLoadException {
         Character character = CitizensAPI.getCharacterManager().getInstance(root.getString("character"), this);
 
-        // Load the character if it exists, otherwise remove the character
+        // Load the character if it exists
         if (character != null) {
             if (!character.getClass().isAnnotationPresent(SaveId.class))
                 throw new NPCLoadException("Could not load character '" + root.getString("character")
                         + "'. SaveId annotation is missing.");
-            character.load(root.getRelative("characters." + character.getClass().getAnnotation(SaveId.class).value()));
+            character.load(root.getRelative("characters." + character.getName()));
             setCharacter(character);
         }
 
@@ -150,14 +150,13 @@ public abstract class AbstractNPC implements NPC {
 
         // Save the character if it exists
         if (getCharacter() != null) {
-            root.setString("character", getCharacter().getClass().getAnnotation(SaveId.class).value());
-            getCharacter().save(
-                    root.getRelative("characters." + getCharacter().getClass().getAnnotation(SaveId.class).value()));
+            root.setString("character", getCharacter().getName());
+            getCharacter().save(root.getRelative("characters." + getCharacter().getName()));
         }
 
         // Save all existing traits
         for (Trait trait : getTraits())
-            trait.save(root.getRelative("traits." + trait.getClass().getAnnotation(SaveId.class).value()));
+            trait.save(root.getRelative("traits." + trait.getName()));
     }
 
     @Override

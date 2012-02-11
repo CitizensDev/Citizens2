@@ -48,4 +48,13 @@ public abstract class Character {
      *            DataKey to save to
      */
     public abstract void save(DataKey key);
+
+    /**
+     * Gets the name of this character
+     * 
+     * @return Name of this character
+     */
+    public final String getName() {
+        return getClass().getAnnotation(SaveId.class).value();
+    }
 }

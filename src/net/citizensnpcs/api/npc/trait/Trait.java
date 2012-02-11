@@ -35,4 +35,13 @@ public abstract class Trait {
      */
     public void onRemove(NPC from) {
     }
+
+    /**
+     * Gets the name of this trait
+     * 
+     * @return Name of this trait
+     */
+    public final String getName() {
+        return getClass().getAnnotation(SaveId.class).value();
+    }
 }
