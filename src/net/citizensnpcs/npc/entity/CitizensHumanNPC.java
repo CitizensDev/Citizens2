@@ -1,5 +1,7 @@
 package net.citizensnpcs.npc.entity;
 
+import net.citizensnpcs.api.DataKey;
+import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.resource.lib.EntityHumanNPC;
@@ -52,5 +54,10 @@ public class CitizensHumanNPC extends CitizensNPC {
         handle.removeFromPlayerMap(getFullName());
         handle.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         return handle;
+    }
+
+    @Override
+    public void load(DataKey key) throws NPCLoadException {
+        super.load(key);
     }
 }

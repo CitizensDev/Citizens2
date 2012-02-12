@@ -1,11 +1,13 @@
 package net.citizensnpcs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -16,10 +18,6 @@ import net.citizensnpcs.api.npc.trait.trait.Inventory;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.DatabaseStorage;
-import net.citizensnpcs.api.util.Storage;
-import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Injector;
 import net.citizensnpcs.command.command.AdminCommands;
@@ -32,9 +30,13 @@ import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.citizensnpcs.storage.DatabaseStorage;
+import net.citizensnpcs.storage.Storage;
+import net.citizensnpcs.storage.YamlStorage;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Sneak;
 import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.Metrics;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.Bukkit;
@@ -46,6 +48,7 @@ import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 public class Citizens extends JavaPlugin {
@@ -58,16 +61,16 @@ public class Citizens extends JavaPlugin {
     private volatile CitizensNPCManager npcManager;
     private final DefaultInstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
     private final DefaultInstanceFactory<Trait> traitManager = new DefaultInstanceFactory<Trait>();
-    private final CommandManager cmdManager = new CommandManager();
+    private final CommandManager commands = new CommandManager();
     private Settings config;
     private Storage saves;
     private Storage templates;
     private boolean compatible;
 
-    private boolean handleMistake(CommandSender sender, String command, String modifier) {
+    private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {
         int minDist = Integer.MAX_VALUE;
         String closest = "";
-        for (String string : cmdManager.getAllCommandModifiers(command)) {
+        for (String string : commands.getAllCommandModifiers(command)) {
             int distance = StringHelper.getLevenshteinDistance(modifier, string);
             if (minDist > distance) {
                 minDist = distance;
@@ -94,16 +97,10 @@ public class Citizens extends JavaPlugin {
             System.arraycopy(args, 0, split, 1, args.length);
             split[0] = cmd.getName().toLowerCase();
 
-            String modifier = "";
-            if (args.length > 0)
-                modifier = args[0];
+            String modifier = args.length > 0 ? args[0] : "";
 
-            // No command found!
-            if (!cmdManager.hasCommand(split[0], modifier)) {
-                if (!modifier.isEmpty()) {
-                    boolean value = handleMistake(sender, split[0], modifier);
-                    return value;
-                }
+            if (!commands.hasCommand(split[0], modifier) && !modifier.isEmpty()) {
+                return suggestClosestModifier(sender, split[0], modifier);
             }
 
             NPC npc = null;
@@ -111,7 +108,7 @@ public class Citizens extends JavaPlugin {
                 npc = npcManager.getSelectedNPC(player);
 
             try {
-                cmdManager.execute(split, player, player == null ? sender : player, npc);
+                commands.execute(split, player, player == null ? sender : player, npc);
             } catch (ServerCommandException ex) {
                 sender.sendMessage("You must be in-game to execute that command.");
             } catch (NoPermissionsException ex) {
@@ -167,10 +164,34 @@ public class Citizens extends JavaPlugin {
         config.load();
 
         // NPC storage
-        if (Setting.USE_DATABASE.asBoolean())
+        if (Setting.USE_DATABASE.asBoolean()) {
             saves = new DatabaseStorage();
-        else
+        } else {
             saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml", "Citizens NPC Storage");
+        }
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Metrics metrics = new Metrics();
+                    metrics.addCustomData(Citizens.this, new Metrics.Plotter() {
+                        @Override
+                        public int getValue() {
+                            return Iterators.size(npcManager.iterator());
+                        }
+
+                        @Override
+                        public String getColumnName() {
+                            return "Total NPCs";
+                        }
+                    });
+                    metrics.beginMeasuringPlugin(Citizens.this);
+                } catch (IOException ex) {
+                    Messaging.log("Unable to load metrics");
+                }
+            }
+        }.start();
 
         // Templates
         templates = new YamlStorage(getDataFolder() + File.separator + "templates.yml", "NPC Templates");
@@ -221,7 +242,7 @@ public class Citizens extends JavaPlugin {
     }
 
     public CommandManager getCommandManager() {
-        return cmdManager;
+        return commands;
     }
 
     public Storage getStorage() {
@@ -233,12 +254,12 @@ public class Citizens extends JavaPlugin {
     }
 
     private void registerCommands() {
-        cmdManager.setInjector(new Injector(this));
+        commands.setInjector(new Injector(this));
 
         // Register command classes
-        cmdManager.register(AdminCommands.class);
-        cmdManager.register(NPCCommands.class);
-        cmdManager.register(HelpCommands.class);
+        commands.register(AdminCommands.class);
+        commands.register(NPCCommands.class);
+        commands.register(HelpCommands.class);
     }
 
     private void saveNPCs() {
@@ -254,15 +275,16 @@ public class Citizens extends JavaPlugin {
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
 
-            String type = key.getString("traits.type");
+            String type = key.getString("traits.type").toUpperCase();
             NPC npc = npcManager.createNPC(
-                    type.equalsIgnoreCase("DEFAULT") ? null : CreatureType.valueOf(key.getString("traits.type")
-                            .toUpperCase()), id, key.getString("name"), null);
+                    type.equalsIgnoreCase("DEFAULT") ? CreatureType.MONSTER : CreatureType.valueOf(type), id,
+                    key.getString("name"), null);
             try {
                 npc.load(key);
             } catch (NPCException ex) {
                 Messaging.log(ex.getMessage());
             }
+
             ++created;
             if (npc.isSpawned())
                 ++spawned;

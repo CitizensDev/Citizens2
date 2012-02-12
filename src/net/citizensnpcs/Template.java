@@ -1,6 +1,6 @@
 package net.citizensnpcs;
 
-import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.DataKey;
 
 public class Template {
     private final DataKey template;
