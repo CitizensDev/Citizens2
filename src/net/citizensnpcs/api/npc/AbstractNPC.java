@@ -17,7 +17,6 @@ import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
 
@@ -41,13 +40,6 @@ public abstract class AbstractNPC implements NPC {
                 runnables.remove(traits.get(trait.getClass()));
         }
         traits.put(trait.getClass(), trait);
-    }
-
-    @Override
-    public void chat(String message) {
-        String formatted = "<" + getName() + "> " + message;
-        for (Player player : Bukkit.getOnlinePlayers())
-            player.sendMessage(formatted);
     }
 
     @Override
