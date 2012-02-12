@@ -56,7 +56,7 @@ public class CommandManager {
      * their respective Method. The child map has the key of the command name
      * (one for each alias) with the method.
      */
-    private final Map<CommandIdentifier, Method> commands = new HashMap<CommandIdentifier, Method>();
+    private final Map<String, Method> commands = new HashMap<String, Method>();
 
     private final Map<String, List<Command>> subCommands = new HashMap<String, List<Command>>();
 
@@ -96,9 +96,9 @@ public class CommandManager {
         String cmdName = args[0];
         String modifier = args.length >= 1 ? args[1] : "";
 
-        Method method = commands.get(new CommandIdentifier(cmdName.toLowerCase(), modifier.toLowerCase()));
+        Method method = commands.get(cmdName.toLowerCase() + " " + modifier.toLowerCase());
         if (method == null)
-            method = commands.get(new CommandIdentifier(cmdName.toLowerCase(), "*"));
+            method = commands.get(cmdName.toLowerCase() + " *");
 
         if (method != null && methodArgs != null && serverCommands.get(method) == null
                 && methodArgs[1] instanceof ConsoleCommandSender)
@@ -155,9 +155,10 @@ public class CommandManager {
 
     public String[] getAllCommandModifiers(String command) {
         Set<String> cmds = new HashSet<String>();
-        for (CommandIdentifier identifier : commands.keySet()) {
-            if (identifier.getCommand().equals(command)) {
-                cmds.add(identifier.getModifier());
+        for (String cmd : commands.keySet()) {
+            String[] split = cmd.split(" ");
+            if (split[0].equalsIgnoreCase(command)) {
+                cmds.add(split[1]);
             }
         }
 
@@ -183,16 +184,16 @@ public class CommandManager {
      * This will check aliases as well.
      */
     public boolean hasCommand(String command, String modifier) {
-        return commands.containsKey(new CommandIdentifier(command.toLowerCase(), modifier.toLowerCase()))
-                || commands.containsKey(new CommandIdentifier(command.toLowerCase(), "*"));
+        return commands.containsKey(command.toLowerCase() + " " + modifier.toLowerCase())
+                || commands.containsKey(command.toLowerCase() + " *");
     }
 
     public List<Command> getCommands(String command) {
         if (subCommands.containsKey(command))
             return subCommands.get(command);
         List<Command> cmds = new ArrayList<Command>();
-        for (Entry<CommandIdentifier, Method> entry : commands.entrySet()) {
-            if (!entry.getKey().getCommand().equalsIgnoreCase(command)
+        for (Entry<String, Method> entry : commands.entrySet()) {
+            if (!entry.getKey().split(" ")[0].equalsIgnoreCase(command)
                     || !entry.getValue().isAnnotationPresent(Command.class))
                 continue;
             cmds.add(entry.getValue().getAnnotation(Command.class));
@@ -247,9 +248,11 @@ public class CommandManager {
             String[] modifiers = cmd.modifiers();
 
             // Cache the aliases too
-            for (String alias : cmd.aliases())
-                for (String modifier : modifiers)
-                    commands.put(new CommandIdentifier(alias, modifier), method);
+            for (String alias : cmd.aliases()) {
+                for (String modifier : modifiers) {
+                    commands.put(alias + " " + modifier, method);
+                }
+            }
 
             Requirements cmdRequirements = null;
             if (method.getDeclaringClass().isAnnotationPresent(Requirements.class))
