@@ -2,7 +2,6 @@ package net.citizensnpcs.command.command;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.Template;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
@@ -26,12 +25,10 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
-    private final Citizens plugin;
     private final CitizensNPCManager npcManager;
     private final DefaultInstanceFactory<Character> characterManager;
 
     public NPCCommands(Citizens plugin) {
-        this.plugin = plugin;
         npcManager = plugin.getNPCManager();
         characterManager = plugin.getCharacterManager();
     }
@@ -51,7 +48,7 @@ public class NPCCommands {
             Messaging.sendError(player, "NPC names cannot be longer than 16 characters. The name has been shortened.");
             name = name.substring(0, 15);
         }
-        CreatureType type = CreatureType.MONSTER; // Default NPC type
+        CreatureType type = null;
         if (args.hasValueFlag("type"))
             try {
                 type = CreatureType.valueOf(args.getFlag("type").toUpperCase().replace('-', '_'));
@@ -72,16 +69,6 @@ public class NPCCommands {
                 create.setCharacter(characterManager.getInstance(args.getFlag("char"), create));
                 successMsg += " with the character " + StringHelper.wrap(args.getFlag("char"));
             }
-        }
-        if (args.hasValueFlag("temp")) {
-            String template = args.getFlag("temp");
-            if (!plugin.getTemplates().getKey("templates").keyExists(template)) {
-                Messaging.sendError(player, "The template '" + template
-                        + "' does not exist. Did you type the name incorrectly?");
-                return;
-            }
-            new Template(plugin.getTemplates().getKey("templates." + template)).apply(plugin.getStorage().getKey(
-                    "npc." + npc.getId()));
         }
         successMsg += " at your location.";
 
