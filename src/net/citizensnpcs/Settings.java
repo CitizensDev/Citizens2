@@ -2,8 +2,8 @@ package net.citizensnpcs;
 
 import java.io.File;
 
-import net.citizensnpcs.api.DataKey;
-import net.citizensnpcs.storage.YamlStorage;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 
 public class Settings {
@@ -30,11 +30,9 @@ public class Settings {
     }
 
     public enum Setting {
-        DEBUG_MODE("general.debug-mode", false),
-        USE_DATABASE("use-database", false),
-        SELECTION_ITEM("npc.selection.item", 280),
-        SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
-        QUICK_SELECT("npc.selection.quick-select", false);
+        DEBUG_MODE("general.debug-mode", false), USE_DATABASE("use-database", false), SELECTION_ITEM(
+                "npc.selection.item", 280), SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"), QUICK_SELECT(
+                "npc.selection.quick-select", false);
 
         private String path;
         private Object value;
