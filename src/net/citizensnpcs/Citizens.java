@@ -64,7 +64,6 @@ public class Citizens extends JavaPlugin {
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private Storage saves;
-    private Storage templates;
     private boolean compatible;
 
     private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {
@@ -170,33 +169,6 @@ public class Citizens extends JavaPlugin {
             saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml", "Citizens NPC Storage");
         }
 
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Metrics metrics = new Metrics();
-                    metrics.addCustomData(Citizens.this, new Metrics.Plotter() {
-                        @Override
-                        public int getValue() {
-                            return Iterators.size(npcManager.iterator());
-                        }
-
-                        @Override
-                        public String getColumnName() {
-                            return "Total NPCs";
-                        }
-                    });
-                    metrics.beginMeasuringPlugin(Citizens.this);
-                } catch (IOException ex) {
-                    Messaging.log("Unable to load metrics");
-                }
-            }
-        }.start();
-
-        // Templates
-        templates = new YamlStorage(getDataFolder() + File.separator + "templates.yml", "NPC Templates");
-        templates.load();
-
         // Register API managers
         npcManager = new CitizensNPCManager(saves);
         CitizensAPI.setNPCManager(npcManager);
@@ -231,6 +203,30 @@ public class Citizens extends JavaPlugin {
             Messaging.log(Level.SEVERE, "Issue enabling plugin. Disabling.");
             getServer().getPluginManager().disablePlugin(this);
         }
+
+        // Run metrics last
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Metrics metrics = new Metrics();
+                    metrics.addCustomData(Citizens.this, new Metrics.Plotter() {
+                        @Override
+                        public int getValue() {
+                            return Iterators.size(npcManager.iterator());
+                        }
+
+                        @Override
+                        public String getColumnName() {
+                            return "Total NPCs";
+                        }
+                    });
+                    metrics.beginMeasuringPlugin(Citizens.this);
+                } catch (IOException ex) {
+                    Messaging.log("Unable to load metrics");
+                }
+            }
+        }.start();
     }
 
     public CitizensNPCManager getNPCManager() {
@@ -247,10 +243,6 @@ public class Citizens extends JavaPlugin {
 
     public Storage getStorage() {
         return saves;
-    }
-
-    public Storage getTemplates() {
-        return templates;
     }
 
     private void registerCommands() {
@@ -276,8 +268,7 @@ public class Citizens extends JavaPlugin {
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
 
             String type = key.getString("traits.type").toUpperCase();
-            NPC npc = npcManager.createNPC(
-                    type.equalsIgnoreCase("DEFAULT") ? CreatureType.MONSTER : CreatureType.valueOf(type), id,
+            NPC npc = npcManager.createNPC(type.equalsIgnoreCase("DEFAULT") ? null : CreatureType.valueOf(type), id,
                     key.getString("name"), null);
             try {
                 npc.load(key);
