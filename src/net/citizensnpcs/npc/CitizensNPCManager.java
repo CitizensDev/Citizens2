@@ -9,7 +9,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
-import net.citizensnpcs.api.util.Storage;
+import net.citizensnpcs.storage.Storage;
 import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.NPCBuilder;
 

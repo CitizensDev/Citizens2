@@ -1,10 +1,10 @@
 package net.citizensnpcs.trait;
 
+import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.entity.CitizensHumanNPC;
 
 import net.minecraft.server.EntityPlayer;
