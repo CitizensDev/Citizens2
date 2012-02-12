@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
@@ -26,6 +27,12 @@ public abstract class CitizensNPC extends AbstractNPC {
         super(id, name);
         this.manager = manager;
         inventory = new NPCInventory(this);
+    }
+
+    @Override
+    public void chat(String message) {
+        for (Player player : Bukkit.getOnlinePlayers())
+            Messaging.sendWithNPC(player, Setting.CHAT_PREFIX.asString() + message, this);
     }
 
     protected abstract EntityLiving createHandle(Location loc);
