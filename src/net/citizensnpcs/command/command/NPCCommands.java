@@ -76,7 +76,7 @@ public class NPCCommands {
         create.addTrait(new Owner(player.getName()));
 
         // Set the mob type
-        create.addTrait(new MobType(type == CreatureType.MONSTER ? "DEFAULT" : type.toString()));
+        create.addTrait(new MobType(type == null ? "DEFAULT" : type.toString()));
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);
