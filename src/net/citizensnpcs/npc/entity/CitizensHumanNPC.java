@@ -1,7 +1,7 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.resource.lib.EntityHumanNPC;

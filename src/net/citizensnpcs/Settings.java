@@ -2,8 +2,8 @@ package net.citizensnpcs;
 
 import java.io.File;
 
-import net.citizensnpcs.api.DataKey;
-import net.citizensnpcs.storage.YamlStorage;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 
 public class Settings {
