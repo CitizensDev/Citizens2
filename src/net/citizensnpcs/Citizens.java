@@ -6,7 +6,6 @@ import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.DataKey;
 import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -17,6 +16,10 @@ import net.citizensnpcs.api.npc.trait.trait.Inventory;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.DatabaseStorage;
+import net.citizensnpcs.api.util.Storage;
+import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Injector;
 import net.citizensnpcs.command.command.AdminCommands;
@@ -29,9 +32,6 @@ import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.storage.DatabaseStorage;
-import net.citizensnpcs.storage.Storage;
-import net.citizensnpcs.storage.YamlStorage;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Sneak;
 import net.citizensnpcs.util.Messaging;
@@ -256,8 +256,8 @@ public class Citizens extends JavaPlugin {
 
             String type = key.getString("traits.type");
             NPC npc = npcManager.createNPC(
-                    type.equalsIgnoreCase("DEFAULT") ? CreatureType.MONSTER : CreatureType.valueOf(key.getString(
-                            "traits.type").toUpperCase()), id, key.getString("name"), null);
+                    type.equalsIgnoreCase("DEFAULT") ? null : CreatureType.valueOf(key.getString("traits.type")
+                            .toUpperCase()), id, key.getString("name"), null);
             try {
                 npc.load(key);
             } catch (NPCException ex) {
