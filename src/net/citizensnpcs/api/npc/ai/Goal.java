@@ -21,7 +21,7 @@ public interface Goal {
      * 
      * @return Whether the goal can be started.
      */
-    public boolean shouldBegin();
+    public boolean shouldExecute();
 
     /**
      * Called just before updating the goal. Returns whether the goal should
@@ -29,7 +29,7 @@ public interface Goal {
      * 
      * @return Whether the goal should continue
      */
-    public boolean shouldContinue();
+    public boolean continueExecuting();
 
     /**
      * Sets up the execution of this goal so that it can be updated later.
