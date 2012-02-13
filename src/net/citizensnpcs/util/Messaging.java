@@ -38,6 +38,7 @@ public class Messaging {
     public static void sendWithNPC(Player player, Object msg, NPC npc) {
         String send = msg.toString();
 
+        send = send.replace("<player>", player.getName());
         send = send.replace("<npc>", npc.getName());
         send = send.replace("<id>", Integer.toString(npc.getId()));
 
