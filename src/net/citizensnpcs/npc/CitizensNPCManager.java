@@ -86,6 +86,7 @@ public class CitizensNPCManager implements NPCManager {
         return npcs;
     }
 
+    @Override
     public NPC getSelectedNPC(Player player) {
         for (int id : selected.keySet()) {
             if (selected.get(id).contains(player.getName()))
@@ -104,7 +105,8 @@ public class CitizensNPCManager implements NPCManager {
         return npcs.iterator();
     }
 
-    public boolean npcIsSelectedByPlayer(Player player, NPC npc) {
+    @Override
+    public boolean isNPCSelectedByPlayer(Player player, NPC npc) {
         if (!selected.containsKey(npc.getId()))
             return false;
         return selected.get(npc.getId()).contains(player.getName());
@@ -118,6 +120,7 @@ public class CitizensNPCManager implements NPCManager {
         selected.removeAll(npc.getId());
     }
 
+    @Override
     public void selectNPC(Player player, NPC npc) {
         // Remove existing selection if any
         NPC existing = getSelectedNPC(player);

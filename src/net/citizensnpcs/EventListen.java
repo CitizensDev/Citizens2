@@ -89,7 +89,7 @@ public class EventListen implements Listener {
 
         NPC npc = npcManager.getNPC(event.getEntity());
         Player player = (Player) event.getTarget();
-        if (!npcManager.npcIsSelectedByPlayer(player, npc)) {
+        if (!npcManager.isNPCSelectedByPlayer(player, npc)) {
             if (player.hasPermission("citizens.npc.select")
                     && player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.asInt()
                     && npc.getTrait(Owner.class).getOwner().equals(player.getName())) {
