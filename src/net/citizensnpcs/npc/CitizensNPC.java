@@ -9,6 +9,7 @@ import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.util.Messaging;
+
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
@@ -19,14 +20,13 @@ import org.bukkit.entity.Player;
 public abstract class CitizensNPC extends AbstractNPC {
     protected final CitizensNPCManager manager;
     protected final CitizensAI ai = new CitizensAI(this);
-    protected final NPCInventory inventory;
     protected EntityLiving mcEntity;
+    protected final NPCInventory inventory;
 
     protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
         super(id, name);
         this.manager = manager;
-        this.inventory = new NPCInventory(this);
-        addTrait(new Inventory(inventory.asInventory()));
+        inventory = new NPCInventory(this);
     }
 
     @Override
@@ -110,6 +110,7 @@ public abstract class CitizensNPC extends AbstractNPC {
     public boolean openInventory(Player player) {
         if (!isSpawned())
             return false;
+        getInventory().setContents(getTrait(Inventory.class).getContents());
         inventory.show(player);
         return true;
     }
