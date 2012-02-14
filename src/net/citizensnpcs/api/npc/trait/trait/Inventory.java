@@ -14,13 +14,14 @@ import org.bukkit.inventory.ItemStack;
 
 @SaveId("inventory")
 public class Inventory extends Trait {
-    private org.bukkit.inventory.Inventory inventory;
+    private ItemStack[] contents;
 
     public Inventory() {
+        contents = new ItemStack[36];
     }
 
     public Inventory(org.bukkit.inventory.Inventory inventory) {
-        this.inventory = inventory;
+        contents = inventory.getContents();
     }
 
     /**
@@ -29,7 +30,7 @@ public class Inventory extends Trait {
      * @return ItemStack array of an NPC's inventory contents
      */
     public ItemStack[] getContents() {
-        return inventory.getContents();
+        return contents;
     }
 
     /**
@@ -39,18 +40,18 @@ public class Inventory extends Trait {
      *            ItemStack array to set as the contents of an NPC's inventory
      */
     public void setContents(ItemStack[] contents) {
-        inventory.setContents(contents);
+        this.contents = contents;
     }
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        inventory.setContents(parseContents(key));
+        contents = parseContents(key);
     }
 
     @Override
     public void save(DataKey key) {
         int slot = 0;
-        for (ItemStack item : inventory.getContents()) {
+        for (ItemStack item : contents) {
             // Clear previous items to avoid conflicts
             key.removeKey(String.valueOf(slot));
             if (item != null)
@@ -60,30 +61,25 @@ public class Inventory extends Trait {
     }
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
-        ItemStack[] contents = new ItemStack[inventory.getSize()];
-        for (DataKey slotKey : key.getIntegerSubKeys()) {
-            int index = Integer.parseInt(slotKey.name());
-            if (index >= contents.length)
-                continue;
-            contents[index] = getItemStack(slotKey);
-        }
+        ItemStack[] contents = new ItemStack[36];
+        for (DataKey slotKey : key.getIntegerSubKeys())
+            contents[Integer.parseInt(slotKey.name())] = getItemStack(slotKey);
         return contents;
     }
 
     private ItemStack getItemStack(DataKey key) throws NPCLoadException {
         try {
-            ItemStack item = new ItemStack(Material.matchMaterial(key.getString("name")), key.getInt("amount"),
-                    (short) key.getLong("data"));
+            ItemStack item = new ItemStack(Material.getMaterial(key.getString("name").toUpperCase().replace('-', '_')),
+                    key.getInt("amount"), (short) key.getLong("data"));
             if (key.keyExists("enchantments")) {
                 Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
                 for (DataKey subKey : key.getRelative("enchantments").getSubKeys()) {
-                    Enchantment enchantment = Enchantment.getByName(subKey.name());
-                    if (enchantment != null && enchantment.canEnchantItem(item)) {
+                    Enchantment enchantment = Enchantment.getByName(subKey.name().toUpperCase().replace('-', '_'));
+                    if (enchantment != null && enchantment.canEnchantItem(item))
                         enchantments.put(
                                 enchantment,
                                 subKey.getInt("") <= enchantment.getMaxLevel() ? subKey.getInt("") : enchantment
                                         .getMaxLevel());
-                    }
                 }
                 item.addEnchantments(enchantments);
             }
@@ -99,12 +95,13 @@ public class Inventory extends Trait {
         key.setLong("data", item.getDurability());
 
         for (Enchantment enchantment : item.getEnchantments().keySet()) {
-            key.getRelative("enchantments").setInt(enchantment.getName(), item.getEnchantmentLevel(enchantment));
+            key.getRelative("enchantments").setInt(enchantment.getName().toLowerCase().replace('_', '-'),
+                    item.getEnchantmentLevel(enchantment));
         }
     }
 
     @Override
     public String toString() {
-        return "Inventory{" + inventory.getContents() + "}";
+        return "Inventory{" + contents + "}";
     }
 }
