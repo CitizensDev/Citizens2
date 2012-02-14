@@ -6,6 +6,7 @@ import net.citizensnpcs.api.npc.trait.Character;
 
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 /**
  * Handles various NPC-related methods
@@ -71,4 +72,13 @@ public interface NPCManager extends Iterable<NPC> {
      * @return Whether the given entity is an NPC
      */
     public boolean isNPC(Entity entity);
+
+    @Deprecated
+    public boolean isNPCSelectedByPlayer(Player player, NPC npc);
+
+    @Deprecated
+    public void selectNPC(Player player, NPC npc);
+
+    @Deprecated
+    public NPC getSelectedNPC(Player player);
 }
