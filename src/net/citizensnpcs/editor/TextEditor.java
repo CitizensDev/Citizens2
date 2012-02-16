@@ -4,7 +4,7 @@ public class TextEditor implements Editor {
 
     @Override
     public void begin() {
-        // This should work?
+        // This should work!
     }
 
     @Override
