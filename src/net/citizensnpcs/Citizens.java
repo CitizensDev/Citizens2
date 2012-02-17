@@ -2,6 +2,7 @@ package net.citizensnpcs;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -164,7 +165,13 @@ public class Citizens extends JavaPlugin {
 
         // NPC storage
         if (Setting.USE_DATABASE.asBoolean()) {
-            saves = new DatabaseStorage();
+            try {
+                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
+                        Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
+            } catch (SQLException e) {
+                Messaging.log("Unable to connect to database, falling back to YAML");
+                saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml", "Citizens NPC Storage");
+            }
         } else {
             saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml", "Citizens NPC Storage");
         }

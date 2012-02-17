@@ -11,25 +11,21 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.1-R4</bukkit.version>
-		<craftbukkit.version>1.1-R4</craftbukkit.version>
+		<bukkit.version>1.1-R4-SNAPSHOT</bukkit.version>
+		<craftbukkit.version>1.1-R4-SNAPSHOT</craftbukkit.version>
 		<build.number>Unknown</build.number>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>craftbukkit-repo</id>
-			<url>http://repo.bukkit.org/org/bukkit/craftbukkit/${craftbukkit.version}/craftbukkit-${craftbukkit.version}.jar</url>
-		</repository>
-		<repository>
 			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/org/bukkit/bukkit/${bukkit.version}/bukkit-${bukkit.version}.jar</url>
+			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
-		<repository>
+		
+            <!-- This does not work yet. Need repo to be set up. <repository>
 			<id>citizensapi-repo</id>
-			<!-- This does not work yet. Need repo to be set up. -->
 			<url>http://repo.citizensnpcs.net</url>
-		</repository>
+		</repository>-->
 	</repositories>
 
 	<dependencies>
