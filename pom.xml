@@ -11,23 +11,27 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <bukkit.version>1.1-R4</bukkit.version>
-        <build.number>Unknown</build.number>
+		<bukkit.version>1.1-R4-SNAPSHOT</bukkit.version>
+		<build.number>Unknown</build.number>
 	</properties>
 
 	<repositories>
 		<repository>
 			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/org/bukkit/bukkit/${bukkit.version}/bukkit-${bukkit.version}.jar</url>
+			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
 	</repositories>
 
 	<dependencies>
 		<dependency>
+			<groupId>commons-dbutils</groupId>
+			<artifactId>commons-dbutils</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>${bukkit.version}</version>
-			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
