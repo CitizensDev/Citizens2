@@ -11,8 +11,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.1-R4-SNAPSHOT</bukkit.version>
-		<craftbukkit.version>1.1-R4-SNAPSHOT</craftbukkit.version>
+		<bukkit.version>1.1-R5-SNAPSHOT</bukkit.version>
+		<craftbukkit.version>1.1-R5-SNAPSHOT</craftbukkit.version>
+		<citizensapi.version>2.0</citizensapi.version>
 		<build.number>Unknown</build.number>
 	</properties>
 
@@ -24,7 +25,7 @@
 		
             <!-- This does not work yet. Need repo to be set up. <repository>
 			<id>citizensapi-repo</id>
-			<url>http://repo.citizensnpcs.net</url>
+			<url>http://repo.citizensnpcs.net/content/groups/public/</url>
 		</repository>-->
 	</repositories>
 
@@ -39,7 +40,7 @@
 		<dependency>
 			<groupId>net.citizensnpcs</groupId>
 			<artifactId>citizensapi</artifactId>
-			<version>2.0</version>
+			<version>${citizensapi.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
