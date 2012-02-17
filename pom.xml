@@ -42,8 +42,39 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>bukkit</artifactId>
+			<version>1.1-R5-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>1.3.RC2</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
+	<url>http://www.citizensnpcs.net</url>
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://ci.citizensnpcs.net</url>
+	</ciManagement>
+	<scm>
+		<connection>scm:git:git://github.com/CitizensDev/CitizensAPI.git</connection>
+		<developerConnection>scm:git:git:@github.com:CitizensDev/CitizensAPI.git</developerConnection>
+		<url>https://github.com/CitizensDev/CitizensAPI/tree/master/</url>
+	</scm>
 	<build>
 		<defaultGoal>clean</defaultGoal>
 		<sourceDirectory>${basedir}/src</sourceDirectory>
