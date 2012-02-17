@@ -35,7 +35,11 @@ public class Settings {
         QUICK_SELECT("npc.selection.quick-select", false),
         SELECTION_ITEM("npc.selection.item", 280),
         SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
-        USE_DATABASE("use-database", false);
+        USE_DATABASE("use-database", false),
+        DATABASE_PASSWORD("database.password", ""),
+        DATABASE_USERNAME("database.username", ""),
+        DATABASE_URL("database.url", ""),
+        DATABASE_DRIVER("database.driver", "");
 
         private String path;
         private Object value;
