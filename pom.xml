@@ -30,6 +30,16 @@
 		</dependency>
 	</dependencies>
 
+	<url>http://www.citizensnpcs.net</url>
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://ci.citizensnpcs.net</url>
+	</ciManagement>
+	<scm>
+		<connection>scm:git:git://github.com/CitizensDev/CitizensAPI.git</connection>
+		<developerConnection>scm:git:git:@github.com:CitizensDev/CitizensAPI.git</developerConnection>
+		<url>https://github.com/CitizensDev/CitizensAPI/tree/master/</url>
+	</scm>
 	<build>
 		<defaultGoal>clean install</defaultGoal>
 		<sourceDirectory>${basedir}/src</sourceDirectory>
