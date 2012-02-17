@@ -4,6 +4,7 @@ import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.trait.trait.Owner;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -39,6 +40,8 @@ public class Messaging {
         String send = msg.toString();
 
         send = send.replace("<player>", player.getName());
+        send = send.replace("<world>", player.getWorld().getName());
+        send = send.replace("<owner>", npc.getTrait(Owner.class).getOwner());
         send = send.replace("<npc>", npc.getName());
         send = send.replace("<id>", Integer.toString(npc.getId()));
 
