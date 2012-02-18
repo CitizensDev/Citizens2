@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
@@ -76,6 +77,8 @@ public abstract class CitizensNPC extends AbstractNPC {
         if (isSpawned())
             despawn();
         manager.remove(this);
+        ((Citizens) Bukkit.getServer().getPluginManager().getPlugin("Citizens")).getStorage().getKey("npc").removeKey(
+                String.valueOf(getId()));
     }
 
     @Override

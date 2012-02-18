@@ -108,6 +108,20 @@ public class NPCCommands {
         npc.despawn();
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
+    
+    @Command(
+            aliases = { "npc" },
+            usage = "remove",
+            desc = "Remove an NPC",
+            modifiers = { "remove" },
+            min = 1,
+            max = 1,
+            permission = "npc.remove")
+   public void removeNPC(CommandContext args, Player player, NPC npc) {
+       npc.remove();
+       Messaging.send(player,
+               ChatColor.GREEN + "You permanently removed " + StringHelper.wrap(npc.getName()) + ".");
+   }
 
     @Command(
              aliases = { "npc" },
