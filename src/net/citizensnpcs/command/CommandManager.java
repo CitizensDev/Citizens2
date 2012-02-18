@@ -94,7 +94,7 @@ public class CommandManager {
     // Attempt to execute a command.
     public void executeMethod(Method parent, String[] args, Player player, Object[] methodArgs) throws CommandException {
         String cmdName = args[0];
-        String modifier = args.length >= 1 ? args[1] : "";
+        String modifier = args.length > 1 ? args[1] : "";
 
         Method method = commands.get(cmdName.toLowerCase() + " " + modifier.toLowerCase());
         if (method == null)
@@ -157,9 +157,8 @@ public class CommandManager {
         Set<String> cmds = new HashSet<String>();
         for (String cmd : commands.keySet()) {
             String[] split = cmd.split(" ");
-            if (split[0].equalsIgnoreCase(command)) {
+            if (split[0].equalsIgnoreCase(command) && split.length > 1)
                 cmds.add(split[1]);
-            }
         }
 
         return cmds.toArray(new String[cmds.size()]);
