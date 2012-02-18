@@ -33,7 +33,12 @@ public abstract class CitizensNPC extends AbstractNPC {
     @Override
     public void chat(String message) {
         for (Player player : Bukkit.getOnlinePlayers())
-            Messaging.sendWithNPC(player, Setting.CHAT_PREFIX.asString() + message, this);
+            chat(player, message);
+    }
+
+    @Override
+    public void chat(Player player, String message) {
+        Messaging.sendWithNPC(player, Setting.CHAT_PREFIX.asString() + message, this);
     }
 
     protected abstract EntityLiving createHandle(Location loc);
