@@ -17,6 +17,7 @@
 			<classpath>
 				<pathelement path="${lib}" />
 				<pathelement location="${lib}/bukkit-1.1-R3.jar" />
+				<pathelement location="${lib}/commons-dbutils-1.4.jar" />
 			</classpath>
 		</javac>
 		<antcall target="distcore" />
