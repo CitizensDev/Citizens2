@@ -32,16 +32,13 @@ public class NPCCommands {
         npcManager = plugin.getNPCManager();
         characterManager = plugin.getCharacterManager();
     }
-    
-    @Command(
-            aliases = { "npc" },
-            desc = "Show basic NPC information",
-            max = 0,
-            permission = "npc.info")    
+
+    @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "npc.info")
     public void showInfo(CommandContext args, Player player, NPC npc) {
         Messaging.send(player, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(player, "    <a>ID: <e>" + npc.getId());
-        Messaging.send(player, "    <a>Character: <e>" + npc.getCharacter().getName());
+        Messaging.send(player, "    <a>Character: <e>" + npc.getCharacter() != null ? npc.getCharacter().getName()
+                : "None");
     }
 
     @Command(
@@ -72,9 +69,8 @@ public class NPCCommands {
         boolean success = true;
         if (args.hasValueFlag("char")) {
             if (characterManager.getInstance(args.getFlag("char"), create) == null) {
-                Messaging.sendError(player,
-                        "The character '" + args.getFlag("char") + "' does not exist. " + create.getName()
-                                + " was created at your location without a character.");
+                Messaging.sendError(player, "The character '" + args.getFlag("char") + "' does not exist. "
+                        + create.getName() + " was created at your location without a character.");
                 success = false;
             } else {
                 create.setCharacter(characterManager.getInstance(args.getFlag("char"), create));
@@ -108,20 +104,19 @@ public class NPCCommands {
         npc.despawn();
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
-    
+
     @Command(
-            aliases = { "npc" },
-            usage = "remove",
-            desc = "Remove an NPC",
-            modifiers = { "remove" },
-            min = 1,
-            max = 1,
-            permission = "npc.remove")
-   public void removeNPC(CommandContext args, Player player, NPC npc) {
-       npc.remove();
-       Messaging.send(player,
-               ChatColor.GREEN + "You permanently removed " + StringHelper.wrap(npc.getName()) + ".");
-   }
+             aliases = { "npc" },
+             usage = "remove",
+             desc = "Remove an NPC",
+             modifiers = { "remove" },
+             min = 1,
+             max = 1,
+             permission = "npc.remove")
+    public void removeNPC(CommandContext args, Player player, NPC npc) {
+        npc.remove();
+        Messaging.send(player, ChatColor.GREEN + "You permanently removed " + StringHelper.wrap(npc.getName()) + ".");
+    }
 
     @Command(
              aliases = { "npc" },
@@ -139,9 +134,8 @@ public class NPCCommands {
             newName = newName.substring(0, 15);
         }
         npc.setName(newName);
-        Messaging.send(player,
-                ChatColor.GREEN + "You renamed " + StringHelper.wrap(oldName) + " to " + StringHelper.wrap(newName)
-                        + ".");
+        Messaging.send(player, ChatColor.GREEN + "You renamed " + StringHelper.wrap(oldName) + " to "
+                + StringHelper.wrap(newName) + ".");
     }
 
     @Command(
@@ -182,14 +176,13 @@ public class NPCCommands {
             return;
         }
         if (npc.getCharacter() != null
-                && npc.getCharacter().getClass().getAnnotation(SaveId.class).value()
-                        .equalsIgnoreCase(character.getClass().getAnnotation(SaveId.class).value())) {
+                && npc.getCharacter().getClass().getAnnotation(SaveId.class).value().equalsIgnoreCase(
+                        character.getClass().getAnnotation(SaveId.class).value())) {
             Messaging.sendError(player, "The NPC already has the character '" + args.getString(1) + "'.");
             return;
         }
-        Messaging.send(player,
-                StringHelper.wrap(npc.getName() + "'s") + " character is now '" + StringHelper.wrap(args.getString(1))
-                        + "'.");
+        Messaging.send(player, StringHelper.wrap(npc.getName() + "'s") + " character is now '"
+                + StringHelper.wrap(args.getString(1)) + "'.");
         npc.setCharacter(character);
     }
 
