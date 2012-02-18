@@ -11,9 +11,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.1-R5-SNAPSHOT</bukkit.version>
-		<craftbukkit.version>1.1-R5-SNAPSHOT</craftbukkit.version>
-		<citizensapi.version>2.0</citizensapi.version>
+		<bukkit.version>1.1-R4-SNAPSHOT</bukkit.version>
+		<craftbukkit.version>1.1-R4-SNAPSHOT</craftbukkit.version>
 		<build.number>Unknown</build.number>
 	</properties>
 
@@ -25,7 +24,7 @@
 		
             <!-- This does not work yet. Need repo to be set up. <repository>
 			<id>citizensapi-repo</id>
-			<url>http://repo.citizensnpcs.net/content/groups/public/</url>
+			<url>http://repo.citizensnpcs.net</url>
 		</repository>-->
 	</repositories>
 
@@ -40,7 +39,7 @@
 		<dependency>
 			<groupId>net.citizensnpcs</groupId>
 			<artifactId>citizensapi</artifactId>
-			<version>${citizensapi.version}</version>
+			<version>2.0</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -89,13 +88,8 @@
 		<resources>
 			<resource>
 				<targetPath>.</targetPath>
-				<filtering>false</filtering>
+				<filtering>true</filtering>
 				<directory>${basedir}</directory>
-			</resource>
-			<resource>
-				<targetPath>.</targetPath>
-				<filtering>false</filtering>
-				<directory>${basedir}/src</directory>
 				<includes>
 					<include>plugin.yml</include>
 				</includes>
@@ -123,7 +117,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.5</version>
+				<version>1.4</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
