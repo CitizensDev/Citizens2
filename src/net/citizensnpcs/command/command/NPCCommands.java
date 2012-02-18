@@ -32,6 +32,17 @@ public class NPCCommands {
         npcManager = plugin.getNPCManager();
         characterManager = plugin.getCharacterManager();
     }
+    
+    @Command(
+            aliases = { "npc" },
+            desc = "Show basic NPC information",
+            max = 0,
+            permission = "npc.info")    
+    public void showInfo(CommandContext args, Player player, NPC npc) {
+        Messaging.send(player, StringHelper.wrapHeader(npc.getName()));
+        Messaging.send(player, "    <a>ID: <e>" + npc.getId());
+        Messaging.send(player, "    <a>Character: <e>" + npc.getId());
+    }
 
     @Command(
              aliases = { "npc" },
