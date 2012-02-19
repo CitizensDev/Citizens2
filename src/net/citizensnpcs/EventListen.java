@@ -92,7 +92,7 @@ public class EventListen implements Listener {
         if (!npcManager.isNPCSelectedByPlayer(player, npc)) {
             if (player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.asInt()
                     && (npc.getTrait(Owner.class).getOwner().equals(player.getName()) || player
-                            .hasPermission("citizens.npc.override-selection"))) {
+                            .hasPermission("citizens.admin"))) {
                 npcManager.selectNPC(player, npc);
                 Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), npc);
                 if (!Setting.QUICK_SELECT.asBoolean())

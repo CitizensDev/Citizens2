@@ -118,7 +118,8 @@ public class CommandManager {
                 if (cmdRequirements.selected() && npc == null)
                     throw new RequirementMissingException("You must have an NPC selected to execute that command.");
                 if (cmdRequirements.ownership() && npc != null
-                        && !npc.getTrait(Owner.class).getOwner().equals(player.getName()))
+                        && !npc.getTrait(Owner.class).getOwner().equals(player.getName())
+                        && !player.hasPermission("citizens.admin"))
                     throw new RequirementMissingException("You must be the owner of this NPC to execute that command.");
             }
         }
