@@ -27,6 +27,11 @@
 			<id>everything</id>
 			<url>http://repo.citizensnpcs.net/</url>
 		</repository>
+		
+		<repository>
+			<id>junit</id>
+			<url>http://mvnrepository.com/artifact/junit/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
