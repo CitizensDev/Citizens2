@@ -24,8 +24,8 @@
 		</repository>
 		
             	<repository>
-			<id>citizensapi</id>
-			<url>http://repo.citizensnpcs.net/content/groups/public/</url>
+			<id>everything</id>
+			<url>http://repo.citizensnpcs.net/</url>
 		</repository>
 	</repositories>
 
