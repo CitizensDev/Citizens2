@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<bukkit.version>1.1-R5-SNAPSHOT</bukkit.version>
 		<craftbukkit.version>1.1-R5-SNAPSHOT</craftbukkit.version>
-        	<citizensapi.version>2.0</citizensapi.version>
+		<citizensapi.version>2.0</citizensapi.version>
 		<build.number>Unknown</build.number>
 	</properties>
 
@@ -22,8 +22,8 @@
 			<id>bukkit-repo</id>
 			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
-		
-            	<repository>
+
+		<repository>
 			<id>everything</id>
 			<url>http://repo.citizensnpcs.net/</url>
 		</repository>
@@ -64,7 +64,7 @@
 		<url>https://github.com/CitizensDev/Citizens2/tree/master/</url>
 	</scm>
 	<build>
-		<defaultGoal>clean install</defaultGoal>
+		<defaultGoal>clean package install</defaultGoal>
 		<sourceDirectory>${basedir}/src</sourceDirectory>
 
 		<resources>
@@ -103,6 +103,9 @@
 				<executions>
 					<execution>
 						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
