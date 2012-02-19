@@ -73,12 +73,39 @@ public interface NPCManager extends Iterable<NPC> {
      */
     public boolean isNPC(Entity entity);
 
+    /**
+     * Checks whether the given NPC is selected by the given player
+     * 
+     * @param player
+     *            Player to check
+     * @param npc
+     *            NPC to check
+     * @deprecated Will be replaced by Bukkit metadata
+     * @return Whether the given NPC is selected by the given player
+     */
     @Deprecated
     public boolean isNPCSelectedByPlayer(Player player, NPC npc);
 
+    /**
+     * Selects an NPC
+     * 
+     * @param player
+     *            Player to select the NPC
+     * @param npc
+     *            NPC to be selected
+     * @deprecated Will be replaced by Bukkit metadata
+     */
     @Deprecated
     public void selectNPC(Player player, NPC npc);
 
+    /**
+     * Gets the selected NPC from the given player
+     * 
+     * @param player
+     *            Player to check
+     * @deprecated Will be replaced by Bukkit metadata
+     * @return NPC that is selected by the given player
+     */
     @Deprecated
     public NPC getSelectedNPC(Player player);
 }
