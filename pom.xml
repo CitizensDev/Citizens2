@@ -78,9 +78,9 @@
 		<url>http://ci.citizensnpcs.net</url>
 	</ciManagement>
 	<scm>
-		<connection>scm:git:git://github.com/aPunch/Citizens2.git</connection>
-		<developerConnection>scm:git:git:@github.com:aPunch/Citizens2.git</developerConnection>
-		<url>https://github.com/aPunch/Citizens2/tree/master/</url>
+		<connection>scm:git:git://github.com/CitizensDev/Citizens2.git</connection>
+		<developerConnection>scm:git:git:@github.com:CitizensDev/Citizens2.git</developerConnection>
+		<url>https://github.com/CitizensDev/Citizens2/tree/master/</url>
 	</scm>
 	<build>
 		<defaultGoal>clean install</defaultGoal>
@@ -122,16 +122,6 @@
 				<executions>
 					<execution>
 						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<artifactSet>
-								<includes>
-									<include>net.citizensnpcs:*</include>
-								</includes>
-							</artifactSet>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
