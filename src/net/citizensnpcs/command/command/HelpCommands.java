@@ -33,7 +33,7 @@ public class HelpCommands {
              modifiers = { "help" },
              min = 1,
              max = 2,
-             permission = "citizens.help")
+             permission = "help")
     @Requirements
     public void citizensHelp(CommandContext args, Player player, NPC npc) {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
