@@ -16,7 +16,7 @@
 		<javac srcdir="${src}" destdir="${build}" debug="on" debuglevel="lines,vars,source" includeantruntime="false" encoding="Cp1252">
 			<classpath>
 				<pathelement path="${lib}" />
-				<pathelement location="${lib}/bukkit-1.1-R3.jar" />
+				<pathelement location="${lib}/bukkit-1.1-R5-SNAPSHOT.jar" />
 				<pathelement location="${lib}/commons-dbutils-1.4.jar" />
 			</classpath>
 		</javac>
