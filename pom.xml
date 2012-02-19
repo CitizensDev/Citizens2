@@ -27,11 +27,6 @@
 			<id>everything</id>
 			<url>http://repo.citizensnpcs.net/</url>
 		</repository>
-		
-		<repository>
-			<id>junit</id>
-			<url>http://mvnrepository.com/artifact/junit/</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
@@ -55,20 +50,6 @@
 			<version>${bukkit.version}</version>
 			<type>jar</type>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.1</version>
-			<type>jar</type>
-			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-			<version>1.2.1</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
