@@ -1,8 +1,9 @@
 package net.citizensnpcs;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
@@ -12,6 +13,7 @@ import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,7 +27,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class EventListen implements Listener {
-    private final List<Integer> toRespawn = new ArrayList<Integer>();
+    private final Map<Chunk, List<Integer>> toRespawn = new HashMap<Chunk, List<Integer>>();
     private volatile CitizensNPCManager npcManager;
 
     public EventListen(CitizensNPCManager npcManager) {
@@ -37,12 +39,16 @@ public class EventListen implements Listener {
      */
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        Iterator<Integer> itr = toRespawn.iterator();
-        while (itr.hasNext()) {
-            NPC npc = npcManager.getNPC(itr.next());
-            npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
-            itr.remove();
+        if (!toRespawn.containsKey(event.getChunk()))
+            return;
+        for (int id : toRespawn.get(event.getChunk())) {
+            NPC npc = npcManager.getNPC(id);
+            Location loc = npc.getTrait(SpawnLocation.class).getLocation();
+            npc.spawn(loc);
+            Messaging.log("Spawned " + npc.getId() + " at " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ()
+                    + " in world " + loc.getWorld().getName());
         }
+        toRespawn.remove(event.getChunk());
     }
 
     @EventHandler
@@ -50,17 +56,21 @@ public class EventListen implements Listener {
         if (event.isCancelled())
             return;
 
+        List<Integer> respawn = new ArrayList<Integer>();
         for (NPC npc : npcManager) {
             if (!npc.isSpawned())
                 return;
             Location loc = npc.getBukkitEntity().getLocation();
             if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
                     && event.getChunk().getZ() == loc.getChunk().getZ()) {
-                toRespawn.add(npc.getId());
+                Messaging.log("Despawned " + npc.getId() + " at " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ()
+                        + " in world " + loc.getWorld().getName());
                 npc.getTrait(SpawnLocation.class).setLocation(loc);
                 npc.despawn();
+                respawn.add(npc.getId());
             }
         }
+        toRespawn.put(event.getChunk(), respawn);
     }
 
     /*
