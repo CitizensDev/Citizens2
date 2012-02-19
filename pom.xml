@@ -23,10 +23,10 @@
 			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
 		
-            <!-- This does not work yet. Need repo to be set up. <repository>
-			<id>citizensapi-repo</id>
+            	<repository>
+			<id>citizensapi</id>
 			<url>http://repo.citizensnpcs.net/content/groups/public/</url>
-		</repository>-->
+		</repository>
 	</repositories>
 
 	<dependencies>
