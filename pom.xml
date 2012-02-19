@@ -24,7 +24,7 @@
 		</repository>
 		
             	<repository>
-			<id>citizensapi>/id>
+			<id>citizensapi</id>
 			<url>http://repo.citizensnpcs.net/</url>
 		</repository>
 	</repositories>
