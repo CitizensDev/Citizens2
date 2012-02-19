@@ -9,14 +9,12 @@ import net.citizensnpcs.api.npc.NPC;
  */
 public class NPCDespawnEvent extends NPCEvent {
     public NPCDespawnEvent(NPC npc) {
-        super("NPCDespawnEvent", npc);
+        super(npc);
     }
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-
-    private static final long serialVersionUID = -6104193791185001957L;
 
     private static final HandlerList handlers = new HandlerList();
 
