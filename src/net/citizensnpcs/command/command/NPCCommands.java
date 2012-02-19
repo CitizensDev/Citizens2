@@ -8,6 +8,7 @@ import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
 import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.trait.MobType;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
+import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.npc.trait.trait.Spawned;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.annotation.Command;
@@ -242,6 +243,9 @@ public class NPCCommands {
              max = 1,
              permission = "npc.tphere")
     public void teleportNPCToPlayer(CommandContext args, Player player, NPC npc) {
+        // Spawn the NPC if it isn't spawned to prevent NPEs
+        if (!npc.isSpawned())
+            npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
         npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
     }
@@ -255,6 +259,9 @@ public class NPCCommands {
              max = 1,
              permission = "npc.tp")
     public void teleportToNPC(CommandContext args, Player player, NPC npc) {
+        // Spawn the NPC if it isn't spawned to prevent NPEs
+        if (!npc.isSpawned())
+            npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
         player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
         Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
     }
