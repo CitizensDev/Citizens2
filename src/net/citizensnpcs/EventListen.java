@@ -45,8 +45,6 @@ public class EventListen implements Listener {
             NPC npc = npcManager.getNPC(id);
             Location loc = npc.getTrait(SpawnLocation.class).getLocation();
             npc.spawn(loc);
-            Messaging.log("Spawned " + npc.getId() + " at " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ()
-                    + " in world " + loc.getWorld().getName());
         }
         toRespawn.remove(event.getChunk());
     }
@@ -63,8 +61,6 @@ public class EventListen implements Listener {
             Location loc = npc.getBukkitEntity().getLocation();
             if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
                     && event.getChunk().getZ() == loc.getChunk().getZ()) {
-                Messaging.log("Despawned " + npc.getId() + " at " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ()
-                        + " in world " + loc.getWorld().getName());
                 npc.getTrait(SpawnLocation.class).setLocation(loc);
                 npc.despawn();
                 respawn.add(npc.getId());
