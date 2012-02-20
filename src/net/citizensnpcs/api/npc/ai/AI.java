@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
 public interface AI {
+
     /**
      * Registers a {@link Goal} with a given priority.
      * 
