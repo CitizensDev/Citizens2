@@ -77,7 +77,7 @@ public class EventListen implements Listener {
         if (!npcManager.isNPC(event.getEntity()))
             return;
 
-        event.setCancelled(true); // TODO implement damage handlers
+        event.setCancelled(true);
         if (event instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
             if (e.getDamager() instanceof Player) {
