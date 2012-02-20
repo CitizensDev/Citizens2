@@ -234,6 +234,7 @@ public class NPCCommands {
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
         npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
+        npc.getTrait(SpawnLocation.class).setLocation(npc.getBukkitEntity().getLocation());
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
     }
 
