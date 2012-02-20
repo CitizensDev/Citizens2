@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import net.citizensnpcs.api.event.NPCSelectEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.trait.Character;
@@ -116,7 +117,7 @@ public class CitizensNPCManager implements NPCManager {
         if (npc.isSpawned())
             despawn(npc, true);
         npcs.remove(npc.getId());
-        saves.getKey("npc").removeKey("" + npc.getId());
+        saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
         selected.removeAll(npc.getId());
     }
 
@@ -127,5 +128,8 @@ public class CitizensNPCManager implements NPCManager {
         if (existing != null)
             selected.get(existing.getId()).remove(player.getName());
         selected.put(npc.getId(), player.getName());
+
+        // Call selection event
+        player.getServer().getPluginManager().callEvent(new NPCSelectEvent(npc, player));
     }
 }
