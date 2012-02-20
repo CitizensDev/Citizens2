@@ -18,8 +18,7 @@ public class EditorCommands {
              desc = "Toggle equipment editor",
              modifiers = { "equip" },
              min = 1,
-             max = 1,
-             permission = "npc.equip")
+             max = 1)
     public void toggleEquipEditor(CommandContext args, Player player, NPC npc) {
         // TODO
     }
@@ -30,8 +29,7 @@ public class EditorCommands {
             desc = "Toggle path editor",
             modifiers = { "path" },
             min = 1,
-            max = 1,
-            permission = "npc.path")
+            max = 1)
    public void togglePathEditor(CommandContext args, Player player, NPC npc) {
        // TODO
    }
@@ -42,8 +40,7 @@ public class EditorCommands {
             desc = "Toggle text editor",
             modifiers = { "text" },
             min = 1,
-            max = 1,
-            permission = "npc.text")
+            max = 1)
    public void toggleTextEditor(CommandContext args, Player player, NPC npc) {
         // TODO
    }

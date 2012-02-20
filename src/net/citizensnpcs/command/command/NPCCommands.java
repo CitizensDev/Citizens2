@@ -34,17 +34,18 @@ public class NPCCommands {
         characterManager = plugin.getCharacterManager();
     }
 
-    @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "npc.info")
+    @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0)
     public void showInfo(CommandContext args, Player player, NPC npc) {
         Messaging.send(player, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(player, "    <a>ID: <e>" + npc.getId());
-        Messaging.send(player, "    <a>Character: <e>" + (npc.getCharacter() != null ? npc.getCharacter().getName()
-                : "None"));
+        Messaging.send(player, "    <a>Character: <e>"
+                + (npc.getCharacter() != null ? npc.getCharacter().getName() : "None"));
+        Messaging.send(player, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
     }
 
     @Command(
              aliases = { "npc" },
-             usage = "create [name] --type (type) --char (character) --temp (template)",
+             usage = "create [name] --type (type) --char (character)",
              desc = "Create a new NPC",
              modifiers = { "create" },
              min = 2,
@@ -98,22 +99,14 @@ public class NPCCommands {
              desc = "Despawn an NPC",
              modifiers = { "despawn" },
              min = 1,
-             max = 1,
-             permission = "npc.despawn")
+             max = 1)
     public void despawnNPC(CommandContext args, Player player, NPC npc) {
         npc.getTrait(Spawned.class).setSpawned(false);
         npc.despawn();
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "remove",
-             desc = "Remove an NPC",
-             modifiers = { "remove" },
-             min = 1,
-             max = 1,
-             permission = "npc.remove")
+    @Command(aliases = { "npc" }, usage = "remove", desc = "Remove an NPC", modifiers = { "remove" }, min = 1, max = 1)
     public void removeNPC(CommandContext args, Player player, NPC npc) {
         npc.remove();
         Messaging.send(player, ChatColor.GREEN + "You permanently removed " + StringHelper.wrap(npc.getName()) + ".");
@@ -125,8 +118,7 @@ public class NPCCommands {
              desc = "Rename an NPC",
              modifiers = { "rename" },
              min = 2,
-             max = 2,
-             permission = "npc.rename")
+             max = 2)
     public void renameNPC(CommandContext args, Player player, NPC npc) {
         String oldName = npc.getName();
         String newName = args.getString(1);
@@ -145,8 +137,7 @@ public class NPCCommands {
              desc = "Selects an NPC with the given ID",
              modifiers = { "select" },
              min = 2,
-             max = 2,
-             permission = "npc.select")
+             max = 2)
     @Requirements(ownership = true)
     public void selectNPC(CommandContext args, Player player, NPC npc) {
         NPC toSelect = npcManager.getNPC(args.getInteger(1));
@@ -168,8 +159,7 @@ public class NPCCommands {
              desc = "Sets the character of an NPC",
              modifiers = { "character" },
              min = 2,
-             max = 2,
-             permission = "npc.character")
+             max = 2)
     public void setNPCCharacter(CommandContext args, Player player, NPC npc) {
         Character character = characterManager.getInstance(args.getString(1), npc);
         if (character == null) {
@@ -193,8 +183,7 @@ public class NPCCommands {
              desc = "Toggle whether an NPC should sneak",
              modifiers = { "sneak" },
              min = 1,
-             max = 1,
-             permission = "npc.sneak")
+             max = 1)
     public void toggleSneak(CommandContext args, Player player, NPC npc) {
         Sneak trait = npc.getTrait(Sneak.class);
         trait.toggle();
@@ -209,8 +198,7 @@ public class NPCCommands {
              desc = "Spawn an existing NPC",
              modifiers = { "spawn" },
              min = 2,
-             max = 2,
-             permission = "npc.spawn")
+             max = 2)
     @Requirements
     public void spawnNPC(CommandContext args, Player player, NPC npc) {
         NPC respawn = npcManager.getNPC(args.getInteger(1));
@@ -240,8 +228,7 @@ public class NPCCommands {
              desc = "Teleport an NPC to your location",
              modifiers = { "tphere" },
              min = 1,
-             max = 1,
-             permission = "npc.tphere")
+             max = 1)
     public void teleportNPCToPlayer(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
@@ -256,8 +243,7 @@ public class NPCCommands {
              desc = "Teleport to an NPC",
              modifiers = { "tp", "teleport" },
              min = 1,
-             max = 1,
-             permission = "npc.tp")
+             max = 1)
     public void teleportToNPC(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
@@ -267,7 +253,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, usage = "lookclose", desc = "Toggle an NPC's look-close state", modifiers = {
-            "lookclose", "look", "rotate" }, min = 1, max = 1, permission = "npc.look-close")
+            "lookclose", "look", "rotate" }, min = 1, max = 1)
     public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
         LookClose trait = npc.getTrait(LookClose.class);
         trait.toggle();
