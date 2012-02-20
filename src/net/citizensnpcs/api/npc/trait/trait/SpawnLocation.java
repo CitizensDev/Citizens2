@@ -8,6 +8,10 @@ import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+/**
+ * Represents the spawn location of an NPC. This is not reliable for determining
+ * an NPC's location. Use NPC.getBukkitEntity().getLocation().
+ */
 @SaveId("location")
 public class SpawnLocation extends Trait {
     private Location loc;
@@ -34,8 +38,8 @@ public class SpawnLocation extends Trait {
             throw new NPCLoadException("'" + key.getString("world") + "' is not a valid world.");
 
         try {
-            loc = new Location(Bukkit.getWorld(key.getString("world")), key.getDouble("x"), key.getDouble("y"),
-                    key.getDouble("z"), (float) key.getDouble("yaw"), (float) key.getDouble("pitch"));
+            loc = new Location(Bukkit.getWorld(key.getString("world")), key.getDouble("x"), key.getDouble("y"), key
+                    .getDouble("z"), (float) key.getDouble("yaw"), (float) key.getDouble("pitch"));
         } catch (Exception ex) {
             throw new NPCLoadException("Invalid coordinates.");
         }

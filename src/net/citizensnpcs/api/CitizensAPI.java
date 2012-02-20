@@ -43,20 +43,17 @@ public class CitizensAPI {
     }
 
     public static void setCharacterManager(InstanceFactory<Character> characterManager) {
-        if (instance.characterManager == null) {
+        if (instance.characterManager == null)
             instance.characterManager = characterManager;
-        }
     }
 
     public static void setNPCManager(NPCManager npcManager) {
-        if (instance.npcManager == null) {
+        if (instance.npcManager == null)
             instance.npcManager = npcManager;
-        }
     }
 
     public static void setTraitManager(InstanceFactory<Trait> traitManager) {
-        if (instance.traitManager == null) {
+        if (instance.traitManager == null)
             instance.traitManager = traitManager;
-        }
     }
 }

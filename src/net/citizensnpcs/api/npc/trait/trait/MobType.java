@@ -4,6 +4,9 @@ import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
+/**
+ * Represents an NPC's mob type
+ */
 @SaveId("type")
 public class MobType extends Trait {
     private String type;
