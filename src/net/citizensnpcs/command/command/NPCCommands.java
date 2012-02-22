@@ -15,7 +15,6 @@ import net.citizensnpcs.command.annotation.Command;
 import net.citizensnpcs.command.annotation.Requirements;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.Sneak;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
@@ -99,7 +98,8 @@ public class NPCCommands {
              desc = "Despawn an NPC",
              modifiers = { "despawn" },
              min = 1,
-             max = 1)
+             max = 1,
+             permission = "npc.despawn")
     public void despawnNPC(CommandContext args, Player player, NPC npc) {
         npc.getTrait(Spawned.class).setSpawned(false);
         npc.despawn();
@@ -118,7 +118,8 @@ public class NPCCommands {
              desc = "Rename an NPC",
              modifiers = { "rename" },
              min = 2,
-             max = 2)
+             max = 2,
+             permission = "npc.rename")
     public void renameNPC(CommandContext args, Player player, NPC npc) {
         String oldName = npc.getName();
         String newName = args.getString(1);
@@ -137,7 +138,8 @@ public class NPCCommands {
              desc = "Selects an NPC with the given ID",
              modifiers = { "select" },
              min = 2,
-             max = 2)
+             max = 2,
+             permission = "npc.select")
     @Requirements(ownership = true)
     public void selectNPC(CommandContext args, Player player, NPC npc) {
         NPC toSelect = npcManager.getNPC(args.getInteger(1));
@@ -172,24 +174,13 @@ public class NPCCommands {
             Messaging.sendError(player, "The NPC already has the character '" + args.getString(1) + "'.");
             return;
         }
+        if (!player.hasPermission("citizens.npc.character." + character.getName())) {
+            Messaging.sendError(player, "You don't have permission to execute that command.");
+            return;
+        }
         Messaging.send(player, StringHelper.wrap(npc.getName() + "'s") + " character is now '"
                 + StringHelper.wrap(args.getString(1)) + "'.");
         npc.setCharacter(character);
-    }
-
-    @Command(
-             aliases = { "npc" },
-             usage = "sneak",
-             desc = "Toggle whether an NPC should sneak",
-             modifiers = { "sneak" },
-             min = 1,
-             max = 1)
-    public void toggleSneak(CommandContext args, Player player, NPC npc) {
-        Sneak trait = npc.getTrait(Sneak.class);
-        trait.toggle();
-        String msg = StringHelper.wrap(npc.getName()) + " will "
-                + (trait.isSneaking() ? "now sneak" : "no longer sneak");
-        Messaging.send(player, msg += ".");
     }
 
     @Command(
@@ -198,7 +189,8 @@ public class NPCCommands {
              desc = "Spawn an existing NPC",
              modifiers = { "spawn" },
              min = 2,
-             max = 2)
+             max = 2,
+             permission = "npc.spawn")
     @Requirements
     public void spawnNPC(CommandContext args, Player player, NPC npc) {
         NPC respawn = npcManager.getNPC(args.getInteger(1));
@@ -228,7 +220,8 @@ public class NPCCommands {
              desc = "Teleport an NPC to your location",
              modifiers = { "tphere" },
              min = 1,
-             max = 1)
+             max = 1,
+             permission = "npc.tphere")
     public void teleportNPCToPlayer(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
@@ -244,7 +237,8 @@ public class NPCCommands {
              desc = "Teleport to an NPC",
              modifiers = { "tp", "teleport" },
              min = 1,
-             max = 1)
+             max = 1,
+             permission = "npc.tp")
     public void teleportToNPC(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
@@ -254,7 +248,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, usage = "lookclose", desc = "Toggle an NPC's look-close state", modifiers = {
-            "lookclose", "look", "rotate" }, min = 1, max = 1)
+            "lookclose", "look", "rotate" }, min = 1, max = 1, permission = "npc.look-close")
     public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
         LookClose trait = npc.getTrait(LookClose.class);
         trait.toggle();
