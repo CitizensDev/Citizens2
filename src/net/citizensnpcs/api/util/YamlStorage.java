@@ -65,7 +65,7 @@ public class YamlStorage implements Storage {
     }
 
     public class YamlKey extends DataKey {
-        private String current;
+        private final String current;
 
         public YamlKey(String root) {
             current = root;
