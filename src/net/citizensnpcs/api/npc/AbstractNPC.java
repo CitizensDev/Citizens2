@@ -153,15 +153,19 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void setCharacter(Character character) {
+        // If there was an old character, remove it
         if (this.character != null) {
             if (this.character instanceof Runnable)
                 runnables.remove(this.character);
             this.character.onCharacterRemove(this);
         }
+        // Set the new character
         this.character = character;
-        if (character instanceof Runnable)
-            runnables.add((Runnable) character);
-        character.onCharacterSet(this);
+        if (character != null) {
+            if (character instanceof Runnable)
+                runnables.add((Runnable) character);
+            character.onCharacterSet(this);
+        }
     }
 
     @Override

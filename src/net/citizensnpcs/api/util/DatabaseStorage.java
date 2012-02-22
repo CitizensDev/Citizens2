@@ -80,8 +80,8 @@ public class DatabaseStorage implements Storage {
                 rs.close();
                 rs = conn.getMetaData().getImportedKeys(null, null, entry.getKey());
                 while (rs.next()) {
-                    ForeignKey key = new ForeignKey(tables.get(rs.getString("FKTABLE_NAME")),
-                            rs.getString("PKCOLUMN_NAME"));
+                    ForeignKey key = new ForeignKey(tables.get(rs.getString("FKTABLE_NAME")), rs
+                            .getString("PKCOLUMN_NAME"));
                     entry.getValue().foreignKeys.put(key.localColumn, key);
                 }
                 rs.close();

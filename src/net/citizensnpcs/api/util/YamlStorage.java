@@ -185,8 +185,7 @@ public class YamlStorage implements Storage {
         public DataKey getRelative(String relative) {
             if (relative == null || relative.isEmpty())
                 return this;
-            current = getKeyExt(relative);
-            return this;
+            return new YamlKey(getKeyExt(relative));
         }
 
         @Override
