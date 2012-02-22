@@ -174,7 +174,8 @@ public class NPCCommands {
             Messaging.sendError(player, "The NPC already has the character '" + args.getString(1) + "'.");
             return;
         }
-        if (!player.hasPermission("citizens.npc.character." + character.getName())) {
+        if (!player.hasPermission("citizens.npc.character." + character.getName())
+                && !player.hasPermission("citizens.npc.character.*")) {
             Messaging.sendError(player, "You don't have permission to execute that command.");
             return;
         }
