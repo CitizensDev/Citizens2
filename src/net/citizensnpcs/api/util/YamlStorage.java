@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -66,7 +65,7 @@ public class YamlStorage implements Storage {
     }
 
     public class YamlKey extends DataKey {
-        private final String current;
+        private String current;
 
         public YamlKey(String root) {
             current = root;
@@ -186,7 +185,8 @@ public class YamlStorage implements Storage {
         public DataKey getRelative(String relative) {
             if (relative == null || relative.isEmpty())
                 return this;
-            return new YamlKey(getKeyExt(relative));
+            current = getKeyExt(relative);
+            return this;
         }
 
         @Override
