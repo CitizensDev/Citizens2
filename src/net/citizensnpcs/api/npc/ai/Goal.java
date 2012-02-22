@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.npc.ai;
 
 public interface Goal {
+
     /**
      * Returns whether this and the other {@link Goal} can be run at the same
      * time.

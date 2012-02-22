@@ -33,6 +33,16 @@ public interface NPC {
     public void chat(String message);
 
     /**
+     * Sends a message to the given player with the NPC's formatted name
+     * 
+     * @param player
+     *            Player to send message to
+     * @param message
+     *            Message to send
+     */
+    public void chat(Player player, String message);
+
+    /**
      * Despawns this NPC
      * 
      * @return Whether this NPC was able to despawn

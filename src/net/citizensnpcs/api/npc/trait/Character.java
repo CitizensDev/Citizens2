@@ -60,4 +60,22 @@ public abstract class Character {
     public final String getName() {
         return getClass().getAnnotation(SaveId.class).value();
     }
+
+    /**
+     * Called when an NPC is set as this character
+     * 
+     * @param npc
+     *            NPC that is set as this character
+     */
+    public void onCharacterSet(NPC npc) {
+    }
+
+    /**
+     * Called when this character is removed from an NPC
+     * 
+     * @param npc
+     *            NPC that had this character removed
+     */
+    public void onCharacterRemove(NPC npc) {
+    }
 }

@@ -5,6 +5,9 @@ import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
+/**
+ * Represents the owner of an NPC
+ */
 @SaveId("owner")
 public class Owner extends Trait {
     private String owner;

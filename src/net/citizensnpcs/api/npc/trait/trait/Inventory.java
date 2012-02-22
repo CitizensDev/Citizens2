@@ -12,6 +12,9 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Represents an NPC's inventory
+ */
 @SaveId("inventory")
 public class Inventory extends Trait {
     private ItemStack[] contents;
@@ -76,10 +79,8 @@ public class Inventory extends Trait {
                 for (DataKey subKey : key.getRelative("enchantments").getSubKeys()) {
                     Enchantment enchantment = Enchantment.getByName(subKey.name().toUpperCase().replace('-', '_'));
                     if (enchantment != null && enchantment.canEnchantItem(item))
-                        enchantments.put(
-                                enchantment,
-                                subKey.getInt("") <= enchantment.getMaxLevel() ? subKey.getInt("") : enchantment
-                                        .getMaxLevel());
+                        enchantments.put(enchantment, subKey.getInt("") <= enchantment.getMaxLevel() ? subKey
+                                .getInt("") : enchantment.getMaxLevel());
                 }
                 item.addEnchantments(enchantments);
             }

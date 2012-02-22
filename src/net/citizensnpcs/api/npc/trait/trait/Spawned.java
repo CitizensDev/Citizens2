@@ -5,6 +5,11 @@ import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
+/**
+ * Represents the spawn state of an NPC. This only determines whether an NPC
+ * should spawn onEnable. For checking if an NPC's entity is spawned, use
+ * NPC.isSpawned().
+ */
 @SaveId("spawned")
 public class Spawned extends Trait {
     private boolean shouldSpawn;
