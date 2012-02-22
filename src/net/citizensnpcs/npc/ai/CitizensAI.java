@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.ai;
 
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +20,7 @@ import com.google.common.collect.Lists;
 public class CitizensAI implements AI {
     private Runnable ai;
     private boolean paused;
-    private final List<NavigationCallback> callbacks = Lists.newArrayList();
+    private final List<WeakReference<NavigationCallback>> callbacks = Lists.newArrayList();
     private PathStrategy executing;
     private final List<GoalEntry> executingGoals = Lists.newArrayList();
     private final List<GoalEntry> goals = Lists.newArrayList();
@@ -56,7 +57,7 @@ public class CitizensAI implements AI {
     @Override
     public void registerNavigationCallback(NavigationCallback callback) {
         if (!callbacks.contains(callback))
-            callbacks.add(callback);
+            callbacks.add(new WeakReference<NavigationCallback>(callback));
     }
 
     @Override
@@ -67,9 +68,10 @@ public class CitizensAI implements AI {
     @Override
     public void setDestination(Location destination) {
         if (executing != null) {
-            Iterator<NavigationCallback> itr = callbacks.iterator();
+            Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
             while (itr.hasNext()) {
-                if (itr.next().onCancel(this, PathCancelReason.PLUGIN)) {
+                NavigationCallback next = itr.next().get();
+                if (next == null || next.onCancel(this, PathCancelReason.PLUGIN)) {
                     itr.remove();
                 }
             }
@@ -80,17 +82,19 @@ public class CitizensAI implements AI {
     @Override
     public void setTarget(LivingEntity target, boolean aggressive) {
         if (executing != null) {
-            Iterator<NavigationCallback> itr = callbacks.iterator();
+            Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
             while (itr.hasNext()) {
-                if (itr.next().onCancel(this, PathCancelReason.PLUGIN)) {
+                NavigationCallback next = itr.next().get();
+                if (next == null || next.onCancel(this, PathCancelReason.PLUGIN)) {
                     itr.remove();
                 }
             }
         }
         executing = new TargetStrategy(npc, target, aggressive);
-        Iterator<NavigationCallback> itr = callbacks.iterator();
+        Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
         while (itr.hasNext()) {
-            if (itr.next().onBegin(this)) {
+            NavigationCallback next = itr.next().get();
+            if (next == null || next.onBegin(this)) {
                 itr.remove();
             }
         }
@@ -108,9 +112,10 @@ public class CitizensAI implements AI {
         if (paused)
             return;
         if (executing != null && executing.update()) {
-            Iterator<NavigationCallback> itr = callbacks.iterator();
+            Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
             while (itr.hasNext()) {
-                if (itr.next().onCompletion(this)) {
+                NavigationCallback next = itr.next().get();
+                if (next == null || next.onCompletion(this)) {
                     itr.remove();
                 }
             }
