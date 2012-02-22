@@ -115,10 +115,21 @@ public class CitizensNPCManager implements NPCManager {
 
     public void remove(NPC npc) {
         if (npc.isSpawned())
-            despawn(npc, true);
+            npc.getBukkitEntity().remove();
         npcs.remove(npc.getId());
         saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
         selected.removeAll(npc.getId());
+    }
+
+    public void removeAll() {
+        while (iterator().hasNext()) {
+            NPC npc = iterator().next();
+            saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
+            selected.removeAll(npc.getId());
+            if (npc.isSpawned())
+                npc.getBukkitEntity().remove();
+            iterator().remove();
+        }
     }
 
     @Override

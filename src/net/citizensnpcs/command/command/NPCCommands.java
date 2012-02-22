@@ -106,10 +106,38 @@ public class NPCCommands {
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(aliases = { "npc" }, usage = "remove", desc = "Remove an NPC", modifiers = { "remove" }, min = 1, max = 1)
+    @Command(
+             aliases = { "npc" },
+             usage = "remove (all)",
+             desc = "Remove an NPC",
+             modifiers = { "remove" },
+             min = 1,
+             max = 2)
+    @Requirements
     public void removeNPC(CommandContext args, Player player, NPC npc) {
+        if (args.argsLength() == 2) {
+            if (!player.hasPermission("citizens.npc.remove.all")) {
+                Messaging.sendError(player, "You don't have permission to execute that command.");
+                return;
+            }
+            npcManager.removeAll();
+            Messaging.send(player, "<a>You permanently removed all NPCs.");
+            return;
+        }
+        if (npc == null) {
+            Messaging.sendError(player, "You must have an NPC selected to execute that command.");
+            return;
+        }
+        if (!npc.getTrait(Owner.class).getOwner().equals(player.getName()) && !player.hasPermission("citizens.admin")) {
+            Messaging.sendError(player, "You must be the owner of this NPC to execute that command.");
+            return;
+        }
+        if (!player.hasPermission("citizens.npc.remove")) {
+            Messaging.sendError(player, "You don't have permission to execute that command.");
+            return;
+        }
         npc.remove();
-        Messaging.send(player, ChatColor.GREEN + "You permanently removed " + StringHelper.wrap(npc.getName()) + ".");
+        Messaging.send(player, "<a>You permanently removed " + StringHelper.wrap(npc.getName()) + ".");
     }
 
     @Command(
@@ -249,7 +277,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, usage = "lookclose", desc = "Toggle an NPC's look-close state", modifiers = {
-            "lookclose", "look", "rotate" }, min = 1, max = 1, permission = "npc.look-close")
+            "lookclose", "look", "rotate" }, min = 1, max = 1, permission = "npc.lookclose")
     public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
         LookClose trait = npc.getTrait(LookClose.class);
         trait.toggle();
