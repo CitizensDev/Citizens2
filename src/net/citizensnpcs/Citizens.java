@@ -35,7 +35,6 @@ import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.Sneak;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Metrics;
 import net.citizensnpcs.util.StringHelper;
@@ -57,7 +56,7 @@ public class Citizens extends JavaPlugin {
 
     @SuppressWarnings("unchecked")
     private static final List<Class<? extends Trait>> defaultTraits = Lists.newArrayList(Owner.class, Spawned.class,
-            LookClose.class, SpawnLocation.class, Inventory.class, Sneak.class);
+            LookClose.class, SpawnLocation.class, Inventory.class);
 
     private volatile CitizensNPCManager npcManager;
     private final DefaultInstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
