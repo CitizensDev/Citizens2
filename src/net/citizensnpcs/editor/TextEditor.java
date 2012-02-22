@@ -1,15 +1,19 @@
 package net.citizensnpcs.editor;
 
+import org.bukkit.entity.Player;
+
 public class TextEditor implements Editor {
+    private Player player;
+
+    public TextEditor(Player player) {
+        this.player = player;
+    }
 
     @Override
     public void begin() {
-        // If this doesn't work I quit the internet.
     }
 
     @Override
     public void end() {
-        // TODO Auto-generated method stub
-
     }
 }

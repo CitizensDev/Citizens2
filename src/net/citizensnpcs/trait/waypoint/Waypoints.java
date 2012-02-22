@@ -1,4 +1,4 @@
-package net.citizensnpcs.trait;
+package net.citizensnpcs.trait.waypoint;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -21,6 +21,5 @@ public class Waypoints extends Trait {
 
     @Override
     public void save(DataKey key) {
-        // TODO Auto-generated method stub
     }
 }
