@@ -14,7 +14,6 @@ public class ByIdArray<T> implements Iterable<T> {
     private int lowest = Integer.MAX_VALUE;
 
     public ByIdArray() {
-        // Probably a better way to do this, but setting the capacity to 50 was bad.
         this(65535);
     }
 
