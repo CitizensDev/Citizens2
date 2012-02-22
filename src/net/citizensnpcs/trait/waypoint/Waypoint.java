@@ -1,4 +1,4 @@
-package net.citizensnpcs.trait;
+package net.citizensnpcs.trait.waypoint;
 
 import org.bukkit.Location;
 
