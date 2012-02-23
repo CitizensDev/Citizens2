@@ -1,4 +1,4 @@
-package net.citizensnpcs.api.trait.builtin;
+package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;

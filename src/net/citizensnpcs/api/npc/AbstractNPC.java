@@ -11,8 +11,8 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Character;
 import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.builtin.SpawnLocation;
-import net.citizensnpcs.api.trait.builtin.Spawned;
+import net.citizensnpcs.api.trait.trait.SpawnLocation;
+import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;

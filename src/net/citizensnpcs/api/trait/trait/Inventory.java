@@ -1,4 +1,4 @@
-package net.citizensnpcs.api.trait.builtin;
+package net.citizensnpcs.api.trait.trait;
 
 import java.util.HashMap;
 import java.util.Map;

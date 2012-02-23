@@ -12,6 +12,7 @@ import net.citizensnpcs.api.npc.NPC;
  *            Type of objects this will produce
  */
 public interface InstanceFactory<T> {
+
     public T getInstance(String name, NPC npc);
 
     public T getInstance(String name);
