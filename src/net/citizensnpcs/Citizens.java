@@ -3,7 +3,6 @@ package net.citizensnpcs;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
@@ -13,6 +12,7 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
+import net.citizensnpcs.api.npc.trait.InstanceFactory;
 import net.citizensnpcs.api.npc.trait.Trait;
 import net.citizensnpcs.api.npc.trait.trait.Inventory;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
@@ -49,18 +49,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 public class Citizens extends JavaPlugin {
     private static final String COMPATIBLE_MC_VERSION = "1.1";
 
-    @SuppressWarnings("unchecked")
-    private static final List<Class<? extends Trait>> defaultTraits = Lists.newArrayList(Owner.class, Spawned.class,
-            LookClose.class, SpawnLocation.class, Inventory.class);
-
     private volatile CitizensNPCManager npcManager;
-    private final DefaultInstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
-    private final DefaultInstanceFactory<Trait> traitManager = new DefaultInstanceFactory<Trait>();
+    private final InstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
+    private final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create(Owner.class, Spawned.class,
+            LookClose.class, SpawnLocation.class, Inventory.class);
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private Storage saves;
@@ -187,9 +183,6 @@ public class Citizens extends JavaPlugin {
         // Register commands
         registerCommands();
 
-        // Register default traits
-        traitManager.registerAll(defaultTraits);
-
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
 
         Messaging.log("v" + getDescription().getVersion() + " enabled.");
@@ -239,7 +232,7 @@ public class Citizens extends JavaPlugin {
         return npcManager;
     }
 
-    public DefaultInstanceFactory<Character> getCharacterManager() {
+    public InstanceFactory<Character> getCharacterManager() {
         return characterManager;
     }
 
