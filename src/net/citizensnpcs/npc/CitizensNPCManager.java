@@ -14,8 +14,8 @@ import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.NPCBuilder;
 
-import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.HashMultimap;
@@ -31,7 +31,7 @@ public class CitizensNPCManager implements NPCManager {
         this.saves = saves;
     }
 
-    public NPC createNPC(CreatureType type, int id, String name, Character character) {
+    public NPC createNPC(EntityType type, int id, String name, Character character) {
         if (npcs.contains(id))
             throw new IllegalArgumentException("An NPC already has the ID '" + id + "'.");
 
@@ -42,12 +42,12 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     @Override
-    public NPC createNPC(CreatureType type, String name) {
+    public NPC createNPC(EntityType type, String name) {
         return createNPC(type, name, null);
     }
 
     @Override
-    public NPC createNPC(CreatureType type, String name, Character character) {
+    public NPC createNPC(EntityType type, String name, Character character) {
         return createNPC(type, generateUniqueId(), name, character);
     }
 

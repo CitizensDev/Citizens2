@@ -44,7 +44,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -267,8 +267,7 @@ public class Citizens extends JavaPlugin {
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
 
             String type = key.getString("traits.type").toUpperCase();
-            NPC npc = npcManager.createNPC(type.equalsIgnoreCase("DEFAULT") ? null : CreatureType.valueOf(type), id,
-                    key.getString("name"), null);
+            NPC npc = npcManager.createNPC(EntityType.valueOf(type), id, key.getString("name"), null);
             try {
                 npc.load(key);
             } catch (NPCException ex) {

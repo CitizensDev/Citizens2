@@ -30,38 +30,38 @@ import net.citizensnpcs.npc.entity.CitizensVillagerNPC;
 import net.citizensnpcs.npc.entity.CitizensWolfNPC;
 import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 
-import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.EntityType;
 
 public class NPCBuilder {
-    private static final Map<CreatureType, Class<? extends CitizensNPC>> types = new HashMap<CreatureType, Class<? extends CitizensNPC>>();
+    private static final Map<EntityType, Class<? extends CitizensNPC>> types = new HashMap<EntityType, Class<? extends CitizensNPC>>();
 
     static {
-        types.put(CreatureType.BLAZE, CitizensBlazeNPC.class);
-        types.put(CreatureType.CAVE_SPIDER, CitizensCaveSpiderNPC.class);
-        types.put(CreatureType.CHICKEN, CitizensChickenNPC.class);
-        types.put(CreatureType.COW, CitizensCowNPC.class);
-        types.put(CreatureType.CREEPER, CitizensCreeperNPC.class);
-        types.put(CreatureType.ENDER_DRAGON, CitizensEnderDragonNPC.class);
-        types.put(CreatureType.ENDERMAN, CitizensEndermanNPC.class);
-        types.put(CreatureType.GHAST, CitizensGhastNPC.class);
-        types.put(CreatureType.GIANT, CitizensGiantNPC.class);
-        types.put(CreatureType.MAGMA_CUBE, CitizensMagmaCubeNPC.class);
-        types.put(CreatureType.MUSHROOM_COW, CitizensMushroomCowNPC.class);
-        types.put(CreatureType.PIG, CitizensPigNPC.class);
-        types.put(CreatureType.PIG_ZOMBIE, CitizensPigZombieNPC.class);
-        types.put(CreatureType.SHEEP, CitizensSheepNPC.class);
-        types.put(CreatureType.SILVERFISH, CitizensSilverfishNPC.class);
-        types.put(CreatureType.SKELETON, CitizensSkeletonNPC.class);
-        types.put(CreatureType.SLIME, CitizensSlimeNPC.class);
-        types.put(CreatureType.SNOWMAN, CitizensSnowmanNPC.class);
-        types.put(CreatureType.SPIDER, CitizensSpiderNPC.class);
-        types.put(CreatureType.SQUID, CitizensSquidNPC.class);
-        types.put(CreatureType.VILLAGER, CitizensVillagerNPC.class);
-        types.put(CreatureType.WOLF, CitizensWolfNPC.class);
-        types.put(CreatureType.ZOMBIE, CitizensZombieNPC.class);
+        types.put(EntityType.BLAZE, CitizensBlazeNPC.class);
+        types.put(EntityType.CAVE_SPIDER, CitizensCaveSpiderNPC.class);
+        types.put(EntityType.CHICKEN, CitizensChickenNPC.class);
+        types.put(EntityType.COW, CitizensCowNPC.class);
+        types.put(EntityType.CREEPER, CitizensCreeperNPC.class);
+        types.put(EntityType.ENDER_DRAGON, CitizensEnderDragonNPC.class);
+        types.put(EntityType.ENDERMAN, CitizensEndermanNPC.class);
+        types.put(EntityType.GHAST, CitizensGhastNPC.class);
+        types.put(EntityType.GIANT, CitizensGiantNPC.class);
+        types.put(EntityType.MAGMA_CUBE, CitizensMagmaCubeNPC.class);
+        types.put(EntityType.MUSHROOM_COW, CitizensMushroomCowNPC.class);
+        types.put(EntityType.PIG, CitizensPigNPC.class);
+        types.put(EntityType.PIG_ZOMBIE, CitizensPigZombieNPC.class);
+        types.put(EntityType.SHEEP, CitizensSheepNPC.class);
+        types.put(EntityType.SILVERFISH, CitizensSilverfishNPC.class);
+        types.put(EntityType.SKELETON, CitizensSkeletonNPC.class);
+        types.put(EntityType.SLIME, CitizensSlimeNPC.class);
+        types.put(EntityType.SNOWMAN, CitizensSnowmanNPC.class);
+        types.put(EntityType.SPIDER, CitizensSpiderNPC.class);
+        types.put(EntityType.SQUID, CitizensSquidNPC.class);
+        types.put(EntityType.VILLAGER, CitizensVillagerNPC.class);
+        types.put(EntityType.WOLF, CitizensWolfNPC.class);
+        types.put(EntityType.ZOMBIE, CitizensZombieNPC.class);
     }
 
-    public CitizensNPC getByType(CreatureType type, CitizensNPCManager npcManager, int id, String name) {
+    public CitizensNPC getByType(EntityType type, CitizensNPCManager npcManager, int id, String name) {
         Class<? extends CitizensNPC> npcClass = types.get(type);
         if (npcClass == null)
             npcClass = CitizensHumanNPC.class;

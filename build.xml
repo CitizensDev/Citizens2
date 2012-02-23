@@ -1,6 +1,6 @@
 <project name="Citizens" default="dist" basedir=".">
 	<description>
-		Citizens build file
+		Build file used for testing purposes
     </description>
 	<!-- set global properties for this build -->
 	<property name="src" location="src" />
@@ -16,8 +16,8 @@
 		<javac srcdir="${src}" destdir="${build}" debug="on" debuglevel="lines,vars,source" includeantruntime="false" encoding="Cp1252">
 			<classpath>
 				<pathelement path="${lib}" />
-				<pathelement location="${lib}/bukkit-1.1-R3.jar" />
-				<pathelement location="${lib}/craftbukkit-1.1-R3.jar" />
+				<pathelement location="${lib}/bukkit-1.1-R5-SNAPSHOT.jar" />
+				<pathelement location="${lib}/craftbukkit-1.1-R5-SNAPSHOT.jar" />
 				<pathelement location="${lib}/CitizensAPI.jar" />
 				<pathelement location="${lib}/hamcrest.jar" />
 				<pathelement location="${lib}/junit-dep-4.10.jar" />
