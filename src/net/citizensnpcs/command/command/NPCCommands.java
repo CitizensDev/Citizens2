@@ -18,7 +18,7 @@ import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -56,10 +56,10 @@ public class NPCCommands {
             Messaging.sendError(player, "NPC names cannot be longer than 16 characters. The name has been shortened.");
             name = name.substring(0, 15);
         }
-        CreatureType type = null;
+        EntityType type = EntityType.PLAYER;
         if (args.hasValueFlag("type"))
             try {
-                type = CreatureType.valueOf(args.getFlag("type").toUpperCase().replace('-', '_'));
+                type = EntityType.valueOf(args.getFlag("type").toUpperCase().replace('-', '_'));
             } catch (IllegalArgumentException ex) {
                 Messaging.sendError(player, "'" + args.getFlag("type")
                         + "' is not a valid mob type. Using default NPC.");
@@ -84,7 +84,7 @@ public class NPCCommands {
         create.addTrait(new Owner(player.getName()));
 
         // Set the mob type
-        create.addTrait(new MobType(type == null ? "DEFAULT" : type.toString()));
+        create.addTrait(new MobType(type.toString()));
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);
