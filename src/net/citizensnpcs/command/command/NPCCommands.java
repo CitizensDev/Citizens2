@@ -5,7 +5,6 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.trait.Character;
 import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
-import net.citizensnpcs.api.npc.trait.SaveId;
 import net.citizensnpcs.api.npc.trait.trait.MobType;
 import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
@@ -69,13 +68,14 @@ public class NPCCommands {
         String successMsg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
         boolean success = true;
         if (args.hasValueFlag("char")) {
-            if (characterManager.getInstance(args.getFlag("char"), create) == null) {
+            String character = args.getFlag("char").toLowerCase();
+            if (characterManager.getInstance(character, create) == null) {
                 Messaging.sendError(player, "The character '" + args.getFlag("char") + "' does not exist. "
                         + create.getName() + " was created at your location without a character.");
                 success = false;
             } else {
-                create.setCharacter(characterManager.getInstance(args.getFlag("char"), create));
-                successMsg += " with the character " + StringHelper.wrap(args.getFlag("char"));
+                create.setCharacter(characterManager.getInstance(character, create));
+                successMsg += " with the character " + StringHelper.wrap(character);
             }
         }
         successMsg += " at your location.";
@@ -191,15 +191,14 @@ public class NPCCommands {
              min = 2,
              max = 2)
     public void setNPCCharacter(CommandContext args, Player player, NPC npc) {
-        Character character = characterManager.getInstance(args.getString(1), npc);
+        String name = args.getString(1).toLowerCase();
+        Character character = characterManager.getInstance(name, npc);
         if (character == null) {
             Messaging.sendError(player, "The character '" + args.getString(1) + "' does not exist.");
             return;
         }
-        if (npc.getCharacter() != null
-                && npc.getCharacter().getClass().getAnnotation(SaveId.class).value().equalsIgnoreCase(
-                        character.getClass().getAnnotation(SaveId.class).value())) {
-            Messaging.sendError(player, "The NPC already has the character '" + args.getString(1) + "'.");
+        if (npc.getCharacter() != null && npc.getCharacter().getName().equalsIgnoreCase(character.getName())) {
+            Messaging.sendError(player, "The NPC already has the character '" + name + "'.");
             return;
         }
         if (!player.hasPermission("citizens.npc.character." + character.getName())
@@ -208,7 +207,7 @@ public class NPCCommands {
             return;
         }
         Messaging.send(player, StringHelper.wrap(npc.getName() + "'s") + " character is now '"
-                + StringHelper.wrap(args.getString(1)) + "'.");
+                + StringHelper.wrap(name) + "'.");
         npc.setCharacter(character);
     }
 
