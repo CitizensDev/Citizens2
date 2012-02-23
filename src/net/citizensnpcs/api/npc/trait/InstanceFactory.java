@@ -14,9 +14,15 @@ import net.citizensnpcs.api.npc.NPC;
 public interface InstanceFactory<T> {
     public T getInstance(String name, NPC npc);
 
+    public T getInstance(String name);
+
     public void register(Class<? extends T> clazz);
 
+    public void register(Class<? extends T> clazz, String name);
+
     public void registerAll(Collection<Class<? extends T>> classes);
+
+    public void registerAll(Class<?>... classes);
 
     public void registerWithFactory(String name, Factory<? extends T> factory);
 }

@@ -16,8 +16,26 @@ public class DefaultInstanceFactory<T> implements InstanceFactory<T> {
     }
 
     @Override
+    public T getInstance(String name) {
+        return getInstance(name, null);
+    }
+
+    @Override
     public void register(Class<? extends T> clazz) {
-        registerWithFactory(clazz.getAnnotation(SaveId.class).value(), new DefaultFactory(clazz));
+        register(clazz, clazz.getAnnotation(SaveId.class).value());
+    }
+
+    @Override
+    public void register(Class<? extends T> clazz, String name) {
+        registerWithFactory(name, new DefaultFactory(clazz));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void registerAll(Class<?>... classes) {
+        for (Class<?> t : classes) {
+            register((Class<? extends T>) t);
+        }
     }
 
     @Override
@@ -55,5 +73,15 @@ public class DefaultInstanceFactory<T> implements InstanceFactory<T> {
                 return null;
             }
         }
+    }
+
+    public static <T> InstanceFactory<T> create() {
+        return new DefaultInstanceFactory<T>();
+    }
+
+    public static <T> InstanceFactory<T> create(Class<?>... classes) {
+        InstanceFactory<T> t = create();
+        t.registerAll(classes);
+        return t;
     }
 }
