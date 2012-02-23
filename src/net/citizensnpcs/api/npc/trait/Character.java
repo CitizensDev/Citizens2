@@ -67,7 +67,7 @@ public abstract class Character {
      * @param npc
      *            NPC that is set as this character
      */
-    public void onCharacterSet(NPC npc) {
+    public void onSet(NPC npc) {
     }
 
     /**
@@ -76,6 +76,6 @@ public abstract class Character {
      * @param npc
      *            NPC that had this character removed
      */
-    public void onCharacterRemove(NPC npc) {
+    public void onRemove(NPC npc) {
     }
 }
