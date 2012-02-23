@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntityBlaze;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensBlazeNPC extends CitizensMobNPC {
     public Blaze getBukkitEntity() {
         return (Blaze) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityBlaze) getHandle();
+	}
 
     public static class EntityBlazeNPC extends EntityBlaze {
 

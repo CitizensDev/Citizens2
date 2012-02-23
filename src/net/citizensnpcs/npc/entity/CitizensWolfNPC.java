@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntityWolf;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensWolfNPC extends CitizensMobNPC {
     public Wolf getBukkitEntity() {
         return (Wolf) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityWolf) getHandle();
+	}
 
     public static class EntityWolfNPC extends EntityWolf {
 

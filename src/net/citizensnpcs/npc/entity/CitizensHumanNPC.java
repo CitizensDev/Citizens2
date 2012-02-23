@@ -7,6 +7,8 @@ import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.resource.lib.EntityHumanNPC;
 import net.citizensnpcs.util.StringHelper;
 
+import net.minecraft.server.Entity;
+import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.WorldServer;
@@ -60,4 +62,9 @@ public class CitizensHumanNPC extends CitizensNPC {
     public void load(DataKey key) throws NPCLoadException {
         super.load(key);
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityHuman) getHandle();
+	}
 }
