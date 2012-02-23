@@ -5,8 +5,8 @@ import org.bukkit.entity.Entity;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.trait.SaveId;
-import net.citizensnpcs.api.npc.trait.Trait;
+import net.citizensnpcs.api.trait.SaveId;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.minecraft.server.EntityLiving;

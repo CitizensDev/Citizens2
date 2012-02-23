@@ -2,10 +2,10 @@ package net.citizensnpcs.trait.waypoint;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.trait.DefaultInstanceFactory;
-import net.citizensnpcs.api.npc.trait.InstanceFactory;
-import net.citizensnpcs.api.npc.trait.SaveId;
-import net.citizensnpcs.api.npc.trait.Trait;
+import net.citizensnpcs.api.trait.DefaultInstanceFactory;
+import net.citizensnpcs.api.trait.InstanceFactory;
+import net.citizensnpcs.api.trait.SaveId;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 

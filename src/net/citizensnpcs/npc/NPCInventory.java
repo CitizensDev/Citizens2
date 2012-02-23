@@ -88,7 +88,7 @@ public class NPCInventory implements IInventory {
             index++;
         }
 
-        npc.getTrait(net.citizensnpcs.api.npc.trait.trait.Inventory.class).setContents(bukkitItems);
+        npc.getTrait(net.citizensnpcs.api.trait.builtin.Inventory.class).setContents(bukkitItems);
     }
 
     @Override

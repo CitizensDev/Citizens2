@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.citizensnpcs.command.annotation;
+package net.citizensnpcs.command;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

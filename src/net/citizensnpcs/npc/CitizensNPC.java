@@ -5,9 +5,9 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
-import net.citizensnpcs.api.npc.trait.trait.Inventory;
-import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
-import net.citizensnpcs.api.npc.trait.trait.Spawned;
+import net.citizensnpcs.api.trait.builtin.Inventory;
+import net.citizensnpcs.api.trait.builtin.SpawnLocation;
+import net.citizensnpcs.api.trait.builtin.Spawned;
 import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.util.Messaging;
 
