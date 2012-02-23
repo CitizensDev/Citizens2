@@ -4,7 +4,7 @@ import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.builtin.Owner;
+import net.citizensnpcs.api.trait.trait.Owner;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

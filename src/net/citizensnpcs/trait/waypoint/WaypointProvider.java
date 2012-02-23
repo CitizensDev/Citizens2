@@ -7,6 +7,7 @@ import net.citizensnpcs.editor.Editor;
 import org.bukkit.entity.Player;
 
 public interface WaypointProvider {
+
     public Editor createEditor(Player player);
 
     public void load(DataKey key);
