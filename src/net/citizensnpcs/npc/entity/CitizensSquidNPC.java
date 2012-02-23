@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntitySquid;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensSquidNPC extends CitizensMobNPC {
     public Squid getBukkitEntity() {
         return (Squid) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntitySquid) getHandle();
+	}
 
     public static class EntitySquidNPC extends EntitySquid {
 

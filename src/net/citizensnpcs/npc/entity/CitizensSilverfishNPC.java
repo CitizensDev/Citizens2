@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntitySilverfish;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensSilverfishNPC extends CitizensMobNPC {
     public Silverfish getBukkitEntity() {
         return (Silverfish) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntitySilverfish) getHandle();
+	}
 
     public static class EntitySilverfishNPC extends EntitySilverfish {
 

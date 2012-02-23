@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntityZombie;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensZombieNPC extends CitizensMobNPC {
     public Zombie getBukkitEntity() {
         return (Zombie) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityZombie) getHandle();
+	}
 
     public static class EntityZombieNPC extends EntityZombie {
 

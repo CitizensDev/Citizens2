@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntityEnderDragon;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
     public EnderDragon getBukkitEntity() {
         return (EnderDragon) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityEnderDragon) getHandle();
+	}
 
     public static class EntityEnderDragonNPC extends EntityEnderDragon {
 

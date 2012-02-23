@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntityMagmaCube;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
     public MagmaCube getBukkitEntity() {
         return (MagmaCube) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityMagmaCube) getHandle();
+	}
 
     public static class EntityMagmaCubeNPC extends EntityMagmaCube {
 

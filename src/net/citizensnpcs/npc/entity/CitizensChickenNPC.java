@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntityChicken;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensChickenNPC extends CitizensMobNPC {
     public Chicken getBukkitEntity() {
         return (Chicken) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityChicken) getHandle();
+	}
 
     public static class EntityChickenNPC extends EntityChicken {
 

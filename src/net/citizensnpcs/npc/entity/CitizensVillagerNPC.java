@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntityVillager;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
     public Villager getBukkitEntity() {
         return (Villager) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityVillager) getHandle();
+	}
 
     public static class EntityVillagerNPC extends EntityVillager {
 

@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntitySlime;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
     public Slime getBukkitEntity() {
         return (Slime) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntitySlime) getHandle();
+	}
 
     public static class EntitySlimeNPC extends EntitySlime {
 

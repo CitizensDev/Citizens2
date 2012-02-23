@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntityCreeper;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
     public Creeper getBukkitEntity() {
         return (Creeper) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityCreeper) getHandle();
+	}
 
     public static class EntityCreeperNPC extends EntityCreeper {
 

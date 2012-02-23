@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntityGhast;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensGhastNPC extends CitizensMobNPC {
     public Ghast getBukkitEntity() {
         return (Ghast) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityGhast) getHandle();
+	}
 
     public static class EntityGhastNPC extends EntityGhast {
 

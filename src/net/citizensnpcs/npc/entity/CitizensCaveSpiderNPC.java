@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.minecraft.server.Entity;
 import net.minecraft.server.EntityCaveSpider;
 import net.minecraft.server.World;
 
@@ -17,6 +18,11 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
     public CaveSpider getBukkitEntity() {
         return (CaveSpider) getHandle().getBukkitEntity();
     }
+
+	@Override
+	public Entity getEntity() {
+		return (EntityCaveSpider) getHandle();
+	}
 
     public static class EntityCaveSpiderNPC extends EntityCaveSpider {
 
