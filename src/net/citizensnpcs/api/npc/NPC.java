@@ -1,9 +1,9 @@
 package net.citizensnpcs.api.npc;
 
+import net.citizensnpcs.api.ai.AI;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.ai.AI;
-import net.citizensnpcs.api.npc.trait.Character;
-import net.citizensnpcs.api.npc.trait.Trait;
+import net.citizensnpcs.api.trait.Character;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Location;

@@ -1,4 +1,4 @@
-package net.citizensnpcs.api.npc.trait;
+package net.citizensnpcs.api.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -67,7 +67,7 @@ public abstract class Character {
      * @param npc
      *            NPC that is set as this character
      */
-    public void onSet(NPC npc) {
+    public void onCharacterSet(NPC npc) {
     }
 
     /**
@@ -76,6 +76,6 @@ public abstract class Character {
      * @param npc
      *            NPC that had this character removed
      */
-    public void onRemove(NPC npc) {
+    public void onCharacterRemove(NPC npc) {
     }
 }

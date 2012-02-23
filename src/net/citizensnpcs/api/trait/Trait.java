@@ -1,4 +1,4 @@
-package net.citizensnpcs.api.npc.trait;
+package net.citizensnpcs.api.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;

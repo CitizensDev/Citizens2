@@ -8,11 +8,11 @@ import java.util.logging.Level;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.trait.Character;
-import net.citizensnpcs.api.npc.trait.SaveId;
-import net.citizensnpcs.api.npc.trait.Trait;
-import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
-import net.citizensnpcs.api.npc.trait.trait.Spawned;
+import net.citizensnpcs.api.trait.Character;
+import net.citizensnpcs.api.trait.SaveId;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.builtin.SpawnLocation;
+import net.citizensnpcs.api.trait.builtin.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;
@@ -21,11 +21,11 @@ import org.bukkit.ChatColor;
 import com.google.common.collect.Lists;
 
 public abstract class AbstractNPC implements NPC {
-    protected final int id;
-    protected final List<Runnable> runnables = Lists.newArrayList();
-    protected final Map<Class<? extends Trait>, Trait> traits = new HashMap<Class<? extends Trait>, Trait>();
-    protected String name;
-    protected Character character;
+    private final int id;
+    private final List<Runnable> runnables = Lists.newArrayList();
+    private final Map<Class<? extends Trait>, Trait> traits = new HashMap<Class<? extends Trait>, Trait>();
+    private String name;
+    private Character character;
 
     protected AbstractNPC(int id, String name) {
         this.id = id;
@@ -157,14 +157,14 @@ public abstract class AbstractNPC implements NPC {
         if (this.character != null) {
             if (this.character instanceof Runnable)
                 runnables.remove(this.character);
-            this.character.onRemove(this);
+            this.character.onCharacterRemove(this);
         }
         // Set the new character
         this.character = character;
         if (character != null) {
             if (character instanceof Runnable)
                 runnables.add((Runnable) character);
-            character.onSet(this);
+            character.onCharacterSet(this);
         }
     }
 

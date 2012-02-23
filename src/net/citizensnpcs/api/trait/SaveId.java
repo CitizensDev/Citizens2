@@ -1,4 +1,4 @@
-package net.citizensnpcs.api.npc.trait;
+package net.citizensnpcs.api.trait;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

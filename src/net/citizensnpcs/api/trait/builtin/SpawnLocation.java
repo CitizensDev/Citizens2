@@ -1,8 +1,8 @@
-package net.citizensnpcs.api.npc.trait.trait;
+package net.citizensnpcs.api.trait.builtin;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.trait.SaveId;
-import net.citizensnpcs.api.npc.trait.Trait;
+import net.citizensnpcs.api.trait.SaveId;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;

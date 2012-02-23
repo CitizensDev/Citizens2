@@ -1,4 +1,4 @@
-package net.citizensnpcs.api.npc.ai;
+package net.citizensnpcs.api.ai;
 
 /**
  * Represents a navigation callback, linked to a {@link AI}. Methods should

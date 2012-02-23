@@ -1,4 +1,4 @@
-package net.citizensnpcs.api.npc.ai;
+package net.citizensnpcs.api.ai;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;

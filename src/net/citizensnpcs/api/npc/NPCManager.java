@@ -2,7 +2,7 @@ package net.citizensnpcs.api.npc;
 
 import java.util.Collection;
 
-import net.citizensnpcs.api.npc.trait.Character;
+import net.citizensnpcs.api.trait.Character;
 
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;

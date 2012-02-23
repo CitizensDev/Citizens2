@@ -1,4 +1,4 @@
-package net.citizensnpcs.api.npc.ai;
+package net.citizensnpcs.api.ai;
 
 public interface Goal {
 

@@ -1,9 +1,9 @@
 package net.citizensnpcs.api;
 
 import net.citizensnpcs.api.npc.NPCManager;
-import net.citizensnpcs.api.npc.trait.Character;
-import net.citizensnpcs.api.npc.trait.InstanceFactory;
-import net.citizensnpcs.api.npc.trait.Trait;
+import net.citizensnpcs.api.trait.Character;
+import net.citizensnpcs.api.trait.InstanceFactory;
+import net.citizensnpcs.api.trait.Trait;
 
 /**
  * Contains methods used in order to utilize the Citizens API
