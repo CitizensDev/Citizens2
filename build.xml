@@ -1,6 +1,6 @@
 <project name="CitizensAPI" default="dist" basedir=".">
 	<description>
-		CitizensAPI build file
+		Build file used for testing purposes
     </description>
 	<!-- set global properties for this build -->
 	<property name="src" location="src" />

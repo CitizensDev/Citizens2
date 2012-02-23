@@ -32,7 +32,7 @@ public class MobType extends Trait {
         try {
             type = key.getString("").toUpperCase();
         } catch (IllegalArgumentException ex) {
-            type = "DEFAULT";
+            type = "PLAYER";
         }
     }
 
