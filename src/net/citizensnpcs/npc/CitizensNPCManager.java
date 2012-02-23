@@ -9,7 +9,7 @@ import net.citizensnpcs.api.event.NPCSelectEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.trait.Character;
-import net.citizensnpcs.api.trait.builtin.SpawnLocation;
+import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.NPCBuilder;

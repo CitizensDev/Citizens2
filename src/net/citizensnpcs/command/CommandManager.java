@@ -1,22 +1,3 @@
-// $Id$
-/*
- * WorldEdit
- * Copyright (C) 2010 sk89q <http://www.sk89q.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
 package net.citizensnpcs.command;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.builtin.Owner;
+import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
