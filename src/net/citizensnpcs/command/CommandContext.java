@@ -77,8 +77,7 @@ public class CommandContext {
                 }
 
                 if (inner != -1) {
-                    System.out.println(args[inner]);
-                    valueFlags.put(args[i].replaceFirst("--", ""), args[inner]);
+                    valueFlags.put(args[i].toLowerCase().replaceFirst("--", ""), args[inner]);
                     args[i] = "";
                     args[inner] = "";
                 }
