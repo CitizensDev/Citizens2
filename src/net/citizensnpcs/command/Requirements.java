@@ -1,4 +1,4 @@
-package net.citizensnpcs.command.annotation;
+package net.citizensnpcs.command;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

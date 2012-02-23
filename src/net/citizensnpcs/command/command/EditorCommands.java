@@ -4,8 +4,8 @@ import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
-import net.citizensnpcs.command.annotation.Command;
 import net.citizensnpcs.util.Messaging;
 
 public class EditorCommands {

@@ -1,6 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
-import net.citizensnpcs.api.npc.ai.NavigationCallback;
+import net.citizensnpcs.api.ai.NavigationCallback;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 

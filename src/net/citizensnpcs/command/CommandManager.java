@@ -33,10 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.trait.trait.Owner;
-import net.citizensnpcs.command.annotation.Command;
-import net.citizensnpcs.command.annotation.Requirements;
-import net.citizensnpcs.command.annotation.ServerCommand;
+import net.citizensnpcs.api.trait.builtin.Owner;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
 import net.citizensnpcs.command.exception.NoPermissionsException;

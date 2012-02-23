@@ -7,8 +7,8 @@ import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.trait.trait.Owner;
-import net.citizensnpcs.api.npc.trait.trait.SpawnLocation;
+import net.citizensnpcs.api.trait.builtin.Owner;
+import net.citizensnpcs.api.trait.builtin.SpawnLocation;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.util.Messaging;
 

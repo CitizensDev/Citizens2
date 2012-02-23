@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.citizensnpcs.api.npc.ai.AI;
-import net.citizensnpcs.api.npc.ai.Goal;
-import net.citizensnpcs.api.npc.ai.NavigationCallback;
-import net.citizensnpcs.api.npc.ai.NavigationCallback.PathCancelReason;
+import net.citizensnpcs.api.ai.AI;
+import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.ai.NavigationCallback;
+import net.citizensnpcs.api.ai.NavigationCallback.PathCancelReason;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.Messaging;
 
