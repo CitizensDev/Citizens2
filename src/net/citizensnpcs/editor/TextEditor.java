@@ -1,13 +1,6 @@
 package net.citizensnpcs.editor;
 
-import org.bukkit.entity.Player;
-
-public class TextEditor implements Editor {
-    private Player player;
-
-    public TextEditor(Player player) {
-        this.player = player;
-    }
+public class TextEditor extends Editor {
 
     @Override
     public void begin() {

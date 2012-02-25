@@ -6,7 +6,6 @@ import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
-import net.citizensnpcs.util.Messaging;
 
 public class EditorCommands {
 
@@ -15,40 +14,11 @@ public class EditorCommands {
 
     @Command(
              aliases = { "npc" },
-             usage = "equip",
-             desc = "Toggle equipment editor",
-             modifiers = { "equip" },
-             min = 1,
-             max = 1,
-             permission = "npc.equip")
+             usage = "edit (editor)",
+             desc = "Toggle an NPC editor",
+             modifiers = { "edit" },
+             min = 2,
+             max = 2)
     public void toggleEquipEditor(CommandContext args, Player player, NPC npc) {
-        if (!(npc instanceof Player)) {
-            Messaging.sendError(player, "The NPC must be a human to equip armor and items.");
-            return;
-        }
-    }
-
-    @Command(
-             aliases = { "npc" },
-             usage = "path",
-             desc = "Toggle path editor",
-             modifiers = { "path" },
-             min = 1,
-             max = 1,
-             permission = "npc.path")
-    public void togglePathEditor(CommandContext args, Player player, NPC npc) {
-        // TODO
-    }
-
-    @Command(
-             aliases = { "npc" },
-             usage = "text",
-             desc = "Toggle text editor",
-             modifiers = { "text" },
-             min = 1,
-             max = 1,
-             permission = "npc.text")
-    public void toggleTextEditor(CommandContext args, Player player, NPC npc) {
-        // TODO
     }
 }

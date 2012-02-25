@@ -202,7 +202,7 @@ public class NPCCommands {
             return;
         }
         if (!player.hasPermission("citizens.npc.character." + character.getName())
-                && !player.hasPermission("citizens.npc.character.*")) {
+                && !player.hasPermission("citizens.npc.character.*") && !player.hasPermission("citizens.admin")) {
             Messaging.sendError(player, "You don't have permission to execute that command.");
             return;
         }

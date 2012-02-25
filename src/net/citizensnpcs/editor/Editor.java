@@ -1,8 +1,8 @@
 package net.citizensnpcs.editor;
 
-public interface Editor {
+public abstract class Editor {
 
-    public void begin();
+    public abstract void begin();
 
-    public void end();
+    public abstract void end();
 }
