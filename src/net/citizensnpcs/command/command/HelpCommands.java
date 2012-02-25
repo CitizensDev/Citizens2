@@ -65,15 +65,13 @@ public class HelpCommands {
         int startIndex = LINES_PER_PAGE * page - LINES_PER_PAGE;
         int endIndex = page * LINES_PER_PAGE;
 
-        Messaging.send(
-                player,
-                StringHelper.wrapHeader("<e>"
-                        + (baseCommand.equalsIgnoreCase("npc") ? "NPC" : StringHelper.capitalize(baseCommand
-                                .toLowerCase())) + " Help <f>" + page + "/" + pages));
+        Messaging.send(player, StringHelper.wrapHeader("<e>"
+                + (baseCommand.equalsIgnoreCase("npc") ? "NPC" : StringHelper.capitalize(baseCommand.toLowerCase()))
+                + " Help <f>" + page + "/" + pages));
 
         if (lines.size() < endIndex)
             endIndex = lines.size() - 1;
-        for (String line : lines.subList(startIndex, endIndex))
+        for (String line : lines.subList(startIndex, endIndex == -1 ? 0 : endIndex))
             Messaging.send(player, line);
         return true;
     }
@@ -83,10 +81,12 @@ public class HelpCommands {
         Set<Command> cmds = new HashSet<Command>();
         List<String> lines = new ArrayList<String>();
         for (Command cmd : cmdManager.getCommands(baseCommand)) {
-            if (cmds.contains(cmd) || !player.hasPermission("citizens." + cmd.permission()))
+            if (cmds.contains(cmd)
+                    || (!player.hasPermission("citizens.admin") && !player
+                            .hasPermission("citizens." + cmd.permission())))
                 continue;
-            lines.add(StringHelper.parseColors("<7>/<c>" + cmd.aliases()[0]
-                    + (cmd.usage().isEmpty() ? "" : " " + cmd.usage()) + " <7>- <e>" + cmd.desc()));
+            lines.add("<7>/<c>" + cmd.aliases()[0] + (cmd.usage().isEmpty() ? "" : " " + cmd.usage()) + " <7>- <e>"
+                    + cmd.desc());
             if (cmd.modifiers().length > 1)
                 cmds.add(cmd);
         }
