@@ -116,7 +116,7 @@ public class NPCCommands {
     @Requirements
     public void removeNPC(CommandContext args, Player player, NPC npc) {
         if (args.argsLength() == 2) {
-            if (!player.hasPermission("citizens.npc.remove.all")) {
+            if (!player.hasPermission("citizens.npc.remove.all") && !player.hasPermission("citizens.admin")) {
                 Messaging.sendError(player, "You don't have permission to execute that command.");
                 return;
             }
@@ -132,7 +132,7 @@ public class NPCCommands {
             Messaging.sendError(player, "You must be the owner of this NPC to execute that command.");
             return;
         }
-        if (!player.hasPermission("citizens.npc.remove")) {
+        if (!player.hasPermission("citizens.npc.remove") && !player.hasPermission("citizens.admin")) {
             Messaging.sendError(player, "You don't have permission to execute that command.");
             return;
         }

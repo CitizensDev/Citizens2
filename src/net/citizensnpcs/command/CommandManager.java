@@ -182,8 +182,7 @@ public class CommandManager {
     // Returns whether a player has access to a command.
     private boolean hasPermission(Method method, Player player) {
         Command cmd = method.getAnnotation(Command.class);
-        if (cmd.permission().isEmpty() || hasPermission(player, cmd.permission())
-                || hasPermission(player, "citizens.admin"))
+        if (cmd.permission().isEmpty() || hasPermission(player, cmd.permission()) || hasPermission(player, "admin"))
             return true;
 
         return false;
