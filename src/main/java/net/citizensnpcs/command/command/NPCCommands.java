@@ -33,7 +33,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0)
-    public void showInfo(CommandContext args, Player player, NPC npc) {
+    public void npc(CommandContext args, Player player, NPC npc) {
         Messaging.send(player, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(player, "    <a>ID: <e>" + npc.getId());
         Messaging.send(player, "    <a>Character: <e>"
@@ -50,7 +50,7 @@ public class NPCCommands {
              max = 5,
              permission = "npc.create")
     @Requirements
-    public void createNPC(CommandContext args, Player player, NPC npc) {
+    public void create(CommandContext args, Player player, NPC npc) {
         String name = args.getString(1);
         if (name.length() > 16) {
             Messaging.sendError(player, "NPC names cannot be longer than 16 characters. The name has been shortened.");
@@ -100,7 +100,7 @@ public class NPCCommands {
              min = 1,
              max = 1,
              permission = "npc.despawn")
-    public void despawnNPC(CommandContext args, Player player, NPC npc) {
+    public void despawn(CommandContext args, Player player, NPC npc) {
         npc.getTrait(Spawned.class).setSpawned(false);
         npc.despawn();
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
@@ -114,7 +114,7 @@ public class NPCCommands {
              min = 1,
              max = 2)
     @Requirements
-    public void removeNPC(CommandContext args, Player player, NPC npc) {
+    public void remove(CommandContext args, Player player, NPC npc) {
         if (args.argsLength() == 2) {
             if (!player.hasPermission("citizens.npc.remove.all") && !player.hasPermission("citizens.admin")) {
                 Messaging.sendError(player, "You don't have permission to execute that command.");
@@ -148,7 +148,7 @@ public class NPCCommands {
              min = 2,
              max = 2,
              permission = "npc.rename")
-    public void renameNPC(CommandContext args, Player player, NPC npc) {
+    public void rename(CommandContext args, Player player, NPC npc) {
         String oldName = npc.getName();
         String newName = args.getString(1);
         if (newName.length() > 16) {
@@ -169,7 +169,7 @@ public class NPCCommands {
              max = 2,
              permission = "npc.select")
     @Requirements(ownership = true)
-    public void selectNPC(CommandContext args, Player player, NPC npc) {
+    public void select(CommandContext args, Player player, NPC npc) {
         NPC toSelect = npcManager.getNPC(args.getInteger(1));
         if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn()) {
             Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' is spawned.");
@@ -190,7 +190,7 @@ public class NPCCommands {
              modifiers = { "character" },
              min = 2,
              max = 2)
-    public void setNPCCharacter(CommandContext args, Player player, NPC npc) {
+    public void character(CommandContext args, Player player, NPC npc) {
         String name = args.getString(1).toLowerCase();
         Character character = characterManager.getInstance(name, npc);
         if (character == null) {
@@ -213,6 +213,25 @@ public class NPCCommands {
 
     @Command(
              aliases = { "npc" },
+             usage = "owner [name]",
+             desc = "Set the owner of an NPC",
+             modifiers = { "owner" },
+             min = 2,
+             max = 2,
+             permission = "npc.owner")
+    public void owner(CommandContext args, Player player, NPC npc) {
+        String name = args.getString(1);
+        if (npc.getTrait(Owner.class).getOwner().equals(name)) {
+            Messaging.sendError(player, "'" + name + "' is already the owner of " + npc.getName() + ".");
+            return;
+        }
+        npc.getTrait(Owner.class).setOwner(name);
+        Messaging.send(player, StringHelper.wrap(name) + " is now the owner of " + StringHelper.wrap(npc.getName())
+                + ".");
+    }
+
+    @Command(
+             aliases = { "npc" },
              usage = "spawn [id]",
              desc = "Spawn an existing NPC",
              modifiers = { "spawn" },
@@ -220,7 +239,7 @@ public class NPCCommands {
              max = 2,
              permission = "npc.spawn")
     @Requirements
-    public void spawnNPC(CommandContext args, Player player, NPC npc) {
+    public void spawn(CommandContext args, Player player, NPC npc) {
         NPC respawn = npcManager.getNPC(args.getInteger(1));
         if (respawn == null) {
             Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' exists.");
@@ -250,7 +269,7 @@ public class NPCCommands {
              min = 1,
              max = 1,
              permission = "npc.tphere")
-    public void teleportNPCToPlayer(CommandContext args, Player player, NPC npc) {
+    public void tphere(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
@@ -267,7 +286,7 @@ public class NPCCommands {
              min = 1,
              max = 1,
              permission = "npc.tp")
-    public void teleportToNPC(CommandContext args, Player player, NPC npc) {
+    public void tp(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
@@ -277,7 +296,7 @@ public class NPCCommands {
 
     @Command(aliases = { "npc" }, usage = "lookclose", desc = "Toggle an NPC's look-close state", modifiers = {
             "lookclose", "look", "rotate" }, min = 1, max = 1, permission = "npc.lookclose")
-    public void toggleNPCLookClose(CommandContext args, Player player, NPC npc) {
+    public void lookClose(CommandContext args, Player player, NPC npc) {
         LookClose trait = npc.getTrait(LookClose.class);
         trait.toggle();
         String msg = StringHelper.wrap(npc.getName()) + " will "

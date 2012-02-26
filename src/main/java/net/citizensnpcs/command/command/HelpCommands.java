@@ -58,7 +58,7 @@ public class HelpCommands {
 
     private boolean sendPage(Player player, String baseCommand, int page) {
         List<String> lines = getLines(player, baseCommand);
-        int pages = (lines.size() / LINES_PER_PAGE == 0) ? 1 : lines.size() / LINES_PER_PAGE;
+        int pages = (int) ((lines.size() / LINES_PER_PAGE == 0) ? 1 : Math.ceil((double) lines.size() / LINES_PER_PAGE));
         if (page < 0 || page > pages)
             return false;
 
@@ -70,8 +70,8 @@ public class HelpCommands {
                 + " Help <f>" + page + "/" + pages));
 
         if (lines.size() < endIndex)
-            endIndex = lines.size() - 1;
-        for (String line : lines.subList(startIndex, endIndex == -1 ? 0 : endIndex))
+            endIndex = lines.size();
+        for (String line : lines.subList(startIndex, endIndex))
             Messaging.send(player, line);
         return true;
     }
@@ -85,6 +85,7 @@ public class HelpCommands {
                     || (!player.hasPermission("citizens.admin") && !player
                             .hasPermission("citizens." + cmd.permission())))
                 continue;
+
             lines.add("<7>/<c>" + cmd.aliases()[0] + (cmd.usage().isEmpty() ? "" : " " + cmd.usage()) + " <7>- <e>"
                     + cmd.desc());
             if (cmd.modifiers().length > 1)

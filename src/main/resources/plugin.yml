@@ -25,6 +25,7 @@ permissions:
               citizens.npc.edit.path: true
               citizens.npc.edit.text: true
           citizens.npc.help: true
+          citizens.npc.owner: true
           citizens.npc.remove: true
           citizens.npc.remove.all: true
           citizens.npc.rename: true
