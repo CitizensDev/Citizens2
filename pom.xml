@@ -48,7 +48,7 @@
 	</scm>
 	<build>
 		<defaultGoal>clean install</defaultGoal>
-		<sourceDirectory>${basedir}/src</sourceDirectory>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 
 		<plugins>
 
