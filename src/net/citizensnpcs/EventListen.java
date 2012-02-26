@@ -10,11 +10,14 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.citizensnpcs.resource.lib.EntityHumanNPC;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +25,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -156,4 +160,13 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(
                 new EntityTargetEvent(event.getRightClicked(), event.getPlayer(), TargetReason.CUSTOM));
     }
+
+    @EventHandler
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        if (!(((CraftPlayer) event.getPlayer()).getHandle() instanceof EntityHumanNPC))
+            return;
+
+        ((CraftServer) Bukkit.getServer()).getHandle().players.remove(((CraftPlayer) event.getPlayer()).getHandle());
+    }
+
 }
