@@ -116,6 +116,10 @@ public class NPCCommands {
     @Requirements
     public void remove(CommandContext args, Player player, NPC npc) {
         if (args.argsLength() == 2) {
+            if (!args.getString(1).equals("all")) {
+                Messaging.sendError(player, "Incorrect syntax. /npc remove (all)");
+                return;
+            }
             if (!player.hasPermission("citizens.npc.remove.all") && !player.hasPermission("citizens.admin")) {
                 Messaging.sendError(player, "You don't have permission to execute that command.");
                 return;
