@@ -25,6 +25,8 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 
 public class EventListen implements Listener {
     private final Map<Chunk, List<Integer>> toRespawn = new HashMap<Chunk, List<Integer>>();
@@ -43,8 +45,7 @@ public class EventListen implements Listener {
             return;
         for (int id : toRespawn.get(event.getChunk())) {
             NPC npc = npcManager.getNPC(id);
-            Location loc = npc.getTrait(SpawnLocation.class).getLocation();
-            npc.spawn(loc);
+            npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
         }
         toRespawn.remove(event.getChunk());
     }
@@ -57,7 +58,7 @@ public class EventListen implements Listener {
         List<Integer> respawn = new ArrayList<Integer>();
         for (NPC npc : npcManager) {
             if (!npc.isSpawned())
-                return;
+                continue;
             Location loc = npc.getBukkitEntity().getLocation();
             if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
                     && event.getChunk().getZ() == loc.getChunk().getZ()) {
@@ -66,7 +67,42 @@ public class EventListen implements Listener {
                 respawn.add(npc.getId());
             }
         }
-        toRespawn.put(event.getChunk(), respawn);
+        if (respawn.size() > 0)
+            toRespawn.put(event.getChunk(), respawn);
+    }
+
+    @EventHandler
+    public void onWorldLoad(WorldLoadEvent event) {
+        for (Chunk chunk : toRespawn.keySet()) {
+            if (event.getWorld().isChunkLoaded(chunk)) {
+                for (int id : toRespawn.get(chunk)) {
+                    NPC npc = npcManager.getNPC(id);
+                    npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
+                }
+                toRespawn.remove(chunk);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onWorldUnload(WorldUnloadEvent event) {
+        if (event.isCancelled())
+            return;
+
+        for (NPC npc : npcManager) {
+            if (!npc.isSpawned() || !npc.getBukkitEntity().getWorld().equals(event.getWorld()))
+                continue;
+            Location loc = npc.getBukkitEntity().getLocation();
+            npc.getTrait(SpawnLocation.class).setLocation(loc);
+            npc.despawn();
+            if (toRespawn.containsKey(loc.getChunk()))
+                toRespawn.get(loc.getChunk()).add(npc.getId());
+            else {
+                List<Integer> respawn = new ArrayList<Integer>();
+                respawn.add(npc.getId());
+                toRespawn.put(loc.getChunk(), respawn);
+            }
+        }
     }
 
     /*
