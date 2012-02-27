@@ -27,5 +27,9 @@ public class CitizensChickenNPC extends CitizensMobNPC {
         @Override
         public void m_() {
         }
+
+        @Override
+        public void d() {
+        }
     }
 }

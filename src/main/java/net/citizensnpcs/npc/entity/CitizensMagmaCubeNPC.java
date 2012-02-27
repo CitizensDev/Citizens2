@@ -22,6 +22,7 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
 
         public EntityMagmaCubeNPC(World world) {
             super(world);
+            setSize(3);
         }
 
         @Override
