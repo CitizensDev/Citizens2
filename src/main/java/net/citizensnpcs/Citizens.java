@@ -138,7 +138,7 @@ public class Citizens extends JavaPlugin {
             saveNPCs();
             for (NPC npc : npcManager)
                 npc.despawn();
-            Bukkit.getScheduler().cancelTasks(this);
+            getServer().getScheduler().cancelTasks(this);
         }
 
         Messaging.log("v" + getDescription().getVersion() + " disabled.");
@@ -228,6 +228,16 @@ public class Citizens extends JavaPlugin {
                 }
             }
         }.start();
+    }
+
+    public void reload() throws NPCLoadException {
+        getServer().getScheduler().cancelTasks(this);
+        config.load();
+        for (NPC npc : npcManager)
+            npc.despawn();
+
+        saves.load();
+        setupNPCs();
     }
 
     public CitizensNPCManager getNPCManager() {
