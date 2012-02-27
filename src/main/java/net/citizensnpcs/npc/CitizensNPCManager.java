@@ -32,9 +32,6 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public NPC createNPC(EntityType type, int id, String name, Character character) {
-        if (npcs.contains(id))
-            throw new IllegalArgumentException("An NPC already has the ID '" + id + "'.");
-
         CitizensNPC npc = npcBuilder.getByType(type, this, id, name);
         npc.setCharacter(character);
         npcs.put(npc.getId(), npc);

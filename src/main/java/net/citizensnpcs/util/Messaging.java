@@ -8,6 +8,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
@@ -28,23 +29,26 @@ public class Messaging {
         log(Level.INFO, SPACE.join(msg));
     }
 
-    public static void send(Player player, Object msg) {
-        player.sendMessage(StringHelper.parseColors(msg.toString()));
+    public static void send(CommandSender sender, Object msg) {
+        sender.sendMessage(StringHelper.parseColors(msg.toString()));
     }
 
-    public static void sendError(Player player, Object msg) {
-        send(player, ChatColor.RED.toString() + msg);
+    public static void sendError(CommandSender sender, Object msg) {
+        send(sender, ChatColor.RED.toString() + msg);
     }
 
-    public static void sendWithNPC(Player player, Object msg, NPC npc) {
+    public static void sendWithNPC(CommandSender sender, Object msg, NPC npc) {
         String send = msg.toString();
 
-        send = send.replace("<player>", player.getName());
-        send = send.replace("<world>", player.getWorld().getName());
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            send = send.replace("<player>", player.getName());
+            send = send.replace("<world>", player.getWorld().getName());
+        }
         send = send.replace("<owner>", npc.getTrait(Owner.class).getOwner());
         send = send.replace("<npc>", npc.getName());
         send = send.replace("<id>", Integer.toString(npc.getId()));
 
-        send(player, send);
+        send(sender, send);
     }
 }
