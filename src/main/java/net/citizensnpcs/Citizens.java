@@ -15,6 +15,7 @@ import net.citizensnpcs.api.trait.DefaultInstanceFactory;
 import net.citizensnpcs.api.trait.InstanceFactory;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Inventory;
+import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.trait.trait.Spawned;
@@ -25,6 +26,7 @@ import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Injector;
 import net.citizensnpcs.command.command.AdminCommands;
+import net.citizensnpcs.command.command.EditorCommands;
 import net.citizensnpcs.command.command.HelpCommands;
 import net.citizensnpcs.command.command.NPCCommands;
 import net.citizensnpcs.command.exception.CommandUsageException;
@@ -56,7 +58,7 @@ public class Citizens extends JavaPlugin {
     private volatile CitizensNPCManager npcManager;
     private final InstanceFactory<Character> characterManager = new DefaultInstanceFactory<Character>();
     private final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create(Owner.class, Spawned.class,
-            LookClose.class, SpawnLocation.class, Inventory.class);
+            LookClose.class, SpawnLocation.class, Inventory.class, MobType.class);
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private Storage saves;
@@ -249,8 +251,9 @@ public class Citizens extends JavaPlugin {
 
         // Register command classes
         commands.register(AdminCommands.class);
-        commands.register(NPCCommands.class);
+        commands.register(EditorCommands.class);
         commands.register(HelpCommands.class);
+        commands.register(NPCCommands.class);
     }
 
     private void saveNPCs() {

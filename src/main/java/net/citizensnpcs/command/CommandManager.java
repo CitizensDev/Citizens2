@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
@@ -24,6 +25,7 @@ import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class CommandManager {
@@ -99,6 +101,11 @@ public class CommandManager {
                         && !npc.getTrait(Owner.class).getOwner().equals(player.getName())
                         && !player.hasPermission("citizens.admin"))
                     throw new RequirementMissingException("You must be the owner of this NPC to execute that command.");
+                if (cmdRequirements.type() != EntityType.UNKNOWN
+                        && !cmdRequirements.type().name().equals(npc.getTrait(MobType.class).getType()))
+                    throw new RequirementMissingException("The NPC must be of the type '"
+                            + cmdRequirements.type().name().toLowerCase().replace('_', '-')
+                            + "' in order for you to use that command.");
             }
         }
 
