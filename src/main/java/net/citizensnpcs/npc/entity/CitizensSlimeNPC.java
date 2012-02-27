@@ -22,6 +22,7 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
 
         public EntitySlimeNPC(World world) {
             super(world);
+            setSize(3);
         }
 
         @Override
