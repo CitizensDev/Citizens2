@@ -56,7 +56,7 @@ public class Citizens extends JavaPlugin {
     private static final String COMPATIBLE_MC_VERSION = "1.1";
 
     private volatile CitizensNPCManager npcManager;
-    private final InstanceFactory<Character> characterManager = DefaultInstanceFactory.create(Derp.class);
+    private final InstanceFactory<Character> characterManager = DefaultInstanceFactory.create();
     private final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create(Owner.class, Spawned.class,
             LookClose.class, SpawnLocation.class, Inventory.class, MobType.class);
     private final CommandManager commands = new CommandManager();
