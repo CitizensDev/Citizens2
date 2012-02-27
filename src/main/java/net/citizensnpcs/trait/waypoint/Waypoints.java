@@ -29,7 +29,7 @@ public class Waypoints extends Trait {
             if (provider == null)
                 return;
         }
-        provider.load(key);
+        provider.load(key.getRelative(providerName));
         npc.getAI().registerNavigationCallback(provider.getCallback());
     }
 
@@ -37,7 +37,7 @@ public class Waypoints extends Trait {
     public void save(DataKey key) {
         if (provider == null)
             return;
-        provider.save(key);
+        provider.save(key.getRelative(providerName));
         key.setString("provider", providerName);
     }
 
@@ -45,7 +45,7 @@ public class Waypoints extends Trait {
         return provider.createEditor(player);
     }
 
-    public void registerWaypointProvider(Class<? extends WaypointProvider> clazz, String name) {
+    public static void registerWaypointProvider(Class<? extends WaypointProvider> clazz, String name) {
         providers.register(clazz, name);
     }
 

@@ -56,8 +56,10 @@ public class CitizensAI implements AI {
 
     @Override
     public void registerNavigationCallback(NavigationCallback callback) {
-        if (!callbacks.contains(callback))
+        if (!callbacks.contains(callback)) {
             callbacks.add(new WeakReference<NavigationCallback>(callback));
+            callback.onAttach(this);
+        }
     }
 
     @Override

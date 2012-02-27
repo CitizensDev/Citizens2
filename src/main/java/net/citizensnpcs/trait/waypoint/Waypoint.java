@@ -8,4 +8,8 @@ public class Waypoint {
     public Waypoint(Location location) {
         this.location = location;
     }
+
+    public Location getLocation() {
+        return location;
+    }
 }
