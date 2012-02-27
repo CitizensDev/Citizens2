@@ -5,6 +5,8 @@ package net.citizensnpcs.api.ai;
  * return whether the callback has finished or not.
  */
 public abstract class NavigationCallback {
+    public void onAttach(AI ai) {
+    }
 
     public boolean onBegin(AI ai) {
         return false;
