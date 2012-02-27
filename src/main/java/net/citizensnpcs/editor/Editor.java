@@ -16,7 +16,7 @@ public abstract class Editor implements Listener {
 
     public abstract void end();
 
-    public static void enterEditor(Player player, Editor editor) {
+    public static void enter(Player player, Editor editor) {
         if (editing.containsKey(player.getName())) {
             Messaging.sendError(player, "You're already in an editor!");
             return;
@@ -26,7 +26,18 @@ public abstract class Editor implements Listener {
         editing.put(player.getName(), editor);
     }
 
-    public static void leaveEditor(Player player) {
+    public static void enterOrLeave(Player player, Editor editor) {
+        Editor edit = editing.get(player.getName());
+        if (edit == null) {
+            enter(player, editor);
+        } else if (edit.getClass() == editor.getClass()) {
+            leave(player);
+        } else {
+            Messaging.sendError(player, "You're already in an editor!");
+        }
+    }
+
+    public static void leave(Player player) {
         if (!editing.containsKey(player.getName()))
             return;
         Editor editor = editing.remove(player.getName());
