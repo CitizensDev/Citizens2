@@ -168,5 +168,4 @@ public class EventListen implements Listener {
 
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(((CraftPlayer) event.getPlayer()).getHandle());
     }
-
 }
