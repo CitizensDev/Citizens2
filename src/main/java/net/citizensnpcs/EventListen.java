@@ -156,7 +156,7 @@ public class EventListen implements Listener {
      */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Editor.leaveEditor(event.getPlayer());
+        Editor.leave(event.getPlayer());
     }
 
     @EventHandler

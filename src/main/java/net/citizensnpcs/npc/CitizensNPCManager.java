@@ -11,6 +11,7 @@ import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.trait.Character;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.util.Storage;
+import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.NPCBuilder;
 
@@ -136,6 +137,9 @@ public class CitizensNPCManager implements NPCManager {
         if (existing != null)
             selected.get(existing.getId()).remove(player.getName());
         selected.put(npc.getId(), player.getName());
+
+        // Remove editor if the player has one
+        Editor.leave(player);
 
         // Call selection event
         player.getServer().getPluginManager().callEvent(new NPCSelectEvent(npc, player));
