@@ -52,13 +52,17 @@ public abstract class Character {
      */
     public abstract void save(DataKey key);
 
+    private String name = null;
+
     /**
      * Gets the name of this character
      * 
      * @return Name of this character
      */
     public final String getName() {
-        return getClass().getAnnotation(SaveId.class).value();
+        if (name == null)
+            name = getClass().getAnnotation(SaveId.class).value();
+        return name;
     }
 
     /**

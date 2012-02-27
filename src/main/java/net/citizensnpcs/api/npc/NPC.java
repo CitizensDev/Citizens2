@@ -7,7 +7,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -54,7 +54,7 @@ public interface NPC {
      * 
      * @return Entity associated with this NPC
      */
-    public Entity getBukkitEntity();
+    public LivingEntity getBukkitEntity();
 
     /**
      * Gets the character of this NPC
@@ -182,4 +182,6 @@ public interface NPC {
     public boolean spawn(Location location);
 
     public void update();
+
+    public void move(int x, int y, int z);
 }
