@@ -9,6 +9,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
+import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.resource.lib.EntityHumanNPC;
 import net.citizensnpcs.util.Messaging;
@@ -27,6 +28,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -152,6 +154,11 @@ public class EventListen implements Listener {
     /*
      * Player events
      */
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Editor.leaveEditor(event.getPlayer());
+    }
+
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         if (!npcManager.isNPC(event.getRightClicked()))

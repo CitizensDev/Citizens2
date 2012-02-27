@@ -10,7 +10,6 @@ import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.util.Messaging;
-
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
@@ -42,6 +41,12 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     protected abstract EntityLiving createHandle(Location loc);
+
+    @Override
+    public void move(int x, int y, int z) {
+        if (mcEntity != null)
+            mcEntity.move(x, y, z);
+    }
 
     @Override
     public boolean despawn() {
@@ -82,8 +87,8 @@ public abstract class CitizensNPC extends AbstractNPC {
         if (isSpawned())
             despawn();
         manager.remove(this);
-        ((Citizens) Bukkit.getServer().getPluginManager().getPlugin("Citizens")).getStorage().getKey("npc").removeKey(
-                String.valueOf(getId()));
+        ((Citizens) Bukkit.getServer().getPluginManager().getPlugin("Citizens")).getStorage().getKey("npc")
+                .removeKey(String.valueOf(getId()));
     }
 
     @Override
