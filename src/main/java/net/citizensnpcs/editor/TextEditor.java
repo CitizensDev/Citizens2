@@ -1,6 +1,6 @@
 package net.citizensnpcs.editor;
 
-public class TextEditor implements Editor {
+public class TextEditor extends Editor {
 
     @Override
     public void begin() {
@@ -8,10 +8,5 @@ public class TextEditor implements Editor {
 
     @Override
     public void end() {
-    }
-
-    @Override
-    public String getName() {
-        return "text";
     }
 }

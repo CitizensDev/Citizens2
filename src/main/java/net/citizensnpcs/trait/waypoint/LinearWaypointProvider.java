@@ -33,11 +33,6 @@ public class LinearWaypointProvider implements WaypointProvider {
                 player.sendMessage(ChatColor.GREEN + "Exited linear waypoint editor.");
             }
 
-            @Override
-            public String getName() {
-                return "path";
-            }
-
             @EventHandler
             @SuppressWarnings("unused")
             public void onPlayerInteract(PlayerInteractEvent event) {
