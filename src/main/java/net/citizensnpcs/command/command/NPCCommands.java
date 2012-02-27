@@ -167,7 +167,7 @@ public class NPCCommands {
     @Command(
              aliases = { "npc" },
              usage = "select [id]",
-             desc = "Selects an NPC with the given ID",
+             desc = "Select an NPC with the given ID",
              modifiers = { "select" },
              min = 2,
              max = 2,
@@ -190,7 +190,7 @@ public class NPCCommands {
     @Command(
              aliases = { "npc" },
              usage = "character [character]",
-             desc = "Sets the character of an NPC",
+             desc = "Set the character of an NPC",
              modifiers = { "character" },
              min = 2,
              max = 2)
