@@ -1,6 +1,8 @@
 package net.citizensnpcs.editor;
 
-public abstract class Editor {
+import org.bukkit.event.Listener;
+
+public abstract class Editor implements Listener {
 
     public abstract void begin();
 
