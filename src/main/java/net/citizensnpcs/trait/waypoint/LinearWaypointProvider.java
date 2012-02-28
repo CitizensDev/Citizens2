@@ -5,9 +5,9 @@ import java.util.List;
 import net.citizensnpcs.api.ai.AI;
 import net.citizensnpcs.api.ai.NavigationCallback;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.StorageUtils;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StorageUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
