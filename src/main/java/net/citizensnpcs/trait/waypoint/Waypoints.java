@@ -19,6 +19,7 @@ public class Waypoints extends Trait {
 
     public Waypoints(NPC npc) {
         this.npc = npc;
+        npc.getAI().registerNavigationCallback(provider.getCallback());
     }
 
     @Override
