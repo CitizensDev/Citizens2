@@ -27,10 +27,10 @@ public class EquipmentEditor extends Editor {
 
     @Override
     public void begin() {
-        Messaging.send(player, "<2>Entered the equipment editor!");
-        Messaging.send(player, "<e>Right click <a>to equip armor and items.");
-        Messaging.send(player, "<e>Right click <a>while <e>crouching <a>to equip armor in the NPC's hand.");
-        Messaging.send(player, "<e>Right click <a>with an <e>empty hand <a>to remove all armor and items.");
+        Messaging.send(player, "<a>Entered the equipment editor!");
+        Messaging.send(player, "<a>Right click to equip armor and items.");
+        Messaging.send(player, "<a>Right click while crouching to equip armor in the NPC's hand.");
+        Messaging.send(player, "<a>Right click with an empty hand to remove all armor and items.");
     }
 
     @Override
@@ -100,15 +100,17 @@ public class EquipmentEditor extends Editor {
             Messaging.send(player, "<e>" + npc.getName() + " <a>had all of its items removed.");
         }
         // Now edit the equipment based on the slot
-        if (trait.get(slot) != null && trait.get(slot).getType() != Material.AIR)
+        if (trait.get(slot) != null) {
             player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.get(slot));
+        }
 
         ItemStack set = hand;
         if (set != null && set.getType() != Material.AIR) {
-            if (hand.getAmount() > 1)
+            if (hand.getAmount() > 1) {
                 hand.setAmount(hand.getAmount() - 1);
-            else
+            } else {
                 hand = null;
+            }
             player.setItemInHand(hand);
             set.setAmount(1);
         }
