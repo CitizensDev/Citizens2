@@ -13,8 +13,8 @@ public class StorageUtils {
 
     public static Location loadLocation(DataKey root) {
         root = root.getRelative("location");
-        return new Location(Bukkit.getWorld(root.getString("world")), root.getDouble("x"), root.getDouble("y"),
-                root.getDouble("z"), (float) root.getDouble("yaw", 0), (float) root.getDouble("pitch", 0));
+        return new Location(Bukkit.getWorld(root.getString("world")), root.getDouble("x"), root.getDouble("y"), root
+                .getDouble("z"), (float) root.getDouble("yaw", 0), (float) root.getDouble("pitch", 0));
     }
 
     public static ItemStack loadItemStack(DataKey root) {
@@ -49,8 +49,7 @@ public class StorageUtils {
         key.setInt("data", item.getDurability());
 
         key = key.getRelative("enchantments");
-        for (Enchantment enchantment : item.getEnchantments().keySet()) {
+        for (Enchantment enchantment : item.getEnchantments().keySet())
             key.setInt(Integer.toString(enchantment.getId()), item.getEnchantmentLevel(enchantment));
-        }
     }
 }
