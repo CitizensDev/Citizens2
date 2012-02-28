@@ -1,15 +1,15 @@
 package net.citizensnpcs.api.trait.trait;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.ItemBuilder;
+import net.citizensnpcs.api.util.StorageUtils;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Represents an NPC's equipment. This only is applicable to human NPCs.
@@ -26,36 +26,29 @@ public class Equipment extends Trait {
     @Override
     public void load(DataKey key) throws NPCLoadException {
         if (key.keyExists("hand"))
-            equipment[0] = ItemBuilder.getItemStack(key.getRelative("hand"));
+            equipment[0] = StorageUtils.loadItemStack(key.getRelative("hand"));
         if (key.keyExists("helmet"))
-            equipment[1] = ItemBuilder.getItemStack(key.getRelative("helmet"));
+            equipment[1] = StorageUtils.loadItemStack(key.getRelative("helmet"));
         if (key.keyExists("chestplate"))
-            equipment[2] = ItemBuilder.getItemStack(key.getRelative("chestplate"));
+            equipment[2] = StorageUtils.loadItemStack(key.getRelative("chestplate"));
         if (key.keyExists("leggings"))
-            equipment[3] = ItemBuilder.getItemStack(key.getRelative("leggings"));
+            equipment[3] = StorageUtils.loadItemStack(key.getRelative("leggings"));
         if (key.keyExists("boots"))
-            equipment[4] = ItemBuilder.getItemStack(key.getRelative("boots"));
+            equipment[4] = StorageUtils.loadItemStack(key.getRelative("boots"));
 
         // Must set equipment after the NPC entity has been created
-        Bukkit.getScheduler().scheduleAsyncDelayedTask(Bukkit.getPluginManager().getPlugin("Citizens"), new Runnable() {
-
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("Citizens"), new Runnable() {
             @Override
             public void run() {
                 if (npc.getBukkitEntity() instanceof Player) {
                     Player player = (Player) npc.getBukkitEntity();
                     if (equipment[0] != null)
                         player.setItemInHand(equipment[0]);
-                    if (equipment[1] != null)
-                        player.getInventory().setHelmet(equipment[1]);
-                    if (equipment[2] != null)
-                        player.getInventory().setChestplate(equipment[2]);
-                    if (equipment[3] != null)
-                        player.getInventory().setLeggings(equipment[3]);
-                    if (equipment[4] != null)
-                        player.getInventory().setBoots(equipment[4]);
+                    ItemStack[] armor = { equipment[1], equipment[2], equipment[3], equipment[4] };
+                    player.getInventory().setArmorContents(armor);
                 }
             }
-        }, 10);
+        }, 1);
     }
 
     @Override
@@ -83,7 +76,7 @@ public class Equipment extends Trait {
      *            Slot where the armor is located (0, 1, 2, 3, or 4)
      * @return ItemStack from the given armor slot
      */
-    public ItemStack getEquipment(int slot) {
+    public ItemStack get(int slot) {
         if (slot < 0 || slot > 4)
             throw new IllegalArgumentException("Slot must be between 0 and 4");
         return equipment[slot];
@@ -98,9 +91,9 @@ public class Equipment extends Trait {
      *            Item to set the armor as
      */
     @SuppressWarnings("deprecation")
-    public void setEquipment(int slot, ItemStack item) {
+    public void set(int slot, ItemStack item) {
         if (!(npc.getBukkitEntity() instanceof Player))
-            throw new UnsupportedOperationException("Cannot set the armor of an NPC that is not a player.");
+            throw new UnsupportedOperationException("Only player NPCs can be equipped");
 
         Player player = (Player) npc.getBukkitEntity();
         switch (slot) {
@@ -134,7 +127,7 @@ public class Equipment extends Trait {
 
     private void saveOrRemove(DataKey key, ItemStack item) {
         if (item != null)
-            ItemBuilder.saveItem(item, key);
+            StorageUtils.saveItem(key, item);
         else {
             if (key.keyExists(""))
                 key.removeKey("");

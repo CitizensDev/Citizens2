@@ -4,7 +4,7 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.ItemBuilder;
+import net.citizensnpcs.api.util.StorageUtils;
 
 import org.bukkit.inventory.ItemStack;
 
@@ -54,7 +54,7 @@ public class Inventory extends Trait {
             // Clear previous items to avoid conflicts
             key.removeKey(String.valueOf(slot));
             if (item != null)
-                ItemBuilder.saveItem(item, key.getRelative(String.valueOf(slot)));
+                StorageUtils.saveItem(key.getRelative(String.valueOf(slot)), item);
             slot++;
         }
     }
@@ -62,7 +62,7 @@ public class Inventory extends Trait {
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
         ItemStack[] contents = new ItemStack[36];
         for (DataKey slotKey : key.getIntegerSubKeys())
-            contents[Integer.parseInt(slotKey.name())] = ItemBuilder.getItemStack(slotKey);
+            contents[Integer.parseInt(slotKey.name())] = StorageUtils.loadItemStack(slotKey);
         return contents;
     }
 
