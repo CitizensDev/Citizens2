@@ -102,7 +102,9 @@ public class EquipmentEditor extends Editor {
         // Now edit the equipment based on the slot
         if (trait.getEquipment(slot) != null && trait.getEquipment(slot).getType() != Material.AIR)
             player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.getEquipment(slot));
-        trait.setEquipment(slot, hand);
+        ItemStack set = hand;
+        set.setAmount(1);
+        trait.setEquipment(slot, set);
         if (hand.getAmount() > 1)
             hand.setAmount(hand.getAmount() - 1);
         else
