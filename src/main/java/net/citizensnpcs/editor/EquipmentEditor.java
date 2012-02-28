@@ -108,7 +108,8 @@ public class EquipmentEditor extends Editor {
         else
             hand = null;
         player.setItemInHand(hand);
-        set.setAmount(1);
+        if (set != null)
+            set.setAmount(1);
         trait.setEquipment(slot, set);
     }
 }
