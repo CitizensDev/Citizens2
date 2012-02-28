@@ -6,6 +6,7 @@ import net.citizensnpcs.api.ai.AI;
 import net.citizensnpcs.api.ai.NavigationCallback;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StorageUtils;
 
 import org.bukkit.ChatColor;
@@ -24,7 +25,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         return new Editor() {
             @Override
             public void begin() {
-                player.sendMessage(ChatColor.GREEN + "Entered the linear waypoint editor!");
+                player.sendMessage(ChatColor.AQUA + "Entered the linear waypoint editor!");
                 player.sendMessage(ChatColor.GREEN + "Left click to add waypoint, right click to remove.");
             }
 
@@ -40,11 +41,11 @@ public class LinearWaypointProvider implements WaypointProvider {
                     return;
                 if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                     waypoints.add(new Waypoint(event.getClickedBlock().getLocation()));
-                    player.sendMessage(ChatColor.GREEN + "Added a waypoint.");
+                    Messaging.send(player, "<e>Added<a> a waypoint.");
                 } else if (waypoints.size() > 0) {
                     waypoints.remove(waypoints.size() - 1);
-                    player.sendMessage(ChatColor.GREEN
-                            + String.format("Removed a waypoint ({0} remaining)", waypoints.size()));
+                    Messaging.send(player,
+                            String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining)", waypoints.size()));
                 }
             }
         };
@@ -92,7 +93,7 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @Override
         public void onAttach(AI ai) {
-            if (attached != null && attached != ai) {
+            if (attached == null || attached != ai) {
                 executing = false;
                 currentIndex = -1;
                 cycle();
