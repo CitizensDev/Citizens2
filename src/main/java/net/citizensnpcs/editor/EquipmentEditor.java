@@ -2,14 +2,17 @@ package net.citizensnpcs.editor;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.util.Messaging;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class EquipmentEditor extends Editor {
     private final Citizens plugin;
@@ -27,7 +30,7 @@ public class EquipmentEditor extends Editor {
         Messaging.send(player, "<a>Entered the equipment editor!");
         Messaging.send(player, "<a>Right click to equip armor and items.");
         Messaging.send(player, "<a>Right click while crouching to equip armor in the NPC's hand.");
-        Messaging.send(player, "<a>Left click to remove all armor and items.");
+        Messaging.send(player, "<a>Right click with an empty hand to remove all armor and items.");
     }
 
     @Override
@@ -48,6 +51,62 @@ public class EquipmentEditor extends Editor {
                 || !event.getPlayer().getName().equals(player.getName()))
             return;
 
-        npc.chat("You clicked me!");
+        ItemStack hand = player.getItemInHand();
+        Equipment trait = npc.getTrait(Equipment.class);
+        int slot = 0;
+        // First, determine the slot to edit
+        switch (hand.getType()) {
+        case PUMPKIN:
+        case JACK_O_LANTERN:
+        case LEATHER_HELMET:
+        case CHAINMAIL_HELMET:
+        case GOLD_HELMET:
+        case IRON_HELMET:
+        case DIAMOND_HELMET:
+            if (!player.isSneaking())
+                slot = 1;
+            break;
+        case LEATHER_CHESTPLATE:
+        case CHAINMAIL_CHESTPLATE:
+        case GOLD_CHESTPLATE:
+        case IRON_CHESTPLATE:
+        case DIAMOND_CHESTPLATE:
+            if (!player.isSneaking())
+                slot = 2;
+            break;
+        case LEATHER_LEGGINGS:
+        case CHAINMAIL_LEGGINGS:
+        case GOLD_LEGGINGS:
+        case IRON_LEGGINGS:
+        case DIAMOND_LEGGINGS:
+            if (!player.isSneaking())
+                slot = 3;
+            break;
+        case LEATHER_BOOTS:
+        case CHAINMAIL_BOOTS:
+        case GOLD_BOOTS:
+        case IRON_BOOTS:
+        case DIAMOND_BOOTS:
+            if (!player.isSneaking())
+                slot = 4;
+            break;
+        case AIR:
+            for (int i = 0; i < 4; i++) {
+                if (trait.getEquipment(i) != null && trait.getEquipment(i).getType() != Material.AIR) {
+                    player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.getEquipment(i));
+                    trait.setEquipment(i, null);
+                }
+            }
+            Messaging.send(player, "<e>" + npc.getName() + " <a>had all of its items removed.");
+        }
+        // Now edit the equipment based on the slot
+        if (trait.getEquipment(slot) != null && trait.getEquipment(slot).getType() != Material.AIR)
+            player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.getEquipment(slot));
+        trait.setEquipment(slot, hand);
+        if (hand.getAmount() > 1)
+            hand.setAmount(hand.getAmount() - 1);
+        else
+            hand = null;
+        player.setItemInHand(hand);
     }
 }

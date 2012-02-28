@@ -14,6 +14,7 @@ import net.citizensnpcs.api.trait.Character;
 import net.citizensnpcs.api.trait.DefaultInstanceFactory;
 import net.citizensnpcs.api.trait.InstanceFactory;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
@@ -60,7 +61,7 @@ public class Citizens extends JavaPlugin {
     private volatile CitizensNPCManager npcManager;
     private final InstanceFactory<Character> characterManager = DefaultInstanceFactory.create();
     private final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create(Owner.class, Spawned.class,
-            LookClose.class, SpawnLocation.class, Inventory.class, MobType.class, Waypoints.class);
+            LookClose.class, SpawnLocation.class, Inventory.class, MobType.class, Waypoints.class, Equipment.class);
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private Storage saves;
