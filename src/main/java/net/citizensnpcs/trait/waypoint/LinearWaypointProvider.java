@@ -32,6 +32,12 @@ public class LinearWaypointProvider implements WaypointProvider {
             @Override
             public void end() {
                 player.sendMessage(ChatColor.GREEN + "Exited linear waypoint editor.");
+                if (waypoints.size() == 0)
+                    callback.currentIndex = -1;
+                else if (callback.ai != null && callback.currentIndex == -1) {
+                    callback.currentIndex = 0;
+                    callback.ai.setDestination(waypoints.get(0).getLocation());
+                }
             }
 
             @EventHandler
@@ -39,6 +45,7 @@ public class LinearWaypointProvider implements WaypointProvider {
             public void onPlayerInteract(PlayerInteractEvent event) {
                 if (!event.getPlayer().equals(player))
                     return;
+
                 if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                     waypoints.add(new Waypoint(event.getClickedBlock().getLocation()));
                     Messaging.send(player, "<e>Added<a> a waypoint.");
@@ -47,10 +54,6 @@ public class LinearWaypointProvider implements WaypointProvider {
                     Messaging.send(player,
                             String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining)", waypoints.size()));
                 }
-                if (waypoints.size() == 0)
-                    callback.currentIndex = -1;
-                else if (callback.currentIndex == -1)
-                    callback.currentIndex = 0;
             }
         };
     }
@@ -79,7 +82,8 @@ public class LinearWaypointProvider implements WaypointProvider {
 
     private class LinearNavigationCallback extends NavigationCallback {
         private boolean executing;
-        private int currentIndex;
+        private int currentIndex = -1;
+        private AI ai;
 
         @Override
         public boolean onCancel(AI ai, PathCancelReason reason) {
@@ -98,6 +102,7 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @Override
         public void onAttach(AI ai) {
+            this.ai = ai;
             executing = false;
             currentIndex = -1;
             cycle();

@@ -79,6 +79,13 @@ public class CitizensAI implements AI {
             }
         }
         executing = new MoveStrategy(npc, destination);
+        Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
+        while (itr.hasNext()) {
+            NavigationCallback next = itr.next().get();
+            if (next == null || next.onBegin(this)) {
+                itr.remove();
+            }
+        }
     }
 
     @Override
@@ -114,6 +121,7 @@ public class CitizensAI implements AI {
         if (paused)
             return;
         if (executing != null && executing.update()) {
+            Messaging.log("finished");
             Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
             while (itr.hasNext()) {
                 NavigationCallback next = itr.next().get();

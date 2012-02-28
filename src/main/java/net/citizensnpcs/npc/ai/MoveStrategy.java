@@ -19,7 +19,7 @@ public class MoveStrategy implements PathStrategy {
     private final Random random = new Random();
 
     public MoveStrategy(CitizensNPC handle, Location destination) {
-        this.handle = (EntityLiving) handle.getHandle();
+        this.handle = handle.getHandle();
         this.path = this.handle.world.a(this.handle, destination.getBlockX(), destination.getBlockY(),
                 destination.getBlockZ(), 16F);
     }
