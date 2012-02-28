@@ -91,7 +91,7 @@ public class EquipmentEditor extends Editor {
                 slot = 4;
             break;
         case AIR:
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 5; i++) {
                 if (trait.get(i) != null && trait.get(i).getType() != Material.AIR) {
                     player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.get(i));
                     trait.set(i, null);
