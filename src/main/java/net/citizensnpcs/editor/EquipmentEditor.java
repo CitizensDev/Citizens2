@@ -43,10 +43,11 @@ public class EquipmentEditor extends Editor {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (plugin.getNPCManager().isNPC(event.getRightClicked())
-                && plugin.getNPCManager().getNPC(event.getRightClicked()).equals(npc)
-                && event.getPlayer().getName().equals(player.getName())) {
-            npc.chat("You clicked me!");
-        }
+        if (!plugin.getNPCManager().isNPC(event.getRightClicked())
+                || !plugin.getNPCManager().getNPC(event.getRightClicked()).equals(npc)
+                || !event.getPlayer().getName().equals(player.getName()))
+            return;
+
+        npc.chat("You clicked me!");
     }
 }

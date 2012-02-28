@@ -136,8 +136,7 @@ public class Citizens extends JavaPlugin {
     public void onDisable() {
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
-            config.save();
-            saveNPCs();
+            save();
             for (NPC npc : npcManager)
                 npc.despawn();
             getServer().getScheduler().cancelTasks(this);
@@ -232,6 +231,13 @@ public class Citizens extends JavaPlugin {
         }.start();
     }
 
+    public void save() {
+        config.save();
+        for (NPC npc : npcManager)
+            npc.save(saves.getKey("npc." + npc.getId()));
+        saves.save();
+    }
+
     public void reload() throws NPCLoadException {
         getServer().getScheduler().cancelTasks(this);
         Editor.leaveAll();
@@ -267,12 +273,6 @@ public class Citizens extends JavaPlugin {
         commands.register(EditorCommands.class);
         commands.register(HelpCommands.class);
         commands.register(NPCCommands.class);
-    }
-
-    private void saveNPCs() {
-        for (NPC npc : npcManager)
-            npc.save(saves.getKey("npc." + npc.getId()));
-        saves.save();
     }
 
     private void setupNPCs() throws NPCLoadException {
