@@ -100,7 +100,7 @@ public class EquipmentEditor extends Editor {
             Messaging.send(player, "<e>" + npc.getName() + " <a>had all of its items removed.");
         }
         // Now edit the equipment based on the slot
-        if (trait.get(slot) != null) {
+        if (trait.get(slot) != null && trait.get(slot).getType() != Material.AIR) {
             player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.get(slot));
         }
 
