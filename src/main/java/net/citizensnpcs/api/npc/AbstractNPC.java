@@ -35,8 +35,7 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void addTrait(Trait trait) {
         if (trait == null) {
-            getBukkitEntity().getServer().getLogger().log(Level.SEVERE,
-                    "trait cannot be null. Did you register it properly?");
+            Bukkit.getLogger().log(Level.SEVERE, "trait cannot be null. Did you register it properly?");
             return;
         }
         if (trait instanceof Runnable) {
@@ -121,6 +120,7 @@ public abstract class AbstractNPC implements NPC {
                         "[Citizens] The trait '" + traitKey.name()
                                 + "' failed to load properly for the NPC with the ID '" + getId() + "'. "
                                 + ex.getMessage());
+                ex.printStackTrace();
             }
             addTrait(trait);
         }
