@@ -60,6 +60,7 @@ public class MoveStrategy implements PathStrategy {
         if (vector.b - yHeight > 0.0D)
             jump();
         handle.d(handle.ar());
+        handle.d();
         // handle.walk();
 
         if (handle.positionChanged)
