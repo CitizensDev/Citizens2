@@ -52,7 +52,6 @@ public class LinearWaypointProvider implements WaypointProvider {
 
     @Override
     public void load(DataKey key) {
-        waypoints.clear();
         for (DataKey root : key.getRelative("waypoints").getIntegerSubKeys()) {
             waypoints.add(new Waypoint(StorageUtils.loadLocation(root)));
         }
