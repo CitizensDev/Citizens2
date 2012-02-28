@@ -36,6 +36,8 @@ public class LinearWaypointProvider implements WaypointProvider {
             @EventHandler
             @SuppressWarnings("unused")
             public void onPlayerInteract(PlayerInteractEvent event) {
+                if (!event.getPlayer().equals(player))
+                    return;
                 if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                     waypoints.add(new Waypoint(event.getClickedBlock().getLocation()));
                     player.sendMessage(ChatColor.GREEN + "Added a waypoint.");
