@@ -59,7 +59,7 @@ public class MoveStrategy implements PathStrategy {
         handle.yaw += getYawDifference(diffZ, diffX);
         if (vector.b - yHeight > 0.0D)
             jump();
-        handle.d();
+        handle.d(handle.ar());
         // handle.walk();
 
         if (handle.positionChanged)
