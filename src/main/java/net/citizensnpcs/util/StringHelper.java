@@ -63,8 +63,9 @@ public class StringHelper {
 
     public static String parseColors(Object string) {
         String parsed = string.toString();
-        for (ChatColor color : ChatColor.values())
+        for (ChatColor color : ChatColor.values()) {
             parsed = parsed.replace("<" + color.getChar() + ">", color.toString());
+        }
         return parsed;
     }
 
