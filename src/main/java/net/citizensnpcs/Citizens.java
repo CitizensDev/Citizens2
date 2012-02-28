@@ -35,8 +35,10 @@ import net.citizensnpcs.command.exception.RequirementMissingException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
+import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Metrics;
 import net.citizensnpcs.util.StringHelper;
@@ -58,7 +60,7 @@ public class Citizens extends JavaPlugin {
     private volatile CitizensNPCManager npcManager;
     private final InstanceFactory<Character> characterManager = DefaultInstanceFactory.create();
     private final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create(Owner.class, Spawned.class,
-            LookClose.class, SpawnLocation.class, Inventory.class, MobType.class);
+            LookClose.class, SpawnLocation.class, Inventory.class, MobType.class, Waypoints.class);
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private Storage saves;
@@ -232,6 +234,7 @@ public class Citizens extends JavaPlugin {
 
     public void reload() throws NPCLoadException {
         getServer().getScheduler().cancelTasks(this);
+        Editor.leaveAll();
         config.load();
         for (NPC npc : npcManager)
             npc.despawn();
