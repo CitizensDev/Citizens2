@@ -47,6 +47,10 @@ public class LinearWaypointProvider implements WaypointProvider {
                     Messaging.send(player,
                             String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining)", waypoints.size()));
                 }
+                if (waypoints.size() == 0)
+                    callback.currentIndex = -1;
+                else if (callback.currentIndex == -1)
+                    callback.currentIndex = 0;
             }
         };
     }
@@ -71,10 +75,11 @@ public class LinearWaypointProvider implements WaypointProvider {
         return callback;
     }
 
-    private final NavigationCallback callback = new NavigationCallback() {
+    private final LinearNavigationCallback callback = new LinearNavigationCallback();
+
+    private class LinearNavigationCallback extends NavigationCallback {
         private boolean executing;
         private int currentIndex;
-        private AI attached;
 
         @Override
         public boolean onCancel(AI ai, PathCancelReason reason) {
@@ -93,13 +98,11 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @Override
         public void onAttach(AI ai) {
-            if (attached == null || attached != ai) {
-                executing = false;
-                currentIndex = -1;
-                cycle();
-                if (currentIndex != -1) {
-                    ai.setDestination(waypoints.get(currentIndex).getLocation());
-                }
+            executing = false;
+            currentIndex = -1;
+            cycle();
+            if (currentIndex != -1) {
+                ai.setDestination(waypoints.get(currentIndex).getLocation());
             }
         }
 
