@@ -34,6 +34,11 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void addTrait(Trait trait) {
+        if (trait == null) {
+            getBukkitEntity().getServer().getLogger().log(Level.SEVERE,
+                    "trait cannot be null. Did you register it properly?");
+            return;
+        }
         if (trait instanceof Runnable) {
             runnables.add((Runnable) trait);
             if (traits.containsKey(trait.getClass()))
