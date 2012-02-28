@@ -48,7 +48,7 @@ public class EquipmentEditor extends Editor {
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         if (!plugin.getNPCManager().isNPC(event.getRightClicked())
                 || !plugin.getNPCManager().getNPC(event.getRightClicked()).equals(npc)
-                || !event.getPlayer().getName().equals(player.getName()))
+                || !event.getPlayer().equals(player))
             return;
 
         ItemStack hand = player.getItemInHand();
@@ -92,24 +92,28 @@ public class EquipmentEditor extends Editor {
             break;
         case AIR:
             for (int i = 0; i < 4; i++) {
-                if (trait.getEquipment(i) != null && trait.getEquipment(i).getType() != Material.AIR) {
-                    player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.getEquipment(i));
-                    trait.setEquipment(i, null);
+                if (trait.get(i) != null && trait.get(i).getType() != Material.AIR) {
+                    player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.get(i));
+                    trait.set(i, null);
                 }
             }
             Messaging.send(player, "<e>" + npc.getName() + " <a>had all of its items removed.");
         }
         // Now edit the equipment based on the slot
-        if (trait.getEquipment(slot) != null && trait.getEquipment(slot).getType() != Material.AIR)
-            player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.getEquipment(slot));
-        trait.setEquipment(slot, hand);
-        if (hand.getAmount() > 1)
-            hand.setAmount(hand.getAmount() - 1);
-        else
-            hand = null;
-        player.setItemInHand(hand);
-        if (set.getType() != Material.AIR)
+        if (trait.get(slot) != null) {
+            player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.get(slot));
+        }
+
+        ItemStack set = hand;
+        if (set != null && set.getType() != Material.AIR) {
+            if (hand.getAmount() > 1) {
+                hand.setAmount(hand.getAmount() - 1);
+            } else {
+                hand = null;
+            }
+            player.setItemInHand(hand);
             set.setAmount(1);
-        trait.setEquipment(slot, set);
+        }
+        trait.set(slot, set);
     }
 }
