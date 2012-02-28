@@ -50,4 +50,8 @@ public class Waypoints extends Trait {
     }
 
     private static final InstanceFactory<WaypointProvider> providers = DefaultInstanceFactory.create();
+
+    static {
+        providers.register(LinearWaypointProvider.class, "linear");
+    }
 }
