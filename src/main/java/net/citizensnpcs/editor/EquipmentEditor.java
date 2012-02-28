@@ -27,10 +27,10 @@ public class EquipmentEditor extends Editor {
 
     @Override
     public void begin() {
-        Messaging.send(player, "<a>Entered the equipment editor!");
-        Messaging.send(player, "<a>Right click to equip armor and items.");
-        Messaging.send(player, "<a>Right click while crouching to equip armor in the NPC's hand.");
-        Messaging.send(player, "<a>Right click with an empty hand to remove all armor and items.");
+        Messaging.send(player, "<2>Entered the equipment editor!");
+        Messaging.send(player, "<e>Right click <a>to equip armor and items.");
+        Messaging.send(player, "<e>Right click <a>while <e>crouching <a>to equip armor in the NPC's hand.");
+        Messaging.send(player, "<e>Right click <a>with an <e>empty hand <a>to remove all armor and items.");
     }
 
     @Override
