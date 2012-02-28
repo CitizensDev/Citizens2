@@ -40,7 +40,6 @@ public class AdminCommands {
              permission = "admin")
     @ServerCommand
     public void reload(CommandContext args, CommandSender sender, NPC npc) {
-        // TODO possibly could be made more safe
         Messaging.send(sender, "<e>Reloading Citizens...");
         try {
             plugin.reload();
@@ -49,5 +48,20 @@ public class AdminCommands {
             Messaging.sendError(sender, "Error occured while reloading, see console.");
             e.printStackTrace();
         }
+    }
+
+    @Command(
+             aliases = { "citizens" },
+             usage = "save",
+             desc = "Save NPCs",
+             modifiers = { "save" },
+             min = 1,
+             max = 1,
+             permission = "admin")
+    @ServerCommand
+    public void save(CommandContext args, CommandSender sender, NPC npc) {
+        Messaging.send(sender, "<e>Saving Citizens...");
+        plugin.save();
+        Messaging.send(sender, "<e>Citizens saved.");
     }
 }
