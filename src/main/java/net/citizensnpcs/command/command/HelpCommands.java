@@ -14,13 +14,10 @@ import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
-import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StringHelper;
+import net.citizensnpcs.util.Paginator;
 
 @Requirements
 public class HelpCommands {
-    private static final int LINES_PER_PAGE = 9;
-
     private final CommandManager cmdManager;
 
     public HelpCommands(Citizens plugin) {
@@ -38,7 +35,11 @@ public class HelpCommands {
     @Requirements
     public void citizensHelp(CommandContext args, Player player, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
-        if (!sendPage(player, args.getCommand(), page))
+        Paginator paginator = new Paginator();
+        for (String line : getLines(player, "citizens"))
+            paginator.addLine(line);
+        paginator.setHeaderText("Citizens Help");
+        if (!paginator.sendPage(player, page))
             throw new CommandException("The page '" + page + "' does not exist.");
     }
 
@@ -53,28 +54,12 @@ public class HelpCommands {
     @Requirements
     public void npcHelp(CommandContext args, Player player, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
-        if (!sendPage(player, args.getCommand(), page))
+        Paginator paginator = new Paginator();
+        for (String line : getLines(player, "npc"))
+            paginator.addLine(line);
+        paginator.setHeaderText("NPC Help");
+        if (!paginator.sendPage(player, page))
             throw new CommandException("The page '" + page + "' does not exist.");
-    }
-
-    private boolean sendPage(Player player, String baseCommand, int page) {
-        List<String> lines = getLines(player, baseCommand);
-        int pages = (int) ((lines.size() / LINES_PER_PAGE == 0) ? 1 : Math.ceil((double) lines.size() / LINES_PER_PAGE));
-        if (page < 0 || page > pages)
-            return false;
-
-        int startIndex = LINES_PER_PAGE * page - LINES_PER_PAGE;
-        int endIndex = page * LINES_PER_PAGE;
-
-        Messaging.send(player, StringHelper.wrapHeader("<e>"
-                + (baseCommand.equalsIgnoreCase("npc") ? "NPC" : StringHelper.capitalize(baseCommand.toLowerCase()))
-                + " Help <f>" + page + "/" + pages));
-
-        if (lines.size() < endIndex)
-            endIndex = lines.size();
-        for (String line : lines.subList(startIndex, endIndex))
-            Messaging.send(player, line);
-        return true;
     }
 
     private List<String> getLines(Player player, String baseCommand) {

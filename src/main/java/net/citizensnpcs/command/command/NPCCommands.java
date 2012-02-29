@@ -45,7 +45,7 @@ public class NPCCommands {
 
     @Command(
              aliases = { "npc" },
-             usage = "create [name] --type (type) --char (character)",
+             usage = "create [name] (--type (type) --char (char))",
              desc = "Create a new NPC",
              modifiers = { "create" },
              min = 2,
@@ -281,5 +281,18 @@ public class NPCCommands {
         String msg = StringHelper.wrap(npc.getName()) + " will "
                 + (trait.shouldLookClose() ? "now rotate" : "no longer rotate");
         Messaging.send(player, msg += " when a player is nearby.");
+    }
+
+    @Command(
+             aliases = { "npc" },
+             usage = "list (--type (type) --char (char)",
+             desc = "List NPCs",
+             modifiers = { "list" },
+             min = 2,
+             max = 5,
+             permission = "npc.list")
+    @Requirements
+    public void list(CommandContext args, Player player, NPC npc) {
+
     }
 }
