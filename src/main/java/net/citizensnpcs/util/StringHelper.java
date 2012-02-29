@@ -71,11 +71,11 @@ public class StringHelper {
 
     public static String capitalize(Object string) {
         String capitalize = string.toString();
-        return capitalize.replaceFirst(String.valueOf(capitalize.charAt(0)),
-                String.valueOf(Character.toUpperCase(capitalize.charAt(0))));
+        return capitalize.replaceFirst(String.valueOf(capitalize.charAt(0)), String.valueOf(Character
+                .toUpperCase(capitalize.charAt(0))));
     }
 
     public static String wrapHeader(Object string) {
-        return ChatColor.GREEN + "=====[ " + string.toString() + ChatColor.GREEN + " ]=====";
+        return "<a>=====[ " + string.toString() + "<a> ]=====";
     }
 }
