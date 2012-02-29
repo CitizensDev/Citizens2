@@ -80,8 +80,8 @@ public class DatabaseStorage implements Storage {
                 rs.close();
                 rs = conn.getMetaData().getImportedKeys(null, null, entry.getKey());
                 while (rs.next()) {
-                    ForeignKey key = new ForeignKey(tables.get(rs.getString("FKTABLE_NAME")), rs
-                            .getString("PKCOLUMN_NAME"));
+                    ForeignKey key = new ForeignKey(tables.get(rs.getString("FKTABLE_NAME")),
+                            rs.getString("PKCOLUMN_NAME"));
                     entry.getValue().foreignKeys.put(key.localColumn, key);
                 }
                 rs.close();
@@ -157,6 +157,11 @@ public class DatabaseStorage implements Storage {
             this.tableName = string;
         }
 
+        private DatabaseKey(Table table, String currentKey) {
+            this.table = table;
+            this.currentKey = currentKey;
+        }
+
         @Override
         public void copy(String to) {
         }
@@ -199,6 +204,8 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public DataKey getRelative(String relative) {
+            if (relative.isEmpty())
+                return this;
             String[] split = relative.split("\\.");
             if (table == null) {
                 String primary = null;
@@ -219,40 +226,39 @@ public class DatabaseStorage implements Storage {
                 }
             }
             Connection conn = getConnection();
-            for (int i = 0; i < split.length; ++i) {
-                if (i + 1 == split.length && table.columns.contains(split[i])) {
-                    continue;
-                }
-                if (!tables.containsKey(split[i])) {
-                    createTable(split[i], Types.INTEGER);
-                }
-                Table foreign = tables.get(split[i]);
-                if (!table.foreignKeys.containsKey("fk_" + foreign.name)) {
-                    createForeignKey(table, foreign);
-                }
-                ForeignKey key = table.foreignKeys.get("fk_" + foreign.name);
-                String name = key.foreignTable.name;
-                try {
-                    PreparedStatement stmt = conn.prepareStatement("SELECT `" + key.foreignTable.primaryKey
-                            + "` FROM `" + name + "` INNER JOIN `" + table.name + "` ON `"
-                            + key.foreignTable.primaryKey + "`=`" + key.localColumn + "`");
-                    ResultSet rs = stmt.executeQuery();
-                    if (!rs.next()) {
-                        System.out.println("NO MATCHING RELATION");
-                        // TODO: need to create a memo of some sort to create
-                        // these relationships on setX, but fake it so that
-                        // we're on the next table.
-                        continue;
-                    }
-                    currentKey = rs.getString(key.foreignTable.primaryKey);
-                    table = key.foreignTable;
-                    System.out.println("switched to new table " + table.name);
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
+            String rel = split[0];
+            // if (i + 1 == split.length && table.columns.contains(split[i])) {
+            // continue;
+            // }
+            if (!tables.containsKey(rel)) {
+                createTable(rel, Types.INTEGER);
             }
+            Table foreign = tables.get(rel);
+            if (!table.foreignKeys.containsKey("fk_" + foreign.name)) {
+                createForeignKey(table, foreign);
+            }
+            ForeignKey key = table.foreignKeys.get("fk_" + foreign.name);
+            String name = key.foreignTable.name;
+            try {
+                PreparedStatement stmt = conn.prepareStatement("SELECT `" + key.foreignTable.primaryKey + "` FROM `"
+                        + name + "` INNER JOIN `" + table.name + "` ON `" + key.foreignTable.primaryKey + "`=`"
+                        + key.localColumn + "`");
+                ResultSet rs = stmt.executeQuery();
+                if (!rs.next()) {
+                    System.out.println("NO MATCHING RELATION");
+                    // TODO: need to create a memo of some sort to create
+                    // these relationships on setX, but fake it so that
+                    // we're on the next table.
+                    // continue;
+                }
+                DbUtils.closeQuietly(conn);
+                return new DatabaseKey(key.foreignTable, rs.getString(key.foreignTable.primaryKey));
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+
             DbUtils.closeQuietly(conn);
-            return this;
+            return null;
         }
 
         @Override
@@ -306,14 +312,16 @@ public class DatabaseStorage implements Storage {
         }
 
         private void setPrimitive(String key, Object value) {
+            Connection conn = getConnection();
+            PreparedStatement stmt = null;
             try {
-                Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement("UPDATE `" + table.name + "` SET `" + key + "`=" + value
-                        + " WHERE `" + table.primaryKey + "` =" + this.currentKey);
+                stmt = conn.prepareStatement("UPDATE `" + table.name + "` SET `" + key + "`=" + value + " WHERE `"
+                        + table.primaryKey + "` =" + this.currentKey);
                 stmt.execute();
-                DbUtils.closeQuietly(conn, stmt, null);
             } catch (SQLException ex) {
                 ex.printStackTrace();
+            } finally {
+                DbUtils.closeQuietly(conn, stmt, null);
             }
         }
 
