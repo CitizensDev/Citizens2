@@ -13,6 +13,7 @@ import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Requirements;
+import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
@@ -35,10 +36,10 @@ public class HelpCommands {
              max = 2,
              permission = "help")
     @Requirements
-    public void citizensHelp(CommandContext args, Player player, NPC npc) {
+    public void citizensHelp(CommandContext args, Player player, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         if (!sendPage(player, args.getCommand(), page))
-            Messaging.sendError(player, "The page '" + page + "' does not exist.");
+            throw new CommandException("The page '" + page + "' does not exist.");
     }
 
     @Command(
@@ -50,10 +51,10 @@ public class HelpCommands {
              max = 2,
              permission = "npc.help")
     @Requirements
-    public void npcHelp(CommandContext args, Player player, NPC npc) {
+    public void npcHelp(CommandContext args, Player player, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         if (!sendPage(player, args.getCommand(), page))
-            Messaging.sendError(player, "The page '" + page + "' does not exist.");
+            throw new CommandException("The page '" + page + "' does not exist.");
     }
 
     private boolean sendPage(Player player, String baseCommand, int page) {

@@ -12,6 +12,8 @@ import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
+import net.citizensnpcs.command.exception.CommandException;
+import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.util.Messaging;
@@ -114,32 +116,22 @@ public class NPCCommands {
              min = 1,
              max = 2)
     @Requirements
-    public void remove(CommandContext args, Player player, NPC npc) {
+    public void remove(CommandContext args, Player player, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
-            if (!args.getString(1).equals("all")) {
-                Messaging.sendError(player, "Incorrect syntax. /npc remove (all)");
-                return;
-            }
-            if (!player.hasPermission("citizens.npc.remove.all") && !player.hasPermission("citizens.admin")) {
-                Messaging.sendError(player, "You don't have permission to execute that command.");
-                return;
-            }
+            if (!args.getString(1).equals("all"))
+                throw new CommandException("Incorrect syntax. /npc remove (all)");
+            if (!player.hasPermission("citizens.npc.remove.all") && !player.hasPermission("citizens.admin"))
+                throw new NoPermissionsException();
             npcManager.removeAll();
             Messaging.send(player, "<a>You permanently removed all NPCs.");
             return;
         }
-        if (npc == null) {
-            Messaging.sendError(player, "You must have an NPC selected to execute that command.");
-            return;
-        }
-        if (!npc.getTrait(Owner.class).getOwner().equals(player.getName()) && !player.hasPermission("citizens.admin")) {
-            Messaging.sendError(player, "You must be the owner of this NPC to execute that command.");
-            return;
-        }
-        if (!player.hasPermission("citizens.npc.remove") && !player.hasPermission("citizens.admin")) {
-            Messaging.sendError(player, "You don't have permission to execute that command.");
-            return;
-        }
+        if (npc == null)
+            throw new CommandException("You must have an NPC selected to execute that command.");
+        if (!npc.getTrait(Owner.class).getOwner().equals(player.getName()) && !player.hasPermission("citizens.admin"))
+            throw new CommandException("You must be the owner of this NPC to execute that command.");
+        if (!player.hasPermission("citizens.npc.remove") && !player.hasPermission("citizens.admin"))
+            throw new NoPermissionsException();
         npc.remove();
         Messaging.send(player, "<a>You permanently removed " + StringHelper.wrap(npc.getName()) + ".");
     }
@@ -173,16 +165,12 @@ public class NPCCommands {
              max = 2,
              permission = "npc.select")
     @Requirements(ownership = true)
-    public void select(CommandContext args, Player player, NPC npc) {
+    public void select(CommandContext args, Player player, NPC npc) throws CommandException {
         NPC toSelect = npcManager.getNPC(args.getInteger(1));
-        if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn()) {
-            Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' is spawned.");
-            return;
-        }
-        if (npc != null && toSelect.getId() == npc.getId()) {
-            Messaging.sendError(player, "You already have that NPC selected.");
-            return;
-        }
+        if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn())
+            throw new CommandException("No NPC with the ID '" + args.getInteger(1) + "' is spawned.");
+        if (npc != null && toSelect.getId() == npc.getId())
+            throw new CommandException("You already have that NPC selected.");
         npcManager.selectNPC(player, toSelect);
         Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), toSelect);
     }
@@ -194,22 +182,16 @@ public class NPCCommands {
              modifiers = { "character" },
              min = 2,
              max = 2)
-    public void character(CommandContext args, Player player, NPC npc) {
+    public void character(CommandContext args, Player player, NPC npc) throws CommandException {
         String name = args.getString(1).toLowerCase();
         Character character = characterManager.getInstance(name, npc);
-        if (character == null) {
-            Messaging.sendError(player, "The character '" + args.getString(1) + "' does not exist.");
-            return;
-        }
-        if (npc.getCharacter() != null && npc.getCharacter().getName().equalsIgnoreCase(character.getName())) {
-            Messaging.sendError(player, "The NPC already has the character '" + name + "'.");
-            return;
-        }
+        if (character == null)
+            throw new CommandException("The character '" + args.getString(1) + "' does not exist.");
+        if (npc.getCharacter() != null && npc.getCharacter().getName().equalsIgnoreCase(character.getName()))
+            throw new CommandException("The NPC already has the character '" + name + "'.");
         if (!player.hasPermission("citizens.npc.character." + character.getName())
-                && !player.hasPermission("citizens.npc.character.*") && !player.hasPermission("citizens.admin")) {
-            Messaging.sendError(player, "You don't have permission to execute that command.");
-            return;
-        }
+                && !player.hasPermission("citizens.npc.character.*") && !player.hasPermission("citizens.admin"))
+            throw new NoPermissionsException();
         Messaging.send(player, StringHelper.wrap(npc.getName() + "'s") + " character is now '"
                 + StringHelper.wrap(name) + "'.");
         npc.setCharacter(character);
@@ -223,12 +205,10 @@ public class NPCCommands {
              min = 2,
              max = 2,
              permission = "npc.owner")
-    public void owner(CommandContext args, Player player, NPC npc) {
+    public void owner(CommandContext args, Player player, NPC npc) throws CommandException {
         String name = args.getString(1);
-        if (npc.getTrait(Owner.class).getOwner().equals(name)) {
-            Messaging.sendError(player, "'" + name + "' is already the owner of " + npc.getName() + ".");
-            return;
-        }
+        if (npc.getTrait(Owner.class).getOwner().equals(name))
+            throw new CommandException("'" + name + "' is already the owner of " + npc.getName() + ".");
         npc.getTrait(Owner.class).setOwner(name);
         Messaging.send(player, StringHelper.wrap(name) + " is now the owner of " + StringHelper.wrap(npc.getName())
                 + ".");
@@ -243,26 +223,21 @@ public class NPCCommands {
              max = 2,
              permission = "npc.spawn")
     @Requirements
-    public void spawn(CommandContext args, Player player, NPC npc) {
+    public void spawn(CommandContext args, Player player, NPC npc) throws CommandException {
         NPC respawn = npcManager.getNPC(args.getInteger(1));
-        if (respawn == null) {
-            Messaging.sendError(player, "No NPC with the ID '" + args.getInteger(1) + "' exists.");
-            return;
-        }
+        if (respawn == null)
+            throw new CommandException("No NPC with the ID '" + args.getInteger(1) + "' exists.");
 
-        if (!respawn.getTrait(Owner.class).getOwner().equals(player.getName())) {
-            Messaging.sendError(player, "You must be the owner of this NPC to execute that command.");
-            return;
-        }
+        if (!respawn.getTrait(Owner.class).getOwner().equals(player.getName()))
+            throw new CommandException("You must be the owner of this NPC to execute that command.");
 
         if (respawn.spawn(player.getLocation())) {
             npcManager.selectNPC(player, respawn);
             Messaging.send(player, ChatColor.GREEN + "You respawned " + StringHelper.wrap(respawn.getName())
                     + " at your location.");
-        } else {
-            Messaging.sendError(player, respawn.getName() + " is already spawned at another location."
+        } else
+            throw new CommandException(respawn.getName() + " is already spawned at another location."
                     + " Use '/npc tphere' to teleport the NPC to your location.");
-        }
     }
 
     @Command(

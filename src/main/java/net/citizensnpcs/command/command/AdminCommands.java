@@ -10,6 +10,7 @@ import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.ServerCommand;
+import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
@@ -39,14 +40,13 @@ public class AdminCommands {
              max = 1,
              permission = "admin")
     @ServerCommand
-    public void reload(CommandContext args, CommandSender sender, NPC npc) {
+    public void reload(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.send(sender, "<e>Reloading Citizens...");
         try {
             plugin.reload();
             Messaging.send(sender, "<e>Citizens reloaded.");
-        } catch (NPCLoadException e) {
-            Messaging.sendError(sender, "Error occured while reloading, see console.");
-            e.printStackTrace();
+        } catch (NPCLoadException ex) {
+            throw new CommandException("Error occured while reloading, see console.");
         }
     }
 
