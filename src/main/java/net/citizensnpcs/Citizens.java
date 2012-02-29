@@ -30,9 +30,8 @@ import net.citizensnpcs.command.command.AdminCommands;
 import net.citizensnpcs.command.command.EditorCommands;
 import net.citizensnpcs.command.command.HelpCommands;
 import net.citizensnpcs.command.command.NPCCommands;
+import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
-import net.citizensnpcs.command.exception.NoPermissionsException;
-import net.citizensnpcs.command.exception.RequirementMissingException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
@@ -110,25 +109,23 @@ public class Citizens extends JavaPlugin {
             try {
                 commands.execute(split, player, player == null ? sender : player, npc);
             } catch (ServerCommandException ex) {
-                sender.sendMessage("You must be in-game to execute that command.");
-            } catch (NoPermissionsException ex) {
-                Messaging.sendError(player, "You don't have permission to execute that command.");
+                Messaging.send(sender, "You must be in-game to execute that command.");
             } catch (CommandUsageException ex) {
                 Messaging.sendError(player, ex.getMessage());
                 Messaging.sendError(player, ex.getUsage());
-            } catch (RequirementMissingException ex) {
-                Messaging.sendError(player, ex.getMessage());
-            } catch (WrappedCommandException e) {
-                throw e.getCause();
-            } catch (UnhandledCommandException e) {
+            } catch (WrappedCommandException ex) {
+                throw ex.getCause();
+            } catch (UnhandledCommandException ex) {
                 return false;
+            } catch (CommandException ex) {
+                Messaging.sendError(player, ex.getMessage());
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ex) {
             Messaging.sendError(player, "That is not a valid number.");
-        } catch (Throwable excp) {
-            excp.printStackTrace();
+        } catch (Throwable ex) {
+            ex.printStackTrace();
             Messaging.sendError(player, "Please report this error: [See console]");
-            Messaging.sendError(player, excp.getClass().getName() + ": " + excp.getMessage());
+            Messaging.sendError(player, ex.getClass().getName() + ": " + ex.getMessage());
         }
         return true;
     }
