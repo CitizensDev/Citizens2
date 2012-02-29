@@ -289,8 +289,9 @@ public class NPCCommands {
 
     @Command(
              aliases = { "npc" },
-             usage = "list (page) (--owner (owner) --type (type) --char (char))",
+             usage = "list (page) ((-a) --owner (owner) --type (type) --char (char))",
              desc = "List NPCs",
+             flags = "a",
              modifiers = { "list" },
              min = 1,
              max = 2,
@@ -299,7 +300,10 @@ public class NPCCommands {
     public void list(CommandContext args, Player player, NPC npc) throws CommandException {
         List<NPC> npcs = new ArrayList<NPC>();
 
-        if (args.getValueFlags().size() == 0 && args.argsLength() == 1 || args.argsLength() == 2) {
+        if (args.hasFlag('a')) {
+            for (NPC add : npcManager)
+                npcs.add(add);
+        } else if (args.getValueFlags().size() == 0 && args.argsLength() == 1 || args.argsLength() == 2) {
             for (NPC add : npcManager)
                 if (add.getTrait(Owner.class).getOwner().equalsIgnoreCase(player.getName()))
                     npcs.add(add);
