@@ -1,5 +1,8 @@
 package net.citizensnpcs.command.command;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
@@ -17,6 +20,7 @@ import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.ChatColor;
@@ -72,7 +76,7 @@ public class NPCCommands {
         if (args.hasValueFlag("char")) {
             String character = args.getFlag("char").toLowerCase();
             if (characterManager.getInstance(character, create) == null) {
-                Messaging.sendError(player, "The character '" + args.getFlag("char") + "' does not exist. "
+                Messaging.sendError(player, "'" + args.getFlag("char") + "' is not a valid character. "
                         + create.getName() + " was created at your location without a character.");
                 success = false;
             } else {
@@ -285,14 +289,69 @@ public class NPCCommands {
 
     @Command(
              aliases = { "npc" },
-             usage = "list (--type (type) --char (char)",
+             usage = "list (page) (--owner (owner) --type (type) --char (char))",
              desc = "List NPCs",
              modifiers = { "list" },
-             min = 2,
-             max = 5,
+             min = 1,
+             max = 2,
              permission = "npc.list")
     @Requirements
-    public void list(CommandContext args, Player player, NPC npc) {
+    public void list(CommandContext args, Player player, NPC npc) throws CommandException {
+        List<NPC> npcs = new ArrayList<NPC>();
 
+        if (args.getValueFlags().size() == 0 && args.argsLength() == 1 || args.argsLength() == 2) {
+            for (NPC add : npcManager)
+                if (add.getTrait(Owner.class).getOwner().equalsIgnoreCase(player.getName()))
+                    npcs.add(add);
+        } else {
+            if (args.hasValueFlag("owner")) {
+                String name = args.getFlag("owner");
+                for (NPC add : npcManager)
+                    if (add.getTrait(Owner.class).getOwner().equalsIgnoreCase(name))
+                        npcs.add(add);
+            }
+
+            if (args.hasValueFlag("type")) {
+                String type = args.getFlag("type");
+                try {
+                    EntityType.valueOf(type.toUpperCase().replace('-', '_'));
+                } catch (IllegalArgumentException ex) {
+                    throw new CommandException("'" + type + "' is not a valid mob type.");
+                }
+
+                for (NPC add : npcManager)
+                    if (!npcs.contains(add) && add.getTrait(MobType.class).getType().equalsIgnoreCase(type))
+                        npcs.add(add);
+            }
+
+            if (args.hasValueFlag("char")) {
+                String character = args.getFlag("char");
+                if (characterManager.getInstance(character) == null)
+                    throw new CommandException("'" + character + "' is not a valid character.");
+
+                for (NPC add : npcManager.getNPCs(characterManager.getInstance(character).getClass()))
+                    if (!npcs.contains(add) && add.getCharacter() != null
+                            && add.getCharacter().getName().equals(character.toLowerCase()))
+                        npcs.add(add);
+            }
+        }
+
+        Paginator paginator = new Paginator();
+        paginator.setHeaderText("NPCs");
+        paginator.addLine("<e>Key: <a>ID  <b>Name");
+        for (int i = 0; i < npcs.size(); i += 2) {// 0,2,4,6,etc, size=3
+            String line = "<a>" + npcs.get(i).getId() + "<b>  " + npcs.get(i).getName();
+            if (npcs.size() >= i + 2)
+                line += "      " + "<a>" + npcs.get(i + 1).getId() + "<b>  " + npcs.get(i + 1).getName();
+            paginator.addLine(line);
+        }
+
+        int page = 1;
+        try {
+            page = args.getInteger(1);
+        } catch (Exception ex) {
+        }
+        if (!paginator.sendPage(player, page))
+            throw new CommandException("The page '" + page + "' does not exist.");
     }
 }
