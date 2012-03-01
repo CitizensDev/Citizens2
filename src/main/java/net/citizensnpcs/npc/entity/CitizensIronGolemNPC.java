@@ -6,7 +6,7 @@ import net.citizensnpcs.npc.CitizensNPCManager;
 import net.minecraft.server.EntityIronGolem;
 import net.minecraft.server.World;
 
-//import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.IronGolem;
 
 public class CitizensIronGolemNPC extends CitizensMobNPC {
 
@@ -14,10 +14,10 @@ public class CitizensIronGolemNPC extends CitizensMobNPC {
         super(manager, id, name, EntityIronGolemNPC.class);
     }
 
-    /*@Override
+    @Override
     public IronGolem getBukkitEntity() {
         return (IronGolem) getHandle().getBukkitEntity();
-    }*/
+    }
 
     public static class EntityIronGolemNPC extends EntityIronGolem {
 

@@ -47,12 +47,13 @@ public class NPCBuilder {
         types.put(EntityType.ENDERMAN, CitizensEndermanNPC.class);
         types.put(EntityType.GHAST, CitizensGhastNPC.class);
         types.put(EntityType.GIANT, CitizensGiantNPC.class);
-        // types.put(EntityType.IRON_GOLEM, CitizensIronGolemNPC.class);
+        types.put(EntityType.IRON_GOLEM, CitizensIronGolemNPC.class);
         types.put(EntityType.MAGMA_CUBE, CitizensMagmaCubeNPC.class);
         types.put(EntityType.MUSHROOM_COW, CitizensMushroomCowNPC.class);
-        // types.put(EntityType.OCELOT, CitizensOcelotNPC.class);
+        types.put(EntityType.OCELOT, CitizensOcelotNPC.class);
         types.put(EntityType.PIG, CitizensPigNPC.class);
         types.put(EntityType.PIG_ZOMBIE, CitizensPigZombieNPC.class);
+        types.put(EntityType.PLAYER, CitizensHumanNPC.class);
         types.put(EntityType.SHEEP, CitizensSheepNPC.class);
         types.put(EntityType.SILVERFISH, CitizensSilverfishNPC.class);
         types.put(EntityType.SKELETON, CitizensSkeletonNPC.class);
@@ -67,8 +68,6 @@ public class NPCBuilder {
 
     public CitizensNPC getByType(EntityType type, CitizensNPCManager npcManager, int id, String name) {
         Class<? extends CitizensNPC> npcClass = types.get(type);
-        if (npcClass == null)
-            npcClass = CitizensHumanNPC.class;
         try {
             return npcClass.getConstructor(CitizensNPCManager.class, int.class, String.class).newInstance(npcManager,
                     id, name);
