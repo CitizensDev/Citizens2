@@ -9,12 +9,13 @@ import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.metadata.Metadatable;
 
 /**
  * Represents an NPC with a Character and separate traits
  */
-public interface NPC {
+public interface NPC extends Metadatable, InventoryHolder {
 
     /**
      * Adds a trait to this NPC
@@ -78,13 +79,6 @@ public interface NPC {
     public int getId();
 
     /**
-     * Gets the inventory of this NPC
-     * 
-     * @return Inventory of this NPC
-     */
-    public Inventory getInventory();
-
-    /**
      * Gets the name of this NPC with color codes stripped
      * 
      * @return Stripped name of this NPC
@@ -131,15 +125,6 @@ public interface NPC {
     public boolean isSpawned();
 
     public void load(DataKey root) throws NPCLoadException;
-
-    /**
-     * Shows the inventory of this NPC to the given player
-     * 
-     * @param player
-     *            Player to show the inventory to
-     * @return Whether the inventory was successfully opened
-     */
-    public boolean openInventory(Player player);
 
     /**
      * Permanently removes this NPC

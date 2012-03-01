@@ -17,6 +17,8 @@ import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.Lists;
 
@@ -182,5 +184,25 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public List<MetadataValue> getMetadata(String key) {
+        return getBukkitEntity().getMetadata(key);
+    }
+
+    @Override
+    public boolean hasMetadata(String key) {
+        return getBukkitEntity().hasMetadata(key);
+    }
+
+    @Override
+    public void removeMetadata(String key, Plugin plugin) {
+        getBukkitEntity().removeMetadata(key, plugin);
+    }
+
+    @Override
+    public void setMetadata(String key, MetadataValue value) {
+        getBukkitEntity().setMetadata(key, value);
     }
 }
