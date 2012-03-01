@@ -1,32 +1,32 @@
 package net.citizensnpcs.npc;
 
-import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
-import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.util.Messaging;
+
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 public abstract class CitizensNPC extends AbstractNPC {
     protected final CitizensNPCManager manager;
     protected final CitizensAI ai = new CitizensAI(this);
     protected EntityLiving mcEntity;
-    protected final NPCInventory inventory;
+    protected final Inventory inventory;
 
     protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
         super(id, name);
         this.manager = manager;
-        inventory = new NPCInventory(this);
+        inventory = Bukkit.getServer().createInventory(this, 36, name);
     }
 
     @Override
@@ -84,11 +84,9 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public void remove() {
+        manager.remove(this);
         if (isSpawned())
             despawn();
-        manager.remove(this);
-        ((Citizens) Bukkit.getServer().getPluginManager().getPlugin("Citizens")).getStorage().getKey("npc")
-                .removeKey(String.valueOf(getId()));
     }
 
     @Override
@@ -116,16 +114,8 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public org.bukkit.inventory.Inventory getInventory() {
-        return inventory.asInventory();
-    }
-
-    @Override
-    public boolean openInventory(Player player) {
-        if (!isSpawned())
-            return false;
-        getInventory().setContents(getTrait(Inventory.class).getContents());
-        inventory.show(player);
-        return true;
+        inventory.setContents(getTrait(net.citizensnpcs.api.trait.trait.Inventory.class).getContents());
+        return inventory;
     }
 
     @Override
@@ -137,6 +127,5 @@ public abstract class CitizensNPC extends AbstractNPC {
     @Override
     public void setName(String name) {
         super.setName(name);
-        inventory.setName(name);
     }
 }
