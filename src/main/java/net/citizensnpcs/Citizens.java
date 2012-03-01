@@ -55,7 +55,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.Iterators;
 
 public class Citizens extends JavaPlugin {
-    private static final String COMPATIBLE_MC_VERSION = "1.1";
+    private static final String COMPATIBLE_MC_VERSION = "1.2.2";
 
     private volatile CitizensNPCManager npcManager;
     private final InstanceFactory<Character> characterManager = DefaultInstanceFactory.create();
