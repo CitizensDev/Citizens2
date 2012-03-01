@@ -5,7 +5,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.NetServerHandler;
 import net.minecraft.server.NetworkManager;
 import net.minecraft.server.Packet;
-import net.minecraft.server.Packet101CloseWindow;
 import net.minecraft.server.Packet102WindowClick;
 import net.minecraft.server.Packet106Transaction;
 import net.minecraft.server.Packet10Flying;
@@ -26,14 +25,6 @@ public class NPCNetHandler extends NetServerHandler {
 
     @Override
     public void a() {
-    }
-
-    @Override
-    public void a(Packet packet) {
-    }
-
-    @Override
-    public void a(Packet101CloseWindow packet) {
     }
 
     @Override
