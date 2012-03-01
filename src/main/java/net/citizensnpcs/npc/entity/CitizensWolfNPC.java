@@ -25,7 +25,7 @@ public class CitizensWolfNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void m_() {
+        public void d_() {
         }
     }
 }

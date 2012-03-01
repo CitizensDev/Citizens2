@@ -26,7 +26,7 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void m_() {
+        public void d_() {
         }
     }
 }

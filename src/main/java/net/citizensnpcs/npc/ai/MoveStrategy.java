@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.ai;
 
+import java.lang.reflect.Field;
 import java.util.Random;
 
 import net.citizensnpcs.npc.CitizensNPC;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player;
 public class MoveStrategy implements PathStrategy {
     private static final double JUMP_VELOCITY = 0.49D;
 
+    private Float cachedMotion;
     private final EntityLiving handle;
     private final PathEntity path;
     private final Random random = new Random();
@@ -21,7 +23,7 @@ public class MoveStrategy implements PathStrategy {
     public MoveStrategy(CitizensNPC handle, Location destination) {
         this.handle = handle.getHandle();
         this.path = this.handle.world.a(this.handle, destination.getBlockX(), destination.getBlockY(),
-                destination.getBlockZ(), 16F);
+                destination.getBlockZ(), 16F, true, false, false, true);
     }
 
     MoveStrategy(EntityLiving handle, PathEntity path) {
@@ -59,8 +61,16 @@ public class MoveStrategy implements PathStrategy {
         handle.yaw += getYawDifference(diffZ, diffX);
         if (vector.b - yHeight > 0.0D)
             jump();
-        handle.d(handle.ar());
-        handle.d();
+        if (cachedMotion == null) {
+            try {
+                cachedMotion = MOTION_FIELD.getFloat(handle);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        handle.e(cachedMotion);
         // handle.walk();
 
         if (handle.positionChanged)
@@ -79,5 +89,16 @@ public class MoveStrategy implements PathStrategy {
     private void jump() {
         if (handle.onGround)
             handle.motY = JUMP_VELOCITY;
+    }
+
+    private static Field MOTION_FIELD;
+    static {
+        try {
+            MOTION_FIELD = EntityLiving.class.getDeclaredField("bb");
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 }

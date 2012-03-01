@@ -25,11 +25,11 @@ public class CitizensEndermanNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void m_() {
+        public void d_() {
         }
 
         @Override
-        public void d() {
+        public void e() {
         }
     }
 }

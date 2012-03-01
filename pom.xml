@@ -11,8 +11,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <bukkit.version>1.1-R5-SNAPSHOT</bukkit.version>
-        <craftbukkit.version>1.1-R5-SNAPSHOT</craftbukkit.version>
+        <bukkit.version>1.2.2-R0-SNAPSHOT</bukkit.version>
+        <craftbukkit.version>1.2.2-R0-SNAPSHOT</craftbukkit.version>
         <citizensapi.version>2.0-SNAPSHOT</citizensapi.version>
         <build.number>Unknown</build.number>
     </properties>
