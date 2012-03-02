@@ -24,11 +24,11 @@ import org.bukkit.plugin.Plugin;
 import com.google.common.collect.Lists;
 
 public abstract class AbstractNPC implements NPC {
+    private Character character;
     private final int id;
+    private String name;
     private final List<Runnable> runnables = Lists.newArrayList();
     private final Map<Class<? extends Trait>, Trait> traits = new HashMap<Class<? extends Trait>, Trait>();
-    private String name;
-    private Character character;
 
     protected AbstractNPC(int id, String name) {
         this.id = id;
@@ -65,6 +65,11 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public List<MetadataValue> getMetadata(String key) {
+        return METADATA.getMetadata(this, key);
+    }
+
+    @Override
     public String getName() {
         String parsed = name;
         for (ChatColor color : ChatColor.values())
@@ -87,6 +92,11 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public Iterable<Trait> getTraits() {
         return Collections.unmodifiableCollection(traits.values());
+    }
+
+    @Override
+    public boolean hasMetadata(String key) {
+        return METADATA.hasMetadata(this, key);
     }
 
     @Override
@@ -134,6 +144,11 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public void removeMetadata(String key, Plugin plugin) {
+        METADATA.removeMetadata(this, key, plugin);
+    }
+
+    @Override
     public void removeTrait(Class<? extends Trait> trait) {
         if (traits.containsKey(trait)) {
             Trait t = traits.get(trait);
@@ -177,9 +192,8 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public void update() {
-        for (Runnable runnable : runnables)
-            runnable.run();
+    public void setMetadata(String key, MetadataValue value) {
+        METADATA.setMetadata(this, key, value);
     }
 
     @Override
@@ -188,23 +202,9 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public List<MetadataValue> getMetadata(String key) {
-        return METADATA.getMetadata(this, key);
-    }
-
-    @Override
-    public boolean hasMetadata(String key) {
-        return METADATA.hasMetadata(this, key);
-    }
-
-    @Override
-    public void removeMetadata(String key, Plugin plugin) {
-        METADATA.removeMetadata(this, key, plugin);
-    }
-
-    @Override
-    public void setMetadata(String key, MetadataValue value) {
-        METADATA.setMetadata(this, key, value);
+    public void update() {
+        for (Runnable runnable : runnables)
+            runnable.run();
     }
 
     // TODO: this can be moved out to another class if necessary

@@ -32,19 +32,16 @@ public class Inventory extends Trait {
         return contents;
     }
 
-    /**
-     * Sets the contents of an NPC's inventory
-     * 
-     * @param contents
-     *            ItemStack array to set as the contents of an NPC's inventory
-     */
-    public void setContents(ItemStack[] contents) {
-        this.contents = contents;
-    }
-
     @Override
     public void load(DataKey key) throws NPCLoadException {
         contents = parseContents(key);
+    }
+
+    private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
+        ItemStack[] contents = new ItemStack[36];
+        for (DataKey slotKey : key.getIntegerSubKeys())
+            contents[Integer.parseInt(slotKey.name())] = StorageUtils.loadItemStack(slotKey);
+        return contents;
     }
 
     @Override
@@ -59,11 +56,14 @@ public class Inventory extends Trait {
         }
     }
 
-    private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
-        ItemStack[] contents = new ItemStack[36];
-        for (DataKey slotKey : key.getIntegerSubKeys())
-            contents[Integer.parseInt(slotKey.name())] = StorageUtils.loadItemStack(slotKey);
-        return contents;
+    /**
+     * Sets the contents of an NPC's inventory
+     * 
+     * @param contents
+     *            ItemStack array to set as the contents of an NPC's inventory
+     */
+    public void setContents(ItemStack[] contents) {
+        this.contents = contents;
     }
 
     @Override

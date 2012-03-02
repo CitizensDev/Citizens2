@@ -3,6 +3,14 @@ package net.citizensnpcs.api.ai;
 public interface Goal {
 
     /**
+     * Called just before updating the goal. Returns whether the goal should
+     * continue to be updated or be cancelled.
+     * 
+     * @return Whether the goal should continue
+     */
+    public boolean continueExecuting();
+
+    /**
      * Returns whether this and the other {@link Goal} can be run at the same
      * time.
      * 
@@ -23,14 +31,6 @@ public interface Goal {
      * @return Whether the goal can be started.
      */
     public boolean shouldExecute();
-
-    /**
-     * Called just before updating the goal. Returns whether the goal should
-     * continue to be updated or be cancelled.
-     * 
-     * @return Whether the goal should continue
-     */
-    public boolean continueExecuting();
 
     /**
      * Sets up the execution of this goal so that it can be updated later.

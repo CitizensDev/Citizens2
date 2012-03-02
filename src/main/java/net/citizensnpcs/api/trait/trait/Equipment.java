@@ -23,6 +23,28 @@ public class Equipment extends Trait {
         this.npc = npc;
     }
 
+    /**
+     * Get an NPC's equipment from the given slot
+     * 
+     * @param slot
+     *            Slot where the armor is located (0, 1, 2, 3, or 4)
+     * @return ItemStack from the given armor slot
+     */
+    public ItemStack get(int slot) {
+        if (slot < 0 || slot > 4)
+            throw new IllegalArgumentException("Slot must be between 0 and 4");
+        return equipment[slot];
+    }
+
+    /**
+     * Get all of an NPC's equipment
+     * 
+     * @return An array of an NPC's equipment
+     */
+    public ItemStack[] getEquipment() {
+        return equipment;
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         if (key.keyExists("hand"))
@@ -60,26 +82,13 @@ public class Equipment extends Trait {
         saveOrRemove(key.getRelative("boots"), equipment[4]);
     }
 
-    /**
-     * Get all of an NPC's equipment
-     * 
-     * @return An array of an NPC's equipment
-     */
-    public ItemStack[] getEquipment() {
-        return equipment;
-    }
-
-    /**
-     * Get an NPC's equipment from the given slot
-     * 
-     * @param slot
-     *            Slot where the armor is located (0, 1, 2, 3, or 4)
-     * @return ItemStack from the given armor slot
-     */
-    public ItemStack get(int slot) {
-        if (slot < 0 || slot > 4)
-            throw new IllegalArgumentException("Slot must be between 0 and 4");
-        return equipment[slot];
+    private void saveOrRemove(DataKey key, ItemStack item) {
+        if (item != null)
+            StorageUtils.saveItem(key, item);
+        else {
+            if (key.keyExists(""))
+                key.removeKey("");
+        }
     }
 
     /**
@@ -123,14 +132,5 @@ public class Equipment extends Trait {
     public String toString() {
         return "{hand =" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2] + ",leggings="
                 + equipment[3] + ",boots=" + equipment[4] + "}";
-    }
-
-    private void saveOrRemove(DataKey key, ItemStack item) {
-        if (item != null)
-            StorageUtils.saveItem(key, item);
-        else {
-            if (key.keyExists(""))
-                key.removeKey("");
-        }
     }
 }

@@ -22,7 +22,7 @@ public abstract class NavigationCallback {
 
     public enum PathCancelReason {
         PLUGIN,
-        STUCK,
-        REPLACE;
+        REPLACE,
+        STUCK;
     }
 }

@@ -12,6 +12,19 @@ import org.bukkit.entity.Player;
  */
 public abstract class Character {
 
+    private String name = null;
+
+    /**
+     * Gets the name of this character
+     * 
+     * @return Name of this character
+     */
+    public final String getName() {
+        if (name == null)
+            name = getClass().getAnnotation(SaveId.class).value();
+        return name;
+    }
+
     /**
      * Loads a trait
      * 
@@ -34,6 +47,15 @@ public abstract class Character {
     }
 
     /**
+     * Called when this character is removed from an NPC
+     * 
+     * @param npc
+     *            NPC that had this character removed
+     */
+    public void onRemove(NPC npc) {
+    }
+
+    /**
      * Called when an NPC is right-clicked
      * 
      * @param npc
@@ -42,27 +64,6 @@ public abstract class Character {
      *            Player that clicked the NPC
      */
     public void onRightClick(NPC npc, Player by) {
-    }
-
-    /**
-     * Saves a trait
-     * 
-     * @param key
-     *            DataKey to save to
-     */
-    public abstract void save(DataKey key);
-
-    private String name = null;
-
-    /**
-     * Gets the name of this character
-     * 
-     * @return Name of this character
-     */
-    public final String getName() {
-        if (name == null)
-            name = getClass().getAnnotation(SaveId.class).value();
-        return name;
     }
 
     /**
@@ -75,11 +76,10 @@ public abstract class Character {
     }
 
     /**
-     * Called when this character is removed from an NPC
+     * Saves a trait
      * 
-     * @param npc
-     *            NPC that had this character removed
+     * @param key
+     *            DataKey to save to
      */
-    public void onRemove(NPC npc) {
-    }
+    public abstract void save(DataKey key);
 }

@@ -33,6 +33,51 @@ public class DatabaseStorage implements Storage {
         load();
     }
 
+    private void createForeignKey(Table from, Table to) {
+        String fk = "fk_" + to.name;
+        String sql = "ALTER TABLE `" + from.name + "` ADD FOREIGN KEY (`" + fk + "`) REFERENCES " + to.name + "(`"
+                + to.name + "_id`)";
+        executeSQL(sql);
+        from.foreignKeys.put(fk, new ForeignKey(to, fk));
+    }
+
+    private Table createTable(String name, int type) {
+        String pk = name + "_id";
+        String sql = "CREATE TABLE IF NOT EXISTS `" + name + "` ( `" + pk + "` ";
+        switch (type) {
+        case Types.INTEGER:
+            sql += "int NOT NULL";
+            break;
+        case Types.VARCHAR:
+            sql += "varchar(255) NOT NULL";
+            break;
+        default:
+            throw new IllegalArgumentException("type not supported");
+        }
+        executeSQL(sql + " primary key (`" + pk + "`))");
+        Table table = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(type);
+        tables.put(name, table);
+        return table;
+    }
+
+    private void executeSQL(String... updates) {
+        System.out.println(Joiner.on(" ").join(updates));
+        Connection conn = getConnection();
+        if (conn == null)
+            return;
+        try {
+            for (String sql : updates) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.execute();
+                stmt.close();
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+        }
+    }
+
     private Connection getConnection() {
         try {
             return (username.isEmpty() && password.isEmpty()) ? DriverManager.getConnection(url) : DriverManager
@@ -98,57 +143,10 @@ public class DatabaseStorage implements Storage {
     public void save() {
     }
 
-    private Table createTable(String name, int type) {
-        String pk = name + "_id";
-        String sql = "CREATE TABLE IF NOT EXISTS `" + name + "` ( `" + pk + "` ";
-        switch (type) {
-        case Types.INTEGER:
-            sql += "int NOT NULL";
-            break;
-        case Types.VARCHAR:
-            sql += "varchar(255) NOT NULL";
-            break;
-        default:
-            throw new IllegalArgumentException("type not supported");
-        }
-        executeSQL(sql + " primary key (`" + pk + "`))");
-        Table table = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(type);
-        tables.put(name, table);
-        return table;
-    }
-
-    private void createForeignKey(Table from, Table to) {
-        String fk = "fk_" + to.name;
-        String sql = "ALTER TABLE `" + from.name + "` ADD FOREIGN KEY (`" + fk + "`) REFERENCES " + to.name + "(`"
-                + to.name + "_id`)";
-        executeSQL(sql);
-        from.foreignKeys.put(fk, new ForeignKey(to, fk));
-    }
-
-    private void executeSQL(String... updates) {
-        System.out.println(Joiner.on(" ").join(updates));
-        Connection conn = getConnection();
-        if (conn == null)
-            return;
-        try {
-            for (String sql : updates) {
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                stmt.execute();
-                stmt.close();
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(conn);
-        }
-    }
-
-    private static final Pattern INTEGER = Pattern.compile("([\\+-]?\\d+)([eE][\\+-]?\\d+)?");
-
     public class DatabaseKey extends DataKey {
+        private String currentKey;
         private Table table;
         private String tableName;
-        private String currentKey;
 
         public DatabaseKey(String string) {
             if (string.charAt(string.length()) == 's')
@@ -311,6 +309,16 @@ public class DatabaseStorage implements Storage {
             setPrimitive(key, value);
         }
 
+        @Override
+        public void setInt(String key, int value) {
+            setPrimitive(key, value);
+        }
+
+        @Override
+        public void setLong(String key, long value) {
+            setPrimitive(key, value);
+        }
+
         private void setPrimitive(String key, Object value) {
             Connection conn = getConnection();
             PreparedStatement stmt = null;
@@ -326,16 +334,6 @@ public class DatabaseStorage implements Storage {
         }
 
         @Override
-        public void setInt(String key, int value) {
-            setPrimitive(key, value);
-        }
-
-        @Override
-        public void setLong(String key, long value) {
-            setPrimitive(key, value);
-        }
-
-        @Override
         public void setRaw(String key, Object value) {
             setPrimitive(key, value);
         }
@@ -343,6 +341,36 @@ public class DatabaseStorage implements Storage {
         @Override
         public void setString(String key, String value) {
             setPrimitive(key, value);
+        }
+    }
+
+    public enum DatabaseType {
+        H2("org.h2.Driver"),
+        MYSQL("com.mysql.jdbc.Driver"),
+        POSTGRE("org.postgresql.Driver"),
+        SQLITE("org.sqlite.JDBC");
+        private final String driver;
+        private boolean loaded = false;
+
+        DatabaseType(String driver) {
+            this.driver = driver;
+        }
+
+        public boolean load() {
+            if (loaded)
+                return true;
+            if (DbUtils.loadDriver(driver))
+                loaded = true;
+            return loaded;
+        }
+
+        public static DatabaseType match(String driver) {
+            for (DatabaseType type : DatabaseType.values()) {
+                if (type.name().toLowerCase().contains(driver)) {
+                    return type;
+                }
+            }
+            return null;
         }
     }
 
@@ -357,19 +385,14 @@ public class DatabaseStorage implements Storage {
     }
 
     private static class Table {
+        final List<String> columns = Lists.newArrayList();
+        final Map<String, ForeignKey> foreignKeys = Maps.newHashMap();
         String name;
         String primaryKey;
         int primaryKeyType;
-        final Map<String, ForeignKey> foreignKeys = Maps.newHashMap();
-        final List<String> columns = Lists.newArrayList();
 
-        @Override
-        public String toString() {
-            return "Table [primaryKey=" + primaryKey + ", foreignKeys=" + foreignKeys + ", columns=" + columns + "]";
-        }
-
-        public Table setPrimaryKeyType(int type) {
-            primaryKeyType = type;
+        public Table setName(String tableName) {
+            this.name = tableName;
             return this;
         }
 
@@ -378,39 +401,16 @@ public class DatabaseStorage implements Storage {
             return this;
         }
 
-        public Table setName(String tableName) {
-            this.name = tableName;
+        public Table setPrimaryKeyType(int type) {
+            primaryKeyType = type;
             return this;
         }
-    }
 
-    public enum DatabaseType {
-        MYSQL("com.mysql.jdbc.Driver"),
-        H2("org.h2.Driver"),
-        POSTGRE("org.postgresql.Driver"),
-        SQLITE("org.sqlite.JDBC");
-        private final String driver;
-        private boolean loaded = false;
-
-        DatabaseType(String driver) {
-            this.driver = driver;
-        }
-
-        public static DatabaseType match(String driver) {
-            for (DatabaseType type : DatabaseType.values()) {
-                if (type.name().toLowerCase().contains(driver)) {
-                    return type;
-                }
-            }
-            return null;
-        }
-
-        public boolean load() {
-            if (loaded)
-                return true;
-            if (DbUtils.loadDriver(driver))
-                loaded = true;
-            return loaded;
+        @Override
+        public String toString() {
+            return "Table [primaryKey=" + primaryKey + ", foreignKeys=" + foreignKeys + ", columns=" + columns + "]";
         }
     }
+
+    private static final Pattern INTEGER = Pattern.compile("([\\+-]?\\d+)([eE][\\+-]?\\d+)?");
 }

@@ -9,11 +9,11 @@ import net.citizensnpcs.api.trait.Trait;
  * Contains methods used in order to utilize the Citizens API
  */
 public class CitizensAPI {
-    private static final CitizensAPI instance = new CitizensAPI();
+    private InstanceFactory<Character> characterManager;
 
     private NPCManager npcManager;
-    private InstanceFactory<Character> characterManager;
     private InstanceFactory<Trait> traitManager;
+    private static final CitizensAPI instance = new CitizensAPI();
 
     /**
      * Gets the CharacterManager

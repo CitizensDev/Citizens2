@@ -9,13 +9,16 @@ import net.citizensnpcs.api.npc.NPC;
  * Called when an NPC is selected by a player
  */
 public class NPCSelectEvent extends NPCEvent {
-    private static final HandlerList handlers = new HandlerList();
-
     private final Player player;
 
     public NPCSelectEvent(NPC npc, Player player) {
         super(npc);
         this.player = player;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
     }
 
     /**
@@ -27,10 +30,7 @@ public class NPCSelectEvent extends NPCEvent {
         return player;
     }
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+    private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
         return handlers;

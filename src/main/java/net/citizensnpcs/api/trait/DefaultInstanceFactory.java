@@ -11,13 +11,13 @@ public class DefaultInstanceFactory<T> implements InstanceFactory<T> {
     private final Map<String, Factory<? extends T>> registered = new HashMap<String, Factory<? extends T>>();
 
     @Override
-    public T getInstance(String name, NPC npc) {
-        return registered.containsKey(name) ? registered.get(name).create(npc) : null;
+    public T getInstance(String name) {
+        return getInstance(name, null);
     }
 
     @Override
-    public T getInstance(String name) {
-        return getInstance(name, null);
+    public T getInstance(String name, NPC npc) {
+        return registered.containsKey(name) ? registered.get(name).create(npc) : null;
     }
 
     @Override

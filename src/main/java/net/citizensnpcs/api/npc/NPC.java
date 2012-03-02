@@ -26,14 +26,6 @@ public interface NPC extends Metadatable, InventoryHolder {
     public void addTrait(Trait trait);
 
     /**
-     * Sends a message to all players online with this NPC's formatted name
-     * 
-     * @param message
-     *            Message to send
-     */
-    public void chat(String message);
-
-    /**
      * Sends a message to the given player with the NPC's formatted name
      * 
      * @param player
@@ -44,11 +36,26 @@ public interface NPC extends Metadatable, InventoryHolder {
     public void chat(Player player, String message);
 
     /**
+     * Sends a message to all players online with this NPC's formatted name
+     * 
+     * @param message
+     *            Message to send
+     */
+    public void chat(String message);
+
+    /**
      * Despawns this NPC
      * 
      * @return Whether this NPC was able to despawn
      */
     public boolean despawn();
+
+    /**
+     * Gets the {@link AI} of this NPC
+     * 
+     * @return AI of this NPC
+     */
+    public AI getAI();
 
     /**
      * Gets the Bukkit entity associated with this NPC
@@ -86,13 +93,6 @@ public interface NPC extends Metadatable, InventoryHolder {
     public String getName();
 
     /**
-     * Gets the {@link AI} of this NPC
-     * 
-     * @return AI of this NPC
-     */
-    public AI getAI();
-
-    /**
      * Gets a trait from the given class
      * 
      * @param trait
@@ -125,6 +125,8 @@ public interface NPC extends Metadatable, InventoryHolder {
     public boolean isSpawned();
 
     public void load(DataKey root) throws NPCLoadException;
+
+    public void move(int x, int y, int z);
 
     /**
      * Permanently removes this NPC
@@ -167,6 +169,4 @@ public interface NPC extends Metadatable, InventoryHolder {
     public boolean spawn(Location location);
 
     public void update();
-
-    public void move(int x, int y, int z);
 }

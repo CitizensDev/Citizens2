@@ -15,12 +15,7 @@ public interface AI {
      */
     public void addGoal(int priority, Goal goal);
 
-    /**
-     * Sets the AI of this {@link AI} as a {@link Runnable}.
-     * 
-     * @param ai
-     */
-    public void setAI(Runnable ai);
+    public boolean hasDestination();
 
     /**
      * Registers a callback
@@ -29,6 +24,13 @@ public interface AI {
      *            {@link NavigationCallback} to register
      */
     public void registerNavigationCallback(NavigationCallback callback);
+
+    /**
+     * Sets the AI of this {@link AI} as a {@link Runnable}.
+     * 
+     * @param ai
+     */
+    public void setAI(Runnable ai);
 
     /**
      * Creates a path to the given destination

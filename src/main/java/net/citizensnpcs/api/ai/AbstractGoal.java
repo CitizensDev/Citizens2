@@ -12,11 +12,11 @@ public abstract class AbstractGoal implements Goal {
     }
 
     @Override
-    public void start() {
+    public boolean shouldExecute() {
+        return continueExecuting();
     }
 
     @Override
-    public boolean shouldExecute() {
-        return continueExecuting();
+    public void start() {
     }
 }

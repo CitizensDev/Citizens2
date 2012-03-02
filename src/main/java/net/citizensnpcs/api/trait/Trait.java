@@ -10,6 +10,15 @@ import net.citizensnpcs.api.util.DataKey;
 public abstract class Trait {
 
     /**
+     * Gets the name of this trait
+     * 
+     * @return Name of this trait
+     */
+    public final String getName() {
+        return getClass().getAnnotation(SaveId.class).value();
+    }
+
+    /**
      * Loads a trait
      * 
      * @param key
@@ -18,14 +27,6 @@ public abstract class Trait {
      *             Thrown if this trait failed to load properly
      */
     public abstract void load(DataKey key) throws NPCLoadException;
-
-    /**
-     * Saves a trait
-     * 
-     * @param key
-     *            DataKey to save to
-     */
-    public abstract void save(DataKey key);
 
     /**
      * Called when a trait is removed from the given NPC
@@ -37,11 +38,10 @@ public abstract class Trait {
     }
 
     /**
-     * Gets the name of this trait
+     * Saves a trait
      * 
-     * @return Name of this trait
+     * @param key
+     *            DataKey to save to
      */
-    public final String getName() {
-        return getClass().getAnnotation(SaveId.class).value();
-    }
+    public abstract void save(DataKey key);
 }
