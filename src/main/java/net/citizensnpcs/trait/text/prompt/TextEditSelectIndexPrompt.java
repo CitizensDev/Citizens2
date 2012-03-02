@@ -18,16 +18,16 @@ public class TextEditSelectIndexPrompt extends NumericPrompt {
     }
 
     @Override
-    public Prompt acceptValidatedInput(ConversationContext context, Number number) {
-        context.setSessionData("index", number.intValue());
-        Messaging.send((Player) context.getForWhom(), "<a>Now <e>editing <a>the entry at index <e>" + number.intValue()
-                + "<a>. Enter text to replace the entry with.");
+    public Prompt acceptValidatedInput(ConversationContext context, Number input) {
+        context.setSessionData("index", input.intValue());
+        Messaging.send((Player) context.getForWhom(), "<a>Now <e>editing <a>the entry at index <e>" + input.intValue()
+                + "<a>.");
         return new TextEditPrompt(text);
     }
 
     @Override
-    public String getFailedValidationText(ConversationContext context, String invalidInput) {
-        return ChatColor.RED + invalidInput + " is not a valid index!";
+    public String getFailedValidationText(ConversationContext context, String input) {
+        return ChatColor.RED + "'" + input + "' is not a valid index!";
     }
 
     @Override
@@ -35,5 +35,10 @@ public class TextEditSelectIndexPrompt extends NumericPrompt {
         Player player = (Player) context.getForWhom();
         text.sendPage(player, 1);
         return StringHelper.parseColors("<a>Enter the index of the entry you wish to edit.");
+    }
+
+    @Override
+    public boolean isNumberValid(ConversationContext context, Number input) {
+        return text.hasIndex(input.intValue());
     }
 }

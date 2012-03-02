@@ -17,10 +17,10 @@ public class TextEditPrompt extends StringPrompt {
     }
 
     @Override
-    public Prompt acceptInput(ConversationContext context, String string) {
-        text.edit((Integer) context.getSessionData("index"), string);
+    public Prompt acceptInput(ConversationContext context, String input) {
+        text.edit((Integer) context.getSessionData("index"), input);
         Messaging.send((Player) context.getForWhom(), "<a>Changed entry at index <e>" + context.getSessionData("index")
-                + " <a>to <e>" + string + "<a>.");
+                + " <a>to <e>" + input + "<a>.");
         return new StartPrompt(text);
     }
 
