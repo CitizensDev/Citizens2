@@ -1,10 +1,5 @@
 package net.citizensnpcs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
@@ -34,9 +29,13 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.gson.internal.Pair;
+
 public class EventListen implements Listener {
     private volatile CitizensNPCManager npcManager;
-    private final Map<Chunk, List<Integer>> toRespawn = new HashMap<Chunk, List<Integer>>();
+    private final ListMultimap<Pair<Integer, Integer>, Integer> toRespawn = ArrayListMultimap.create();
 
     public EventListen(CitizensNPCManager npcManager) {
         this.npcManager = npcManager;
@@ -47,13 +46,14 @@ public class EventListen implements Listener {
      */
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        if (!toRespawn.containsKey(event.getChunk()))
+        Pair<Integer, Integer> coord = toIntPair(event.getChunk());
+        if (!toRespawn.containsKey(coord))
             return;
-        for (int id : toRespawn.get(event.getChunk())) {
+        for (int id : toRespawn.get(coord)) {
             NPC npc = npcManager.getNPC(id);
             npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
         }
-        toRespawn.remove(event.getChunk());
+        toRespawn.removeAll(coord);
     }
 
     @EventHandler
@@ -61,7 +61,7 @@ public class EventListen implements Listener {
         if (event.isCancelled())
             return;
 
-        List<Integer> respawn = new ArrayList<Integer>();
+        Pair<Integer, Integer> coord = toIntPair(event.getChunk());
         for (NPC npc : npcManager) {
             if (!npc.isSpawned())
                 continue;
@@ -70,11 +70,9 @@ public class EventListen implements Listener {
                     && event.getChunk().getZ() == loc.getChunk().getZ()) {
                 npc.getTrait(SpawnLocation.class).setLocation(loc);
                 npc.despawn();
-                respawn.add(npc.getId());
+                toRespawn.put(coord, npc.getId());
             }
         }
-        if (respawn.size() > 0)
-            toRespawn.put(event.getChunk(), respawn);
     }
 
     /*
@@ -103,8 +101,7 @@ public class EventListen implements Listener {
 
         NPC npc = npcManager.getNPC(event.getEntity());
         Player player = (Player) event.getTarget();
-        if (!player.hasMetadata("selected") || player.getMetadata("selected").size() == 0
-                || player.getMetadata("selected").get(0).asInt() != npc.getId()) {
+        if (player.getMetadata("selected").size() == 0 || player.getMetadata("selected").get(0).asInt() != npc.getId()) {
             if (player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.asInt()
                     && (npc.getTrait(Owner.class).getOwner().equals(player.getName()) || player
                             .hasPermission("citizens.admin"))) {
@@ -146,14 +143,14 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-        for (Chunk chunk : toRespawn.keySet()) {
-            if (event.getWorld().isChunkLoaded(chunk)) {
-                for (int id : toRespawn.get(chunk)) {
-                    NPC npc = npcManager.getNPC(id);
-                    npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
-                }
-                toRespawn.remove(chunk);
+        for (Pair<Integer, Integer> chunk : toRespawn.keySet()) {
+            if (!event.getWorld().isChunkLoaded(chunk.first, chunk.second))
+                continue;
+            for (int id : toRespawn.get(chunk)) {
+                NPC npc = npcManager.getNPC(id);
+                npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
             }
+            toRespawn.removeAll(chunk);
         }
     }
 
@@ -168,13 +165,11 @@ public class EventListen implements Listener {
             Location loc = npc.getBukkitEntity().getLocation();
             npc.getTrait(SpawnLocation.class).setLocation(loc);
             npc.despawn();
-            if (toRespawn.containsKey(loc.getChunk()))
-                toRespawn.get(loc.getChunk()).add(npc.getId());
-            else {
-                List<Integer> respawn = new ArrayList<Integer>();
-                respawn.add(npc.getId());
-                toRespawn.put(loc.getChunk(), respawn);
-            }
+            toRespawn.put(toIntPair(loc.getChunk()), npc.getId());
         }
+    }
+
+    private Pair<Integer, Integer> toIntPair(Chunk chunk) {
+        return new Pair<Integer, Integer>(chunk.getX(), chunk.getZ());
     }
 }
