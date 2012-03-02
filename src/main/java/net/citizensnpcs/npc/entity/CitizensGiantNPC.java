@@ -4,6 +4,7 @@ import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 
 import net.minecraft.server.EntityGiantZombie;
+import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
 
 import org.bukkit.entity.Giant;
@@ -23,6 +24,8 @@ public class CitizensGiantNPC extends CitizensMobNPC {
 
         public EntityGiantNPC(World world) {
             super(world);
+            goalSelector = new PathfinderGoalSelector();
+            targetSelector = new PathfinderGoalSelector();
         }
 
         @Override

@@ -4,6 +4,7 @@ import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 
 import net.minecraft.server.EntityCreeper;
+import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
 
 import org.bukkit.entity.Creeper;
@@ -23,6 +24,8 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
 
         public EntityCreeperNPC(World world) {
             super(world);
+            goalSelector = new PathfinderGoalSelector();
+            targetSelector = new PathfinderGoalSelector();
         }
 
         @Override

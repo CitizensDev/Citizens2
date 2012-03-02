@@ -4,6 +4,7 @@ import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 
 import net.minecraft.server.EntitySlime;
+import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
 
 import org.bukkit.entity.Slime;
@@ -24,6 +25,8 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
         public EntitySlimeNPC(World world) {
             super(world);
             setSize(3);
+            goalSelector = new PathfinderGoalSelector();
+            targetSelector = new PathfinderGoalSelector();
         }
 
         @Override
