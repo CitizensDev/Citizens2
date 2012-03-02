@@ -40,6 +40,7 @@ public class LookClose extends Trait implements Runnable {
 
         npc.getHandle().yaw = (float) yaw - 90;
         npc.getHandle().pitch = (float) pitch;
+        npc.getHandle().X = npc.getHandle().yaw;
     }
 
     @Override
@@ -71,7 +72,7 @@ public class LookClose extends Trait implements Runnable {
     public void toggle() {
         shouldLookClose = !shouldLookClose;
     }
-
+    
     @Override
     public String toString() {
         return "LookClose{" + shouldLookClose + "}";

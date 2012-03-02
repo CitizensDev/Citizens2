@@ -4,6 +4,7 @@ import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 
 import net.minecraft.server.EntityMagmaCube;
+import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
 
 import org.bukkit.entity.MagmaCube;
@@ -24,6 +25,8 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
         public EntityMagmaCubeNPC(World world) {
             super(world);
             setSize(3);
+            goalSelector = new PathfinderGoalSelector();
+            targetSelector = new PathfinderGoalSelector();
         }
 
         @Override
