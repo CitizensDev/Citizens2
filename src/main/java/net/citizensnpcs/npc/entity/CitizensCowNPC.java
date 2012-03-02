@@ -4,6 +4,7 @@ import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 
 import net.minecraft.server.EntityCow;
+import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
 
 import org.bukkit.entity.Cow;
@@ -23,6 +24,8 @@ public class CitizensCowNPC extends CitizensMobNPC {
 
         public EntityCowNPC(World world) {
             super(world);
+            goalSelector = new PathfinderGoalSelector();
+            targetSelector = new PathfinderGoalSelector();
         }
 
         @Override
