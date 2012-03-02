@@ -14,7 +14,7 @@ public class ByIdArray<T> implements Iterable<T> {
     private int size;
 
     public ByIdArray() {
-        this(65535);
+        this(1000);
     }
 
     public ByIdArray(int capacity) {
@@ -124,7 +124,7 @@ public class ByIdArray<T> implements Iterable<T> {
         if (index < lowest)
             lowest = index;
 
-        ensureCapacity(index + 1);
+        ensureCapacity(index + 2);
 
         elementData[index] = t;
         ++size;
@@ -163,5 +163,9 @@ public class ByIdArray<T> implements Iterable<T> {
     public void trimToSize() {
         if (elementData.length > highest)
             elementData = Arrays.copyOf(elementData, highest + 1);
+    }
+
+    public static <T> ByIdArray<T> create() {
+        return new ByIdArray<T>();
     }
 }
