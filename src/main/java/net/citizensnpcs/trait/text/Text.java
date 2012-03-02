@@ -82,8 +82,8 @@ public class Text extends Trait implements Runnable, Toggleable {
             public void begin() {
                 Messaging.send(player, "<b>Entered the text editor!");
 
-                new ConversationFactory(plugin).withFirstPrompt(startPrompt).withEscapeSequence("/npc text")
-                        .buildConversation(player).begin();
+                new ConversationFactory(plugin).withModality(false).withFirstPrompt(startPrompt).withEscapeSequence(
+                        "/npc text").buildConversation(player).begin();
             }
 
             @Override
@@ -105,11 +105,15 @@ public class Text extends Trait implements Runnable, Toggleable {
         text.set(index, newText);
     }
 
+    public boolean hasIndex(int index) {
+        return text.size() > index;
+    }
+
     public boolean sendPage(Player player, int page) {
         Paginator paginator = new Paginator();
         paginator.setHeaderText(npc.getName() + "'s Text Entries");
-        for (String line : text)
-            paginator.addLine(line);
+        for (int i = 0; i < text.size(); i++)
+            paginator.addLine("<a>" + i + " <7>- <e>" + text.get(i));
 
         return paginator.sendPage(player, page);
     }
