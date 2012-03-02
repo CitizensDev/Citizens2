@@ -17,6 +17,7 @@ import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.metadata.MetadataStoreBase;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
@@ -188,21 +189,29 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public List<MetadataValue> getMetadata(String key) {
-        return getBukkitEntity().getMetadata(key);
+        return METADATA.getMetadata(this, key);
     }
 
     @Override
     public boolean hasMetadata(String key) {
-        return getBukkitEntity().hasMetadata(key);
+        return METADATA.hasMetadata(this, key);
     }
 
     @Override
     public void removeMetadata(String key, Plugin plugin) {
-        getBukkitEntity().removeMetadata(key, plugin);
+        METADATA.removeMetadata(this, key, plugin);
     }
 
     @Override
     public void setMetadata(String key, MetadataValue value) {
-        getBukkitEntity().setMetadata(key, value);
+        METADATA.setMetadata(this, key, value);
     }
+
+    // TODO: this can be moved out to another class if necessary
+    private static final MetadataStoreBase<NPC> METADATA = new MetadataStoreBase<NPC>() {
+        @Override
+        protected String disambiguate(NPC subject, String metadataKey) {
+            return Integer.toString(subject.getId()) + ":" + subject.getName() + ":" + metadataKey;
+        }
+    };
 }
