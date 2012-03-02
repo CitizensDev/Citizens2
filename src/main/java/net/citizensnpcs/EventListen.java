@@ -101,7 +101,8 @@ public class EventListen implements Listener {
 
         NPC npc = npcManager.getNPC(event.getEntity());
         Player player = (Player) event.getTarget();
-        if (player.getMetadata("selected").size() == 0 || player.getMetadata("selected").get(0).asInt() != npc.getId()) {
+        if (!player.hasMetadata("selected") || player.getMetadata("selected").size() == 0
+                || player.getMetadata("selected").get(0).asInt() != npc.getId()) {
             if (player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.asInt()
                     && (npc.getTrait(Owner.class).getOwner().equals(player.getName()) || player
                             .hasPermission("citizens.admin"))) {
