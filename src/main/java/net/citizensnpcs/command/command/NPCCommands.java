@@ -240,6 +240,7 @@ public class NPCCommands {
              modifiers = { "remove" },
              min = 1,
              max = 2)
+    @Requirements
     public void remove(CommandContext args, Player player, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
             if (!args.getString(1).equals("all"))
