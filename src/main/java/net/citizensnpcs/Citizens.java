@@ -38,6 +38,7 @@ import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Metrics;
@@ -63,7 +64,8 @@ public class Citizens extends JavaPlugin {
     private volatile CitizensNPCManager npcManager;
     private Storage saves;
     private final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create(Owner.class, Spawned.class,
-            LookClose.class, SpawnLocation.class, Inventory.class, MobType.class, Waypoints.class, Equipment.class);
+            LookClose.class, SpawnLocation.class, Inventory.class, MobType.class, Waypoints.class, Equipment.class,
+            Text.class);
 
     public InstanceFactory<Character> getCharacterManager() {
         return characterManager;
