@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.Random;
 
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.MathHelper;
 import net.minecraft.server.PathEntity;
@@ -58,7 +57,7 @@ public class MoveStrategy implements PathStrategy {
 
     @Override
     public boolean update() {
-        if (handle.dead)
+        if (handle.dead || path == null)
             return true;
         Vec3D vector = getVector();
         if (vector == null)
@@ -68,8 +67,10 @@ public class MoveStrategy implements PathStrategy {
         boolean onFire = handle.fireTicks > 0;
         double diffX = vector.a - handle.locX;
         double diffZ = vector.c - handle.locZ;
+        float diffYaw = getYawDifference(diffZ, diffX);
+        handle.yaw += diffYaw;
+        // handle.X += diffYaw;
 
-        handle.yaw += getYawDifference(diffZ, diffX);
         if (vector.b - yHeight > 0.0D)
             jump();
         if (cachedSpeed == null) {
@@ -77,12 +78,14 @@ public class MoveStrategy implements PathStrategy {
                 cachedSpeed = SPEED_FIELD.getFloat(handle);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
+                cachedSpeed = 0.7F;
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
+                cachedSpeed = 0.7F;
             }
         }
-        Messaging.log(cachedSpeed);
         handle.e(cachedSpeed);
+        handle.e();
         // handle.walk();
 
         if (handle.positionChanged)

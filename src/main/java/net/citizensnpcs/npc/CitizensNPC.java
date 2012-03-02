@@ -82,12 +82,6 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public void move(int x, int y, int z) {
-        if (mcEntity != null)
-            mcEntity.move(x, y, z);
-    }
-
-    @Override
     public void remove() {
         manager.remove(this);
         if (isSpawned())

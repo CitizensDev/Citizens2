@@ -64,6 +64,7 @@ public class Citizens extends JavaPlugin {
     private Storage saves;
     private final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create(Owner.class, Spawned.class,
             LookClose.class, SpawnLocation.class, Inventory.class, MobType.class, Waypoints.class, Equipment.class);
+
     public InstanceFactory<Character> getCharacterManager() {
         return characterManager;
     }
@@ -236,7 +237,6 @@ public class Citizens extends JavaPlugin {
     }
 
     public void reload() throws NPCLoadException {
-        getServer().getScheduler().cancelTasks(this);
         Editor.leaveAll();
         config.load();
         for (NPC npc : npcManager)

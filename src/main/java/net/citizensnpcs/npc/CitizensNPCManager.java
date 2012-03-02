@@ -109,23 +109,30 @@ public class CitizensNPCManager implements NPCManager {
                 if (Bukkit.getPlayer(value.asString()) != null)
                     Bukkit.getPlayer(value.asString()).removeMetadata("selected", plugin);
         npc.removeMetadata("selectors", plugin);
+        // TODO: merge this and removeAll();
     }
 
     public void removeAll() {
-        while (iterator().hasNext()) {
-            NPC npc = iterator().next();
+        Iterator<NPC> itr = iterator();
+        while (itr.hasNext()) {
+            NPC npc = itr.next();
             saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
 
             // Remove metadata from selectors
-            if (npc.hasMetadata("selectors"))
-                for (MetadataValue value : npc.getMetadata("selectors"))
-                    if (Bukkit.getPlayer(value.asString()) != null)
+            if (npc.hasMetadata("selectors")) {
+                for (MetadataValue value : npc.getMetadata("selectors")) {
+                    if (Bukkit.getPlayer(value.asString()) != null) {
                         Bukkit.getPlayer(value.asString()).removeMetadata("selected", plugin);
-            npc.removeMetadata("selectors", plugin);
+                    }
+                }
+                npc.removeMetadata("selectors", plugin);
+            }
 
-            if (npc.isSpawned())
+            if (npc.isSpawned()) {
                 npc.getBukkitEntity().remove();
-            iterator().remove();
+            }
+
+            itr.remove();
         }
     }
 

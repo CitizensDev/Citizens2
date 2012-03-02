@@ -18,8 +18,8 @@ public abstract class Editor implements Listener {
 
     private static void enter(Player player, Editor editor) {
         editor.begin();
-        player.getServer().getPluginManager().registerEvents(editor,
-                player.getServer().getPluginManager().getPlugin("Citizens"));
+        player.getServer().getPluginManager()
+                .registerEvents(editor, player.getServer().getPluginManager().getPlugin("Citizens"));
         editing.put(player.getName(), editor);
     }
 
