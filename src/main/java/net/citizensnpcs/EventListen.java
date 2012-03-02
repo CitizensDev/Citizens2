@@ -112,6 +112,7 @@ public class EventListen implements Listener {
                     return;
             }
         }
+        // TODO NPC text
         if (npc.getCharacter() != null)
             npc.getCharacter().onRightClick(npc, player);
     }

@@ -25,6 +25,7 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     @Override
     public Editor createEditor(final Player player) {
         return new Editor() {
+
             @Override
             public void begin() {
                 player.sendMessage(ChatColor.AQUA + "Entered the linear waypoint editor!");
@@ -49,8 +50,8 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                             at.getBlockX(), at.getBlockY(), at.getBlockZ()));
                 } else if (waypoints.size() > 0) {
                     waypoints.remove(waypoints.size() - 1);
-                    Messaging.send(player,
-                            String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining)", waypoints.size()));
+                    Messaging.send(player, String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining)", waypoints
+                            .size()));
                 }
             }
         };

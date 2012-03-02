@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.Toggleable;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.SaveId;

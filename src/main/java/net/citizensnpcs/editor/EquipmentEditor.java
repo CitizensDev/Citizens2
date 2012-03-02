@@ -35,7 +35,7 @@ public class EquipmentEditor extends Editor {
 
     @Override
     public void end() {
-        Messaging.send(player, "<a>Exited equipment editor.");
+        Messaging.send(player, "<a>Exited the equipment editor.");
     }
 
     @EventHandler
@@ -100,17 +100,15 @@ public class EquipmentEditor extends Editor {
             Messaging.send(player, "<e>" + npc.getName() + " <a>had all of its items removed.");
         }
         // Now edit the equipment based on the slot
-        if (trait.get(slot) != null && trait.get(slot).getType() != Material.AIR) {
+        if (trait.get(slot) != null && trait.get(slot).getType() != Material.AIR)
             player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), trait.get(slot));
-        }
 
         ItemStack set = hand;
         if (set != null && set.getType() != Material.AIR) {
-            if (hand.getAmount() > 1) {
+            if (hand.getAmount() > 1)
                 hand.setAmount(hand.getAmount() - 1);
-            } else {
+            else
                 hand = null;
-            }
             player.setItemInHand(hand);
             set.setAmount(1);
         }

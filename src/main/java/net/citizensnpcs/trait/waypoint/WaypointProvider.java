@@ -8,6 +8,7 @@ import net.citizensnpcs.editor.Editor;
 import org.bukkit.entity.Player;
 
 public interface WaypointProvider {
+
     /**
      * Creates an {@link Editor} with the given {@link Player}.
      * 

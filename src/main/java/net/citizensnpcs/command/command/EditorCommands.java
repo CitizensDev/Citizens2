@@ -10,7 +10,7 @@ import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.editor.EquipmentEditor;
-import net.citizensnpcs.editor.TextEditor;
+import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
 @Requirements(selected = true, ownership = true)
@@ -55,6 +55,6 @@ public class EditorCommands {
              max = 1,
              permission = "npc.edit.text")
     public void text(CommandContext args, Player player, NPC npc) {
-        Editor.enterOrLeave(player, new TextEditor());
+        Editor.enterOrLeave(player, npc.getTrait(Text.class).getEditor(player));
     }
 }
