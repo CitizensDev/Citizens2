@@ -44,13 +44,32 @@ public class Waypoints extends Trait {
         key.setString("provider", providerName);
     }
 
-    public void setWaypointProvider(WaypointProvider provider, String name) {
-        this.provider = provider;
-        providerName = name;
+    /**
+     * Sets the current {@link WaypointProvider} by using the given name. The
+     * name should have been registered using
+     * {@link Waypoints#registerWaypointProvider(Class, String)}.
+     * 
+     * @param provider
+     * @param name
+     */
+    public void setWaypointProvider(String name) {
+        this.provider = providers.getInstance(name);
+        if (this.provider != null) {
+            providerName = name;
+        }
     }
 
     private static final InstanceFactory<WaypointProvider> providers = DefaultInstanceFactory.create();
 
+    /**
+     * Registers a {@link WaypointProvider}, which can be subsequently used by
+     * NPCs.
+     * 
+     * @param clazz
+     *            The class of the waypoint provider
+     * @param name
+     *            The name of the waypoint provider
+     */
     public static void registerWaypointProvider(Class<? extends WaypointProvider> clazz, String name) {
         providers.register(clazz, name);
     }
