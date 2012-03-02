@@ -4,6 +4,12 @@ import org.bukkit.ChatColor;
 
 public class StringHelper {
 
+    public static String capitalize(Object string) {
+        String capitalize = string.toString();
+        return capitalize.replaceFirst(String.valueOf(capitalize.charAt(0)), String.valueOf(Character
+                .toUpperCase(capitalize.charAt(0))));
+    }
+
     public static int getLevenshteinDistance(String s, String t) {
         if (s == null || t == null)
             throw new IllegalArgumentException("Strings must not be null");
@@ -53,14 +59,6 @@ public class StringHelper {
         return p[n];
     }
 
-    public static String wrap(Object string) {
-        return ChatColor.YELLOW + string.toString() + ChatColor.GREEN;
-    }
-
-    public static String wrap(Object string, ChatColor after) {
-        return ChatColor.YELLOW + string.toString() + after;
-    }
-
     public static String parseColors(Object string) {
         String parsed = string.toString();
         for (ChatColor color : ChatColor.values()) {
@@ -69,10 +67,12 @@ public class StringHelper {
         return parsed;
     }
 
-    public static String capitalize(Object string) {
-        String capitalize = string.toString();
-        return capitalize.replaceFirst(String.valueOf(capitalize.charAt(0)), String.valueOf(Character
-                .toUpperCase(capitalize.charAt(0))));
+    public static String wrap(Object string) {
+        return ChatColor.YELLOW + string.toString() + ChatColor.GREEN;
+    }
+
+    public static String wrap(Object string, ChatColor after) {
+        return ChatColor.YELLOW + string.toString() + after;
     }
 
     public static String wrapHeader(Object string) {

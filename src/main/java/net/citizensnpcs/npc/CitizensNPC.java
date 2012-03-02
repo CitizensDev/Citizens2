@@ -9,7 +9,6 @@ import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
-
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
@@ -19,8 +18,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 public abstract class CitizensNPC extends AbstractNPC {
-    protected final CitizensNPCManager manager;
     protected final CitizensAI ai = new CitizensAI(this);
+    protected final CitizensNPCManager manager;
     protected EntityLiving mcEntity;
 
     protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
@@ -29,23 +28,17 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public void chat(Player player, String message) {
+        Messaging.sendWithNPC(player, Setting.CHAT_PREFIX.asString() + message, this);
+    }
+
+    @Override
     public void chat(String message) {
         for (Player player : Bukkit.getOnlinePlayers())
             chat(player, message);
     }
 
-    @Override
-    public void chat(Player player, String message) {
-        Messaging.sendWithNPC(player, Setting.CHAT_PREFIX.asString() + message, this);
-    }
-
     protected abstract EntityLiving createHandle(Location loc);
-
-    @Override
-    public void move(int x, int y, int z) {
-        if (mcEntity != null)
-            mcEntity.move(x, y, z);
-    }
 
     @Override
     public boolean despawn() {
@@ -63,6 +56,11 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public CitizensAI getAI() {
+        return ai;
+    }
+
+    @Override
     public LivingEntity getBukkitEntity() {
         return (LivingEntity) getHandle().getBukkitEntity();
     }
@@ -72,8 +70,10 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public CitizensAI getAI() {
-        return ai;
+    public org.bukkit.inventory.Inventory getInventory() {
+        Inventory inventory = Bukkit.getServer().createInventory(this, 36, StringHelper.parseColors(getFullName()));
+        inventory.setContents(getTrait(net.citizensnpcs.api.trait.trait.Inventory.class).getContents());
+        return inventory;
     }
 
     @Override
@@ -82,10 +82,21 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public void move(int x, int y, int z) {
+        if (mcEntity != null)
+            mcEntity.move(x, y, z);
+    }
+
+    @Override
     public void remove() {
         manager.remove(this);
         if (isSpawned())
             despawn();
+    }
+
+    @Override
+    public void setName(String name) {
+        super.setName(name);
     }
 
     @Override
@@ -112,20 +123,8 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public org.bukkit.inventory.Inventory getInventory() {
-        Inventory inventory = Bukkit.getServer().createInventory(this, 36, StringHelper.parseColors(getFullName()));
-        inventory.setContents(getTrait(net.citizensnpcs.api.trait.trait.Inventory.class).getContents());
-        return inventory;
-    }
-
-    @Override
     public void update() {
         super.update();
         ai.update();
-    }
-
-    @Override
-    public void setName(String name) {
-        super.setName(name);
     }
 }

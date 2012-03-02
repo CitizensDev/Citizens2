@@ -35,6 +35,17 @@ import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 import org.bukkit.entity.EntityType;
 
 public class NPCBuilder {
+    public CitizensNPC getByType(EntityType type, CitizensNPCManager npcManager, int id, String name) {
+        Class<? extends CitizensNPC> npcClass = types.get(type);
+        try {
+            return npcClass.getConstructor(CitizensNPCManager.class, int.class, String.class).newInstance(npcManager,
+                    id, name);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     private static final Map<EntityType, Class<? extends CitizensNPC>> types = new HashMap<EntityType, Class<? extends CitizensNPC>>();
 
     static {
@@ -64,16 +75,5 @@ public class NPCBuilder {
         types.put(EntityType.VILLAGER, CitizensVillagerNPC.class);
         types.put(EntityType.WOLF, CitizensWolfNPC.class);
         types.put(EntityType.ZOMBIE, CitizensZombieNPC.class);
-    }
-
-    public CitizensNPC getByType(EntityType type, CitizensNPCManager npcManager, int id, String name) {
-        Class<? extends CitizensNPC> npcClass = types.get(type);
-        try {
-            return npcClass.getConstructor(CitizensNPCManager.class, int.class, String.class).newInstance(npcManager,
-                    id, name);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
     }
 }

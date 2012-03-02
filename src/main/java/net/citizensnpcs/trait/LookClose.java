@@ -20,36 +20,6 @@ public class LookClose extends Trait implements Runnable {
         this.npc = npc;
     }
 
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        shouldLookClose = key.getBoolean("");
-    }
-
-    @Override
-    public void save(DataKey key) {
-        key.setBoolean("", shouldLookClose);
-    }
-
-    @Override
-    public void run() {
-        EntityLiving search = null;
-        CitizensNPC handle = (CitizensNPC) npc;
-        if ((search = handle.getHandle().world.findNearbyPlayer(handle.getHandle(), 5)) != null && shouldLookClose)
-            faceEntity(handle, search.getBukkitEntity());
-    }
-
-    public void setLookClose(boolean shouldLookClose) {
-        this.shouldLookClose = shouldLookClose;
-    }
-
-    public boolean shouldLookClose() {
-        return shouldLookClose;
-    }
-
-    public void toggle() {
-        shouldLookClose = !shouldLookClose;
-    }
-
     private void faceEntity(CitizensNPC npc, Entity target) {
         if (npc.getBukkitEntity().getWorld() != target.getWorld())
             return;
@@ -70,6 +40,36 @@ public class LookClose extends Trait implements Runnable {
 
         npc.getHandle().yaw = (float) yaw - 90;
         npc.getHandle().pitch = (float) pitch;
+    }
+
+    @Override
+    public void load(DataKey key) throws NPCLoadException {
+        shouldLookClose = key.getBoolean("");
+    }
+
+    @Override
+    public void run() {
+        EntityLiving search = null;
+        CitizensNPC handle = (CitizensNPC) npc;
+        if ((search = handle.getHandle().world.findNearbyPlayer(handle.getHandle(), 5)) != null && shouldLookClose)
+            faceEntity(handle, search.getBukkitEntity());
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.setBoolean("", shouldLookClose);
+    }
+
+    public void setLookClose(boolean shouldLookClose) {
+        this.shouldLookClose = shouldLookClose;
+    }
+
+    public boolean shouldLookClose() {
+        return shouldLookClose;
+    }
+
+    public void toggle() {
+        shouldLookClose = !shouldLookClose;
     }
 
     @Override

@@ -38,8 +38,6 @@ public class CommandManager {
      */
     private final Map<String, Method> commands = new HashMap<String, Method>();
 
-    private final Map<String, List<Command>> subCommands = new HashMap<String, List<Command>>();
-
     // Stores the injector used to getInstance.
     private Injector injector;
 
@@ -49,6 +47,8 @@ public class CommandManager {
     private final Map<Method, Requirements> requirements = new HashMap<Method, Requirements>();
 
     private final Map<Method, ServerCommand> serverCommands = new HashMap<Method, ServerCommand>();
+
+    private final Map<String, List<Command>> subCommands = new HashMap<String, List<Command>>();
 
     /*
      * Attempt to execute a command. This version takes a separate command name
@@ -150,6 +150,19 @@ public class CommandManager {
         return cmds.toArray(new String[cmds.size()]);
     }
 
+    public List<Command> getCommands(String command) {
+        if (subCommands.containsKey(command))
+            return subCommands.get(command);
+        List<Command> cmds = new ArrayList<Command>();
+        for (Entry<String, Method> entry : commands.entrySet()) {
+            if (!entry.getKey().split(" ")[0].equalsIgnoreCase(command)
+                    || !entry.getValue().isAnnotationPresent(Command.class))
+                continue;
+            cmds.add(entry.getValue().getAnnotation(Command.class));
+        }
+        return cmds;
+    }
+
     // Get the usage string for a command.
     private String getUsage(String[] args, Command cmd) {
         StringBuilder command = new StringBuilder();
@@ -171,19 +184,6 @@ public class CommandManager {
     public boolean hasCommand(String command, String modifier) {
         return commands.containsKey(command.toLowerCase() + " " + modifier.toLowerCase())
                 || commands.containsKey(command.toLowerCase() + " *");
-    }
-
-    public List<Command> getCommands(String command) {
-        if (subCommands.containsKey(command))
-            return subCommands.get(command);
-        List<Command> cmds = new ArrayList<Command>();
-        for (Entry<String, Method> entry : commands.entrySet()) {
-            if (!entry.getKey().split(" ")[0].equalsIgnoreCase(command)
-                    || !entry.getValue().isAnnotationPresent(Command.class))
-                continue;
-            cmds.add(entry.getValue().getAnnotation(Command.class));
-        }
-        return cmds;
     }
 
     // Returns whether a player has access to a command.

@@ -10,9 +10,9 @@ public interface WaypointProvider {
 
     public Editor createEditor(Player player);
 
+    public NavigationCallback getCallback();
+
     public void load(DataKey key);
 
     public void save(DataKey key);
-
-    public NavigationCallback getCallback();
 }

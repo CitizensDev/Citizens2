@@ -15,9 +15,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EquipmentEditor extends Editor {
-    private final Citizens plugin;
-    private final Player player;
     private final NPC npc;
+    private final Player player;
+    private final Citizens plugin;
 
     public EquipmentEditor(Citizens plugin, Player player, NPC npc) {
         this.plugin = plugin;

@@ -7,8 +7,8 @@ import java.util.logging.Level;
 import net.citizensnpcs.util.Messaging;
 
 public class Injector {
-    private Object[] args;
     private Class<?>[] argClasses;
+    private Object[] args;
 
     public Injector(Object... args) {
         this.args = args;

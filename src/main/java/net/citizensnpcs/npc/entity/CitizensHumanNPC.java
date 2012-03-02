@@ -22,6 +22,16 @@ public class CitizensHumanNPC extends CitizensNPC {
     }
 
     @Override
+    protected EntityLiving createHandle(Location loc) {
+        WorldServer ws = ((CraftWorld) loc.getWorld()).getHandle();
+        EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
+                StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws));
+        handle.removeFromPlayerMap(getFullName());
+        handle.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        return handle;
+    }
+
+    @Override
     public Player getBukkitEntity() {
         return (Player) getHandle().getBukkitEntity();
     }
@@ -32,10 +42,8 @@ public class CitizensHumanNPC extends CitizensNPC {
     }
 
     @Override
-    public void update() {
-        super.update();
-        if (mcEntity == null)
-            return;
+    public void load(DataKey key) throws NPCLoadException {
+        super.load(key);
     }
 
     @Override
@@ -47,17 +55,9 @@ public class CitizensHumanNPC extends CitizensNPC {
     }
 
     @Override
-    protected EntityLiving createHandle(Location loc) {
-        WorldServer ws = ((CraftWorld) loc.getWorld()).getHandle();
-        EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
-                StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws));
-        handle.removeFromPlayerMap(getFullName());
-        handle.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-        return handle;
-    }
-
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        super.load(key);
+    public void update() {
+        super.update();
+        if (mcEntity == null)
+            return;
     }
 }

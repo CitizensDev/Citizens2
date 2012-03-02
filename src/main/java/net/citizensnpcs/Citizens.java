@@ -55,33 +55,29 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.Iterators;
 
 public class Citizens extends JavaPlugin {
-    private static final String COMPATIBLE_MC_VERSION = "1.2.2";
-
-    private volatile CitizensNPCManager npcManager;
     private final InstanceFactory<Character> characterManager = DefaultInstanceFactory.create();
+
+    private final CommandManager commands = new CommandManager();
+    private boolean compatible;
+    private Settings config;
+    private volatile CitizensNPCManager npcManager;
+    private Storage saves;
     private final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create(Owner.class, Spawned.class,
             LookClose.class, SpawnLocation.class, Inventory.class, MobType.class, Waypoints.class, Equipment.class);
-    private final CommandManager commands = new CommandManager();
-    private Settings config;
-    private Storage saves;
-    private boolean compatible;
+    public InstanceFactory<Character> getCharacterManager() {
+        return characterManager;
+    }
 
-    private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {
-        int minDist = Integer.MAX_VALUE;
-        String closest = "";
-        for (String string : commands.getAllCommandModifiers(command)) {
-            int distance = StringHelper.getLevenshteinDistance(modifier, string);
-            if (minDist > distance) {
-                minDist = distance;
-                closest = string;
-            }
-        }
-        if (!closest.isEmpty()) {
-            sender.sendMessage(ChatColor.GRAY + "Unknown command. Did you mean:");
-            sender.sendMessage(StringHelper.wrap(" /") + command + " " + StringHelper.wrap(closest));
-            return true;
-        }
-        return false;
+    public CommandManager getCommandManager() {
+        return commands;
+    }
+
+    public CitizensNPCManager getNPCManager() {
+        return npcManager;
+    }
+
+    public Storage getStorage() {
+        return saves;
     }
 
     @Override
@@ -212,13 +208,13 @@ public class Citizens extends JavaPlugin {
                     Metrics metrics = new Metrics();
                     metrics.addCustomData(Citizens.this, new Metrics.Plotter() {
                         @Override
-                        public int getValue() {
-                            return Iterators.size(npcManager.iterator());
+                        public String getColumnName() {
+                            return "Total NPCs";
                         }
 
                         @Override
-                        public String getColumnName() {
-                            return "Total NPCs";
+                        public int getValue() {
+                            return Iterators.size(npcManager.iterator());
                         }
                     });
                     metrics.beginMeasuringPlugin(Citizens.this);
@@ -229,11 +225,14 @@ public class Citizens extends JavaPlugin {
         }.start();
     }
 
-    public void save() {
-        config.save();
-        for (NPC npc : npcManager)
-            npc.save(saves.getKey("npc." + npc.getId()));
-        saves.save();
+    private void registerCommands() {
+        commands.setInjector(new Injector(this));
+
+        // Register command classes
+        commands.register(AdminCommands.class);
+        commands.register(EditorCommands.class);
+        commands.register(HelpCommands.class);
+        commands.register(NPCCommands.class);
     }
 
     public void reload() throws NPCLoadException {
@@ -247,30 +246,11 @@ public class Citizens extends JavaPlugin {
         setupNPCs();
     }
 
-    public CitizensNPCManager getNPCManager() {
-        return npcManager;
-    }
-
-    public InstanceFactory<Character> getCharacterManager() {
-        return characterManager;
-    }
-
-    public CommandManager getCommandManager() {
-        return commands;
-    }
-
-    public Storage getStorage() {
-        return saves;
-    }
-
-    private void registerCommands() {
-        commands.setInjector(new Injector(this));
-
-        // Register command classes
-        commands.register(AdminCommands.class);
-        commands.register(EditorCommands.class);
-        commands.register(HelpCommands.class);
-        commands.register(NPCCommands.class);
+    public void save() {
+        config.save();
+        for (NPC npc : npcManager)
+            npc.save(saves.getKey("npc." + npc.getId()));
+        saves.save();
     }
 
     private void setupNPCs() throws NPCLoadException {
@@ -294,4 +274,24 @@ public class Citizens extends JavaPlugin {
         }
         Messaging.log("Loaded " + created + " NPCs (" + spawned + " spawned).");
     }
+
+    private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {
+        int minDist = Integer.MAX_VALUE;
+        String closest = "";
+        for (String string : commands.getAllCommandModifiers(command)) {
+            int distance = StringHelper.getLevenshteinDistance(modifier, string);
+            if (minDist > distance) {
+                minDist = distance;
+                closest = string;
+            }
+        }
+        if (!closest.isEmpty()) {
+            sender.sendMessage(ChatColor.GRAY + "Unknown command. Did you mean:");
+            sender.sendMessage(StringHelper.wrap(" /") + command + " " + StringHelper.wrap(closest));
+            return true;
+        }
+        return false;
+    }
+
+    private static final String COMPATIBLE_MC_VERSION = "1.2.2";
 }

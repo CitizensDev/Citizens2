@@ -6,17 +6,11 @@ import java.util.List;
 import org.bukkit.entity.Player;
 
 public class Paginator {
-    private static final int LINES_PER_PAGE = 9;
-
-    private final List<String> lines = new ArrayList<String>();
     private String header;
 
+    private final List<String> lines = new ArrayList<String>();
     public void addLine(String line) {
         lines.add(line);
-    }
-
-    public void setHeaderText(String header) {
-        this.header = header;
     }
 
     public boolean sendPage(Player player, int page) {
@@ -35,4 +29,10 @@ public class Paginator {
             Messaging.send(player, line);
         return true;
     }
+
+    public void setHeaderText(String header) {
+        this.header = header;
+    }
+
+    private static final int LINES_PER_PAGE = 9;
 }

@@ -24,10 +24,10 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
 public class CitizensNPCManager implements NPCManager {
-    private final Citizens plugin;
-    private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
-    private final Storage saves;
     private final NPCBuilder npcBuilder = new NPCBuilder();
+    private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
+    private final Citizens plugin;
+    private final Storage saves;
 
     public CitizensNPCManager(Storage saves) {
         plugin = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
