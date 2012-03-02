@@ -9,12 +9,17 @@ import org.bukkit.Location;
 
 public class GenericWaypointCallback extends NavigationCallback {
     private Location dest;
+    private AI ai;
     private boolean executing;
     private Iterator<Waypoint> itr;
     private final Iterable<Waypoint> provider;
 
     public GenericWaypointCallback(Iterable<Waypoint> provider) {
         this.provider = provider;
+        this.itr = provider.iterator();
+        if (itr.hasNext()) {
+            dest = itr.next().getLocation();
+        }
     }
 
     private void ensureItr() {
@@ -24,6 +29,7 @@ public class GenericWaypointCallback extends NavigationCallback {
 
     @Override
     public void onAttach(AI ai) {
+        this.ai = ai;
         executing = !ai.hasDestination();
         if (!executing)
             return;
@@ -57,11 +63,7 @@ public class GenericWaypointCallback extends NavigationCallback {
     @Override
     public boolean onCompletion(AI ai) {
         if (executing) { // if we're executing, we need to get the next waypoint
-            if (!itr.hasNext()) {
-                dest = null;
-            } else {
-                dest = itr.next().getLocation();
-            }
+            dest = itr.hasNext() ? itr.next().getLocation() : null;
         } else {
             executing = true;
             // we're free to return to our waypoints!
@@ -76,5 +78,8 @@ public class GenericWaypointCallback extends NavigationCallback {
     public void onProviderChanged() {
         itr = provider.iterator();
         dest = itr.hasNext() ? itr.next().getLocation() : null;
+        if (dest != null) {
+            ai.setDestination(dest);
+        }
     }
 }

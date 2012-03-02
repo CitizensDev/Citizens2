@@ -10,6 +10,7 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -19,7 +20,6 @@ import com.google.common.collect.Lists;
 
 public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoint> {
     private final GenericWaypointCallback callback = new GenericWaypointCallback(this);
-
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
     @Override
@@ -28,12 +28,12 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
             @Override
             public void begin() {
                 player.sendMessage(ChatColor.AQUA + "Entered the linear waypoint editor!");
-                player.sendMessage(ChatColor.GREEN + "Left click to add waypoint, right click to remove.");
+                Messaging.send(player, "<e>Left click<a> to add a waypoint, <e>right click<a> to remove.");
             }
 
             @Override
             public void end() {
-                player.sendMessage(ChatColor.GREEN + "Exited linear waypoint editor.");
+                player.sendMessage(ChatColor.AQUA + "Exited the linear waypoint editor.");
                 callback.onProviderChanged();
             }
 
@@ -42,10 +42,11 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
             public void onPlayerInteract(PlayerInteractEvent event) {
                 if (!event.getPlayer().equals(player))
                     return;
-
                 if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                    waypoints.add(new Waypoint(event.getClickedBlock().getLocation()));
-                    Messaging.send(player, "<e>Added<a> a waypoint.");
+                    Location at = event.getClickedBlock().getLocation();
+                    waypoints.add(new Waypoint(at));
+                    Messaging.send(player, String.format("<e>Added<a> a waypoint at (<e>%d<a>, <e>%d<a>, <e>%d<a>).",
+                            at.getBlockX(), at.getBlockY(), at.getBlockZ()));
                 } else if (waypoints.size() > 0) {
                     waypoints.remove(waypoints.size() - 1);
                     Messaging.send(player,
@@ -70,6 +71,7 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
         for (DataKey root : key.getRelative("waypoints").getIntegerSubKeys()) {
             waypoints.add(new Waypoint(StorageUtils.loadLocation(root)));
         }
+        callback.onProviderChanged();
     }
 
     @Override
