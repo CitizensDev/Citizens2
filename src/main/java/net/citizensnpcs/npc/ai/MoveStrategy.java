@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Random;
 
 import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.MathHelper;
 import net.minecraft.server.PathEntity;
@@ -18,6 +19,7 @@ public class MoveStrategy implements PathStrategy {
     private final EntityLiving handle;
     private final PathEntity path;
     private final Random random = new Random();
+
     public MoveStrategy(CitizensNPC handle, Location destination) {
         this.handle = handle.getHandle();
         this.path = this.handle.world.a(this.handle, destination.getBlockX(), destination.getBlockY(),
@@ -79,6 +81,7 @@ public class MoveStrategy implements PathStrategy {
                 e.printStackTrace();
             }
         }
+        Messaging.log(cachedSpeed);
         handle.e(cachedSpeed);
         // handle.walk();
 
@@ -95,6 +98,7 @@ public class MoveStrategy implements PathStrategy {
     static {
         try {
             SPEED_FIELD = EntityLiving.class.getDeclaredField("bb");
+            SPEED_FIELD.setAccessible(true);
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
