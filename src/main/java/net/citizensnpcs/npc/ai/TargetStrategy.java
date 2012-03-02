@@ -9,14 +9,24 @@ import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class TargetStrategy implements PathStrategy {
-    private final EntityLiving handle, target;
     private final boolean aggro;
     private PathStrategy current = null;
+    private final EntityLiving handle, target;
 
     public TargetStrategy(CitizensNPC handle, LivingEntity target, boolean aggro) {
         this.handle = handle.getHandle();
         this.target = ((CraftLivingEntity) target).getHandle();
         this.aggro = aggro;
+    }
+
+    private boolean canAttack() {
+        return handle.attackTicks == 0
+                && (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
+                && distanceSquared() <= ATTACK_DISTANCE && handle.h(target);
+    }
+
+    private double distanceSquared() {
+        return handle.getBukkitEntity().getLocation().distanceSquared(target.getBukkitEntity().getLocation());
     }
 
     @Override
@@ -36,15 +46,5 @@ public class TargetStrategy implements PathStrategy {
         return false;
     }
 
-    private boolean canAttack() {
-        return handle.attackTicks == 0
-                && (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
-                && distanceSquared() <= ATTACK_DISTANCE && handle.h(target);
-    }
-
     private static final double ATTACK_DISTANCE = 1.75 * 1.75;
-
-    private double distanceSquared() {
-        return handle.getBukkitEntity().getLocation().distanceSquared(target.getBukkitEntity().getLocation());
-    }
 }

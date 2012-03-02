@@ -13,13 +13,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class MoveStrategy implements PathStrategy {
-    private static final double JUMP_VELOCITY = 0.49D;
+    private Float cachedSpeed;
 
-    private Float cachedMotion;
     private final EntityLiving handle;
     private final PathEntity path;
     private final Random random = new Random();
-
     public MoveStrategy(CitizensNPC handle, Location destination) {
         this.handle = handle.getHandle();
         this.path = this.handle.world.a(this.handle, destination.getBlockX(), destination.getBlockY(),
@@ -37,12 +35,23 @@ public class MoveStrategy implements PathStrategy {
         lengthSq *= lengthSq;
         while (vec3d != null && vec3d.d(handle.locX, vec3d.b, handle.locZ) < lengthSq) {
             this.path.a(); // Increment path index.
-            if (this.path.b())// finished.
+            if (this.path.b()) { // finished.
                 return null;
-            else
-                vec3d = this.path.a(handle);
+            }
+            vec3d = this.path.a(handle);
         }
         return vec3d;
+    }
+
+    private float getYawDifference(double diffZ, double diffX) {
+        float vectorYaw = (float) (Math.atan2(diffZ, diffX) * 180.0D / Math.PI) - 90.0F;
+        float diffYaw = (vectorYaw - handle.yaw) % 360;
+        return Math.max(-30F, Math.min(30, diffYaw));
+    }
+
+    private void jump() {
+        if (handle.onGround)
+            handle.motY = JUMP_VELOCITY;
     }
 
     @Override
@@ -61,16 +70,16 @@ public class MoveStrategy implements PathStrategy {
         handle.yaw += getYawDifference(diffZ, diffX);
         if (vector.b - yHeight > 0.0D)
             jump();
-        if (cachedMotion == null) {
+        if (cachedSpeed == null) {
             try {
-                cachedMotion = MOTION_FIELD.getFloat(handle);
+                cachedSpeed = SPEED_FIELD.getFloat(handle);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
-        handle.e(cachedMotion);
+        handle.e(cachedSpeed);
         // handle.walk();
 
         if (handle.positionChanged)
@@ -80,21 +89,12 @@ public class MoveStrategy implements PathStrategy {
         return false;
     }
 
-    private float getYawDifference(double diffZ, double diffX) {
-        float vectorYaw = (float) (Math.atan2(diffZ, diffX) * 180.0D / Math.PI) - 90.0F;
-        float diffYaw = (vectorYaw - handle.yaw) % 360;
-        return Math.max(-30F, Math.min(30, diffYaw));
-    }
+    private static final double JUMP_VELOCITY = 0.49D;
 
-    private void jump() {
-        if (handle.onGround)
-            handle.motY = JUMP_VELOCITY;
-    }
-
-    private static Field MOTION_FIELD;
+    private static Field SPEED_FIELD;
     static {
         try {
-            MOTION_FIELD = EntityLiving.class.getDeclaredField("bb");
+            SPEED_FIELD = EntityLiving.class.getDeclaredField("bb");
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {

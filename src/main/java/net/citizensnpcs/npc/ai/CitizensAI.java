@@ -19,12 +19,12 @@ import com.google.common.collect.Lists;
 
 public class CitizensAI implements AI {
     private Runnable ai;
-    private boolean paused;
     private final List<WeakReference<NavigationCallback>> callbacks = Lists.newArrayList();
     private PathStrategy executing;
     private final List<GoalEntry> executingGoals = Lists.newArrayList();
     private final List<GoalEntry> goals = Lists.newArrayList();
     private final CitizensNPC npc;
+    private boolean paused;
 
     public CitizensAI(CitizensNPC npc) {
         this.npc = npc;
@@ -36,6 +36,11 @@ public class CitizensAI implements AI {
             return;
         goals.add(new GoalEntry(priority, goal));
         Collections.sort(goals);
+    }
+
+    @Override
+    public boolean hasDestination() {
+        return executing != null;
     }
 
     private boolean isGoalAllowable(GoalEntry test) {
@@ -54,12 +59,20 @@ public class CitizensAI implements AI {
         return true;
     }
 
+    public void pause() {
+        paused = true;
+    }
+
     @Override
     public void registerNavigationCallback(NavigationCallback callback) {
         if (!callbacks.contains(callback)) {
             callbacks.add(new WeakReference<NavigationCallback>(callback));
             callback.onAttach(this);
         }
+    }
+
+    public void resume() {
+        paused = false;
     }
 
     @Override
@@ -109,19 +122,10 @@ public class CitizensAI implements AI {
         }
     }
 
-    public void pause() {
-        paused = true;
-    }
-
-    public void resume() {
-        paused = false;
-    }
-
     public void update() {
         if (paused)
             return;
         if (executing != null && executing.update()) {
-            Messaging.log("finished");
             Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
             while (itr.hasNext()) {
                 NavigationCallback next = itr.next().get();

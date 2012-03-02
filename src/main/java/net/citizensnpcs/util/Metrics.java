@@ -54,82 +54,15 @@ import org.bukkit.plugin.Plugin;
 public class Metrics {
 
     /**
-     * Interface used to collect custom data for a plugin
+     * The plugin configuration file
      */
-    public static abstract class Plotter {
-
-        /**
-         * Get the column name for the plotted point
-         * 
-         * @return the plotted point's column name
-         */
-        public abstract String getColumnName();
-
-        /**
-         * Get the current value for the plotted point
-         * 
-         * @return
-         */
-        public abstract int getValue();
-
-        /**
-         * Called after the website graphs have been updated
-         */
-        public void reset() {
-        }
-
-        @Override
-        public int hashCode() {
-            return getColumnName().hashCode() + getValue();
-        }
-
-        @Override
-        public boolean equals(Object object) {
-            if (!(object instanceof Plotter)) {
-                return false;
-            }
-
-            Plotter plotter = (Plotter) object;
-            return plotter.getColumnName().equals(getColumnName()) && plotter.getValue() == getValue();
-        }
-
-    }
-
-    /**
-     * The metrics revision number
-     */
-    private final static int REVISION = 4;
-
-    /**
-     * The base url of the metrics domain
-     */
-    private static final String BASE_URL = "http://metrics.griefcraft.com";
-
-    /**
-     * The url used to report a server's status
-     */
-    private static final String REPORT_URL = "/report/%s";
-
-    /**
-     * The file where guid and opt out is stored in
-     */
-    private static final String CONFIG_FILE = "plugins/PluginMetrics/config.yml";
-
-    /**
-     * Interval of time to ping in minutes
-     */
-    private final static int PING_INTERVAL = 10;
+    private final YamlConfiguration configuration;
 
     /**
      * A map of the custom data plotters for plugins
      */
     private final Map<Plugin, Set<Plotter>> customData = Collections
             .synchronizedMap(new HashMap<Plugin, Set<Plotter>>());
-
-    /**
-     * The plugin configuration file
-     */
-    private final YamlConfiguration configuration;
 
     /**
      * Unique server id
@@ -197,6 +130,21 @@ public class Metrics {
                 }
             }
         }, PING_INTERVAL * 1200, PING_INTERVAL * 1200);
+    }
+
+    /**
+     * Check if mineshafter is present. If it is, we need to bypass it to send
+     * POST requests
+     * 
+     * @return
+     */
+    private boolean isMineshafterPresent() {
+        try {
+            Class.forName("mineshafter.MineServer");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -273,19 +221,71 @@ public class Metrics {
     }
 
     /**
-     * Check if mineshafter is present. If it is, we need to bypass it to send
-     * POST requests
-     * 
-     * @return
+     * Interface used to collect custom data for a plugin
      */
-    private boolean isMineshafterPresent() {
-        try {
-            Class.forName("mineshafter.MineServer");
-            return true;
-        } catch (Exception e) {
-            return false;
+    public static abstract class Plotter {
+
+        @Override
+        public boolean equals(Object object) {
+            if (!(object instanceof Plotter)) {
+                return false;
+            }
+
+            Plotter plotter = (Plotter) object;
+            return plotter.getColumnName().equals(getColumnName()) && plotter.getValue() == getValue();
         }
+
+        /**
+         * Get the column name for the plotted point
+         * 
+         * @return the plotted point's column name
+         */
+        public abstract String getColumnName();
+
+        /**
+         * Get the current value for the plotted point
+         * 
+         * @return
+         */
+        public abstract int getValue();
+
+        @Override
+        public int hashCode() {
+            return getColumnName().hashCode() + getValue();
+        }
+
+        /**
+         * Called after the website graphs have been updated
+         */
+        public void reset() {
+        }
+
     }
+
+    /**
+     * The base url of the metrics domain
+     */
+    private static final String BASE_URL = "http://metrics.griefcraft.com";
+
+    /**
+     * The file where guid and opt out is stored in
+     */
+    private static final String CONFIG_FILE = "plugins/PluginMetrics/config.yml";
+
+    /**
+     * Interval of time to ping in minutes
+     */
+    private final static int PING_INTERVAL = 10;
+
+    /**
+     * The url used to report a server's status
+     */
+    private static final String REPORT_URL = "/report/%s";
+
+    /**
+     * The metrics revision number
+     */
+    private final static int REVISION = 4;
 
     /**
      * Encode text as UTF-8

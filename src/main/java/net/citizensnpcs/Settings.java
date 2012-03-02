@@ -31,15 +31,15 @@ public class Settings {
 
     public enum Setting {
         CHAT_PREFIX("npc.chat.prefix", "[<npc>]: "),
+        DATABASE_DRIVER("database.driver", ""),
+        DATABASE_PASSWORD("database.password", ""),
+        DATABASE_URL("database.url", ""),
+        DATABASE_USERNAME("database.username", ""),
         DEBUG_MODE("general.debug-mode", false),
         QUICK_SELECT("npc.selection.quick-select", false),
         SELECTION_ITEM("npc.selection.item", 280),
         SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
-        USE_DATABASE("use-database", false),
-        DATABASE_PASSWORD("database.password", ""),
-        DATABASE_USERNAME("database.username", ""),
-        DATABASE_URL("database.url", ""),
-        DATABASE_DRIVER("database.driver", "");
+        USE_DATABASE("use-database", false);
 
         private String path;
         private Object value;

@@ -6,12 +6,12 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class ByIdArray<T> implements Iterable<T> {
-    private Object[] elementData;
     private final int capacity;
-    private int size;
-    private int modCount;
+    private Object[] elementData;
     private int highest = Integer.MIN_VALUE;
     private int lowest = Integer.MAX_VALUE;
+    private int modCount;
+    private int size;
 
     public ByIdArray() {
         this(65535);

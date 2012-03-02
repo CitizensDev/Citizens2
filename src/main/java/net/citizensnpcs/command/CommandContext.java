@@ -28,8 +28,8 @@ import com.google.common.collect.Maps;
 
 public class CommandContext {
     protected String[] args;
-    protected final Map<String, String> valueFlags = Maps.newHashMap();
     protected final Set<Character> flags = new HashSet<Character>();
+    protected final Map<String, String> valueFlags = Maps.newHashMap();
 
     public CommandContext(String args) {
         this(args.split(" "));
@@ -112,6 +112,45 @@ public class CommandContext {
         return index + 1 < args.length ? Double.parseDouble(args[index + 1]) : def;
     }
 
+    public String getFlag(String ch) {
+        return valueFlags.get(ch);
+    }
+
+    public String getFlag(String ch, String def) {
+        final String value = valueFlags.get(ch);
+        if (value == null) {
+            return def;
+        }
+
+        return value;
+    }
+
+    public double getFlagDouble(String ch) throws NumberFormatException {
+        return Double.parseDouble(valueFlags.get(ch));
+    }
+
+    public double getFlagDouble(String ch, double def) throws NumberFormatException {
+        final String value = valueFlags.get(ch);
+        if (value == null) {
+            return def;
+        }
+
+        return Double.parseDouble(value);
+    }
+
+    public int getFlagInteger(String ch) throws NumberFormatException {
+        return Integer.parseInt(valueFlags.get(ch));
+    }
+
+    public int getFlagInteger(String ch, int def) throws NumberFormatException {
+        final String value = valueFlags.get(ch);
+        if (value == null) {
+            return def;
+        }
+
+        return Integer.parseInt(value);
+    }
+
     public Set<Character> getFlags() {
         return flags;
     }
@@ -152,6 +191,10 @@ public class CommandContext {
         return index + 1 < args.length ? args[index + 1] : def;
     }
 
+    public Map<String, String> getValueFlags() {
+        return valueFlags;
+    }
+
     public boolean hasFlag(char ch) {
         return flags.contains(ch);
     }
@@ -166,48 +209,5 @@ public class CommandContext {
 
     public boolean matches(String command) {
         return args[0].equalsIgnoreCase(command);
-    }
-
-    public Map<String, String> getValueFlags() {
-        return valueFlags;
-    }
-
-    public String getFlag(String ch) {
-        return valueFlags.get(ch);
-    }
-
-    public String getFlag(String ch, String def) {
-        final String value = valueFlags.get(ch);
-        if (value == null) {
-            return def;
-        }
-
-        return value;
-    }
-
-    public int getFlagInteger(String ch) throws NumberFormatException {
-        return Integer.parseInt(valueFlags.get(ch));
-    }
-
-    public int getFlagInteger(String ch, int def) throws NumberFormatException {
-        final String value = valueFlags.get(ch);
-        if (value == null) {
-            return def;
-        }
-
-        return Integer.parseInt(value);
-    }
-
-    public double getFlagDouble(String ch) throws NumberFormatException {
-        return Double.parseDouble(valueFlags.get(ch));
-    }
-
-    public double getFlagDouble(String ch, double def) throws NumberFormatException {
-        final String value = valueFlags.get(ch);
-        if (value == null) {
-            return def;
-        }
-
-        return Double.parseDouble(value);
     }
 }

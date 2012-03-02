@@ -14,12 +14,16 @@ import org.bukkit.entity.Player;
 @SaveId("waypoints")
 public class Waypoints extends Trait {
     private final NPC npc;
-    private String providerName;
     private WaypointProvider provider = new LinearWaypointProvider();
+    private String providerName;
 
     public Waypoints(NPC npc) {
         this.npc = npc;
         npc.getAI().registerNavigationCallback(provider.getCallback());
+    }
+
+    public Editor getEditor(Player player) {
+        return provider.createEditor(player);
     }
 
     @Override
@@ -40,20 +44,16 @@ public class Waypoints extends Trait {
         key.setString("provider", providerName);
     }
 
-    public Editor getEditor(Player player) {
-        return provider.createEditor(player);
-    }
-
     public void setWaypointProvider(WaypointProvider provider, String name) {
         this.provider = provider;
         providerName = name;
     }
 
+    private static final InstanceFactory<WaypointProvider> providers = DefaultInstanceFactory.create();
+
     public static void registerWaypointProvider(Class<? extends WaypointProvider> clazz, String name) {
         providers.register(clazz, name);
     }
-
-    private static final InstanceFactory<WaypointProvider> providers = DefaultInstanceFactory.create();
 
     static {
         providers.register(LinearWaypointProvider.class, "linear");
