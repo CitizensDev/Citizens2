@@ -75,6 +75,6 @@ public class GenericWaypointCallback extends NavigationCallback {
 
     public void onProviderChanged() {
         itr = provider.iterator();
-        dest = null;
+        dest = itr.hasNext() ? itr.next().getLocation() : null;
     }
 }
