@@ -124,9 +124,15 @@ public interface NPC extends Metadatable, InventoryHolder {
      */
     public boolean isSpawned();
 
+    /**
+     * Loads NPC data from the specified {@link DataKey}.
+     * 
+     * @param root
+     *            Where to load NPC data from
+     * @throws NPCLoadException
+     *             Thrown when unable to load NPC data
+     */
     public void load(DataKey root) throws NPCLoadException;
-
-    public void move(int x, int y, int z);
 
     /**
      * Permanently removes this NPC
@@ -141,6 +147,12 @@ public interface NPC extends Metadatable, InventoryHolder {
      */
     public void removeTrait(Class<? extends Trait> trait);
 
+    /**
+     * Saves NPC data to the given {@link DataKey}.
+     * 
+     * @param root
+     *            Where to save the NPC data
+     */
     public void save(DataKey root);
 
     /**
@@ -168,5 +180,8 @@ public interface NPC extends Metadatable, InventoryHolder {
      */
     public boolean spawn(Location location);
 
+    /**
+     * Updates the state of this NPC. Should be run every tick.
+     */
     public void update();
 }
