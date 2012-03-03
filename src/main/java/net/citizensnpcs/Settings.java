@@ -39,6 +39,8 @@ public class Settings {
         QUICK_SELECT("npc.selection.quick-select", false),
         SELECTION_ITEM("npc.selection.item", 280),
         SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
+        TALK_CLOSE_MAXIMUM_COOLDOWN("npc.talk.max-cooldown", 60),
+        TALK_CLOSE_MINIMUM_COOLDOWN("npc.talk.min-cooldown", 30),
         USE_DATABASE("use-database", false);
 
         private String path;
