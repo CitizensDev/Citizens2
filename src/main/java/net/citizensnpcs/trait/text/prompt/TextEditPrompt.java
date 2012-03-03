@@ -2,8 +2,8 @@ package net.citizensnpcs.trait.text.prompt;
 
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StringHelper;
 
+import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -18,15 +18,15 @@ public class TextEditPrompt extends StringPrompt {
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        text.edit((Integer) context.getSessionData("index"), input);
-        Messaging.send((Player) context.getForWhom(), "<a>Changed entry at index <e>" + context.getSessionData("index")
-                + " <a>to <e>" + input + "<a>.");
+        int index = (Integer) context.getSessionData("index");
+        text.edit(index, input);
+        Messaging.send((Player) context.getForWhom(), "<a>Changed entry at index <e>" + index + " <a>to <e>" + input
+                + "<a>.");
         return new StartPrompt(text);
     }
 
     @Override
     public String getPromptText(ConversationContext context) {
-        return StringHelper.parseColors("<a>Enter text to change the entry at the index <e>"
-                + context.getSessionData("index") + "<a>.");
+        return ChatColor.GREEN + "Enter text to edit the entry.";
     }
 }

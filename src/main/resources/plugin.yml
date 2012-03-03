@@ -32,6 +32,7 @@ permissions:
           citizens.npc.rename: true
           citizens.npc.select: true
           citizens.npc.spawn: true
+          citizens.npc.talk: true
           citizens.npc.tp: true
           citizens.npc.tphere: true
           citizens.npc.lookclose: true

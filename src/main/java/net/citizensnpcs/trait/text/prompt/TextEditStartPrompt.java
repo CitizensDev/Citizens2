@@ -9,10 +9,10 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
-public class TextRemovePrompt extends StringPrompt {
+public class TextEditStartPrompt extends StringPrompt {
     private Text text;
 
-    public TextRemovePrompt(Text text) {
+    public TextEditStartPrompt(Text text) {
         this.text = text;
     }
 
@@ -25,9 +25,8 @@ public class TextRemovePrompt extends StringPrompt {
                 Messaging.sendError(player, "'" + index + "' is not a valid index!");
                 return new StartPrompt(text);
             }
-            text.remove(index);
-            Messaging.send(player, "<e>Removed <a>entry at index <e>" + index + "<a>.");
-            return new StartPrompt(text);
+            context.setSessionData("index", index);
+            return new TextEditPrompt(text);
         } catch (NumberFormatException ex) {
             if (input.equalsIgnoreCase("page")) {
                 context.setSessionData("previous", this);
@@ -42,6 +41,6 @@ public class TextRemovePrompt extends StringPrompt {
     public String getPromptText(ConversationContext context) {
         text.sendPage(((Player) context.getForWhom()), 1);
         return StringHelper
-                .parseColors("<a>Enter the index of the entry you wish to remove or <e>page <a>to view more pages.");
+                .parseColors("<a>Enter the index of the entry you wish to edit or <e>page <a>to view more pages.");
     }
 }
