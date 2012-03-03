@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.SaveId;
@@ -14,7 +15,7 @@ import org.bukkit.entity.Entity;
 @SaveId("look-close")
 public class LookClose extends Trait implements Runnable, Toggleable {
     private final NPC npc;
-    private boolean shouldLookClose;
+    private boolean lookClose = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
 
     public LookClose(NPC npc) {
         this.npc = npc;
@@ -45,37 +46,30 @@ public class LookClose extends Trait implements Runnable, Toggleable {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        shouldLookClose = key.getBoolean("");
+        lookClose = key.getBoolean("");
     }
 
     @Override
     public void run() {
         EntityLiving search = null;
         CitizensNPC handle = (CitizensNPC) npc;
-        if ((search = handle.getHandle().world.findNearbyPlayer(handle.getHandle(), 5)) != null && shouldLookClose)
+        if ((search = handle.getHandle().world.findNearbyPlayer(handle.getHandle(), 5)) != null && lookClose)
             faceEntity(handle, search.getBukkitEntity());
     }
 
     @Override
     public void save(DataKey key) {
-        key.setBoolean("", shouldLookClose);
-    }
-
-    public void setLookClose(boolean shouldLookClose) {
-        this.shouldLookClose = shouldLookClose;
-    }
-
-    public boolean shouldLookClose() {
-        return shouldLookClose;
+        key.setBoolean("", lookClose);
     }
 
     @Override
-    public void toggle() {
-        shouldLookClose = !shouldLookClose;
+    public boolean toggle() {
+        lookClose = !lookClose;
+        return lookClose;
     }
 
     @Override
     public String toString() {
-        return "LookClose{" + shouldLookClose + "}";
+        return "LookClose{" + lookClose + "}";
     }
 }

@@ -33,7 +33,9 @@ public class Text extends Trait implements Runnable, Toggleable {
     private final NPC npc;
     private final List<String> text = new ArrayList<String>();
     private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();
-    private boolean talkClose;
+    private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
+    private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
+    private int currentIndex;
 
     public Text(NPC npc) {
         this.npc = npc;
@@ -47,18 +49,22 @@ public class Text extends Trait implements Runnable, Toggleable {
 
         if (key.keyExists("talk-close"))
             talkClose = key.getBoolean("talk-close");
+        if (key.keyExists("random-talker"))
+            randomTalker = key.getBoolean("random-talker");
     }
 
     @Override
     public void save(DataKey key) {
         key.setBoolean("talk-close", talkClose);
+        key.setBoolean("random-talker", randomTalker);
         for (int i = 0; i < text.size(); i++)
             key.setString(String.valueOf(i), text.get(i));
     }
 
     @Override
-    public void toggle() {
+    public boolean toggle() {
         talkClose = !talkClose;
+        return talkClose;
     }
 
     @Override
@@ -73,14 +79,15 @@ public class Text extends Trait implements Runnable, Toggleable {
                     return;
                 cooldowns.remove(player.getName());
             }
-            sendRandomText(player);
-            // Add a cooldown if the text was successfully sent
-            Calendar wait = Calendar.getInstance();
-            wait.add(
-                    Calendar.SECOND,
-                    (new Random().nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt()) + Setting.TALK_CLOSE_MINIMUM_COOLDOWN
-                            .asInt()));
-            cooldowns.put(player.getName(), wait);
+            if (sendText(player)) {
+                // Add a cooldown if the text was successfully sent
+                Calendar wait = Calendar.getInstance();
+                wait.add(
+                        Calendar.SECOND,
+                        (new Random().nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt()) + Setting.TALK_CLOSE_MINIMUM_COOLDOWN
+                                .asInt()));
+                cooldowns.put(player.getName(), wait);
+            }
         }
     }
 
@@ -92,10 +99,6 @@ public class Text extends Trait implements Runnable, Toggleable {
             builder.append(line + ",");
         builder.append("}");
         return builder.toString();
-    }
-
-    public boolean shouldTalkClose() {
-        return talkClose;
     }
 
     public Editor getEditor(final Player player) {
@@ -142,7 +145,26 @@ public class Text extends Trait implements Runnable, Toggleable {
         return paginator.sendPage(player, page);
     }
 
-    private void sendRandomText(Player player) {
-        npc.chat(player, text.get(new Random().nextInt(text.size())));
+    public boolean sendText(Player player) {
+        if (text.size() == 0)
+            return false;
+
+        int index = 0;
+        if (randomTalker)
+            index = new Random().nextInt(text.size());
+        else {
+            if (currentIndex > text.size() - 1)
+                currentIndex = 0;
+            index = currentIndex++;
+        }
+        Messaging.log("current: " + currentIndex);
+        Messaging.log("index: " + index);
+        npc.chat(player, text.get(index));
+        return true;
+    }
+
+    public boolean toggleRandomTalker() {
+        randomTalker = !randomTalker;
+        return randomTalker;
     }
 }

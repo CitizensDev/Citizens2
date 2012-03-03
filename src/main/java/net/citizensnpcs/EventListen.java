@@ -7,6 +7,7 @@ import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.resource.lib.EntityHumanNPC;
+import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
@@ -112,7 +113,10 @@ public class EventListen implements Listener {
                     return;
             }
         }
-        // TODO NPC text
+        if ((player.hasPermission("citizens.npc.talk") || player.hasPermission("citizens.admin"))
+                && player.getItemInHand().getTypeId() == Setting.TALK_ITEM.asInt())
+            npc.getTrait(Text.class).sendText(player);
+
         if (npc.getCharacter() != null)
             npc.getCharacter().onRightClick(npc, player);
     }

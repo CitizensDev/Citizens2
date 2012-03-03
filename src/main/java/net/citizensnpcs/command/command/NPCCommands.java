@@ -19,7 +19,6 @@ import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
@@ -207,10 +206,8 @@ public class NPCCommands {
              max = 1,
              permission = "npc.lookclose")
     public void lookClose(CommandContext args, Player player, NPC npc) {
-        LookClose trait = npc.getTrait(LookClose.class);
-        trait.toggle();
         String msg = StringHelper.wrap(npc.getName()) + " will "
-                + (trait.shouldLookClose() ? "now rotate" : "no longer rotate");
+                + (npc.getTrait(LookClose.class).toggle() ? "now rotate" : "no longer rotate");
         Messaging.send(player, msg += " when a player is nearby.");
     }
 
@@ -331,22 +328,6 @@ public class NPCCommands {
         } else
             throw new CommandException(respawn.getName() + " is already spawned at another location."
                     + " Use '/npc tphere' to teleport the NPC to your location.");
-    }
-
-    @Command(
-             aliases = { "npc" },
-             usage = "talkclose",
-             desc = "Toggle whether an NPC talks when a player is near",
-             modifiers = { "talkclose", "talk" },
-             min = 1,
-             max = 1,
-             permission = "npc.talkclose")
-    public void talkClose(CommandContext args, Player player, NPC npc) {
-        Text trait = npc.getTrait(Text.class);
-        trait.toggle();
-        String msg = StringHelper.wrap(npc.getName()) + " will "
-                + (trait.shouldTalkClose() ? "now talk" : "no longer talk");
-        Messaging.send(player, msg += " when a player is nearby.");
     }
 
     @Command(
