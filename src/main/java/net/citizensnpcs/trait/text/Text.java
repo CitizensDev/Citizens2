@@ -1,7 +1,10 @@
 package net.citizensnpcs.trait.text;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -9,6 +12,7 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Citizens;
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.SaveId;
@@ -28,6 +32,7 @@ public class Text extends Trait implements Runnable, Toggleable {
     private final Citizens plugin;
     private final NPC npc;
     private final List<String> text = new ArrayList<String>();
+    private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();
     private boolean talkClose;
 
     public Text(NPC npc) {
@@ -60,8 +65,23 @@ public class Text extends Trait implements Runnable, Toggleable {
     public void run() {
         EntityHuman search = null;
         EntityLiving handle = ((CitizensNPC) npc).getHandle();
-        if ((search = handle.world.findNearbyPlayer(handle, 5)) != null && talkClose)
-            sendRandomText((Player) search.getBukkitEntity());
+        if ((search = handle.world.findNearbyPlayer(handle, 5)) != null && talkClose) {
+            Player player = (Player) search.getBukkitEntity();
+            // If the cooldown is not expired, do not send text
+            if (cooldowns.get(player.getName()) != null) {
+                if (!Calendar.getInstance().after(cooldowns.get(player.getName())))
+                    return;
+                cooldowns.remove(player.getName());
+            }
+            sendRandomText(player);
+            // Add a cooldown if the text was successfully sent
+            Calendar wait = Calendar.getInstance();
+            wait.add(
+                    Calendar.SECOND,
+                    (new Random().nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt()) + Setting.TALK_CLOSE_MINIMUM_COOLDOWN
+                            .asInt()));
+            cooldowns.put(player.getName(), wait);
+        }
     }
 
     @Override
@@ -72,6 +92,10 @@ public class Text extends Trait implements Runnable, Toggleable {
             builder.append(line + ",");
         builder.append("}");
         return builder.toString();
+    }
+
+    public boolean shouldTalkClose() {
+        return talkClose;
     }
 
     public Editor getEditor(final Player player) {
