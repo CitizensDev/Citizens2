@@ -101,6 +101,10 @@ public class Text extends Trait implements Runnable, Toggleable {
         return builder.toString();
     }
 
+    public boolean shouldTalkClose() {
+        return talkClose;
+    }
+
     public Editor getEditor(final Player player) {
         final StartPrompt startPrompt = new StartPrompt(this);
         return new Editor() {
@@ -146,6 +150,8 @@ public class Text extends Trait implements Runnable, Toggleable {
     }
 
     public boolean sendText(Player player) {
+        if (!player.hasPermission("citizens.admin") && !player.hasPermission("citizens.npc.talk"))
+            return false;
         if (text.size() == 0)
             return false;
 
@@ -157,8 +163,6 @@ public class Text extends Trait implements Runnable, Toggleable {
                 currentIndex = 0;
             index = currentIndex++;
         }
-        Messaging.log("current: " + currentIndex);
-        Messaging.log("index: " + index);
         npc.chat(player, text.get(index));
         return true;
     }

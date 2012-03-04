@@ -19,13 +19,6 @@
 				<pathelement location="${lib}/bukkit-1.2.2-R0.1-SNAPSHOT.jar" />
 				<pathelement location="${lib}/craftbukkit-1.2.2-R0.1-SNAPSHOT.jar" />
 				<pathelement location="${lib}/CitizensAPI.jar" />
-				<pathelement location="${lib}/hamcrest.jar" />
-				<pathelement location="${lib}/junit-dep-4.10.jar" />
-				<pathelement location="${lib}/hamcrest-library-1.2.1.jar" />
-				<pathelement location="${lib}/hamcrest-core-1.2.1.jar" />
-				<fileset dir="lib">
-					<include name="CitizensAPI.jar" />
-				</fileset>
 			</classpath>
 		</javac>
 		<antcall target="distcore" />
