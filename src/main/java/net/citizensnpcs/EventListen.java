@@ -113,8 +113,9 @@ public class EventListen implements Listener {
                     return;
             }
         }
-        if ((player.hasPermission("citizens.npc.talk") || player.hasPermission("citizens.admin"))
-                && player.getItemInHand().getTypeId() == Setting.TALK_ITEM.asInt())
+        // If the NPC isn't a close talker
+        if (player.getItemInHand().getTypeId() == Setting.TALK_ITEM.asInt()
+                && !npc.getTrait(Text.class).shouldTalkClose())
             npc.getTrait(Text.class).sendText(player);
 
         if (npc.getCharacter() != null)
