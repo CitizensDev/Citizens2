@@ -43,7 +43,7 @@ public class EventListen implements Listener {
     }
 
     /*
-     * World events
+     * Chunk events
      */
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
@@ -122,6 +122,9 @@ public class EventListen implements Listener {
             npc.getCharacter().onRightClick(npc, player);
     }
 
+    /*
+     * Player events
+     */
     @EventHandler
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         if (!(((CraftPlayer) event.getPlayer()).getHandle() instanceof EntityHumanNPC))
@@ -139,14 +142,14 @@ public class EventListen implements Listener {
                 new EntityTargetEvent(event.getRightClicked(), event.getPlayer(), TargetReason.CUSTOM));
     }
 
-    /*
-     * Player events
-     */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Editor.leave(event.getPlayer());
     }
 
+    /*
+     * World events
+     */
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
         for (Pair<Integer, Integer> chunk : toRespawn.keySet()) {

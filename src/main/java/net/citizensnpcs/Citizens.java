@@ -262,8 +262,8 @@ public class Citizens extends JavaPlugin {
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
 
-            String type = key.getString("traits.type").toUpperCase();
-            NPC npc = npcManager.createNPC(EntityType.valueOf(type), id, key.getString("name"), null);
+            NPC npc = npcManager.createNPC(EntityType.valueOf(key.getString("traits.type").toUpperCase()), id, key
+                    .getString("name"), null);
             try {
                 npc.load(key);
             } catch (NPCException ex) {
