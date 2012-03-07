@@ -7,8 +7,8 @@ import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.entity.Player;
 
 /**
- * Represents a Character that can be loaded and saved (one Character can be
- * attached to an NPC at a time)
+ * Represents a Character that can be loaded and saved. One Character can be
+ * attached to an NPC at a time.
  */
 public abstract class Character {
 
