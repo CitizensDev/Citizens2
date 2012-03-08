@@ -3,13 +3,11 @@ package net.citizensnpcs.api.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-public class StorageUtils {
+public class ItemStorage {
 
     public static ItemStack loadItemStack(DataKey root) {
         ItemStack res = new ItemStack(Material.matchMaterial(root.getString("id")), root.getInt("amount"),
@@ -27,12 +25,6 @@ public class StorageUtils {
         return res;
     }
 
-    public static Location loadLocation(DataKey root) {
-        root = root.getRelative("location");
-        return new Location(Bukkit.getWorld(root.getString("world")), root.getDouble("x"), root.getDouble("y"), root
-                .getDouble("z"), (float) root.getDouble("yaw", 0), (float) root.getDouble("pitch", 0));
-    }
-
     public static void saveItem(DataKey key, ItemStack item) {
         key.setInt("id", item.getTypeId());
         key.setInt("amount", item.getAmount());
@@ -41,15 +33,5 @@ public class StorageUtils {
         key = key.getRelative("enchantments");
         for (Enchantment enchantment : item.getEnchantments().keySet())
             key.setInt(Integer.toString(enchantment.getId()), item.getEnchantmentLevel(enchantment));
-    }
-
-    public static void saveLocation(DataKey key, Location location) {
-        key = key.getRelative("location");
-        key.setString("world", location.getWorld().getName());
-        key.setDouble("x", location.getX());
-        key.setDouble("y", location.getY());
-        key.setDouble("z", location.getZ());
-        key.setDouble("yaw", location.getYaw());
-        key.setDouble("pitch", location.getPitch());
     }
 }

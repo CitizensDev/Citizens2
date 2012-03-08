@@ -4,7 +4,7 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.StorageUtils;
+import net.citizensnpcs.api.util.ItemStorage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -46,15 +46,15 @@ public class Equipment extends Trait {
     @Override
     public void load(DataKey key) throws NPCLoadException {
         if (key.keyExists("hand"))
-            equipment[0] = StorageUtils.loadItemStack(key.getRelative("hand"));
+            equipment[0] = ItemStorage.loadItemStack(key.getRelative("hand"));
         if (key.keyExists("helmet"))
-            equipment[1] = StorageUtils.loadItemStack(key.getRelative("helmet"));
+            equipment[1] = ItemStorage.loadItemStack(key.getRelative("helmet"));
         if (key.keyExists("chestplate"))
-            equipment[2] = StorageUtils.loadItemStack(key.getRelative("chestplate"));
+            equipment[2] = ItemStorage.loadItemStack(key.getRelative("chestplate"));
         if (key.keyExists("leggings"))
-            equipment[3] = StorageUtils.loadItemStack(key.getRelative("leggings"));
+            equipment[3] = ItemStorage.loadItemStack(key.getRelative("leggings"));
         if (key.keyExists("boots"))
-            equipment[4] = StorageUtils.loadItemStack(key.getRelative("boots"));
+            equipment[4] = ItemStorage.loadItemStack(key.getRelative("boots"));
 
         // Must set equipment after the NPC entity has been created
         Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("Citizens"), new Runnable() {
@@ -82,7 +82,7 @@ public class Equipment extends Trait {
 
     private void saveOrRemove(DataKey key, ItemStack item) {
         if (item != null)
-            StorageUtils.saveItem(key, item);
+            ItemStorage.saveItem(key, item);
         else {
             if (key.keyExists(""))
                 key.removeKey("");
