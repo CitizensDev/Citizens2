@@ -21,12 +21,7 @@ public class Spawned extends Trait {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        try {
-            shouldSpawn = key.getBoolean("");
-        } catch (Exception ex) {
-            shouldSpawn = false;
-            throw new NPCLoadException("Invalid value. Valid values: true or false");
-        }
+        shouldSpawn = key.getBoolean("");
     }
 
     @Override

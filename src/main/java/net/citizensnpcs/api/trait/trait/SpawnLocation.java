@@ -35,8 +35,8 @@ public class SpawnLocation extends Trait {
         if (Bukkit.getWorld(key.getString("world")) == null)
             throw new NPCLoadException("'" + key.getString("world") + "' is not a valid world.");
 
-        loc = new Location(Bukkit.getWorld(key.getString("world")), key.getDouble("x", 0), key.getDouble("y", 0), key
-                .getDouble("z", 0), (float) key.getDouble("yaw", 0), (float) key.getDouble("pitch", 0));
+        loc = new Location(Bukkit.getWorld(key.getString("world")), key.getDouble("x"), key.getDouble("y"), key
+                .getDouble("z"), (float) key.getDouble("yaw"), (float) key.getDouble("pitch"));
     }
 
     @Override

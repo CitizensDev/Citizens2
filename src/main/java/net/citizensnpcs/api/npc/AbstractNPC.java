@@ -34,8 +34,7 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public void addTrait(Class<? extends Trait> clazz) {
-        Trait trait = CitizensAPI.getTraitManager().getTrait(clazz, this);
+    public void addTrait(Trait trait) {
         if (trait == null) {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot register a null trait. Was it registered properly?");
             return;
@@ -81,7 +80,7 @@ public abstract class AbstractNPC implements NPC {
     public <T extends Trait> T getTrait(Class<T> clazz) {
         Trait t = traits.get(clazz);
         if (t == null)
-            addTrait(clazz);
+            addTrait(CitizensAPI.getTraitManager().getTrait(clazz, this));
 
         return traits.get(clazz) != null ? clazz.cast(traits.get(clazz)) : null;
     }
@@ -127,7 +126,7 @@ public abstract class AbstractNPC implements NPC {
                                 + ex.getMessage());
                 ex.printStackTrace();
             }
-            addTrait(trait.getClass());
+            addTrait(trait);
         }
 
         // Spawn the NPC
