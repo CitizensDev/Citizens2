@@ -1,5 +1,8 @@
 package net.citizensnpcs.api.npc.character;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.citizensnpcs.api.exception.CharacterException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -14,7 +17,7 @@ import org.bukkit.entity.Player;
  */
 public abstract class Character {
     private String name = null;
-    private EntityType[] types;
+    private Set<EntityType> types;
 
     /**
      * Gets the name of this character.
@@ -37,14 +40,17 @@ public abstract class Character {
      * 
      * @return List of valid mob types
      */
-    public final EntityType[] getValidTypes() {
+    public final Set<EntityType> getValidTypes() {
         return types;
     }
 
     public final void setValidTypes(EntityType... types) throws CharacterException {
         if (this.types != null)
             throw new CharacterException("Cannot change the valid mob types of a character.");
-        this.types = types;
+
+        this.types = new HashSet<EntityType>();
+        for (EntityType type : types)
+            this.types.add(type);
     }
 
     /**
