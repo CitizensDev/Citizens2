@@ -35,8 +35,6 @@ public class CitizensTraitManager implements TraitManager {
         registerTrait(new TraitFactory(Waypoints.class).withName("waypoints"));
     }
 
-    // TODO: Code duplication? Yes. But don't change it unless you test to make
-    // sure it builds AND works.
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Trait> T getTrait(String name, NPC npc) {

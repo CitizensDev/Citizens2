@@ -1,4 +1,4 @@
-package net.citizensnpcs.resource.lib;
+package net.citizensnpcs.npc.network;
 
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
