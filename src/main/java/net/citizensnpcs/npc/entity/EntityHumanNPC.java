@@ -1,9 +1,12 @@
-package net.citizensnpcs.resource.lib;
+package net.citizensnpcs.npc.entity;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import net.citizensnpcs.npc.network.NPCNetHandler;
+import net.citizensnpcs.npc.network.NPCNetworkManager;
+import net.citizensnpcs.npc.network.NPCSocket;
 import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.ItemInWorldManager;

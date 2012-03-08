@@ -6,7 +6,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.EntityHumanNPC;
+import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.util.Messaging;
 

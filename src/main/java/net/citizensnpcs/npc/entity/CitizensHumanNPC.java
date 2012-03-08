@@ -4,7 +4,6 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.resource.lib.EntityHumanNPC;
 import net.citizensnpcs.util.StringHelper;
 
 import net.minecraft.server.EntityLiving;

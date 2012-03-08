@@ -5,10 +5,10 @@ import java.util.List;
 
 import net.citizensnpcs.api.ai.NavigationCallback;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.StorageUtils;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -70,7 +70,10 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     @Override
     public void load(DataKey key) {
         for (DataKey root : key.getRelative("waypoints").getIntegerSubKeys()) {
-            waypoints.add(new Waypoint(StorageUtils.loadLocation(root)));
+            root = root.getRelative("location");
+            waypoints.add(new Waypoint(new Location(Bukkit.getWorld(root.getString("world")), root.getDouble("x"), root
+                    .getDouble("y"), root.getDouble("z"), (float) root.getDouble("yaw", 0), (float) root.getDouble(
+                    "pitch", 0))));
         }
         callback.onProviderChanged();
     }
@@ -79,7 +82,14 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     public void save(DataKey key) {
         key = key.getRelative("waypoints");
         for (int i = 0; i < waypoints.size(); ++i) {
-            StorageUtils.saveLocation(key.getRelative(Integer.toString(i)), waypoints.get(i).getLocation());
+            Location location = waypoints.get(i).getLocation();
+            key = key.getRelative(Integer.toString(i) + ".location");
+            key.setString("world", location.getWorld().getName());
+            key.setDouble("x", location.getX());
+            key.setDouble("y", location.getY());
+            key.setDouble("z", location.getZ());
+            key.setDouble("yaw", location.getYaw());
+            key.setDouble("pitch", location.getPitch());
         }
     }
 }
