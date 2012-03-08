@@ -1,12 +1,12 @@
 package net.citizensnpcs.api.exception;
 
 /**
- * Thrown when an NPC fails to load properly.
+ * Represents an Exception thrown by characters.
  */
-public class NPCLoadException extends NPCException {
+public class CharacterException extends Exception {
     private static final long serialVersionUID = -4604062224372942561L;
 
-    public NPCLoadException(String msg) {
+    public CharacterException(String msg) {
         super(msg);
     }
 }

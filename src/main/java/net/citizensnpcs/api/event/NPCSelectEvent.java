@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import net.citizensnpcs.api.npc.NPC;
 
 /**
- * Called when an NPC is selected by a player
+ * Called when an NPC is selected by a player.
  */
 public class NPCSelectEvent extends NPCEvent {
     private final Player player;
@@ -22,7 +22,7 @@ public class NPCSelectEvent extends NPCEvent {
     }
 
     /**
-     * Gets the player that selected an NPC
+     * Gets the player that selected an NPC.
      * 
      * @return Player that selected an NPC
      */

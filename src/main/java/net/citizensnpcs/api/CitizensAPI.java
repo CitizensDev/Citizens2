@@ -1,48 +1,47 @@
 package net.citizensnpcs.api;
 
 import net.citizensnpcs.api.npc.NPCManager;
-import net.citizensnpcs.api.trait.Character;
-import net.citizensnpcs.api.trait.InstanceFactory;
-import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.npc.character.CharacterManager;
+import net.citizensnpcs.api.trait.TraitManager;
 
 /**
- * Contains methods used in order to utilize the Citizens API
+ * Contains methods used in order to utilize the Citizens API.
  */
 public class CitizensAPI {
-    private InstanceFactory<Character> characterManager;
-
-    private NPCManager npcManager;
-    private InstanceFactory<Trait> traitManager;
     private static final CitizensAPI instance = new CitizensAPI();
 
+    private CharacterManager characterManager;
+    private NPCManager npcManager;
+    private TraitManager traitManager;
+
     /**
-     * Gets the CharacterManager
+     * Gets the CharacterManager.
      * 
-     * @return CharacterManager
+     * @return Citizens character manager
      */
-    public static InstanceFactory<Character> getCharacterManager() {
+    public static CharacterManager getCharacterManager() {
         return instance.characterManager;
     }
 
     /**
-     * Gets the NPCManager
+     * Gets the NPCManager.
      * 
-     * @return NPCManager
+     * @return Citizens NPC manager
      */
     public static NPCManager getNPCManager() {
         return instance.npcManager;
     }
 
     /**
-     * Gets the TraitManager
+     * Gets the TraitManager.
      * 
-     * @return TraitManager
+     * @return Citizens trait manager
      */
-    public static InstanceFactory<Trait> getTraitManager() {
+    public static TraitManager getTraitManager() {
         return instance.traitManager;
     }
 
-    public static void setCharacterManager(InstanceFactory<Character> characterManager) {
+    public static void setCharacterManager(CharacterManager characterManager) {
         if (instance.characterManager == null)
             instance.characterManager = characterManager;
     }
@@ -52,7 +51,7 @@ public class CitizensAPI {
             instance.npcManager = npcManager;
     }
 
-    public static void setTraitManager(InstanceFactory<Trait> traitManager) {
+    public static void setTraitManager(TraitManager traitManager) {
         if (instance.traitManager == null)
             instance.traitManager = traitManager;
     }

@@ -2,18 +2,18 @@ package net.citizensnpcs.api.npc;
 
 import java.util.Collection;
 
-import net.citizensnpcs.api.trait.Character;
+import net.citizensnpcs.api.npc.character.Character;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 /**
- * Handles various NPC-related methods
+ * Handles various NPC-related methods.
  */
 public interface NPCManager extends Iterable<NPC> {
 
     /**
-     * Creates an NPC with no attached character (this does not spawn the NPC)
+     * Creates an NPC with no attached character. This does not spawn the NPC.
      * 
      * @param type
      *            Entity type to assign to the NPC
@@ -24,7 +24,7 @@ public interface NPCManager extends Iterable<NPC> {
     public NPC createNPC(EntityType type, String name);
 
     /**
-     * Creates an NPC with the given character (this does not spawn the NPC)
+     * Creates an NPC with the given character. This does not spawn the NPC.
      * 
      * @param type
      *            Entity type to assign to the NPC
@@ -37,7 +37,7 @@ public interface NPCManager extends Iterable<NPC> {
     public NPC createNPC(EntityType type, String name, Character character);
 
     /**
-     * Gets an NPC from the given LivingEntity
+     * Gets an NPC from the given LivingEntity.
      * 
      * @param entity
      *            Entity to get the NPC from
@@ -46,7 +46,7 @@ public interface NPCManager extends Iterable<NPC> {
     public NPC getNPC(Entity entity);
 
     /**
-     * Gets an NPC with the given ID
+     * Gets an NPC with the given ID.
      * 
      * @param id
      *            ID of the NPC
@@ -55,7 +55,7 @@ public interface NPCManager extends Iterable<NPC> {
     public NPC getNPC(int id);
 
     /**
-     * Gets all NPCs with the given character
+     * Gets all NPCs with the given character.
      * 
      * @param character
      *            Character to search for
@@ -64,7 +64,7 @@ public interface NPCManager extends Iterable<NPC> {
     public Collection<NPC> getNPCs(Class<? extends Character> character);
 
     /**
-     * Checks whether the given Bukkit entity is an NPC
+     * Checks whether the given Bukkit entity is an NPC.
      * 
      * @param entity
      *            Entity to check

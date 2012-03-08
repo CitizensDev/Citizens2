@@ -3,7 +3,7 @@ package net.citizensnpcs.api.event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when Citizens is reloaded
+ * Called when Citizens is reloaded.
  */
 public class CitizensReloadEvent extends CitizensEvent {
     @Override

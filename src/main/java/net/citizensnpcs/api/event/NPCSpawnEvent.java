@@ -7,12 +7,13 @@ import org.bukkit.event.HandlerList;
 import net.citizensnpcs.api.npc.NPC;
 
 /**
- * Called when an NPC spawns
+ * Called when an NPC spawns.
  */
 public class NPCSpawnEvent extends NPCEvent implements Cancellable {
     private boolean cancelled = false;
 
     private final Location location;
+
     public NPCSpawnEvent(NPC npc, Location location) {
         super(npc);
         this.location = location;
@@ -24,7 +25,7 @@ public class NPCSpawnEvent extends NPCEvent implements Cancellable {
     }
 
     /**
-     * Gets the location where the NPC was spawned
+     * Gets the location where the NPC was spawned.
      * 
      * @return Location where the NPC was spawned
      */

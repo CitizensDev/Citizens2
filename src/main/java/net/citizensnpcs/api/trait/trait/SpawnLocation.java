@@ -1,7 +1,6 @@
 package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -12,7 +11,6 @@ import org.bukkit.Location;
  * Represents the spawn location of an NPC. This is not reliable for determining
  * an NPC's location. Use NPC.getBukkitEntity().getLocation().
  */
-@SaveId("location")
 public class SpawnLocation extends Trait {
     private Location loc;
 
@@ -24,7 +22,7 @@ public class SpawnLocation extends Trait {
     }
 
     /**
-     * Gets the location where an NPC should spawn upon loading
+     * Gets the location where an NPC should spawn upon loading.
      * 
      * @return NPC's spawn location
      */
@@ -56,7 +54,7 @@ public class SpawnLocation extends Trait {
     }
 
     /**
-     * Sets the location where an NPC should spawn upon loading
+     * Sets the location where an NPC should spawn upon loading.
      * 
      * @param loc
      *            Location to spawn

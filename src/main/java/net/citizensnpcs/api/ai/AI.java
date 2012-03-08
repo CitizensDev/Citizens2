@@ -3,6 +3,9 @@ package net.citizensnpcs.api.ai;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
+/**
+ * Represents AI that can be attached to an NPC.
+ */
 public interface AI {
 
     /**

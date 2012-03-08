@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.npc;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -8,8 +9,7 @@ import java.util.logging.Level;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.Character;
-import net.citizensnpcs.api.trait.SaveId;
+import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.trait.trait.Spawned;
@@ -21,13 +21,11 @@ import org.bukkit.metadata.MetadataStoreBase;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
-import com.google.common.collect.Lists;
-
 public abstract class AbstractNPC implements NPC {
     private Character character;
     private final int id;
     private String name;
-    private final List<Runnable> runnables = Lists.newArrayList();
+    private final List<Runnable> runnables = new ArrayList<Runnable>();
     private final Map<Class<? extends Trait>, Trait> traits = new HashMap<Class<? extends Trait>, Trait>();
 
     protected AbstractNPC(int id, String name) {
@@ -36,9 +34,10 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public void addTrait(Trait trait) {
+    public void addTrait(Class<? extends Trait> clazz) {
+        Trait trait = CitizensAPI.getTraitManager().getTrait(clazz, this);
         if (trait == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "trait cannot be null. Did you register it properly?");
+            Bukkit.getLogger().log(Level.SEVERE, "Cannot register a null trait. Was it registered properly?");
             return;
         }
         if (trait instanceof Runnable) {
@@ -81,12 +80,10 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public <T extends Trait> T getTrait(Class<T> clazz) {
         Trait t = traits.get(clazz);
-        if (t == null) {
-            t = CitizensAPI.getTraitManager().getInstance(clazz.getAnnotation(SaveId.class).value(), this);
-            addTrait(t);
-        }
+        if (t == null)
+            addTrait(clazz);
 
-        return t != null ? clazz.cast(t) : null;
+        return traits.get(clazz) != null ? clazz.cast(traits.get(clazz)) : null;
     }
 
     @Override
@@ -106,25 +103,20 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void load(DataKey root) throws NPCLoadException {
-        Character character = CitizensAPI.getCharacterManager().getInstance(root.getString("character"), this);
+        Character character = CitizensAPI.getCharacterManager().getCharacter(root.getString("character"));
 
         // Load the character if it exists
         if (character != null) {
-            if (!character.getClass().isAnnotationPresent(SaveId.class))
-                throw new NPCLoadException("Could not load character '" + root.getString("character")
-                        + "'. SaveId annotation is missing.");
             character.load(root.getRelative("characters." + character.getName()));
             setCharacter(character);
         }
 
         // Load traits
         for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
-            Trait trait = CitizensAPI.getTraitManager().getInstance(traitKey.name(), this);
+            Trait trait = CitizensAPI.getTraitManager().getTrait(traitKey.name(), this);
             if (trait == null)
-                continue;
-            if (!trait.getClass().isAnnotationPresent(SaveId.class))
-                throw new NPCLoadException("Could not load trait '" + traitKey.name()
-                        + "'. SaveId annotation is missing.");
+                throw new NPCLoadException("No trait with the name '" + traitKey.name()
+                        + "' exists. Was it registered properly?");
             try {
                 trait.load(traitKey);
             } catch (Exception ex) {
@@ -135,7 +127,7 @@ public abstract class AbstractNPC implements NPC {
                                 + ex.getMessage());
                 ex.printStackTrace();
             }
-            addTrait(trait);
+            addTrait(trait.getClass());
         }
 
         // Spawn the NPC
@@ -207,8 +199,8 @@ public abstract class AbstractNPC implements NPC {
             runnable.run();
     }
 
-    // TODO: this can be moved out to another class if necessary
     private static final MetadataStoreBase<NPC> METADATA = new MetadataStoreBase<NPC>() {
+
         @Override
         protected String disambiguate(NPC subject, String metadataKey) {
             return Integer.toString(subject.getId()) + ":" + subject.getName() + ":" + metadataKey;

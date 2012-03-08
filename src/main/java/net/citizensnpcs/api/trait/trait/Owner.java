@@ -1,14 +1,12 @@
 package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
- * Represents the owner of an NPC
+ * Represents the owner of an NPC.
  */
-@SaveId("owner")
 public class Owner extends Trait {
     private String owner;
 
@@ -20,7 +18,7 @@ public class Owner extends Trait {
     }
 
     /**
-     * Gets the owner of an NPC
+     * Gets the owner of an NPC.
      * 
      * @return Name of the owner of an NPC
      */
@@ -44,7 +42,7 @@ public class Owner extends Trait {
     }
 
     /**
-     * Sets the owner of an NPC
+     * Sets the owner of an NPC.
      * 
      * @param owner
      *            Name of the player to set as owner of an NPC

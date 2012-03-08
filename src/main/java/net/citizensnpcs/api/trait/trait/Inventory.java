@@ -1,7 +1,6 @@
 package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.StorageUtils;
@@ -9,9 +8,8 @@ import net.citizensnpcs.api.util.StorageUtils;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Represents an NPC's inventory
+ * Represents an NPC's inventory.
  */
-@SaveId("inventory")
 public class Inventory extends Trait {
     private ItemStack[] contents;
 
@@ -24,7 +22,7 @@ public class Inventory extends Trait {
     }
 
     /**
-     * Gets the contents of an NPC's inventory
+     * Gets the contents of an NPC's inventory.
      * 
      * @return ItemStack array of an NPC's inventory contents
      */
@@ -57,7 +55,7 @@ public class Inventory extends Trait {
     }
 
     /**
-     * Sets the contents of an NPC's inventory
+     * Sets the contents of an NPC's inventory.
      * 
      * @param contents
      *            ItemStack array to set as the contents of an NPC's inventory

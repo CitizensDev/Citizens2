@@ -5,7 +5,7 @@ import org.bukkit.event.HandlerList;
 import net.citizensnpcs.api.npc.NPC;
 
 /**
- * Called when an NPC despawns
+ * Called when an NPC despawns.
  */
 public class NPCDespawnEvent extends NPCEvent {
     public NPCDespawnEvent(NPC npc) {

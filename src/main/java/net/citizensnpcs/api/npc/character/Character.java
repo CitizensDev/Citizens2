@@ -1,9 +1,11 @@
-package net.citizensnpcs.api.trait;
+package net.citizensnpcs.api.npc.character;
 
+import net.citizensnpcs.api.exception.CharacterException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 /**
@@ -11,22 +13,42 @@ import org.bukkit.entity.Player;
  * attached to an NPC at a time.
  */
 public abstract class Character {
-
     private String name = null;
+    private EntityType[] types;
 
     /**
-     * Gets the name of this character
+     * Gets the name of this character.
      * 
      * @return Name of this character
      */
     public final String getName() {
-        if (name == null)
-            name = getClass().getAnnotation(SaveId.class).value();
         return name;
     }
 
+    public final void setName(String name) throws CharacterException {
+        if (this.name != null)
+            throw new CharacterException("Cannot change the name of a character.");
+
+        this.name = name;
+    }
+
     /**
-     * Loads a trait
+     * Gets the valid mob types that this character can be.
+     * 
+     * @return List of valid mob types
+     */
+    public final EntityType[] getValidTypes() {
+        return types;
+    }
+
+    public final void setValidTypes(EntityType... types) throws CharacterException {
+        if (this.types != null)
+            throw new CharacterException("Cannot change the valid mob types of a character.");
+        this.types = types;
+    }
+
+    /**
+     * Loads a trait.
      * 
      * @param key
      *            DataKey to load from
@@ -36,7 +58,7 @@ public abstract class Character {
     public abstract void load(DataKey key) throws NPCLoadException;
 
     /**
-     * Called when an NPC is left-clicked
+     * Called when an NPC is left-clicked.
      * 
      * @param npc
      *            NPC that was left-clicked
@@ -47,7 +69,7 @@ public abstract class Character {
     }
 
     /**
-     * Called when this character is removed from an NPC
+     * Called when this character is removed from an NPC.
      * 
      * @param npc
      *            NPC that had this character removed
@@ -56,7 +78,7 @@ public abstract class Character {
     }
 
     /**
-     * Called when an NPC is right-clicked
+     * Called when an NPC is right-clicked.
      * 
      * @param npc
      *            NPC that was right-clicked
@@ -67,7 +89,7 @@ public abstract class Character {
     }
 
     /**
-     * Called when an NPC is set as this character
+     * Called when an NPC is set as this character.
      * 
      * @param npc
      *            NPC that is set as this character
@@ -76,7 +98,7 @@ public abstract class Character {
     }
 
     /**
-     * Saves a trait
+     * Saves a trait.
      * 
      * @param key
      *            DataKey to save to

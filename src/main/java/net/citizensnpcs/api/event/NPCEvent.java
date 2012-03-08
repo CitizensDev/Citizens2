@@ -3,7 +3,7 @@ package net.citizensnpcs.api.event;
 import net.citizensnpcs.api.npc.NPC;
 
 /**
- * Represents an event thrown by an NPC
+ * Represents an event thrown by an NPC.
  */
 public abstract class NPCEvent extends CitizensEvent {
     private final NPC npc;
@@ -14,7 +14,7 @@ public abstract class NPCEvent extends CitizensEvent {
     }
 
     /**
-     * Get the npc involved in the event
+     * Get the npc involved in the event.
      * 
      * @return the npc involved in the event
      */

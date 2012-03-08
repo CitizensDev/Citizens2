@@ -1,7 +1,6 @@
 package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -10,7 +9,6 @@ import net.citizensnpcs.api.util.DataKey;
  * should spawn onEnable. For checking if an NPC's entity is spawned, use
  * NPC.isSpawned().
  */
-@SaveId("spawned")
 public class Spawned extends Trait {
     private boolean shouldSpawn;
 
@@ -37,7 +35,7 @@ public class Spawned extends Trait {
     }
 
     /**
-     * Sets whether an NPC should spawn during server starts or reloads
+     * Sets whether an NPC should spawn during server starts or reloads.
      * 
      * @param shouldSpawn
      *            Whether an NPC should spawn
@@ -47,7 +45,7 @@ public class Spawned extends Trait {
     }
 
     /**
-     * Gets whether an NPC should spawn during server starts or reloads
+     * Gets whether an NPC should spawn during server starts or reloads.
      * 
      * @return Whether an NPC should spawn
      */

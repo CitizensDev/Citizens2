@@ -2,7 +2,6 @@ package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.StorageUtils;
@@ -14,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Represents an NPC's equipment. This only is applicable to human NPCs.
  */
-@SaveId("equipment")
 public class Equipment extends Trait {
     private final ItemStack[] equipment = new ItemStack[5];
     private final NPC npc;
@@ -24,7 +22,7 @@ public class Equipment extends Trait {
     }
 
     /**
-     * Get an NPC's equipment from the given slot
+     * Get an NPC's equipment from the given slot.
      * 
      * @param slot
      *            Slot where the armor is located (0, 1, 2, 3, or 4)
@@ -37,7 +35,7 @@ public class Equipment extends Trait {
     }
 
     /**
-     * Get all of an NPC's equipment
+     * Get all of an NPC's equipment.
      * 
      * @return An array of an NPC's equipment
      */
@@ -92,7 +90,7 @@ public class Equipment extends Trait {
     }
 
     /**
-     * Set the armor from the given slot as the given item
+     * Set the armor from the given slot as the given item.
      * 
      * @param slot
      *            Slot of the armor (must be between 0 and 4)

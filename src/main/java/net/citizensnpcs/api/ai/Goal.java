@@ -1,5 +1,8 @@
 package net.citizensnpcs.api.ai;
 
+/**
+ * Represents an AI Goal that can be added to a queue of an NPC's goals.
+ */
 public interface Goal {
 
     /**

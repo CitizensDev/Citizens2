@@ -1,13 +1,11 @@
 package net.citizensnpcs.api.trait.trait;
 
-import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
- * Represents an NPC's mob type
+ * Represents an NPC's mob type.
  */
-@SaveId("type")
 public class MobType extends Trait {
     private String type;
 
@@ -19,9 +17,9 @@ public class MobType extends Trait {
     }
 
     /**
-     * Gets the type of creature that an NPC is
+     * Gets the type of mob that an NPC is.
      * 
-     * @return Name of the creature type of an NPC
+     * @return Name of the mob type of an NPC
      */
     public String getType() {
         return type;
@@ -42,10 +40,10 @@ public class MobType extends Trait {
     }
 
     /**
-     * Sets the type of creature that an NPC is
+     * Sets the type of mob that an NPC is.
      * 
      * @param type
-     *            Name of the creature type to set an NPC as
+     *            Name of the mob type to set an NPC as
      */
     public void setType(String type) {
         this.type = type;
