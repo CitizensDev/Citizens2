@@ -110,9 +110,9 @@ public abstract class CitizensNPC extends AbstractNPC {
         mcEntity.world.players.remove(mcEntity);
 
         // Set the location
-        addTrait(new SpawnLocation(loc));
+        getTrait(SpawnLocation.class).setLocation(loc);
         // Set the spawned state
-        addTrait(new Spawned(true));
+        getTrait(Spawned.class).setSpawned(true);
         return true;
     }
 

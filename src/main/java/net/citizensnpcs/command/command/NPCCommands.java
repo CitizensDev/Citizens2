@@ -6,8 +6,7 @@ import java.util.List;
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Character;
-import net.citizensnpcs.api.trait.InstanceFactory;
+import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
@@ -17,6 +16,7 @@ import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
+import net.citizensnpcs.npc.CitizensCharacterManager;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.util.Messaging;
@@ -30,7 +30,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
-    private final InstanceFactory<Character> characterManager;
+    private final CitizensCharacterManager characterManager;
     private final CitizensNPCManager npcManager;
 
     public NPCCommands(Citizens plugin) {
@@ -47,7 +47,7 @@ public class NPCCommands {
              max = 2)
     public void character(CommandContext args, Player player, NPC npc) throws CommandException {
         String name = args.getString(1).toLowerCase();
-        Character character = characterManager.getInstance(name, npc);
+        Character character = characterManager.getCharacter(name);
         if (character == null)
             throw new CommandException("The character '" + args.getString(1) + "' does not exist.");
         if (npc.getCharacter() != null && npc.getCharacter().getName().equalsIgnoreCase(character.getName()))
@@ -88,22 +88,22 @@ public class NPCCommands {
         boolean success = true;
         if (args.hasValueFlag("char")) {
             String character = args.getFlag("char").toLowerCase();
-            if (characterManager.getInstance(character, create) == null) {
+            if (characterManager.getCharacter(character) == null) {
                 Messaging.sendError(player, "'" + args.getFlag("char") + "' is not a valid character. "
                         + create.getName() + " was created at your location without a character.");
                 success = false;
             } else {
-                create.setCharacter(characterManager.getInstance(character, create));
+                create.setCharacter(characterManager.getCharacter(character));
                 successMsg += " with the character " + StringHelper.wrap(character);
             }
         }
         successMsg += " at your location.";
 
         // Set the owner
-        create.addTrait(new Owner(player.getName()));
+        create.getTrait(Owner.class).setOwner(player.getName());
 
         // Set the mob type
-        create.addTrait(new MobType(type.toString()));
+        create.getTrait(MobType.class).setType(type.toString());
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);
@@ -168,10 +168,10 @@ public class NPCCommands {
 
             if (args.hasValueFlag("char")) {
                 String character = args.getFlag("char");
-                if (characterManager.getInstance(character) == null)
+                if (characterManager.getCharacter(character) == null)
                     throw new CommandException("'" + character + "' is not a valid character.");
 
-                for (NPC add : npcManager.getNPCs(characterManager.getInstance(character).getClass()))
+                for (NPC add : npcManager.getNPCs(characterManager.getCharacter(character).getClass()))
                     if (!npcs.contains(add) && add.getCharacter() != null
                             && add.getCharacter().getName().equals(character.toLowerCase()))
                         npcs.add(add);

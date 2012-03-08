@@ -3,16 +3,15 @@ package net.citizensnpcs.trait;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
+
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
-@SaveId("look-close")
 public class LookClose extends Trait implements Runnable, Toggleable {
     private final NPC npc;
     private boolean lookClose = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
