@@ -7,19 +7,10 @@ import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Character;
-import net.citizensnpcs.api.trait.DefaultInstanceFactory;
-import net.citizensnpcs.api.trait.InstanceFactory;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.api.trait.trait.Inventory;
-import net.citizensnpcs.api.trait.trait.MobType;
-import net.citizensnpcs.api.trait.trait.Owner;
-import net.citizensnpcs.api.trait.trait.SpawnLocation;
-import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.Storage;
@@ -36,10 +27,9 @@ import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.npc.CitizensCharacterManager;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.text.Text;
-import net.citizensnpcs.trait.waypoint.Waypoints;
+import net.citizensnpcs.npc.CitizensTraitManager;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Metrics;
 import net.citizensnpcs.util.StringHelper;
@@ -56,18 +46,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.Iterators;
 
 public class Citizens extends JavaPlugin {
-    private final InstanceFactory<Character> characterManager = DefaultInstanceFactory.create();
+    private static final String COMPATIBLE_MC_VERSION = "1.2.3";
 
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
+    private CitizensCharacterManager characterManager;
     private volatile CitizensNPCManager npcManager;
     private Storage saves;
-    private final InstanceFactory<Trait> traitManager = DefaultInstanceFactory.create(Owner.class, Spawned.class,
-            LookClose.class, SpawnLocation.class, Inventory.class, MobType.class, Waypoints.class, Equipment.class,
-            Text.class);
 
-    public InstanceFactory<Character> getCharacterManager() {
+    public CitizensCharacterManager getCharacterManager() {
         return characterManager;
     }
 
@@ -173,9 +161,10 @@ public class Citizens extends JavaPlugin {
 
         // Register API managers
         npcManager = new CitizensNPCManager(saves);
+        characterManager = new CitizensCharacterManager();
         CitizensAPI.setNPCManager(npcManager);
         CitizensAPI.setCharacterManager(characterManager);
-        CitizensAPI.setTraitManager(traitManager);
+        CitizensAPI.setTraitManager(new CitizensTraitManager());
 
         // Register events
         getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
@@ -246,6 +235,8 @@ public class Citizens extends JavaPlugin {
 
         saves.load();
         setupNPCs();
+
+        getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
 
     public void save() {
@@ -294,6 +285,4 @@ public class Citizens extends JavaPlugin {
         }
         return false;
     }
-
-    private static final String COMPATIBLE_MC_VERSION = "1.2.3";
 }

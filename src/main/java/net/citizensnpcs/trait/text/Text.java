@@ -15,7 +15,6 @@ import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
@@ -24,10 +23,10 @@ import net.citizensnpcs.trait.Toggleable;
 import net.citizensnpcs.trait.text.prompt.StartPrompt;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
+
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
 
-@SaveId("text")
 public class Text extends Trait implements Runnable, Toggleable {
     private final Citizens plugin;
     private final NPC npc;

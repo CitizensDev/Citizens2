@@ -1,17 +1,16 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.DefaultInstanceFactory;
-import net.citizensnpcs.api.trait.InstanceFactory;
-import net.citizensnpcs.api.trait.SaveId;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 
 import org.bukkit.entity.Player;
 
-@SaveId("waypoints")
 public class Waypoints extends Trait {
     private final NPC npc;
     private WaypointProvider provider = new LinearWaypointProvider();
@@ -29,7 +28,11 @@ public class Waypoints extends Trait {
     @Override
     public void load(DataKey key) throws NPCLoadException {
         providerName = key.getString("provider", "linear");
-        provider = providers.getInstance(providerName);
+        for (Class<? extends WaypointProvider> clazz : providers.keySet())
+            if (providers.get(clazz).equals(providerName)) {
+                provider = create(clazz);
+                break;
+            }
         if (provider == null)
             return;
         provider.load(key.getRelative(providerName));
@@ -45,21 +48,36 @@ public class Waypoints extends Trait {
     }
 
     /**
-     * Sets the current {@link WaypointProvider} by using the given name. The
-     * name should have been registered using
+     * Sets the current {@link WaypointProvider} by using the given class. The
+     * class should have been registered using
      * {@link Waypoints#registerWaypointProvider(Class, String)}.
      * 
      * @param provider
-     * @param name
+     *            Class to set as waypoint provider
      */
-    public void setWaypointProvider(String name) {
-        this.provider = providers.getInstance(name);
-        if (this.provider != null) {
-            providerName = name;
-        }
+    public void setWaypointProvider(Class<? extends WaypointProvider> clazz) {
+        // TODO Probably needs to be changed/fixed. I attempted to make it work
+        // with refactor. -aPunch
+        provider = create(clazz);
+        if (provider != null)
+            providerName = providers.get(clazz);
     }
 
-    private static final InstanceFactory<WaypointProvider> providers = DefaultInstanceFactory.create();
+    private WaypointProvider create(Class<? extends WaypointProvider> clazz) {
+        if (!providers.containsKey(clazz))
+            return null;
+
+        WaypointProvider provider;
+        try {
+            provider = clazz.newInstance();
+        } catch (Exception ex) {
+            provider = null;
+        }
+
+        return provider;
+    }
+
+    private static final Map<Class<? extends WaypointProvider>, String> providers = new HashMap<Class<? extends WaypointProvider>, String>();
 
     /**
      * Registers a {@link WaypointProvider}, which can be subsequently used by
@@ -71,10 +89,10 @@ public class Waypoints extends Trait {
      *            The name of the waypoint provider
      */
     public static void registerWaypointProvider(Class<? extends WaypointProvider> clazz, String name) {
-        providers.register(clazz, name);
+        providers.put(clazz, name);
     }
 
     static {
-        providers.register(LinearWaypointProvider.class, "linear");
+        providers.put(LinearWaypointProvider.class, "linear");
     }
 }

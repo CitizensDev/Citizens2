@@ -9,7 +9,7 @@ import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.event.NPCSelectEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
-import net.citizensnpcs.api.trait.Character;
+import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.editor.Editor;
