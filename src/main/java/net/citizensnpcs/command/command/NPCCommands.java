@@ -84,20 +84,25 @@ public class NPCCommands {
                         + "' is not a valid mob type. Using default NPC.");
             }
         NPC create = npcManager.createNPC(type, name);
-        String successMsg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
-        boolean success = true;
+        String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(create.getName());
         if (args.hasValueFlag("char")) {
             String character = args.getFlag("char").toLowerCase();
             if (characterManager.getCharacter(character) == null) {
-                Messaging.sendError(player, "'" + args.getFlag("char") + "' is not a valid character. "
-                        + create.getName() + " was created at your location without a character.");
-                success = false;
+                Messaging.sendError(player, "'" + args.getFlag("char") + "' is not a valid character.");
+                return;
             } else {
+                Character set = characterManager.getCharacter(character);
+                if (!set.getValidTypes().contains(type)) {
+                    Messaging.sendError(player, "The character '" + set.getName() + "' cannot be given the mob type '"
+                            + type.name().toLowerCase() + "'.");
+                    create.remove();
+                    return;
+                }
                 create.setCharacter(characterManager.getCharacter(character));
-                successMsg += " with the character " + StringHelper.wrap(character);
+                msg += " with the character " + StringHelper.wrap(character);
             }
         }
-        successMsg += " at your location.";
+        msg += " at your location.";
 
         // Set the owner
         create.getTrait(Owner.class).setOwner(player.getName());
@@ -107,8 +112,7 @@ public class NPCCommands {
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);
-        if (success)
-            Messaging.send(player, successMsg);
+        Messaging.send(player, msg);
     }
 
     @Command(
