@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 
@@ -27,7 +30,7 @@ import net.citizensnpcs.util.Paginator;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
 
-public class Text extends Trait implements Runnable, Toggleable {
+public class Text extends Trait implements Runnable, Toggleable, ConversationAbandonedListener {
     private final Citizens plugin;
     private final NPC npc;
     private final List<String> text = new ArrayList<String>();
@@ -91,13 +94,8 @@ public class Text extends Trait implements Runnable, Toggleable {
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Text{talk-close=" + talkClose + ",text=");
-        for (String line : text)
-            builder.append(line + ",");
-        builder.append("}");
-        return builder.toString();
+    public void conversationAbandoned(ConversationAbandonedEvent event) {
+        plugin.getServer().dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
     }
 
     public boolean shouldTalkClose() {
@@ -105,15 +103,16 @@ public class Text extends Trait implements Runnable, Toggleable {
     }
 
     public Editor getEditor(final Player player) {
-        final StartPrompt startPrompt = new StartPrompt(this);
+        final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
+                .withLocalEcho(false).withEscapeSequence("/npc text").withModality(false).withFirstPrompt(
+                        new StartPrompt(this)).buildConversation(player);
         return new Editor() {
 
             @Override
             public void begin() {
                 Messaging.send(player, "<b>Entered the text editor!");
 
-                new ConversationFactory(plugin).withModality(false).withFirstPrompt(startPrompt).withEscapeSequence(
-                        "/npc text").buildConversation(player).begin();
+                conversation.begin();
             }
 
             @Override
@@ -169,5 +168,15 @@ public class Text extends Trait implements Runnable, Toggleable {
     public boolean toggleRandomTalker() {
         randomTalker = !randomTalker;
         return randomTalker;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Text{talk-close=" + talkClose + ",text=");
+        for (String line : text)
+            builder.append(line + ",");
+        builder.append("}");
+        return builder.toString();
     }
 }
