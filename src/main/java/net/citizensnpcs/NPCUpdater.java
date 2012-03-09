@@ -1,6 +1,7 @@
 package net.citizensnpcs;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 
 public class NPCUpdater implements Runnable {
@@ -15,7 +16,7 @@ public class NPCUpdater implements Runnable {
         for (NPC npc : npcManager) {
             if (!npc.isSpawned())
                 continue;
-            npc.update();
+            ((CitizensNPC) npc).update();
         }
     }
 }

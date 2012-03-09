@@ -28,6 +28,7 @@ import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensCharacterManager;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.CitizensTraitManager;
 import net.citizensnpcs.util.Messaging;
@@ -242,7 +243,7 @@ public class Citizens extends JavaPlugin {
     public void save() {
         config.save();
         for (NPC npc : npcManager)
-            npc.save(saves.getKey("npc." + npc.getId()));
+            ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
         saves.save();
     }
 
@@ -256,7 +257,7 @@ public class Citizens extends JavaPlugin {
             NPC npc = npcManager.createNPC(EntityType.valueOf(key.getString("traits.type").toUpperCase()), id, key
                     .getString("name"), null);
             try {
-                npc.load(key);
+                ((CitizensNPC) npc).load(key);
             } catch (NPCException ex) {
                 Messaging.log(ex.getMessage());
             }
