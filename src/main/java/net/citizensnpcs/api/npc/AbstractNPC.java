@@ -8,12 +8,8 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.trait.SpawnLocation;
-import net.citizensnpcs.api.trait.trait.Spawned;
-import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -101,40 +97,6 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public void load(DataKey root) throws NPCLoadException {
-        Character character = CitizensAPI.getCharacterManager().getCharacter(root.getString("character"));
-
-        // Load the character if it exists
-        if (character != null) {
-            character.load(root.getRelative("characters." + character.getName()));
-            setCharacter(character);
-        }
-
-        // Load traits
-        for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
-            Trait trait = CitizensAPI.getTraitManager().getTrait(traitKey.name(), this);
-            if (trait == null)
-                throw new NPCLoadException("No trait with the name '" + traitKey.name()
-                        + "' exists. Was it registered properly?");
-            try {
-                trait.load(traitKey);
-            } catch (Exception ex) {
-                Bukkit.getLogger().log(
-                        Level.SEVERE,
-                        "[Citizens] The trait '" + traitKey.name()
-                                + "' failed to load properly for the NPC with the ID '" + getId() + "'. "
-                                + ex.getMessage());
-                ex.printStackTrace();
-            }
-            addTrait(trait);
-        }
-
-        // Spawn the NPC
-        if (getTrait(Spawned.class).shouldSpawn())
-            spawn(getTrait(SpawnLocation.class).getLocation());
-    }
-
-    @Override
     public void removeMetadata(String key, Plugin plugin) {
         METADATA.removeMetadata(this, key, plugin);
     }
@@ -148,21 +110,6 @@ public abstract class AbstractNPC implements NPC {
             t.onRemove(this);
         }
         traits.remove(trait);
-    }
-
-    @Override
-    public void save(DataKey root) {
-        root.setString("name", getFullName());
-
-        // Save the character if it exists
-        if (getCharacter() != null) {
-            root.setString("character", getCharacter().getName());
-            getCharacter().save(root.getRelative("characters." + getCharacter().getName()));
-        }
-
-        // Save all existing traits
-        for (Trait trait : getTraits())
-            trait.save(root.getRelative("traits." + trait.getName()));
     }
 
     @Override
@@ -192,7 +139,6 @@ public abstract class AbstractNPC implements NPC {
         this.name = name;
     }
 
-    @Override
     public void update() {
         for (Runnable runnable : runnables)
             runnable.run();

@@ -1,10 +1,8 @@
 package net.citizensnpcs.api.npc;
 
 import net.citizensnpcs.api.ai.AI;
-import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -125,16 +123,6 @@ public interface NPC extends Metadatable, InventoryHolder {
     public boolean isSpawned();
 
     /**
-     * Loads NPC data from the specified {@link DataKey}.
-     * 
-     * @param root
-     *            Where to load NPC data from
-     * @throws NPCLoadException
-     *             Thrown when unable to load NPC data
-     */
-    public void load(DataKey root) throws NPCLoadException;
-
-    /**
      * Permanently removes this NPC.
      */
     public void remove();
@@ -146,14 +134,6 @@ public interface NPC extends Metadatable, InventoryHolder {
      *            Trait to remove
      */
     public void removeTrait(Class<? extends Trait> trait);
-
-    /**
-     * Saves NPC data to the given {@link DataKey}.
-     * 
-     * @param root
-     *            Where to save the NPC data
-     */
-    public void save(DataKey root);
 
     /**
      * Sets the character of this NPC.
@@ -179,6 +159,4 @@ public interface NPC extends Metadatable, InventoryHolder {
      * @return Whether this NPC was able to spawn at the location
      */
     public boolean spawn(Location location);
-
-    public void update();
 }
