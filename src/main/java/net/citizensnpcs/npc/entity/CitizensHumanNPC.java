@@ -5,7 +5,6 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.util.StringHelper;
-
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.WorldServer;
@@ -32,7 +31,7 @@ public class CitizensHumanNPC extends CitizensNPC {
 
     @Override
     public Player getBukkitEntity() {
-        return (Player) getHandle().getBukkitEntity();
+        return getHandle().getBukkitEntity();
     }
 
     @Override
@@ -56,7 +55,8 @@ public class CitizensHumanNPC extends CitizensNPC {
     @Override
     public void update() {
         super.update();
-        if (mcEntity == null)
-            return;
+        if (mcEntity != null) {
+            mcEntity.move(0, -0.1, 0);
+        }
     }
 }

@@ -39,6 +39,20 @@ public class CitizensAI implements AI {
     }
 
     @Override
+    public void cancelDestination() {
+        if (executing != null) {
+            Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
+            while (itr.hasNext()) {
+                NavigationCallback next = itr.next().get();
+                if (next == null || next.onCancel(this, PathCancelReason.CANCEL)) {
+                    itr.remove();
+                }
+            }
+        }
+        executing = null;
+    }
+
+    @Override
     public boolean hasDestination() {
         return executing != null;
     }
@@ -82,20 +96,15 @@ public class CitizensAI implements AI {
 
     @Override
     public void setDestination(Location destination) {
-        if (executing != null) {
-            Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
-            while (itr.hasNext()) {
-                NavigationCallback next = itr.next().get();
-                if (next == null || next.onCancel(this, PathCancelReason.PLUGIN)) {
-                    itr.remove();
-                }
-            }
-        }
-        executing = new MoveStrategy(npc, destination);
+        if (destination == null)
+            throw new IllegalArgumentException("destination cannot be null");
+        boolean replaced = executing != null;
+        executing = new NavigationStrategy(npc, destination);
+
         Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
         while (itr.hasNext()) {
             NavigationCallback next = itr.next().get();
-            if (next == null || next.onBegin(this)) {
+            if (next == null || (replaced && next.onCancel(this, PathCancelReason.REPLACE)) || next.onBegin(this)) {
                 itr.remove();
             }
         }
@@ -103,20 +112,16 @@ public class CitizensAI implements AI {
 
     @Override
     public void setTarget(LivingEntity target, boolean aggressive) {
-        if (executing != null) {
-            Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
-            while (itr.hasNext()) {
-                NavigationCallback next = itr.next().get();
-                if (next == null || next.onCancel(this, PathCancelReason.PLUGIN)) {
-                    itr.remove();
-                }
-            }
-        }
+        if (target == null)
+            throw new IllegalArgumentException("target cannot be null");
+
+        boolean replaced = executing != null;
         executing = new TargetStrategy(npc, target, aggressive);
+
         Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
         while (itr.hasNext()) {
             NavigationCallback next = itr.next().get();
-            if (next == null || next.onBegin(this)) {
+            if (next == null || (replaced && next.onCancel(this, PathCancelReason.REPLACE)) || next.onBegin(this)) {
                 itr.remove();
             }
         }

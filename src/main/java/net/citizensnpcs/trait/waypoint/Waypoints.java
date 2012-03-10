@@ -56,25 +56,20 @@ public class Waypoints extends Trait {
      *            Class to set as waypoint provider
      */
     public void setWaypointProvider(Class<? extends WaypointProvider> clazz) {
-        // TODO Probably needs to be changed/fixed. I attempted to make it work
-        // with refactor. -aPunch
         provider = create(clazz);
-        if (provider != null)
+        if (provider != null) {
             providerName = providers.get(clazz);
+        }
     }
 
     private WaypointProvider create(Class<? extends WaypointProvider> clazz) {
         if (!providers.containsKey(clazz))
             return null;
-
-        WaypointProvider provider;
         try {
-            provider = clazz.newInstance();
+            return clazz.newInstance();
         } catch (Exception ex) {
-            provider = null;
+            return null;
         }
-
-        return provider;
     }
 
     private static final Map<Class<? extends WaypointProvider>, String> providers = new HashMap<Class<? extends WaypointProvider>, String>();

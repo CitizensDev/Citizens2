@@ -55,9 +55,28 @@ public class EntityHumanNPC extends EntityPlayer {
         return super.getBukkitEntity();
     }
 
+    public void moveOnCurrentHeading() {
+        if (this.aZ) {
+            if (aT()) {
+                this.motY += 0.03999999910593033D;
+            } else if (aU()) {
+                this.motY += 0.03999999910593033D;
+            } else if (this.onGround && this.q == 0) {
+                this.motY = 0.5;
+                this.q = 10;
+            }
+        } else {
+            this.q = 0;
+        }
+
+        aX *= 0.98F;
+        this.a(aW, aX);
+    }
+
     public void removeFromPlayerMap(String name) {
-        if (players != null)
+        if (players != null) {
             players.remove(name);
+        }
     }
 
     private static Map<String, CraftPlayer> players;
