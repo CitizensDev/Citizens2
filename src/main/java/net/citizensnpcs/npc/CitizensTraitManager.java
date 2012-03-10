@@ -35,22 +35,6 @@ public class CitizensTraitManager implements TraitManager {
         registerTrait(new TraitFactory(Waypoints.class).withName("waypoints"));
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends Trait> T getTrait(String name, NPC npc) {
-        if (!registered.containsKey(name))
-            return null;
-        Trait t = getTrait(registered.get(name), npc);
-        try {
-            if (t.getName() == null)
-                t.setName(name);
-            return (T) t;
-        } catch (TraitException ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
     @Override
     public <T extends Trait> T getTrait(Class<T> clazz) {
         return getTrait(clazz, null);
@@ -58,6 +42,18 @@ public class CitizensTraitManager implements TraitManager {
 
     @SuppressWarnings("unchecked")
     @Override
+    public <T extends Trait> T getTrait(String name) {
+        if (!registered.containsKey(name))
+            return null;
+        return (T) create(registered.get(name), null);
+    }
+
+    @Override
+    public void registerTrait(TraitFactory factory) {
+        registered.put(factory.getName(), factory.getTraitClass());
+    }
+
+    @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(Class<T> clazz, NPC npc) {
         for (String name : registered.keySet())
             if (registered.get(name).equals(clazz)) {
@@ -74,16 +70,18 @@ public class CitizensTraitManager implements TraitManager {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <T extends Trait> T getTrait(String name) {
+    public <T extends Trait> T getTrait(String name, NPC npc) {
         if (!registered.containsKey(name))
             return null;
-        return (T) create(registered.get(name), null);
-    }
-
-    @Override
-    public void registerTrait(TraitFactory factory) {
-        registered.put(factory.getName(), factory.getTraitClass());
+        Trait t = getTrait(registered.get(name), npc);
+        try {
+            if (t.getName() == null)
+                t.setName(name);
+            return (T) t;
+        } catch (TraitException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")

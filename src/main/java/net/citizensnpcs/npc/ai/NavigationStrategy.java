@@ -23,7 +23,7 @@ public class NavigationStrategy implements PathStrategy {
 
     NavigationStrategy(EntityLiving entity, EntityLiving target) {
         if (entity instanceof EntityHumanNPC)
-            entity = entity;
+            this.entity = (EntityHumanNPC) entity;
         navigation = entity.ak();
         navigation.a(target, getSpeed(entity));
     }
