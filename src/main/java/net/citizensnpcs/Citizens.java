@@ -3,6 +3,7 @@ package net.citizensnpcs;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
@@ -11,6 +12,7 @@ import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.Storage;
@@ -50,13 +52,15 @@ public class Citizens extends JavaPlugin {
     private static final String COMPATIBLE_MC_VERSION = "1.2.3";
 
     private final CommandManager commands = new CommandManager();
-    private boolean compatible;
     private Settings config;
-    private CitizensCharacterManager characterManager;
-    private volatile CitizensNPCManager npcManager;
-    private Storage saves;
+    private boolean compatible;
+    private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
+    private final CitizensTraitManager traitManager = new CitizensTraitManager();
+    private CitizensNPCManager npcManager;
+    private Storage saves; // TODO: refactor this into an NPCStore (remove
+                           // dependency on Storage).
 
-    public CitizensCharacterManager getCharacterManager() {
+    public CharacterManager getCharacterManager() {
         return characterManager;
     }
 
@@ -66,10 +70,6 @@ public class Citizens extends JavaPlugin {
 
     public CitizensNPCManager getNPCManager() {
         return npcManager;
-    }
-
-    public Storage getStorage() {
-        return saves;
     }
 
     @Override
@@ -123,8 +123,12 @@ public class Citizens extends JavaPlugin {
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
             save();
-            for (NPC npc : npcManager)
-                npc.despawn();
+            Iterator<NPC> itr = npcManager.iterator();
+            while (itr.hasNext()) {
+                itr.next().despawn();
+                itr.remove();
+            }
+            npcManager = null;
             getServer().getScheduler().cancelTasks(this);
         }
 
@@ -143,8 +147,7 @@ public class Citizens extends JavaPlugin {
             return;
         }
 
-        // Configuration file
-        config = new Settings(this);
+        config = new Settings(this.getDataFolder());
         config.load();
 
         // NPC storage
@@ -161,11 +164,10 @@ public class Citizens extends JavaPlugin {
         }
 
         // Register API managers
-        npcManager = new CitizensNPCManager(saves);
-        characterManager = new CitizensCharacterManager();
+        npcManager = new CitizensNPCManager(this, saves);
         CitizensAPI.setNPCManager(npcManager);
         CitizensAPI.setCharacterManager(characterManager);
-        CitizensAPI.setTraitManager(new CitizensTraitManager());
+        CitizensAPI.setTraitManager(traitManager);
 
         // Register events
         getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
@@ -231,10 +233,8 @@ public class Citizens extends JavaPlugin {
     public void reload() throws NPCLoadException {
         Editor.leaveAll();
         config.load();
-        for (NPC npc : npcManager)
-            npc.despawn();
-
         saves.load();
+        npcManager.removeAll();
         setupNPCs();
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
@@ -242,8 +242,9 @@ public class Citizens extends JavaPlugin {
 
     public void save() {
         config.save();
-        for (NPC npc : npcManager)
+        for (NPC npc : npcManager) {
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
+        }
         saves.save();
     }
 

@@ -7,14 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.conversations.ConversationAbandonedListener;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.entity.Player;
-
-import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -26,12 +18,19 @@ import net.citizensnpcs.trait.Toggleable;
 import net.citizensnpcs.trait.text.prompt.StartPrompt;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
-
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
 
+import org.bukkit.Bukkit;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.conversations.ConversationAbandonedListener;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
 public class Text extends Trait implements Runnable, Toggleable, ConversationAbandonedListener {
-    private final Citizens plugin;
+    private final Plugin plugin;
     private final NPC npc;
     private final List<String> text = new ArrayList<String>();
     private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();
@@ -41,7 +40,7 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
 
     public Text(NPC npc) {
         this.npc = npc;
-        plugin = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
+        this.plugin = Bukkit.getPluginManager().getPlugin("Citizens");
     }
 
     @Override
@@ -95,7 +94,7 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
 
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent event) {
-        plugin.getServer().dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
+        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
     }
 
     public boolean shouldTalkClose() {
@@ -104,8 +103,8 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
 
     public Editor getEditor(final Player player) {
         final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
-                .withLocalEcho(false).withEscapeSequence("/npc text").withModality(false).withFirstPrompt(
-                        new StartPrompt(this)).buildConversation(player);
+                .withLocalEcho(false).withEscapeSequence("/npc text").withModality(false)
+                .withFirstPrompt(new StartPrompt(this)).buildConversation(player);
         return new Editor() {
 
             @Override

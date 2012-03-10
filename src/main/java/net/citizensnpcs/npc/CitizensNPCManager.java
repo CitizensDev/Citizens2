@@ -29,8 +29,8 @@ public class CitizensNPCManager implements NPCManager {
     private final Citizens plugin;
     private final Storage saves;
 
-    public CitizensNPCManager(Storage saves) {
-        plugin = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
+    public CitizensNPCManager(Citizens plugin, Storage saves) {
+        this.plugin = plugin;
         this.saves = saves;
     }
 
@@ -115,6 +115,7 @@ public class CitizensNPCManager implements NPCManager {
             iterator().next().remove();
     }
 
+    // TODO: remove
     public void selectNPC(Player player, NPC npc) {
         // Remove existing selection if any
         if (player.hasMetadata("selected"))
