@@ -52,4 +52,6 @@ public interface AI {
      *            Whether the targeting entity should attack
      */
     public void setTarget(LivingEntity target, boolean aggressive);
+
+    void cancelDestination();
 }
