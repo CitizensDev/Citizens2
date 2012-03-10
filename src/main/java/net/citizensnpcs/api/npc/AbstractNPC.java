@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.trait.Trait;
 
@@ -22,7 +21,7 @@ public abstract class AbstractNPC implements NPC {
     private final int id;
     private String name;
     private final List<Runnable> runnables = new ArrayList<Runnable>();
-    private final Map<Class<? extends Trait>, Trait> traits = new HashMap<Class<? extends Trait>, Trait>();
+    protected final Map<Class<? extends Trait>, Trait> traits = new HashMap<Class<? extends Trait>, Trait>();
 
     protected AbstractNPC(int id, String name) {
         this.id = id;
@@ -70,15 +69,6 @@ public abstract class AbstractNPC implements NPC {
             if (parsed.contains("<" + color.getChar() + ">"))
                 parsed = parsed.replace("<" + color.getChar() + ">", "");
         return parsed;
-    }
-
-    @Override
-    public <T extends Trait> T getTrait(Class<T> clazz) {
-        Trait t = traits.get(clazz);
-        if (t == null)
-            addTrait(CitizensAPI.getTraitManager().getTrait(clazz, this));
-
-        return traits.get(clazz) != null ? clazz.cast(traits.get(clazz)) : null;
     }
 
     @Override
