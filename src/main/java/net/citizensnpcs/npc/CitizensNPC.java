@@ -28,10 +28,12 @@ public abstract class CitizensNPC extends AbstractNPC {
     protected final CitizensAI ai = new CitizensAI(this);
     protected final CitizensNPCManager manager;
     protected EntityLiving mcEntity;
+    private final CitizensTraitManager traitManager;
 
     protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
         super(id, name);
         this.manager = manager;
+        traitManager = (CitizensTraitManager) CitizensAPI.getTraitManager();
     }
 
     @Override
@@ -81,6 +83,15 @@ public abstract class CitizensNPC extends AbstractNPC {
         Inventory inventory = Bukkit.getServer().createInventory(this, 36, StringHelper.parseColors(getFullName()));
         inventory.setContents(getTrait(net.citizensnpcs.api.trait.trait.Inventory.class).getContents());
         return inventory;
+    }
+
+    @Override
+    public <T extends Trait> T getTrait(Class<T> clazz) {
+        Trait t = traits.get(clazz);
+        if (t == null)
+            addTrait(traitManager.getTrait(clazz, this));
+
+        return traits.get(clazz) != null ? clazz.cast(traits.get(clazz)) : null;
     }
 
     @Override
@@ -139,7 +150,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
         // Load traits
         for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
-            Trait trait = CitizensAPI.getTraitManager().getTrait(traitKey.name(), this);
+            Trait trait = traitManager.getTrait(traitKey.name(), this);
             if (trait == null)
                 throw new NPCLoadException("No trait with the name '" + traitKey.name()
                         + "' exists. Was it registered properly?");
