@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import net.citizensnpcs.api.ai.AI;
 import net.citizensnpcs.api.ai.NavigationCallback;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Location;
 
@@ -20,8 +19,9 @@ public class GenericWaypointCallback extends NavigationCallback {
     }
 
     private void ensureItr() {
-        if (itr == null || !itr.hasNext())
+        if (itr == null || !itr.hasNext()) {
             itr = provider.iterator();
+        }
     }
 
     @Override
@@ -43,7 +43,7 @@ public class GenericWaypointCallback extends NavigationCallback {
 
     @Override
     public boolean onCancel(AI ai, PathCancelReason reason) {
-        if (executing) {
+        if (executing && reason == PathCancelReason.REPLACE) {
             executing = false;
         } else {
             executing = true;
@@ -60,8 +60,9 @@ public class GenericWaypointCallback extends NavigationCallback {
     @Override
     public boolean onCompletion(AI ai) {
         if (executing) { // if we're executing, we need to get the next waypoint
+            if (!itr.hasNext())
+                itr = provider.iterator();
             dest = itr.hasNext() ? itr.next().getLocation() : null;
-            Messaging.log("fetched next");
         } else {
             executing = true;
             // we're free to return to our waypoints!

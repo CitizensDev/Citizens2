@@ -33,7 +33,7 @@ public class TargetStrategy implements PathStrategy {
     public boolean update() {
         if (target == null || target.dead)
             return true;
-        current = new MoveStrategy(handle, handle.world.findPath(handle, target, 16F, true, false, false, true));
+        current = new NavigationStrategy(handle, target);
         if (aggro && canAttack()) {
             if (handle instanceof EntityMonster) {
                 ((EntityMonster) handle).a(target);
