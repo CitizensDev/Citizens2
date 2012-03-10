@@ -3,14 +3,15 @@ package net.citizensnpcs;
 import java.io.File;
 
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 
 public class Settings {
-    private final YamlStorage config;
+    private final Storage config;
 
-    public Settings(Citizens plugin) {
-        config = new YamlStorage(plugin.getDataFolder() + File.separator + "config.yml", "Citizens Configuration");
+    public Settings(File folder) {
+        config = new YamlStorage(folder + File.separator + "config.yml", "Citizens Configuration");
     }
 
     public void load() {

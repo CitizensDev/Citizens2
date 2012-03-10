@@ -80,39 +80,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new Iterator<T>() {
-            private int expected = ByIdArray.this.modCount;
-            private int idx = lowest;
-
-            @Override
-            public boolean hasNext() {
-                if (ByIdArray.this.modCount != expected)
-                    throw new ConcurrentModificationException();
-                return highest + 1 > idx && size > 0;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public T next() {
-                if (ByIdArray.this.modCount != expected)
-                    throw new ConcurrentModificationException();
-                T next = (T) elementData[idx];
-                if (next == null || idx > highest)
-                    throw new NoSuchElementException();
-                do
-                    idx++;
-                while (idx != highest + 1 && elementData[idx] == null);
-                return next;
-            }
-
-            @Override
-            public void remove() {
-                if (ByIdArray.this.modCount != expected)
-                    throw new ConcurrentModificationException();
-                ByIdArray.this.fastRemove(idx);
-                expected = ByIdArray.this.modCount;
-            }
-        };
+        return new Itr();
     }
 
     public void put(int index, T t) {
@@ -163,6 +131,40 @@ public class ByIdArray<T> implements Iterable<T> {
     public void trimToSize() {
         if (elementData.length > highest)
             elementData = Arrays.copyOf(elementData, highest + 1);
+    }
+
+    private class Itr implements Iterator<T> {
+        private int expected = ByIdArray.this.modCount;
+        private int idx = lowest;
+
+        @Override
+        public boolean hasNext() {
+            if (ByIdArray.this.modCount != expected)
+                throw new ConcurrentModificationException();
+            return highest + 1 > idx && size > 0;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public T next() {
+            if (ByIdArray.this.modCount != expected)
+                throw new ConcurrentModificationException();
+            T next = (T) elementData[idx];
+            if (next == null || idx > highest)
+                throw new NoSuchElementException();
+            do
+                idx++;
+            while (idx != highest + 1 && elementData[idx] == null);
+            return next;
+        }
+
+        @Override
+        public void remove() {
+            if (ByIdArray.this.modCount != expected)
+                throw new ConcurrentModificationException();
+            ByIdArray.this.fastRemove(idx);
+            expected = ByIdArray.this.modCount;
+        }
     }
 
     public static <T> ByIdArray<T> create() {

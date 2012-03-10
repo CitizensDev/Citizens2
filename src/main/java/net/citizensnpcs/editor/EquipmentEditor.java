@@ -1,6 +1,6 @@
 package net.citizensnpcs.editor;
 
-import net.citizensnpcs.Citizens;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.util.Messaging;
@@ -17,10 +17,8 @@ import org.bukkit.inventory.ItemStack;
 public class EquipmentEditor extends Editor {
     private final NPC npc;
     private final Player player;
-    private final Citizens plugin;
 
-    public EquipmentEditor(Citizens plugin, Player player, NPC npc) {
-        this.plugin = plugin;
+    public EquipmentEditor(Player player, NPC npc) {
         this.player = player;
         this.npc = npc;
     }
@@ -46,8 +44,8 @@ public class EquipmentEditor extends Editor {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (!plugin.getNPCManager().isNPC(event.getRightClicked())
-                || !plugin.getNPCManager().getNPC(event.getRightClicked()).equals(npc)
+        if (!CitizensAPI.getNPCManager().isNPC(event.getRightClicked())
+                || !CitizensAPI.getNPCManager().getNPC(event.getRightClicked()).equals(npc)
                 || !event.getPlayer().equals(player))
             return;
 

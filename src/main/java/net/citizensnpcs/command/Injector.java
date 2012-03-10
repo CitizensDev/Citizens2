@@ -7,8 +7,8 @@ import java.util.logging.Level;
 import net.citizensnpcs.util.Messaging;
 
 public class Injector {
-    private Class<?>[] argClasses;
-    private Object[] args;
+    private final Class<?>[] argClasses;
+    private final Object[] args;
 
     public Injector(Object... args) {
         this.args = args;
@@ -24,9 +24,13 @@ public class Injector {
             ctr.setAccessible(true);
             return ctr.newInstance(args);
         } catch (NoSuchMethodException e) {
-            Messaging.log(Level.SEVERE, "Error initializing commands class " + clazz + ": ");
-            e.printStackTrace();
-            return null;
+            try {
+                return clazz.newInstance();
+            } catch (Exception ex) {
+                Messaging.log(Level.SEVERE, "Error initializing commands class " + clazz + ": ");
+                ex.printStackTrace();
+                return null;
+            }
         } catch (InvocationTargetException e) {
             Messaging.log(Level.SEVERE, "Error initializing commands class " + clazz + ": ");
             e.printStackTrace();
