@@ -10,8 +10,9 @@ import net.citizensnpcs.api.npc.NPC;
  * Called when an NPC spawns.
  */
 public class NPCSpawnEvent extends NPCEvent implements Cancellable {
-    private boolean cancelled = false;
+    private static final HandlerList handlers = new HandlerList();
 
+    private boolean cancelled = false;
     private final Location location;
 
     public NPCSpawnEvent(NPC npc, Location location) {
@@ -42,8 +43,6 @@ public class NPCSpawnEvent extends NPCEvent implements Cancellable {
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
-
-    private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
         return handlers;

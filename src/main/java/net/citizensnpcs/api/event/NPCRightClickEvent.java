@@ -1,12 +1,19 @@
 package net.citizensnpcs.api.event;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
+import net.citizensnpcs.api.npc.NPC;
+
 /**
- * Called when Citizens is reloaded.
+ * Called when an NPC is right-clicked by a player.
  */
-public class CitizensReloadEvent extends CitizensEvent {
+public class NPCRightClickEvent extends NPCClickEvent {
     private static final HandlerList handlers = new HandlerList();
+
+    public NPCRightClickEvent(NPC npc, Player rightClicker) {
+        super(npc, rightClicker);
+    }
 
     @Override
     public HandlerList getHandlers() {
