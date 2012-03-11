@@ -100,14 +100,16 @@ public class Citizens extends JavaPlugin {
             } catch (UnhandledCommandException ex) {
                 return false;
             } catch (CommandException ex) {
-                Messaging.sendError(player, ex.getMessage());
+                Messaging.sendError(sender, ex.getMessage());
             }
         } catch (NumberFormatException ex) {
             Messaging.sendError(player, "That is not a valid number.");
         } catch (Throwable ex) {
             ex.printStackTrace();
-            Messaging.sendError(player, "Please report this error: [See console]");
-            Messaging.sendError(player, ex.getClass().getName() + ": " + ex.getMessage());
+            if (sender instanceof Player) {
+                Messaging.sendError(player, "Please report this error: [See console]");
+                Messaging.sendError(player, ex.getClass().getName() + ": " + ex.getMessage());
+            }
         }
         return true;
     }
