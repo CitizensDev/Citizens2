@@ -28,6 +28,8 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.Sets;
+
 public class CommandManager {
 
     /*
@@ -95,17 +97,23 @@ public class CommandManager {
             if (cmdRequirements != null) {
                 NPC npc = (NPC) methodArgs[2];
 
+                // Requirements
                 if (cmdRequirements.selected() && npc == null)
                     throw new RequirementMissingException("You must have an NPC selected to execute that command.");
+
                 if (cmdRequirements.ownership() && npc != null
                         && !npc.getTrait(Owner.class).getOwner().equals(player.getName())
                         && !player.hasPermission("citizens.admin"))
                     throw new RequirementMissingException("You must be the owner of this NPC to execute that command.");
-                if (cmdRequirements.type() != EntityType.UNKNOWN
-                        && !cmdRequirements.type().name().equals(npc.getTrait(MobType.class).getType()))
-                    throw new RequirementMissingException("The NPC must be of the type '"
-                            + cmdRequirements.type().name().toLowerCase().replace('_', '-')
-                            + "' in order for you to use that command.");
+
+                Set<EntityType> types = Sets.newHashSet(cmdRequirements.types());
+                if (!types.contains(EntityType.UNKNOWN)) {
+                    EntityType type = EntityType.valueOf(npc.getTrait(MobType.class).getType());
+                    if (!types.contains(type)) {
+                        throw new RequirementMissingException("The NPC cannot be the mob type '"
+                                + type.name().toLowerCase().replace('_', '-') + "' to use that command.");
+                    }
+                }
             }
         }
 

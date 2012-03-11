@@ -17,8 +17,8 @@
 			<classpath>
 				<pathelement path="${lib}" />
 				<pathelement location="${lib}/bukkit-1.2.3-R0.2-SNAPSHOT.jar" />
-				<pathelement location="${lib}/craftbukkit-1.2.3-R0.2-SNAPSHOT.jar" />
 				<pathelement location="${lib}/CitizensAPI.jar" />
+				<pathelement location="${lib}/craftbukkit-1.2.3-R0.2-SNAPSHOT.jar" />
 			</classpath>
 		</javac>
 		<antcall target="distcore" />
