@@ -7,11 +7,13 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Represents an NPC's equipment. This only is applicable to human NPCs.
+ * Represents an NPC's equipment. This only is applicable to human and enderman
+ * NPCs.
  */
 public class Equipment extends Trait {
     private final ItemStack[] equipment = new ItemStack[5];
@@ -29,8 +31,11 @@ public class Equipment extends Trait {
      * @return ItemStack from the given armor slot
      */
     public ItemStack get(int slot) {
-        if (slot < 0 || slot > 4)
+        if (npc.getBukkitEntity() instanceof Enderman && slot != 0)
+            throw new IllegalArgumentException("Slot must be 0 for enderman");
+        else if (npc.getBukkitEntity() instanceof Player && (slot < 0 || slot > 4))
             throw new IllegalArgumentException("Slot must be between 0 and 4");
+
         return equipment[slot];
     }
 
@@ -56,11 +61,15 @@ public class Equipment extends Trait {
         if (key.keyExists("boots"))
             equipment[4] = ItemStorage.loadItemStack(key.getRelative("boots"));
 
-        // Must set equipment after the NPC entity has been created
+        // Must set equipment after the NPC entity has been created (workaround)
         Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("Citizens"), new Runnable() {
             @Override
             public void run() {
-                if (npc.getBukkitEntity() instanceof Player) {
+                if (npc.getBukkitEntity() instanceof Enderman) {
+                    Enderman enderman = (Enderman) npc.getBukkitEntity();
+                    if (equipment[0] != null)
+                        enderman.setCarriedMaterial(equipment[0].getData());
+                } else if (npc.getBukkitEntity() instanceof Player) {
                     Player player = (Player) npc.getBukkitEntity();
                     if (equipment[0] != null)
                         player.setItemInHand(equipment[0]);
@@ -99,31 +108,35 @@ public class Equipment extends Trait {
      */
     @SuppressWarnings("deprecation")
     public void set(int slot, ItemStack item) {
-        if (!(npc.getBukkitEntity() instanceof Player))
-            throw new UnsupportedOperationException("Only player NPCs can be equipped");
+        if (npc.getBukkitEntity() instanceof Enderman) {
+            if (slot != 0)
+                throw new UnsupportedOperationException("Slot can only be 0 for enderman");
 
-        Player player = (Player) npc.getBukkitEntity();
-        switch (slot) {
-        case 0:
-            player.setItemInHand(item);
-            break;
-        case 1:
-            player.getInventory().setHelmet(item);
-            break;
-        case 2:
-            player.getInventory().setChestplate(item);
-            break;
-        case 3:
-            player.getInventory().setLeggings(item);
-            break;
-        case 4:
-            player.getInventory().setBoots(item);
-            break;
-        default:
-            throw new IllegalArgumentException("Slot must be between 0 and 4");
+            ((Enderman) npc.getBukkitEntity()).setCarriedMaterial(item.getData());
+        } else if (npc.getBukkitEntity() instanceof Player) {
+            Player player = (Player) npc.getBukkitEntity();
+            switch (slot) {
+            case 0:
+                player.setItemInHand(item);
+                break;
+            case 1:
+                player.getInventory().setHelmet(item);
+                break;
+            case 2:
+                player.getInventory().setChestplate(item);
+                break;
+            case 3:
+                player.getInventory().setLeggings(item);
+                break;
+            case 4:
+                player.getInventory().setBoots(item);
+                break;
+            default:
+                throw new IllegalArgumentException("Slot must be between 0 and 4");
+            }
+            player.updateInventory();
         }
         equipment[slot] = item;
-        player.updateInventory();
     }
 
     @Override
