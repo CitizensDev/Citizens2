@@ -36,7 +36,6 @@ import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Metrics;
 import net.citizensnpcs.util.StringHelper;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -170,13 +169,13 @@ public class Citizens extends JavaPlugin {
         // Register commands
         registerCommands();
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
 
         Messaging.log("v" + getDescription().getVersion() + " enabled.");
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)
-        if (Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+        if (getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
                 try {
@@ -228,8 +227,7 @@ public class Citizens extends JavaPlugin {
     public void reload() throws NPCLoadException {
         Editor.leaveAll();
         config.load();
-        saves.load();
-        npcManager.removeAll();
+        npcManager.safeRemove();
         setupNPCs();
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
@@ -237,13 +235,14 @@ public class Citizens extends JavaPlugin {
 
     public void save() {
         config.save();
-        for (NPC npc : npcManager) {
+        for (NPC npc : npcManager)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
-        }
+
         saves.save();
     }
 
     private void setupNPCs() throws NPCLoadException {
+        saves.load();
         int created = 0, spawned = 0;
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
