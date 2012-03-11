@@ -46,6 +46,7 @@ public class AdminCommands {
             plugin.reload();
             Messaging.send(sender, "<e>Citizens reloaded.");
         } catch (NPCLoadException ex) {
+            ex.printStackTrace();
             throw new CommandException("Error occured while reloading, see console.");
         }
     }

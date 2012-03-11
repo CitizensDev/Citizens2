@@ -7,6 +7,7 @@ import java.util.List;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.event.NPCSelectEvent;
+import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.character.Character;
@@ -51,9 +52,9 @@ public class CitizensNPCManager implements NPCManager {
         return createNPC(type, generateUniqueId(), name, character);
     }
 
-    public void despawn(NPC npc, boolean deselect) {
+    public void despawn(NPC npc, boolean keepSelected) {
         npc.getTrait(SpawnLocation.class).setLocation(npc.getBukkitEntity().getLocation());
-        if (!deselect)
+        if (!keepSelected)
             npc.removeMetadata("selectors", plugin);
         npc.getBukkitEntity().remove();
     }
@@ -100,13 +101,16 @@ public class CitizensNPCManager implements NPCManager {
     public void remove(NPC npc) {
         npcs.remove(npc.getId());
         saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
+        removeMetadata(npc);
+    }
 
-        // Remove metadata from selectors
-        if (npc.hasMetadata("selectors")) {
-            for (MetadataValue value : npc.getMetadata("selectors"))
-                if (Bukkit.getPlayer(value.asString()) != null)
-                    Bukkit.getPlayer(value.asString()).removeMetadata("selected", plugin);
-            npc.removeMetadata("selectors", plugin);
+    public void safeRemove() throws NPCLoadException {
+        // Destroy all NPCs everywhere besides storage
+        while (iterator().hasNext()) {
+            NPC npc = iterator().next();
+            removeMetadata(npc);
+            npc.despawn();
+            iterator().remove();
         }
     }
 
@@ -115,7 +119,6 @@ public class CitizensNPCManager implements NPCManager {
             iterator().next().remove();
     }
 
-    // TODO: remove
     public void selectNPC(Player player, NPC npc) {
         // Remove existing selection if any
         if (player.hasMetadata("selected"))
@@ -129,5 +132,15 @@ public class CitizensNPCManager implements NPCManager {
 
         // Call selection event
         player.getServer().getPluginManager().callEvent(new NPCSelectEvent(npc, player));
+    }
+
+    private void removeMetadata(NPC npc) {
+        // Remove metadata from selectors
+        if (npc.hasMetadata("selectors")) {
+            for (MetadataValue value : npc.getMetadata("selectors"))
+                if (Bukkit.getPlayer(value.asString()) != null)
+                    Bukkit.getPlayer(value.asString()).removeMetadata("selected", plugin);
+            npc.removeMetadata("selectors", plugin);
+        }
     }
 }
