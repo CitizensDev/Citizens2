@@ -12,7 +12,6 @@ import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.Storage;
@@ -59,10 +58,6 @@ public class Citizens extends JavaPlugin {
     private CitizensNPCManager npcManager;
     private Storage saves; // TODO: refactor this into an NPCStore (remove
                            // dependency on Storage).
-
-    public CharacterManager getCharacterManager() {
-        return characterManager;
-    }
 
     public CommandManager getCommandManager() {
         return commands;
@@ -255,8 +250,8 @@ public class Citizens extends JavaPlugin {
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
 
-            NPC npc = npcManager.createNPC(EntityType.valueOf(key.getString("traits.type").toUpperCase()), id,
-                    key.getString("name"), null);
+            NPC npc = npcManager.createNPC(EntityType.valueOf(key.getString("traits.type").toUpperCase()), id, key
+                    .getString("name"), null);
             try {
                 ((CitizensNPC) npc).load(key);
             } catch (NPCException ex) {
