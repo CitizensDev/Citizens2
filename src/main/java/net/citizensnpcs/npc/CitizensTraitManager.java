@@ -16,6 +16,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
@@ -29,6 +30,7 @@ public class CitizensTraitManager implements TraitManager {
         registerTrait(new TraitFactory(LookClose.class).withName("look-close"));
         registerTrait(new TraitFactory(MobType.class).withName("type"));
         registerTrait(new TraitFactory(Owner.class).withName("owner"));
+        registerTrait(new TraitFactory(Powered.class).withName("powered"));
         registerTrait(new TraitFactory(Spawned.class).withName("spawned"));
         registerTrait(new TraitFactory(SpawnLocation.class).withName("location"));
         registerTrait(new TraitFactory(Text.class).withName("text"));
