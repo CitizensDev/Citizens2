@@ -1,6 +1,8 @@
 package net.citizensnpcs;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.event.NPCLeftClickEvent;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.SpawnLocation;
@@ -88,9 +90,17 @@ public class EventListen implements Listener {
         if (event instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
             if (e.getDamager() instanceof Player) {
+                Player damager = (Player) e.getDamager();
                 NPC npc = npcManager.getNPC(event.getEntity());
+
+                // Call left-click event
+                NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
+                Bukkit.getPluginManager().callEvent(leftClickEvent);
+                if (leftClickEvent.isCancelled())
+                    return;
+
                 if (npc.getCharacter() != null)
-                    npc.getCharacter().onLeftClick(npc, (Player) e.getDamager());
+                    npc.getCharacter().onLeftClick(npc, damager);
             }
         }
     }
@@ -102,6 +112,13 @@ public class EventListen implements Listener {
 
         NPC npc = npcManager.getNPC(event.getEntity());
         Player player = (Player) event.getTarget();
+
+        // Call right-click event
+        NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
+        Bukkit.getPluginManager().callEvent(rightClickEvent);
+        if (rightClickEvent.isCancelled())
+            return;
+
         if (!player.hasMetadata("selected") || player.getMetadata("selected").size() == 0
                 || player.getMetadata("selected").get(0).asInt() != npc.getId()) {
             if (player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.asInt()
@@ -138,6 +155,7 @@ public class EventListen implements Listener {
         if (!npcManager.isNPC(event.getRightClicked()))
             return;
 
+        // Call target event for NPCs
         Bukkit.getPluginManager().callEvent(
                 new EntityTargetEvent(event.getRightClicked(), event.getPlayer(), TargetReason.CUSTOM));
     }
