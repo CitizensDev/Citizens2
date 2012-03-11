@@ -131,6 +131,10 @@ public abstract class CitizensNPC extends AbstractNPC {
         getTrait(SpawnLocation.class).setLocation(loc);
         // Set the spawned state
         getTrait(Spawned.class).setSpawned(true);
+
+        // Modify NPC using traits after the entity has been created
+        for (Trait trait : getTraits())
+            trait.onNPCSpawn();
         return true;
     }
 
