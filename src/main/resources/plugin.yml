@@ -27,6 +27,7 @@ permissions:
           citizens.npc.help: true
           citizens.npc.list: true
           citizens.npc.owner: true
+          citizens.npc.power: true
           citizens.npc.remove: true
           citizens.npc.remove.all: true
           citizens.npc.rename: true

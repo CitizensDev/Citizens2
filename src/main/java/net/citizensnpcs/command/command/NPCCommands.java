@@ -20,6 +20,7 @@ import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
@@ -366,5 +367,20 @@ public class NPCCommands {
         npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
         npc.getTrait(SpawnLocation.class).setLocation(npc.getBukkitEntity().getLocation());
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
+    }
+
+    @Command(
+             aliases = { "npc" },
+             usage = "power",
+             desc = "Toggle a creeper NPC as powered",
+             modifiers = { "power" },
+             min = 1,
+             max = 1,
+             permission = "npc.power")
+    @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
+    public void power(CommandContext args, Player player, NPC npc) {
+        String msg = StringHelper.wrap(npc.getName()) + " will "
+                + (npc.getTrait(Powered.class).toggle() ? "now" : "no longer");
+        Messaging.send(player, msg += " be powered.");
     }
 }
