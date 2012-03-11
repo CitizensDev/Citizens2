@@ -42,7 +42,7 @@ public class NPCCommands {
     @Command(
              aliases = { "npc" },
              usage = "character [character]",
-             desc = "Set the character of an NPC",
+             desc = "Set the character of a NPC",
              modifiers = { "character" },
              min = 2,
              max = 2)
@@ -119,7 +119,7 @@ public class NPCCommands {
     @Command(
              aliases = { "npc" },
              usage = "despawn",
-             desc = "Despawn an NPC",
+             desc = "Despawn a NPC",
              modifiers = { "despawn" },
              min = 1,
              max = 1,
@@ -205,7 +205,7 @@ public class NPCCommands {
     @Command(
              aliases = { "npc" },
              usage = "lookclose",
-             desc = "Toggle whether an NPC will look when a player is near",
+             desc = "Toggle whether a NPC will look when a player is near",
              modifiers = { "lookclose", "look", "rotate" },
              min = 1,
              max = 1,
@@ -245,7 +245,7 @@ public class NPCCommands {
     @Command(
              aliases = { "npc" },
              usage = "remove (all)",
-             desc = "Remove an NPC",
+             desc = "Remove a NPC",
              modifiers = { "remove" },
              min = 1,
              max = 2)
@@ -273,7 +273,7 @@ public class NPCCommands {
     @Command(
              aliases = { "npc" },
              usage = "rename [name]",
-             desc = "Rename an NPC",
+             desc = "Rename a NPC",
              modifiers = { "rename" },
              min = 2,
              max = 2,
@@ -293,7 +293,7 @@ public class NPCCommands {
     @Command(
              aliases = { "npc" },
              usage = "select [id]",
-             desc = "Select an NPC with the given ID",
+             desc = "Select a NPC with the given ID",
              modifiers = { "select" },
              min = 2,
              max = 2,
@@ -338,7 +338,7 @@ public class NPCCommands {
     @Command(
              aliases = { "npc" },
              usage = "tp",
-             desc = "Teleport to an NPC",
+             desc = "Teleport to a NPC",
              modifiers = { "tp", "teleport" },
              min = 1,
              max = 1,
@@ -354,7 +354,7 @@ public class NPCCommands {
     @Command(
              aliases = { "npc" },
              usage = "tphere",
-             desc = "Teleport an NPC to your location",
+             desc = "Teleport a NPC to your location",
              modifiers = { "tphere" },
              min = 1,
              max = 1,
