@@ -4,6 +4,7 @@ import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 
 import net.minecraft.server.EntityPig;
+import net.minecraft.server.EntityWeatherLighting;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
 
@@ -30,6 +31,10 @@ public class CitizensPigNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+        }
+
+        @Override
+        public void a(EntityWeatherLighting entityweatherlighting) {
         }
     }
 }
