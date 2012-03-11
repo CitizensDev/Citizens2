@@ -6,7 +6,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -60,24 +59,6 @@ public class Equipment extends Trait {
             equipment[3] = ItemStorage.loadItemStack(key.getRelative("leggings"));
         if (key.keyExists("boots"))
             equipment[4] = ItemStorage.loadItemStack(key.getRelative("boots"));
-
-        // Must set equipment after the NPC entity has been created (workaround)
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("Citizens"), new Runnable() {
-            @Override
-            public void run() {
-                if (npc.getBukkitEntity() instanceof Enderman) {
-                    Enderman enderman = (Enderman) npc.getBukkitEntity();
-                    if (equipment[0] != null)
-                        enderman.setCarriedMaterial(equipment[0].getData());
-                } else if (npc.getBukkitEntity() instanceof Player) {
-                    Player player = (Player) npc.getBukkitEntity();
-                    if (equipment[0] != null)
-                        player.setItemInHand(equipment[0]);
-                    ItemStack[] armor = { equipment[1], equipment[2], equipment[3], equipment[4] };
-                    player.getInventory().setArmorContents(armor);
-                }
-            }
-        }, 1);
     }
 
     @Override
@@ -87,6 +68,21 @@ public class Equipment extends Trait {
         saveOrRemove(key.getRelative("chestplate"), equipment[2]);
         saveOrRemove(key.getRelative("leggings"), equipment[3]);
         saveOrRemove(key.getRelative("boots"), equipment[4]);
+    }
+
+    @Override
+    public void onNPCSpawn() {
+        if (npc.getBukkitEntity() instanceof Enderman) {
+            Enderman enderman = (Enderman) npc.getBukkitEntity();
+            if (equipment[0] != null)
+                enderman.setCarriedMaterial(equipment[0].getData());
+        } else if (npc.getBukkitEntity() instanceof Player) {
+            Player player = (Player) npc.getBukkitEntity();
+            if (equipment[0] != null)
+                player.setItemInHand(equipment[0]);
+            ItemStack[] armor = { equipment[1], equipment[2], equipment[3], equipment[4] };
+            player.getInventory().setArmorContents(armor);
+        }
     }
 
     private void saveOrRemove(DataKey key, ItemStack item) {

@@ -97,7 +97,7 @@ public abstract class AbstractNPC implements NPC {
             Trait t = traits.get(trait);
             if (t instanceof Runnable)
                 runnables.remove(t);
-            t.onRemove(this);
+            t.onRemove();
         }
         traits.remove(trait);
     }

@@ -2,7 +2,6 @@ package net.citizensnpcs.api.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.exception.TraitException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
@@ -39,11 +38,16 @@ public abstract class Trait {
 
     /**
      * Called when a trait is removed from the given NPC.
-     * 
-     * @param from
-     *            NPC this trait was removed from
      */
-    public void onRemove(NPC from) {
+    public void onRemove() {
+    }
+
+    /**
+     * Called when an NPC is spawned. NPCs cannot be physically modified until
+     * the entity is created in-game. This is called after the entity has been
+     * created.
+     */
+    public void onNPCSpawn() {
     }
 
     /**
