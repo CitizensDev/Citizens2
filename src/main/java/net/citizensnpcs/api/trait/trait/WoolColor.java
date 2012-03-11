@@ -39,7 +39,29 @@ public class WoolColor extends Trait {
         key.setString("", color.name());
     }
 
+    /**
+     * Gets the wool color of a sheep NPC.
+     * 
+     * @return Wool color of a sheep NPC
+     */
     public DyeColor getColor() {
         return color;
+    }
+
+    /**
+     * Sets the wool color of a sheep NPC.
+     * 
+     * @param color
+     *            DyeColor to set the wool as
+     */
+    public void setColor(DyeColor color) {
+        this.color = color;
+        if (npc.getBukkitEntity() instanceof Sheep)
+            ((Sheep) npc.getBukkitEntity()).setColor(color);
+    }
+
+    @Override
+    public String toString() {
+        return "WoolColor{" + color + "}";
     }
 }

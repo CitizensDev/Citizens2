@@ -16,15 +16,6 @@ public class MobType extends Trait {
         this.type = type;
     }
 
-    /**
-     * Gets the type of mob that an NPC is.
-     * 
-     * @return Name of the mob type of an NPC
-     */
-    public String getType() {
-        return type;
-    }
-
     @Override
     public void load(DataKey key) {
         try {
@@ -40,13 +31,12 @@ public class MobType extends Trait {
     }
 
     /**
-     * Sets the type of mob that an NPC is.
+     * Gets the type of mob that an NPC is.
      * 
-     * @param type
-     *            Name of the mob type to set an NPC as
+     * @return Name of the mob type of an NPC
      */
-    public void setType(String type) {
-        this.type = type;
+    public String getType() {
+        return type;
     }
 
     @Override

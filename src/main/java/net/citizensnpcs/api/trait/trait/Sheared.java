@@ -30,7 +30,35 @@ public class Sheared extends Trait {
 
     @Override
     public void onNPCSpawn() {
+        // TODO Get rid of instanceof's, add
+        // TraitFactory.withTypes(EntityType...) or similar
         if (npc.getBukkitEntity() instanceof Sheep)
             ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
+    }
+
+    /**
+     * Gets if a sheep NPC is sheared.
+     * 
+     * @return Whether a sheep NPC is sheared
+     */
+    public boolean isSheared() {
+        return sheared;
+    }
+
+    /**
+     * Sets whether a sheep NPC is sheared.
+     * 
+     * @param sheared
+     *            Whether a sheep NPC is sheared
+     */
+    public void setSheared(boolean sheared) {
+        this.sheared = sheared;
+        if (npc.getBukkitEntity() instanceof Sheep)
+            ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
+    }
+
+    @Override
+    public String toString() {
+        return "Sheared{" + sheared + "}";
     }
 }
