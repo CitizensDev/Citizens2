@@ -36,6 +36,7 @@ public class CharacterFactory {
 
     /**
      * Specifies which mob types that the character can be given upon creation.
+     * Default is all types.
      * 
      * @param types
      *            List of types that the character can be
