@@ -11,7 +11,6 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.character.Character;
-import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.ByIdArray;
@@ -53,7 +52,6 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public void despawn(NPC npc, boolean keepSelected) {
-        npc.getTrait(SpawnLocation.class).setLocation(npc.getBukkitEntity().getLocation());
         if (!keepSelected)
             npc.removeMetadata("selectors", plugin);
         npc.getBukkitEntity().remove();

@@ -11,7 +11,6 @@ import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
-import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
@@ -19,6 +18,7 @@ import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.util.Messaging;
@@ -347,7 +347,7 @@ public class NPCCommands {
     public void tp(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
-            npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
+            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
         Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
     }
@@ -363,9 +363,8 @@ public class NPCCommands {
     public void tphere(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
-            npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
+            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
-        npc.getTrait(SpawnLocation.class).setLocation(npc.getBukkitEntity().getLocation());
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
     }
 

@@ -5,10 +5,10 @@ import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
-import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
+import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.util.Messaging;
 
@@ -54,7 +54,7 @@ public class EventListen implements Listener {
             return;
         for (int id : toRespawn.get(coord)) {
             NPC npc = npcManager.getNPC(id);
-            npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
+            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         }
         toRespawn.removeAll(coord);
     }
@@ -71,7 +71,6 @@ public class EventListen implements Listener {
             Location loc = npc.getBukkitEntity().getLocation();
             if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
                     && event.getChunk().getZ() == loc.getChunk().getZ()) {
-                npc.getTrait(SpawnLocation.class).setLocation(loc);
                 npc.despawn();
                 toRespawn.put(coord, npc.getId());
             }
@@ -175,7 +174,7 @@ public class EventListen implements Listener {
                 continue;
             for (int id : toRespawn.get(chunk)) {
                 NPC npc = npcManager.getNPC(id);
-                npc.spawn(npc.getTrait(SpawnLocation.class).getLocation());
+                npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
             }
             toRespawn.removeAll(chunk);
         }
@@ -189,10 +188,9 @@ public class EventListen implements Listener {
         for (NPC npc : npcManager) {
             if (!npc.isSpawned() || !npc.getBukkitEntity().getWorld().equals(event.getWorld()))
                 continue;
-            Location loc = npc.getBukkitEntity().getLocation();
-            npc.getTrait(SpawnLocation.class).setLocation(loc);
+
             npc.despawn();
-            toRespawn.put(toIntPair(loc.getChunk()), npc.getId());
+            toRespawn.put(toIntPair(npc.getBukkitEntity().getLocation().getChunk()), npc.getId());
         }
     }
 

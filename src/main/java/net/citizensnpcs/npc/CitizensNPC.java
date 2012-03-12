@@ -10,12 +10,13 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.trait.SpawnLocation;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.ai.CitizensAI;
+import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
+
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
@@ -128,7 +129,7 @@ public abstract class CitizensNPC extends AbstractNPC {
         mcEntity.world.players.remove(mcEntity);
 
         // Set the location
-        getTrait(SpawnLocation.class).setLocation(loc);
+        getTrait(CurrentLocation.class).spawn(loc);
         // Set the spawned state
         getTrait(Spawned.class).setSpawned(true);
 
@@ -173,7 +174,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
         // Spawn the NPC
         if (getTrait(Spawned.class).shouldSpawn())
-            spawn(getTrait(SpawnLocation.class).getLocation());
+            spawn(getTrait(CurrentLocation.class).getLocation());
     }
 
     public void save(DataKey root) {
