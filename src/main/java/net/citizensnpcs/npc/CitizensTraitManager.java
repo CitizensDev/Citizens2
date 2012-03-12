@@ -77,7 +77,7 @@ public class CitizensTraitManager implements TraitManager {
         if (clazz == null)
             return null;
         Trait t = getTrait(clazz, npc);
-        t.setName(name);
+        //t.setName(name);
         return (T) t;
     }
 
