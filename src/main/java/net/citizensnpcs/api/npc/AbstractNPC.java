@@ -95,11 +95,9 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void remove() {
         runnables.clear();
-        for (Trait trait : traits.values()) {
-            if (trait instanceof Listener) {
+        for (Trait trait : traits.values())
+            if (trait instanceof Listener)
                 HandlerList.unregisterAll((Listener) trait);
-            }
-        }
         traits.clear();
     }
 
