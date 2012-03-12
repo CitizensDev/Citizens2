@@ -20,10 +20,9 @@ import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
-import com.google.common.collect.Maps;
-
 public class CitizensTraitManager implements TraitManager {
     private final Map<String, Class<? extends Trait>> registered = new HashMap<String, Class<? extends Trait>>();
+    private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = new HashMap<Class<? extends Trait>, Constructor<? extends Trait>>();
 
     public CitizensTraitManager() {
         // Register Citizens traits
@@ -77,7 +76,6 @@ public class CitizensTraitManager implements TraitManager {
         if (clazz == null)
             return null;
         Trait t = getTrait(clazz, npc);
-        //t.setName(name);
         return (T) t;
     }
 
@@ -94,9 +92,8 @@ public class CitizensTraitManager implements TraitManager {
                 constructor = null;
             }
             CACHED_CTORS.put(trait, constructor);
-        } else {
+        } else
             constructor = CACHED_CTORS.get(trait);
-        }
 
         try {
             if (constructor == null || npc == null)
@@ -107,6 +104,4 @@ public class CitizensTraitManager implements TraitManager {
             return null;
         }
     }
-
-    private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = Maps.newHashMap();
 }
