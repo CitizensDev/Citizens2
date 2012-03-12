@@ -1,11 +1,12 @@
 package net.citizensnpcs.npc.entity;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.util.Messaging;
-
 import net.minecraft.server.EntityEnderman;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
@@ -58,10 +59,17 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         getTrait(Equipment.class).set(0, set);
     }
 
-    public static class EntityEndermanNPC extends EntityEnderman {
+    public static class EntityEndermanNPC extends EntityEnderman implements NPCHandle {
+        private final NPC npc;
 
-        public EntityEndermanNPC(World world) {
+        @Override
+        public NPC getNPC() {
+            return this.npc;
+        }
+
+        public EntityEndermanNPC(World world, NPC npc) {
             super(world);
+            this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }

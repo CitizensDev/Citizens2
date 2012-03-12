@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -136,6 +137,14 @@ public class EventListen implements Listener {
 
         if (npc.getCharacter() != null)
             npc.getCharacter().onRightClick(npc, player);
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent event) {
+        if (!npcManager.isNPC(event.getEntity()))
+            return;
+        NPC npc = npcManager.getNPC(event.getEntity());
+        npc.despawn();
     }
 
     /*
