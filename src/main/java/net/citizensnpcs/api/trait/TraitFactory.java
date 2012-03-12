@@ -8,7 +8,7 @@ public final class TraitFactory {
     private String name;
 
     /**
-     * Constructs a factory with the given plugin and trait class.
+     * Constructs a factory with the given trait class.
      * 
      * @param character
      *            Class of the trait
