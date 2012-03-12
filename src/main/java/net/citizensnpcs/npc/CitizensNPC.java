@@ -101,6 +101,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public void remove() {
+        super.remove();
         manager.remove(this);
         if (isSpawned())
             despawn();
