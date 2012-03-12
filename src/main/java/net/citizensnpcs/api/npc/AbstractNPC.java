@@ -12,6 +12,8 @@ import net.citizensnpcs.api.trait.Trait;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.metadata.MetadataStoreBase;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -38,6 +40,10 @@ public abstract class AbstractNPC implements NPC {
             runnables.add((Runnable) trait);
             if (traits.containsKey(trait.getClass()))
                 runnables.remove(traits.get(trait.getClass()));
+        }
+        if (trait instanceof Listener) {
+            Bukkit.getPluginManager().registerEvents((Listener) trait, null);
+            // TODO: insert plugin instance somehow
         }
         traits.put(trait.getClass(), trait);
     }
@@ -84,6 +90,17 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public boolean hasTrait(Class<? extends Trait> trait) {
         return traits.containsKey(trait);
+    }
+
+    @Override
+    public void remove() {
+        runnables.clear();
+        for (Trait trait : traits.values()) {
+            if (trait instanceof Listener) {
+                HandlerList.unregisterAll((Listener) trait);
+            }
+        }
+        traits.clear();
     }
 
     @Override
