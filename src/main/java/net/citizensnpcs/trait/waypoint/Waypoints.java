@@ -2,6 +2,7 @@ package net.citizensnpcs.trait.waypoint;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -18,7 +19,6 @@ public class Waypoints extends Trait {
 
     public Waypoints(NPC npc) {
         this.npc = npc;
-        npc.getAI().registerNavigationCallback(provider.getCallback());
     }
 
     public Editor getEditor(Player player) {
@@ -27,12 +27,14 @@ public class Waypoints extends Trait {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
+        provider = null;
         providerName = key.getString("provider", "linear");
-        for (Class<? extends WaypointProvider> clazz : providers.keySet())
-            if (providers.get(clazz).equals(providerName)) {
-                provider = create(clazz);
+        for (Entry<Class<? extends WaypointProvider>, String> entry : providers.entrySet()) {
+            if (entry.getValue().equals(providerName)) {
+                provider = create(entry.getKey());
                 break;
             }
+        }
         if (provider == null)
             return;
         provider.load(key.getRelative(providerName));

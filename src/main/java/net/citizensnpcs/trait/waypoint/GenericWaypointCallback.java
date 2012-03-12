@@ -8,8 +8,8 @@ import net.citizensnpcs.api.ai.NavigationCallback;
 import org.bukkit.Location;
 
 public class GenericWaypointCallback extends NavigationCallback {
-    private Location dest;
     private AI ai;
+    private Location dest;
     private boolean executing;
     private Iterator<Waypoint> itr;
     private final Iterable<Waypoint> provider;
@@ -27,7 +27,7 @@ public class GenericWaypointCallback extends NavigationCallback {
     @Override
     public void onAttach(AI ai) {
         this.ai = ai;
-        executing = !ai.hasDestination();
+        executing |= !ai.hasDestination();
         if (!executing)
             return;
         if (dest == null) {
@@ -42,17 +42,17 @@ public class GenericWaypointCallback extends NavigationCallback {
     }
 
     @Override
-    public boolean onCancel(AI ai, PathCancelReason reason) {
-        if (executing && reason == PathCancelReason.REPLACE) {
+    public boolean onCancel(AI ai, CancelReason reason) {
+        if (executing && reason == CancelReason.REPLACE) {
             executing = false;
-        } else {
-            executing = true;
-            ensureItr();
-            if (dest != null)
-                ai.setDestination(dest);
-            else if (itr.hasNext()) {
-                ai.setDestination(itr.next().getLocation());
-            }
+            return false;
+        }
+        executing = true;
+        ensureItr();
+        if (dest == null && itr.hasNext())
+            dest = itr.next().getLocation();
+        if (dest != null) {
+            ai.setDestination(dest);
         }
         return false;
     }
@@ -60,8 +60,7 @@ public class GenericWaypointCallback extends NavigationCallback {
     @Override
     public boolean onCompletion(AI ai) {
         if (executing) { // if we're executing, we need to get the next waypoint
-            if (!itr.hasNext())
-                itr = provider.iterator();
+            ensureItr();
             dest = itr.hasNext() ? itr.next().getLocation() : null;
         } else {
             executing = true;
