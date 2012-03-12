@@ -70,6 +70,8 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
 
     @Override
     public void run() {
+        if (!npc.isSpawned())
+            return;
         EntityHuman search = null;
         EntityLiving handle = ((CitizensNPC) npc).getHandle();
         if ((search = handle.world.findNearbyPlayer(handle, 5)) != null && talkClose) {

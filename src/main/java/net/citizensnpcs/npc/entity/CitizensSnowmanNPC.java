@@ -1,8 +1,9 @@
 package net.citizensnpcs.npc.entity;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-
+import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntitySnowman;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
@@ -20,10 +21,17 @@ public class CitizensSnowmanNPC extends CitizensMobNPC {
         return (Snowman) getHandle().getBukkitEntity();
     }
 
-    public static class EntitySnowmanNPC extends EntitySnowman {
+    public static class EntitySnowmanNPC extends EntitySnowman implements NPCHandle {
+        private final NPC npc;
 
-        public EntitySnowmanNPC(World world) {
+        @Override
+        public NPC getNPC() {
+            return this.npc;
+        }
+
+        public EntitySnowmanNPC(World world, NPC npc) {
             super(world);
+            this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }

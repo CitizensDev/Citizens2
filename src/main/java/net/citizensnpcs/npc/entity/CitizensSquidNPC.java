@@ -1,8 +1,9 @@
 package net.citizensnpcs.npc.entity;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
-
+import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntitySquid;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
@@ -20,10 +21,17 @@ public class CitizensSquidNPC extends CitizensMobNPC {
         return (Squid) getHandle().getBukkitEntity();
     }
 
-    public static class EntitySquidNPC extends EntitySquid {
+    public static class EntitySquidNPC extends EntitySquid implements NPCHandle {
+        private final NPC npc;
 
-        public EntitySquidNPC(World world) {
+        @Override
+        public NPC getNPC() {
+            return this.npc;
+        }
+
+        public EntitySquidNPC(World world, NPC npc) {
             super(world);
+            this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }

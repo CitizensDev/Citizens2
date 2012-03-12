@@ -13,10 +13,12 @@ import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.NPCBuilder;
 
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -66,9 +68,14 @@ public class CitizensNPCManager implements NPCManager {
 
     @Override
     public NPC getNPC(Entity entity) {
-        for (NPC npc : npcs)
-            if (npc.isSpawned() && npc.getBukkitEntity().getEntityId() == entity.getEntityId())
+        net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
+        if (handle instanceof NPCHandle)
+            return ((NPCHandle) handle).getNPC();
+        for (NPC npc : npcs) { // fall back to linear search
+            if (npc.isSpawned() && npc.getBukkitEntity().getEntityId() == entity.getEntityId()) {
                 return npc;
+            }
+        }
         return null;
     }
 

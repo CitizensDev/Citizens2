@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityTypes;
@@ -19,7 +20,7 @@ public abstract class CitizensMobNPC extends CitizensNPC {
     protected CitizensMobNPC(CitizensNPCManager manager, int id, String name, Class<? extends EntityLiving> clazz) {
         super(manager, id, name);
         try {
-            this.constructor = clazz.getConstructor(World.class);
+            this.constructor = clazz.getConstructor(World.class, NPC.class);
         } catch (Exception ex) {
             throw new IllegalStateException("unable to find an entity constructor");
         }
@@ -29,7 +30,7 @@ public abstract class CitizensMobNPC extends CitizensNPC {
 
     private EntityLiving createEntityFromClass(World world) {
         try {
-            return constructor.newInstance(world);
+            return constructor.newInstance(world, this);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
