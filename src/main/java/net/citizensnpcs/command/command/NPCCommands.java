@@ -50,6 +50,7 @@ public class NPCCommands {
     public void character(CommandContext args, Player player, NPC npc) throws CommandException {
         String name = args.getString(1).toLowerCase();
         Character character = characterManager.getCharacter(name);
+
         if (character == null)
             throw new CommandException("The character '" + args.getString(1) + "' does not exist.");
         if (npc.getCharacter() != null && npc.getCharacter().getName().equalsIgnoreCase(character.getName()))
@@ -57,6 +58,12 @@ public class NPCCommands {
         if (!player.hasPermission("citizens.npc.character." + character.getName())
                 && !player.hasPermission("citizens.npc.character.*") && !player.hasPermission("citizens.admin"))
             throw new NoPermissionsException();
+
+        EntityType type = EntityType.valueOf(npc.getTrait(MobType.class).getType());
+        if (!character.getValidTypes().isEmpty() && !character.getValidTypes().contains(type)) {
+            Messaging.sendError(player, "This NPC cannot be given the character '" + character.getName() + "'.");
+            return;
+        }
         Messaging.send(player, StringHelper.wrap(npc.getName() + "'s") + " character is now '"
                 + StringHelper.wrap(name) + "'.");
         npc.setCharacter(character);
@@ -94,7 +101,7 @@ public class NPCCommands {
                 return;
             } else {
                 Character set = characterManager.getCharacter(character);
-                if (!set.getValidTypes().contains(type)) {
+                if (!set.getValidTypes().isEmpty() && !set.getValidTypes().contains(type)) {
                     Messaging.sendError(player, "The character '" + set.getName() + "' cannot be given the mob type '"
                             + type.name().toLowerCase() + "'.");
                     create.remove();
