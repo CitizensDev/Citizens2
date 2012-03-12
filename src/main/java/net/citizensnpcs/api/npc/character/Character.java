@@ -3,7 +3,6 @@ package net.citizensnpcs.api.npc.character;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.citizensnpcs.api.exception.CharacterException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
@@ -28,9 +27,9 @@ public abstract class Character {
         return name;
     }
 
-    public final void setName(String name) throws CharacterException {
+    public final void setName(String name) {
         if (this.name != null)
-            throw new CharacterException("Cannot change the name of a character.");
+            throw new IllegalStateException("Cannot change the name of a character.");
 
         this.name = name;
     }
@@ -44,9 +43,9 @@ public abstract class Character {
         return types;
     }
 
-    public final void setValidTypes(EntityType... types) throws CharacterException {
+    public final void setValidTypes(EntityType... types) {
         if (this.types != null)
-            throw new CharacterException("Cannot change the valid mob types of a character.");
+            throw new IllegalStateException("Cannot change the valid mob types of a character.");
 
         this.types = new HashSet<EntityType>();
         for (EntityType type : types)

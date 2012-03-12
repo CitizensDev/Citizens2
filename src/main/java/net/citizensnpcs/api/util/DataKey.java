@@ -2,7 +2,7 @@ package net.citizensnpcs.api.util;
 
 import java.util.List;
 
-public abstract class DataKey {
+public abstract class DataKey implements Cloneable {
 
     public abstract void copy(String to);
 

@@ -7,8 +7,8 @@ import org.bukkit.entity.EntityType;
 /**
  * Builds a character.
  */
-public class CharacterFactory {
-    private Class<? extends Character> character;
+public final class CharacterFactory {
+    private final Class<? extends Character> character;
     private String name;
     private EntityType[] types;
 
@@ -29,7 +29,7 @@ public class CharacterFactory {
      * @param name
      *            Name to assign to the character
      */
-    public final CharacterFactory withName(String name) {
+    public CharacterFactory withName(String name) {
         this.name = name;
         return this;
     }
@@ -41,7 +41,7 @@ public class CharacterFactory {
      * @param types
      *            List of types that the character can be
      */
-    public final CharacterFactory withTypes(EntityType... types) {
+    public CharacterFactory withTypes(EntityType... types) {
         this.types = types;
         return this;
     }
@@ -54,7 +54,7 @@ public class CharacterFactory {
      * @throws CharacterException
      *             Thrown if the character could not be created.
      */
-    public final Character create() throws CharacterException {
+    public Character create() throws CharacterException {
         Character create;
 
         try {

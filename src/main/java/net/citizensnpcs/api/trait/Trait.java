@@ -1,7 +1,6 @@
 package net.citizensnpcs.api.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.exception.TraitException;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
@@ -19,9 +18,9 @@ public abstract class Trait {
         return name;
     }
 
-    public final void setName(String name) throws TraitException {
+    public final void setName(String name) {
         if (this.name != null)
-            throw new TraitException("Cannot change the name of a trait.");
+            throw new IllegalStateException("Cannot change the name of a trait.");
 
         this.name = name;
     }

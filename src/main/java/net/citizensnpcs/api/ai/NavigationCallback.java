@@ -12,7 +12,7 @@ public abstract class NavigationCallback {
         return false;
     }
 
-    public boolean onCancel(AI ai, PathCancelReason reason) {
+    public boolean onCancel(AI ai, CancelReason reason) {
         return false;
     }
 
@@ -20,7 +20,7 @@ public abstract class NavigationCallback {
         return false;
     }
 
-    public enum PathCancelReason {
+    public enum CancelReason {
         CANCEL,
         REPLACE,
         STUCK;

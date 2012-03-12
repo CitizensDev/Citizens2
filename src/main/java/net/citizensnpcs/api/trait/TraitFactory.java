@@ -3,8 +3,8 @@ package net.citizensnpcs.api.trait;
 /**
  * Builds a trait.
  */
-public class TraitFactory {
-    private Class<? extends Trait> trait;
+public final class TraitFactory {
+    private final Class<? extends Trait> trait;
     private String name;
 
     /**
@@ -17,11 +17,11 @@ public class TraitFactory {
         this.trait = trait;
     }
 
-    public final String getName() {
+    public String getName() {
         return name;
     }
 
-    public final Class<? extends Trait> getTraitClass() {
+    public Class<? extends Trait> getTraitClass() {
         return trait;
     }
 
@@ -31,7 +31,7 @@ public class TraitFactory {
      * @param name
      *            Name to assign to the trait
      */
-    public final TraitFactory withName(String name) {
+    public TraitFactory withName(String name) {
         this.name = name;
         return this;
     }
