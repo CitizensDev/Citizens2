@@ -50,8 +50,8 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                             at.getBlockX(), at.getBlockY(), at.getBlockZ()));
                 } else if (waypoints.size() > 0) {
                     waypoints.remove(waypoints.size() - 1);
-                    Messaging.send(player, String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining)", waypoints
-                            .size()));
+                    Messaging.send(player,
+                            String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining)", waypoints.size()));
                 }
             }
         };
@@ -80,16 +80,17 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
 
     @Override
     public void save(DataKey key) {
+        key.removeKey("waypoints");
         key = key.getRelative("waypoints");
         for (int i = 0; i < waypoints.size(); ++i) {
             Location location = waypoints.get(i).getLocation();
-            key = key.getRelative(Integer.toString(i) + ".location");
-            key.setString("world", location.getWorld().getName());
-            key.setDouble("x", location.getX());
-            key.setDouble("y", location.getY());
-            key.setDouble("z", location.getZ());
-            key.setDouble("yaw", location.getYaw());
-            key.setDouble("pitch", location.getPitch());
+            DataKey root = key.getRelative(Integer.toString(i) + ".location");
+            root.setString("world", location.getWorld().getName());
+            root.setDouble("x", location.getX());
+            root.setDouble("y", location.getY());
+            root.setDouble("z", location.getZ());
+            root.setDouble("yaw", location.getYaw());
+            root.setDouble("pitch", location.getPitch());
         }
     }
 }

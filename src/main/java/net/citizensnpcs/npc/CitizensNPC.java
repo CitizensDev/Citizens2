@@ -16,7 +16,6 @@ import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
-
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
@@ -26,8 +25,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 public abstract class CitizensNPC extends AbstractNPC {
-    protected final CitizensAI ai = new CitizensAI(this);
-    protected final CitizensNPCManager manager;
+    private final CitizensAI ai = new CitizensAI(this);
+    private final CitizensNPCManager manager;
     protected EntityLiving mcEntity;
     private final CitizensTraitManager traitManager;
 
@@ -139,6 +138,7 @@ public abstract class CitizensNPC extends AbstractNPC {
         return true;
     }
 
+    @Override
     public void update() {
         super.update();
         ai.update();

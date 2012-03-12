@@ -3,8 +3,8 @@ package net.citizensnpcs.npc;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import net.citizensnpcs.api.exception.TraitException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
@@ -19,6 +19,8 @@ import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
+
+import com.google.common.collect.Maps;
 
 public class CitizensTraitManager implements TraitManager {
     private final Map<String, Class<? extends Trait>> registered = new HashMap<String, Class<? extends Trait>>();
@@ -57,52 +59,54 @@ public class CitizensTraitManager implements TraitManager {
 
     @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(Class<T> clazz, NPC npc) {
-        for (String name : registered.keySet())
-            if (registered.get(name).equals(clazz)) {
-                Trait t = create(registered.get(name), npc);
-                try {
-                    if (t.getName() == null)
-                        t.setName(name);
-                    return (T) t;
-                } catch (TraitException ex) {
-                    ex.printStackTrace();
-                }
-            }
+        for (Entry<String, Class<? extends Trait>> entry : registered.entrySet()) {
+            if (!entry.getValue().equals(clazz))
+                continue;
+            Trait t = create(entry.getValue(), npc);
+            t.setName(entry.getKey());
+            return (T) t;
+        }
         return null;
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(String name, NPC npc) {
-        if (!registered.containsKey(name))
+        // TODO: we could replace NPC with Object... and search for the
+        // constructor
+        Class<? extends Trait> clazz = registered.get(name);
+        if (clazz == null)
             return null;
-        Trait t = getTrait(registered.get(name), npc);
-        try {
-            if (t.getName() == null)
-                t.setName(name);
-            return (T) t;
-        } catch (TraitException ex) {
-            ex.printStackTrace();
-        }
-        return null;
+        Trait t = getTrait(clazz, npc);
+        t.setName(name);
+        return (T) t;
     }
 
     @SuppressWarnings("unchecked")
     private <T extends Trait> T create(Class<T> trait, NPC npc) {
         Constructor<? extends Trait> constructor;
 
-        try {
-            constructor = trait.getConstructor(NPC.class);
-        } catch (Exception ex) {
-            constructor = null;
+        if (!CACHED_CTORS.containsKey(trait)) {
+            try {
+                constructor = trait.getConstructor(NPC.class);
+                constructor.setAccessible(true); // do we want to allow private
+                                                 // constructors?
+            } catch (Exception ex) {
+                constructor = null;
+            }
+            CACHED_CTORS.put(trait, constructor);
+        } else {
+            constructor = CACHED_CTORS.get(trait);
         }
 
         try {
-            if (npc == null)
-                return (T) trait.newInstance();
-            return constructor != null ? (T) constructor.newInstance(npc) : (T) trait.newInstance();
+            if (constructor == null || npc == null)
+                return trait.newInstance();
+            return (T) constructor.newInstance(npc);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
         }
     }
+
+    private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = Maps.newHashMap();
 }

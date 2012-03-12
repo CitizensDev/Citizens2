@@ -8,7 +8,7 @@ import java.util.List;
 import net.citizensnpcs.api.ai.AI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.NavigationCallback;
-import net.citizensnpcs.api.ai.NavigationCallback.PathCancelReason;
+import net.citizensnpcs.api.ai.NavigationCallback.CancelReason;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.Messaging;
 
@@ -44,7 +44,7 @@ public class CitizensAI implements AI {
             Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
             while (itr.hasNext()) {
                 NavigationCallback next = itr.next().get();
-                if (next == null || next.onCancel(this, PathCancelReason.CANCEL)) {
+                if (next == null || next.onCancel(this, CancelReason.CANCEL)) {
                     itr.remove();
                 }
             }
@@ -104,7 +104,7 @@ public class CitizensAI implements AI {
         Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
         while (itr.hasNext()) {
             NavigationCallback next = itr.next().get();
-            if (next == null || (replaced && next.onCancel(this, PathCancelReason.REPLACE)) || next.onBegin(this)) {
+            if (next == null || (replaced && next.onCancel(this, CancelReason.REPLACE)) || next.onBegin(this)) {
                 itr.remove();
             }
         }
@@ -121,7 +121,7 @@ public class CitizensAI implements AI {
         Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
         while (itr.hasNext()) {
             NavigationCallback next = itr.next().get();
-            if (next == null || (replaced && next.onCancel(this, PathCancelReason.REPLACE)) || next.onBegin(this)) {
+            if (next == null || (replaced && next.onCancel(this, CancelReason.REPLACE)) || next.onBegin(this)) {
                 itr.remove();
             }
         }
