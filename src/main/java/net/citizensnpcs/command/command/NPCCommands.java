@@ -21,6 +21,7 @@ import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
@@ -113,11 +114,11 @@ public class NPCCommands {
         }
         msg += " at your location.";
 
-        // Set the owner
+        // Initialize necessary traits
         create.getTrait(Owner.class).setOwner(player.getName());
-
-        // Set the mob type
         create.getTrait(MobType.class).setType(type.toString());
+        create.addTrait(LookClose.class);
+        create.addTrait(Text.class);
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);
