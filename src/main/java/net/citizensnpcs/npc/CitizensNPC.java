@@ -28,8 +28,8 @@ import org.bukkit.inventory.Inventory;
 public abstract class CitizensNPC extends AbstractNPC {
     private final CitizensAI ai = new CitizensAI(this);
     private final CitizensNPCManager manager;
-    protected EntityLiving mcEntity;
     private final CitizensTraitManager traitManager;
+    protected EntityLiving mcEntity;
 
     protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
         super(id, name);
@@ -43,6 +43,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot register a null trait. Was it registered properly?");
             return;
         }
+
         if (trait instanceof Runnable) {
             runnables.add((Runnable) trait);
             if (traits.containsKey(trait.getClass()))
@@ -52,6 +53,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             Bukkit.getPluginManager().registerEvents((Listener) trait, null);
             // TODO: insert plugin instance somehow
         }
+
         traits.put(trait.getClass(), trait);
     }
 
@@ -179,8 +181,9 @@ public abstract class CitizensNPC extends AbstractNPC {
             if (trait == null)
                 throw new NPCLoadException("No trait with the name '" + traitKey.name()
                         + "' exists. Was it registered properly?");
+            addTrait(trait);
             try {
-                trait.load(traitKey);
+                getTrait(trait.getClass()).load(traitKey);
             } catch (Exception ex) {
                 Bukkit.getLogger().log(
                         Level.SEVERE,
@@ -189,7 +192,6 @@ public abstract class CitizensNPC extends AbstractNPC {
                                 + ex.getMessage());
                 ex.printStackTrace();
             }
-            addTrait(trait);
         }
 
         // Spawn the NPC
