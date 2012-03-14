@@ -18,6 +18,7 @@ import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.npc.CitizensNPCManager;
+import net.citizensnpcs.npc.CitizensTraitManager;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
@@ -35,6 +36,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 public class NPCCommands {
     private final CharacterManager characterManager = CitizensAPI.getCharacterManager();
     private final CitizensNPCManager npcManager;
+    private final CitizensTraitManager traitManager = (CitizensTraitManager) CitizensAPI.getTraitManager();
 
     public NPCCommands(Citizens plugin) {
         npcManager = plugin.getNPCManager();
@@ -116,8 +118,8 @@ public class NPCCommands {
         // Initialize necessary traits
         create.getTrait(Owner.class).setOwner(player.getName());
         create.getTrait(MobType.class).setType(type.toString());
-        create.addTrait(new LookClose(create));
-        create.addTrait(new Text(create));
+        create.addTrait(traitManager.getTrait(LookClose.class, create));
+        create.addTrait(traitManager.getTrait(Text.class, create));
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);
