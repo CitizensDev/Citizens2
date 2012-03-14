@@ -1,7 +1,6 @@
 package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
@@ -14,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 public class Inventory extends Trait {
     private ItemStack[] contents;
 
-    public Inventory(NPC npc) {
+    public Inventory() {
         contents = new ItemStack[36];
     }
 
@@ -30,13 +29,6 @@ public class Inventory extends Trait {
     @Override
     public void load(DataKey key) throws NPCLoadException {
         contents = parseContents(key);
-    }
-
-    private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
-        ItemStack[] contents = new ItemStack[36];
-        for (DataKey slotKey : key.getIntegerSubKeys())
-            contents[Integer.parseInt(slotKey.name())] = ItemStorage.loadItemStack(slotKey);
-        return contents;
     }
 
     @Override
@@ -59,6 +51,13 @@ public class Inventory extends Trait {
      */
     public void setContents(ItemStack[] contents) {
         this.contents = contents;
+    }
+
+    private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
+        ItemStack[] contents = new ItemStack[36];
+        for (DataKey slotKey : key.getIntegerSubKeys())
+            contents[Integer.parseInt(slotKey.name())] = ItemStorage.loadItemStack(slotKey);
+        return contents;
     }
 
     @Override

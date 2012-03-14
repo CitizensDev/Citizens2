@@ -9,9 +9,6 @@ import net.citizensnpcs.api.util.DataKey;
 public class MobType extends Trait {
     private String type;
 
-    public MobType() {
-    }
-
     @Override
     public void load(DataKey key) {
         try {
