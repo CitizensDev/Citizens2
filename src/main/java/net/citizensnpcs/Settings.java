@@ -41,11 +41,11 @@ public class Settings {
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", true),
         DEFAULT_TALK_CLOSE("npc.default.talk-close", false),
         QUICK_SELECT("npc.selection.quick-select", false),
-        SELECTION_ITEM("npc.selection.item", 280),
+        SELECTION_ITEM("npc.selection.item", "280"),
         SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
-        TALK_CLOSE_MAXIMUM_COOLDOWN("npc.talk.max-cooldown", 60),
-        TALK_CLOSE_MINIMUM_COOLDOWN("npc.talk.min-cooldown", 30),
-        TALK_ITEM("npc.talk-item", 340),
+        TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 60),
+        TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 30),
+        TALK_ITEM("npc.text.talk-item", "340"),
         USE_DATABASE("use-database", false);
 
         private String path;
@@ -65,7 +65,7 @@ public class Settings {
         }
 
         public int asInt() {
-            return (Integer) value;
+            return Integer.parseInt(value.toString());
         }
 
         public long asLong() {
