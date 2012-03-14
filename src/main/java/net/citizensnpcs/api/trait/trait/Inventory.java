@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
@@ -13,12 +14,8 @@ import org.bukkit.inventory.ItemStack;
 public class Inventory extends Trait {
     private ItemStack[] contents;
 
-    public Inventory() {
+    public Inventory(NPC npc) {
         contents = new ItemStack[36];
-    }
-
-    public Inventory(org.bukkit.inventory.Inventory inventory) {
-        contents = inventory.getContents();
     }
 
     /**

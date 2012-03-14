@@ -5,12 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.trait.Trait;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -22,30 +20,12 @@ public abstract class AbstractNPC implements NPC {
     private Character character;
     private final int id;
     private String name;
-    private final List<Runnable> runnables = new ArrayList<Runnable>();
+    protected final List<Runnable> runnables = new ArrayList<Runnable>();
     protected final Map<Class<? extends Trait>, Trait> traits = new HashMap<Class<? extends Trait>, Trait>();
 
     protected AbstractNPC(int id, String name) {
         this.id = id;
         this.name = name;
-    }
-
-    @Override
-    public void addTrait(Trait trait) {
-        if (trait == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "Cannot register a null trait. Was it registered properly?");
-            return;
-        }
-        if (trait instanceof Runnable) {
-            runnables.add((Runnable) trait);
-            if (traits.containsKey(trait.getClass()))
-                runnables.remove(traits.get(trait.getClass()));
-        }
-        if (trait instanceof Listener) {
-            Bukkit.getPluginManager().registerEvents((Listener) trait, null);
-            // TODO: insert plugin instance somehow
-        }
-        traits.put(trait.getClass(), trait);
     }
 
     @Override

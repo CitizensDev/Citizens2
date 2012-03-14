@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -10,11 +11,7 @@ import net.citizensnpcs.api.util.DataKey;
 public class Owner extends Trait {
     private String owner;
 
-    public Owner() {
-    }
-
-    public Owner(String owner) {
-        this.owner = owner;
+    public Owner(NPC npc) {
     }
 
     /**

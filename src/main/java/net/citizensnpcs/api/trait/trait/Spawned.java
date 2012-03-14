@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -12,11 +13,7 @@ import net.citizensnpcs.api.util.DataKey;
 public class Spawned extends Trait {
     private boolean shouldSpawn;
 
-    public Spawned() {
-    }
-
-    public Spawned(boolean shouldSpawn) {
-        this.shouldSpawn = shouldSpawn;
+    public Spawned(NPC npc) {
     }
 
     @Override

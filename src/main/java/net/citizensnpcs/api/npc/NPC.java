@@ -19,9 +19,9 @@ public interface NPC extends Metadatable, InventoryHolder {
      * Adds a trait to this NPC.
      * 
      * @param trait
-     *            Trait to add
+     *            Class of the trait to add
      */
-    public void addTrait(Trait trait);
+    public void addTrait(Class<? extends Trait> trait);
 
     /**
      * Sends a message to the given player with the NPC's formatted name.

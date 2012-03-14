@@ -12,10 +12,6 @@ public class MobType extends Trait {
     public MobType() {
     }
 
-    public MobType(String type) {
-        this.type = type;
-    }
-
     @Override
     public void load(DataKey key) {
         try {
