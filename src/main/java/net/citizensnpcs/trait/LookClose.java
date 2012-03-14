@@ -20,29 +20,6 @@ public class LookClose extends Trait implements Runnable, Toggleable {
         this.npc = npc;
     }
 
-    private void faceEntity(CitizensNPC npc, Entity target) {
-        if (npc.getBukkitEntity().getWorld() != target.getWorld())
-            return;
-        Location loc = npc.getBukkitEntity().getLocation();
-
-        double xDiff = target.getLocation().getX() - loc.getX();
-        double yDiff = target.getLocation().getY() - loc.getY();
-        double zDiff = target.getLocation().getZ() - loc.getZ();
-
-        double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
-        double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
-
-        double yaw = (Math.acos(xDiff / distanceXZ) * 180 / Math.PI);
-        double pitch = (Math.acos(yDiff / distanceY) * 180 / Math.PI) - 90;
-        if (zDiff < 0.0) {
-            yaw = yaw + (Math.abs(180 - yaw) * 2);
-        }
-
-        npc.getHandle().yaw = (float) yaw - 90;
-        npc.getHandle().pitch = (float) pitch;
-        npc.getHandle().X = npc.getHandle().yaw;
-    }
-
     @Override
     public void load(DataKey key) throws NPCLoadException {
         lookClose = key.getBoolean("");
@@ -65,6 +42,29 @@ public class LookClose extends Trait implements Runnable, Toggleable {
     public boolean toggle() {
         lookClose = !lookClose;
         return lookClose;
+    }
+
+    private void faceEntity(CitizensNPC npc, Entity target) {
+        if (npc.getBukkitEntity().getWorld() != target.getWorld())
+            return;
+        Location loc = npc.getBukkitEntity().getLocation();
+
+        double xDiff = target.getLocation().getX() - loc.getX();
+        double yDiff = target.getLocation().getY() - loc.getY();
+        double zDiff = target.getLocation().getZ() - loc.getZ();
+
+        double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
+        double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
+
+        double yaw = (Math.acos(xDiff / distanceXZ) * 180 / Math.PI);
+        double pitch = (Math.acos(yDiff / distanceY) * 180 / Math.PI) - 90;
+        if (zDiff < 0.0) {
+            yaw = yaw + (Math.abs(180 - yaw) * 2);
+        }
+
+        npc.getHandle().yaw = (float) yaw - 90;
+        npc.getHandle().pitch = (float) pitch;
+        npc.getHandle().X = npc.getHandle().yaw;
     }
 
     @Override

@@ -19,6 +19,7 @@ import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
+import net.citizensnpcs.util.Messaging;
 
 public class CitizensTraitManager implements TraitManager {
     private final Map<String, Class<? extends Trait>> registered = new HashMap<String, Class<? extends Trait>>();
@@ -86,8 +87,7 @@ public class CitizensTraitManager implements TraitManager {
         if (!CACHED_CTORS.containsKey(trait)) {
             try {
                 constructor = trait.getConstructor(NPC.class);
-                constructor.setAccessible(true); // do we want to allow private
-                                                 // constructors?
+                constructor.setAccessible(true);
             } catch (Exception ex) {
                 constructor = null;
             }

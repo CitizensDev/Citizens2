@@ -22,6 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 
 public abstract class CitizensNPC extends AbstractNPC {
@@ -34,6 +35,25 @@ public abstract class CitizensNPC extends AbstractNPC {
         super(id, name);
         this.manager = manager;
         traitManager = (CitizensTraitManager) CitizensAPI.getTraitManager();
+    }
+
+    @Override
+    public void addTrait(Class<? extends Trait> clazz) {
+        Trait trait = traitManager.getTrait(clazz, this);
+        if (trait == null) {
+            Bukkit.getLogger().log(Level.SEVERE, "Cannot register a null trait. Was it registered properly?");
+            return;
+        }
+        if (trait instanceof Runnable) {
+            runnables.add((Runnable) trait);
+            if (traits.containsKey(trait.getClass()))
+                runnables.remove(traits.get(trait.getClass()));
+        }
+        if (trait instanceof Listener) {
+            Bukkit.getPluginManager().registerEvents((Listener) trait, null);
+            // TODO: insert plugin instance somehow
+        }
+        traits.put(trait.getClass(), trait);
     }
 
     @Override
@@ -89,7 +109,7 @@ public abstract class CitizensNPC extends AbstractNPC {
     public <T extends Trait> T getTrait(Class<T> clazz) {
         Trait t = traits.get(clazz);
         if (t == null)
-            addTrait(traitManager.getTrait(clazz, this));
+            addTrait(clazz);
 
         return traits.get(clazz) != null ? clazz.cast(traits.get(clazz)) : null;
     }
@@ -170,7 +190,7 @@ public abstract class CitizensNPC extends AbstractNPC {
                                 + ex.getMessage());
                 ex.printStackTrace();
             }
-            addTrait(trait);
+            addTrait(trait.getClass());
         }
 
         // Spawn the NPC
