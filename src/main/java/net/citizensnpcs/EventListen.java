@@ -121,7 +121,7 @@ public class EventListen implements Listener {
 
         if (!player.hasMetadata("selected") || player.getMetadata("selected").size() == 0
                 || player.getMetadata("selected").get(0).asInt() != npc.getId()) {
-            if (player.getItemInHand().getTypeId() == Setting.SELECTION_ITEM.asInt()
+            if (isSettingFulfilled(player, Setting.SELECTION_ITEM)
                     && (npc.getTrait(Owner.class).getOwner().equals(player.getName()) || player
                             .hasPermission("citizens.admin"))) {
                 npcManager.selectNPC(player, npc);
@@ -131,8 +131,7 @@ public class EventListen implements Listener {
             }
         }
         // If the NPC isn't a close talker
-        if (player.getItemInHand().getTypeId() == Setting.TALK_ITEM.asInt()
-                && !npc.getTrait(Text.class).shouldTalkClose())
+        if (isSettingFulfilled(player, Setting.TALK_ITEM) && !npc.getTrait(Text.class).shouldTalkClose())
             npc.getTrait(Text.class).sendText(player);
 
         if (npc.getCharacter() != null)
@@ -205,5 +204,13 @@ public class EventListen implements Listener {
 
     private Pair<Integer, Integer> toIntPair(Chunk chunk) {
         return new Pair<Integer, Integer>(chunk.getX(), chunk.getZ());
+    }
+
+    private boolean isSettingFulfilled(Player player, Setting setting) {
+        try {
+            return player.getItemInHand().getTypeId() == setting.asInt();
+        } catch (NumberFormatException ex) {
+            return setting.asString().equals("*");
+        }
     }
 }

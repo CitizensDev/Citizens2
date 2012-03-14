@@ -19,7 +19,6 @@ import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
-import net.citizensnpcs.util.Messaging;
 
 public class CitizensTraitManager implements TraitManager {
     private final Map<String, Class<? extends Trait>> registered = new HashMap<String, Class<? extends Trait>>();

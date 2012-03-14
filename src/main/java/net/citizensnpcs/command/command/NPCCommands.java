@@ -34,8 +34,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
     private final CharacterManager characterManager = CitizensAPI.getCharacterManager();
-    private final CitizensNPCManager npcManager; // TODO: remove reliance on
-                                                 // CitizensNPCManager
+    private final CitizensNPCManager npcManager;
 
     public NPCCommands(Citizens plugin) {
         npcManager = plugin.getNPCManager();
@@ -117,8 +116,8 @@ public class NPCCommands {
         // Initialize necessary traits
         create.getTrait(Owner.class).setOwner(player.getName());
         create.getTrait(MobType.class).setType(type.toString());
-        create.addTrait(LookClose.class);
-        create.addTrait(Text.class);
+        create.addTrait(new LookClose(create));
+        create.addTrait(new Text(create));
 
         create.spawn(player.getLocation());
         npcManager.selectNPC(player, create);
