@@ -11,7 +11,7 @@ import net.citizensnpcs.api.util.DataKey;
  * NPC.isSpawned().
  */
 public class Spawned extends Trait {
-    private boolean shouldSpawn;
+    private boolean shouldSpawn = true;
 
     public Spawned(NPC npc) {
     }
