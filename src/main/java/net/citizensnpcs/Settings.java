@@ -15,6 +15,7 @@ public class Settings {
     }
 
     public void load() {
+        config.load();
         DataKey root = config.getKey("");
         for (Setting setting : Setting.values()) {
             if (!root.keyExists(setting.path)) {
@@ -23,7 +24,6 @@ public class Settings {
             } else
                 setting.set(root.getRaw(setting.path));
         }
-        save();
     }
 
     public void save() {

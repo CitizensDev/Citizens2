@@ -234,10 +234,11 @@ public class Citizens extends JavaPlugin {
     }
 
     public void save() {
-        config.save();
+        //config.load();
+        //saves.load();
         for (NPC npc : npcManager)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
-
+        config.save();
         saves.save();
     }
 
@@ -249,8 +250,8 @@ public class Citizens extends JavaPlugin {
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
 
-            NPC npc = npcManager.createNPC(EntityType.valueOf(key.getString("traits.type").toUpperCase()), id,
-                    key.getString("name"), null);
+            NPC npc = npcManager.createNPC(EntityType.valueOf(key.getString("traits.type").toUpperCase()), id, key
+                    .getString("name"), null);
             try {
                 ((CitizensNPC) npc).load(key);
             } catch (NPCException ex) {
