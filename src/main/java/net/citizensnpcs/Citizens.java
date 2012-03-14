@@ -234,8 +234,6 @@ public class Citizens extends JavaPlugin {
     }
 
     public void save() {
-        //config.load();
-        //saves.load();
         for (NPC npc : npcManager)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
         config.save();
