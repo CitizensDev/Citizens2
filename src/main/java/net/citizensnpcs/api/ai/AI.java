@@ -18,6 +18,14 @@ public interface AI {
      */
     public void addGoal(int priority, Goal goal);
 
+    /**
+     * Returns whether this AI is currently pathing towards an {@link Entity} or
+     * {@link Location}.
+     * 
+     * @see AI#setDestination(Location)
+     * @see AI#setTarget(LivingEntity, boolean)
+     * @return Whether the AI has a destination
+     */
     public boolean hasDestination();
 
     /**
@@ -27,13 +35,6 @@ public interface AI {
      *            {@link NavigationCallback} to register
      */
     public void registerNavigationCallback(NavigationCallback callback);
-
-    /**
-     * Sets the AI of this {@link AI} as a {@link Runnable}.
-     * 
-     * @param ai
-     */
-    public void setAI(Runnable ai);
 
     /**
      * Creates a path to the given destination
@@ -53,5 +54,11 @@ public interface AI {
      */
     public void setTarget(LivingEntity target, boolean aggressive);
 
-    void cancelDestination();
+    /**
+     * Cancels the destination of this AI.
+     * 
+     * @see AI#setDestination(Location)
+     * @see AI#setTarget(LivingEntity, boolean)
+     */
+    public void cancelDestination();
 }
