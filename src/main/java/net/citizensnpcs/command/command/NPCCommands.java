@@ -22,6 +22,7 @@ import net.citizensnpcs.npc.CitizensTraitManager;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
@@ -30,6 +31,7 @@ import net.citizensnpcs.util.StringHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Requirements(selected = true, ownership = true)
@@ -391,5 +393,25 @@ public class NPCCommands {
         String msg = StringHelper.wrap(npc.getName()) + " will "
                 + (npc.getTrait(Powered.class).toggle() ? "now" : "no longer");
         Messaging.send(player, msg += " be powered.");
+    }
+
+    @Command(
+             aliases = { "npc" },
+             usage = "profession [profession]",
+             desc = "Set a NPC's profession",
+             modifiers = { "profession" },
+             min = 2,
+             max = 2,
+             permission = "npc.profession")
+    @Requirements(selected = true, ownership = true, types = { EntityType.VILLAGER })
+    public void profession(CommandContext args, Player player, NPC npc) throws CommandException {
+        String profession = args.getString(1);
+        try {
+            npc.getTrait(VillagerProfession.class).setProfession(Profession.valueOf(profession.toUpperCase()));
+            Messaging.send(player, StringHelper.wrap(npc.getName()) + " is now the profession "
+                    + StringHelper.wrap(profession.toUpperCase()) + ".");
+        } catch (IllegalArgumentException ex) {
+            throw new CommandException("'" + profession + "' is not a valid profession.");
+        }
     }
 }

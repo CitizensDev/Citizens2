@@ -17,6 +17,7 @@ import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
@@ -35,6 +36,7 @@ public class CitizensTraitManager implements TraitManager {
         registerTrait(new TraitFactory(Spawned.class).withName("spawned"));
         registerTrait(new TraitFactory(CurrentLocation.class).withName("location"));
         registerTrait(new TraitFactory(Text.class).withName("text"));
+        registerTrait(new TraitFactory(VillagerProfession.class).withName("profession"));
         registerTrait(new TraitFactory(Waypoints.class).withName("waypoints"));
     }
 

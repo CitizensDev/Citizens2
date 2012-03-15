@@ -53,6 +53,6 @@ public class CurrentLocation extends Trait implements Runnable {
 
     @Override
     public String toString() {
-        return "SpawnLocation{" + loc + "}";
+        return "CurrentLocation{" + loc + "}";
     }
 }
