@@ -146,6 +146,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             return false;
 
         mcEntity = createHandle(loc);
+
         mcEntity.world.addEntity(mcEntity);
         mcEntity.world.players.remove(mcEntity);
 

@@ -60,7 +60,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
     @Override
     public void update() {
         super.update();
-        if (mcEntity != null) {
+        if (isSpawned() && getBukkitEntity().getLocation().getChunk().isLoaded()) {
             mcEntity.move(0, -0.1, 0);
             // gravity! also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
