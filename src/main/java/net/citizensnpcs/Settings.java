@@ -1,6 +1,8 @@
 package net.citizensnpcs;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Storage;
@@ -8,7 +10,7 @@ import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 
 public class Settings {
-    private final Storage config;
+    private static Storage config;
 
     public Settings(File folder) {
         config = new YamlStorage(folder + File.separator + "config.yml", "Citizens Configuration");
@@ -40,6 +42,7 @@ public class Settings {
         DEFAULT_LOOK_CLOSE("npc.default.look-close", false),
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", true),
         DEFAULT_TALK_CLOSE("npc.default.talk-close", false),
+        DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!"),
         QUICK_SELECT("npc.selection.quick-select", false),
         SELECTION_ITEM("npc.selection.item", "280"),
         SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
@@ -54,6 +57,13 @@ public class Settings {
         Setting(String path, Object value) {
             this.path = path;
             this.value = value;
+        }
+
+        public List<String> asList() {
+            List<String> list = new ArrayList<String>();
+            for (DataKey key : config.getKey("npc.default.text").getIntegerSubKeys())
+                list.add(key.getString(""));
+            return list;
         }
 
         public boolean asBoolean() {

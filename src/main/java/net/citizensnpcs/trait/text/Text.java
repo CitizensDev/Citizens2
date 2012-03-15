@@ -47,6 +47,8 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
     public void load(DataKey key) throws NPCLoadException {
         for (DataKey sub : key.getIntegerSubKeys())
             text.add(sub.getString(""));
+        if (text.isEmpty())
+            populateDefaultText();
 
         if (key.keyExists("talk-close"))
             talkClose = key.getBoolean("talk-close");
@@ -95,6 +97,12 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
     }
 
     @Override
+    public void onNPCSpawn() {
+        if (text.isEmpty())
+            populateDefaultText();
+    }
+
+    @Override
     public void conversationAbandoned(ConversationAbandonedEvent event) {
         Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
     }
@@ -105,8 +113,8 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
 
     public Editor getEditor(final Player player) {
         final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
-                .withLocalEcho(false).withEscapeSequence("/npc text").withModality(false)
-                .withFirstPrompt(new StartPrompt(this)).buildConversation(player);
+                .withLocalEcho(false).withEscapeSequence("/npc text").withModality(false).withFirstPrompt(
+                        new StartPrompt(this)).buildConversation(player);
         return new Editor() {
 
             @Override
@@ -169,6 +177,11 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
     public boolean toggleRandomTalker() {
         randomTalker = !randomTalker;
         return randomTalker;
+    }
+
+    private void populateDefaultText() {
+        for (String line : Setting.DEFAULT_TEXT.asList())
+            text.add(line);
     }
 
     @Override
