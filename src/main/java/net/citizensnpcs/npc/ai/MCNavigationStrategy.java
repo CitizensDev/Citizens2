@@ -10,20 +10,28 @@ import net.minecraft.server.Navigation;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class NavigationStrategy implements PathStrategy {
+public class MCNavigationStrategy implements PathStrategy {
     private final Navigation navigation;
     private EntityHumanNPC entity = null;
 
-    NavigationStrategy(CitizensNPC npc, Location dest) {
+    MCNavigationStrategy(CitizensNPC npc, Location dest) {
+        if (npc.getBukkitEntity() instanceof Player) {
+            entity = (EntityHumanNPC) npc.getHandle();
+            entity.onGround = true;
+            // not sure of a better way around this - if onGround is false, then
+            // navigation won't execute, and calling entity.move doesn't
+            // entirely fix the problem.
+        }
         navigation = npc.getHandle().ak();
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), getSpeed(npc.getHandle()));
-        if (npc.getBukkitEntity() instanceof Player)
-            entity = (EntityHumanNPC) npc.getHandle();
+
     }
 
-    NavigationStrategy(EntityLiving entity, EntityLiving target) {
-        if (entity instanceof EntityHumanNPC)
+    MCNavigationStrategy(EntityLiving entity, EntityLiving target) {
+        if (entity instanceof EntityHumanNPC) {
             this.entity = (EntityHumanNPC) entity;
+            entity.onGround = true; // see above
+        }
         navigation = entity.ak();
         navigation.a(target, getSpeed(entity));
     }

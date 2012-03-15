@@ -19,6 +19,9 @@ public class Waypoints extends Trait {
 
     public Waypoints(NPC npc) {
         this.npc = npc;
+        npc.getAI().registerNavigationCallback(provider.getCallback());
+        // TODO: this is necessary because traits aren't loaded when added
+        // manually so we may be in an uninitialised state.
     }
 
     public Editor getEditor(Player player) {

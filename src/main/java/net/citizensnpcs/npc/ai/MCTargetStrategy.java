@@ -8,12 +8,11 @@ import net.minecraft.server.EntityMonster;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 
-public class TargetStrategy implements PathStrategy {
+public class MCTargetStrategy implements PathStrategy {
     private final boolean aggro;
-    private PathStrategy current = null;
     private final EntityLiving handle, target;
 
-    public TargetStrategy(CitizensNPC handle, LivingEntity target, boolean aggro) {
+    public MCTargetStrategy(CitizensNPC handle, LivingEntity target, boolean aggro) {
         this.handle = handle.getHandle();
         this.target = ((CraftLivingEntity) target).getHandle();
         this.aggro = aggro;
@@ -33,7 +32,8 @@ public class TargetStrategy implements PathStrategy {
     public boolean update() {
         if (target == null || target.dead)
             return true;
-        current = new NavigationStrategy(handle, target);
+        new MCNavigationStrategy(handle, target).update();
+        handle.getControllerLook().a(target, 10.0F, handle.C());
         if (aggro && canAttack()) {
             if (handle instanceof EntityMonster) {
                 ((EntityMonster) handle).a(target);
@@ -42,7 +42,6 @@ public class TargetStrategy implements PathStrategy {
             }
         }
 
-        current.update();
         return false;
     }
 

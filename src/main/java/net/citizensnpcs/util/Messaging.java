@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import com.google.common.base.Joiner;
 
 public class Messaging {
-    private static final Joiner SPACE = Joiner.on(" ");
+    private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
 
     public static void debug(Object... msg) {
         if (Setting.DEBUG_MODE.asBoolean())

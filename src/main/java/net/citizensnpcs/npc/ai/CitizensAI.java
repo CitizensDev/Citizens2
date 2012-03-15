@@ -10,7 +10,6 @@ import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.NavigationCallback;
 import net.citizensnpcs.api.ai.NavigationCallback.CancelReason;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -18,7 +17,6 @@ import org.bukkit.entity.LivingEntity;
 import com.google.common.collect.Lists;
 
 public class CitizensAI implements AI {
-    private Runnable ai;
     private final List<WeakReference<NavigationCallback>> callbacks = Lists.newArrayList();
     private PathStrategy executing;
     private final List<GoalEntry> executingGoals = Lists.newArrayList();
@@ -40,16 +38,16 @@ public class CitizensAI implements AI {
 
     @Override
     public void cancelDestination() {
-        if (executing != null) {
-            Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
-            while (itr.hasNext()) {
-                NavigationCallback next = itr.next().get();
-                if (next == null || next.onCancel(this, CancelReason.CANCEL)) {
-                    itr.remove();
-                }
+        if (executing == null)
+            return;
+        executing = null;
+        Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
+        while (itr.hasNext()) {
+            NavigationCallback next = itr.next().get();
+            if (next == null || next.onCancel(this, CancelReason.CANCEL)) {
+                itr.remove();
             }
         }
-        executing = null;
     }
 
     @Override
@@ -90,17 +88,14 @@ public class CitizensAI implements AI {
     }
 
     @Override
-    public void setAI(Runnable ai) {
-        this.ai = ai;
-    }
-
-    @Override
     public void setDestination(Location destination) {
         if (destination == null)
             throw new IllegalArgumentException("destination cannot be null");
         boolean replaced = executing != null;
-        executing = new NavigationStrategy(npc, destination);
+        executing = new MCNavigationStrategy(npc, destination);
 
+        if (!replaced)
+            return;
         Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
         while (itr.hasNext()) {
             NavigationCallback next = itr.next().get();
@@ -116,8 +111,10 @@ public class CitizensAI implements AI {
             throw new IllegalArgumentException("target cannot be null");
 
         boolean replaced = executing != null;
-        executing = new TargetStrategy(npc, target, aggressive);
+        executing = new MCTargetStrategy(npc, target, aggressive);
 
+        if (!replaced)
+            return;
         Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
         while (itr.hasNext()) {
             NavigationCallback next = itr.next().get();
@@ -128,25 +125,18 @@ public class CitizensAI implements AI {
     }
 
     public void update() {
-        if (paused)
+        if (paused || !npc.isSpawned()) {
             return;
+        }
+
         if (executing != null && executing.update()) {
+            executing = null;
             Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
             while (itr.hasNext()) {
                 NavigationCallback next = itr.next().get();
                 if (next == null || next.onCompletion(this)) {
                     itr.remove();
                 }
-            }
-            executing = null;
-        }
-
-        if (ai != null) {
-            try {
-                ai.run();
-            } catch (Throwable ex) {
-                Messaging.log("Unexpected error while running ai " + ai);
-                ex.printStackTrace();
             }
         }
 

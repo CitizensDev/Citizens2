@@ -71,6 +71,7 @@ public class EntityHumanNPC extends EntityPlayer {
 
         aX *= 0.98F;
         this.a(aW, aX);
+        X = yaw; // TODO: this looks jerky
     }
 
     public void removeFromPlayerMap(String name) {
