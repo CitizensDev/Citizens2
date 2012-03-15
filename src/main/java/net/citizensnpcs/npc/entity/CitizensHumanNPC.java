@@ -27,8 +27,8 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
     @Override
     protected EntityLiving createHandle(Location loc) {
         WorldServer ws = ((CraftWorld) loc.getWorld()).getHandle();
-        EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, StringHelper
-                .parseColors(getFullName()), new ItemInWorldManager(ws));
+        EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
+                StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws));
         handle.removeFromPlayerMap(getFullName());
         handle.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         return handle;
@@ -62,6 +62,8 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         super.update();
         if (mcEntity != null) {
             mcEntity.move(0, -0.1, 0);
+            // gravity! also works around an entity.onGround not updating issue
+            // (onGround is normally updated by the client)
         }
     }
 
