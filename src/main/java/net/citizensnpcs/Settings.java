@@ -59,9 +59,9 @@ public class Settings {
             this.value = value;
         }
 
-        public List<String> asList() {
+        public List<String> asList(String path) {
             List<String> list = new ArrayList<String>();
-            for (DataKey key : config.getKey("npc.default.text").getIntegerSubKeys())
+            for (DataKey key : config.getKey(path).getIntegerSubKeys())
                 list.add(key.getString(""));
             return list;
         }
