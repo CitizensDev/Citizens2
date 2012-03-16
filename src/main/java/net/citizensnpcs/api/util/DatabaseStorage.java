@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
@@ -43,18 +44,19 @@ public class DatabaseStorage implements Storage {
 
     private Table createTable(String name, int type) {
         String pk = name + "_id";
-        String sql = "CREATE TABLE IF NOT EXISTS `" + name + "` ( `" + pk + "` ";
+        StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS `" + name + "` ( `" + pk + "` ");
         switch (type) {
         case Types.INTEGER:
-            sql += "int NOT NULL";
+            sql.append("int NOT NULL");
             break;
         case Types.VARCHAR:
-            sql += "varchar(255) NOT NULL";
+            sql.append("varchar(255) NOT NULL");
             break;
         default:
             throw new IllegalArgumentException("type not supported");
         }
-        executeSQL(sql + " primary key (`" + pk + "`))");
+        sql.append("PRIMARY KEY (`" + pk + "`))");
+        executeSQL(sql.toString());
         Table table = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(type);
         tables.put(name, table);
         return table;
@@ -91,7 +93,9 @@ public class DatabaseStorage implements Storage {
     @Override
     public DataKey getKey(String root) {
         String[] split = Iterables.toArray(Splitter.on('.').split(root), String.class);
-        DataKey table = new DatabaseKey(split[0].isEmpty() ? null : split[0]);
+        if (split[0].isEmpty())
+            return new DatabaseKey();
+        DataKey table = new DatabaseKey(split[0]);
         if (split.length == 1)
             return table;
         for (int i = 1; i < split.length; ++i) {
@@ -144,20 +148,28 @@ public class DatabaseStorage implements Storage {
     }
 
     public class DatabaseKey extends DataKey {
+        private final List<Runnable> actions = Lists.newArrayList();
         private String currentKey;
         private Table table;
         private String tableName;
 
-        public DatabaseKey(String string) {
-            if (string.charAt(string.length()) == 's')
-                string = string.substring(0, string.length() - 1);
-            this.table = tables.get(string);
-            this.tableName = string;
+        public DatabaseKey(String _table) {
+            if (_table == null)
+                throw new IllegalArgumentException("table cannot be null");
+            if (_table.charAt(_table.length()) == 's')
+                _table = _table.substring(0, _table.length() - 1);
+            this.table = tables.get(_table);
+            this.tableName = _table;
         }
 
-        private DatabaseKey(Table table, String currentKey) {
+        public DatabaseKey(Table table, String currentKey) {
+            if (table == null || currentKey == null)
+                throw new IllegalArgumentException("arguments cannot be null");
             this.table = table;
             this.currentKey = currentKey;
+        }
+
+        public DatabaseKey() {
         }
 
         @Override
@@ -196,12 +208,12 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public Object getRaw(String key) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
-        public DataKey getRelative(String relative) {
+        public DatabaseKey getRelative(String relative) {
+            runActions();
             if (relative.isEmpty())
                 return this;
             String[] split = relative.split("\\.");
@@ -223,7 +235,6 @@ public class DatabaseStorage implements Storage {
                     currentKey = primary;
                 }
             }
-            Connection conn = getConnection();
             String rel = split[0];
             // if (i + 1 == split.length && table.columns.contains(split[i])) {
             // continue;
@@ -235,27 +246,23 @@ public class DatabaseStorage implements Storage {
             if (!table.foreignKeys.containsKey("fk_" + foreign.name)) {
                 createForeignKey(table, foreign);
             }
-            ForeignKey key = table.foreignKeys.get("fk_" + foreign.name);
-            String name = key.foreignTable.name;
+            ForeignKey mapping = table.foreignKeys.get("fk_" + foreign.name);
+
+            Connection conn = getConnection();
             try {
-                PreparedStatement stmt = conn.prepareStatement("SELECT `" + key.foreignTable.primaryKey + "` FROM `"
-                        + name + "` INNER JOIN `" + table.name + "` ON `" + key.foreignTable.primaryKey + "`=`"
-                        + key.localColumn + "`");
+                PreparedStatement stmt = conn.prepareStatement("SELECT `" + mapping.foreignTable.primaryKey
+                        + "` FROM `" + mapping.foreignTable.name + "` INNER JOIN `" + table.name + "` ON `"
+                        + mapping.foreignTable.primaryKey + "`=`" + mapping.localColumn + "`");
                 ResultSet rs = stmt.executeQuery();
                 if (!rs.next()) {
-                    System.out.println("NO MATCHING RELATION");
-                    // TODO: need to create a memo of some sort to create
-                    // these relationships on setX, but fake it so that
-                    // we're on the next table.
-                    // continue;
+                    actions.add(new CreateRelation(this, mapping));
                 }
-                DbUtils.closeQuietly(conn);
-                return new DatabaseKey(key.foreignTable, rs.getString(key.foreignTable.primaryKey));
+                return new DatabaseKey(mapping.foreignTable, rs.getString(mapping.foreignTable.primaryKey));
             } catch (SQLException ex) {
                 ex.printStackTrace();
+            } finally {
+                DbUtils.closeQuietly(conn);
             }
-
-            DbUtils.closeQuietly(conn);
             return null;
         }
 
@@ -279,14 +286,12 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public String name() {
-            return this.currentKey != null ? currentKey : table.name;
+            return currentKey != null ? currentKey : table.name;
         }
 
         @Override
         public void removeKey(String key) {
             Connection conn = getConnection();
-            if (conn == null)
-                return;
             PreparedStatement stmt = null;
             try {
                 stmt = conn.prepareStatement("DELETE FROM `" + table.name + "` WHERE `" + table.primaryKey + "` = `"
@@ -320,17 +325,39 @@ public class DatabaseStorage implements Storage {
         }
 
         private void setPrimitive(String key, Object value) {
+            runActions();
+            String[] parts = Iterables.toArray(Splitter.on('.').split(key), String.class);
+            String column = key, primaryReferenceKey = this.currentKey;
+            Table from = this.table;
+            if (parts.length > 1) {
+                DatabaseKey traverse = new DatabaseKey(this.table, this.currentKey);
+                for (int i = 0; i < parts.length - 1; ++i) {
+                    traverse = traverse.getRelative(parts[i]);
+                }
+                traverse.runActions();
+                from = traverse.table;
+                primaryReferenceKey = traverse.currentKey;
+                column = parts[parts.length - 1];
+            }
+
             Connection conn = getConnection();
             PreparedStatement stmt = null;
             try {
-                stmt = conn.prepareStatement("UPDATE `" + table.name + "` SET `" + key + "`=" + value + " WHERE `"
-                        + table.primaryKey + "` =" + this.currentKey);
-                stmt.execute();
+                stmt = conn.prepareStatement("UPDATE `" + from.name + "` SET `" + column + "`=" + value + " WHERE `"
+                        + from.primaryKey + "` =" + primaryReferenceKey);
+                stmt.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             } finally {
                 DbUtils.closeQuietly(conn, stmt, null);
             }
+        }
+
+        private void runActions() {
+            for (Runnable run : actions) {
+                run.run();
+            }
+            actions.clear();
         }
 
         @Override
@@ -409,6 +436,40 @@ public class DatabaseStorage implements Storage {
         @Override
         public String toString() {
             return "Table [primaryKey=" + primaryKey + ", foreignKeys=" + foreignKeys + ", columns=" + columns + "]";
+        }
+    }
+
+    private class CreateRelation implements Runnable {
+        private final Table from;
+        private final String primary;
+        private final ForeignKey mapping;
+
+        CreateRelation(DatabaseKey update, ForeignKey mapping) {
+            this.from = update.table;
+            this.primary = update.currentKey;
+            this.mapping = mapping;
+        }
+
+        @Override
+        public void run() {
+            Connection conn = getConnection();
+            PreparedStatement stmt = null;
+            ResultSet rs = null;
+            try {
+                stmt = conn.prepareStatement("INSERT INTO ? () VALUES ()", Statement.RETURN_GENERATED_KEYS);
+                stmt.executeUpdate();
+                rs = stmt.getGeneratedKeys();
+                rs.next();
+                String generated = rs.getString(mapping.foreignTable.primaryKey);
+                DbUtils.closeQuietly(null, stmt, rs);
+                stmt = conn.prepareStatement("UPDATE `" + from.name + "` SET `" + mapping.localColumn + "`="
+                        + generated + " WHERE `" + from.primaryKey + "`=`" + primary + "`");
+                stmt.executeUpdate();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } finally {
+                DbUtils.closeQuietly(conn, stmt, rs);
+            }
         }
     }
 
