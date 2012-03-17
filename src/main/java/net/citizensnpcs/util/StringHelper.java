@@ -71,10 +71,6 @@ public class StringHelper {
         return ChatColor.YELLOW + string.toString() + ChatColor.GREEN;
     }
 
-    public static String wrap(Object string, ChatColor after) {
-        return ChatColor.YELLOW + string.toString() + after;
-    }
-
     public static String wrapHeader(Object string) {
         return "<a>=====[ " + string.toString() + "<a> ]=====";
     }

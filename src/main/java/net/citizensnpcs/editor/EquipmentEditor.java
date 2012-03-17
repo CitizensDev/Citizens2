@@ -25,9 +25,6 @@ public class EquipmentEditor extends Editor {
     public void begin() {
         Messaging.send(player, "<b>Entered the equipment editor!");
         Messaging.send(player, "<e>Right click <a>to equip the NPC!");
-        Messaging.send(player, "<e>Right click <a>with an <e>empty hand <a>to reset all items.");
-        Messaging.send(player,
-                "<a>If the NPC is <e>human<a>, <e>right click <a>while <e>crouching <a>to equip armor its hand.");
     }
 
     @Override

@@ -26,7 +26,7 @@ public class CitizensBlazeNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntityBlazeNPC(World world, NPC npc) {

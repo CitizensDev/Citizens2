@@ -49,10 +49,9 @@ public abstract class CitizensNPC extends AbstractNPC {
             if (traits.containsKey(trait.getClass()))
                 runnables.remove(traits.get(trait.getClass()));
         }
-        if (trait instanceof Listener) {
-            Bukkit.getPluginManager().registerEvents((Listener) trait, null);
+        if (trait instanceof Listener)
             // TODO: insert plugin instance somehow
-        }
+            Bukkit.getPluginManager().registerEvents((Listener) trait, Bukkit.getPluginManager().getPlugin("Citizens"));
 
         traits.put(trait.getClass(), trait);
     }

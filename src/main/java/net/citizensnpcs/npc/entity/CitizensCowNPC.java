@@ -26,7 +26,7 @@ public class CitizensCowNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntityCowNPC(World world, NPC npc) {

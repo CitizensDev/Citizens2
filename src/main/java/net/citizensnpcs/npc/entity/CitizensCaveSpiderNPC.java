@@ -26,7 +26,7 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntityCaveSpiderNPC(World world, NPC npc) {

@@ -26,7 +26,7 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntityMagmaCubeNPC(World world, NPC npc) {

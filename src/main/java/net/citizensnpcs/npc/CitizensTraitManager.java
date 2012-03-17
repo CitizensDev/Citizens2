@@ -17,7 +17,9 @@ import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.VillagerProfession;
+import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
@@ -27,17 +29,19 @@ public class CitizensTraitManager implements TraitManager {
 
     public CitizensTraitManager() {
         // Register Citizens traits
+        registerTrait(new TraitFactory(CurrentLocation.class).withName("location"));
         registerTrait(new TraitFactory(Equipment.class).withName("equipment"));
         registerTrait(new TraitFactory(Inventory.class).withName("inventory"));
         registerTrait(new TraitFactory(LookClose.class).withName("look-close"));
         registerTrait(new TraitFactory(MobType.class).withName("type"));
         registerTrait(new TraitFactory(Owner.class).withName("owner"));
         registerTrait(new TraitFactory(Powered.class).withName("powered"));
+        registerTrait(new TraitFactory(Sheared.class).withName("sheared"));
         registerTrait(new TraitFactory(Spawned.class).withName("spawned"));
-        registerTrait(new TraitFactory(CurrentLocation.class).withName("location"));
         registerTrait(new TraitFactory(Text.class).withName("text"));
         registerTrait(new TraitFactory(VillagerProfession.class).withName("profession"));
         registerTrait(new TraitFactory(Waypoints.class).withName("waypoints"));
+        registerTrait(new TraitFactory(WoolColor.class).withName("wool-color"));
     }
 
     @Override

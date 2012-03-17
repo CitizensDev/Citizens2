@@ -26,7 +26,7 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntitySlimeNPC(World world, NPC npc) {
