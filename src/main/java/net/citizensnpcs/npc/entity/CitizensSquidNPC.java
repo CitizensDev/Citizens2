@@ -26,7 +26,7 @@ public class CitizensSquidNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntitySquidNPC(World world, NPC npc) {

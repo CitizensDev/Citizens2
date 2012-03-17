@@ -26,7 +26,7 @@ public class CitizensGiantNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntityGiantNPC(World world, NPC npc) {

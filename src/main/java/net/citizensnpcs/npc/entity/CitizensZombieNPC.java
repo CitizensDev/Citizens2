@@ -26,7 +26,7 @@ public class CitizensZombieNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntityZombieNPC(World world, NPC npc) {

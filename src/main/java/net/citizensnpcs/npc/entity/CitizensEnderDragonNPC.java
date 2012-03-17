@@ -26,7 +26,7 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntityEnderDragonNPC(World world, NPC npc) {

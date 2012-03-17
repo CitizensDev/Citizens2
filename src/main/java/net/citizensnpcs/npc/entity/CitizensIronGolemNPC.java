@@ -26,7 +26,7 @@ public class CitizensIronGolemNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntityIronGolemNPC(World world, NPC npc) {

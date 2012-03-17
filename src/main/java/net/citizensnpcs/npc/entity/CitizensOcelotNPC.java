@@ -26,7 +26,7 @@ public class CitizensOcelotNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntityOcelotNPC(World world, NPC npc) {

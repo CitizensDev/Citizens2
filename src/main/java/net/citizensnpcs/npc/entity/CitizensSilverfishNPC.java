@@ -26,7 +26,7 @@ public class CitizensSilverfishNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntitySilverfishNPC(World world, NPC npc) {

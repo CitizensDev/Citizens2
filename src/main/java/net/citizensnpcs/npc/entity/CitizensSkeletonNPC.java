@@ -26,7 +26,7 @@ public class CitizensSkeletonNPC extends CitizensMobNPC {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntitySkeletonNPC(World world, NPC npc) {

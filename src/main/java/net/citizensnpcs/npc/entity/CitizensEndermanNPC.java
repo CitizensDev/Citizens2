@@ -64,7 +64,7 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
 
         @Override
         public NPC getNPC() {
-            return this.npc;
+            return npc;
         }
 
         public EntityEndermanNPC(World world, NPC npc) {

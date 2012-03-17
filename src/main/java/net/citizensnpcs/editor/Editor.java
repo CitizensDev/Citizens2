@@ -10,11 +10,11 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 public abstract class Editor implements Listener {
+    private static final Map<String, Editor> editing = new HashMap<String, Editor>();
+
     public abstract void begin();
 
     public abstract void end();
-
-    private static final Map<String, Editor> editing = new HashMap<String, Editor>();
 
     private static void enter(Player player, Editor editor) {
         editor.begin();
