@@ -38,6 +38,7 @@ public class VillagerProfession extends Trait {
 
     public void setProfession(Profession profession) {
         this.profession = profession;
+        ((Villager) npc.getBukkitEntity()).setProfession(profession);
     }
 
     @Override
