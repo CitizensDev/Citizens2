@@ -25,14 +25,7 @@ public class HelpCommands {
         cmdManager = plugin.getCommandManager();
     }
 
-    @Command(
-             aliases = { "citizens" },
-             usage = "help (page)",
-             desc = "Citizens help menu",
-             modifiers = { "help" },
-             min = 1,
-             max = 2,
-             permission = "help")
+    @Command(aliases = { "citizens" }, usage = "help (page)", desc = "Citizens help menu", modifiers = { "help" }, min = 1, max = 2, permission = "help")
     @Requirements
     @ServerCommand
     public void citizensHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
@@ -45,14 +38,7 @@ public class HelpCommands {
             throw new CommandException("The page '" + page + "' does not exist.");
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "help (page)",
-             desc = "NPC help menu",
-             modifiers = { "help" },
-             min = 1,
-             max = 2,
-             permission = "npc.help")
+    @Command(aliases = { "npc" }, usage = "help (page)", desc = "NPC help menu", modifiers = { "help" }, min = 1, max = 2, permission = "npc.help")
     @Requirements
     @ServerCommand
     public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
