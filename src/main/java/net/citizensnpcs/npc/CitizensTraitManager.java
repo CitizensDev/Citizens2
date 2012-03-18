@@ -14,6 +14,7 @@ import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
+import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
@@ -29,6 +30,7 @@ public class CitizensTraitManager implements TraitManager {
 
     public CitizensTraitManager() {
         // Register Citizens traits
+        registerTrait(new TraitFactory(Age.class).withName("age"));
         registerTrait(new TraitFactory(CurrentLocation.class).withName("location"));
         registerTrait(new TraitFactory(Equipment.class).withName("equipment"));
         registerTrait(new TraitFactory(Inventory.class).withName("inventory"));

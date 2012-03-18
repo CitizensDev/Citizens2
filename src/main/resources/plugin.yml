@@ -16,6 +16,7 @@ permissions:
       citizens.help: true
       citizens.npc.*:
         children:
+          citizens.npc.age: true
           citizens.npc.character.*: true
           citizens.npc.create: true
           citizens.npc.despawn: true

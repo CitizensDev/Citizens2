@@ -19,6 +19,7 @@ import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.CitizensTraitManager;
+import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
@@ -29,6 +30,7 @@ import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager.Profession;
@@ -44,13 +46,7 @@ public class NPCCommands {
         npcManager = plugin.getNPCManager();
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "character [character]",
-            desc = "Set the character of a NPC",
-            modifiers = { "character" },
-            min = 2,
-            max = 2)
+    @Command(aliases = { "npc" }, usage = "character [character]", desc = "Set the character of a NPC", modifiers = { "character" }, min = 2, max = 2)
     public void character(CommandContext args, Player player, NPC npc) throws CommandException {
         String name = args.getString(1).toLowerCase();
         Character character = characterManager.getCharacter(name);
@@ -73,14 +69,7 @@ public class NPCCommands {
         npc.setCharacter(character);
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "create [name] (--type (type) --char (char))",
-            desc = "Create a new NPC",
-            modifiers = { "create" },
-            min = 2,
-            max = 5,
-            permission = "npc.create")
+    @Command(aliases = { "npc" }, usage = "create [name] (--type (type) --char (char))", desc = "Create a new NPC", flags = "b", modifiers = { "create" }, min = 2, max = 5, permission = "npc.create")
     @Requirements
     public void create(CommandContext args, Player player, NPC npc) {
         String name = args.getString(1);
@@ -115,7 +104,21 @@ public class NPCCommands {
                 msg += " with the character " + StringHelper.wrap(character);
             }
         }
-        msg += " at your location.";
+        msg += " at your location";
+
+        int age = 0;
+        if (args.hasFlag('b')) {
+            // TODO: Use Ageable when it is implemented
+            if (!Animals.class.isAssignableFrom(type.getEntityClass()))
+                Messaging.sendError(player, "The mob type '" + type.name().toLowerCase().replace("_", "-")
+                        + "' cannot be aged.");
+            else {
+                age = -24000;
+                msg += " as a baby";
+            }
+        }
+
+        msg += ".";
 
         // Initialize necessary traits
         npc.getTrait(Owner.class).setOwner(player.getName());
@@ -124,33 +127,22 @@ public class NPCCommands {
         npc.addTrait(traitManager.getTrait(Text.class, npc));
 
         npc.spawn(player.getLocation());
+
+        // Set age after entity spawns
+        npc.getTrait(Age.class).setAge(age);
+
         npcManager.selectNPC(player, npc);
         Messaging.send(player, msg);
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "despawn",
-            desc = "Despawn a NPC",
-            modifiers = { "despawn" },
-            min = 1,
-            max = 1,
-            permission = "npc.despawn")
+    @Command(aliases = { "npc" }, usage = "despawn", desc = "Despawn a NPC", modifiers = { "despawn" }, min = 1, max = 1, permission = "npc.despawn")
     public void despawn(CommandContext args, Player player, NPC npc) {
         npc.getTrait(Spawned.class).setSpawned(false);
         npc.despawn();
         Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "list (page) ((-a) --owner (owner) --type (type) --char (char))",
-            desc = "List NPCs",
-            flags = "a",
-            modifiers = { "list" },
-            min = 1,
-            max = 2,
-            permission = "npc.list")
+    @Command(aliases = { "npc" }, usage = "list (page) ((-a) --owner (owner) --type (type) --char (char))", desc = "List NPCs", flags = "a", modifiers = { "list" }, min = 1, max = 2, permission = "npc.list")
     @Requirements
     public void list(CommandContext args, Player player, NPC npc) throws CommandException {
         List<NPC> npcs = new ArrayList<NPC>();
@@ -214,14 +206,8 @@ public class NPCCommands {
             throw new CommandException("The page '" + page + "' does not exist.");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "lookclose",
-            desc = "Toggle whether a NPC will look when a player is near",
-            modifiers = { "lookclose", "look", "rotate" },
-            min = 1,
-            max = 1,
-            permission = "npc.lookclose")
+    @Command(aliases = { "npc" }, usage = "lookclose", desc = "Toggle whether a NPC will look when a player is near", modifiers = {
+            "lookclose", "look", "rotate" }, min = 1, max = 1, permission = "npc.lookclose")
     public void lookClose(CommandContext args, Player player, NPC npc) {
         String msg = StringHelper.wrap(npc.getName()) + " will "
                 + (npc.getTrait(LookClose.class).toggle() ? "now rotate" : "no longer rotate");
@@ -237,14 +223,7 @@ public class NPCCommands {
         Messaging.send(player, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "owner [name]",
-            desc = "Set the owner of an NPC",
-            modifiers = { "owner" },
-            min = 2,
-            max = 2,
-            permission = "npc.owner")
+    @Command(aliases = { "npc" }, usage = "owner [name]", desc = "Set the owner of an NPC", modifiers = { "owner" }, min = 2, max = 2, permission = "npc.owner")
     public void owner(CommandContext args, Player player, NPC npc) throws CommandException {
         String name = args.getString(1);
         if (npc.getTrait(Owner.class).getOwner().equals(name))
@@ -254,13 +233,7 @@ public class NPCCommands {
                 + ".");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "remove (all)",
-            desc = "Remove a NPC",
-            modifiers = { "remove" },
-            min = 1,
-            max = 2)
+    @Command(aliases = { "npc" }, usage = "remove (all)", desc = "Remove a NPC", modifiers = { "remove" }, min = 1, max = 2)
     @Requirements
     public void remove(CommandContext args, Player player, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
@@ -282,14 +255,7 @@ public class NPCCommands {
         Messaging.send(player, "<a>You permanently removed " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "rename [name]",
-            desc = "Rename a NPC",
-            modifiers = { "rename" },
-            min = 2,
-            max = 2,
-            permission = "npc.rename")
+    @Command(aliases = { "npc" }, usage = "rename [name]", desc = "Rename a NPC", modifiers = { "rename" }, min = 2, max = 2, permission = "npc.rename")
     public void rename(CommandContext args, Player player, NPC npc) {
         String oldName = npc.getName();
         String newName = args.getString(1);
@@ -303,14 +269,7 @@ public class NPCCommands {
                         + ".");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "select [id]",
-            desc = "Select a NPC with the given ID",
-            modifiers = { "select" },
-            min = 2,
-            max = 2,
-            permission = "npc.select")
+    @Command(aliases = { "npc" }, usage = "select [id]", desc = "Select a NPC with the given ID", modifiers = { "select" }, min = 2, max = 2, permission = "npc.select")
     @Requirements(ownership = true)
     public void select(CommandContext args, Player player, NPC npc) throws CommandException {
         NPC toSelect = npcManager.getNPC(args.getInteger(1));
@@ -322,14 +281,7 @@ public class NPCCommands {
         Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), toSelect);
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "spawn [id]",
-            desc = "Spawn an existing NPC",
-            modifiers = { "spawn" },
-            min = 2,
-            max = 2,
-            permission = "npc.spawn")
+    @Command(aliases = { "npc" }, usage = "spawn [id]", desc = "Spawn an existing NPC", modifiers = { "spawn" }, min = 2, max = 2, permission = "npc.spawn")
     @Requirements
     public void spawn(CommandContext args, Player player, NPC npc) throws CommandException {
         NPC respawn = npcManager.getNPC(args.getInteger(1));
@@ -348,14 +300,7 @@ public class NPCCommands {
                     + " Use '/npc tphere' to teleport the NPC to your location.");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "tp",
-            desc = "Teleport to a NPC",
-            modifiers = { "tp", "teleport" },
-            min = 1,
-            max = 1,
-            permission = "npc.tp")
+    @Command(aliases = { "npc" }, usage = "tp", desc = "Teleport to a NPC", modifiers = { "tp", "teleport" }, min = 1, max = 1, permission = "npc.tp")
     public void tp(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
@@ -364,14 +309,7 @@ public class NPCCommands {
         Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "tphere",
-            desc = "Teleport a NPC to your location",
-            modifiers = { "tphere" },
-            min = 1,
-            max = 1,
-            permission = "npc.tphere")
+    @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport a NPC to your location", modifiers = { "tphere" }, min = 1, max = 1, permission = "npc.tphere")
     public void tphere(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
@@ -380,14 +318,7 @@ public class NPCCommands {
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "power",
-            desc = "Toggle a creeper NPC as powered",
-            modifiers = { "power" },
-            min = 1,
-            max = 1,
-            permission = "npc.power")
+    @Command(aliases = { "npc" }, usage = "power", desc = "Toggle a creeper NPC as powered", modifiers = { "power" }, min = 1, max = 1, permission = "npc.power")
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, Player player, NPC npc) {
         String msg = StringHelper.wrap(npc.getName()) + " will "
@@ -395,23 +326,48 @@ public class NPCCommands {
         Messaging.send(player, msg += " be powered.");
     }
 
-    @Command(
-             aliases = { "npc" },
-             usage = "profession [profession]",
-             desc = "Set a NPC's profession",
-             modifiers = { "profession" },
-             min = 2,
-             max = 2,
-             permission = "npc.profession")
+    @Command(aliases = { "npc" }, usage = "profession [profession]", desc = "Set a NPC's profession", modifiers = { "profession" }, min = 2, max = 2, permission = "npc.profession")
     @Requirements(selected = true, ownership = true, types = { EntityType.VILLAGER })
     public void profession(CommandContext args, Player player, NPC npc) throws CommandException {
         String profession = args.getString(1);
         try {
             npc.getTrait(VillagerProfession.class).setProfession(Profession.valueOf(profession.toUpperCase()));
-            Messaging.send(player, StringHelper.wrap(npc.getName()) + " is now the profession "
-                    + StringHelper.wrap(profession.toUpperCase()) + ".");
+            Messaging.send(
+                    player,
+                    StringHelper.wrap(npc.getName()) + " is now the profession "
+                            + StringHelper.wrap(profession.toUpperCase()) + ".");
         } catch (IllegalArgumentException ex) {
             throw new CommandException("'" + profession + "' is not a valid profession.");
         }
+    }
+
+    @Command(aliases = { "npc" }, usage = "age [age] (-l)", desc = "Set the age of a NPC", flags = "l", modifiers = { "age" }, min = 1, max = 2, permission = "npc.age")
+    @Requirements(selected = true, ownership = true, types = { EntityType.CHICKEN, EntityType.COW, EntityType.OCELOT,
+            EntityType.PIG, EntityType.SHEEP, EntityType.VILLAGER, EntityType.WOLF })
+    public void age(CommandContext args, Player player, NPC npc) throws CommandException {
+        Age trait = npc.getTrait(Age.class);
+
+        if (args.argsLength() > 1) {
+            int age = 0;
+            String ageStr = "an adult";
+            try {
+                age = args.getInteger(1);
+                if (age < -24000 || age > 0)
+                    throw new CommandException("Invalid age. Valid: adult, baby, number between -24000 and 0");
+                ageStr = "age " + age;
+            } catch (NumberFormatException ex) {
+                if (args.getString(1).equalsIgnoreCase("baby")) {
+                    age = -24000;
+                    ageStr = "a baby";
+                } else if (!args.getString(1).equalsIgnoreCase("adult"))
+                    throw new CommandException("Invalid age. Valid: adult, baby, number between -24000 and 0");
+            }
+
+            trait.setAge(age);
+            Messaging.send(player, StringHelper.wrap(npc.getName()) + " is now " + ageStr + ".");
+        }
+
+        if (args.hasFlag('l'))
+            Messaging.send(player, "<a>Age " + (trait.toggle() ? "locked" : "unlocked") + ".");
     }
 }
