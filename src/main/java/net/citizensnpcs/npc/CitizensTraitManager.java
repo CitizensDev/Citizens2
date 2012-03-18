@@ -18,6 +18,7 @@ import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WoolColor;
@@ -38,6 +39,7 @@ public class CitizensTraitManager implements TraitManager {
         registerTrait(new TraitFactory(MobType.class).withName("type"));
         registerTrait(new TraitFactory(Owner.class).withName("owner"));
         registerTrait(new TraitFactory(Powered.class).withName("powered"));
+        registerTrait(new TraitFactory(Saddle.class).withName("saddle"));
         registerTrait(new TraitFactory(Sheared.class).withName("sheared"));
         registerTrait(new TraitFactory(Spawned.class).withName("spawned"));
         registerTrait(new TraitFactory(Text.class).withName("text"));
