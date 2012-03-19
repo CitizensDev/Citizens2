@@ -15,12 +15,56 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.dbutils.DbUtils;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * Implements a traversable tree-view database, which can be accessed with
+ * simple keys, and is dynamic, meaning that any necessary tables or columns
+ * must be created when needed.
+ * 
+ * Keys are formatted using a general node-subnode format x.x.x...x, and will be
+ * treated by this object according to a set of rules.
+ * <ul>
+ * <li>1. The first node is treated as the name of the initial table.
+ * 
+ * <li>2. The second node is treated as the primary key of the given table name,
+ * and will be fetched or created from the database as necessary.
+ * 
+ * <p>
+ * A combination of the first two rules gives us the initial starting point to
+ * traverse the key. We have a table and a valid starting point to begin at.
+ * </p>
+ * 
+ * <li>3. The last node of the key is treated as the table field to fetch or set
+ * the requested value from.
+ * 
+ * <li>4. Any other subnodes are traversed by creating foreign keys between the
+ * current table and the next table.
+ * </ul>
+ * 
+ * <p>
+ * For example, the user sets a string at the key
+ * <code>npcs.Bob.location.x</code>
+ * </p>
+ * <ul>
+ * <li>The table <code>npcs</code> is created.
+ * 
+ * <li>The primary key field must also be created, and as <code>Bob</code> does
+ * not match any other validation patterns, it is treated as a varchar, so a
+ * primary key <code>npcs_id varchar(255)</code> is created.
+ * 
+ * <li>The table <code>location</code> is created and a foreign key
+ * <code>fk_location</code> is inserted into <code>npcs</code> which references
+ * <code>location_id</code> (integer). A row is created in location and the
+ * fk_location field is updated with the generated id.
+ * 
+ * <li>The field <code>x varchar(255)</code> is created for
+ * <code>location</code> and the value inserted.
+ * </ul>
+ */
 public class DatabaseStorage implements Storage {
     private final Map<String, Table> tables = Maps.newHashMap();
     private final String url, username, password;
@@ -36,48 +80,49 @@ public class DatabaseStorage implements Storage {
 
     private void createForeignKey(Table from, Table to) {
         String fk = "fk_" + to.name;
-        String sql = "ALTER TABLE `" + from.name + "` ADD FOREIGN KEY (`" + fk + "`) REFERENCES " + to.name + "(`"
-                + to.name + "_id`)";
-        executeSQL(sql);
-        from.foreignKeys.put(fk, new ForeignKey(to, fk));
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` ADD FOREIGN KEY (`" + fk + "`) REFERENCES `"
+                    + to.name + "` (`" + to.name + "_id" + "`)");
+            stmt.execute();
+            from.foreignKeys.put(fk, new ForeignKey(to, fk));
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn, stmt, null);
+        }
     }
 
     private Table createTable(String name, int type) {
         String pk = name + "_id";
-        StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS `" + name + "` ( `" + pk + "` ");
+        String pkType = "";
         switch (type) {
         case Types.INTEGER:
-            sql.append("int NOT NULL");
+            pkType = "INTEGER NOT NULL";
             break;
         case Types.VARCHAR:
-            sql.append("varchar(255) NOT NULL");
+            pkType = "varchar(255) NOT NULL";
             break;
         default:
             throw new IllegalArgumentException("type not supported");
         }
-        sql.append("PRIMARY KEY (`" + pk + "`))");
-        executeSQL(sql.toString());
-        Table table = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(type);
-        tables.put(name, table);
-        return table;
-    }
 
-    private void executeSQL(String... updates) {
-        System.out.println(Joiner.on(" ").join(updates));
         Connection conn = getConnection();
-        if (conn == null)
-            return;
+        PreparedStatement stmt = null;
+        Table created = null;
         try {
-            for (String sql : updates) {
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                stmt.execute();
-                stmt.close();
-            }
+            stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS `" + name + "` (`" + pk + "` " + pkType
+                    + " PRIMARY KEY (`" + pk + "`))");
+            stmt.execute();
+            created = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(type);
+            tables.put(name, created);
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
-            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(conn, stmt, null);
         }
+        return created;
     }
 
     private Connection getConnection() {
@@ -93,8 +138,10 @@ public class DatabaseStorage implements Storage {
     @Override
     public DataKey getKey(String root) {
         String[] split = Iterables.toArray(Splitter.on('.').split(root), String.class);
-        if (split[0].isEmpty())
+        if (split[0].isEmpty()) {
             return new DatabaseKey();
+        }
+
         DataKey table = new DatabaseKey(split[0]);
         if (split.length == 1)
             return table;
@@ -147,8 +194,17 @@ public class DatabaseStorage implements Storage {
     public void save() {
     }
 
+    // TODO: make everything a string-builder until the whole string is
+    // constructed.
+    // eg. called new
+    // DatabaseKey("blah.blah.blah")getRelative("blah.blah").setString("x.x")
+    // does nothing except string manipulation until setString is called,
+    // whereupon it constructs the final string and then does everything in a
+    // group - this makes all the operations batchable and easier! :)
+    // (basically, do everything like YAMLKey until the final bit -- this could
+    // be made into a generic abstract class too! :D)
+
     public class DatabaseKey extends DataKey {
-        private final List<Runnable> actions = Lists.newArrayList();
         private String currentKey;
         private Table table;
         private String tableName;
@@ -213,7 +269,6 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public DatabaseKey getRelative(String relative) {
-            runActions();
             if (relative.isEmpty())
                 return this;
             String[] split = relative.split("\\.");
@@ -236,16 +291,15 @@ public class DatabaseStorage implements Storage {
                 }
             }
             String rel = split[0];
-            // if (i + 1 == split.length && table.columns.contains(split[i])) {
-            // continue;
-            // }
             if (!tables.containsKey(rel)) {
                 createTable(rel, Types.INTEGER);
             }
+
             Table foreign = tables.get(rel);
             if (!table.foreignKeys.containsKey("fk_" + foreign.name)) {
                 createForeignKey(table, foreign);
             }
+
             ForeignKey mapping = table.foreignKeys.get("fk_" + foreign.name);
 
             Connection conn = getConnection();
@@ -254,9 +308,9 @@ public class DatabaseStorage implements Storage {
                         + "` FROM `" + mapping.foreignTable.name + "` INNER JOIN `" + table.name + "` ON `"
                         + mapping.foreignTable.primaryKey + "`=`" + mapping.localColumn + "`");
                 ResultSet rs = stmt.executeQuery();
-                if (!rs.next()) {
-                    actions.add(new CreateRelation(this, mapping));
-                }
+                // if (!rs.next()) {
+                // actions.add(new CreateRelation(this, mapping));
+                // }
                 return new DatabaseKey(mapping.foreignTable, rs.getString(mapping.foreignTable.primaryKey));
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -294,9 +348,9 @@ public class DatabaseStorage implements Storage {
             Connection conn = getConnection();
             PreparedStatement stmt = null;
             try {
-                stmt = conn.prepareStatement("DELETE FROM `" + table.name + "` WHERE `" + table.primaryKey + "` = `"
-                        + key + "`");
-                stmt.execute();
+                stmt = conn.prepareStatement("DELETE FROM `" + table.name + "` WHERE `" + table.primaryKey + "` = ?");
+                stmt.setString(1, key);
+                stmt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
@@ -354,10 +408,6 @@ public class DatabaseStorage implements Storage {
         }
 
         private void runActions() {
-            for (Runnable run : actions) {
-                run.run();
-            }
-            actions.clear();
         }
 
         @Override
@@ -463,7 +513,8 @@ public class DatabaseStorage implements Storage {
                 String generated = rs.getString(mapping.foreignTable.primaryKey);
                 DbUtils.closeQuietly(null, stmt, rs);
                 stmt = conn.prepareStatement("UPDATE `" + from.name + "` SET `" + mapping.localColumn + "`="
-                        + generated + " WHERE `" + from.primaryKey + "`=`" + primary + "`");
+                        + generated + " WHERE `" + from.primaryKey + "`= ?");
+                stmt.setString(1, primary);
                 stmt.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
