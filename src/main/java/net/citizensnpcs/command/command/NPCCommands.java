@@ -122,7 +122,9 @@ public class NPCCommands {
         msg += ".";
 
         // Initialize necessary traits
-        npc.getTrait(Owner.class).setOwner(player.getName());
+        npc.addTrait(traitManager.getTrait(Owner.class));
+        if (!Setting.SERVER_OWNS_NPCS.asBoolean())
+            npc.getTrait(Owner.class).setOwner(player.getName());
         npc.getTrait(MobType.class).setType(type.toString());
         npc.addTrait(traitManager.getTrait(LookClose.class, npc));
         npc.addTrait(traitManager.getTrait(Text.class, npc));
@@ -154,13 +156,13 @@ public class NPCCommands {
                 npcs.add(add);
         } else if (args.getValueFlags().size() == 0 && args.argsLength() == 1 || args.argsLength() == 2) {
             for (NPC add : npcManager)
-                if (add.getTrait(Owner.class).getOwner().equalsIgnoreCase(player.getName()))
+                if (add.getTrait(Owner.class).isOwner(player))
                     npcs.add(add);
         } else {
             if (args.hasValueFlag("owner")) {
                 String name = args.getFlag("owner");
                 for (NPC add : npcManager)
-                    if (add.getTrait(Owner.class).getOwner().equalsIgnoreCase(name))
+                    if (add.getTrait(Owner.class).getOwner().equals(name))
                         npcs.add(add);
             }
 
@@ -225,14 +227,19 @@ public class NPCCommands {
         Messaging.send(player, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
     }
 
-    @Command(aliases = { "npc" }, usage = "owner [name]", desc = "Set the owner of an NPC", modifiers = { "owner" }, min = 2, max = 2, permission = "npc.owner")
+    @Command(aliases = { "npc" }, usage = "owner [name]", desc = "Set the owner of an NPC", modifiers = { "owner" }, min = 1, max = 2, permission = "npc.owner")
     public void owner(CommandContext args, Player player, NPC npc) throws CommandException {
+        if (args.argsLength() == 1) {
+            Messaging.send(player, StringHelper.wrap(npc.getName() + "'s Owner: ")
+                    + npc.getTrait(Owner.class).getOwner());
+            return;
+        }
         String name = args.getString(1);
         if (npc.getTrait(Owner.class).getOwner().equals(name))
             throw new CommandException("'" + name + "' is already the owner of " + npc.getName() + ".");
-        npc.getTrait(Owner.class).setOwner(name);
-        Messaging.send(player, StringHelper.wrap(name) + " is now the owner of " + StringHelper.wrap(npc.getName())
-                + ".");
+        npc.getTrait(Owner.class).setOwner(name.equalsIgnoreCase("server") ? "server" : name);
+        Messaging.send(player, (name.equalsIgnoreCase("server") ? "<a>The server" : StringHelper.wrap(name))
+                + " is now the owner of " + StringHelper.wrap(npc.getName()) + ".");
     }
 
     @Command(aliases = { "npc" }, usage = "remove (all)", desc = "Remove a NPC", modifiers = { "remove" }, min = 1, max = 2)
@@ -249,7 +256,7 @@ public class NPCCommands {
         }
         if (npc == null)
             throw new CommandException("You must have an NPC selected to execute that command.");
-        if (!npc.getTrait(Owner.class).getOwner().equals(player.getName()) && !player.hasPermission("citizens.admin"))
+        if (!npc.getTrait(Owner.class).isOwner(player))
             throw new CommandException("You must be the owner of this NPC to execute that command.");
         if (!player.hasPermission("citizens.npc.remove") && !player.hasPermission("citizens.admin"))
             throw new NoPermissionsException();
@@ -290,7 +297,7 @@ public class NPCCommands {
         if (respawn == null)
             throw new CommandException("No NPC with the ID '" + args.getInteger(1) + "' exists.");
 
-        if (!respawn.getTrait(Owner.class).getOwner().equals(player.getName()))
+        if (!respawn.getTrait(Owner.class).isOwner(player))
             throw new CommandException("You must be the owner of this NPC to execute that command.");
 
         if (respawn.spawn(player.getLocation())) {

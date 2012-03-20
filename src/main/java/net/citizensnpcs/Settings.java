@@ -46,6 +46,7 @@ public class Settings {
         QUICK_SELECT("npc.selection.quick-select", false),
         SELECTION_ITEM("npc.selection.item", "280"),
         SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
+        SERVER_OWNS_NPCS("npc.server-ownership", false),
         TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 60),
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 30),
         TALK_ITEM("npc.text.talk-item", "340"),

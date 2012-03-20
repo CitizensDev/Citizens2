@@ -121,9 +121,7 @@ public class EventListen implements Listener {
 
         if (!player.hasMetadata("selected") || player.getMetadata("selected").size() == 0
                 || player.getMetadata("selected").get(0).asInt() != npc.getId()) {
-            if (isSettingFulfilled(player, Setting.SELECTION_ITEM)
-                    && (npc.getTrait(Owner.class).getOwner().equals(player.getName()) || player
-                            .hasPermission("citizens.admin"))) {
+            if (isSettingFulfilled(player, Setting.SELECTION_ITEM) && (npc.getTrait(Owner.class).isOwner(player))) {
                 npcManager.selectNPC(player, npc);
                 Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), npc);
                 if (!Setting.QUICK_SELECT.asBoolean())
