@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.trait.trait;
 
+import org.bukkit.entity.Player;
+
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
@@ -8,16 +10,7 @@ import net.citizensnpcs.api.util.DataKey;
  * Represents the owner of an NPC.
  */
 public class Owner extends Trait {
-    private String owner;
-
-    /**
-     * Gets the owner of an NPC.
-     * 
-     * @return Name of the owner of an NPC
-     */
-    public String getOwner() {
-        return owner;
-    }
+    private String owner = "server";
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
@@ -32,6 +25,27 @@ public class Owner extends Trait {
     @Override
     public void save(DataKey key) {
         key.setString("", owner);
+    }
+
+    /**
+     * Gets if the given player is the owner of an NPC.
+     * 
+     * @param player
+     *            Player to check
+     * @return Whether the given player is the owner of an NPC
+     */
+    public boolean isOwner(Player player) {
+        return owner.equals(player.getName()) || player.hasPermission("citizens.admin")
+                || (owner.equals("server") && player.hasPermission("citizens.admin"));
+    }
+
+    /**
+     * Gets the owner of an NPC.
+     * 
+     * @return Name of the owner of an NPC
+     */
+    public String getOwner() {
+        return owner;
     }
 
     /**
