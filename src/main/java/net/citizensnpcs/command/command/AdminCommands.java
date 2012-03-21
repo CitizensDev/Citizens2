@@ -31,7 +31,14 @@ public class AdminCommands {
         Messaging.send(player, "     <7>-- <c>Website: " + plugin.getDescription().getWebsite());
     }
 
-    @Command(aliases = { "citizens" }, usage = "reload", desc = "Reload Citizens", modifiers = { "reload" }, min = 1, max = 1, permission = "admin")
+    @Command(
+             aliases = { "citizens" },
+             usage = "reload",
+             desc = "Reload Citizens",
+             modifiers = { "reload" },
+             min = 1,
+             max = 1,
+             permission = "admin")
     @ServerCommand
     public void reload(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.send(sender, "<e>Reloading Citizens...");
@@ -44,7 +51,14 @@ public class AdminCommands {
         }
     }
 
-    @Command(aliases = { "citizens" }, usage = "save", desc = "Save NPCs", modifiers = { "save" }, min = 1, max = 1, permission = "admin")
+    @Command(
+             aliases = { "citizens" },
+             usage = "save",
+             desc = "Save NPCs",
+             modifiers = { "save" },
+             min = 1,
+             max = 1,
+             permission = "admin")
     @ServerCommand
     public void save(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, "<e>Saving Citizens...");
