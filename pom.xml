@@ -1,115 +1,115 @@
 <!-- Citizens build file -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.citizensnpcs</groupId>
-    <artifactId>citizens</artifactId>
-    <version>2.0-SNAPSHOT</version>
-    <name>Citizens</name>
+	<groupId>net.citizensnpcs</groupId>
+	<artifactId>citizens</artifactId>
+	<version>2.0-SNAPSHOT</version>
+	<name>Citizens</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <bukkit.version>1.2.3-R0.2-SNAPSHOT</bukkit.version>
-        <craftbukkit.version>1.2.3-R0.2-SNAPSHOT</craftbukkit.version>
-        <citizensapi.version>2.0-SNAPSHOT</citizensapi.version>
-        <build.number>Unknown</build.number>
-    </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<bukkit.version>1.2.3-R0.2-SNAPSHOT</bukkit.version>
+		<craftbukkit.version>1.2.3-R0.2-SNAPSHOT</craftbukkit.version>
+		<citizensapi.version>2.0-SNAPSHOT</citizensapi.version>
+		<build.number>Unknown</build.number>
+	</properties>
 
-    <repositories>
-        <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public/</url>
-        </repository>
+	<repositories>
+		<repository>
+			<id>bukkit-repo</id>
+			<url>http://repo.bukkit.org/content/groups/public/</url>
+		</repository>
 
-        <repository>
-            <id>everything</id>
-            <url>http://repo.citizensnpcs.net/</url>
-        </repository>
-    </repositories>
+		<repository>
+			<id>everything</id>
+			<url>http://repo.citizensnpcs.net/</url>
+		</repository>
+	</repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>${craftbukkit.version}</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.citizensnpcs</groupId>
-            <artifactId>citizensapi</artifactId>
-            <version>${citizensapi.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>${bukkit.version}</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit</artifactId>
+			<version>${craftbukkit.version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.citizensnpcs</groupId>
+			<artifactId>citizensapi</artifactId>
+			<version>${citizensapi.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>bukkit</artifactId>
+			<version>${bukkit.version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 
-    <url>http://www.citizensnpcs.net</url>
-    <ciManagement>
-        <system>jenkins</system>
-        <url>http://ci.citizensnpcs.net</url>
-    </ciManagement>
-    <scm>
-        <connection>scm:git:git://github.com/CitizensDev/Citizens2.git</connection>
-        <developerConnection>scm:git:git:@github.com:CitizensDev/Citizens2.git</developerConnection>
-        <url>https://github.com/CitizensDev/Citizens2/tree/master/</url>
-    </scm>
-    <build>
-        <defaultGoal>clean package install</defaultGoal>
-        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+	<url>http://www.citizensnpcs.net</url>
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://ci.citizensnpcs.net</url>
+	</ciManagement>
+	<scm>
+		<connection>scm:git:git://github.com/CitizensDev/Citizens2.git</connection>
+		<developerConnection>scm:git:git:@github.com:CitizensDev/Citizens2.git</developerConnection>
+		<url>https://github.com/CitizensDev/Citizens2/tree/master/</url>
+	</scm>
+	<build>
+		<defaultGoal>clean package install</defaultGoal>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 
-        <resources>
-            <resource>
-                <targetPath>.</targetPath>
-                <filtering>true</filtering>
-                <directory>${basedir}/src/main/resources</directory>
-                <includes>
-                    <include>plugin.yml</include>
-                </includes>
-            </resource>
-        </resources>
+		<resources>
+			<resource>
+				<targetPath>.</targetPath>
+				<filtering>true</filtering>
+				<directory>${basedir}/src/main/resources</directory>
+				<includes>
+					<include>plugin.yml</include>
+				</includes>
+			</resource>
+		</resources>
 
-        <plugins>
+		<plugins>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.2</version>
-            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+			</plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
