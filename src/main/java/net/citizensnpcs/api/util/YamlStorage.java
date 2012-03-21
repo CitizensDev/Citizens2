@@ -71,13 +71,13 @@ public class YamlStorage implements Storage {
             current = root;
         }
 
-        @Override
-        public void copy(String to) {
-            ConfigurationSection root = config.getConfigurationSection(current);
-            if (root == null)
-                return;
-            config.createSection(to, root.getValues(true));
-        }
+        /* @Override
+         public void copy(String to) {
+             ConfigurationSection root = config.getConfigurationSection(current);
+             if (root == null)
+                 return;
+             config.createSection(to, root.getValues(true));
+         }*/
 
         @Override
         public boolean getBoolean(String key) {

@@ -2,10 +2,7 @@ package net.citizensnpcs.api.util;
 
 import java.util.List;
 
-public abstract class DataKey implements Cloneable {
-
-    public abstract void copy(String to);
-
+public abstract class DataKey {
     public abstract boolean getBoolean(String key);
 
     public boolean getBoolean(String key, boolean value) {
@@ -73,7 +70,7 @@ public abstract class DataKey implements Cloneable {
 
     public abstract void setLong(String key, long value);
 
-    public abstract void setRaw(String path, Object value);
+    public abstract void setRaw(String key, Object value);
 
     public abstract void setString(String key, String value);
 }
