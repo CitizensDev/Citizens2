@@ -160,7 +160,13 @@ public class CommandContext {
     }
 
     public int getInteger(int index, int def) throws NumberFormatException {
-        return index + 1 < args.length ? Integer.parseInt(args[index + 1]) : def;
+        if (index + 1 < args.length) {
+            try {
+                return Integer.parseInt(args[index + 1]);
+            } catch (NumberFormatException ex) {
+            }
+        }
+        return def;
     }
 
     public String getJoinedStrings(int initialIndex) {
