@@ -32,7 +32,8 @@ public class Paginator {
         return true;
     }
 
-    public void setHeaderText(String header) {
+    public Paginator header(String header) {
         this.header = header;
+        return this;
     }
 }

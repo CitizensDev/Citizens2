@@ -87,9 +87,10 @@ public class CitizensNPCManager implements NPCManager {
     @Override
     public Collection<NPC> getNPCs(Class<? extends Character> character) {
         List<NPC> npcs = new ArrayList<NPC>();
-        for (NPC npc : this)
+        for (NPC npc : this) {
             if (npc.getCharacter() != null && npc.getCharacter().getClass().equals(character))
                 npcs.add(npc);
+        }
         return npcs;
     }
 

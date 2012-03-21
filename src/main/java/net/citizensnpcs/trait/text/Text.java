@@ -113,8 +113,8 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
 
     public Editor getEditor(final Player player) {
         final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
-                .withLocalEcho(false).withEscapeSequence("/npc text").withModality(false).withFirstPrompt(
-                        new StartPrompt(this)).buildConversation(player);
+                .withLocalEcho(false).withEscapeSequence("/npc text").withModality(false)
+                .withFirstPrompt(new StartPrompt(this)).buildConversation(player);
         return new Editor() {
 
             @Override
@@ -148,8 +148,7 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
     }
 
     public boolean sendPage(Player player, int page) {
-        Paginator paginator = new Paginator();
-        paginator.setHeaderText(npc.getName() + "'s Text Entries");
+        Paginator paginator = new Paginator().header(npc.getName() + "'s Text Entries");
         for (int i = 0; i < text.size(); i++)
             paginator.addLine("<a>" + i + " <7>- <e>" + text.get(i));
 
