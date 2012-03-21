@@ -65,8 +65,8 @@ public class NPCCommands {
             Messaging.sendError(player, "This NPC cannot be given the character '" + character.getName() + "'.");
             return;
         }
-        Messaging.send(player,
-                StringHelper.wrap(npc.getName() + "'s") + " character is now '" + StringHelper.wrap(name) + "'.");
+        Messaging.send(player, StringHelper.wrap(npc.getName() + "'s") + " character is now " + StringHelper.wrap(name)
+                + ".");
         npc.setCharacter(character);
     }
 
