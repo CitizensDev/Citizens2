@@ -26,13 +26,13 @@ public class HelpCommands {
     }
 
     @Command(
-            aliases = { "citizens" },
-            usage = "help (page)",
-            desc = "Citizens help menu",
-            modifiers = { "help" },
-            min = 1,
-            max = 2,
-            permission = "help")
+             aliases = { "citizens" },
+             usage = "help (page)",
+             desc = "Citizens help menu",
+             modifiers = { "help" },
+             min = 1,
+             max = 2,
+             permission = "help")
     @Requirements
     @ServerCommand
     public void citizensHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
@@ -45,13 +45,13 @@ public class HelpCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "help (page)",
-            desc = "NPC help menu",
-            modifiers = { "help" },
-            min = 1,
-            max = 2,
-            permission = "npc.help")
+             aliases = { "npc" },
+             usage = "help (page)",
+             desc = "NPC help menu",
+             modifiers = { "help" },
+             min = 1,
+             max = 2,
+             permission = "npc.help")
     @Requirements
     @ServerCommand
     public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
