@@ -46,7 +46,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.Iterators;
 
 public class Citizens extends JavaPlugin {
-    private static final String COMPATIBLE_MC_VERSION = "1.2.3";
+    private static final String COMPATIBLE_MC_VERSION = "1.2.4";
 
     private final CommandManager commands = new CommandManager();
     private Settings config;

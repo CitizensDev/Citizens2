@@ -22,7 +22,7 @@ public class MCNavigationStrategy implements PathStrategy {
             // navigation won't execute, and calling entity.move doesn't
             // entirely fix the problem.
         }
-        navigation = npc.getHandle().ak();
+        navigation = npc.getHandle().al();
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), getSpeed(npc.getHandle()));
 
     }
@@ -32,7 +32,7 @@ public class MCNavigationStrategy implements PathStrategy {
             this.entity = (EntityHumanNPC) entity;
             entity.onGround = true; // see above
         }
-        navigation = entity.ak();
+        navigation = entity.al();
         navigation.a(target, getSpeed(entity));
     }
 

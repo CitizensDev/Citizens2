@@ -33,7 +33,7 @@ public class MCTargetStrategy implements PathStrategy {
         if (target == null || target.dead)
             return true;
         new MCNavigationStrategy(handle, target).update();
-        handle.getControllerLook().a(target, 10.0F, handle.C());
+        handle.getControllerLook().a(target, 10.0F, handle.D());
         if (aggro && canAttack()) {
             if (handle instanceof EntityMonster) {
                 ((EntityMonster) handle).a(target);
