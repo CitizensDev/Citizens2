@@ -31,7 +31,7 @@ import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Animals;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager.Profession;
@@ -123,8 +123,7 @@ public class NPCCommands {
 
         int age = 0;
         if (args.hasFlag('b')) {
-            // TODO: Use Ageable when it is implemented
-            if (!Animals.class.isAssignableFrom(type.getEntityClass()))
+            if (!Ageable.class.isAssignableFrom(type.getEntityClass()))
                 Messaging.sendError(player, "The mob type '" + type.name().toLowerCase().replace("_", "-")
                         + "' cannot be aged.");
             else {

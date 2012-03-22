@@ -1,6 +1,6 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.entity.Animals;
+import org.bukkit.entity.Ageable;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -30,31 +30,30 @@ public class Age extends Trait implements Runnable, Toggleable {
 
     @Override
     public void onNPCSpawn() {
-        // TODO: Switch to use Ageable when that is implemented
-        if (npc.getBukkitEntity() instanceof Animals) {
-            Animals animal = (Animals) npc.getBukkitEntity();
-            animal.setAge(age);
-            animal.setAgeLock(locked);
+        if (npc.getBukkitEntity() instanceof Ageable) {
+            Ageable entity = (Ageable) npc.getBukkitEntity();
+            entity.setAge(age);
+            entity.setAgeLock(locked);
         }
     }
 
     @Override
     public void run() {
         if (!locked)
-            age = ((Animals) npc.getBukkitEntity()).getAge();
+            age = ((Ageable) npc.getBukkitEntity()).getAge();
     }
 
     @Override
     public boolean toggle() {
         locked = !locked;
-        ((Animals) npc.getBukkitEntity()).setAgeLock(locked);
+        ((Ageable) npc.getBukkitEntity()).setAgeLock(locked);
         return locked;
     }
 
     public void setAge(int age) {
         this.age = age;
-        if (npc.getBukkitEntity() instanceof Animals)
-            ((Animals) npc.getBukkitEntity()).setAge(age);
+        if (npc.getBukkitEntity() instanceof Ageable)
+            ((Ageable) npc.getBukkitEntity()).setAge(age);
     }
 
     @Override
