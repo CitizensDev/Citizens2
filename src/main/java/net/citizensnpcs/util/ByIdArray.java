@@ -24,13 +24,6 @@ public class ByIdArray<T> implements Iterable<T> {
         elementData = new Object[capacity];
     }
 
-    /**
-     * Uses a linear search to insert an object at the first available space.
-     * 
-     * @param t
-     *            The object to add
-     * @return The index the object was added at
-     */
     public int add(T t) {
         int index = 0;
         while (elementData[index++] != null) {
