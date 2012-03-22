@@ -48,25 +48,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-/**
- * Tooling to post to metrics.griefcraft.com
- */
 public class Metrics {
+    private static final String BASE_URL = "http://metrics.griefcraft.com";
+    private static final String CONFIG_FILE = "plugins/PluginMetrics/config.yml";
+    private final static int PING_INTERVAL = 10;
+    private static final String REPORT_URL = "/report/%s";
+    private final static int REVISION = 4;
 
-    /**
-     * The plugin configuration file
-     */
     private final YamlConfiguration configuration;
-
-    /**
-     * A map of the custom data plotters for plugins
-     */
     private final Map<Plugin, Set<Plotter>> customData = Collections
             .synchronizedMap(new HashMap<Plugin, Set<Plotter>>());
-
-    /**
-     * Unique server id
-     */
     private final String guid;
 
     public Metrics() throws IOException {
@@ -88,12 +79,6 @@ public class Metrics {
         guid = configuration.getString("guid");
     }
 
-    /**
-     * Adds a custom data plotter for a given plugin
-     * 
-     * @param plugin
-     * @param plotter
-     */
     public void addCustomData(Plugin plugin, Plotter plotter) {
         Set<Plotter> plotters = customData.get(plugin);
 
@@ -105,11 +90,6 @@ public class Metrics {
         plotters.add(plotter);
     }
 
-    /**
-     * Begin measuring a plugin
-     * 
-     * @param plugin
-     */
     public void beginMeasuringPlugin(final Plugin plugin) throws IOException {
         // Did we opt out?
         if (configuration.getBoolean("opt-out", false)) {
@@ -132,12 +112,6 @@ public class Metrics {
         }, PING_INTERVAL * 1200, PING_INTERVAL * 1200);
     }
 
-    /**
-     * Check if mineshafter is present. If it is, we need to bypass it to send
-     * POST requests
-     * 
-     * @return
-     */
     private boolean isMineshafterPresent() {
         try {
             Class.forName("mineshafter.MineServer");
@@ -147,11 +121,6 @@ public class Metrics {
         }
     }
 
-    /**
-     * Generic method that posts a plugin to the metrics website
-     * 
-     * @param plugin
-     */
     private void postPlugin(Plugin plugin, boolean isPing) throws IOException {
         // Construct the post data
         String response = "ERR No response";
@@ -220,9 +189,6 @@ public class Metrics {
         // optional description if everything goes right
     }
 
-    /**
-     * Interface used to collect custom data for a plugin
-     */
     public static abstract class Plotter {
 
         @Override
@@ -235,66 +201,20 @@ public class Metrics {
             return plotter.getColumnName().equals(getColumnName()) && plotter.getValue() == getValue();
         }
 
-        /**
-         * Get the column name for the plotted point
-         * 
-         * @return the plotted point's column name
-         */
         public abstract String getColumnName();
 
-        /**
-         * Get the current value for the plotted point
-         * 
-         * @return
-         */
         public abstract int getValue();
+
+        public void reset() {
+        }
 
         @Override
         public int hashCode() {
             return getColumnName().hashCode() + getValue();
         }
-
-        /**
-         * Called after the website graphs have been updated
-         */
-        public void reset() {
-        }
-
     }
 
-    /**
-     * The base url of the metrics domain
-     */
-    private static final String BASE_URL = "http://metrics.griefcraft.com";
-
-    /**
-     * The file where guid and opt out is stored in
-     */
-    private static final String CONFIG_FILE = "plugins/PluginMetrics/config.yml";
-
-    /**
-     * Interval of time to ping in minutes
-     */
-    private final static int PING_INTERVAL = 10;
-
-    /**
-     * The url used to report a server's status
-     */
-    private static final String REPORT_URL = "/report/%s";
-
-    /**
-     * The metrics revision number
-     */
-    private final static int REVISION = 4;
-
-    /**
-     * Encode text as UTF-8
-     * 
-     * @param text
-     * @return
-     */
     private static String encode(String text) throws UnsupportedEncodingException {
         return URLEncoder.encode(text, "UTF-8");
     }
-
 }

@@ -20,8 +20,6 @@ public class Waypoints extends Trait {
     public Waypoints(NPC npc) {
         this.npc = npc;
         npc.getAI().registerNavigationCallback(provider.getCallback());
-        // TODO: this is necessary because traits aren't loaded when added
-        // manually so we may be in an uninitialised state.
     }
 
     public Editor getEditor(Player player) {
@@ -53,8 +51,7 @@ public class Waypoints extends Trait {
     }
 
     /**
-     * Sets the current {@link WaypointProvider} by using the given class. The
-     * class should have been registered using
+     * Sets the current {@link WaypointProvider} by using the given class. The class should have been registered using
      * {@link Waypoints#registerWaypointProvider(Class, String)}.
      * 
      * @param provider
@@ -80,8 +77,7 @@ public class Waypoints extends Trait {
     private static final Map<Class<? extends WaypointProvider>, String> providers = new HashMap<Class<? extends WaypointProvider>, String>();
 
     /**
-     * Registers a {@link WaypointProvider}, which can be subsequently used by
-     * NPCs.
+     * Registers a {@link WaypointProvider}, which can be subsequently used by NPCs.
      * 
      * @param clazz
      *            The class of the waypoint provider

@@ -80,8 +80,6 @@ public class CitizensTraitManager implements TraitManager {
 
     @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(String name, NPC npc) {
-        // TODO: we could replace NPC with Object... and search for the
-        // constructor
         Class<? extends Trait> clazz = registered.get(name);
         if (clazz == null)
             return null;
