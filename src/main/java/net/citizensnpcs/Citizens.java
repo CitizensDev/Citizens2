@@ -52,7 +52,7 @@ public class Citizens extends JavaPlugin {
     private Settings config;
     private boolean compatible;
     private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
-    private final CitizensTraitManager traitManager = new CitizensTraitManager();
+    private CitizensTraitManager traitManager;
     private CitizensNPCManager npcManager;
     private Storage saves; // TODO: refactor this into an NPCStore (remove
                            // dependency on Storage).
@@ -159,6 +159,7 @@ public class Citizens extends JavaPlugin {
 
         // Register API managers
         npcManager = new CitizensNPCManager(this, saves);
+        traitManager = new CitizensTraitManager(this);
         CitizensAPI.setNPCManager(npcManager);
         CitizensAPI.setCharacterManager(characterManager);
         CitizensAPI.setTraitManager(traitManager);
@@ -248,8 +249,8 @@ public class Citizens extends JavaPlugin {
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
 
-            NPC npc = npcManager.createNPC(EntityType.valueOf(key.getString("traits.type").toUpperCase()), id, key
-                    .getString("name"), null);
+            NPC npc = npcManager.createNPC(EntityType.valueOf(key.getString("traits.type").toUpperCase()), id,
+                    key.getString("name"), null);
             try {
                 ((CitizensNPC) npc).load(key);
             } catch (NPCException ex) {

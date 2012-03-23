@@ -44,7 +44,6 @@ public class Saddle extends Trait implements Toggleable, Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        // TODO: Complete trait/plugin system
         if (CitizensAPI.getNPCManager().isNPC(event.getRightClicked()))
             event.setCancelled(true);
     }

@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
@@ -27,14 +27,15 @@ import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
+import net.citizensnpcs.util.Messaging;
 
 public class CitizensTraitManager implements TraitManager {
     private final Map<Plugin, Map<String, Class<? extends Trait>>> registered = new HashMap<Plugin, Map<String, Class<? extends Trait>>>();
     private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = new HashMap<Class<? extends Trait>, Constructor<? extends Trait>>();
 
-    public CitizensTraitManager() {
+    public CitizensTraitManager(Citizens plugin) {
         // Register Citizens traits
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("Citizens");
+        Messaging.log("Plugin: " + plugin);
 
         registerTrait(new TraitFactory(Age.class).withName("age").withPlugin(plugin));
         registerTrait(new TraitFactory(CurrentLocation.class).withName("location").withPlugin(plugin));
@@ -84,10 +85,10 @@ public class CitizensTraitManager implements TraitManager {
             for (Entry<String, Class<? extends Trait>> subEntry : entry.getValue().entrySet()) {
                 if (!subEntry.getValue().equals(clazz))
                     continue;
-                Trait t = create(subEntry.getValue(), npc);
-                t.setName(subEntry.getKey());
-                t.setPlugin(entry.getKey());
-                return (T) t;
+                Trait trait = create(subEntry.getValue(), npc);
+                trait.setName(subEntry.getKey());
+                trait.setPlugin(entry.getKey());
+                return (T) trait;
             }
         }
         return null;
