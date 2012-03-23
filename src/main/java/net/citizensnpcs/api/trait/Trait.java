@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.trait;
 
+import org.bukkit.plugin.Plugin;
+
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -8,6 +10,7 @@ import net.citizensnpcs.api.util.DataKey;
  */
 public abstract class Trait {
     private String name;
+    private Plugin plugin;
 
     /**
      * Gets the name of this trait.
@@ -42,9 +45,8 @@ public abstract class Trait {
     }
 
     /**
-     * Called when an NPC is spawned. NPCs cannot be physically modified until
-     * the entity is created in-game. This is called after the entity has been
-     * created.
+     * Called when an NPC is spawned. NPCs cannot be physically modified until the entity is created in-game. This is
+     * called after the entity has been created.
      */
     public void onNPCSpawn() {
     }
@@ -56,4 +58,20 @@ public abstract class Trait {
      *            DataKey to save to
      */
     public abstract void save(DataKey key);
+
+    /**
+     * Gets the plugin that this trait is associated with.
+     * 
+     * @return Plugin attached to this trait
+     */
+    public final Plugin getPlugin() {
+        return plugin;
+    }
+
+    public final void setPlugin(Plugin plugin) {
+        if (this.plugin != null)
+            throw new IllegalStateException("Cannot change the plugin of a trait.");
+
+        this.plugin = plugin;
+    }
 }

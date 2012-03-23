@@ -9,6 +9,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.metadata.Metadatable;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Represents an NPC with a Character and separate traits.
@@ -100,11 +101,11 @@ public interface NPC extends Metadatable, InventoryHolder {
     public <T extends Trait> T getTrait(Class<T> trait);
 
     /**
-     * Gets the traits of this NPC, these are not attached to any character.
+     * Gets the traits of this NPC from the given plugin.
      * 
-     * @return The traits of this NPC
+     * @return The traits of this NPC that are associated with the given plugin
      */
-    public Iterable<Trait> getTraits();
+    public Iterable<Trait> getTraits(Plugin plugin);
 
     /**
      * Checks if this NPC has the given trait.
