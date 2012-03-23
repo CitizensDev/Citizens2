@@ -21,7 +21,7 @@ public abstract class AbstractNPC implements NPC {
     private final int id;
     private String name;
     protected final List<Runnable> runnables = new ArrayList<Runnable>();
-    protected final Map<Class<? extends Trait>, Trait> traits = new HashMap<Class<? extends Trait>, Trait>();
+    protected final Map<Plugin, Map<Class<? extends Trait>, Trait>> traits = new HashMap<Plugin, Map<Class<? extends Trait>, Trait>>();
 
     protected AbstractNPC(int id, String name) {
         this.id = id;
@@ -58,8 +58,12 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public Iterable<Trait> getTraits() {
-        return Collections.unmodifiableCollection(traits.values());
+    public Iterable<Trait> getTraits(Plugin plugin) {
+        if (plugin == null)
+            throw new IllegalArgumentException("Plugin cannot be null.");
+        if (traits.get(plugin) == null)
+            throw new IllegalArgumentException("Plugin has no traits.");
+        return Collections.unmodifiableCollection(traits.get(plugin).values());
     }
 
     @Override
@@ -75,9 +79,10 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void remove() {
         runnables.clear();
-        for (Trait trait : traits.values())
-            if (trait instanceof Listener)
-                HandlerList.unregisterAll((Listener) trait);
+        for (Plugin plugin : traits.keySet())
+            for (Trait trait : traits.get(plugin).values())
+                if (trait instanceof Listener)
+                    HandlerList.unregisterAll((Listener) trait);
         traits.clear();
     }
 
@@ -88,12 +93,13 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void removeTrait(Class<? extends Trait> trait) {
-        if (traits.containsKey(trait)) {
-            Trait t = traits.get(trait);
-            if (t instanceof Runnable)
-                runnables.remove(t);
-            t.onRemove();
-        }
+        for (Plugin plugin : traits.keySet())
+            if (traits.get(plugin).containsKey(trait)) {
+                Trait t = traits.get(plugin).get(trait);
+                if (t instanceof Runnable)
+                    runnables.remove(t);
+                t.onRemove();
+            }
         traits.remove(trait);
     }
 
