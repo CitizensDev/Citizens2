@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
@@ -26,26 +29,28 @@ import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
 public class CitizensTraitManager implements TraitManager {
-    private final Map<String, Class<? extends Trait>> registered = new HashMap<String, Class<? extends Trait>>();
+    private final Map<Plugin, Map<String, Class<? extends Trait>>> registered = new HashMap<Plugin, Map<String, Class<? extends Trait>>>();
     private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = new HashMap<Class<? extends Trait>, Constructor<? extends Trait>>();
 
     public CitizensTraitManager() {
         // Register Citizens traits
-        registerTrait(new TraitFactory(Age.class).withName("age"));
-        registerTrait(new TraitFactory(CurrentLocation.class).withName("location"));
-        registerTrait(new TraitFactory(Equipment.class).withName("equipment"));
-        registerTrait(new TraitFactory(Inventory.class).withName("inventory"));
-        registerTrait(new TraitFactory(LookClose.class).withName("look-close"));
-        registerTrait(new TraitFactory(MobType.class).withName("type"));
-        registerTrait(new TraitFactory(Owner.class).withName("owner"));
-        registerTrait(new TraitFactory(Powered.class).withName("powered"));
-        registerTrait(new TraitFactory(Saddle.class).withName("saddle"));
-        registerTrait(new TraitFactory(Sheared.class).withName("sheared"));
-        registerTrait(new TraitFactory(Spawned.class).withName("spawned"));
-        registerTrait(new TraitFactory(Text.class).withName("text"));
-        registerTrait(new TraitFactory(VillagerProfession.class).withName("profession"));
-        registerTrait(new TraitFactory(Waypoints.class).withName("waypoints"));
-        registerTrait(new TraitFactory(WoolColor.class).withName("wool-color"));
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("Citizens");
+
+        registerTrait(new TraitFactory(Age.class).withName("age").withPlugin(plugin));
+        registerTrait(new TraitFactory(CurrentLocation.class).withName("location").withPlugin(plugin));
+        registerTrait(new TraitFactory(Equipment.class).withName("equipment").withPlugin(plugin));
+        registerTrait(new TraitFactory(Inventory.class).withName("inventory").withPlugin(plugin));
+        registerTrait(new TraitFactory(LookClose.class).withName("look-close").withPlugin(plugin));
+        registerTrait(new TraitFactory(MobType.class).withName("type").withPlugin(plugin));
+        registerTrait(new TraitFactory(Owner.class).withName("owner").withPlugin(plugin));
+        registerTrait(new TraitFactory(Powered.class).withName("powered").withPlugin(plugin));
+        registerTrait(new TraitFactory(Saddle.class).withName("saddle").withPlugin(plugin));
+        registerTrait(new TraitFactory(Sheared.class).withName("sheared").withPlugin(plugin));
+        registerTrait(new TraitFactory(Spawned.class).withName("spawned").withPlugin(plugin));
+        registerTrait(new TraitFactory(Text.class).withName("text").withPlugin(plugin));
+        registerTrait(new TraitFactory(VillagerProfession.class).withName("profession").withPlugin(plugin));
+        registerTrait(new TraitFactory(Waypoints.class).withName("waypoints").withPlugin(plugin));
+        registerTrait(new TraitFactory(WoolColor.class).withName("wool-color").withPlugin(plugin));
     }
 
     @Override
@@ -56,35 +61,47 @@ public class CitizensTraitManager implements TraitManager {
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Trait> T getTrait(String name) {
-        if (!registered.containsKey(name))
-            return null;
-        return (T) create(registered.get(name), null);
+        for (Plugin plugin : registered.keySet()) {
+            if (!registered.get(plugin).containsKey(name))
+                return null;
+            return (T) create(registered.get(plugin).get(name), null);
+        }
+        return null;
     }
 
     @Override
     public void registerTrait(TraitFactory factory) {
-        registered.put(factory.getName(), factory.getTraitClass());
+        Map<String, Class<? extends Trait>> map = registered.get(factory.getTraitPlugin());
+        if (map == null)
+            map = new HashMap<String, Class<? extends Trait>>();
+        map.put(factory.getTraitName(), factory.getTraitClass());
+        registered.put(factory.getTraitPlugin(), map);
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(Class<T> clazz, NPC npc) {
-        for (Entry<String, Class<? extends Trait>> entry : registered.entrySet()) {
-            if (!entry.getValue().equals(clazz))
-                continue;
-            Trait t = create(entry.getValue(), npc);
-            t.setName(entry.getKey());
-            return (T) t;
+        for (Entry<Plugin, Map<String, Class<? extends Trait>>> entry : registered.entrySet()) {
+            for (Entry<String, Class<? extends Trait>> subEntry : entry.getValue().entrySet()) {
+                if (!subEntry.getValue().equals(clazz))
+                    continue;
+                Trait t = create(subEntry.getValue(), npc);
+                t.setName(subEntry.getKey());
+                t.setPlugin(entry.getKey());
+                return (T) t;
+            }
         }
         return null;
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(String name, NPC npc) {
-        Class<? extends Trait> clazz = registered.get(name);
-        if (clazz == null)
-            return null;
-        Trait t = getTrait(clazz, npc);
-        return (T) t;
+        for (Plugin plugin : registered.keySet()) {
+            Class<? extends Trait> clazz = registered.get(plugin).get(name);
+            if (clazz == null)
+                continue;
+            return (T) getTrait(clazz, npc);
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
