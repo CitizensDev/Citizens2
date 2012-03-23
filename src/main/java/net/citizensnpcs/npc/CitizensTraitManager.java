@@ -27,16 +27,13 @@ import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
-import net.citizensnpcs.util.Messaging;
 
 public class CitizensTraitManager implements TraitManager {
     private final Map<Plugin, Map<String, Class<? extends Trait>>> registered = new HashMap<Plugin, Map<String, Class<? extends Trait>>>();
     private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = new HashMap<Class<? extends Trait>, Constructor<? extends Trait>>();
 
     public CitizensTraitManager(Citizens plugin) {
-        // Register Citizens traits
-        Messaging.log("Plugin: " + plugin);
-
+        // Register Citizens traits\
         registerTrait(new TraitFactory(Age.class).withName("age").withPlugin(plugin));
         registerTrait(new TraitFactory(CurrentLocation.class).withName("location").withPlugin(plugin));
         registerTrait(new TraitFactory(Equipment.class).withName("equipment").withPlugin(plugin));
