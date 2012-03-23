@@ -1,5 +1,7 @@
 package net.citizensnpcs.npc;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
@@ -24,6 +26,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.Plugin;
 
 public abstract class CitizensNPC extends AbstractNPC {
     private final CitizensAI ai = new CitizensAI(this);
@@ -51,9 +54,13 @@ public abstract class CitizensNPC extends AbstractNPC {
         }
         if (trait instanceof Listener)
             // TODO: insert plugin instance somehow
-            Bukkit.getPluginManager().registerEvents((Listener) trait, Bukkit.getPluginManager().getPlugin("Citizens"));
+            Bukkit.getPluginManager().registerEvents((Listener) trait, trait.getPlugin());
 
-        traits.put(trait.getClass(), trait);
+        Map<Class<? extends Trait>, Trait> map = traits.get(trait.getPlugin());
+        if (map == null)
+            map = new HashMap<Class<? extends Trait>, Trait>();
+        map.put(trait.getClass(), trait);
+        traits.put(trait.getPlugin(), map);
     }
 
     @Override
@@ -107,11 +114,14 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public <T extends Trait> T getTrait(Class<T> clazz) {
-        Trait t = traits.get(clazz);
-        if (t == null)
+        Trait trait = null;
+        for (Plugin plugin : traits.keySet())
+            if (traits.get(plugin).containsKey(clazz))
+                trait = traits.get(plugin).get(clazz);
+        if (trait == null)
             addTrait(traitManager.getTrait(clazz, this));
 
-        return traits.get(clazz) != null ? clazz.cast(traits.get(clazz)) : null;
+        return trait != null ? clazz.cast(trait) : null;
     }
 
     @Override
@@ -155,8 +165,9 @@ public abstract class CitizensNPC extends AbstractNPC {
         getTrait(Spawned.class).setSpawned(true);
 
         // Modify NPC using traits after the entity has been created
-        for (Trait trait : getTraits())
-            trait.onNPCSpawn();
+        for (Plugin plugin : traits.keySet())
+            for (Trait trait : getTraits(plugin))
+                trait.onNPCSpawn();
         return true;
     }
 
@@ -209,7 +220,8 @@ public abstract class CitizensNPC extends AbstractNPC {
         }
 
         // Save all existing traits
-        for (Trait trait : getTraits())
-            trait.save(root.getRelative("traits." + trait.getName()));
+        for (Plugin plugin : traits.keySet())
+            for (Trait trait : getTraits(plugin))
+                trait.save(root.getRelative("traits." + trait.getName()));
     }
 }
