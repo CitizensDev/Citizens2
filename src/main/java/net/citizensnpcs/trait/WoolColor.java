@@ -42,7 +42,6 @@ public class WoolColor extends Trait implements Listener {
 
     @EventHandler
     public void onSheepDyeWool(SheepDyeWoolEvent event) {
-        // TODO: Complete trait/plugin system
         if (CitizensAPI.getNPCManager().isNPC(event.getEntity()))
             event.setCancelled(true);
     }

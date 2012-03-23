@@ -53,7 +53,6 @@ public abstract class CitizensNPC extends AbstractNPC {
                 runnables.remove(traits.get(trait.getClass()));
         }
         if (trait instanceof Listener)
-            // TODO: insert plugin instance somehow
             Bukkit.getPluginManager().registerEvents((Listener) trait, trait.getPlugin());
 
         Map<Class<? extends Trait>, Trait> map = traits.get(trait.getPlugin());
@@ -119,8 +118,9 @@ public abstract class CitizensNPC extends AbstractNPC {
             if (traits.get(plugin).containsKey(clazz))
                 trait = traits.get(plugin).get(clazz);
         if (trait == null)
-            addTrait(traitManager.getTrait(clazz, this));
+            trait = traitManager.getTrait(clazz, this);
 
+        addTrait(trait);
         return trait != null ? clazz.cast(trait) : null;
     }
 

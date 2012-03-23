@@ -31,8 +31,6 @@ public class Sheared extends Trait implements Toggleable, Listener {
 
     @Override
     public void onNPCSpawn() {
-        // TODO Get rid of instanceof's, add
-        // TraitFactory.withTypes(EntityType...) or similar
         if (npc.getBukkitEntity() instanceof Sheep)
             ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
     }
@@ -46,7 +44,6 @@ public class Sheared extends Trait implements Toggleable, Listener {
 
     @EventHandler
     public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
-        // TODO: Complete trait/plugin system
         if (CitizensAPI.getNPCManager().isNPC(event.getEntity()))
             event.setCancelled(true);
     }
