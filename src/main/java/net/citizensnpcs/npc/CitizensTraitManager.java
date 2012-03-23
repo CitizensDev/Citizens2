@@ -33,7 +33,7 @@ public class CitizensTraitManager implements TraitManager {
     private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = new HashMap<Class<? extends Trait>, Constructor<? extends Trait>>();
 
     public CitizensTraitManager(Citizens plugin) {
-        // Register Citizens traits\
+        // Register Citizens traits
         registerTrait(new TraitFactory(Age.class).withName("age").withPlugin(plugin));
         registerTrait(new TraitFactory(CurrentLocation.class).withName("location").withPlugin(plugin));
         registerTrait(new TraitFactory(Equipment.class).withName("equipment").withPlugin(plugin));
