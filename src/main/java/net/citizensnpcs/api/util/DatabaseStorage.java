@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -67,6 +69,7 @@ import com.google.common.collect.Maps;
  */
 public class DatabaseStorage implements Storage {
     private static final Traversed INVALID_TRAVERSAL = new Traversed(null, null, null);
+    private final QueryRunner queryRunner = new QueryRunner();
     private final Map<String, Table> tables = Maps.newHashMap();
     private final Map<String, Traversed> traverseCache = Maps.newHashMap();
     private final String url, username, password;
@@ -80,7 +83,7 @@ public class DatabaseStorage implements Storage {
         load();
     }
 
-    private void ensureForeignKey(Table from, Table to) {
+    private void createForeignKey(Table from, Table to) {
         String fk = "fk_" + to.name;
         if (from.foreignKeys.containsKey(fk)) {
             return;
@@ -90,15 +93,40 @@ public class DatabaseStorage implements Storage {
         try {
             stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` ADD " + fk + " " + to.primaryKeyType);
             stmt.execute();
-            DbUtils.close(stmt);
+            DbUtils.closeQuietly(stmt);
             stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` ADD FOREIGN KEY (`" + fk + "`) REFERENCES `"
                     + to.name + "` (`" + to.name + "_id" + "`)");
             stmt.execute();
-            from.foreignKeys.put(fk, new ForeignKey(to, fk));
+            from.addForeignKey(fk, new ForeignKey(to, fk));
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
             DbUtils.closeQuietly(conn, stmt, null);
+        }
+    }
+
+    private String ensureRelation(String pk, Table from, final Table to) {
+        Connection conn = getConnection();
+        try {
+            String existing = queryRunner.query(conn, "SELECT `fk_" + to.name + "` FROM " + from.name + " WHERE "
+                    + from.primaryKey + " = ?", new ResultSetHandler<String>() {
+                @Override
+                public String handle(ResultSet rs) throws SQLException {
+                    return rs.getString("fk_" + to.name);
+                }
+            }, pk);
+            if (existing == null) {
+                String generated = to.generateRow();
+                queryRunner.update(conn, "UPDATE `" + from.name + "` SET `fk_" + to.name + "=?", generated);
+                return generated;
+            } else {
+                return existing;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        } finally {
+            DbUtils.closeQuietly(conn);
         }
     }
 
@@ -125,7 +153,7 @@ public class DatabaseStorage implements Storage {
             stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + name + ", (`" + pk + "` " + pkType
                     + " PRIMARY KEY (`" + pk + "`))");
             stmt.execute();
-            created = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(type);
+            created = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(pkType);
             tables.put(name, created);
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -166,13 +194,12 @@ public class DatabaseStorage implements Storage {
                 rs = conn.getMetaData().getColumns(null, null, entry.getKey(), null);
                 while (rs.next()) {
                     entry.getValue().columns.add(rs.getString("COLUMN_NAME"));
-                    rs.getMetaData().getColumnType(0);
                 }
                 rs.close();
                 rs = conn.getMetaData().getPrimaryKeys(null, null, entry.getKey());
                 while (rs.next()) {
                     entry.getValue().primaryKey = rs.getString("PK_NAME");
-                    entry.getValue().setPrimaryKeyType(rs.getMetaData().getColumnType(4));
+                    entry.getValue().setPrimaryKeyType(rs.getMetaData().getColumnTypeName(4));
                 }
                 rs.close();
                 rs = conn.getMetaData().getImportedKeys(null, null, entry.getKey());
@@ -224,20 +251,44 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public boolean getBoolean(String key) {
-            // TODO Auto-generated method stub
-            return false;
+            final Traversed t = traverse(createRelativeKey(key), false);
+            if (t == INVALID_TRAVERSAL)
+                return false;
+            Boolean value = getValue(t, new ResultSetHandler<Boolean>() {
+                @Override
+                public Boolean handle(ResultSet rs) throws SQLException {
+                    return rs.getBoolean(t.column);
+                }
+            });
+            return value == null ? false : value;
         }
 
         @Override
         public double getDouble(String key) {
-            // TODO Auto-generated method stub
-            return 0;
+            final Traversed t = traverse(createRelativeKey(key), false);
+            if (t == INVALID_TRAVERSAL)
+                return 0;
+            Double value = getValue(t, new ResultSetHandler<Double>() {
+                @Override
+                public Double handle(ResultSet rs) throws SQLException {
+                    return rs.getDouble(t.column);
+                }
+            });
+            return value == null ? 0 : value;
         }
 
         @Override
         public int getInt(String key) {
-            // TODO Auto-generated method stub
-            return 0;
+            final Traversed t = traverse(createRelativeKey(key), false);
+            if (t == INVALID_TRAVERSAL)
+                return 0;
+            Integer value = getValue(t, new ResultSetHandler<Integer>() {
+                @Override
+                public Integer handle(ResultSet rs) throws SQLException {
+                    return rs.getInt(t.column);
+                }
+            });
+            return value == null ? 0 : value;
         }
 
         @Override
@@ -248,14 +299,43 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public long getLong(String key) {
-            // TODO Auto-generated method stub
-            return 0;
+            final Traversed t = traverse(createRelativeKey(key), false);
+            if (t == INVALID_TRAVERSAL)
+                return 0;
+            Long value = getValue(t, new ResultSetHandler<Long>() {
+                @Override
+                public Long handle(ResultSet rs) throws SQLException {
+                    return rs.getLong(t.column);
+                }
+            });
+            return value == null ? 0 : value;
+        }
+
+        private <T> T getValue(Traversed t, ResultSetHandler<T> resultSetHandler) {
+            Connection conn = getConnection();
+            try {
+                return queryRunner.query(getConnection(), "SELECT `" + t.column + "` FROM " + t.found.name + " WHERE `"
+                        + t.found.primaryKey + "`=?", resultSetHandler, t.key);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                return null;
+            } finally {
+                DbUtils.closeQuietly(conn);
+            }
         }
 
         @Override
         public Object getRaw(String key) {
-            // TODO Auto-generated method stub
-            return null;
+            final Traversed t = traverse(createRelativeKey(key), false);
+            if (t == INVALID_TRAVERSAL)
+                return null;
+            Object value = getValue(t, new ResultSetHandler<Object>() {
+                @Override
+                public Object handle(ResultSet rs) throws SQLException {
+                    return rs.getObject(t.column);
+                }
+            });
+            return value;
         }
 
         @Override
@@ -267,11 +347,16 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public String getString(String key) {
-            Traversed t = traverse(createRelativeKey(key), false);
+            final Traversed t = traverse(createRelativeKey(key), false);
             if (t == INVALID_TRAVERSAL)
                 return "";
-            // TODO Auto-generated method stub
-            return null;
+            String value = getValue(t, new ResultSetHandler<String>() {
+                @Override
+                public String handle(ResultSet rs) throws SQLException {
+                    return rs.getString(t.column);
+                }
+            });
+            return value == null ? "" : value;
         }
 
         @Override
@@ -302,44 +387,36 @@ public class DatabaseStorage implements Storage {
             String pk = null;
             for (int i = 0; i < parts.length - 1; ++i) {
                 String part = parts[i];
-                if (table == null && !tables.containsKey(part)) {
-                    if (!createRelations || i + 1 >= parts.length)
-                        return INVALID_TRAVERSAL;
-                    pk = parts[++i];
-                    int type = INTEGER.matcher(pk).matches() ? Types.INTEGER : Types.VARCHAR;
-                    table = createTable(part, type, false);
-                    table.insert(pk);
-                    continue;
-                } else if (!tables.containsKey(part)) {
+                if (!tables.containsKey(part)) {
                     if (!createRelations)
                         return INVALID_TRAVERSAL;
-                    Table old = table;
-                    table = createTable(part, Types.INTEGER, true);
-                    pk = table.generateRow();
-                    ensureForeignKey(old, table);
-                } else {
-                    ensureForeignKey(table, tables.get(part));
-                    Connection conn = getConnection();
-                    PreparedStatement stmt = null;
-                    ResultSet rs = null;
-                    try {
-                        stmt = conn.prepareStatement("SELECT `fk_" + part + "` FROM " + table.name + " WHERE "
-                                + table.primaryKey + " = ?");
-                        stmt.setString(1, pk);
-                        rs = stmt.executeQuery();
-                        if (!rs.next())
-                            throw new IllegalStateException("primary key row wasn't created?");
-                        String existing = rs.getString("fk_" + part);
-                        if (existing == null)
-                            ;
-                        else {
-                            pk = existing;
-                        }
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    } finally {
-                        DbUtils.closeQuietly(conn, stmt, rs);
+                    if (table == null) {
+                        if (i + 1 >= parts.length)
+                            return INVALID_TRAVERSAL;
+                        pk = parts[++i];
+                        int type = INTEGER.matcher(pk).matches() ? Types.INTEGER : Types.VARCHAR;
+                        table = createTable(part, type, false);
+                        table.insert(pk);
+                        continue;
+                    } else {
+                        Table old = table;
+                        table = createTable(part, Types.INTEGER, true);
+                        if (table == null)
+                            return INVALID_TRAVERSAL;
+                        createForeignKey(old, table);
+                        pk = ensureRelation(pk, old, table);
+                        if (pk == null)
+                            return INVALID_TRAVERSAL;
                     }
+                } else {
+                    if (!table.foreignKeys.containsKey("fk_" + part)) {
+                        if (!createRelations)
+                            return INVALID_TRAVERSAL;
+                        createForeignKey(table, tables.get(part));
+                    }
+                    pk = ensureRelation(pk, table, tables.get(part));
+                    if (pk == null)
+                        return INVALID_TRAVERSAL;
                     table = tables.get(part);
                 }
             }
@@ -354,74 +431,132 @@ public class DatabaseStorage implements Storage {
             if (t == INVALID_TRAVERSAL)
                 return;
             Connection conn = getConnection();
-            PreparedStatement stmt = null;
             try {
                 if (t.found.columns.contains(t.column)) {
-                    stmt = conn.prepareStatement("UPDATE TABLE `" + t.found.name + "` SET `" + t.column
-                            + "` = ? WHERE `" + t.found.primaryKey + "`= ?");
-                    stmt.setNull(1, Types.VARCHAR);
-                    // TODO: this doesn't actually provide the right type code.
-                    stmt.setString(2, t.key);
+                    queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`=? WHERE `"
+                            + t.found.primaryKey + "`=?", null, t.key);
                 } else {
-                    stmt = conn.prepareStatement("DELETE FROM `" + t.found.name + "` WHERE `" + t.found.primaryKey
-                            + "` = ?");
-                    stmt.setString(1, t.key);
+                    queryRunner.update(conn, "DELETE FROM `" + t.found.name + "` WHERE `" + t.found.primaryKey + "=?",
+                            t.key);
                 }
-                stmt.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             } finally {
-                DbUtils.closeQuietly(conn, stmt, null);
+                DbUtils.closeQuietly(conn);
             }
         }
 
         @Override
-        public void setBoolean(String key, boolean value) {
-            setPrimitive(key, value);
+        public void setBoolean(String key, final boolean value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+
+                @Override
+                public String getType() {
+                    return "SMALLINT";
+                }
+            });
         }
 
-        private void setPrimitive(String key, Object value) {
+        private void setValue(String key, ColumnProvider value) {
             Traversed t = traverse(createRelativeKey(key), true);
             if (t == INVALID_TRAVERSAL)
                 throw new IllegalStateException("could not set " + value + " at " + key);
             Connection conn = getConnection();
-            PreparedStatement stmt = null;
             try {
-                stmt = conn.prepareStatement("UPDATE `" + t.found.name + "` SET `" + t.column + "`= ? WHERE `"
-                        + t.found.primaryKey + "` = ?");
-                stmt.setString(1, value.toString());
-                stmt.setString(2, t.key);
-                stmt.executeUpdate();
+                if (!t.found.columns.contains(t.column)) {
+                    PreparedStatement stmt = conn.prepareStatement("ALTER TABLE `" + t.found.name + "` ADD `"
+                            + t.column + "` " + value.getType());
+                    stmt.execute();
+                    DbUtils.closeQuietly(stmt);
+                    t.found.columns.add(t.column);
+                }
+                queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`= ? WHERE `"
+                        + t.found.primaryKey + "` = ?", value.getValue(), t.key);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             } finally {
-                DbUtils.closeQuietly(conn, stmt, null);
+                DbUtils.closeQuietly(conn);
             }
         }
 
+        // why I wish Java had lambdas...
         @Override
-        public void setDouble(String key, double value) {
-            setPrimitive(key, value);
+        public void setDouble(String key, final double value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+
+                @Override
+                public String getType() {
+                    return "DOUBLE";
+                }
+            });
         }
 
         @Override
-        public void setInt(String key, int value) {
-            setPrimitive(key, value);
+        public void setInt(String key, final int value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+
+                @Override
+                public String getType() {
+                    return "STRING";
+                }
+            });
         }
 
         @Override
-        public void setLong(String key, long value) {
-            setPrimitive(key, value);
+        public void setLong(String key, final long value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+
+                @Override
+                public String getType() {
+                    return "BIGINT";
+                }
+            });
         }
 
         @Override
-        public void setRaw(String key, Object value) {
-            setPrimitive(key, value);
+        public void setRaw(String key, final Object value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+
+                @Override
+                public String getType() {
+                    return "JAVA_OBJECT";
+                }
+            });
         }
 
         @Override
-        public void setString(String key, String value) {
-            setPrimitive(key, value);
+        public void setString(String key, final String value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+
+                @Override
+                public String getType() {
+                    return "VARCHAR";
+                }
+            });
         }
     }
 
@@ -470,30 +605,40 @@ public class DatabaseStorage implements Storage {
         final Map<String, ForeignKey> foreignKeys = Maps.newHashMap();
         String name;
         String primaryKey;
-        int primaryKeyType;
+        String primaryKeyType;
 
         public Table setName(String tableName) {
             name = tableName;
             return this;
         }
 
-        public Table setPrimaryKeyType(int type) {
+        public void addForeignKey(String fk, ForeignKey foreignKey) {
+            foreignKeys.put(fk, foreignKey);
+            columns.add(fk);
+        }
+
+        public Table setPrimaryKeyType(String type) {
             primaryKeyType = type;
             return this;
         }
 
         public String generateRow() {
             String vals = Joiner.on(", ").join(columns);
+            StringBuilder nullBuilder = new StringBuilder();
+            for (int i = 0; i < columns.size(); ++i) {
+                nullBuilder.append("NULL,");
+            }
+            String nulls = nullBuilder.substring(0, nullBuilder.length() - 2).toString();
             Connection conn = getConnection();
             PreparedStatement stmt = null;
             ResultSet rs = null;
             try {
-                stmt = conn.prepareStatement("INSERT INTO `" + name + "` (" + vals + ") VALUES (NU)",
+                stmt = conn.prepareStatement("INSERT INTO `" + name + "` (" + vals + ") VALUES (" + nulls + ")",
                         Statement.RETURN_GENERATED_KEYS);
                 stmt.executeQuery();
                 rs = stmt.getGeneratedKeys();
                 if (!rs.next())
-                    throw new IllegalStateException("could not create insert row");
+                    return null;
                 return rs.getString(primaryKey);
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -504,16 +649,11 @@ public class DatabaseStorage implements Storage {
         }
 
         public void insert(String primary) {
-            Connection conn = getConnection();
-            PreparedStatement stmt = null;
             try {
-                stmt = conn.prepareStatement("INSERT INTO `" + name + "` (`" + primaryKey + "`) VALUES (?)");
-                stmt.setString(1, primary);
-                stmt.executeUpdate();
+                queryRunner.update(getConnection(), "INSERT INTO `" + name + "` (`" + primaryKey + "`) VALUES (?)",
+                        true, primary);
             } catch (SQLException ex) {
                 ex.printStackTrace();
-            } finally {
-                DbUtils.closeQuietly(conn, stmt, null);
             }
         }
 
@@ -526,6 +666,12 @@ public class DatabaseStorage implements Storage {
         public String toString() {
             return "Table [primaryKey=" + primaryKey + ", foreignKeys=" + foreignKeys + ", columns=" + columns + "]";
         }
+    }
+
+    private static interface ColumnProvider {
+        public String getType();
+
+        public Object getValue();
     }
 
     private static final Pattern INTEGER = Pattern.compile("([\\+-]?\\d+)([eE][\\+-]?\\d+)?");
