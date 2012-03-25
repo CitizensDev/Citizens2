@@ -29,7 +29,7 @@ public class LookClose extends Trait implements Runnable, Toggleable {
     public void run() {
         EntityLiving search = null;
         CitizensNPC handle = (CitizensNPC) npc;
-        if ((search = handle.getHandle().world.findNearbyPlayer(handle.getHandle(), 5)) != null && lookClose)
+        if (!npc.getAI().hasDestination() && (search = handle.getHandle().world.findNearbyPlayer(handle.getHandle(), 5)) != null && lookClose)
             faceEntity(handle, search.getBukkitEntity());
     }
 
