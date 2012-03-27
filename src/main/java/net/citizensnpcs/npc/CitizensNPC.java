@@ -31,8 +31,8 @@ import org.bukkit.plugin.Plugin;
 public abstract class CitizensNPC extends AbstractNPC {
     private final CitizensAI ai = new CitizensAI(this);
     private final CitizensNPCManager manager;
-    private final CitizensTraitManager traitManager;
     protected EntityLiving mcEntity;
+    private final CitizensTraitManager traitManager;
 
     protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
         super(id, name);
@@ -129,12 +129,62 @@ public abstract class CitizensNPC extends AbstractNPC {
         return getHandle() != null;
     }
 
+    public void load(DataKey root) throws NPCLoadException {
+        Character character = CitizensAPI.getCharacterManager().getCharacter(root.getString("character"));
+
+        // Load the character if it exists
+        if (character != null) {
+            character.load(root.getRelative("characters." + character.getName()));
+            setCharacter(character);
+        }
+
+        // Load traits
+        for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
+            Trait trait = traitManager.getTrait(traitKey.name(), this);
+            if (trait == null)
+                throw new NPCLoadException("No trait with the name '" + traitKey.name()
+                        + "' exists. Was it registered properly?");
+            addTrait(trait);
+            try {
+                getTrait(trait.getClass()).load(traitKey);
+            } catch (Exception ex) {
+                Bukkit.getLogger().log(
+                        Level.SEVERE,
+                        "[Citizens] The trait '" + traitKey.name()
+                                + "' failed to load properly for the NPC with the ID '" + getId() + "'. "
+                                + ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
+
+        // Spawn the NPC
+        if (getTrait(Spawned.class).shouldSpawn())
+            spawn(getTrait(CurrentLocation.class).getLocation());
+    }
+
     @Override
     public void remove() {
         super.remove();
         manager.remove(this);
         if (isSpawned())
             despawn();
+    }
+
+    public void save(DataKey root) {
+        root.setString("name", getFullName());
+
+        // Save the character if it exists
+        if (getCharacter() != null) {
+            root.setString("character", getCharacter().getName());
+            getCharacter().save(root.getRelative("characters." + getCharacter().getName()));
+        }
+
+        // Save all existing traits
+        for (Map<Class<? extends Trait>, Trait> map : traits.values()) {
+            for (Trait trait : map.values()) {
+                trait.save(root.getRelative("traits." + trait.getName()));
+            }
+        }
     }
 
     @Override
@@ -175,53 +225,5 @@ public abstract class CitizensNPC extends AbstractNPC {
     public void update() {
         super.update();
         ai.update();
-    }
-
-    public void load(DataKey root) throws NPCLoadException {
-        Character character = CitizensAPI.getCharacterManager().getCharacter(root.getString("character"));
-
-        // Load the character if it exists
-        if (character != null) {
-            character.load(root.getRelative("characters." + character.getName()));
-            setCharacter(character);
-        }
-
-        // Load traits
-        for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
-            Trait trait = traitManager.getTrait(traitKey.name(), this);
-            if (trait == null)
-                throw new NPCLoadException("No trait with the name '" + traitKey.name()
-                        + "' exists. Was it registered properly?");
-            addTrait(trait);
-            try {
-                getTrait(trait.getClass()).load(traitKey);
-            } catch (Exception ex) {
-                Bukkit.getLogger().log(
-                        Level.SEVERE,
-                        "[Citizens] The trait '" + traitKey.name()
-                                + "' failed to load properly for the NPC with the ID '" + getId() + "'. "
-                                + ex.getMessage());
-                ex.printStackTrace();
-            }
-        }
-
-        // Spawn the NPC
-        if (getTrait(Spawned.class).shouldSpawn())
-            spawn(getTrait(CurrentLocation.class).getLocation());
-    }
-
-    public void save(DataKey root) {
-        root.setString("name", getFullName());
-
-        // Save the character if it exists
-        if (getCharacter() != null) {
-            root.setString("character", getCharacter().getName());
-            getCharacter().save(root.getRelative("characters." + getCharacter().getName()));
-        }
-
-        // Save all existing traits
-        for (Plugin plugin : traits.keySet())
-            for (Trait trait : getTraits(plugin))
-                trait.save(root.getRelative("traits." + trait.getName()));
     }
 }

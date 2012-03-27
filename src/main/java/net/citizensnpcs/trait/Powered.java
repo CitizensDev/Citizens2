@@ -7,8 +7,8 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 public class Powered extends Trait implements Toggleable {
-    private boolean powered;
     private final NPC npc;
+    private boolean powered;
 
     public Powered(NPC npc) {
         this.npc = npc;
@@ -20,14 +20,14 @@ public class Powered extends Trait implements Toggleable {
     }
 
     @Override
-    public void save(DataKey key) {
-        key.setBoolean("", powered);
-    }
-
-    @Override
     public void onNPCSpawn() {
         if (npc.getBukkitEntity() instanceof Creeper)
             ((Creeper) npc.getBukkitEntity()).setPowered(powered);
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.setBoolean("", powered);
     }
 
     @Override

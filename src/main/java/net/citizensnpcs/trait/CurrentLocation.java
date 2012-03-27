@@ -16,12 +16,8 @@ public class CurrentLocation extends Trait implements Runnable {
         this.npc = npc;
     }
 
-    @Override
-    public void run() {
-        if (npc.getBukkitEntity() == null)
-            return;
-
-        loc = npc.getBukkitEntity().getLocation();
+    public Location getLocation() {
+        return loc;
     }
 
     @Override
@@ -29,8 +25,16 @@ public class CurrentLocation extends Trait implements Runnable {
         if (Bukkit.getWorld(key.getString("world")) == null)
             throw new NPCLoadException("'" + key.getString("world") + "' is not a valid world.");
 
-        loc = new Location(Bukkit.getWorld(key.getString("world")), key.getDouble("x"), key.getDouble("y"), key
-                .getDouble("z"), (float) key.getDouble("yaw"), (float) key.getDouble("pitch"));
+        loc = new Location(Bukkit.getWorld(key.getString("world")), key.getDouble("x"), key.getDouble("y"),
+                key.getDouble("z"), (float) key.getDouble("yaw"), (float) key.getDouble("pitch"));
+    }
+
+    @Override
+    public void run() {
+        if (npc.getBukkitEntity() == null)
+            return;
+
+        loc = npc.getBukkitEntity().getLocation();
     }
 
     @Override
@@ -41,10 +45,6 @@ public class CurrentLocation extends Trait implements Runnable {
         key.setDouble("z", loc.getZ());
         key.setDouble("yaw", loc.getYaw());
         key.setDouble("pitch", loc.getPitch());
-    }
-
-    public Location getLocation() {
-        return loc;
     }
 
     public void spawn(Location loc) {

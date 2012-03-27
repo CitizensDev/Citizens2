@@ -6,13 +6,17 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 public class Paginator {
-    private static final int LINES_PER_PAGE = 9;
-
     private String header;
+
     private final List<String> lines = new ArrayList<String>();
 
     public void addLine(String line) {
         lines.add(line);
+    }
+
+    public Paginator header(String header) {
+        this.header = header;
+        return this;
     }
 
     public boolean sendPage(CommandSender sender, int page) {
@@ -32,8 +36,5 @@ public class Paginator {
         return true;
     }
 
-    public Paginator header(String header) {
-        this.header = header;
-        return this;
-    }
+    private static final int LINES_PER_PAGE = 9;
 }

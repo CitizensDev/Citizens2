@@ -46,16 +46,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.Iterators;
 
 public class Citizens extends JavaPlugin {
-    private static final String COMPATIBLE_MC_VERSION = "1.2.4";
+    private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
 
     private final CommandManager commands = new CommandManager();
-    private Settings config;
     private boolean compatible;
-    private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
-    private CitizensTraitManager traitManager;
+    private Settings config;
     private CitizensNPCManager npcManager;
     private Storage saves; // TODO: refactor this into an NPCStore (remove
                            // dependency on Storage).
+    private CitizensTraitManager traitManager;
 
     public CommandManager getCommandManager() {
         return commands;
@@ -149,13 +148,18 @@ public class Citizens extends JavaPlugin {
             try {
                 saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
                         Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
+                saves.getKey("test.one").setString("two", "empty");
+                Messaging.log(saves.getKey("test.one").getString("two"));
             } catch (SQLException e) {
+                e.printStackTrace();
                 Messaging.log("Unable to connect to database, falling back to YAML");
                 saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml", "Citizens NPC Storage");
             }
         } else {
             saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml", "Citizens NPC Storage");
         }
+
+        Messaging.log("Save method set to", saves.toString());
 
         // Register API managers
         npcManager = new CitizensNPCManager(this, saves);
@@ -249,8 +253,15 @@ public class Citizens extends JavaPlugin {
             if (!key.keyExists("name"))
                 throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
 
-            NPC npc = npcManager.createNPC(EntityType.valueOf(key.getString("traits.type").toUpperCase()), id,
-                    key.getString("name"), null);
+            EntityType type = EntityType.fromName(key.getString("traits.type"));
+            if (type == null) {
+                try {
+                    type = EntityType.valueOf(key.getString("traits.type"));
+                } catch (IllegalArgumentException ex) {
+                    throw new NPCLoadException("type not recognised");
+                }
+            }
+            NPC npc = npcManager.createNPC(type, id, key.getString("name"), null);
             try {
                 ((CitizensNPC) npc).load(key);
             } catch (NPCException ex) {
@@ -281,4 +292,6 @@ public class Citizens extends JavaPlugin {
         }
         return false;
     }
+
+    private static final String COMPATIBLE_MC_VERSION = "1.2.4";
 }

@@ -1,8 +1,5 @@
 package net.citizensnpcs.command.command;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -13,6 +10,9 @@ import net.citizensnpcs.command.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 @Requirements
 public class AdminCommands {
@@ -32,13 +32,13 @@ public class AdminCommands {
     }
 
     @Command(
-             aliases = { "citizens" },
-             usage = "reload",
-             desc = "Reload Citizens",
-             modifiers = { "reload" },
-             min = 1,
-             max = 1,
-             permission = "admin")
+            aliases = { "citizens" },
+            usage = "reload",
+            desc = "Reload Citizens",
+            modifiers = { "reload" },
+            min = 1,
+            max = 1,
+            permission = "admin")
     @ServerCommand
     public void reload(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.send(sender, "<e>Reloading Citizens...");
@@ -52,13 +52,13 @@ public class AdminCommands {
     }
 
     @Command(
-             aliases = { "citizens" },
-             usage = "save",
-             desc = "Save NPCs",
-             modifiers = { "save" },
-             min = 1,
-             max = 1,
-             permission = "admin")
+            aliases = { "citizens" },
+            usage = "save",
+            desc = "Save NPCs",
+            modifiers = { "save" },
+            min = 1,
+            max = 1,
+            permission = "admin")
     @ServerCommand
     public void save(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, "<e>Saving Citizens...");

@@ -20,8 +20,8 @@ public class TextAddPrompt extends StringPrompt {
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
         text.add(input);
-        Messaging.send((Player) context.getForWhom(), StringHelper.parseColors("<e>Added <a>the entry <e>" + input
-                + "."));
+        Messaging.send((Player) context.getForWhom(),
+                StringHelper.parseColors("<e>Added <a>the entry <e>" + input + "."));
         return new StartPrompt(text);
     }
 

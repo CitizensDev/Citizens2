@@ -24,11 +24,6 @@ public class CitizensIronGolemNPC extends CitizensMobNPC {
     public static class EntityIronGolemNPC extends EntityIronGolem implements NPCHandle {
         private final NPC npc;
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
         public EntityIronGolemNPC(World world, NPC npc) {
             super(world);
             this.npc = npc;
@@ -38,6 +33,11 @@ public class CitizensIronGolemNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

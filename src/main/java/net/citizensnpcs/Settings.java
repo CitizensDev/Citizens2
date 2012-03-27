@@ -10,8 +10,6 @@ import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 
 public class Settings {
-    private static Storage config;
-
     public Settings(File folder) {
         config = new YamlStorage(folder + File.separator + "config.yml", "Citizens Configuration");
     }
@@ -26,6 +24,7 @@ public class Settings {
             } else
                 setting.set(root.getRaw(setting.path));
         }
+        config.save();
     }
 
     public void save() {
@@ -50,7 +49,7 @@ public class Settings {
         TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 60),
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 30),
         TALK_ITEM("npc.text.talk-item", "340"),
-        USE_DATABASE("use-database", false);
+        USE_DATABASE("database.use", false);
 
         private String path;
         private Object value;
@@ -58,13 +57,6 @@ public class Settings {
         Setting(String path, Object value) {
             this.path = path;
             this.value = value;
-        }
-
-        public List<String> asList(String path) {
-            List<String> list = new ArrayList<String>();
-            for (DataKey key : config.getKey(path).getIntegerSubKeys())
-                list.add(key.getString(""));
-            return list;
         }
 
         public boolean asBoolean() {
@@ -77,6 +69,14 @@ public class Settings {
 
         public int asInt() {
             return Integer.parseInt(value.toString());
+        }
+
+        // TODO: single values only in a field, remove this
+        public List<String> asList(String path) {
+            List<String> list = new ArrayList<String>();
+            for (DataKey key : config.getKey(path).getIntegerSubKeys())
+                list.add(key.getString(""));
+            return list;
         }
 
         public long asLong() {
@@ -95,4 +95,6 @@ public class Settings {
             this.value = value;
         }
     }
+
+    private static Storage config;
 }

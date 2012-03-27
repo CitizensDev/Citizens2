@@ -24,11 +24,6 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
     public static class EntityEnderDragonNPC extends EntityEnderDragon implements NPCHandle {
         private final NPC npc;
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
         public EntityEnderDragonNPC(World world, NPC npc) {
             super(world);
             this.npc = npc;
@@ -42,6 +37,11 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
 
         @Override
         public void e() {
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

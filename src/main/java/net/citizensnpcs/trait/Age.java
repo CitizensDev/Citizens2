@@ -23,12 +23,6 @@ public class Age extends Trait implements Runnable, Toggleable {
     }
 
     @Override
-    public void save(DataKey key) {
-        key.setInt("age", age);
-        key.setBoolean("locked", locked);
-    }
-
-    @Override
     public void onNPCSpawn() {
         if (npc.getBukkitEntity() instanceof Ageable) {
             Ageable entity = (Ageable) npc.getBukkitEntity();
@@ -44,16 +38,22 @@ public class Age extends Trait implements Runnable, Toggleable {
     }
 
     @Override
-    public boolean toggle() {
-        locked = !locked;
-        ((Ageable) npc.getBukkitEntity()).setAgeLock(locked);
-        return locked;
+    public void save(DataKey key) {
+        key.setInt("age", age);
+        key.setBoolean("locked", locked);
     }
 
     public void setAge(int age) {
         this.age = age;
         if (npc.getBukkitEntity() instanceof Ageable)
             ((Ageable) npc.getBukkitEntity()).setAge(age);
+    }
+
+    @Override
+    public boolean toggle() {
+        locked = !locked;
+        ((Ageable) npc.getBukkitEntity()).setAgeLock(locked);
+        return locked;
     }
 
     @Override

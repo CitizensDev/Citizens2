@@ -9,8 +9,8 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 
 public class VillagerProfession extends Trait {
-    private Profession profession = Profession.FARMER;
     private final NPC npc;
+    private Profession profession = Profession.FARMER;
 
     public VillagerProfession(NPC npc) {
         this.npc = npc;
@@ -26,14 +26,14 @@ public class VillagerProfession extends Trait {
     }
 
     @Override
-    public void save(DataKey key) {
-        key.setString("", profession.name());
-    }
-
-    @Override
     public void onNPCSpawn() {
         if (npc.getBukkitEntity() instanceof Villager)
             ((Villager) npc.getBukkitEntity()).setProfession(profession);
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.setString("", profession.name());
     }
 
     public void setProfession(Profession profession) {

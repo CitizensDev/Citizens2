@@ -24,11 +24,6 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
     public static class EntitySlimeNPC extends EntitySlime implements NPCHandle {
         private final NPC npc;
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
         public EntitySlimeNPC(World world, NPC npc) {
             super(world);
             this.npc = npc;
@@ -39,6 +34,11 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

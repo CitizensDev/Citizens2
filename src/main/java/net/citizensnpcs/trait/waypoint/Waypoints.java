@@ -22,6 +22,16 @@ public class Waypoints extends Trait {
         npc.getAI().registerNavigationCallback(provider.getCallback());
     }
 
+    private WaypointProvider create(Class<? extends WaypointProvider> clazz) {
+        if (!providers.containsKey(clazz))
+            return null;
+        try {
+            return clazz.newInstance();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     public Editor getEditor(Player player) {
         return provider.createEditor(player);
     }
@@ -51,7 +61,8 @@ public class Waypoints extends Trait {
     }
 
     /**
-     * Sets the current {@link WaypointProvider} by using the given class. The class should have been registered using
+     * Sets the current {@link WaypointProvider} by using the given class. The
+     * class should have been registered using
      * {@link Waypoints#registerWaypointProvider(Class, String)}.
      * 
      * @param provider
@@ -64,20 +75,11 @@ public class Waypoints extends Trait {
         }
     }
 
-    private WaypointProvider create(Class<? extends WaypointProvider> clazz) {
-        if (!providers.containsKey(clazz))
-            return null;
-        try {
-            return clazz.newInstance();
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
     private static final Map<Class<? extends WaypointProvider>, String> providers = new HashMap<Class<? extends WaypointProvider>, String>();
 
     /**
-     * Registers a {@link WaypointProvider}, which can be subsequently used by NPCs.
+     * Registers a {@link WaypointProvider}, which can be subsequently used by
+     * NPCs.
      * 
      * @param clazz
      *            The class of the waypoint provider

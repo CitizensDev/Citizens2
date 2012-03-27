@@ -1,6 +1,6 @@
 package net.citizensnpcs.util;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import net.citizensnpcs.npc.CitizensNPC;
@@ -35,7 +35,22 @@ import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 import org.bukkit.entity.EntityType;
 
 public class NPCBuilder {
-    private static final Map<EntityType, Class<? extends CitizensNPC>> types = new HashMap<EntityType, Class<? extends CitizensNPC>>();
+    // TODO: convert this into solely a lookup class.
+    public CitizensNPC getByType(EntityType type, CitizensNPCManager npcManager, int id, String name) {
+        Class<? extends CitizensNPC> npcClass = types.get(type);
+        if (npcClass == null)
+            return null;
+        try {
+            return npcClass.getConstructor(CitizensNPCManager.class, int.class, String.class).newInstance(npcManager,
+                    id, name);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    private static final Map<EntityType, Class<? extends CitizensNPC>> types = new EnumMap<EntityType, Class<? extends CitizensNPC>>(
+            EntityType.class);
 
     static {
         types.put(EntityType.BLAZE, CitizensBlazeNPC.class);
@@ -64,16 +79,5 @@ public class NPCBuilder {
         types.put(EntityType.VILLAGER, CitizensVillagerNPC.class);
         types.put(EntityType.WOLF, CitizensWolfNPC.class);
         types.put(EntityType.ZOMBIE, CitizensZombieNPC.class);
-    }
-
-    public CitizensNPC getByType(EntityType type, CitizensNPCManager npcManager, int id, String name) {
-        Class<? extends CitizensNPC> npcClass = types.get(type);
-        try {
-            return npcClass.getConstructor(CitizensNPCManager.class, int.class, String.class).newInstance(npcManager,
-                    id, name);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
     }
 }

@@ -25,11 +25,6 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHandle {
         private final NPC npc;
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
         public EntityCreeperNPC(World world, NPC npc) {
             super(world);
             this.npc = npc;
@@ -38,11 +33,16 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
         }
 
         @Override
+        public void a(EntityWeatherLighting entityweatherlighting) {
+        }
+
+        @Override
         public void d_() {
         }
 
         @Override
-        public void a(EntityWeatherLighting entityweatherlighting) {
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

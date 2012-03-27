@@ -35,39 +35,6 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
     }
 
     @Override
-    public Player getBukkitEntity() {
-        return getHandle().getBukkitEntity();
-    }
-
-    @Override
-    public EntityHumanNPC getHandle() {
-        return (EntityHumanNPC) mcEntity;
-    }
-
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        super.load(key);
-    }
-
-    @Override
-    public void setName(String name) {
-        super.setName(name);
-        Location prev = getBukkitEntity().getLocation();
-        despawn();
-        spawn(prev);
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        if (isSpawned() && getBukkitEntity().getLocation().getChunk().isLoaded()) {
-            mcEntity.move(0, -0.1, 0);
-            // gravity! also works around an entity.onGround not updating issue
-            // (onGround is normally updated by the client)
-        }
-    }
-
-    @Override
     public void equip(Player equipper) {
         ItemStack hand = equipper.getItemInHand();
         Equipment trait = getTrait(Equipment.class);
@@ -131,5 +98,38 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
             set.setAmount(1);
         }
         trait.set(slot, set);
+    }
+
+    @Override
+    public Player getBukkitEntity() {
+        return getHandle().getBukkitEntity();
+    }
+
+    @Override
+    public EntityHumanNPC getHandle() {
+        return (EntityHumanNPC) mcEntity;
+    }
+
+    @Override
+    public void load(DataKey key) throws NPCLoadException {
+        super.load(key);
+    }
+
+    @Override
+    public void setName(String name) {
+        super.setName(name);
+        Location prev = getBukkitEntity().getLocation();
+        despawn();
+        spawn(prev);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (isSpawned() && getBukkitEntity().getLocation().getChunk().isLoaded()) {
+            mcEntity.move(0, -0.1, 0);
+            // gravity! also works around an entity.onGround not updating issue
+            // (onGround is normally updated by the client)
+        }
     }
 }

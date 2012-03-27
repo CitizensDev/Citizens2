@@ -29,8 +29,8 @@ import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
 public class CitizensTraitManager implements TraitManager {
-    private final Map<Plugin, Map<String, Class<? extends Trait>>> registered = new HashMap<Plugin, Map<String, Class<? extends Trait>>>();
     private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = new HashMap<Class<? extends Trait>, Constructor<? extends Trait>>();
+    private final Map<Plugin, Map<String, Class<? extends Trait>>> registered = new HashMap<Plugin, Map<String, Class<? extends Trait>>>();
 
     public CitizensTraitManager(Citizens plugin) {
         // Register Citizens traits
@@ -49,57 +49,6 @@ public class CitizensTraitManager implements TraitManager {
         registerTrait(new TraitFactory(VillagerProfession.class).withName("profession").withPlugin(plugin));
         registerTrait(new TraitFactory(Waypoints.class).withName("waypoints").withPlugin(plugin));
         registerTrait(new TraitFactory(WoolColor.class).withName("wool-color").withPlugin(plugin));
-    }
-
-    @Override
-    public <T extends Trait> T getTrait(Class<T> clazz) {
-        return getTrait(clazz, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends Trait> T getTrait(String name) {
-        for (Plugin plugin : registered.keySet()) {
-            if (!registered.get(plugin).containsKey(name))
-                return null;
-            return (T) create(registered.get(plugin).get(name), null);
-        }
-        return null;
-    }
-
-    @Override
-    public void registerTrait(TraitFactory factory) {
-        Map<String, Class<? extends Trait>> map = registered.get(factory.getTraitPlugin());
-        if (map == null)
-            map = new HashMap<String, Class<? extends Trait>>();
-        map.put(factory.getTraitName(), factory.getTraitClass());
-        registered.put(factory.getTraitPlugin(), map);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends Trait> T getTrait(Class<T> clazz, NPC npc) {
-        for (Entry<Plugin, Map<String, Class<? extends Trait>>> entry : registered.entrySet()) {
-            for (Entry<String, Class<? extends Trait>> subEntry : entry.getValue().entrySet()) {
-                if (!subEntry.getValue().equals(clazz))
-                    continue;
-                Trait trait = create(subEntry.getValue(), npc);
-                trait.setName(subEntry.getKey());
-                trait.setPlugin(entry.getKey());
-                return (T) trait;
-            }
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends Trait> T getTrait(String name, NPC npc) {
-        for (Plugin plugin : registered.keySet()) {
-            Class<? extends Trait> clazz = registered.get(plugin).get(name);
-            if (clazz == null)
-                continue;
-            return (T) getTrait(clazz, npc);
-        }
-        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -125,5 +74,56 @@ public class CitizensTraitManager implements TraitManager {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public <T extends Trait> T getTrait(Class<T> clazz) {
+        return getTrait(clazz, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Trait> T getTrait(Class<T> clazz, NPC npc) {
+        for (Entry<Plugin, Map<String, Class<? extends Trait>>> entry : registered.entrySet()) {
+            for (Entry<String, Class<? extends Trait>> subEntry : entry.getValue().entrySet()) {
+                if (!subEntry.getValue().equals(clazz))
+                    continue;
+                Trait trait = create(subEntry.getValue(), npc);
+                trait.setName(subEntry.getKey());
+                trait.setPlugin(entry.getKey());
+                return (T) trait;
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends Trait> T getTrait(String name) {
+        for (Plugin plugin : registered.keySet()) {
+            if (!registered.get(plugin).containsKey(name))
+                return null;
+            return (T) create(registered.get(plugin).get(name), null);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Trait> T getTrait(String name, NPC npc) {
+        for (Plugin plugin : registered.keySet()) {
+            Class<? extends Trait> clazz = registered.get(plugin).get(name);
+            if (clazz == null)
+                continue;
+            return (T) getTrait(clazz, npc);
+        }
+        return null;
+    }
+
+    @Override
+    public void registerTrait(TraitFactory factory) {
+        Map<String, Class<? extends Trait>> map = registered.get(factory.getTraitPlugin());
+        if (map == null)
+            map = new HashMap<String, Class<? extends Trait>>();
+        map.put(factory.getTraitName(), factory.getTraitClass());
+        registered.put(factory.getTraitPlugin(), map);
     }
 }

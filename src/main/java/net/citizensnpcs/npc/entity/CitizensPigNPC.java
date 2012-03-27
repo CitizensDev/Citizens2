@@ -25,11 +25,6 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
     }
 
     @Override
-    public Pig getBukkitEntity() {
-        return (Pig) getHandle().getBukkitEntity();
-    }
-
-    @Override
     public void equip(Player equipper) {
         ItemStack hand = equipper.getItemInHand();
         if (hand.getType() == Material.SADDLE) {
@@ -48,13 +43,13 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
         }
     }
 
+    @Override
+    public Pig getBukkitEntity() {
+        return (Pig) getHandle().getBukkitEntity();
+    }
+
     public static class EntityPigNPC extends EntityPig implements NPCHandle {
         private final NPC npc;
-
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
 
         public EntityPigNPC(World world, NPC npc) {
             super(world);
@@ -64,11 +59,16 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
+        public void a(EntityWeatherLighting entityweatherlighting) {
+        }
+
+        @Override
         public void d_() {
         }
 
         @Override
-        public void a(EntityWeatherLighting entityweatherlighting) {
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

@@ -12,6 +12,11 @@ public class CitizensCharacterManager implements CharacterManager {
     private final Map<String, Character> registered = new HashMap<String, Character>();
 
     @Override
+    public Character getCharacter(String name) {
+        return registered.get(name);
+    }
+
+    @Override
     public void registerCharacter(CharacterFactory factory) {
         try {
             Character character = factory.create();
@@ -19,10 +24,5 @@ public class CitizensCharacterManager implements CharacterManager {
         } catch (CharacterException ex) {
             ex.printStackTrace();
         }
-    }
-
-    @Override
-    public Character getCharacter(String name) {
-        return registered.get(name);
     }
 }
