@@ -13,35 +13,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 public class LookClose extends Trait implements Runnable, Toggleable {
-    private final NPC npc;
     private boolean lookClose = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
+    private final NPC npc;
 
     public LookClose(NPC npc) {
         this.npc = npc;
-    }
-
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        lookClose = key.getBoolean("");
-    }
-
-    @Override
-    public void run() {
-        EntityLiving search = null;
-        CitizensNPC handle = (CitizensNPC) npc;
-        if (!npc.getAI().hasDestination() && (search = handle.getHandle().world.findNearbyPlayer(handle.getHandle(), 5)) != null && lookClose)
-            faceEntity(handle, search.getBukkitEntity());
-    }
-
-    @Override
-    public void save(DataKey key) {
-        key.setBoolean("", lookClose);
-    }
-
-    @Override
-    public boolean toggle() {
-        lookClose = !lookClose;
-        return lookClose;
     }
 
     private void faceEntity(CitizensNPC npc, Entity target) {
@@ -65,6 +41,31 @@ public class LookClose extends Trait implements Runnable, Toggleable {
         npc.getHandle().yaw = (float) yaw - 90;
         npc.getHandle().pitch = (float) pitch;
         npc.getHandle().X = npc.getHandle().yaw;
+    }
+
+    @Override
+    public void load(DataKey key) throws NPCLoadException {
+        lookClose = key.getBoolean("");
+    }
+
+    @Override
+    public void run() {
+        EntityLiving search = null;
+        CitizensNPC handle = (CitizensNPC) npc;
+        if (!npc.getAI().hasDestination()
+                && (search = handle.getHandle().world.findNearbyPlayer(handle.getHandle(), 5)) != null && lookClose)
+            faceEntity(handle, search.getBukkitEntity());
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.setBoolean("", lookClose);
+    }
+
+    @Override
+    public boolean toggle() {
+        lookClose = !lookClose;
+        return lookClose;
     }
 
     @Override

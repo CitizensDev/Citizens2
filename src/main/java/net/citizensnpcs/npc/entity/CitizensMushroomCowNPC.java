@@ -24,11 +24,6 @@ public class CitizensMushroomCowNPC extends CitizensMobNPC {
     public static class EntityMushroomCowNPC extends EntityMushroomCow implements NPCHandle {
         private final NPC npc;
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
         public EntityMushroomCowNPC(World world, NPC npc) {
             super(world);
             this.npc = npc;
@@ -38,6 +33,11 @@ public class CitizensMushroomCowNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

@@ -24,11 +24,6 @@ public class CitizensSnowmanNPC extends CitizensMobNPC {
     public static class EntitySnowmanNPC extends EntitySnowman implements NPCHandle {
         private final NPC npc;
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
         public EntitySnowmanNPC(World world, NPC npc) {
             super(world);
             this.npc = npc;
@@ -38,6 +33,11 @@ public class CitizensSnowmanNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

@@ -26,38 +26,19 @@ public class HelpCommands {
     }
 
     @Command(
-             aliases = { "citizens" },
-             usage = "help (page)",
-             desc = "Citizens help menu",
-             modifiers = { "help" },
-             min = 1,
-             max = 2,
-             permission = "help")
+            aliases = { "citizens" },
+            usage = "help (page)",
+            desc = "Citizens help menu",
+            modifiers = { "help" },
+            min = 1,
+            max = 2,
+            permission = "help")
     @Requirements
     @ServerCommand
     public void citizensHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         Paginator paginator = new Paginator().header("Citizens Help");
         for (String line : getLines(sender, "citizens"))
-            paginator.addLine(line);
-        if (!paginator.sendPage(sender, page))
-            throw new CommandException("The page '" + page + "' does not exist.");
-    }
-
-    @Command(
-             aliases = { "npc" },
-             usage = "help (page)",
-             desc = "NPC help menu",
-             modifiers = { "help" },
-             min = 1,
-             max = 2,
-             permission = "npc.help")
-    @Requirements
-    @ServerCommand
-    public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
-        Paginator paginator = new Paginator().header("NPC Help");
-        for (String line : getLines(sender, "npc"))
             paginator.addLine(line);
         if (!paginator.sendPage(sender, page))
             throw new CommandException("The page '" + page + "' does not exist.");
@@ -79,5 +60,24 @@ public class HelpCommands {
                 cmds.add(cmd);
         }
         return lines;
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "help (page)",
+            desc = "NPC help menu",
+            modifiers = { "help" },
+            min = 1,
+            max = 2,
+            permission = "npc.help")
+    @Requirements
+    @ServerCommand
+    public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
+        Paginator paginator = new Paginator().header("NPC Help");
+        for (String line : getLines(sender, "npc"))
+            paginator.addLine(line);
+        if (!paginator.sendPage(sender, page))
+            throw new CommandException("The page '" + page + "' does not exist.");
     }
 }

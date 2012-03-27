@@ -47,6 +47,18 @@ public class EventListen implements Listener {
         this.npcManager = npcManager;
     }
 
+    private boolean isSettingFulfilled(Player player, Setting setting) {
+        String parts = setting.asString();
+        if (parts.contains("*"))
+            return true;
+        for (String part : Splitter.on(',').split(parts)) {
+            if (Material.matchMaterial(part) == player.getItemInHand().getType()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /*
      * Chunk events
      */
@@ -108,6 +120,14 @@ public class EventListen implements Listener {
     }
 
     @EventHandler
+    public void onEntityDeath(EntityDeathEvent event) {
+        if (!npcManager.isNPC(event.getEntity()))
+            return;
+        NPC npc = npcManager.getNPC(event.getEntity());
+        npc.despawn();
+    }
+
+    @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
         if (event.isCancelled() || !npcManager.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
             return;
@@ -137,14 +157,6 @@ public class EventListen implements Listener {
 
         if (npc.getCharacter() != null)
             npc.getCharacter().onRightClick(npc, player);
-    }
-
-    @EventHandler
-    public void onEntityDeath(EntityDeathEvent event) {
-        if (!npcManager.isNPC(event.getEntity()))
-            return;
-        NPC npc = npcManager.getNPC(event.getEntity());
-        npc.despawn();
     }
 
     /*
@@ -205,17 +217,5 @@ public class EventListen implements Listener {
 
     private Pair<Integer, Integer> toIntPair(Chunk chunk) {
         return new Pair<Integer, Integer>(chunk.getX(), chunk.getZ());
-    }
-
-    private boolean isSettingFulfilled(Player player, Setting setting) {
-        String parts = setting.asString();
-        if (parts.contains("*"))
-            return true;
-        for (String part : Splitter.on(',').split(parts)) {
-            if (Material.matchMaterial(part) == player.getItemInHand().getType()) {
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -24,11 +24,6 @@ public class CitizensOcelotNPC extends CitizensMobNPC {
     public static class EntityOcelotNPC extends EntityOcelot implements NPCHandle {
         private final NPC npc;
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
         public EntityOcelotNPC(World world, NPC npc) {
             super(world);
             this.npc = npc;
@@ -38,6 +33,11 @@ public class CitizensOcelotNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

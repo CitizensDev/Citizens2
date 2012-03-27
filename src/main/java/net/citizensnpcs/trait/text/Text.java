@@ -30,17 +30,54 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class Text extends Trait implements Runnable, Toggleable, ConversationAbandonedListener {
-    private final Plugin plugin;
-    private final NPC npc;
-    private final List<String> text = new ArrayList<String>();
     private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();
-    private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
-    private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
     private int currentIndex;
+    private final NPC npc;
+    private final Plugin plugin;
+    private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
+    private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
+    private final List<String> text = new ArrayList<String>();
 
     public Text(NPC npc) {
         this.npc = npc;
         this.plugin = Bukkit.getPluginManager().getPlugin("Citizens");
+    }
+
+    public void add(String string) {
+        text.add(string);
+    }
+
+    @Override
+    public void conversationAbandoned(ConversationAbandonedEvent event) {
+        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
+    }
+
+    public void edit(int index, String newText) {
+        text.set(index, newText);
+    }
+
+    public Editor getEditor(final Player player) {
+        final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
+                .withLocalEcho(false).withEscapeSequence("/npc text").withModality(false)
+                .withFirstPrompt(new StartPrompt(this)).buildConversation(player);
+        return new Editor() {
+
+            @Override
+            public void begin() {
+                Messaging.send(player, "<b>Entered the text editor!");
+
+                conversation.begin();
+            }
+
+            @Override
+            public void end() {
+                Messaging.send(player, "<a>Exited the text editor.");
+            }
+        };
+    }
+
+    public boolean hasIndex(int index) {
+        return text.size() > index;
     }
 
     @Override
@@ -57,17 +94,18 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
     }
 
     @Override
-    public void save(DataKey key) {
-        key.setBoolean("talk-close", talkClose);
-        key.setBoolean("random-talker", randomTalker);
-        for (int i = 0; i < text.size(); i++)
-            key.setString(String.valueOf(i), text.get(i));
+    public void onNPCSpawn() {
+        if (text.isEmpty())
+            populateDefaultText();
     }
 
-    @Override
-    public boolean toggle() {
-        talkClose = !talkClose;
-        return talkClose;
+    private void populateDefaultText() {
+        for (String line : Setting.DEFAULT_TEXT.asList("npc.default.text"))
+            text.add(line);
+    }
+
+    public void remove(int index) {
+        text.remove(index);
     }
 
     @Override
@@ -97,54 +135,11 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
     }
 
     @Override
-    public void onNPCSpawn() {
-        if (text.isEmpty())
-            populateDefaultText();
-    }
-
-    @Override
-    public void conversationAbandoned(ConversationAbandonedEvent event) {
-        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
-    }
-
-    public boolean shouldTalkClose() {
-        return talkClose;
-    }
-
-    public Editor getEditor(final Player player) {
-        final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
-                .withLocalEcho(false).withEscapeSequence("/npc text").withModality(false)
-                .withFirstPrompt(new StartPrompt(this)).buildConversation(player);
-        return new Editor() {
-
-            @Override
-            public void begin() {
-                Messaging.send(player, "<b>Entered the text editor!");
-
-                conversation.begin();
-            }
-
-            @Override
-            public void end() {
-                Messaging.send(player, "<a>Exited the text editor.");
-            }
-        };
-    }
-
-    public void add(String string) {
-        text.add(string);
-    }
-
-    public void remove(int index) {
-        text.remove(index);
-    }
-
-    public void edit(int index, String newText) {
-        text.set(index, newText);
-    }
-
-    public boolean hasIndex(int index) {
-        return text.size() > index;
+    public void save(DataKey key) {
+        key.setBoolean("talk-close", talkClose);
+        key.setBoolean("random-talker", randomTalker);
+        for (int i = 0; i < text.size(); i++)
+            key.setString(String.valueOf(i), text.get(i));
     }
 
     public boolean sendPage(Player player, int page) {
@@ -173,14 +168,19 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
         return true;
     }
 
+    public boolean shouldTalkClose() {
+        return talkClose;
+    }
+
+    @Override
+    public boolean toggle() {
+        talkClose = !talkClose;
+        return talkClose;
+    }
+
     public boolean toggleRandomTalker() {
         randomTalker = !randomTalker;
         return randomTalker;
-    }
-
-    private void populateDefaultText() {
-        for (String line : Setting.DEFAULT_TEXT.asList("npc.default.text"))
-            text.add(line);
     }
 
     @Override

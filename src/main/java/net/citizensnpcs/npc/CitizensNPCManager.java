@@ -38,7 +38,8 @@ public class CitizensNPCManager implements NPCManager {
 
     public NPC createNPC(EntityType type, int id, String name, Character character) {
         CitizensNPC npc = npcBuilder.getByType(type, this, id, name);
-        npc.setCharacter(character);
+        if (character != null)
+            npc.setCharacter(character);
         npcs.put(npc.getId(), npc);
         return npc;
     }
@@ -110,6 +111,21 @@ public class CitizensNPCManager implements NPCManager {
         removeMetadata(npc);
     }
 
+    public void removeAll() {
+        while (iterator().hasNext())
+            iterator().next().remove();
+    }
+
+    private void removeMetadata(NPC npc) {
+        // Remove metadata from selectors
+        if (npc.hasMetadata("selectors")) {
+            for (MetadataValue value : npc.getMetadata("selectors"))
+                if (Bukkit.getPlayer(value.asString()) != null)
+                    Bukkit.getPlayer(value.asString()).removeMetadata("selected", plugin);
+            npc.removeMetadata("selectors", plugin);
+        }
+    }
+
     public void safeRemove() throws NPCLoadException {
         // Destroy all NPCs everywhere besides storage
         while (iterator().hasNext()) {
@@ -118,11 +134,6 @@ public class CitizensNPCManager implements NPCManager {
             npc.despawn();
             iterator().remove();
         }
-    }
-
-    public void removeAll() {
-        while (iterator().hasNext())
-            iterator().next().remove();
     }
 
     public void selectNPC(Player player, NPC npc) {
@@ -138,15 +149,5 @@ public class CitizensNPCManager implements NPCManager {
 
         // Call selection event
         player.getServer().getPluginManager().callEvent(new NPCSelectEvent(npc, player));
-    }
-
-    private void removeMetadata(NPC npc) {
-        // Remove metadata from selectors
-        if (npc.hasMetadata("selectors")) {
-            for (MetadataValue value : npc.getMetadata("selectors"))
-                if (Bukkit.getPlayer(value.asString()) != null)
-                    Bukkit.getPlayer(value.asString()).removeMetadata("selected", plugin);
-            npc.removeMetadata("selectors", plugin);
-        }
     }
 }

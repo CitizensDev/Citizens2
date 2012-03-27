@@ -26,8 +26,8 @@ public class StartPrompt extends StringPrompt {
             return new TextRemovePrompt(text);
         else {
             if (input.equalsIgnoreCase("random"))
-                Messaging.send((Player) context.getForWhom(), "<e>Random talker <a>set to <e>"
-                        + text.toggleRandomTalker() + "<a>.");
+                Messaging.send((Player) context.getForWhom(),
+                        "<e>Random talker <a>set to <e>" + text.toggleRandomTalker() + "<a>.");
             else if (input.equalsIgnoreCase("close")) {
                 Messaging.send((Player) context.getForWhom(), "<e>Close talker <a>set to <e>" + text.toggle() + "<a>.");
             } else

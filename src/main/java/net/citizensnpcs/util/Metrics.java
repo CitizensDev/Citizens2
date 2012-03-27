@@ -49,12 +49,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 public class Metrics {
-    private static final String BASE_URL = "http://metrics.griefcraft.com";
-    private static final String CONFIG_FILE = "plugins/PluginMetrics/config.yml";
-    private final static int PING_INTERVAL = 10;
-    private static final String REPORT_URL = "/report/%s";
-    private final static int REVISION = 4;
-
     private final YamlConfiguration configuration;
     private final Map<Plugin, Set<Plotter>> customData = Collections
             .synchronizedMap(new HashMap<Plugin, Set<Plotter>>());
@@ -205,14 +199,24 @@ public class Metrics {
 
         public abstract int getValue();
 
-        public void reset() {
-        }
-
         @Override
         public int hashCode() {
             return getColumnName().hashCode() + getValue();
         }
+
+        public void reset() {
+        }
     }
+
+    private static final String BASE_URL = "http://metrics.griefcraft.com";
+
+    private static final String CONFIG_FILE = "plugins/PluginMetrics/config.yml";
+
+    private final static int PING_INTERVAL = 10;
+
+    private static final String REPORT_URL = "/report/%s";
+
+    private final static int REVISION = 4;
 
     private static String encode(String text) throws UnsupportedEncodingException {
         return URLEncoder.encode(text, "UTF-8");

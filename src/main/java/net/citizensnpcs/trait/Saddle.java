@@ -12,8 +12,8 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 public class Saddle extends Trait implements Toggleable, Listener {
-    private boolean saddle;
     private final NPC npc;
+    private boolean saddle;
 
     public Saddle(NPC npc) {
         this.npc = npc;
@@ -25,14 +25,20 @@ public class Saddle extends Trait implements Toggleable, Listener {
     }
 
     @Override
-    public void save(DataKey key) {
-        key.setBoolean("", saddle);
-    }
-
-    @Override
     public void onNPCSpawn() {
         if (npc.getBukkitEntity() instanceof Pig)
             ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
+    }
+
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (CitizensAPI.getNPCManager().isNPC(event.getRightClicked()))
+            event.setCancelled(true);
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.setBoolean("", saddle);
     }
 
     @Override
@@ -40,12 +46,6 @@ public class Saddle extends Trait implements Toggleable, Listener {
         saddle = !saddle;
         ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
         return saddle;
-    }
-
-    @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (CitizensAPI.getNPCManager().isNPC(event.getRightClicked()))
-            event.setCancelled(true);
     }
 
     @Override

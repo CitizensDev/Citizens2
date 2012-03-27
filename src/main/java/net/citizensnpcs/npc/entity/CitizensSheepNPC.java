@@ -26,11 +26,6 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
     }
 
     @Override
-    public Sheep getBukkitEntity() {
-        return (Sheep) getHandle().getBukkitEntity();
-    }
-
-    @Override
     public void equip(Player equipper) {
         ItemStack hand = equipper.getItemInHand();
         if (hand.getType() == Material.SHEARS) {
@@ -58,13 +53,13 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         }
     }
 
+    @Override
+    public Sheep getBukkitEntity() {
+        return (Sheep) getHandle().getBukkitEntity();
+    }
+
     public static class EntitySheepNPC extends EntitySheep implements NPCHandle {
         private final NPC npc;
-
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
 
         public EntitySheepNPC(World world, NPC npc) {
             super(world);
@@ -75,6 +70,11 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
 
         @Override
         public void d_() {
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

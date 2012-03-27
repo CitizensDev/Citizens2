@@ -24,11 +24,6 @@ public class CitizensSpiderNPC extends CitizensMobNPC {
     public static class EntitySpiderNPC extends EntitySpider implements NPCHandle {
         private final NPC npc;
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
         public EntitySpiderNPC(World world, NPC npc) {
             super(world);
             this.npc = npc;
@@ -38,6 +33,11 @@ public class CitizensSpiderNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

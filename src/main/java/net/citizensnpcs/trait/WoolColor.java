@@ -35,15 +35,15 @@ public class WoolColor extends Trait implements Listener {
             ((Sheep) npc.getBukkitEntity()).setColor(color);
     }
 
-    @Override
-    public void save(DataKey key) {
-        key.setString("", color.name());
-    }
-
     @EventHandler
     public void onSheepDyeWool(SheepDyeWoolEvent event) {
         if (CitizensAPI.getNPCManager().isNPC(event.getEntity()))
             event.setCancelled(true);
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.setString("", color.name());
     }
 
     public void setColor(DyeColor color) {

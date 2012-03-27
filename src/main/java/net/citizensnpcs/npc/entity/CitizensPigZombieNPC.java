@@ -24,11 +24,6 @@ public class CitizensPigZombieNPC extends CitizensMobNPC {
     public static class EntityPigZombieNPC extends EntityPigZombie implements NPCHandle {
         private final NPC npc;
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
         public EntityPigZombieNPC(World world, NPC npc) {
             super(world);
             this.npc = npc;
@@ -38,6 +33,11 @@ public class CitizensPigZombieNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

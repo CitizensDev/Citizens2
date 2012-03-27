@@ -24,11 +24,6 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
     }
 
     @Override
-    public Enderman getBukkitEntity() {
-        return (Enderman) getHandle().getBukkitEntity();
-    }
-
-    @Override
     public void equip(Player equipper) {
         ItemStack hand = equipper.getItemInHand();
         if (!hand.getType().isBlock()) {
@@ -59,13 +54,13 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         getTrait(Equipment.class).set(0, set);
     }
 
+    @Override
+    public Enderman getBukkitEntity() {
+        return (Enderman) getHandle().getBukkitEntity();
+    }
+
     public static class EntityEndermanNPC extends EntityEnderman implements NPCHandle {
         private final NPC npc;
-
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
 
         public EntityEndermanNPC(World world, NPC npc) {
             super(world);
@@ -80,6 +75,11 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
 
         @Override
         public void e() {
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

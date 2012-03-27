@@ -12,8 +12,8 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 public class Sheared extends Trait implements Toggleable, Listener {
-    private boolean sheared;
     private final NPC npc;
+    private boolean sheared;
 
     public Sheared(NPC npc) {
         this.npc = npc;
@@ -25,14 +25,20 @@ public class Sheared extends Trait implements Toggleable, Listener {
     }
 
     @Override
-    public void save(DataKey key) {
-        key.setBoolean("", sheared);
-    }
-
-    @Override
     public void onNPCSpawn() {
         if (npc.getBukkitEntity() instanceof Sheep)
             ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
+    }
+
+    @EventHandler
+    public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
+        if (CitizensAPI.getNPCManager().isNPC(event.getEntity()))
+            event.setCancelled(true);
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.setBoolean("", sheared);
     }
 
     @Override
@@ -40,12 +46,6 @@ public class Sheared extends Trait implements Toggleable, Listener {
         sheared = !sheared;
         ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
         return sheared;
-    }
-
-    @EventHandler
-    public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
-        if (CitizensAPI.getNPCManager().isNPC(event.getEntity()))
-            event.setCancelled(true);
     }
 
     @Override
