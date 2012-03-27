@@ -35,7 +35,6 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
             @Override
             public void end() {
                 player.sendMessage(ChatColor.AQUA + "Exited the linear waypoint editor.");
-                callback.onProviderChanged();
             }
 
             @EventHandler
@@ -53,6 +52,7 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                     Messaging.send(player,
                             String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining)", waypoints.size()));
                 }
+                callback.onProviderChanged();
             }
         };
     }
