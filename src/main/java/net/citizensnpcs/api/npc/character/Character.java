@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.npc.character;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -46,10 +46,11 @@ public abstract class Character {
     public final void setValidTypes(EntityType... types) {
         if (this.types != null)
             throw new IllegalStateException("Cannot change the valid mob types of a character.");
-
-        this.types = new HashSet<EntityType>();
-        for (EntityType type : types)
-            this.types.add(type);
+        if (types.length == 0) {
+            this.types = EnumSet.noneOf(EntityType.class);
+        } else {
+            this.types = EnumSet.of(types[0], types);
+        }
     }
 
     /**

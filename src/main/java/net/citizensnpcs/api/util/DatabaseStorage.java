@@ -209,7 +209,6 @@ public class DatabaseStorage implements Storage {
                     entry.getValue().foreignKeys.put(key.localColumn, key);
                 }
                 rs.close();
-                System.out.println(entry.getValue());
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -414,6 +413,7 @@ public class DatabaseStorage implements Storage {
                             return INVALID_TRAVERSAL;
                         createForeignKey(table, tables.get(part));
                     }
+                    System.out.println(table + " " + pk + " " + tables);
                     pk = ensureRelation(pk, table, tables.get(part));
                     if (pk == null)
                         return INVALID_TRAVERSAL;
@@ -664,7 +664,8 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public String toString() {
-            return "Table [primaryKey=" + primaryKey + ", foreignKeys=" + foreignKeys + ", columns=" + columns + "]";
+            return "Table {name=" + name + ", primaryKey=" + primaryKey + ", foreignKeys=" + foreignKeys + ", columns="
+                    + columns + "}";
         }
     }
 
@@ -675,4 +676,9 @@ public class DatabaseStorage implements Storage {
     }
 
     private static final Pattern INTEGER = Pattern.compile("([\\+-]?\\d+)([eE][\\+-]?\\d+)?");
+
+    @Override
+    public String toString() {
+        return "DatabaseStorage {url=" + url + ", username=" + username + ", password=" + password + "}";
+    }
 }

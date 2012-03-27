@@ -256,4 +256,9 @@ public class YamlStorage implements Storage {
             config.set(getKeyExt(key), value);
         }
     }
+
+    @Override
+    public String toString() {
+        return "YamlStorage {file=" + file + "}";
+    }
 }
