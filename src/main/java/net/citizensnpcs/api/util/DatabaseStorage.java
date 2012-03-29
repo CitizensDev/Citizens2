@@ -131,6 +131,9 @@ public class DatabaseStorage implements Storage {
     }
 
     private Table createTable(String name, int type, boolean autoIncrement) {
+        Table t = tables.get(name);
+        if (t != null)
+            return t;
         String pk = name + "_id";
         String pkType = "";
         switch (type) {
@@ -186,6 +189,7 @@ public class DatabaseStorage implements Storage {
         try {
             ResultSet rs = conn.getMetaData().getTables(null, null, null, new String[] { "TABLE" });
             while (rs.next()) {
+                System.out.println(rs.getString("TABLE_TYPE"));
                 tables.put(rs.getString("TABLE_NAME"), new Table());
             }
             rs.close();
@@ -386,39 +390,29 @@ public class DatabaseStorage implements Storage {
             String pk = null;
             for (int i = 0; i < parts.length - 1; ++i) {
                 String part = parts[i];
-                if (!tables.containsKey(part)) {
+                boolean contains = tables.containsKey(part);
+                if (table == null) {
+                    if (!createRelations || i + 1 >= parts.length)
+                        return INVALID_TRAVERSAL;
+                    pk = parts[++i];
+                    int type = INTEGER.matcher(pk).matches() ? Types.INTEGER : Types.VARCHAR;
+                    table = createTable(part, type, false);
+                    table.insert(pk);
+                    continue;
+                } else if (!contains) {
+                    createTable(part, Types.INTEGER, true);
+                }
+                Table next = tables.get(part);
+                if (!table.foreignKeys.containsKey("fk_" + part)) {
                     if (!createRelations)
                         return INVALID_TRAVERSAL;
-                    if (table == null) {
-                        if (i + 1 >= parts.length)
-                            return INVALID_TRAVERSAL;
-                        pk = parts[++i];
-                        int type = INTEGER.matcher(pk).matches() ? Types.INTEGER : Types.VARCHAR;
-                        table = createTable(part, type, false);
-                        table.insert(pk);
-                        continue;
-                    } else {
-                        Table old = table;
-                        table = createTable(part, Types.INTEGER, true);
-                        if (table == null)
-                            return INVALID_TRAVERSAL;
-                        createForeignKey(old, table);
-                        pk = ensureRelation(pk, old, table);
-                        if (pk == null)
-                            return INVALID_TRAVERSAL;
-                    }
-                } else {
-                    if (!table.foreignKeys.containsKey("fk_" + part)) {
-                        if (!createRelations)
-                            return INVALID_TRAVERSAL;
-                        createForeignKey(table, tables.get(part));
-                    }
-                    System.out.println(table + " " + pk + " " + tables);
-                    pk = ensureRelation(pk, table, tables.get(part));
-                    if (pk == null)
-                        return INVALID_TRAVERSAL;
-                    table = tables.get(part);
+                    createForeignKey(table, next);
                 }
+                System.out.println(table + " " + pk);
+                pk = ensureRelation(pk, table, next);
+                if (pk == null)
+                    return INVALID_TRAVERSAL;
+                table = next;
             }
             Traversed t = new Traversed(table, pk, parts[parts.length - 1]);
             traverseCache.put(path, t);
