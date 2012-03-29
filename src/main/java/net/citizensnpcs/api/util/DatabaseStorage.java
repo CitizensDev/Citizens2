@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -74,6 +75,8 @@ public class DatabaseStorage implements Storage {
     private final Map<String, Traversed> traverseCache = Maps.newHashMap();
     private final String url, username, password;
 
+    // TODO: cache Connections for speed.
+
     public DatabaseStorage(String driver, String url, String username, String password) throws SQLException {
         url = "jdbc:" + url;
         this.url = url;
@@ -97,7 +100,7 @@ public class DatabaseStorage implements Storage {
             stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` ADD FOREIGN KEY (`" + fk + "`) REFERENCES `"
                     + to.name + "` (`" + to.name + "_id" + "`)");
             stmt.execute();
-            from.addForeignKey(fk, new ForeignKey(to, fk));
+            from.addForeignKey(fk, new ForeignKey(fk));
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -131,6 +134,8 @@ public class DatabaseStorage implements Storage {
     }
 
     private Table createTable(String name, int type, boolean autoIncrement) {
+        if (name == null)
+            throw new IllegalArgumentException("name cannot be null");
         Table t = tables.get(name);
         if (t != null)
             return t;
@@ -153,8 +158,8 @@ public class DatabaseStorage implements Storage {
         PreparedStatement stmt = null;
         Table created = null;
         try {
-            stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + name + ", (`" + pk + "` " + pkType
-                    + " PRIMARY KEY (`" + pk + "`))");
+            stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + name + "(`" + pk + "` " + pkType
+                    + ", PRIMARY KEY (`" + pk + "`))");
             stmt.execute();
             created = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(pkType);
             tables.put(name, created);
@@ -189,7 +194,6 @@ public class DatabaseStorage implements Storage {
         try {
             ResultSet rs = conn.getMetaData().getTables(null, null, null, new String[] { "TABLE" });
             while (rs.next()) {
-                System.out.println(rs.getString("TABLE_TYPE"));
                 tables.put(rs.getString("TABLE_NAME"), new Table());
             }
             rs.close();
@@ -208,8 +212,8 @@ public class DatabaseStorage implements Storage {
                 rs.close();
                 rs = conn.getMetaData().getImportedKeys(null, null, entry.getKey());
                 while (rs.next()) {
-                    ForeignKey key = new ForeignKey(tables.get(rs.getString("FKTABLE_NAME")),
-                            rs.getString("PKCOLUMN_NAME"));
+                    // tables.get(rs.getString("FKTABLE_NAME")),
+                    ForeignKey key = new ForeignKey(rs.getString("PKCOLUMN_NAME"));
                     entry.getValue().foreignKeys.put(key.localColumn, key);
                 }
                 rs.close();
@@ -383,7 +387,8 @@ public class DatabaseStorage implements Storage {
             Traversed prev = traverseCache.get(path);
             if (prev != null)
                 return prev;
-            String[] parts = Iterables.toArray(Splitter.on('.').split(path), String.class);
+            String[] parts = Iterables.toArray(Splitter.on('.').omitEmptyStrings().trimResults().split(path),
+                    String.class);
             if (parts.length < 2)
                 return INVALID_TRAVERSAL; // not enough information given.
             Table table = null;
@@ -397,10 +402,13 @@ public class DatabaseStorage implements Storage {
                     pk = parts[++i];
                     int type = INTEGER.matcher(pk).matches() ? Types.INTEGER : Types.VARCHAR;
                     table = createTable(part, type, false);
+                    if (table == null)
+                        return INVALID_TRAVERSAL;
                     table.insert(pk);
                     continue;
                 } else if (!contains) {
-                    createTable(part, Types.INTEGER, true);
+                    if (createTable(part, Types.INTEGER, true) == null)
+                        return INVALID_TRAVERSAL;
                 }
                 Table next = tables.get(part);
                 if (!table.foreignKeys.containsKey("fk_" + part)) {
@@ -408,7 +416,6 @@ public class DatabaseStorage implements Storage {
                         return INVALID_TRAVERSAL;
                     createForeignKey(table, next);
                 }
-                System.out.println(table + " " + pk);
                 pk = ensureRelation(pk, table, next);
                 if (pk == null)
                     return INVALID_TRAVERSAL;
@@ -585,11 +592,9 @@ public class DatabaseStorage implements Storage {
     }
 
     private static class ForeignKey {
-        final Table foreignTable;
         final String localColumn;
 
-        ForeignKey(Table foreign, String from) {
-            this.foreignTable = foreign;
+        ForeignKey(String from) {
             this.localColumn = from;
         }
     }
@@ -643,11 +648,13 @@ public class DatabaseStorage implements Storage {
         }
 
         public void insert(String primary) {
+            Connection conn = getConnection();
             try {
-                queryRunner.update(getConnection(), "INSERT INTO `" + name + "` (`" + primaryKey + "`) VALUES (?)",
-                        true, primary);
+                queryRunner.update(conn, "INSERT INTO `" + name + "` (`" + primaryKey + "`) VALUES (?)", primary);
             } catch (SQLException ex) {
                 ex.printStackTrace();
+            } finally {
+                DbUtils.closeQuietly(conn);
             }
         }
 
