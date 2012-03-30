@@ -21,8 +21,9 @@ public class Settings {
             if (!root.keyExists(setting.path)) {
                 Messaging.log("Writing default setting: '" + setting.path + "'");
                 root.setRaw(setting.path, setting.get());
-            } else
+            } else {
                 setting.set(root.getRaw(setting.path));
+            }
         }
         config.save();
     }
@@ -33,10 +34,10 @@ public class Settings {
 
     public enum Setting {
         CHAT_PREFIX("npc.chat.prefix", "[<npc>]: "),
-        DATABASE_DRIVER("database.driver", ""),
-        DATABASE_PASSWORD("database.password", ""),
-        DATABASE_URL("database.url", ""),
-        DATABASE_USERNAME("database.username", ""),
+        DATABASE_DRIVER("storage.database.driver", ""),
+        DATABASE_PASSWORD("storage.database.password", ""),
+        DATABASE_URL("storage.database.url", ""),
+        DATABASE_USERNAME("storage.database.username", ""),
         DEBUG_MODE("general.debug-mode", false),
         DEFAULT_LOOK_CLOSE("npc.default.look-close", false),
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", true),
@@ -49,7 +50,8 @@ public class Settings {
         TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 60),
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 30),
         TALK_ITEM("npc.text.talk-item", "340"),
-        USE_DATABASE("database.use", false);
+        STORAGE_TYPE("storage.type", "yaml"),
+        STORAGE_FILE("storage.file", "saves.yml");
 
         private String path;
         private Object value;
