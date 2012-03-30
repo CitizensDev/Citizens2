@@ -3,7 +3,6 @@ package net.citizensnpcs.api.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -128,25 +127,6 @@ public class YamlStorage implements Storage {
         @Override
         public int getInt(String key, int def) {
             return config.getInt(getKeyExt(key), def);
-        }
-
-        @Override
-        public List<DataKey> getIntegerSubKeys() {
-            List<DataKey> res = new ArrayList<DataKey>();
-            ConfigurationSection section = config.getConfigurationSection(current);
-            if (section == null)
-                return res;
-            List<Integer> keys = new ArrayList<Integer>();
-            for (String key : section.getKeys(false)) {
-                try {
-                    keys.add(Integer.parseInt(key));
-                } catch (NumberFormatException ex) {
-                }
-            }
-            Collections.sort(keys);
-            for (int key : keys)
-                res.add(getRelative(Integer.toString(key)));
-            return res;
         }
 
         private String getKeyExt(String from) {

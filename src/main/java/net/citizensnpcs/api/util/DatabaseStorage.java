@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.util;
 
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,6 +13,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import javax.script.AbstractScriptEngine;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -445,6 +453,104 @@ public class DatabaseStorage implements Storage {
             } finally {
                 DbUtils.closeQuietly(conn);
             }
+            ScriptEngine e = new AbstractScriptEngine() {
+
+                @Override
+                public Object eval(String script, ScriptContext context) throws ScriptException {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
+
+                @Override
+                public Object eval(Reader reader, ScriptContext context) throws ScriptException {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
+
+                @Override
+                public Bindings createBindings() {
+                    return new SimpleBindings();
+                }
+
+                @Override
+                public ScriptEngineFactory getFactory() {
+                    // TODO Auto-generated method stub
+                    return new ScriptEngineFactory() {
+
+                        @Override
+                        public String getEngineName() {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public String getEngineVersion() {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public List<String> getExtensions() {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public List<String> getMimeTypes() {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public List<String> getNames() {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public String getLanguageName() {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public String getLanguageVersion() {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public Object getParameter(String key) {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public String getMethodCallSyntax(String obj, String m, String... args) {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public String getOutputStatement(String toDisplay) {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public String getProgram(String... statements) {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+
+                        @Override
+                        public ScriptEngine getScriptEngine() {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+                    };
+                }
+            };
         }
 
         @Override
