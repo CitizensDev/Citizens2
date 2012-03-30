@@ -13,6 +13,7 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
+import net.citizensnpcs.api.util.NBTStorage;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.command.CommandManager;
@@ -144,19 +145,22 @@ public class Citizens extends JavaPlugin {
         config.load();
 
         // NPC storage
-        if (Setting.USE_DATABASE.asBoolean()) {
+        String type = Setting.STORAGE_TYPE.asString();
+        if (type.equalsIgnoreCase("db") || type.equalsIgnoreCase("database")) {
             try {
                 saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
                         Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
-                saves.getKey("test.one").setString("two", "empty");
-                Messaging.log(saves.getKey("test.one").getString("two"));
             } catch (SQLException e) {
                 e.printStackTrace();
                 Messaging.log("Unable to connect to database, falling back to YAML");
-                saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml", "Citizens NPC Storage");
             }
-        } else {
-            saves = new YamlStorage(getDataFolder() + File.separator + "saves.yml", "Citizens NPC Storage");
+        } else if (type.equalsIgnoreCase("nbt")) {
+            saves = new NBTStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
+                    "Citizens NPC Storage");
+        }
+        if (saves == null) {
+            saves = new YamlStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
+                    "Citizens NPC Storage");
         }
 
         Messaging.log("Save method set to", saves.toString());
