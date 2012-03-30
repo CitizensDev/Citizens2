@@ -256,4 +256,9 @@ public class NBTStorage implements Storage {
             putTag(key, new StringTag(getNameFor(key), value));
         }
     }
+
+    @Override
+    public String toString() {
+        return "NBTStorage {file=" + file + "}";
+    }
 }
