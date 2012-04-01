@@ -69,7 +69,7 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
 
     @Override
     public void load(DataKey key) {
-        for (DataKey root : key.getRelative("waypoints").getIntegerSubKeys()) {
+        for (DataKey root : key.getRelative("points").getIntegerSubKeys()) {
             root = root.getRelative("location");
             waypoints.add(new Waypoint(new Location(Bukkit.getWorld(root.getString("world")), root.getDouble("x"), root
                     .getDouble("y"), root.getDouble("z"), (float) root.getDouble("yaw", 0), (float) root.getDouble(
@@ -80,8 +80,8 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
 
     @Override
     public void save(DataKey key) {
-        key.removeKey("waypoints");
-        key = key.getRelative("waypoints");
+        key.removeKey("points");
+        key = key.getRelative("points");
         for (int i = 0; i < waypoints.size(); ++i) {
             Location location = waypoints.get(i).getLocation();
             DataKey root = key.getRelative(Integer.toString(i) + ".location");

@@ -14,6 +14,7 @@
 		<bukkit.version>1.2.4-R0.1-SNAPSHOT</bukkit.version>
 		<craftbukkit.version>1.2.4-R0.1-SNAPSHOT</craftbukkit.version>
 		<citizensapi.version>2.0-SNAPSHOT</citizensapi.version>
+		<rhino.version>1.7R2</rhino.version>
 		<build.number>Unknown</build.number>
 	</properties>
 
@@ -25,7 +26,7 @@
 
 		<repository>
 			<id>everything</id>
-			<url>http://repo.citizensnpcs.net/</url>
+			<url>http://repo.citizensnpcs.net</url>
 		</repository>
 	</repositories>
 
@@ -51,6 +52,11 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+            <groupId>rhino</groupId>
+            <artifactId>js</artifactId>
+            <version>${rhino.version}</version>
+        </dependency>
 	</dependencies>
 
 	<url>http://www.citizensnpcs.net</url>
