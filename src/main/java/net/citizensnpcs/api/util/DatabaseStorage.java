@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.util;
 
-import java.io.Reader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,14 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
-
-import javax.script.AbstractScriptEngine;
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
-import javax.script.ScriptException;
-import javax.script.SimpleBindings;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -82,8 +73,7 @@ public class DatabaseStorage implements Storage {
     private final Map<String, Table> tables = Maps.newHashMap();
     private final Map<String, Traversed> traverseCache = Maps.newHashMap();
     private final String url, username, password;
-
-    // TODO: cache Connections for speed.
+    private Connection conn;
 
     public DatabaseStorage(String driver, String url, String username, String password) throws SQLException {
         url = "jdbc:" + url;
@@ -112,7 +102,7 @@ public class DatabaseStorage implements Storage {
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
-            DbUtils.closeQuietly(conn, stmt, null);
+            DbUtils.closeQuietly(null, stmt, null);
         }
     }
 
@@ -136,8 +126,6 @@ public class DatabaseStorage implements Storage {
         } catch (SQLException ex) {
             ex.printStackTrace();
             return null;
-        } finally {
-            DbUtils.closeQuietly(conn);
         }
     }
 
@@ -173,20 +161,31 @@ public class DatabaseStorage implements Storage {
             tables.put(name, created);
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(conn, stmt, null);
         }
         return created;
     }
 
     private Connection getConnection() {
+        if (conn != null) {
+            // Make a dummy query to check the connection is alive.
+            try {
+                conn.prepareStatement("SELECT 1;").execute();
+            } catch (SQLException ex) {
+                if ("08S01".equals(ex.getSQLState())) {
+                    DbUtils.closeQuietly(conn);
+                }
+            }
+        }
         try {
-            return (username.isEmpty() && password.isEmpty()) ? DriverManager.getConnection(url) : DriverManager
-                    .getConnection(url, username, password);
+            if (conn == null || conn.isClosed()) {
+                conn = (username.isEmpty() && password.isEmpty()) ? DriverManager.getConnection(url) : DriverManager
+                        .getConnection(url, username, password);
+                return conn;
+            }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             return null;
         }
+        return null;
     }
 
     @Override
@@ -228,13 +227,17 @@ public class DatabaseStorage implements Storage {
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(conn);
         }
     }
 
     @Override
     public void save() {
+        DbUtils.commitAndCloseQuietly(conn);
+    }
+
+    @Override
+    public String toString() {
+        return "DatabaseStorage {url=" + url + ", username=" + username + ", password=" + password + "}";
     }
 
     private static class Traversed {
@@ -327,15 +330,12 @@ public class DatabaseStorage implements Storage {
         }
 
         private <T> T getValue(Traversed t, ResultSetHandler<T> resultSetHandler) {
-            Connection conn = getConnection();
             try {
                 return queryRunner.query(getConnection(), "SELECT `" + t.column + "` FROM " + t.found.name + " WHERE `"
                         + t.found.primaryKey + "`=?", resultSetHandler, t.key);
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 return null;
-            } finally {
-                DbUtils.closeQuietly(conn);
             }
         }
 
@@ -450,107 +450,7 @@ public class DatabaseStorage implements Storage {
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
-            } finally {
-                DbUtils.closeQuietly(conn);
             }
-            ScriptEngine e = new AbstractScriptEngine() {
-
-                @Override
-                public Object eval(String script, ScriptContext context) throws ScriptException {
-                    // TODO Auto-generated method stub
-                    return null;
-                }
-
-                @Override
-                public Object eval(Reader reader, ScriptContext context) throws ScriptException {
-                    // TODO Auto-generated method stub
-                    return null;
-                }
-
-                @Override
-                public Bindings createBindings() {
-                    return new SimpleBindings();
-                }
-
-                @Override
-                public ScriptEngineFactory getFactory() {
-                    // TODO Auto-generated method stub
-                    return new ScriptEngineFactory() {
-
-                        @Override
-                        public String getEngineName() {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public String getEngineVersion() {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public List<String> getExtensions() {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public List<String> getMimeTypes() {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public List<String> getNames() {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public String getLanguageName() {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public String getLanguageVersion() {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public Object getParameter(String key) {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public String getMethodCallSyntax(String obj, String m, String... args) {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public String getOutputStatement(String toDisplay) {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public String getProgram(String... statements) {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-
-                        @Override
-                        public ScriptEngine getScriptEngine() {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-                    };
-                }
-            };
         }
 
         @Override
@@ -585,8 +485,6 @@ public class DatabaseStorage implements Storage {
                         + t.found.primaryKey + "` = ?", value.getValue(), t.key);
             } catch (SQLException ex) {
                 ex.printStackTrace();
-            } finally {
-                DbUtils.closeQuietly(conn);
             }
         }
 
@@ -747,8 +645,6 @@ public class DatabaseStorage implements Storage {
                 return rs.getString(primaryKey);
             } catch (SQLException ex) {
                 ex.printStackTrace();
-            } finally {
-                DbUtils.closeQuietly(conn, stmt, rs);
             }
             return null;
         }
@@ -759,8 +655,6 @@ public class DatabaseStorage implements Storage {
                 queryRunner.update(conn, "INSERT INTO `" + name + "` (`" + primaryKey + "`) VALUES (?)", primary);
             } catch (SQLException ex) {
                 ex.printStackTrace();
-            } finally {
-                DbUtils.closeQuietly(conn);
             }
         }
 
@@ -783,9 +677,4 @@ public class DatabaseStorage implements Storage {
     }
 
     private static final Pattern INTEGER = Pattern.compile("([\\+-]?\\d+)([eE][\\+-]?\\d+)?");
-
-    @Override
-    public String toString() {
-        return "DatabaseStorage {url=" + url + ", username=" + username + ", password=" + password + "}";
-    }
 }
