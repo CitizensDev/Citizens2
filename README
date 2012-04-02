@@ -1,10 +1,24 @@
 ---------- Citizens2 README ----------
 
-Citizens is an NPC plugin for the Bukkit API. It was first released on March 5, 2011, and has since seen numerous updates. Citizens
-provides an API itself, which developers can use to create their own NPC characters.
+Citizens is an NPC plugin for the Bukkit API. It was first released on March 5, 2011, and has since seen numerous updates. 
+Citizens provides an API itself, which developers can use to create their own NPC characters.
 
-Compatible With:
+Compatible with:
 -Bukkit 1.2.5-R0.1
 -CitizensAPI 2.0
 -CraftBukkit 1.2.5-R0.1
 -Minecraft 1.2.5
+
+Incompatible with:
+-RPGEssentials - Conficts over /npc command
+-NoCheat - Forces NPCs to not have god mode (and makes them killable)
+
+Since Citizens2 is still in beta, downloads are only available on our Jenkins:
+http://ci.citizensnpcs.net/job/Citizens2/
+
+Bugs:
+If you've discovered a bug, please follow these instructions:
+-Check our JIRA installation ( http://issues.citizensnpcs.net/ ) to make sure the bug hasn't been reported already.
+-Check to make sure that you're on the latest version of Citizens2
+-Report the issue on JIRA ( http://issues.citizensnpcs.net/ ), but make sure to include details such as the Minecraft
+ version, Craftbukkit version, and Citizens2 version, along with the errors pasted on pastebin.
