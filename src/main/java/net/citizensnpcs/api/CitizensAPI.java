@@ -7,12 +7,15 @@ import net.citizensnpcs.api.trait.TraitManager;
 /**
  * Contains methods used in order to utilize the Citizens API.
  */
-public class CitizensAPI {
+public final class CitizensAPI {
     private static final CitizensAPI instance = new CitizensAPI();
 
     private CharacterManager characterManager;
     private NPCManager npcManager;
     private TraitManager traitManager;
+
+    private CitizensAPI() {
+    }
 
     /**
      * Gets the CharacterManager.
