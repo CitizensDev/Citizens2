@@ -48,7 +48,6 @@ import com.google.common.collect.Iterators;
 
 public class Citizens extends JavaPlugin {
     private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
-
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
@@ -132,8 +131,8 @@ public class Citizens extends JavaPlugin {
     @Override
     public void onEnable() {
         // Disable if the server is not using the compatible Minecraft version
-        compatible = ((CraftServer) getServer()).getServer().getVersion().startsWith(COMPATIBLE_MC_VERSION);
         String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
+        compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
         if (!compatible) {
             Messaging.log(Level.SEVERE, "v" + getDescription().getVersion() + " is not compatible with Minecraft v"
                     + mcVersion + ". Disabling.");
