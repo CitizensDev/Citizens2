@@ -2,6 +2,7 @@ package net.citizensnpcs.api;
 
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.character.CharacterManager;
+import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitManager;
 
 /**
@@ -13,6 +14,7 @@ public final class CitizensAPI {
     private CharacterManager characterManager;
     private NPCManager npcManager;
     private TraitManager traitManager;
+    private final ScriptCompiler scriptCompiler = new ScriptCompiler();
 
     private CitizensAPI() {
     }
@@ -33,6 +35,10 @@ public final class CitizensAPI {
      */
     public static NPCManager getNPCManager() {
         return instance.npcManager;
+    }
+
+    public static ScriptCompiler getScriptCompiler() {
+        return instance.scriptCompiler;
     }
 
     /**
