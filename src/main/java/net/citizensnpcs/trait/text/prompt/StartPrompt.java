@@ -24,16 +24,15 @@ public class StartPrompt extends StringPrompt {
             return new TextEditStartPrompt(text);
         else if (input.equalsIgnoreCase("remove"))
             return new TextRemovePrompt(text);
-        else {
-            if (input.equalsIgnoreCase("random"))
-                Messaging.send((Player) context.getForWhom(),
-                        "<e>Random talker <a>set to <e>" + text.toggleRandomTalker() + "<a>.");
-            else if (input.equalsIgnoreCase("close")) {
-                Messaging.send((Player) context.getForWhom(), "<e>Close talker <a>set to <e>" + text.toggle() + "<a>.");
-            } else
-                Messaging.sendError((Player) context.getForWhom(), "Invalid edit type.");
-            return new StartPrompt(text);
-        }
+        else if (input.equalsIgnoreCase("random"))
+            Messaging.send((Player) context.getForWhom(), "<e>Random talker <a>set to <e>" + text.toggleRandomTalker()
+                    + "<a>.");
+        else if (input.equalsIgnoreCase("close"))
+            Messaging.send((Player) context.getForWhom(), "<e>Close talker <a>set to <e>" + text.toggle() + "<a>.");
+        else
+            Messaging.sendError((Player) context.getForWhom(), "Invalid edit type.");
+
+        return new StartPrompt(text);
     }
 
     @Override
