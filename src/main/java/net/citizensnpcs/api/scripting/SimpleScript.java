@@ -62,5 +62,4 @@ public class SimpleScript implements Script {
             return expected.cast(obj);
         return invocable.getInterface(expected);
     }
-
 }

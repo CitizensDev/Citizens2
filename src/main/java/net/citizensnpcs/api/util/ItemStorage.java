@@ -26,7 +26,7 @@ public class ItemStorage {
     }
 
     public static void saveItem(DataKey key, ItemStack item) {
-        key.setInt("id", item.getTypeId());
+        key.setString("item", item.getType().name());
         key.setInt("amount", item.getAmount());
         key.setInt("data", item.getDurability());
 

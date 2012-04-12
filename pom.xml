@@ -12,7 +12,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<bukkit.version>1.2.5-R1.2-SNAPSHOT</bukkit.version>
-        <rhino.version>1.7R2</rhino.version>
+		<rhino.version>1.7R2</rhino.version>
 		<build.number>Unknown</build.number>
 	</properties>
 
@@ -36,10 +36,10 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-            <groupId>rhino</groupId>
-            <artifactId>js</artifactId>
-            <version>${rhino.version}</version>
-        </dependency>
+			<groupId>rhino</groupId>
+			<artifactId>js</artifactId>
+			<version>${rhino.version}</version>
+		</dependency>
 	</dependencies>
 
 	<url>http://www.citizensnpcs.net</url>
