@@ -1,8 +1,13 @@
 package net.citizensnpcs.command.command;
 
+import java.io.File;
+
 import net.citizensnpcs.Citizens;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.scripting.CompileCallback;
+import net.citizensnpcs.api.scripting.ScriptFactory;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
@@ -20,6 +25,28 @@ public class AdminCommands {
 
     public AdminCommands(Citizens plugin) {
         this.plugin = plugin;
+    }
+
+    @Command(
+            aliases = "citizens",
+            modifiers = "script",
+            desc = "compile and run a script",
+            min = 2,
+            max = 2,
+            permission = "scripts.run")
+    @ServerCommand
+    public void runScript(CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
+        File file = new File(args.getString(1));
+        if (!file.exists())
+            throw new CommandException("file doesn't exist!");
+        sender.sendMessage("Could put into queue? "
+                + CitizensAPI.getScriptCompiler().compile(file).withCallback(new CompileCallback() {
+                    @Override
+                    public void onScriptCompiled(ScriptFactory script) {
+                        script.newInstance();
+                        sender.sendMessage("Script compiled.");
+                    }
+                }).begin());
     }
 
     @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "admin")
