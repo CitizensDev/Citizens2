@@ -1,7 +1,5 @@
-package net.citizensnpcs.api.trait;
+package net.citizensnpcs.api.scripting;
 
-import net.citizensnpcs.api.scripting.ContextProvider;
-import net.citizensnpcs.api.scripting.Script;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
