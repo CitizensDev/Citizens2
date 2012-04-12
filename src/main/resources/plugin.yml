@@ -38,3 +38,6 @@ permissions:
           citizens.npc.tp: true
           citizens.npc.tphere: true
           citizens.npc.lookclose: true
+    citizens.script.*:
+      children:
+        citizens.script.run: true
