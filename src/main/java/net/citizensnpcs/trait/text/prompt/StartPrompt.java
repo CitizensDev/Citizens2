@@ -10,7 +10,7 @@ import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 public class StartPrompt extends StringPrompt {
-    private Text text;
+    private final Text text;
 
     public StartPrompt(Text text) {
         this.text = text;

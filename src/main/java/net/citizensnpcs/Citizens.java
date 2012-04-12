@@ -11,6 +11,8 @@ import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.scripting.ScriptCompiler;
+import net.citizensnpcs.api.trait.EventRegistrar;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.NBTStorage;
@@ -177,6 +179,8 @@ public class Citizens extends JavaPlugin {
         // Register commands
         registerCommands();
 
+        registerScriptHelpers();
+
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
 
         Messaging.log("v" + getDescription().getVersion() + " enabled.");
@@ -220,6 +224,12 @@ public class Citizens extends JavaPlugin {
                 }
             }
         }.start();
+    }
+
+    private void registerScriptHelpers() {
+        ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
+        compiler.registerGlobalContextProvider(new EventRegistrar(this));
+
     }
 
     private void registerCommands() {
