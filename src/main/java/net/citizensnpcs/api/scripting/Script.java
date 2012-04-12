@@ -60,5 +60,5 @@ public interface Script {
      *            The expected interface
      * @return The converted class
      */
-    public <T> T asInterface(Object obj, Class<T> expected);
+    public <T> T convertToInterface(Object obj, Class<T> expected);
 }

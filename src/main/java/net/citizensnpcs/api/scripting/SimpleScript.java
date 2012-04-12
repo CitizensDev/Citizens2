@@ -55,7 +55,7 @@ public class SimpleScript implements Script {
     }
 
     @Override
-    public <T> T asInterface(Object obj, Class<T> expected) {
+    public <T> T convertToInterface(Object obj, Class<T> expected) {
         if (obj == null || expected == null)
             throw new IllegalArgumentException("arguments should not be null");
         if (expected.isAssignableFrom(obj.getClass()))
