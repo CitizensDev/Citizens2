@@ -54,8 +54,7 @@ public class Citizens extends JavaPlugin {
     private boolean compatible;
     private Settings config;
     private CitizensNPCManager npcManager;
-    private Storage saves; // TODO: refactor this into an NPCStore (remove
-                           // dependency on Storage).
+    private Storage saves;
     private CitizensTraitManager traitManager;
 
     public CommandManager getCommandManager() {
@@ -229,7 +228,6 @@ public class Citizens extends JavaPlugin {
     private void registerScriptHelpers() {
         ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
         compiler.registerGlobalContextProvider(new EventRegistrar(this));
-
     }
 
     private void registerCommands() {

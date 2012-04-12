@@ -28,25 +28,27 @@ public class AdminCommands {
     }
 
     @Command(
-            aliases = "citizens",
-            modifiers = "script",
-            desc = "compile and run a script",
-            min = 2,
-            max = 2,
-            permission = "scripts.run")
+             aliases = "citizens",
+             modifiers = "script",
+             desc = "compile and run a script",
+             min = 2,
+             max = 2,
+             permission = "script.run")
     @ServerCommand
     public void runScript(CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         File file = new File(args.getString(1));
         if (!file.exists())
-            throw new CommandException("file doesn't exist!");
-        sender.sendMessage("Could put into queue? "
-                + CitizensAPI.getScriptCompiler().compile(file).withCallback(new CompileCallback() {
-                    @Override
-                    public void onScriptCompiled(ScriptFactory script) {
-                        script.newInstance();
-                        sender.sendMessage("Script compiled.");
-                    }
-                }).begin());
+            throw new CommandException("The file '" + args.getString(1) + "' doesn't exist!");
+        Messaging.send(
+                sender,
+                "Could put into queue? "
+                        + CitizensAPI.getScriptCompiler().compile(file).withCallback(new CompileCallback() {
+                            @Override
+                            public void onScriptCompiled(ScriptFactory script) {
+                                script.newInstance();
+                                Messaging.send(sender, "<a>Script compiled!");
+                            }
+                        }).begin());
     }
 
     @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "admin")
@@ -59,13 +61,13 @@ public class AdminCommands {
     }
 
     @Command(
-            aliases = { "citizens" },
-            usage = "reload",
-            desc = "Reload Citizens",
-            modifiers = { "reload" },
-            min = 1,
-            max = 1,
-            permission = "admin")
+             aliases = { "citizens" },
+             usage = "reload",
+             desc = "Reload Citizens",
+             modifiers = { "reload" },
+             min = 1,
+             max = 1,
+             permission = "admin")
     @ServerCommand
     public void reload(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.send(sender, "<e>Reloading Citizens...");
@@ -79,13 +81,13 @@ public class AdminCommands {
     }
 
     @Command(
-            aliases = { "citizens" },
-            usage = "save",
-            desc = "Save NPCs",
-            modifiers = { "save" },
-            min = 1,
-            max = 1,
-            permission = "admin")
+             aliases = { "citizens" },
+             usage = "save",
+             desc = "Save NPCs",
+             modifiers = { "save" },
+             min = 1,
+             max = 1,
+             permission = "admin")
     @ServerCommand
     public void save(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, "<e>Saving Citizens...");
