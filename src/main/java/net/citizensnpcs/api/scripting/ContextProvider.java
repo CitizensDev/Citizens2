@@ -6,9 +6,9 @@ package net.citizensnpcs.api.scripting;
  * level of the script can access the provided functions.
  */
 public interface ContextProvider {
+
     /**
-     * Provides context to a script, such as via
-     * {@link Script#setAttribute(String, Object)}.
+     * Provides context to a script, such as via {@link Script#setAttribute(String, Object)}.
      * 
      * @param script
      *            The script to provide context to.

@@ -23,9 +23,8 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 /**
- * Compiles files into {@link ScriptFactory}s. Intended for use as a separate
- * thread - {@link ScriptCompiler#run()} will block while waiting for new tasks
- * to compile.
+ * Compiles files into {@link ScriptFactory}s. Intended for use as a separate thread - {@link ScriptCompiler#run()} will
+ * block while waiting for new tasks to compile.
  */
 public class ScriptCompiler implements Runnable {
     private final ScriptEngineManager engineManager = new ScriptEngineManager();
@@ -67,8 +66,7 @@ public class ScriptCompiler implements Runnable {
     }
 
     /**
-     * Registers a global {@link ContextProvider}, which will be invoked on all
-     * scripts created by this ScriptCompiler.
+     * Registers a global {@link ContextProvider}, which will be invoked on all scripts created by this ScriptCompiler.
      * 
      * @param provider
      *            The global provider

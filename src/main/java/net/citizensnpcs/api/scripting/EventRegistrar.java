@@ -8,12 +8,15 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
+/**
+ * TODO: Add JavaDoc
+ */
 public class EventRegistrar implements ContextProvider {
     private final Plugin plugin;
 
     public EventRegistrar(Plugin plugin) {
         if (plugin == null || !plugin.isEnabled())
-            throw new IllegalArgumentException("invalid plugin supplied");
+            throw new IllegalArgumentException("Invalid plugin passed to EventRegistrar. Is it enabled?");
         this.plugin = plugin;
     }
 
@@ -38,7 +41,7 @@ public class EventRegistrar implements ContextProvider {
         private void registerEvent(final Object object, final String functionName,
                 final Class<? extends Event> eventClass) {
             if (!plugin.isEnabled())
-                throw new IllegalStateException("plugin is no longer valid");
+                throw new IllegalStateException("Plugin is no longer valid.");
             PluginManager manager = plugin.getServer().getPluginManager();
             manager.registerEvent(eventClass, new Listener() {
             }, EventPriority.NORMAL, new EventExecutor() {
