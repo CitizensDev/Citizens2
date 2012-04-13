@@ -235,11 +235,10 @@ public class CommandManager {
             boolean isStatic = Modifier.isStatic(method.getModifiers());
 
             Command cmd = method.getAnnotation(Command.class);
-            String[] modifiers = cmd.modifiers();
 
             // Cache the aliases too
             for (String alias : cmd.aliases()) {
-                for (String modifier : modifiers) {
+                for (String modifier : cmd.modifiers()) {
                     commands.put(alias + " " + modifier, method);
                 }
             }

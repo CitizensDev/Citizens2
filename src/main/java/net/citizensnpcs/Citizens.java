@@ -24,6 +24,7 @@ import net.citizensnpcs.command.command.AdminCommands;
 import net.citizensnpcs.command.command.EditorCommands;
 import net.citizensnpcs.command.command.HelpCommands;
 import net.citizensnpcs.command.command.NPCCommands;
+import net.citizensnpcs.command.command.ScriptCommands;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
 import net.citizensnpcs.command.exception.ServerCommandException;
@@ -131,6 +132,7 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Messaging.log(System.getProperty("java.class.path"));
         // Disable if the server is not using the compatible Minecraft version
         String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
         compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
@@ -225,11 +227,6 @@ public class Citizens extends JavaPlugin {
         }.start();
     }
 
-    private void registerScriptHelpers() {
-        ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
-        compiler.registerGlobalContextProvider(new EventRegistrar(this));
-    }
-
     private void registerCommands() {
         commands.setInjector(new Injector(this));
 
@@ -238,6 +235,12 @@ public class Citizens extends JavaPlugin {
         commands.register(EditorCommands.class);
         commands.register(HelpCommands.class);
         commands.register(NPCCommands.class);
+        commands.register(ScriptCommands.class);
+    }
+
+    private void registerScriptHelpers() {
+        ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
+        compiler.registerGlobalContextProvider(new EventRegistrar(this));
     }
 
     public void reload() throws NPCLoadException {
