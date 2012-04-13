@@ -4,6 +4,8 @@ version: 2.0
 main: net.citizensnpcs.Citizens
 website: http://www.citizensnpcs.net
 commands:
+  script:
+    description: Scripting commands
   citizens:
     description: Administration commands
   npc:
@@ -14,30 +16,23 @@ permissions:
     children:
       citizens.admin: true
       citizens.help: true
+      citizens.script.*:
+        children:
+            citizens.script.compile: true
       citizens.npc.*:
         children:
-          citizens.npc.age: true
           citizens.npc.character.*: true
           citizens.npc.create: true
           citizens.npc.despawn: true
-          citizens.npc.edit.*:
-            children:
-              citizens.npc.edit.equip: true
-              citizens.npc.edit.path: true
-              citizens.npc.edit.text: true
+          citizens.npc.equip: true
           citizens.npc.help: true
-          citizens.npc.list: true
-          citizens.npc.owner: true
-          citizens.npc.power: true
+          citizens.npc.path: true
           citizens.npc.remove: true
           citizens.npc.remove.all: true
           citizens.npc.rename: true
           citizens.npc.select: true
           citizens.npc.spawn: true
-          citizens.npc.talk: true
+          citizens.npc.text: true
           citizens.npc.tp: true
           citizens.npc.tphere: true
           citizens.npc.lookclose: true
-    citizens.script.*:
-      children:
-        citizens.script.run: true
