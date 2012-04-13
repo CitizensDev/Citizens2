@@ -9,15 +9,19 @@ import net.citizensnpcs.api.trait.TraitManager;
  * Contains methods used in order to utilize the Citizens API.
  */
 public final class CitizensAPI {
-    private static final CitizensAPI instance = new CitizensAPI();
-
     private CharacterManager characterManager;
     private NPCManager npcManager;
+    private final ScriptCompiler scriptCompiler;
     private TraitManager traitManager;
-    private final ScriptCompiler scriptCompiler = new ScriptCompiler();
+    {
+        scriptCompiler = new ScriptCompiler();
+        new Thread(scriptCompiler).start();
+    }
 
     private CitizensAPI() {
     }
+
+    private static final CitizensAPI instance = new CitizensAPI();
 
     /**
      * Gets the CharacterManager.

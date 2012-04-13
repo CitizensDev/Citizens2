@@ -63,6 +63,11 @@ public class YamlStorage implements Storage {
         }
     }
 
+    @Override
+    public String toString() {
+        return "YamlStorage {file=" + file + "}";
+    }
+
     public class YamlKey extends DataKey {
         private final String current;
 
@@ -235,10 +240,5 @@ public class YamlStorage implements Storage {
         public void setString(String key, String value) {
             config.set(getKeyExt(key), value);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "YamlStorage {file=" + file + "}";
     }
 }

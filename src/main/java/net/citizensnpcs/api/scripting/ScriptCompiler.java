@@ -23,8 +23,9 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 /**
- * Compiles files into {@link ScriptFactory}s. Intended for use as a separate thread - {@link ScriptCompiler#run()} will
- * block while waiting for new tasks to compile.
+ * Compiles files into {@link ScriptFactory}s. Intended for use as a separate
+ * thread - {@link ScriptCompiler#run()} will block while waiting for new tasks
+ * to compile.
  */
 public class ScriptCompiler implements Runnable {
     private final ScriptEngineManager engineManager = new ScriptEngineManager();
@@ -66,7 +67,8 @@ public class ScriptCompiler implements Runnable {
     }
 
     /**
-     * Registers a global {@link ContextProvider}, which will be invoked on all scripts created by this ScriptCompiler.
+     * Registers a global {@link ContextProvider}, which will be invoked on all
+     * scripts created by this ScriptCompiler.
      * 
      * @param provider
      *            The global provider
@@ -82,27 +84,35 @@ public class ScriptCompiler implements Runnable {
     @Override
     public void run() {
         try {
-            CompileTask task = toCompile.take();
-            for (FileEngine engine : task.files) {
-                Compilable compiler = (Compilable) engine.engine;
-                Reader reader = null;
-                try {
-                    reader = new FileReader(engine.file);
-                    CompiledScript src = compiler.compile(reader);
-                    for (CompileCallback callback : task.callbacks) {
-                        synchronized (callback) {
-                            callback.onScriptCompiled(new SimpleScriptFactory(src, task.contextProviders));
+            while (true) {
+                CompileTask task = toCompile.take();
+                for (FileEngine engine : task.files) {
+                    Compilable compiler = (Compilable) engine.engine;
+                    Reader reader = null;
+                    try {
+                        reader = new FileReader(engine.file);
+                        synchronized (compiler) {
+                            CompiledScript src = compiler.compile(reader);
+                            for (CompileCallback callback : task.callbacks) {
+                                synchronized (callback) {
+                                    callback.onScriptCompiled(new SimpleScriptFactory(src, task.contextProviders));
+                                }
+                            }
                         }
+                    } catch (IOException e) {
+                        System.err.println("[Citizens]: IO fail while reading " + engine.file + " for scripting.");
+                        e.printStackTrace();
+                    } catch (ScriptException e) {
+                        System.err.println("[Citizens]: Compile error while parsing script at " + engine.file.getName()
+                                + ".");
+                        e.printStackTrace();
+                    } catch (Throwable t) {
+                        System.err.println("[Citizens]: Unexpected error while parsing script at "
+                                + engine.file.getName() + ".");
+                        t.printStackTrace();
+                    } finally {
+                        Closeables.closeQuietly(reader);
                     }
-                } catch (IOException ex) {
-                    System.err.println("[Citizens]: IO fail while reading " + engine.file + " for scripting.");
-                    ex.printStackTrace();
-                } catch (ScriptException e) {
-                    System.err.println("[Citizens]: Compile error while parsing script at " + engine.file.getName()
-                            + ".");
-                    e.printStackTrace();
-                } finally {
-                    Closeables.closeQuietly(reader);
                 }
             }
         } catch (InterruptedException e) {

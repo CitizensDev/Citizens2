@@ -127,13 +127,6 @@ public class RhinoScriptEngine extends AbstractScriptEngine implements Invocable
         return this;
     }
 
-    private static Object unwrapReturnValue(Object obj) {
-        if (obj instanceof Wrapper) {
-            obj = ((Wrapper) obj).unwrap();
-        }
-        return obj instanceof Undefined ? null : obj;
-    }
-
     public static class RhinoCompiledScript extends CompiledScript {
         private final ScriptEngine engine;
         private final Script script;
@@ -159,5 +152,12 @@ public class RhinoScriptEngine extends AbstractScriptEngine implements Invocable
         public ScriptEngine getEngine() {
             return this.engine;
         }
+    }
+
+    private static Object unwrapReturnValue(Object obj) {
+        if (obj instanceof Wrapper) {
+            obj = ((Wrapper) obj).unwrap();
+        }
+        return obj instanceof Undefined ? null : obj;
     }
 }

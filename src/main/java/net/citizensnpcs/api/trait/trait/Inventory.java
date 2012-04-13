@@ -31,6 +31,13 @@ public class Inventory extends Trait {
         contents = parseContents(key);
     }
 
+    private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
+        ItemStack[] contents = new ItemStack[36];
+        for (DataKey slotKey : key.getIntegerSubKeys())
+            contents[Integer.parseInt(slotKey.name())] = ItemStorage.loadItemStack(slotKey);
+        return contents;
+    }
+
     @Override
     public void save(DataKey key) {
         int slot = 0;
@@ -51,13 +58,6 @@ public class Inventory extends Trait {
      */
     public void setContents(ItemStack[] contents) {
         this.contents = contents;
-    }
-
-    private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
-        ItemStack[] contents = new ItemStack[36];
-        for (DataKey slotKey : key.getIntegerSubKeys())
-            contents[Integer.parseInt(slotKey.name())] = ItemStorage.loadItemStack(slotKey);
-        return contents;
     }
 
     @Override

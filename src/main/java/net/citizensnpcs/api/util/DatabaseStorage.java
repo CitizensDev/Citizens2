@@ -68,13 +68,11 @@ import com.google.common.collect.Maps;
  * </ul>
  */
 public class DatabaseStorage implements Storage {
-    private static final Traversed INVALID_TRAVERSAL = new Traversed(null, null, null);
+    private Connection conn;
     private final QueryRunner queryRunner = new QueryRunner();
     private final Map<String, Table> tables = Maps.newHashMap();
     private final Map<String, Traversed> traverseCache = Maps.newHashMap();
     private final String url, username, password;
-    private Connection conn;
-
     public DatabaseStorage(String driver, String url, String username, String password) throws SQLException {
         url = "jdbc:" + url;
         this.url = url;
@@ -103,29 +101,6 @@ public class DatabaseStorage implements Storage {
             ex.printStackTrace();
         } finally {
             DbUtils.closeQuietly(null, stmt, null);
-        }
-    }
-
-    private String ensureRelation(String pk, Table from, final Table to) {
-        Connection conn = getConnection();
-        try {
-            String existing = queryRunner.query(conn, "SELECT `fk_" + to.name + "` FROM " + from.name + " WHERE "
-                    + from.primaryKey + " = ?", new ResultSetHandler<String>() {
-                @Override
-                public String handle(ResultSet rs) throws SQLException {
-                    return rs.getString("fk_" + to.name);
-                }
-            }, pk);
-            if (existing == null) {
-                String generated = to.generateRow();
-                queryRunner.update(conn, "UPDATE `" + from.name + "` SET `fk_" + to.name + "=?", generated);
-                return generated;
-            } else {
-                return existing;
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return null;
         }
     }
 
@@ -163,6 +138,29 @@ public class DatabaseStorage implements Storage {
             ex.printStackTrace();
         }
         return created;
+    }
+
+    private String ensureRelation(String pk, Table from, final Table to) {
+        Connection conn = getConnection();
+        try {
+            String existing = queryRunner.query(conn, "SELECT `fk_" + to.name + "` FROM " + from.name + " WHERE "
+                    + from.primaryKey + " = ?", new ResultSetHandler<String>() {
+                @Override
+                public String handle(ResultSet rs) throws SQLException {
+                    return rs.getString("fk_" + to.name);
+                }
+            }, pk);
+            if (existing == null) {
+                String generated = to.generateRow();
+                queryRunner.update(conn, "UPDATE `" + from.name + "` SET `fk_" + to.name + "=?", generated);
+                return generated;
+            } else {
+                return existing;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     private Connection getConnection() {
@@ -240,16 +238,10 @@ public class DatabaseStorage implements Storage {
         return "DatabaseStorage {url=" + url + ", username=" + username + ", password=" + password + "}";
     }
 
-    private static class Traversed {
-        private final Table found;
-        private final String key;
-        private final String column;
+    private static interface ColumnProvider {
+        public String getType();
 
-        Traversed(Table found, String pk, String column) {
-            this.found = found;
-            this.key = pk;
-            this.column = column;
-        }
+        public Object getValue();
     }
 
     public class DatabaseKey extends DataKey {
@@ -329,16 +321,6 @@ public class DatabaseStorage implements Storage {
             return value == null ? 0 : value;
         }
 
-        private <T> T getValue(Traversed t, ResultSetHandler<T> resultSetHandler) {
-            try {
-                return queryRunner.query(getConnection(), "SELECT `" + t.column + "` FROM " + t.found.name + " WHERE `"
-                        + t.found.primaryKey + "`=?", resultSetHandler, t.key);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                return null;
-            }
-        }
-
         @Override
         public Object getRaw(String key) {
             final Traversed t = traverse(createRelativeKey(key), false);
@@ -380,6 +362,16 @@ public class DatabaseStorage implements Storage {
             return null;
         }
 
+        private <T> T getValue(Traversed t, ResultSetHandler<T> resultSetHandler) {
+            try {
+                return queryRunner.query(getConnection(), "SELECT `" + t.column + "` FROM " + t.found.name + " WHERE `"
+                        + t.found.primaryKey + "`=?", resultSetHandler, t.key);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        }
+
         @Override
         public boolean keyExists(String key) {
             return traverse(createRelativeKey(key), false) != INVALID_TRAVERSAL;
@@ -389,6 +381,136 @@ public class DatabaseStorage implements Storage {
         public String name() {
             Traversed t = traverse(current, true);
             return t.key != null ? t.key : t.found.name;
+        }
+
+        @Override
+        public void removeKey(String key) {
+            Traversed t = traverse(createRelativeKey(key), false);
+            if (t == INVALID_TRAVERSAL)
+                return;
+            Connection conn = getConnection();
+            try {
+                if (t.found.columns.contains(t.column)) {
+                    queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`=? WHERE `"
+                            + t.found.primaryKey + "`=?", null, t.key);
+                } else {
+                    queryRunner.update(conn, "DELETE FROM `" + t.found.name + "` WHERE `" + t.found.primaryKey + "=?",
+                            t.key);
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public void setBoolean(String key, final boolean value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public String getType() {
+                    return "SMALLINT";
+                }
+
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+            });
+        }
+
+        // why I wish Java had lambdas...
+        @Override
+        public void setDouble(String key, final double value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public String getType() {
+                    return "DOUBLE";
+                }
+
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+            });
+        }
+
+        @Override
+        public void setInt(String key, final int value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public String getType() {
+                    return "STRING";
+                }
+
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+            });
+        }
+
+        @Override
+        public void setLong(String key, final long value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public String getType() {
+                    return "BIGINT";
+                }
+
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+            });
+        }
+
+        @Override
+        public void setRaw(String key, final Object value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public String getType() {
+                    return "JAVA_OBJECT";
+                }
+
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+            });
+        }
+
+        @Override
+        public void setString(String key, final String value) {
+            setValue(key, new ColumnProvider() {
+                @Override
+                public String getType() {
+                    return "VARCHAR";
+                }
+
+                @Override
+                public Object getValue() {
+                    return value;
+                }
+            });
+        }
+
+        private void setValue(String key, ColumnProvider value) {
+            Traversed t = traverse(createRelativeKey(key), true);
+            if (t == INVALID_TRAVERSAL)
+                throw new IllegalStateException("could not set " + value + " at " + key);
+            Connection conn = getConnection();
+            try {
+                if (!t.found.columns.contains(t.column)) {
+                    PreparedStatement stmt = conn.prepareStatement("ALTER TABLE `" + t.found.name + "` ADD `"
+                            + t.column + "` " + value.getType());
+                    stmt.execute();
+                    DbUtils.closeQuietly(stmt);
+                    t.found.columns.add(t.column);
+                }
+                queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`= ? WHERE `"
+                        + t.found.primaryKey + "` = ?", value.getValue(), t.key);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
 
         private Traversed traverse(String path, boolean createRelations) {
@@ -432,136 +554,6 @@ public class DatabaseStorage implements Storage {
             Traversed t = new Traversed(table, pk, parts[parts.length - 1]);
             traverseCache.put(path, t);
             return t;
-        }
-
-        @Override
-        public void removeKey(String key) {
-            Traversed t = traverse(createRelativeKey(key), false);
-            if (t == INVALID_TRAVERSAL)
-                return;
-            Connection conn = getConnection();
-            try {
-                if (t.found.columns.contains(t.column)) {
-                    queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`=? WHERE `"
-                            + t.found.primaryKey + "`=?", null, t.key);
-                } else {
-                    queryRunner.update(conn, "DELETE FROM `" + t.found.name + "` WHERE `" + t.found.primaryKey + "=?",
-                            t.key);
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        @Override
-        public void setBoolean(String key, final boolean value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-
-                @Override
-                public String getType() {
-                    return "SMALLINT";
-                }
-            });
-        }
-
-        private void setValue(String key, ColumnProvider value) {
-            Traversed t = traverse(createRelativeKey(key), true);
-            if (t == INVALID_TRAVERSAL)
-                throw new IllegalStateException("could not set " + value + " at " + key);
-            Connection conn = getConnection();
-            try {
-                if (!t.found.columns.contains(t.column)) {
-                    PreparedStatement stmt = conn.prepareStatement("ALTER TABLE `" + t.found.name + "` ADD `"
-                            + t.column + "` " + value.getType());
-                    stmt.execute();
-                    DbUtils.closeQuietly(stmt);
-                    t.found.columns.add(t.column);
-                }
-                queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`= ? WHERE `"
-                        + t.found.primaryKey + "` = ?", value.getValue(), t.key);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        // why I wish Java had lambdas...
-        @Override
-        public void setDouble(String key, final double value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-
-                @Override
-                public String getType() {
-                    return "DOUBLE";
-                }
-            });
-        }
-
-        @Override
-        public void setInt(String key, final int value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-
-                @Override
-                public String getType() {
-                    return "STRING";
-                }
-            });
-        }
-
-        @Override
-        public void setLong(String key, final long value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-
-                @Override
-                public String getType() {
-                    return "BIGINT";
-                }
-            });
-        }
-
-        @Override
-        public void setRaw(String key, final Object value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-
-                @Override
-                public String getType() {
-                    return "JAVA_OBJECT";
-                }
-            });
-        }
-
-        @Override
-        public void setString(String key, final String value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-
-                @Override
-                public String getType() {
-                    return "VARCHAR";
-                }
-            });
         }
     }
 
@@ -610,19 +602,9 @@ public class DatabaseStorage implements Storage {
         String primaryKey;
         String primaryKeyType;
 
-        public Table setName(String tableName) {
-            name = tableName;
-            return this;
-        }
-
         public void addForeignKey(String fk, ForeignKey foreignKey) {
             foreignKeys.put(fk, foreignKey);
             columns.add(fk);
-        }
-
-        public Table setPrimaryKeyType(String type) {
-            primaryKeyType = type;
-            return this;
         }
 
         public String generateRow() {
@@ -658,8 +640,18 @@ public class DatabaseStorage implements Storage {
             }
         }
 
+        public Table setName(String tableName) {
+            name = tableName;
+            return this;
+        }
+
         public Table setPrimaryKey(String pk) {
             this.primaryKey = pk;
+            return this;
+        }
+
+        public Table setPrimaryKeyType(String type) {
+            primaryKeyType = type;
             return this;
         }
 
@@ -670,11 +662,19 @@ public class DatabaseStorage implements Storage {
         }
     }
 
-    private static interface ColumnProvider {
-        public String getType();
+    private static class Traversed {
+        private final String column;
+        private final Table found;
+        private final String key;
 
-        public Object getValue();
+        Traversed(Table found, String pk, String column) {
+            this.found = found;
+            this.key = pk;
+            this.column = column;
+        }
     }
 
     private static final Pattern INTEGER = Pattern.compile("([\\+-]?\\d+)([eE][\\+-]?\\d+)?");
+
+    private static final Traversed INVALID_TRAVERSAL = new Traversed(null, null, null);
 }

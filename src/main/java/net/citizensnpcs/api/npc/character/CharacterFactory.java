@@ -23,30 +23,6 @@ public final class CharacterFactory {
     }
 
     /**
-     * Assigns a name to the character. This is used as a key to save character
-     * data.
-     * 
-     * @param name
-     *            Name to assign to the character
-     */
-    public CharacterFactory withName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    /**
-     * Specifies which mob types that the character can be given upon creation.
-     * Default is all types.
-     * 
-     * @param types
-     *            List of types that the character can be
-     */
-    public CharacterFactory withTypes(EntityType... types) {
-        this.types = types;
-        return this;
-    }
-
-    /**
      * Creates a character using the parameters specified using the factory's
      * methods.
      * 
@@ -72,5 +48,29 @@ public final class CharacterFactory {
         }
 
         return create;
+    }
+
+    /**
+     * Assigns a name to the character. This is used as a key to save character
+     * data.
+     * 
+     * @param name
+     *            Name to assign to the character
+     */
+    public CharacterFactory withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    /**
+     * Specifies which mob types that the character can be given upon creation.
+     * Default is all types.
+     * 
+     * @param types
+     *            List of types that the character can be
+     */
+    public CharacterFactory withTypes(EntityType... types) {
+        this.types = types;
+        return this;
     }
 }

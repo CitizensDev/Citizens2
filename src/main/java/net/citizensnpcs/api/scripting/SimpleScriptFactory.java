@@ -4,8 +4,8 @@ import javax.script.CompiledScript;
 import javax.script.ScriptException;
 
 public class SimpleScriptFactory implements ScriptFactory {
-    private final CompiledScript src;
     private final ContextProvider[] providers;
+    private final CompiledScript src;
 
     SimpleScriptFactory(CompiledScript src, ContextProvider... providers) {
         if (src == null)
@@ -21,6 +21,7 @@ public class SimpleScriptFactory implements ScriptFactory {
         try {
             return new SimpleScript(src, providers);
         } catch (ScriptException e) {
+            e.printStackTrace();
             return null;
         }
     }

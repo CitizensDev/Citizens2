@@ -10,14 +10,26 @@ import org.bukkit.event.HandlerList;
  * Represents an event where an NPC was clicked by a player.
  */
 public class NPCClickEvent extends NPCEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-
-    private final Player clicker;
     private boolean cancelled = false;
 
+    private final Player clicker;
     protected NPCClickEvent(NPC npc, Player clicker) {
         super(npc);
         this.clicker = clicker;
+    }
+
+    /**
+     * Gets the player that clicked the NPC.
+     * 
+     * @return Player that clicked the NPC
+     */
+    public Player getClicker() {
+        return clicker;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
     }
 
     @Override
@@ -30,19 +42,7 @@ public class NPCClickEvent extends NPCEvent implements Cancellable {
         this.cancelled = cancelled;
     }
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    /**
-     * Gets the player that clicked the NPC.
-     * 
-     * @return Player that clicked the NPC
-     */
-    public Player getClicker() {
-        return clicker;
-    }
+    private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
         return handlers;

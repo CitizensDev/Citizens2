@@ -51,6 +51,11 @@ public final class CompoundTag extends Tag {
      */
     private final Map<String, Tag> value;
 
+    public CompoundTag(String name) {
+        super(name);
+        this.value = Maps.newHashMap();
+    }
+
     /**
      * Creates the tag.
      * 
@@ -62,11 +67,6 @@ public final class CompoundTag extends Tag {
     public CompoundTag(String name, Map<String, Tag> value) {
         super(name);
         this.value = Collections.unmodifiableMap(value);
-    }
-
-    public CompoundTag(String name) {
-        super(name);
-        this.value = Maps.newHashMap();
     }
 
     @Override

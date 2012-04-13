@@ -19,6 +19,14 @@ public interface AI {
     public void addGoal(int priority, Goal goal);
 
     /**
+     * Cancels the destination of this AI.
+     * 
+     * @see AI#setDestination(Location)
+     * @see AI#setTarget(LivingEntity, boolean)
+     */
+    public void cancelDestination();
+
+    /**
      * Returns whether this AI is currently pathing towards an {@link Entity} or
      * {@link Location}.
      * 
@@ -53,12 +61,4 @@ public interface AI {
      *            Whether the targeting entity should attack
      */
     public void setTarget(LivingEntity target, boolean aggressive);
-
-    /**
-     * Cancels the destination of this AI.
-     * 
-     * @see AI#setDestination(Location)
-     * @see AI#setTarget(LivingEntity, boolean)
-     */
-    public void cancelDestination();
 }

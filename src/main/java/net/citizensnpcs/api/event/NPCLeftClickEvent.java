@@ -9,8 +9,6 @@ import org.bukkit.event.HandlerList;
  * Called when an NPC is left-clicked by a player.
  */
 public class NPCLeftClickEvent extends NPCClickEvent {
-    private static final HandlerList handlers = new HandlerList();
-
     public NPCLeftClickEvent(NPC npc, Player leftClicker) {
         super(npc, leftClicker);
     }
@@ -19,6 +17,8 @@ public class NPCLeftClickEvent extends NPCClickEvent {
     public HandlerList getHandlers() {
         return handlers;
     }
+
+    private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
         return handlers;

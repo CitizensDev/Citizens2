@@ -12,19 +12,13 @@ import net.citizensnpcs.api.util.DataKey;
 public class Owner extends Trait {
     private String owner = "server";
 
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        try {
-            owner = key.getString("");
-        } catch (Exception ex) {
-            owner = "notch";
-            throw new NPCLoadException("Invalid owner.");
-        }
-    }
-
-    @Override
-    public void save(DataKey key) {
-        key.setString("", owner);
+    /**
+     * Gets the owner of an NPC.
+     * 
+     * @return Name of the owner of an NPC
+     */
+    public String getOwner() {
+        return owner;
     }
 
     /**
@@ -39,13 +33,19 @@ public class Owner extends Trait {
                 || (owner.equals("server") && player.hasPermission("citizens.admin"));
     }
 
-    /**
-     * Gets the owner of an NPC.
-     * 
-     * @return Name of the owner of an NPC
-     */
-    public String getOwner() {
-        return owner;
+    @Override
+    public void load(DataKey key) throws NPCLoadException {
+        try {
+            owner = key.getString("");
+        } catch (Exception ex) {
+            owner = "notch";
+            throw new NPCLoadException("Invalid owner.");
+        }
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.setString("", owner);
     }
 
     /**

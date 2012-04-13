@@ -28,9 +28,9 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 public class NBTStorage implements Storage {
-    private final Map<String, Tag> root = Maps.newHashMap();
     private final File file;
     private final String name;
+    private final Map<String, Tag> root = Maps.newHashMap();
 
     public NBTStorage(String file) {
         this(file, "root");
@@ -90,8 +90,17 @@ public class NBTStorage implements Storage {
         }
     }
 
+    @Override
+    public String toString() {
+        return "NBTStorage {file=" + file + "}";
+    }
+
     public class NBTKey extends DataKey {
         private final String current;
+
+        public NBTKey(String root) {
+            this.current = root;
+        }
 
         private String createRelativeKey(String from) {
             if (from.isEmpty())
@@ -99,18 +108,6 @@ public class NBTStorage implements Storage {
             if (from.charAt(0) == '.')
                 return current.isEmpty() ? from.substring(1, from.length()) : current + from;
             return current.isEmpty() ? from : current + "." + from;
-        }
-
-        public NBTKey(String root) {
-            this.current = root;
-        }
-
-        @Override
-        public boolean getBoolean(String key) {
-            Tag tag = findLastTag(key);
-            if (tag == null || !(tag instanceof ByteTag))
-                return false;
-            return ((ByteTag) tag).getValue() != 0;
         }
 
         private Map<String, Tag> findLastParent(String key) {
@@ -138,6 +135,14 @@ public class NBTStorage implements Storage {
         }
 
         @Override
+        public boolean getBoolean(String key) {
+            Tag tag = findLastTag(key);
+            if (tag == null || !(tag instanceof ByteTag))
+                return false;
+            return ((ByteTag) tag).getValue() != 0;
+        }
+
+        @Override
         public double getDouble(String key) {
             Tag tag = findLastTag(key);
             if (tag == null || !(tag instanceof DoubleTag))
@@ -159,6 +164,11 @@ public class NBTStorage implements Storage {
             if (tag == null || !(tag instanceof LongTag))
                 return 0;
             return ((LongTag) tag).getValue();
+        }
+
+        private String getNameFor(String key) {
+            String[] parts = Iterables.toArray(Splitter.on('.').split(createRelativeKey(key)), String.class);
+            return parts[parts.length - 1];
         }
 
         @Override
@@ -202,23 +212,6 @@ public class NBTStorage implements Storage {
             return current.substring(last == 0 ? 0 : last + 1);
         }
 
-        @Override
-        public void removeKey(String key) {
-            String[] parts = Iterables.toArray(Splitter.on('.').split(key), String.class);
-            Map<String, Tag> parent = findLastParent(createRelativeKey(key));
-            parent.remove(parts[parts.length - 1]);
-        }
-
-        @Override
-        public void setBoolean(String key, boolean value) {
-            putTag(key, new ByteTag(getNameFor(key), (byte) (value ? 1 : 0)));
-        }
-
-        private String getNameFor(String key) {
-            String[] parts = Iterables.toArray(Splitter.on('.').split(createRelativeKey(key)), String.class);
-            return parts[parts.length - 1];
-        }
-
         private void putTag(String key, Tag tag) {
             String[] parts = Iterables.toArray(Splitter.on('.').split(createRelativeKey(key)), String.class);
             Map<String, Tag> parent = root;
@@ -229,6 +222,18 @@ public class NBTStorage implements Storage {
                 parent = ((CompoundTag) parent.get(parts[i])).getValue();
             }
             parent.put(tag.getName(), tag);
+        }
+
+        @Override
+        public void removeKey(String key) {
+            String[] parts = Iterables.toArray(Splitter.on('.').split(key), String.class);
+            Map<String, Tag> parent = findLastParent(createRelativeKey(key));
+            parent.remove(parts[parts.length - 1]);
+        }
+
+        @Override
+        public void setBoolean(String key, boolean value) {
+            putTag(key, new ByteTag(getNameFor(key), (byte) (value ? 1 : 0)));
         }
 
         @Override
@@ -255,10 +260,5 @@ public class NBTStorage implements Storage {
         public void setString(String key, String value) {
             putTag(key, new StringTag(getNameFor(key), value));
         }
-    }
-
-    @Override
-    public String toString() {
-        return "NBTStorage {file=" + file + "}";
     }
 }

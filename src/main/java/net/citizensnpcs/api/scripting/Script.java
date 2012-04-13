@@ -11,6 +11,18 @@ import javax.script.Invocable;
 public interface Script {
 
     /**
+     * Converts an object returned by a script to the given Java interface. The class should be an interface, as
+     * although abstract classes are accepted by the Rhino engine, this is not standard behaviour.
+     * 
+     * @param obj
+     *            The object to convert
+     * @param expected
+     *            The expected interface
+     * @return The converted class
+     */
+    public <T> T convertToInterface(Object obj, Class<T> expected);
+
+    /**
      * Fetches the attribute with the specified name, or null if not found. The returned attribute can be user-stored or
      * a script variable, such as a function. Script objects should be accessed through
      * {@link Script#invoke(String, Object...)}
@@ -20,20 +32,6 @@ public interface Script {
      * @return The attribute
      */
     public Object getAttribute(String name);
-
-    /**
-     * Sets the attribute with the given name and value.
-     */
-    public void setAttribute(String name, Object value);
-
-    /**
-     * Invokes a root-level method using the method name and args and returns the result.
-     * 
-     * @param name
-     * @param args
-     * @return The result of the method call, or null if there was none
-     */
-    public Object invoke(String name, Object... args) throws NoSuchMethodException;
 
     /**
      * Invokes a method on the given object, which should be a return value or scripting object.
@@ -51,14 +49,16 @@ public interface Script {
     public Object invoke(Object instance, String name, Object... args) throws NoSuchMethodException;
 
     /**
-     * Converts an object returned by a script to the given Java interface. The class should be an interface, as
-     * although abstract classes are accepted by the Rhino engine, this is not standard behaviour.
+     * Invokes a root-level method using the method name and args and returns the result.
      * 
-     * @param obj
-     *            The object to convert
-     * @param expected
-     *            The expected interface
-     * @return The converted class
+     * @param name
+     * @param args
+     * @return The result of the method call, or null if there was none
      */
-    public <T> T convertToInterface(Object obj, Class<T> expected);
+    public Object invoke(String name, Object... args) throws NoSuchMethodException;
+
+    /**
+     * Sets the attribute with the given name and value.
+     */
+    public void setAttribute(String name, Object value);
 }

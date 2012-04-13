@@ -93,6 +93,10 @@ public final class NBTInputStream implements Closeable {
         this.is = new DataInputStream(is);
     }
 
+    public void close() throws IOException {
+        is.close();
+    }
+
     /**
      * Reads an NBT tag from the stream.
      * 
@@ -210,10 +214,6 @@ public final class NBTInputStream implements Closeable {
         default:
             throw new IOException("Invalid tag type: " + type + ".");
         }
-    }
-
-    public void close() throws IOException {
-        is.close();
     }
 
 }

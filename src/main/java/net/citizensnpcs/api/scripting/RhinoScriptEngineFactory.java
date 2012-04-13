@@ -9,10 +9,10 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
 public class RhinoScriptEngineFactory implements ScriptEngineFactory {
-    private final List<String> names = ImmutableList.of("rhino", "javascript", "JavaScript", "ECMAScript", "js");
+    private final List<String> extensions = ImmutableList.of("js", "ecmascript", "javascript");
     private final List<String> mimeTypes = ImmutableList.of("application/javascript", "text/javascript",
             "application/ecmascript", "text/javascript");
-    private final List<String> extensions = ImmutableList.of("js", "ecmascript", "javascript");
+    private final List<String> names = ImmutableList.of("rhino", "javascript", "JavaScript", "ECMAScript", "js");
 
     @Override
     public String getEngineName() {
@@ -30,6 +30,21 @@ public class RhinoScriptEngineFactory implements ScriptEngineFactory {
     }
 
     @Override
+    public String getLanguageName() {
+        return "ECMAScript";
+    }
+
+    @Override
+    public String getLanguageVersion() {
+        return "1.8";
+    }
+
+    @Override
+    public String getMethodCallSyntax(String obj, String m, String... args) {
+        return obj + "." + m + "(" + Joiner.on(",").join(args) + ")";
+    }
+
+    @Override
     public List<String> getMimeTypes() {
         return mimeTypes;
     }
@@ -40,13 +55,8 @@ public class RhinoScriptEngineFactory implements ScriptEngineFactory {
     }
 
     @Override
-    public String getLanguageName() {
-        return "ECMAScript";
-    }
-
-    @Override
-    public String getLanguageVersion() {
-        return "1.8";
+    public String getOutputStatement(String toDisplay) {
+        return "print(\"" + toDisplay.replace("\"", "\\\"").replace("\\", "\\\\") + "\")";
     }
 
     @Override
@@ -63,16 +73,6 @@ public class RhinoScriptEngineFactory implements ScriptEngineFactory {
             return "MULTITHREADED";
         }
         throw new IllegalArgumentException("Invalid key");
-    }
-
-    @Override
-    public String getMethodCallSyntax(String obj, String m, String... args) {
-        return obj + "." + m + "(" + Joiner.on(",").join(args) + ")";
-    }
-
-    @Override
-    public String getOutputStatement(String toDisplay) {
-        return "print(\"" + toDisplay.replace("\"", "\\\"").replace("\\", "\\\\") + "\")";
     }
 
     @Override

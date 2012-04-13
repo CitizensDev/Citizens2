@@ -27,13 +27,6 @@ public abstract class Character {
         return name;
     }
 
-    public final void setName(String name) {
-        if (this.name != null)
-            throw new IllegalStateException("Cannot change the name of a character.");
-
-        this.name = name;
-    }
-
     /**
      * Gets the valid mob types that this character can be.
      * 
@@ -41,16 +34,6 @@ public abstract class Character {
      */
     public final Set<EntityType> getValidTypes() {
         return types;
-    }
-
-    public final void setValidTypes(EntityType... types) {
-        if (this.types != null)
-            throw new IllegalStateException("Cannot change the valid mob types of a character.");
-        if (types.length == 0) {
-            this.types = EnumSet.noneOf(EntityType.class);
-        } else {
-            this.types = EnumSet.of(types[0], types);
-        }
     }
 
     /**
@@ -110,4 +93,21 @@ public abstract class Character {
      *            DataKey to save to
      */
     public abstract void save(DataKey key);
+
+    public final void setName(String name) {
+        if (this.name != null)
+            throw new IllegalStateException("Cannot change the name of a character.");
+
+        this.name = name;
+    }
+
+    public final void setValidTypes(EntityType... types) {
+        if (this.types != null)
+            throw new IllegalStateException("Cannot change the valid mob types of a character.");
+        if (types.length == 0) {
+            this.types = EnumSet.noneOf(EntityType.class);
+        } else {
+            this.types = EnumSet.of(types[0], types);
+        }
+    }
 }

@@ -9,6 +9,15 @@ import net.citizensnpcs.api.util.DataKey;
 public class MobType extends Trait {
     private String type;
 
+    /**
+     * Gets the type of mob that an NPC is.
+     * 
+     * @return Name of the mob type of an NPC
+     */
+    public String getType() {
+        return type;
+    }
+
     @Override
     public void load(DataKey key) {
         try {
@@ -21,15 +30,6 @@ public class MobType extends Trait {
     @Override
     public void save(DataKey key) {
         key.setString("", type);
-    }
-
-    /**
-     * Gets the type of mob that an NPC is.
-     * 
-     * @return Name of the mob type of an NPC
-     */
-    public String getType() {
-        return type;
     }
 
     /**

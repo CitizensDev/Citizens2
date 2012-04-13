@@ -62,15 +62,6 @@ public class Equipment extends Trait {
     }
 
     @Override
-    public void save(DataKey key) {
-        saveOrRemove(key.getRelative("hand"), equipment[0]);
-        saveOrRemove(key.getRelative("helmet"), equipment[1]);
-        saveOrRemove(key.getRelative("chestplate"), equipment[2]);
-        saveOrRemove(key.getRelative("leggings"), equipment[3]);
-        saveOrRemove(key.getRelative("boots"), equipment[4]);
-    }
-
-    @Override
     public void onNPCSpawn() {
         if (npc.getBukkitEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getBukkitEntity();
@@ -83,6 +74,15 @@ public class Equipment extends Trait {
             ItemStack[] armor = { equipment[1], equipment[2], equipment[3], equipment[4] };
             player.getInventory().setArmorContents(armor);
         }
+    }
+
+    @Override
+    public void save(DataKey key) {
+        saveOrRemove(key.getRelative("hand"), equipment[0]);
+        saveOrRemove(key.getRelative("helmet"), equipment[1]);
+        saveOrRemove(key.getRelative("chestplate"), equipment[2]);
+        saveOrRemove(key.getRelative("leggings"), equipment[3]);
+        saveOrRemove(key.getRelative("boots"), equipment[4]);
     }
 
     private void saveOrRemove(DataKey key, ItemStack item) {
