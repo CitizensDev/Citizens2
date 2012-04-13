@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.scripting;
 
-
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
@@ -39,7 +38,7 @@ public class EventRegistrar implements ContextProvider {
         private void registerEvent(final Object object, final String functionName,
                 final Class<? extends Event> eventClass) {
             if (!plugin.isEnabled())
-                throw new IllegalStateException("plugin is no longer validw");
+                throw new IllegalStateException("plugin is no longer valid");
             PluginManager manager = plugin.getServer().getPluginManager();
             manager.registerEvent(eventClass, new Listener() {
             }, EventPriority.NORMAL, new EventExecutor() {

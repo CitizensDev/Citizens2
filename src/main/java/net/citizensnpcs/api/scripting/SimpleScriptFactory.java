@@ -18,15 +18,10 @@ public class SimpleScriptFactory implements ScriptFactory {
 
     @Override
     public Script newInstance() {
-        Script script;
         try {
-            script = new SimpleScript(src);
+            return new SimpleScript(src, providers);
         } catch (ScriptException e) {
             return null;
         }
-        for (ContextProvider provider : providers) {
-            provider.provide(script);
-        }
-        return script;
     }
 }

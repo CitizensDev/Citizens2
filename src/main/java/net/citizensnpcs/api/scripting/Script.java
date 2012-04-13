@@ -1,9 +1,12 @@
 package net.citizensnpcs.api.scripting;
 
+import javax.script.Compilable;
+import javax.script.Invocable;
+
 /**
  * Represents a script written in a scripting language such as Lua, Ruby, Python
- * or JavaScript.
- * 
+ * or JavaScript, or any others that implements the JSR-233 scripting
+ * interfaces, including {@link Invocable} and {@link Compilable}.
  */
 public interface Script {
     /**

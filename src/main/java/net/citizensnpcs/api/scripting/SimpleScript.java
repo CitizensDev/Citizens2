@@ -10,9 +10,11 @@ public class SimpleScript implements Script {
     private final Invocable invocable;
     private final Object root;
 
-    public SimpleScript(CompiledScript src) throws ScriptException {
+    public SimpleScript(CompiledScript src, ContextProvider[] providers) throws ScriptException {
         this.invocable = (Invocable) src.getEngine();
         this.bindings = src.getEngine().createBindings();
+        for (ContextProvider provider : providers)
+            provider.provide(this);
         this.root = src.eval(bindings);
     }
 
