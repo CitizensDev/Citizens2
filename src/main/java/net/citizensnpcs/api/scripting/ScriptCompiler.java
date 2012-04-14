@@ -4,10 +4,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.jar.JarFile;
 
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -20,6 +25,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
 
 /**
@@ -28,6 +34,7 @@ import com.google.common.io.Closeables;
  * to compile.
  */
 public class ScriptCompiler implements Runnable {
+    private final Set<File> addedJars = Sets.newHashSet();
     private final ScriptEngineManager engineManager = new ScriptEngineManager();
     private final Map<String, ScriptEngine> engines = Maps.newHashMap();
     private final Function<File, FileEngine> fileEngineConverter = new Function<File, FileEngine>() {
@@ -51,6 +58,45 @@ public class ScriptCompiler implements Runnable {
     };
     private final List<ContextProvider> globalContextProviders = Lists.newArrayList();
     private final BlockingQueue<CompileTask> toCompile = new LinkedBlockingQueue<CompileTask>();
+
+    // TODO: give this a better name. Basically what it does it hack the
+    // classpath to make sure that scripts can access files, eg. Citizens
+    public void makeJARAvailable(File... jars) {
+        if (jars == null || addURL == null)
+            return;
+        if (!(Thread.currentThread().getContextClassLoader() instanceof URLClassLoader)) {
+            System.err.println("[Citizens] Unexpected classloader type, scripts cannot import all classes.");
+            return;
+        }
+        URLClassLoader loader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        for (File file : jars) {
+            if (addedJars.contains(file))
+                continue;
+            if (file.isDirectory()) {
+                for (File sub : file.listFiles()) {
+                    if (add(loader, sub))
+                        addedJars.add(sub);
+                }
+            } else {
+                if (add(loader, file))
+                    addedJars.add(file);
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private boolean add(URLClassLoader loader, File file) {
+        if (file.isFile()) {
+            try {
+                new JarFile(file); // make sure we have a JAR
+                addURL.invoke(loader, file.toURI().toURL());
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
+    }
 
     /**
      * Create a builder to compile the given files.
@@ -165,6 +211,17 @@ public class ScriptCompiler implements Runnable {
         FileEngine(File file, ScriptEngine engine) {
             this.file = file;
             this.engine = engine;
+        }
+    }
+
+    private static Method addURL;
+
+    static {
+        try {
+            addURL = URLClassLoader.class.getDeclaredMethod("addURL", new Class<?>[] { URL.class });
+            addURL.setAccessible(true);
+        } catch (Exception e) {
+            addURL = null;
         }
     }
 }
