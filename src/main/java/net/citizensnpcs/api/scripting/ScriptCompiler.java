@@ -29,9 +29,8 @@ import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
 
 /**
- * Compiles files into {@link ScriptFactory}s. Intended for use as a separate
- * thread - {@link ScriptCompiler#run()} will block while waiting for new tasks
- * to compile.
+ * Compiles files into {@link ScriptFactory}s. Intended for use as a separate thread - {@link ScriptCompiler#run()} will
+ * block while waiting for new tasks to compile.
  */
 public class ScriptCompiler implements Runnable {
     private final Set<File> addedJars = Sets.newHashSet();
@@ -59,9 +58,14 @@ public class ScriptCompiler implements Runnable {
     private final List<ContextProvider> globalContextProviders = Lists.newArrayList();
     private final BlockingQueue<CompileTask> toCompile = new LinkedBlockingQueue<CompileTask>();
 
-    // TODO: give this a better name. Basically what it does it hack the
-    // classpath to make sure that scripts can access files, eg. Citizens
-    public void makeJARAvailable(File... jars) {
+    /**
+     * Adds the specified {@link File}s to the classpath, which must be either directories or valid JAR files. These
+     * files will be added to the classpath to enable scripts to import classes from them.
+     * 
+     * @param jars
+     *            Files to add to the classpath
+     */
+    public void addToClasspath(File... jars) {
         if (jars == null || addURL == null)
             return;
         if (!(Thread.currentThread().getContextClassLoader() instanceof URLClassLoader)) {
@@ -84,7 +88,6 @@ public class ScriptCompiler implements Runnable {
         }
     }
 
-    @SuppressWarnings("unused")
     private boolean add(URLClassLoader loader, File file) {
         if (file.isFile()) {
             try {
@@ -113,8 +116,7 @@ public class ScriptCompiler implements Runnable {
     }
 
     /**
-     * Registers a global {@link ContextProvider}, which will be invoked on all
-     * scripts created by this ScriptCompiler.
+     * Registers a global {@link ContextProvider}, which will be invoked on all scripts created by this ScriptCompiler.
      * 
      * @param provider
      *            The global provider
