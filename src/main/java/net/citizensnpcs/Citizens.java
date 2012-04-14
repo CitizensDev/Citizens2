@@ -132,7 +132,6 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Messaging.log(System.getProperty("java.class.path"));
         // Disable if the server is not using the compatible Minecraft version
         String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
         compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
@@ -241,6 +240,7 @@ public class Citizens extends JavaPlugin {
     private void registerScriptHelpers() {
         ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
         compiler.registerGlobalContextProvider(new EventRegistrar(this));
+        compiler.makeJARAvailable(new File("plugins"));
     }
 
     public void reload() throws NPCLoadException {
@@ -255,7 +255,8 @@ public class Citizens extends JavaPlugin {
     public void save() {
         for (NPC npc : npcManager)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
-        config.save();
+        config.save(); // TODO: can we save the config at another place? this
+                       // overwrites changes made when you reload.
         saves.save();
     }
 
