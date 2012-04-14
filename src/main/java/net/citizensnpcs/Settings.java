@@ -10,21 +10,31 @@ import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 
 public class Settings {
+    private final DataKey root;
+
     public Settings(File folder) {
         config = new YamlStorage(folder + File.separator + "config.yml", "Citizens Configuration");
-    }
+        root = config.getKey("");
 
-    public void load() {
         config.load();
-        DataKey root = config.getKey("");
         for (Setting setting : Setting.values()) {
             if (!root.keyExists(setting.path)) {
                 Messaging.log("Writing default setting: '" + setting.path + "'");
-                root.setRaw(setting.path, setting.get());
-            } else {
+                root.setRaw(setting.path, setting.value);
+            } else
                 setting.set(root.getRaw(setting.path));
-            }
         }
+
+        save();
+    }
+
+    public void reload() {
+        config.load();
+        for (Setting setting : Setting.values())
+            if (root.keyExists(setting.path))
+                setting.set(root.getRaw(setting.path));
+
+        save();
     }
 
     public void save() {
@@ -86,10 +96,6 @@ public class Settings {
 
         public String asString() {
             return value.toString();
-        }
-
-        private Object get() {
-            return value;
         }
 
         private void set(Object value) {
