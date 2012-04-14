@@ -240,7 +240,7 @@ public class Citizens extends JavaPlugin {
     private void registerScriptHelpers() {
         ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
         compiler.registerGlobalContextProvider(new EventRegistrar(this));
-        compiler.makeJARAvailable(new File("plugins"));
+        compiler.addToClasspath(new File("plugins"));
     }
 
     public void reload() throws NPCLoadException {
@@ -255,8 +255,7 @@ public class Citizens extends JavaPlugin {
     public void save() {
         for (NPC npc : npcManager)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
-        config.save(); // TODO: can we save the config at another place? this
-                       // overwrites changes made when you reload.
+
         saves.save();
     }
 
