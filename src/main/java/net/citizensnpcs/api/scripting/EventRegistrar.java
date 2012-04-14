@@ -73,6 +73,8 @@ public class EventRegistrar implements ContextProvider {
                 final Class<? extends Event> eventClass) {
             if (!plugin.isEnabled())
                 throw new IllegalStateException("Plugin is no longer valid.");
+            if (functionName == null || eventClass == null)
+                throw new IllegalArgumentException("Arguments should not be null");
             Listener listener = object != null ? script.convertToInterface(object, Listener.class) : null;
             if (listener == null) {
                 anonymousListeners.put(new FunctionReference(functionName, object), (listener = new Listener() {
@@ -110,6 +112,13 @@ public class EventRegistrar implements ContextProvider {
         }
 
         @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = prime + ((functionName == null) ? 0 : functionName.hashCode());
+            return prime * result + ((instance == null) ? 0 : instance.hashCode());
+        }
+
+        @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
@@ -129,15 +138,10 @@ public class EventRegistrar implements ContextProvider {
                 if (other.instance != null) {
                     return false;
                 }
+            } else if (!instance.equals(other.instance)) {
+                return false;
             }
-            return instance.equals(other.instance);
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = prime + ((functionName == null) ? 0 : functionName.hashCode());
-            return prime * result + ((instance == null) ? 0 : instance.hashCode());
+            return true;
         }
     }
 }
