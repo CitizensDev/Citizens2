@@ -142,8 +142,7 @@ public class Citizens extends JavaPlugin {
             return;
         }
 
-        config = new Settings(this.getDataFolder());
-        config.load();
+        config = new Settings(getDataFolder());
 
         // NPC storage
         String type = Setting.STORAGE_TYPE.asString();
@@ -245,7 +244,7 @@ public class Citizens extends JavaPlugin {
 
     public void reload() throws NPCLoadException {
         Editor.leaveAll();
-        config.load();
+        config.reload();
         npcManager.safeRemove();
         setupNPCs();
 
