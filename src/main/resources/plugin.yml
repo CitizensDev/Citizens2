@@ -19,20 +19,26 @@ permissions:
       citizens.script.*:
         children:
             citizens.script.compile: true
+            citizens.script.help: true
       citizens.npc.*:
         children:
+          citizens.npc.age: true
           citizens.npc.character.*: true
           citizens.npc.create: true
           citizens.npc.despawn: true
           citizens.npc.equip: true
           citizens.npc.help: true
+          citizens.npc.list: true
+          citizens.npc.lookclose: true
+          citizens.npc.owner: true
           citizens.npc.path: true
+          citizens.npc.profession: true
           citizens.npc.remove: true
           citizens.npc.remove.all: true
           citizens.npc.rename: true
           citizens.npc.select: true
           citizens.npc.spawn: true
+          citizens.npc.talk: true
           citizens.npc.text: true
           citizens.npc.tp: true
           citizens.npc.tphere: true
-          citizens.npc.lookclose: true
