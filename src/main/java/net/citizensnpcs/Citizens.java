@@ -271,7 +271,7 @@ public class Citizens extends JavaPlugin {
                 try {
                     type = EntityType.valueOf(key.getString("traits.type"));
                 } catch (IllegalArgumentException ex) {
-                    throw new NPCLoadException("type not recognised");
+                    throw new NPCLoadException("NPC type not recognized. Did you spell it correctly?");
                 }
             }
             NPC npc = npcManager.createNPC(type, id, key.getString("name"), null);
