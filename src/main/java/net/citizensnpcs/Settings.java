@@ -25,7 +25,6 @@ public class Settings {
                 setting.set(root.getRaw(setting.path));
             }
         }
-        config.save();
     }
 
     public void save() {
