@@ -57,6 +57,7 @@ public class Citizens extends JavaPlugin {
     private CitizensNPCManager npcManager;
     private Storage saves;
     private CitizensTraitManager traitManager;
+    private ClassLoader contextClassLoader;
 
     public CommandManager getCommandManager() {
         return commands;
@@ -116,6 +117,8 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Thread.currentThread().setContextClassLoader(contextClassLoader);
+        // replace previous classloader
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
             save();
@@ -141,6 +144,9 @@ public class Citizens extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        this.contextClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(this.getClassLoader());
+        // workaround to fix scripts not loading plugin classes properly
 
         config = new Settings(getDataFolder());
 
@@ -238,7 +244,6 @@ public class Citizens extends JavaPlugin {
     private void registerScriptHelpers() {
         ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
         compiler.registerGlobalContextProvider(new EventRegistrar(this));
-        compiler.addToClasspath(this.getClassLoader(), new File("plugins"));
     }
 
     public void reload() throws NPCLoadException {
