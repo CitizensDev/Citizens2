@@ -29,8 +29,9 @@ import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
 
 /**
- * Compiles files into {@link ScriptFactory}s. Intended for use as a separate thread - {@link ScriptCompiler#run()} will
- * block while waiting for new tasks to compile.
+ * Compiles files into {@link ScriptFactory}s. Intended for use as a separate
+ * thread - {@link ScriptCompiler#run()} will block while waiting for new tasks
+ * to compile.
  */
 public class ScriptCompiler implements Runnable {
     private final Set<File> addedJars = Sets.newHashSet();
@@ -59,40 +60,50 @@ public class ScriptCompiler implements Runnable {
     private final BlockingQueue<CompileTask> toCompile = new LinkedBlockingQueue<CompileTask>();
 
     /**
-     * Adds the specified {@link File}s to the classpath, which must be either directories or valid JAR files. These
-     * files will be added to the classpath to enable scripts to import classes from them.
+     * Adds the specified {@link File}s to the classpath, which must be either
+     * directories or valid JAR files. These files will be added to the
+     * classpath to enable scripts to import classes from them.
      * 
+     * @param exclude
+     *            The {@link ClassLoader} to avoid conflicts with
      * @param jars
      *            Files to add to the classpath
      */
-    public void addToClasspath(File... jars) {
+    public void addToClasspath(ClassLoader exclude, File... jars) {
         if (jars == null || addURL == null)
             return;
         if (!(Thread.currentThread().getContextClassLoader() instanceof URLClassLoader)) {
             System.err.println("[Citizens] Unexpected classloader type, scripts cannot import all classes.");
             return;
         }
+        Set<URL> excludedURLs = Sets.newHashSet(); // we don't want to define
+                                                   // the same classes twice
+        if (exclude instanceof URLClassLoader)
+            excludedURLs = Sets.newHashSet(((URLClassLoader) exclude).getURLs());
+        System.out.println(excludedURLs);
         URLClassLoader loader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
         for (File file : jars) {
             if (addedJars.contains(file))
                 continue;
             if (file.isDirectory()) {
                 for (File sub : file.listFiles()) {
-                    if (add(loader, sub))
+                    if (add(excludedURLs, loader, sub))
                         addedJars.add(sub);
                 }
             } else {
-                if (add(loader, file))
+                if (add(excludedURLs, loader, file))
                     addedJars.add(file);
             }
         }
     }
 
-    private boolean add(URLClassLoader loader, File file) {
+    private boolean add(Set<URL> excludedURLs, URLClassLoader loader, File file) {
         if (file.isFile()) {
             try {
                 new JarFile(file); // make sure we have a JAR
-                addURL.invoke(loader, file.toURI().toURL());
+                URL url = file.toURI().toURL();
+                if (!excludedURLs.contains(url))
+                    addURL.invoke(loader, url);
                 return true;
             } catch (Exception e) {
                 return false;
@@ -116,7 +127,8 @@ public class ScriptCompiler implements Runnable {
     }
 
     /**
-     * Registers a global {@link ContextProvider}, which will be invoked on all scripts created by this ScriptCompiler.
+     * Registers a global {@link ContextProvider}, which will be invoked on all
+     * scripts created by this ScriptCompiler.
      * 
      * @param provider
      *            The global provider
