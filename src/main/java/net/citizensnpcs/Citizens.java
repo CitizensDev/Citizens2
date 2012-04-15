@@ -144,8 +144,8 @@ public class Citizens extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        this.contextClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(this.getClassLoader());
+        contextClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClassLoader());
         // workaround to fix scripts not loading plugin classes properly
 
         config = new Settings(getDataFolder());
