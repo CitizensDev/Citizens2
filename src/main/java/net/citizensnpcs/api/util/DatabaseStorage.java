@@ -12,10 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -231,7 +227,7 @@ public class DatabaseStorage implements Storage {
 
     @Override
     public void save() {
-        DbUtils.commitAndCloseQuietly(conn);
+        commitAndCloseQuietly(conn);
     }
 
     @Override
@@ -335,6 +331,10 @@ public class DatabaseStorage implements Storage {
             if (relative == null || relative.isEmpty())
                 return this;
             return new DatabaseKey(createRelativeKey(relative));
+        }
+
+        protected Traversed getRoot() {
+            return null;
         }
 
         @Override
@@ -550,10 +550,6 @@ public class DatabaseStorage implements Storage {
             traverseCache.put(path, t);
             return t;
         }
-
-        protected Traversed getRoot() {
-            return null;
-        }
     }
 
     public enum DatabaseType {
@@ -571,7 +567,7 @@ public class DatabaseStorage implements Storage {
         public boolean load() {
             if (loaded)
                 return true;
-            if (DbUtils.loadDriver(driver))
+            if (loadDriver(DatabaseStorage.class.getClassLoader(), driver))
                 loaded = true;
             return loaded;
         }
@@ -673,6 +669,10 @@ public class DatabaseStorage implements Storage {
         }
     }
 
+    private static final Pattern INTEGER = Pattern.compile("([\\+-]?\\d+)([eE][\\+-]?\\d+)?");
+    private static final Traversed INVALID_TRAVERSAL = new Traversed(null, null, null);
+
+    // methods from Apache's DbUtils
     private static void closeQuietly(Connection conn) {
         try {
             if (conn != null)
@@ -689,7 +689,29 @@ public class DatabaseStorage implements Storage {
         }
     }
 
-    private static final Pattern INTEGER = Pattern.compile("([\\+-]?\\d+)([eE][\\+-]?\\d+)?");
+    private static void commitAndCloseQuietly(Connection conn) {
+        try {
+            try {
+                conn.commit();
+            } finally {
+                conn.close();
+            }
+        } catch (SQLException e) {
+        }
+    }
 
-    private static final Traversed INVALID_TRAVERSAL = new Traversed(null, null, null);
+    public static boolean loadDriver(ClassLoader classLoader, String driverClassName) {
+        try {
+            classLoader.loadClass(driverClassName).newInstance();
+            return true;
+
+        } catch (IllegalAccessException e) {
+            // Constructor is private, OK for DriverManager contract
+            return true;
+
+        } catch (Exception e) {
+            return false;
+
+        }
+    }
 }
