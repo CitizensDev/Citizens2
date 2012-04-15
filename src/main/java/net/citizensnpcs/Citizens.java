@@ -178,8 +178,6 @@ public class Citizens extends JavaPlugin {
         // Register commands
         registerCommands();
 
-        registerScriptHelpers();
-
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
 
         Messaging.log("v" + getDescription().getVersion() + " enabled.");
@@ -191,6 +189,7 @@ public class Citizens extends JavaPlugin {
             public void run() {
                 try {
                     setupNPCs();
+                    registerScriptHelpers();
                 } catch (NPCLoadException ex) {
                     Messaging.log(Level.SEVERE, "Issue when loading NPCs: " + ex.getMessage());
                 }
@@ -239,7 +238,7 @@ public class Citizens extends JavaPlugin {
     private void registerScriptHelpers() {
         ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
         compiler.registerGlobalContextProvider(new EventRegistrar(this));
-        compiler.addToClasspath(new File("plugins"));
+        compiler.addToClasspath(this.getClassLoader(), new File("plugins"));
     }
 
     public void reload() throws NPCLoadException {
