@@ -80,7 +80,6 @@ public class ScriptCompiler implements Runnable {
                                                    // the same classes twice
         if (exclude instanceof URLClassLoader)
             excludedURLs = Sets.newHashSet(((URLClassLoader) exclude).getURLs());
-        System.out.println(excludedURLs);
         URLClassLoader loader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
         for (File file : jars) {
             if (addedJars.contains(file))

@@ -73,6 +73,7 @@ public class DatabaseStorage implements Storage {
     private final Map<String, Table> tables = Maps.newHashMap();
     private final Map<String, Traversed> traverseCache = Maps.newHashMap();
     private final String url, username, password;
+
     public DatabaseStorage(String driver, String url, String username, String password) throws SQLException {
         url = "jdbc:" + url;
         this.url = url;
@@ -92,7 +93,7 @@ public class DatabaseStorage implements Storage {
         try {
             stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` ADD " + fk + " " + to.primaryKeyType);
             stmt.execute();
-            DbUtils.closeQuietly(stmt);
+            closeQuietly(stmt);
             stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` ADD FOREIGN KEY (`" + fk + "`) REFERENCES `"
                     + to.name + "` (`" + to.name + "_id" + "`)");
             stmt.execute();
@@ -100,7 +101,7 @@ public class DatabaseStorage implements Storage {
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
-            DbUtils.closeQuietly(null, stmt, null);
+            closeQuietly(stmt);
         }
     }
 
@@ -170,7 +171,7 @@ public class DatabaseStorage implements Storage {
                 conn.prepareStatement("SELECT 1;").execute();
             } catch (SQLException ex) {
                 if ("08S01".equals(ex.getSQLState())) {
-                    DbUtils.closeQuietly(conn);
+                    closeQuietly(conn);
                 }
             }
         }
@@ -302,12 +303,6 @@ public class DatabaseStorage implements Storage {
         }
 
         @Override
-        public List<DataKey> getIntegerSubKeys() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
         public long getLong(String key) {
             final Traversed t = traverse(createRelativeKey(key), false);
             if (t == INVALID_TRAVERSAL)
@@ -358,8 +353,8 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public Iterable<DataKey> getSubKeys() {
-            // TODO Auto-generated method stub
-            return null;
+            List<DataKey> keys = Lists.newArrayList();
+            return keys;
         }
 
         private <T> T getValue(Traversed t, ResultSetHandler<T> resultSetHandler) {
@@ -417,7 +412,6 @@ public class DatabaseStorage implements Storage {
             });
         }
 
-        // why I wish Java had lambdas...
         @Override
         public void setDouble(String key, final double value) {
             setValue(key, new ColumnProvider() {
@@ -503,7 +497,7 @@ public class DatabaseStorage implements Storage {
                     PreparedStatement stmt = conn.prepareStatement("ALTER TABLE `" + t.found.name + "` ADD `"
                             + t.column + "` " + value.getType());
                     stmt.execute();
-                    DbUtils.closeQuietly(stmt);
+                    closeQuietly(stmt);
                     t.found.columns.add(t.column);
                 }
                 queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`= ? WHERE `"
@@ -521,8 +515,9 @@ public class DatabaseStorage implements Storage {
                     String.class);
             if (parts.length < 2)
                 return INVALID_TRAVERSAL; // not enough information given.
-            Table table = null;
-            String pk = null;
+            Traversed root = getRoot();
+            Table table = root != null ? root.found : null;
+            String pk = root != null ? root.key : null;
             for (int i = 0; i < parts.length - 1; ++i) {
                 String part = parts[i];
                 boolean contains = tables.containsKey(part);
@@ -554,6 +549,10 @@ public class DatabaseStorage implements Storage {
             Traversed t = new Traversed(table, pk, parts[parts.length - 1]);
             traverseCache.put(path, t);
             return t;
+        }
+
+        protected Traversed getRoot() {
+            return null;
         }
     }
 
@@ -671,6 +670,22 @@ public class DatabaseStorage implements Storage {
             this.found = found;
             this.key = pk;
             this.column = column;
+        }
+    }
+
+    private static void closeQuietly(Connection conn) {
+        try {
+            if (conn != null)
+                conn.close();
+        } catch (SQLException e) {
+        }
+    }
+
+    private static void closeQuietly(Statement stmt) {
+        try {
+            if (stmt != null)
+                stmt.close();
+        } catch (SQLException e) {
         }
     }
 
