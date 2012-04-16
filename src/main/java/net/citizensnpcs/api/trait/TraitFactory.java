@@ -45,8 +45,8 @@ public final class TraitFactory {
     }
 
     /**
-     * Attaches a plugin instance to a trait. This is used for dynamically registering and unregistering listeners per
-     * trait.
+     * Attaches a plugin instance to a trait. This is used for dynamically
+     * registering and unregistering listeners per trait.
      * 
      * @param plugin
      *            Plugin to attach to a trait
