@@ -12,6 +12,7 @@ import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.scripting.EventRegistrar;
+import net.citizensnpcs.api.scripting.PluginProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
@@ -244,6 +245,7 @@ public class Citizens extends JavaPlugin {
     private void registerScriptHelpers() {
         ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
         compiler.registerGlobalContextProvider(new EventRegistrar(this));
+        compiler.registerGlobalContextProvider(new PluginProvider(this));
     }
 
     public void reload() throws NPCLoadException {
