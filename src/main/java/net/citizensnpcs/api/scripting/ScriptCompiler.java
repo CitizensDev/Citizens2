@@ -46,7 +46,7 @@ public class ScriptCompiler implements Runnable {
                     search = null;
                 engines.put(extension, search);
             }
-            ScriptEngine engine = engineManager.getEngineByExtension(extension);
+            ScriptEngine engine = engines.get(extension);
             if (engine == null)
                 return null;
             return new FileEngine(file, engine);
