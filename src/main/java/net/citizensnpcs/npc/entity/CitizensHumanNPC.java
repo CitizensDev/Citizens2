@@ -1,8 +1,6 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
@@ -108,11 +106,6 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
     @Override
     public EntityHumanNPC getHandle() {
         return (EntityHumanNPC) mcEntity;
-    }
-
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        super.load(key);
     }
 
     @Override
