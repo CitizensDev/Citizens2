@@ -55,10 +55,10 @@ public class Citizens extends JavaPlugin {
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
+    private ClassLoader contextClassLoader;
     private CitizensNPCManager npcManager;
     private Storage saves;
     private CitizensTraitManager traitManager;
-    private ClassLoader contextClassLoader;
 
     public CommandManager getCommandManager() {
         return commands;
@@ -118,15 +118,14 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Thread.currentThread().setContextClassLoader(contextClassLoader);
-        // replace previous classloader
+        restoreOldClassLoader();
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
             save();
             while (npcManager.iterator().hasNext()) {
                 npcManager.iterator().next().despawn();
                 npcManager.iterator().remove();
-            }
+            } // TODO: clean up
             npcManager = null;
             getServer().getScheduler().cancelTasks(this);
         }
@@ -145,44 +144,21 @@ public class Citizens extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        contextClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(getClassLoader());
-        // workaround to fix scripts not loading plugin classes properly
+        registerScriptHelpers();
+        replaceClassLoader();
 
         config = new Settings(getDataFolder());
 
-        // NPC storage
-        String type = Setting.STORAGE_TYPE.asString();
-        if (type.equalsIgnoreCase("db") || type.equalsIgnoreCase("database")) {
-            try {
-                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
-                        Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
-            } catch (SQLException e) {
-                e.printStackTrace();
-                Messaging.log("Unable to connect to database, falling back to YAML");
-            }
-        } else if (type.equalsIgnoreCase("nbt")) {
-            saves = new NBTStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
-                    "Citizens NPC Storage");
-        }
-        if (saves == null) {
-            saves = new YamlStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
-                    "Citizens NPC Storage");
-        }
+        setupStorage();
 
-        Messaging.log("Save method set to", saves.toString());
-
-        // Register API managers
         npcManager = new CitizensNPCManager(this, saves);
         traitManager = new CitizensTraitManager(this);
         CitizensAPI.setNPCManager(npcManager);
         CitizensAPI.setCharacterManager(characterManager);
         CitizensAPI.setTraitManager(traitManager);
 
-        // Register events
         getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
 
-        // Register commands
         registerCommands();
 
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
@@ -196,7 +172,6 @@ public class Citizens extends JavaPlugin {
             public void run() {
                 try {
                     setupNPCs();
-                    registerScriptHelpers();
                 } catch (NPCLoadException ex) {
                     Messaging.log(Level.SEVERE, "Issue when loading NPCs: " + ex.getMessage());
                 }
@@ -231,6 +206,27 @@ public class Citizens extends JavaPlugin {
         }.start();
     }
 
+    private void setupStorage() {
+        String type = Setting.STORAGE_TYPE.asString();
+        if (type.equalsIgnoreCase("db") || type.equalsIgnoreCase("database")) {
+            try {
+                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
+                        Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                Messaging.log("Unable to connect to database, falling back to YAML");
+            }
+        } else if (type.equalsIgnoreCase("nbt")) {
+            saves = new NBTStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
+                    "Citizens NPC Storage");
+        }
+        if (saves == null) {
+            saves = new YamlStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
+                    "Citizens NPC Storage");
+        }
+        Messaging.log("Save method set to", saves.toString());
+    }
+
     private void registerCommands() {
         commands.setInjector(new Injector(this));
 
@@ -257,6 +253,16 @@ public class Citizens extends JavaPlugin {
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
 
+    private void replaceClassLoader() {
+        contextClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClassLoader());
+        // workaround to fix scripts not loading plugin classes properly
+    }
+
+    private void restoreOldClassLoader() {
+        Thread.currentThread().setContextClassLoader(contextClassLoader);
+    }
+
     public void save() {
         for (NPC npc : npcManager)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
@@ -264,6 +270,7 @@ public class Citizens extends JavaPlugin {
         saves.save();
     }
 
+    // TODO: refactor
     private void setupNPCs() throws NPCLoadException {
         saves.load();
         int created = 0, spawned = 0;
