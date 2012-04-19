@@ -5,40 +5,63 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
+import net.minecraft.server.EntityPlayer;
 
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 
+//TODO: reduce reliance on CitizensNPC
 public class Controllable extends Trait implements Runnable, Listener {
     private final CitizensNPC npc;
-    private boolean mounted;
 
     public Controllable(CitizensNPC npc) {
         this.npc = npc;
     }
 
-    @EventHandler
-    public void onRightClick(NPCRightClickEvent event) {
-        if (!event.getNPC().equals(npc) || npc.getBukkitEntity().getPassenger() != null)
+    private void jump() {
+        if (!npc.getHandle().onGround)
             return;
-        ((CraftPlayer) event.getClicker()).getHandle().setPassengerOf(npc.getHandle());
-        mounted = true;
-    }
-
-    @Override
-    public void run() {
-        if (!mounted)
-            return;
-        npc.getHandle().motX += npc.getHandle().passenger.motX;
-        npc.getHandle().motZ += npc.getHandle().passenger.motZ;
+        npc.getHandle().motY = JUMP_VELOCITY;
     }
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
     }
 
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
+        if (event.getAction() == Action.PHYSICAL || !handle.equals(npc.getHandle().passenger))
+            return;
+        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            jump();
+        } else {
+            event.getPlayer().leaveVehicle();
+        }
+    }
+
+    @EventHandler
+    public void onRightClick(NPCRightClickEvent event) {
+        if (!event.getNPC().equals(npc) || npc.getHandle().passenger != null)
+            return;
+        EntityPlayer handle = ((CraftPlayer) event.getClicker()).getHandle();
+        handle.setPassengerOf(npc.getHandle());
+    }
+
+    @Override
+    public void run() {
+        if (!npc.isSpawned() || npc.getHandle().passenger == null)
+            return;
+        npc.getHandle().motX += npc.getHandle().passenger.motX;
+        npc.getHandle().motZ += npc.getHandle().passenger.motZ;
+    }
+
     @Override
     public void save(DataKey key) {
     }
+
+    private static final double JUMP_VELOCITY = 0.4;
 }
