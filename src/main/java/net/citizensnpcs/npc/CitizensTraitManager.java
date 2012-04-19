@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.bukkit.plugin.Plugin;
-
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
@@ -18,6 +16,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.trait.Age;
+import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
@@ -28,12 +27,15 @@ import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
+import org.bukkit.plugin.Plugin;
+
 public class CitizensTraitManager implements TraitManager {
     private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = new HashMap<Class<? extends Trait>, Constructor<? extends Trait>>();
     private final Map<Plugin, Map<String, Class<? extends Trait>>> registered = new HashMap<Plugin, Map<String, Class<? extends Trait>>>();
 
     public CitizensTraitManager(Citizens plugin) {
         // Register Citizens traits
+        // TODO: make it automatic without hax (annotations)
         registerTrait(new TraitFactory(Age.class).withName("age").withPlugin(plugin));
         registerTrait(new TraitFactory(CurrentLocation.class).withName("location").withPlugin(plugin));
         registerTrait(new TraitFactory(Equipment.class).withName("equipment").withPlugin(plugin));
@@ -49,6 +51,7 @@ public class CitizensTraitManager implements TraitManager {
         registerTrait(new TraitFactory(VillagerProfession.class).withName("profession").withPlugin(plugin));
         registerTrait(new TraitFactory(Waypoints.class).withName("waypoints").withPlugin(plugin));
         registerTrait(new TraitFactory(WoolColor.class).withName("wool-color").withPlugin(plugin));
+        registerTrait(new TraitFactory(Controllable.class).withName("controllable").withPlugin(plugin));
     }
 
     @SuppressWarnings("unchecked")

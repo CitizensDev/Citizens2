@@ -161,8 +161,6 @@ public class Citizens extends JavaPlugin {
 
         registerCommands();
 
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new NPCUpdater(npcManager), 0, 1);
-
         Messaging.log("v" + getDescription().getVersion() + " enabled.");
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
@@ -170,11 +168,7 @@ public class Citizens extends JavaPlugin {
         if (getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                try {
-                    setupNPCs();
-                } catch (NPCLoadException ex) {
-                    Messaging.log(Level.SEVERE, "Issue when loading NPCs: " + ex.getMessage());
-                }
+                setupNPCs();
             }
         }) == -1) {
             Messaging.log(Level.SEVERE, "Issue enabling plugin. Disabling.");
@@ -271,20 +265,22 @@ public class Citizens extends JavaPlugin {
     }
 
     // TODO: refactor
-    private void setupNPCs() throws NPCLoadException {
+    private void setupNPCs() {
         saves.load();
         int created = 0, spawned = 0;
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
-            if (!key.keyExists("name"))
-                throw new NPCLoadException("Could not find a name for the NPC with ID '" + id + "'.");
-
+            if (!key.keyExists("name")) {
+                Messaging.log("Could not find a name for the NPC with ID '" + id + "'.");
+                continue;
+            }
             EntityType type = EntityType.fromName(key.getString("traits.type"));
             if (type == null) {
                 try {
                     type = EntityType.valueOf(key.getString("traits.type"));
                 } catch (IllegalArgumentException ex) {
-                    throw new NPCLoadException("NPC type not recognized. Did you spell it correctly?");
+                    Messaging.log("NPC type not recognized. Did you spell it correctly?");
+                    continue;
                 }
             }
             NPC npc = npcManager.createNPC(type, id, key.getString("name"), null);

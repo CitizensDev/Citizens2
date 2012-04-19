@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityCreeper;
@@ -23,9 +24,9 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
     }
 
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHandle {
-        private final NPC npc;
+        private final CitizensNPC npc;
 
-        public EntityCreeperNPC(World world, NPC npc) {
+        public EntityCreeperNPC(World world, CitizensNPC npc) {
             super(world);
             this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
@@ -38,6 +39,7 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+            npc.update();
         }
 
         @Override

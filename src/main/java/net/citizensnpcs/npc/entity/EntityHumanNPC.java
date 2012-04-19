@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.npc.network.NPCNetHandler;
 import net.citizensnpcs.npc.network.NPCNetworkManager;
 import net.citizensnpcs.npc.network.NPCSocket;
@@ -19,11 +22,13 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 
 @SuppressWarnings("unchecked")
-public class EntityHumanNPC extends EntityPlayer {
+public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
+    private CitizensNPC npc;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
-            ItemInWorldManager itemInWorldManager) {
+            ItemInWorldManager itemInWorldManager, CitizensNPC npc) {
         super(minecraftServer, world, string, itemInWorldManager);
+        this.npc = npc;
         itemInWorldManager.setGameMode(0);
 
         NPCSocket socket = new NPCSocket();
@@ -41,6 +46,12 @@ public class EntityHumanNPC extends EntityPlayer {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public void d_() {
+        super.d_();
+        npc.update();
     }
 
     @Override
@@ -90,5 +101,10 @@ public class EntityHumanNPC extends EntityPlayer {
         } catch (Exception ex) {
             Messaging.log("Unable to fetch player map from CraftEntity: " + ex.getMessage());
         }
+    }
+
+    @Override
+    public NPC getNPC() {
+        return this.npc;
     }
 }

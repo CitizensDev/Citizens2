@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityPigZombie;
@@ -22,9 +23,9 @@ public class CitizensPigZombieNPC extends CitizensMobNPC {
     }
 
     public static class EntityPigZombieNPC extends EntityPigZombie implements NPCHandle {
-        private final NPC npc;
+        private final CitizensNPC npc;
 
-        public EntityPigZombieNPC(World world, NPC npc) {
+        public EntityPigZombieNPC(World world, CitizensNPC npc) {
             super(world);
             this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
@@ -33,6 +34,7 @@ public class CitizensPigZombieNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+            npc.update();
         }
 
         @Override

@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.trait.Sheared;
@@ -59,9 +60,9 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
     }
 
     public static class EntitySheepNPC extends EntitySheep implements NPCHandle {
-        private final NPC npc;
+        private final CitizensNPC npc;
 
-        public EntitySheepNPC(World world, NPC npc) {
+        public EntitySheepNPC(World world, CitizensNPC npc) {
             super(world);
             this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
@@ -70,6 +71,7 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
 
         @Override
         public void d_() {
+            npc.update();
         }
 
         @Override

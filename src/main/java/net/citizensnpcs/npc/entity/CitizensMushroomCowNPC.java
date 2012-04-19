@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityMushroomCow;
@@ -22,9 +23,9 @@ public class CitizensMushroomCowNPC extends CitizensMobNPC {
     }
 
     public static class EntityMushroomCowNPC extends EntityMushroomCow implements NPCHandle {
-        private final NPC npc;
+        private final CitizensNPC npc;
 
-        public EntityMushroomCowNPC(World world, NPC npc) {
+        public EntityMushroomCowNPC(World world, CitizensNPC npc) {
             super(world);
             this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
@@ -33,6 +34,7 @@ public class CitizensMushroomCowNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+            npc.update();
         }
 
         @Override
