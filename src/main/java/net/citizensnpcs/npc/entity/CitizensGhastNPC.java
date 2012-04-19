@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityGhast;
@@ -22,9 +23,9 @@ public class CitizensGhastNPC extends CitizensMobNPC {
     }
 
     public static class EntityGhastNPC extends EntityGhast implements NPCHandle {
-        private final NPC npc;
+        private final CitizensNPC npc;
 
-        public EntityGhastNPC(World world, NPC npc) {
+        public EntityGhastNPC(World world, CitizensNPC npc) {
             super(world);
             this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
@@ -33,6 +34,7 @@ public class CitizensGhastNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+            npc.update();
         }
 
         @Override

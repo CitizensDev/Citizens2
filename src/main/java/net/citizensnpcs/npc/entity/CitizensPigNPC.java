@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.trait.Saddle;
@@ -49,9 +50,9 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
     }
 
     public static class EntityPigNPC extends EntityPig implements NPCHandle {
-        private final NPC npc;
+        private final CitizensNPC npc;
 
-        public EntityPigNPC(World world, NPC npc) {
+        public EntityPigNPC(World world, CitizensNPC npc) {
             super(world);
             this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
@@ -64,6 +65,7 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
 
         @Override
         public void d_() {
+            npc.update();
         }
 
         @Override

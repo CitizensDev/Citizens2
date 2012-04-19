@@ -26,7 +26,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
     protected EntityLiving createHandle(Location loc) {
         WorldServer ws = ((CraftWorld) loc.getWorld()).getHandle();
         EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
-                StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws));
+                StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws), this);
         handle.removeFromPlayerMap(getFullName());
         handle.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         return handle;

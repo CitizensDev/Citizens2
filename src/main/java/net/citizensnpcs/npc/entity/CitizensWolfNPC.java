@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityWolf;
@@ -22,9 +23,9 @@ public class CitizensWolfNPC extends CitizensMobNPC {
     }
 
     public static class EntityWolfNPC extends EntityWolf implements NPCHandle {
-        private final NPC npc;
+        private final CitizensNPC npc;
 
-        public EntityWolfNPC(World world, NPC npc) {
+        public EntityWolfNPC(World world, CitizensNPC npc) {
             super(world);
             this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
@@ -33,6 +34,7 @@ public class CitizensWolfNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+            npc.update();
         }
 
         @Override

@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityMagmaCube;
@@ -22,9 +23,9 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
     }
 
     public static class EntityMagmaCubeNPC extends EntityMagmaCube implements NPCHandle {
-        private final NPC npc;
+        private final CitizensNPC npc;
 
-        public EntityMagmaCubeNPC(World world, NPC npc) {
+        public EntityMagmaCubeNPC(World world, CitizensNPC npc) {
             super(world);
             this.npc = npc;
             setSize(3);
@@ -34,6 +35,7 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
+            npc.update();
         }
 
         @Override

@@ -4,6 +4,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.util.Messaging;
@@ -60,9 +61,9 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
     }
 
     public static class EntityEndermanNPC extends EntityEnderman implements NPCHandle {
-        private final NPC npc;
+        private final CitizensNPC npc;
 
-        public EntityEndermanNPC(World world, NPC npc) {
+        public EntityEndermanNPC(World world, CitizensNPC npc) {
             super(world);
             this.npc = npc;
             goalSelector = new PathfinderGoalSelector();
@@ -75,6 +76,7 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
 
         @Override
         public void e() {
+            npc.update();
         }
 
         @Override
