@@ -17,9 +17,11 @@ import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.CitizensTraitManager;
 import net.citizensnpcs.trait.Age;
+import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
@@ -83,6 +85,25 @@ public class NPCCommands {
 
         if (args.hasFlag('l'))
             Messaging.send(player, "<a>Age " + (trait.toggle() ? "locked" : "unlocked") + ".");
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "controllable",
+            desc = "Toggles whether the NPC can be ridden and controlled",
+            modifiers = { "controllable" },
+            min = 2,
+            max = 2,
+            permission = "npc.controllable")
+    public void toggleControllable(CommandContext args, Player player, NPC npc) {
+        if (npc.hasTrait(Controllable.class)) {
+            npc.removeTrait(Controllable.class);
+            Messaging.send(player, StringHelper.wrap(npc.getName()) + " can no longer be controlled.");
+        } else {
+            npc.addTrait(new Controllable((CitizensNPC) npc));
+            Messaging.send(player, StringHelper.wrap(npc.getName()) + " can now be controlled.");
+        }
+
     }
 
     @Command(
