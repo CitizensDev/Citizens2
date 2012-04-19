@@ -94,12 +94,10 @@ public class ScriptCompiler implements Runnable {
                     Reader reader = null;
                     try {
                         reader = new FileReader(engine.file);
-                        synchronized (compiler) {
-                            CompiledScript src = compiler.compile(reader);
-                            for (CompileCallback callback : task.callbacks) {
-                                synchronized (callback) {
-                                    callback.onScriptCompiled(new SimpleScriptFactory(src, task.contextProviders));
-                                }
+                        CompiledScript src = compiler.compile(reader);
+                        for (CompileCallback callback : task.callbacks) {
+                            synchronized (callback) {
+                                callback.onScriptCompiled(new SimpleScriptFactory(src, task.contextProviders));
                             }
                         }
                     } catch (IOException e) {

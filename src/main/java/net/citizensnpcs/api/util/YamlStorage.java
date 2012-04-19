@@ -22,8 +22,7 @@ public class YamlStorage implements Storage {
             create();
             config.options().header(header);
             save();
-        } else
-            load();
+        }
     }
 
     private void create() {

@@ -76,7 +76,6 @@ public class DatabaseStorage implements Storage {
         this.username = username;
         this.password = password;
         DatabaseType.match(driver).load();
-        load();
     }
 
     private void createForeignKey(Table from, Table to) {
@@ -113,7 +112,7 @@ public class DatabaseStorage implements Storage {
         case Types.INTEGER:
             pkType = "INTEGER NOT NULL";
             if (autoIncrement)
-                pkType += " AUTO_INCREMENT";
+                pkType += " AUTOINCREMENT";
             break;
         case Types.VARCHAR:
             pkType = "varchar(255) NOT NULL";
@@ -178,9 +177,10 @@ public class DatabaseStorage implements Storage {
                 return conn;
             }
         } catch (SQLException ex) {
+            ex.printStackTrace();
             return null;
         }
-        return null;
+        return conn;
     }
 
     @Override
@@ -214,7 +214,6 @@ public class DatabaseStorage implements Storage {
                 rs.close();
                 rs = conn.getMetaData().getImportedKeys(null, null, entry.getKey());
                 while (rs.next()) {
-                    // tables.get(rs.getString("FKTABLE_NAME")),
                     ForeignKey key = new ForeignKey(rs.getString("PKCOLUMN_NAME"));
                     entry.getValue().foreignKeys.put(key.localColumn, key);
                 }
@@ -235,17 +234,15 @@ public class DatabaseStorage implements Storage {
         return "DatabaseStorage {url=" + url + ", username=" + username + ", password=" + password + "}";
     }
 
-    private static interface ColumnProvider {
-        public String getType();
-
-        public Object getValue();
-    }
-
     public class DatabaseKey extends DataKey {
         private final String current;
 
         private DatabaseKey(String root) {
             current = root;
+        }
+
+        private DatabaseKey() {
+            this("");
         }
 
         private String createRelativeKey(String from) {
@@ -354,6 +351,38 @@ public class DatabaseStorage implements Storage {
         @Override
         public Iterable<DataKey> getSubKeys() {
             List<DataKey> keys = Lists.newArrayList();
+            if (current.split("\\.").length == 1) {
+                return getSingleKeys(keys);
+            }
+            // TODO: handle longer case
+            return keys;
+        }
+
+        private Iterable<DataKey> getSingleKeys(List<DataKey> keys) {
+            if (!tables.containsKey(current))
+                return keys;
+            Table table = tables.get(current);
+            PreparedStatement stmt = null;
+            ResultSet rs = null;
+            try {
+                Connection conn = getConnection();
+                stmt = conn.prepareStatement("SELECT * FROM `" + current + "`");
+                rs = stmt.executeQuery();
+                while (rs.next()) {
+                    final Traversed found = new Traversed(table, rs.getString(table.primaryKey), table.primaryKey);
+                    keys.add(new DatabaseKey() {
+                        @Override
+                        public Traversed getRoot() {
+                            return found;
+                        }
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                closeQuietly(stmt);
+                closeQuietly(rs);
+            }
             return keys;
         }
 
@@ -399,95 +428,35 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public void setBoolean(String key, final boolean value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public String getType() {
-                    return "SMALLINT";
-                }
-
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-            });
+            setValue("SMALLINT", key, value);
         }
 
         @Override
         public void setDouble(String key, final double value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public String getType() {
-                    return "DOUBLE";
-                }
-
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-            });
+            setValue("DOUBLE", key, value);
         }
 
         @Override
         public void setInt(String key, final int value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public String getType() {
-                    return "STRING";
-                }
-
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-            });
+            setValue("STRING", key, value);
         }
 
         @Override
         public void setLong(String key, final long value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public String getType() {
-                    return "BIGINT";
-                }
-
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-            });
+            setValue("BIGINT", key, value);
         }
 
         @Override
         public void setRaw(String key, final Object value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public String getType() {
-                    return "JAVA_OBJECT";
-                }
-
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-            });
+            setValue("JAVA_OBJECT", key, value);
         }
 
         @Override
         public void setString(String key, final String value) {
-            setValue(key, new ColumnProvider() {
-                @Override
-                public String getType() {
-                    return "VARCHAR";
-                }
-
-                @Override
-                public Object getValue() {
-                    return value;
-                }
-            });
+            setValue("VARCHAR", key, value);
         }
 
-        private void setValue(String key, ColumnProvider value) {
+        private void setValue(String type, String key, Object value) {
             Traversed t = traverse(createRelativeKey(key), true);
             if (t == INVALID_TRAVERSAL)
                 throw new IllegalStateException("could not set " + value + " at " + key);
@@ -495,13 +464,13 @@ public class DatabaseStorage implements Storage {
             try {
                 if (!t.found.columns.contains(t.column)) {
                     PreparedStatement stmt = conn.prepareStatement("ALTER TABLE `" + t.found.name + "` ADD `"
-                            + t.column + "` " + value.getType());
+                            + t.column + "` " + type);
                     stmt.execute();
                     closeQuietly(stmt);
                     t.found.columns.add(t.column);
                 }
                 queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`= ? WHERE `"
-                        + t.found.primaryKey + "` = ?", value.getValue(), t.key);
+                        + t.found.primaryKey + "` = ?", value, t.key);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -513,9 +482,9 @@ public class DatabaseStorage implements Storage {
                 return prev;
             String[] parts = Iterables.toArray(Splitter.on('.').omitEmptyStrings().trimResults().split(path),
                     String.class);
-            if (parts.length < 2)
-                return INVALID_TRAVERSAL; // not enough information given.
             Traversed root = getRoot();
+            if (root == null && parts.length < 2)
+                return INVALID_TRAVERSAL; // not enough information given.
             Table table = root != null ? root.found : null;
             String pk = root != null ? root.key : null;
             for (int i = 0; i < parts.length - 1; ++i) {
@@ -685,6 +654,14 @@ public class DatabaseStorage implements Storage {
         try {
             if (stmt != null)
                 stmt.close();
+        } catch (SQLException e) {
+        }
+    }
+
+    private static void closeQuietly(ResultSet rs) {
+        try {
+            if (rs != null)
+                rs.close();
         } catch (SQLException e) {
         }
     }
