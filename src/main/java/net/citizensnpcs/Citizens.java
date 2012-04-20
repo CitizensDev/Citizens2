@@ -280,7 +280,7 @@ public class Citizens extends JavaPlugin {
                 Messaging.log("Could not find a name for the NPC with ID '" + id + "'.");
                 continue;
             }
-            String unparsedEntityType = key.getString("traits.type");
+            String unparsedEntityType = key.getString("traits.type", "PLAYER");
             EntityType type = EntityType.fromName(unparsedEntityType);
             if (type == null) {
                 try {
