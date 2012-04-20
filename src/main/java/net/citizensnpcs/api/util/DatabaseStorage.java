@@ -200,22 +200,24 @@ public class DatabaseStorage implements Storage {
             }
             rs.close();
             for (Entry<String, Table> entry : tables.entrySet()) {
-                entry.getValue().name = entry.getKey();
+                Table table = entry.getValue();
+                table.name = entry.getKey();
                 rs = conn.getMetaData().getColumns(null, null, entry.getKey(), null);
                 while (rs.next()) {
-                    entry.getValue().columns.add(rs.getString("COLUMN_NAME"));
+                    table.columns.add(rs.getString("COLUMN_NAME"));
                 }
                 rs.close();
                 rs = conn.getMetaData().getPrimaryKeys(null, null, entry.getKey());
                 while (rs.next()) {
-                    entry.getValue().primaryKey = rs.getString("PK_NAME");
-                    entry.getValue().setPrimaryKeyType(rs.getMetaData().getColumnTypeName(4));
+                    table.primaryKey = rs.getString("COLUMN_NAME");
+                    table.setPrimaryKeyType(rs.getMetaData().getColumnTypeName(4));
                 }
                 rs.close();
                 rs = conn.getMetaData().getImportedKeys(null, null, entry.getKey());
                 while (rs.next()) {
+                    assert rs.getString("PKCOLUMN_NAME") != null;
                     ForeignKey key = new ForeignKey(rs.getString("PKCOLUMN_NAME"));
-                    entry.getValue().foreignKeys.put(key.localColumn, key);
+                    table.foreignKeys.put(key.localColumn, key);
                 }
                 rs.close();
             }
@@ -362,11 +364,13 @@ public class DatabaseStorage implements Storage {
             if (!tables.containsKey(current))
                 return keys;
             Table table = tables.get(current);
+            if (table.primaryKey == null)
+                return keys;
             PreparedStatement stmt = null;
             ResultSet rs = null;
             try {
                 Connection conn = getConnection();
-                stmt = conn.prepareStatement("SELECT * FROM `" + current + "`");
+                stmt = conn.prepareStatement("SELECT `" + table.primaryKey + "` FROM `" + current + "`");
                 rs = stmt.executeQuery();
                 while (rs.next()) {
                     final Traversed found = new Traversed(table, rs.getString(table.primaryKey), table.primaryKey);
@@ -515,7 +519,8 @@ public class DatabaseStorage implements Storage {
                     return INVALID_TRAVERSAL;
                 table = next;
             }
-            Traversed t = new Traversed(table, pk, parts[parts.length - 1]);
+            String setColumn = parts.length == 0 ? null : parts[parts.length - 1];
+            Traversed t = new Traversed(table, pk, setColumn);
             traverseCache.put(path, t);
             return t;
         }
