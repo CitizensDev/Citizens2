@@ -89,7 +89,9 @@ public class Citizens extends JavaPlugin {
             NPC npc = null;
             if (player != null && player.getMetadata("selected").size() > 0)
                 npc = npcManager.getNPC(player.getMetadata("selected").get(0).asInt());
-
+            // TODO: change the args supplied to a context style system for
+            // flexibility (ie. adding more context in the future without
+            // changing everything)
             try {
                 commands.execute(split, player, player == null ? sender : player, npc);
             } catch (ServerCommandException ex) {

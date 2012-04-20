@@ -60,7 +60,11 @@ public class CitizensTraitManager implements TraitManager {
 
         if (!CACHED_CTORS.containsKey(trait)) {
             try {
+                // TODO: perhaps replace this fixed constructor with a context
+                // class of sorts, which can have extra environment variables.
                 constructor = trait.getConstructor(NPC.class);
+                if (constructor == null)
+                    constructor = trait.getConstructor(CitizensNPC.class);
                 constructor.setAccessible(true);
             } catch (Exception ex) {
                 constructor = null;
@@ -91,6 +95,8 @@ public class CitizensTraitManager implements TraitManager {
                 if (!subEntry.getValue().equals(clazz))
                     continue;
                 Trait trait = create(subEntry.getValue(), npc);
+                if (trait == null)
+                    return null;
                 trait.setName(subEntry.getKey());
                 trait.setPlugin(entry.getKey());
                 return (T) trait;
