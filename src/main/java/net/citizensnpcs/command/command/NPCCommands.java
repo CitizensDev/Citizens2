@@ -88,25 +88,6 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "controllable",
-            desc = "Toggles whether the NPC can be ridden and controlled",
-            modifiers = { "controllable" },
-            min = 2,
-            max = 2,
-            permission = "npc.controllable")
-    public void toggleControllable(CommandContext args, Player player, NPC npc) {
-        if (npc.hasTrait(Controllable.class)) {
-            npc.removeTrait(Controllable.class);
-            Messaging.send(player, StringHelper.wrap(npc.getName()) + " can no longer be controlled.");
-        } else {
-            npc.addTrait(traitManager.getTrait(Controllable.class, npc));
-            Messaging.send(player, StringHelper.wrap(npc.getName()) + " can now be controlled.");
-        }
-
-    }
-
-    @Command(
-            aliases = { "npc" },
             usage = "character [character]",
             desc = "Set the character of a NPC",
             modifiers = { "character" },
@@ -467,6 +448,25 @@ public class NPCCommands {
         } else
             throw new CommandException(respawn.getName() + " is already spawned at another location."
                     + " Use '/npc tphere' to teleport the NPC to your location.");
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "controllable",
+            desc = "Toggles whether the NPC can be ridden and controlled",
+            modifiers = { "controllable" },
+            min = 1,
+            max = 1,
+            permission = "npc.controllable")
+    public void controllable(CommandContext args, Player player, NPC npc) {
+        if (npc.hasTrait(Controllable.class)) {
+            npc.removeTrait(Controllable.class);
+            Messaging.send(player, StringHelper.wrap(npc.getName()) + " can no longer be controlled.");
+        } else {
+            npc.addTrait(traitManager.getTrait(Controllable.class, npc));
+            Messaging.send(player, StringHelper.wrap(npc.getName()) + " can now be controlled.");
+        }
+
     }
 
     @Command(
