@@ -63,7 +63,9 @@ public class CitizensNPCManager implements NPCManager {
     private int generateUniqueId() {
         int count = 0;
         while (getNPC(count++) != null)
-            ;
+            ; // TODO: doesn't respect existing save data that might not have
+              // been loaded. This causes DBs with NPCs that weren't loaded to
+              // have conflicting primary keys.
         return count - 1;
     }
 

@@ -26,9 +26,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
     private CitizensNPC npc;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
-            ItemInWorldManager itemInWorldManager, CitizensNPC npc) {
+            ItemInWorldManager itemInWorldManager, NPC npc) {
         super(minecraftServer, world, string, itemInWorldManager);
-        this.npc = npc;
+        this.npc = (CitizensNPC) npc;
         itemInWorldManager.setGameMode(0);
 
         NPCSocket socket = new NPCSocket();

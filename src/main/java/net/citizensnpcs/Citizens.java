@@ -280,12 +280,14 @@ public class Citizens extends JavaPlugin {
                 Messaging.log("Could not find a name for the NPC with ID '" + id + "'.");
                 continue;
             }
-            EntityType type = EntityType.fromName(key.getString("traits.type"));
+            String unparsedEntityType = key.getString("traits.type");
+            EntityType type = EntityType.fromName(unparsedEntityType);
             if (type == null) {
                 try {
-                    type = EntityType.valueOf(key.getString("traits.type"));
+                    type = EntityType.valueOf(unparsedEntityType);
                 } catch (IllegalArgumentException ex) {
-                    Messaging.log("NPC type not recognized. Did you spell it correctly?");
+                    Messaging.log("NPC type '" + unparsedEntityType
+                            + "' was not recognized. Did you spell it correctly?");
                     continue;
                 }
             }

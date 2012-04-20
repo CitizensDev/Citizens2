@@ -26,9 +26,9 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntityCreeperNPC(World world, CitizensNPC npc) {
+        public EntityCreeperNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }
@@ -38,7 +38,8 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void d_() {
+        public void z_() {
+            super.z_();
             npc.update();
         }
 

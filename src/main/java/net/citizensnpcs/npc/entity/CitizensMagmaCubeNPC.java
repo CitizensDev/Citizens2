@@ -25,9 +25,9 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
     public static class EntityMagmaCubeNPC extends EntityMagmaCube implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntityMagmaCubeNPC(World world, CitizensNPC npc) {
+        public EntityMagmaCubeNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             setSize(3);
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();

@@ -25,9 +25,9 @@ public class CitizensBlazeNPC extends CitizensMobNPC {
     public static class EntityBlazeNPC extends EntityBlaze implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntityBlazeNPC(World world, CitizensNPC npc) {
+        public EntityBlazeNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }

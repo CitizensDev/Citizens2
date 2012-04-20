@@ -25,15 +25,16 @@ public class CitizensSilverfishNPC extends CitizensMobNPC {
     public static class EntitySilverfishNPC extends EntitySilverfish implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntitySilverfishNPC(World world, CitizensNPC npc) {
+        public EntitySilverfishNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }
 
         @Override
-        public void d_() {
+        public void z_() {
+            super.z_();
             npc.update();
         }
 

@@ -25,15 +25,16 @@ public class CitizensMushroomCowNPC extends CitizensMobNPC {
     public static class EntityMushroomCowNPC extends EntityMushroomCow implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntityMushroomCowNPC(World world, CitizensNPC npc) {
+        public EntityMushroomCowNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }
 
         @Override
-        public void d_() {
+        public void z_() {
+            super.z_();
             npc.update();
         }
 

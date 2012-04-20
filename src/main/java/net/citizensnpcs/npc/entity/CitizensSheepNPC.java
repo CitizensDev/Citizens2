@@ -62,15 +62,16 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
     public static class EntitySheepNPC extends EntitySheep implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntitySheepNPC(World world, CitizensNPC npc) {
+        public EntitySheepNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }
 
         @Override
-        public void d_() {
+        public void z_() {
+            super.z_();
             npc.update();
         }
 

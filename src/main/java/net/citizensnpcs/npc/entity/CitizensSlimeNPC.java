@@ -25,16 +25,17 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
     public static class EntitySlimeNPC extends EntitySlime implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntitySlimeNPC(World world, CitizensNPC npc) {
+        public EntitySlimeNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             setSize(3);
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }
 
         @Override
-        public void d_() {
+        public void z_() {
+            super.z_();
             npc.update();
         }
 

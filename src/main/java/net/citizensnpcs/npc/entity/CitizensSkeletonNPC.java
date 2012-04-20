@@ -25,15 +25,16 @@ public class CitizensSkeletonNPC extends CitizensMobNPC {
     public static class EntitySkeletonNPC extends EntitySkeleton implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntitySkeletonNPC(World world, CitizensNPC npc) {
+        public EntitySkeletonNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }
 
         @Override
-        public void d_() {
+        public void z_() {
+            super.z_();
             npc.update();
         }
 
