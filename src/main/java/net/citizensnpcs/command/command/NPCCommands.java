@@ -17,7 +17,6 @@ import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.CitizensTraitManager;
 import net.citizensnpcs.trait.Age;
@@ -100,7 +99,7 @@ public class NPCCommands {
             npc.removeTrait(Controllable.class);
             Messaging.send(player, StringHelper.wrap(npc.getName()) + " can no longer be controlled.");
         } else {
-            npc.addTrait(new Controllable((CitizensNPC) npc));
+            npc.addTrait(traitManager.getTrait(Controllable.class, npc));
             Messaging.send(player, StringHelper.wrap(npc.getName()) + " can now be controlled.");
         }
 

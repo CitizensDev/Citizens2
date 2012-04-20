@@ -118,7 +118,7 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        restoreOldClassLoader();
+        tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
             save();
@@ -145,7 +145,6 @@ public class Citizens extends JavaPlugin {
             return;
         }
         registerScriptHelpers();
-        replaceClassLoader();
 
         config = new Settings(getDataFolder());
 
@@ -176,6 +175,10 @@ public class Citizens extends JavaPlugin {
         }
 
         // Run metrics last
+        startMetrics();
+    }
+
+    private void startMetrics() {
         new Thread() {
             @Override
             public void run() {
@@ -233,6 +236,7 @@ public class Citizens extends JavaPlugin {
     }
 
     private void registerScriptHelpers() {
+        setupScripting();
         ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
         compiler.registerGlobalContextProvider(new EventRegistrar(this));
         compiler.registerGlobalContextProvider(new PluginProvider(this));
@@ -247,13 +251,13 @@ public class Citizens extends JavaPlugin {
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
 
-    private void replaceClassLoader() {
+    private void setupScripting() {
         contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClassLoader());
         // workaround to fix scripts not loading plugin classes properly
     }
 
-    private void restoreOldClassLoader() {
+    private void tearDownScripting() {
         Thread.currentThread().setContextClassLoader(contextClassLoader);
     }
 

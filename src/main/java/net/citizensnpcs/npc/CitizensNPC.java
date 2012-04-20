@@ -42,6 +42,8 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public void addTrait(Trait trait) {
+        // TODO: right now every addTrait call has to be wrapped with
+        // TraitManager.getTrait(Class, NPC) -- this is bad, need to fix this.
         if (trait == null) {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot register a null trait. Was it registered properly?");
             return;
@@ -52,8 +54,9 @@ public abstract class CitizensNPC extends AbstractNPC {
             if (traits.containsKey(trait.getClass()))
                 runnables.remove(traits.get(trait.getClass()));
         }
-        if (trait instanceof Listener)
+        if (trait instanceof Listener) {
             Bukkit.getPluginManager().registerEvents((Listener) trait, trait.getPlugin());
+        }
 
         Map<Class<? extends Trait>, Trait> map = traits.get(trait.getPlugin());
         if (map == null)
