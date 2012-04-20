@@ -25,9 +25,9 @@ public class CitizensGiantNPC extends CitizensMobNPC {
     public static class EntityGiantNPC extends EntityGiantZombie implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntityGiantNPC(World world, CitizensNPC npc) {
+        public EntityGiantNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }

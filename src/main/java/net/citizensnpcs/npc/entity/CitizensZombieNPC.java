@@ -25,9 +25,9 @@ public class CitizensZombieNPC extends CitizensMobNPC {
     public static class EntityZombieNPC extends EntityZombie implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntityZombieNPC(World world, CitizensNPC npc) {
+        public EntityZombieNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }

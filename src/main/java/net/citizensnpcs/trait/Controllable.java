@@ -35,11 +35,12 @@ public class Controllable extends Trait implements Runnable, Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
-        if (event.getAction() == Action.PHYSICAL || !handle.equals(npc.getHandle().passenger))
+        Action performed = event.getAction();
+        if (performed == Action.PHYSICAL || !handle.equals(npc.getHandle().passenger))
             return;
-        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+        if (performed == Action.LEFT_CLICK_AIR || performed == Action.LEFT_CLICK_BLOCK) {
             jump();
-        } else {
+        } else if (-170F >= event.getPlayer().getLocation().getPitch()) {
             event.getPlayer().leaveVehicle();
         }
     }
@@ -64,5 +65,5 @@ public class Controllable extends Trait implements Runnable, Listener {
     public void save(DataKey key) {
     }
 
-    private static final double JUMP_VELOCITY = 0.4;
+    private static final double JUMP_VELOCITY = 0.6;
 }

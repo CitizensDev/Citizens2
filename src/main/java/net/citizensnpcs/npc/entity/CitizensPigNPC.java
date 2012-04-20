@@ -52,9 +52,9 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
     public static class EntityPigNPC extends EntityPig implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntityPigNPC(World world, CitizensNPC npc) {
+        public EntityPigNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }
@@ -64,7 +64,8 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
-        public void d_() {
+        public void z_() {
+            super.z_();
             npc.update();
         }
 

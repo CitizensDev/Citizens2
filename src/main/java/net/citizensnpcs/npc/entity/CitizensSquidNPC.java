@@ -25,9 +25,9 @@ public class CitizensSquidNPC extends CitizensMobNPC {
     public static class EntitySquidNPC extends EntitySquid implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntitySquidNPC(World world, CitizensNPC npc) {
+        public EntitySquidNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }

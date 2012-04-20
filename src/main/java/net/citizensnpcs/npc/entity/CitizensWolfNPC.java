@@ -25,15 +25,16 @@ public class CitizensWolfNPC extends CitizensMobNPC {
     public static class EntityWolfNPC extends EntityWolf implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntityWolfNPC(World world, CitizensNPC npc) {
+        public EntityWolfNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }
 
         @Override
-        public void d_() {
+        public void z_() {
+            super.z_();
             npc.update();
         }
 

@@ -25,9 +25,9 @@ public class CitizensGhastNPC extends CitizensMobNPC {
     public static class EntityGhastNPC extends EntityGhast implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntityGhastNPC(World world, CitizensNPC npc) {
+        public EntityGhastNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }

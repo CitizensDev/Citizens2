@@ -25,15 +25,16 @@ public class CitizensSpiderNPC extends CitizensMobNPC {
     public static class EntitySpiderNPC extends EntitySpider implements NPCHandle {
         private final CitizensNPC npc;
 
-        public EntitySpiderNPC(World world, CitizensNPC npc) {
+        public EntitySpiderNPC(World world, NPC npc) {
             super(world);
-            this.npc = npc;
+            this.npc = (CitizensNPC) npc;
             goalSelector = new PathfinderGoalSelector();
             targetSelector = new PathfinderGoalSelector();
         }
 
         @Override
-        public void d_() {
+        public void z_() {
+            super.z_();
             npc.update();
         }
 
