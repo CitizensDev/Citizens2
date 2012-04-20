@@ -69,13 +69,14 @@ public class DatabaseStorage implements Storage {
     private final Map<String, Table> tables = Maps.newHashMap();
     private final Map<String, Traversed> traverseCache = Maps.newHashMap();
     private final String url, username, password;
+    private final DatabaseType type;
 
     public DatabaseStorage(String driver, String url, String username, String password) throws SQLException {
-        url = "jdbc:" + url;
-        this.url = url;
+        this.url = "jdbc:" + url;
         this.username = username;
         this.password = password;
-        DatabaseType.match(driver).load();
+        this.type = DatabaseType.match(driver);
+        this.type.load();
     }
 
     private void createForeignKey(Table from, Table to) {
@@ -86,7 +87,8 @@ public class DatabaseStorage implements Storage {
         Connection conn = getConnection();
         PreparedStatement stmt = null;
         try {
-            stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` ADD " + fk + " " + to.primaryKeyType);
+            stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` "
+                    + type.getSpecialSyntaxFor(QueryType.ADD_COLUMN) + " " + fk + " " + to.primaryKeyType);
             stmt.execute();
             closeQuietly(stmt);
             stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` ADD FOREIGN KEY (`" + fk + "`) REFERENCES `"
@@ -110,7 +112,7 @@ public class DatabaseStorage implements Storage {
         String pkType = "";
         switch (type) {
         case Types.INTEGER:
-            pkType = "INTEGER NOT NULL";
+            pkType = "INTEGER NOT NULL PRIMARY KEY";
             if (autoIncrement)
                 pkType += " AUTOINCREMENT";
             break;
@@ -125,8 +127,7 @@ public class DatabaseStorage implements Storage {
         PreparedStatement stmt = null;
         Table created = null;
         try {
-            stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + name + "(`" + pk + "` " + pkType
-                    + ", PRIMARY KEY (`" + pk + "`))");
+            stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS " + name + "(`" + pk + "` " + pkType + ")");
             stmt.execute();
             created = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(pkType);
             tables.put(name, created);
@@ -462,8 +463,9 @@ public class DatabaseStorage implements Storage {
 
         private void setValue(String type, String key, Object value) {
             Traversed t = traverse(createRelativeKey(key), true);
-            if (t == INVALID_TRAVERSAL)
-                throw new IllegalStateException("could not set " + value + " at " + key);
+            if (t == INVALID_TRAVERSAL) {
+                System.err.println("Could not set " + value + " at " + key);
+            }
             Connection conn = getConnection();
             try {
                 if (!t.found.columns.contains(t.column)) {
@@ -523,36 +525,6 @@ public class DatabaseStorage implements Storage {
             Traversed t = new Traversed(table, pk, setColumn);
             traverseCache.put(path, t);
             return t;
-        }
-    }
-
-    public enum DatabaseType {
-        H2("org.h2.Driver"),
-        MYSQL("com.mysql.jdbc.Driver"),
-        POSTGRE("org.postgresql.Driver"),
-        SQLITE("org.sqlite.JDBC");
-        private final String driver;
-        private boolean loaded = false;
-
-        DatabaseType(String driver) {
-            this.driver = driver;
-        }
-
-        public boolean load() {
-            if (loaded)
-                return true;
-            if (loadDriver(DatabaseStorage.class.getClassLoader(), driver))
-                loaded = true;
-            return loaded;
-        }
-
-        public static DatabaseType match(String driver) {
-            for (DatabaseType type : DatabaseType.values()) {
-                if (type.name().toLowerCase().contains(driver)) {
-                    return type;
-                }
-            }
-            return null;
         }
     }
 
@@ -686,14 +658,11 @@ public class DatabaseStorage implements Storage {
         try {
             classLoader.loadClass(driverClassName).newInstance();
             return true;
-
         } catch (IllegalAccessException e) {
             // Constructor is private, OK for DriverManager contract
             return true;
-
         } catch (Exception e) {
             return false;
-
         }
     }
 }
