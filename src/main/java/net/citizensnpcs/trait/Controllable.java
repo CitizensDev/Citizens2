@@ -15,8 +15,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 //TODO: reduce reliance on CitizensNPC
-public class Controllable extends Trait implements Runnable, Listener {
+public class Controllable extends Trait implements Runnable, Listener, Toggleable {
     private final CitizensNPC npc;
+    private boolean enabled;
 
     public Controllable(NPC npc) {
         this.npc = (CitizensNPC) npc;
@@ -30,6 +31,7 @@ public class Controllable extends Trait implements Runnable, Listener {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
+        enabled = key.getBoolean("enabled");
     }
 
     @EventHandler
@@ -63,7 +65,13 @@ public class Controllable extends Trait implements Runnable, Listener {
 
     @Override
     public void save(DataKey key) {
+        key.setBoolean("enabled", enabled);
     }
 
     private static final double JUMP_VELOCITY = 0.6;
+
+    @Override
+    public boolean toggle() {
+        return (enabled = !enabled);
+    }
 }
