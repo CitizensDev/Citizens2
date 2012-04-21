@@ -81,24 +81,19 @@ public class DatabaseStorage implements Storage {
 
     private void createForeignKey(Table from, Table to) {
         String fk = "fk_" + to.name;
-        if (from.foreignKeys.containsKey(fk)) {
+        if (from.columns.contains(fk)) {
             return;
         }
         Connection conn = getConnection();
-        PreparedStatement stmt = null;
         try {
-            stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` "
-                    + type.getSpecialSyntaxFor(QueryType.ADD_COLUMN) + " " + fk + " " + to.primaryKeyType);
-            stmt.execute();
-            closeQuietly(stmt);
-            stmt = conn.prepareStatement("ALTER TABLE `" + from.name + "` ADD FOREIGN KEY (`" + fk + "`) REFERENCES `"
-                    + to.name + "` (`" + to.name + "_id" + "`)");
-            stmt.execute();
-            from.addForeignKey(fk, new ForeignKey(fk));
+            for (String sql : type.prepareForeignKeySQL(from, to, fk)) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.execute();
+                stmt.close();
+            }
+            from.addForeignKey(fk);
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            closeQuietly(stmt);
         }
     }
 
@@ -149,7 +144,7 @@ public class DatabaseStorage implements Storage {
             }, pk);
             if (existing == null) {
                 String generated = to.generateRow();
-                queryRunner.update(conn, "UPDATE `" + from.name + "` SET `fk_" + to.name + "=?", generated);
+                queryRunner.update(conn, "UPDATE `" + from.name + "` SET `fk_" + to.name + "`=?", generated);
                 return generated;
             } else {
                 return existing;
@@ -203,22 +198,24 @@ public class DatabaseStorage implements Storage {
             for (Entry<String, Table> entry : tables.entrySet()) {
                 Table table = entry.getValue();
                 table.name = entry.getKey();
-                rs = conn.getMetaData().getColumns(null, null, entry.getKey(), null);
+                rs = conn.getMetaData().getColumns(null, null, table.name, null);
                 while (rs.next()) {
-                    table.columns.add(rs.getString("COLUMN_NAME"));
+                    String column = rs.getString("COLUMN_NAME");
+                    if (column.equalsIgnoreCase(table.name))
+                        continue;
+                    table.columns.add(column);
                 }
                 rs.close();
-                rs = conn.getMetaData().getPrimaryKeys(null, null, entry.getKey());
+                rs = conn.getMetaData().getPrimaryKeys(null, null, table.name);
                 while (rs.next()) {
                     table.primaryKey = rs.getString("COLUMN_NAME");
                     table.setPrimaryKeyType(rs.getMetaData().getColumnTypeName(4));
                 }
                 rs.close();
-                rs = conn.getMetaData().getImportedKeys(null, null, entry.getKey());
+                rs = conn.getMetaData().getImportedKeys(null, null, table.name);
                 while (rs.next()) {
-                    assert rs.getString("PKCOLUMN_NAME") != null;
-                    ForeignKey key = new ForeignKey(rs.getString("PKCOLUMN_NAME"));
-                    table.foreignKeys.put(key.localColumn, key);
+                    System.err.println("!!!!!!!!");
+                    table.addForeignKey(rs.getString("PKCOLUMN_NAME"));
                 }
                 rs.close();
             }
@@ -495,7 +492,7 @@ public class DatabaseStorage implements Storage {
             String pk = root != null ? root.key : null;
             for (int i = 0; i < parts.length - 1; ++i) {
                 String part = parts[i];
-                boolean contains = tables.containsKey(part);
+                boolean tableExists = tables.containsKey(part);
                 if (table == null) {
                     if (!createRelations || i + 1 >= parts.length)
                         return INVALID_TRAVERSAL;
@@ -506,14 +503,16 @@ public class DatabaseStorage implements Storage {
                         return INVALID_TRAVERSAL;
                     table.insert(pk);
                     continue;
-                } else if (!contains) {
-                    if (createTable(part, Types.INTEGER, true) == null)
+                } else if (!tableExists) {
+                    Table res = createTable(part, Types.INTEGER, true);
+                    if (res == null)
                         return INVALID_TRAVERSAL;
                 }
                 Table next = tables.get(part);
-                if (!table.foreignKeys.containsKey("fk_" + part)) {
-                    if (!createRelations)
+                if (!table.columns.contains("fk_" + part)) {
+                    if (!createRelations) {
                         return INVALID_TRAVERSAL;
+                    }
                     createForeignKey(table, next);
                 }
                 pk = ensureRelation(pk, table, next);
@@ -528,28 +527,18 @@ public class DatabaseStorage implements Storage {
         }
     }
 
-    private static class ForeignKey {
-        final String localColumn;
-
-        ForeignKey(String from) {
-            this.localColumn = from;
-        }
-    }
-
-    private class Table {
+    public class Table {
         final List<String> columns = Lists.newArrayList();
-        final Map<String, ForeignKey> foreignKeys = Maps.newHashMap();
         String name;
         String primaryKey;
         String primaryKeyType;
 
-        public void addForeignKey(String fk, ForeignKey foreignKey) {
-            foreignKeys.put(fk, foreignKey);
+        public void addForeignKey(String fk) {
             columns.add(fk);
         }
 
         public String generateRow() {
-            String vals = Joiner.on(", ").join(columns);
+            String joinedColumns = Joiner.on(", ").join(columns);
             StringBuilder nullBuilder = new StringBuilder();
             for (int i = 0; i < columns.size(); ++i) {
                 nullBuilder.append("NULL,");
@@ -558,9 +547,12 @@ public class DatabaseStorage implements Storage {
             Connection conn = getConnection();
             PreparedStatement stmt = null;
             ResultSet rs = null;
+            System.err.println(joinedColumns);
+            System.err.println(nulls);
+            System.err.println("--------");
             try {
-                stmt = conn.prepareStatement("INSERT INTO `" + name + "` (" + vals + ") VALUES (" + nulls + ")",
-                        Statement.RETURN_GENERATED_KEYS);
+                stmt = conn.prepareStatement("INSERT INTO `" + name + "` (" + joinedColumns + ") VALUES (" + nulls
+                        + ")", Statement.RETURN_GENERATED_KEYS);
                 stmt.executeQuery();
                 rs = stmt.getGeneratedKeys();
                 if (!rs.next())
@@ -598,8 +590,7 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public String toString() {
-            return "Table {name=" + name + ", primaryKey=" + primaryKey + ", foreignKeys=" + foreignKeys + ", columns="
-                    + columns + "}";
+            return "Table {name=" + name + ", primaryKey=" + primaryKey + ", columns=" + columns + "}";
         }
     }
 
