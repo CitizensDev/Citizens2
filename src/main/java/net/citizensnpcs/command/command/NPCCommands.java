@@ -459,11 +459,10 @@ public class NPCCommands {
             max = 1,
             permission = "npc.controllable")
     public void controllable(CommandContext args, Player player, NPC npc) {
-        if (npc.hasTrait(Controllable.class)) {
-            npc.removeTrait(Controllable.class);
+        boolean enabled = npc.getTrait(Controllable.class).toggle();
+        if (enabled) {
             Messaging.send(player, StringHelper.wrap(npc.getName()) + " can no longer be controlled.");
         } else {
-            npc.addTrait(traitManager.getTrait(Controllable.class, npc));
             Messaging.send(player, StringHelper.wrap(npc.getName()) + " can now be controlled.");
         }
 
