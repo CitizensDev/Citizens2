@@ -40,7 +40,7 @@ public class CitizensTraitManager implements TraitManager {
         registerTrait(new TraitFactory(CurrentLocation.class).withName("location").withPlugin(plugin));
         registerTrait(new TraitFactory(Equipment.class).withName("equipment").withPlugin(plugin));
         registerTrait(new TraitFactory(Inventory.class).withName("inventory").withPlugin(plugin));
-        registerTrait(new TraitFactory(LookClose.class).withName("look-close").withPlugin(plugin));
+        registerTrait(new TraitFactory(LookClose.class).withName("lookclose").withPlugin(plugin));
         registerTrait(new TraitFactory(MobType.class).withName("type").withPlugin(plugin));
         registerTrait(new TraitFactory(Owner.class).withName("owner").withPlugin(plugin));
         registerTrait(new TraitFactory(Powered.class).withName("powered").withPlugin(plugin));
@@ -50,7 +50,7 @@ public class CitizensTraitManager implements TraitManager {
         registerTrait(new TraitFactory(Text.class).withName("text").withPlugin(plugin));
         registerTrait(new TraitFactory(VillagerProfession.class).withName("profession").withPlugin(plugin));
         registerTrait(new TraitFactory(Waypoints.class).withName("waypoints").withPlugin(plugin));
-        registerTrait(new TraitFactory(WoolColor.class).withName("wool-color").withPlugin(plugin));
+        registerTrait(new TraitFactory(WoolColor.class).withName("woolcolor").withPlugin(plugin));
         registerTrait(new TraitFactory(Controllable.class).withName("controllable").withPlugin(plugin));
     }
 
