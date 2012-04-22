@@ -9,8 +9,8 @@ public enum DatabaseType {
     SQLITE("org.sqlite.JDBC") {
         @Override
         public String[] prepareForeignKeySQL(Table from, Table to, String columnName) {
-            return new String[] { String.format("ALTER TABLE `%s` ADD COLUMN %s %s REFERENCES %s", from.name,
-                    columnName, to.primaryKeyType, to.name) };
+            return new String[] { String.format("ALTER TABLE `%s` ADD COLUMN %s %s REFERENCES %s(`%s`)", from.name,
+                    columnName, to.primaryKeyType, to.name, to.primaryKey) };
         }
     };
     private final String driver;
