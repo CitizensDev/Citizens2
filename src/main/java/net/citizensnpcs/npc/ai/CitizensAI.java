@@ -2,7 +2,6 @@ package net.citizensnpcs.npc.ai;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import net.citizensnpcs.api.ai.AI;
@@ -41,11 +40,10 @@ public class CitizensAI implements AI {
         if (executing == null)
             return;
         executing = null;
-        Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
-        while (itr.hasNext()) {
-            NavigationCallback next = itr.next().get();
+        for (int i = 0; i < callbacks.size(); ++i) {
+            NavigationCallback next = callbacks.get(i).get();
             if (next == null || next.onCancel(this, CancelReason.CANCEL)) {
-                itr.remove();
+                callbacks.remove(i);
             }
         }
     }
@@ -56,11 +54,12 @@ public class CitizensAI implements AI {
     }
 
     private boolean isGoalAllowable(GoalEntry test) {
-        for (GoalEntry item : goals) {
+        for (int i = 0; i < goals.size(); ++i) {
+            GoalEntry item = goals.get(i);
             if (item == test)
                 continue;
             if (test.priority >= item.priority) {
-                if (executingGoals.contains(item) && !test.goal.isCompatibleWith(item.goal)) {
+                if (!test.goal.isCompatibleWith(item.goal) && executingGoals.contains(item)) {
                     return false;
                 }
             } /*else if (executingGoals.contains(item) && !item.goal.requiresUpdates()) {
@@ -96,11 +95,11 @@ public class CitizensAI implements AI {
 
         if (!replaced)
             return;
-        Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
-        while (itr.hasNext()) {
-            NavigationCallback next = itr.next().get();
+
+        for (int i = 0; i < callbacks.size(); ++i) {
+            NavigationCallback next = callbacks.get(i).get();
             if (next == null || (replaced && next.onCancel(this, CancelReason.REPLACE)) || next.onBegin(this)) {
-                itr.remove();
+                callbacks.remove(i);
             }
         }
     }
@@ -115,11 +114,10 @@ public class CitizensAI implements AI {
 
         if (!replaced)
             return;
-        Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
-        while (itr.hasNext()) {
-            NavigationCallback next = itr.next().get();
+        for (int i = 0; i < callbacks.size(); ++i) {
+            NavigationCallback next = callbacks.get(i).get();
             if (next == null || (replaced && next.onCancel(this, CancelReason.REPLACE)) || next.onBegin(this)) {
-                itr.remove();
+                callbacks.remove(i);
             }
         }
     }
@@ -131,16 +129,16 @@ public class CitizensAI implements AI {
 
         if (executing != null && executing.update()) {
             executing = null;
-            Iterator<WeakReference<NavigationCallback>> itr = callbacks.iterator();
-            while (itr.hasNext()) {
-                NavigationCallback next = itr.next().get();
+            for (int i = 0; i < callbacks.size(); ++i) {
+                NavigationCallback next = callbacks.get(i).get();
                 if (next == null || next.onCompletion(this)) {
-                    itr.remove();
+                    callbacks.remove(i);
                 }
             }
         }
 
-        for (GoalEntry entry : goals) {
+        for (int i = 0; i < goals.size(); ++i) {
+            GoalEntry entry = goals.get(i);
             boolean executing = executingGoals.contains(entry);
 
             if (executing) {
@@ -154,8 +152,8 @@ public class CitizensAI implements AI {
             }
         }
 
-        for (GoalEntry entry : executingGoals) {
-            entry.goal.update();
+        for (int i = 0; i < executingGoals.size(); ++i) {
+            executingGoals.get(i).goal.update();
         }
     }
 
