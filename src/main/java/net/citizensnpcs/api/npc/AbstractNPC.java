@@ -131,8 +131,8 @@ public abstract class AbstractNPC implements NPC {
     }
 
     public void update() {
-        for (Runnable runnable : runnables)
-            runnable.run();
+        for (int i = 0; i < runnables.size(); ++i)
+            runnables.get(i).run();
     }
 
     private static final MetadataStoreBase<NPC> METADATA = new MetadataStoreBase<NPC>() {
