@@ -20,7 +20,9 @@ public class CitizensCharacterManager implements CharacterManager {
     public void registerCharacter(CharacterFactory factory) {
         try {
             Character character = factory.create();
-            registered.put(character.getName(), character);
+            registered.put(character.getName(), character); // TODO: this only
+                                                            // allows singletons
+                                                            // for characters.
         } catch (CharacterException ex) {
             ex.printStackTrace();
         }
