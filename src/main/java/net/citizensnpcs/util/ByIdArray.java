@@ -132,26 +132,29 @@ public class ByIdArray<T> implements Iterable<T> {
         private int expected = ByIdArray.this.modCount;
         private int idx;
         {
-            if (lowest == Integer.MAX_VALUE || elementData[lowest] == null) {
-                recalcLowest();
-            }
-            idx = lowest;
-            if (elementData[lowest] == null) {
-                Messaging.log("lowest is still null!");
+            if (size > 0) {
+                if (highest == Integer.MIN_VALUE || elementData[highest] == null)
+                    recalcHighest();
+                if (lowest == Integer.MAX_VALUE || elementData[lowest] == null)
+                    recalcLowest();
+                idx = lowest;
+                if (elementData[lowest] == null) {
+                    Messaging.log("lowest is still null!");
+                }
             }
         }
 
         @Override
         public boolean hasNext() {
-            if (ByIdArray.this.modCount != expected)
+            if (modCount != expected)
                 throw new ConcurrentModificationException();
-            return highest + 1 > idx && size > 0;
+            return size > 0 && highest + 1 > idx;
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public T next() {
-            if (ByIdArray.this.modCount != expected)
+            if (modCount != expected)
                 throw new ConcurrentModificationException();
             T next = (T) elementData[idx];
             if (next == null || idx > highest)
@@ -164,10 +167,10 @@ public class ByIdArray<T> implements Iterable<T> {
 
         @Override
         public void remove() {
-            if (ByIdArray.this.modCount != expected)
+            if (modCount != expected)
                 throw new ConcurrentModificationException();
-            ByIdArray.this.fastRemove(idx);
-            expected = ByIdArray.this.modCount;
+            fastRemove(idx);
+            expected = modCount;
         }
     }
 
