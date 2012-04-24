@@ -92,11 +92,13 @@ public class ByIdArray<T> implements Iterable<T> {
     }
 
     private void recalcHighest() {
+        highest = elementData.length - 1;
         while (highest != 0 && elementData[highest--] == null)
             ;
     }
 
     private void recalcLowest() {
+        lowest = 0;
         while (elementData.length > lowest && highest > lowest && elementData[lowest++] == null)
             ;
     }
@@ -128,7 +130,16 @@ public class ByIdArray<T> implements Iterable<T> {
 
     private class Itr implements Iterator<T> {
         private int expected = ByIdArray.this.modCount;
-        private int idx = lowest;
+        private int idx;
+        {
+            if (lowest == Integer.MIN_VALUE || elementData[lowest] == null) {
+                recalcLowest();
+            }
+            idx = lowest;
+            if (elementData[lowest] == null) {
+                Messaging.log("lowest is still null!");
+            }
+        }
 
         @Override
         public boolean hasNext() {
