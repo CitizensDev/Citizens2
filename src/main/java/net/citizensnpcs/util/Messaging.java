@@ -26,7 +26,7 @@ public class Messaging {
     }
 
     public static void log(Object... msg) {
-        log(Level.INFO, SPACE.join(msg));
+        log(Level.INFO, msg);
     }
 
     public static void send(CommandSender sender, Object msg) {
@@ -50,5 +50,9 @@ public class Messaging {
         send = send.replace("<id>", Integer.toString(npc.getId()));
 
         send(sender, send);
+    }
+
+    public static void severe(Object... messages) {
+        log(Level.SEVERE, messages);
     }
 }
