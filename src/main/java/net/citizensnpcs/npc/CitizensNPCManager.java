@@ -21,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -71,6 +72,8 @@ public class CitizensNPCManager implements NPCManager {
 
     @Override
     public NPC getNPC(Entity entity) {
+        if (!(entity instanceof LivingEntity))
+            return null;
         net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
         if (handle instanceof NPCHandle)
             return ((NPCHandle) handle).getNPC();
