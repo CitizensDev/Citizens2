@@ -132,7 +132,7 @@ public class ByIdArray<T> implements Iterable<T> {
         private int expected = ByIdArray.this.modCount;
         private int idx;
         {
-            if (lowest == Integer.MIN_VALUE || elementData[lowest] == null) {
+            if (lowest == Integer.MAX_VALUE || elementData[lowest] == null) {
                 recalcLowest();
             }
             idx = lowest;
