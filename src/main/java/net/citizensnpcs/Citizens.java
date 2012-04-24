@@ -8,7 +8,6 @@ import java.util.logging.Level;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
-import net.citizensnpcs.api.exception.NPCException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.scripting.EventRegistrar;
@@ -124,10 +123,7 @@ public class Citizens extends JavaPlugin {
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
             save();
-            while (npcManager.iterator().hasNext()) {
-                npcManager.iterator().next().despawn();
-                npcManager.iterator().remove();
-            } // TODO: clean up
+            npcManager.safeRemove();
             npcManager = null;
             getServer().getScheduler().cancelTasks(this);
         }
@@ -292,11 +288,7 @@ public class Citizens extends JavaPlugin {
                 }
             }
             NPC npc = npcManager.createNPC(type, id, key.getString("name"), null);
-            try {
-                ((CitizensNPC) npc).load(key);
-            } catch (NPCException ex) {
-                Messaging.log(ex.getMessage());
-            }
+            ((CitizensNPC) npc).load(key);
 
             ++created;
             if (npc.isSpawned())

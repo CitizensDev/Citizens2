@@ -132,30 +132,34 @@ public abstract class CitizensNPC extends AbstractNPC {
         return getHandle() != null;
     }
 
-    public void load(DataKey root) throws NPCLoadException {
+    public void load(DataKey root) {
         Character character = CitizensAPI.getCharacterManager().getCharacter(root.getString("character"));
 
         // Load the character if it exists
         if (character != null) {
-            character.load(root.getRelative("characters." + character.getName()));
+            try {
+                character.load(root.getRelative("characters." + character.getName()));
+            } catch (NPCLoadException e) {
+                Messaging.severe("Unable to load character " + character.getName() + ".");
+                e.printStackTrace();
+            }
             setCharacter(character);
         }
 
         // Load traits
         for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
             Trait trait = traitManager.getTrait(traitKey.name(), this);
-            if (trait == null)
-                throw new NPCLoadException("No trait with the name '" + traitKey.name()
-                        + "' exists. Was it registered properly?");
+            if (trait == null) {
+                Messaging.severe("Skipping trait with name '" + traitKey.name() + "' while loading '" + getId()
+                        + "': trait does not exist. Was it registered properly or has the name changed?");
+                continue;
+            }
             addTrait(trait);
             try {
                 getTrait(trait.getClass()).load(traitKey);
             } catch (Exception ex) {
-                Bukkit.getLogger().log(
-                        Level.SEVERE,
-                        "[Citizens] The trait '" + traitKey.name()
-                                + "' failed to load properly for the NPC with the ID '" + getId() + "'. "
-                                + ex.getMessage());
+                Messaging.log("[Citizens] The trait '" + traitKey.name()
+                        + "' failed to load properly for the NPC with the ID '" + getId() + "'. " + ex.getMessage());
                 ex.printStackTrace();
             }
         }

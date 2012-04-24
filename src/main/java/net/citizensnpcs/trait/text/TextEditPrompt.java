@@ -1,6 +1,5 @@
-package net.citizensnpcs.trait.text.prompt;
+package net.citizensnpcs.trait.text;
 
-import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.ChatColor;

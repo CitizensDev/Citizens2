@@ -15,7 +15,6 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.trait.Toggleable;
-import net.citizensnpcs.trait.text.prompt.StartPrompt;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.minecraft.server.EntityHuman;

@@ -56,10 +56,11 @@ public class ByIdArray<T> implements Iterable<T> {
     }
 
     private void fastRemove(int index) {
-        if (index == lowest)
-            recalcLowest();
+        ++modCount;
         if (index == highest)
             recalcHighest();
+        if (index == lowest)
+            recalcLowest();
         elementData[index] = null;
         --size;
     }
@@ -99,7 +100,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     private void recalcLowest() {
         lowest = 0;
-        while (elementData.length > lowest && highest > lowest && elementData[lowest++] == null)
+        while (elementData.length > lowest && elementData[lowest++] == null)
             ;
     }
 
@@ -107,10 +108,10 @@ public class ByIdArray<T> implements Iterable<T> {
         if (index > elementData.length || elementData[index] == null)
             return null;
         ++modCount;
-        if (index == lowest)
-            recalcLowest();
         if (index == highest)
             recalcHighest();
+        if (index == lowest)
+            recalcLowest();
         @SuppressWarnings("unchecked")
         T prev = (T) elementData[index];
         elementData[index] = null;
@@ -139,7 +140,11 @@ public class ByIdArray<T> implements Iterable<T> {
                     recalcLowest();
                 idx = lowest;
                 if (elementData[lowest] == null) {
-                    Messaging.log("lowest is still null!");
+                    idx = 0;
+                    while (elementData.length > idx && elementData[idx++] == null)
+                        ;
+                    if (elementData[idx] == null)
+                        Messaging.debug("idx is still null!");
                 }
             }
         }
@@ -171,6 +176,11 @@ public class ByIdArray<T> implements Iterable<T> {
                 throw new ConcurrentModificationException();
             fastRemove(idx);
             expected = modCount;
+            if (hasNext()) {
+                do
+                    idx++;
+                while (idx != highest + 1 && elementData[idx] == null);
+            }
         }
     }
 

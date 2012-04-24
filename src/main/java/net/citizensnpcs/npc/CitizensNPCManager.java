@@ -7,7 +7,6 @@ import java.util.List;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.event.NPCSelectEvent;
-import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.character.Character;
@@ -77,11 +76,6 @@ public class CitizensNPCManager implements NPCManager {
         net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
         if (handle instanceof NPCHandle)
             return ((NPCHandle) handle).getNPC();
-        for (NPC npc : npcs) { // fall back to linear search
-            if (npc.isSpawned() && npc.getBukkitEntity().getEntityId() == entity.getEntityId()) {
-                return npc;
-            }
-        }
         return null;
     }
 
@@ -117,8 +111,9 @@ public class CitizensNPCManager implements NPCManager {
     }
 
     public void removeAll() {
-        while (iterator().hasNext())
-            iterator().next().remove();
+        Iterator<NPC> itr = iterator();
+        while (itr.hasNext())
+            itr.next().remove();
     }
 
     private void removeMetadata(NPC npc) {
@@ -131,13 +126,14 @@ public class CitizensNPCManager implements NPCManager {
         }
     }
 
-    public void safeRemove() throws NPCLoadException {
+    public void safeRemove() {
         // Destroy all NPCs everywhere besides storage
-        while (iterator().hasNext()) {
-            NPC npc = iterator().next();
+        Iterator<NPC> itr = this.iterator();
+        while (itr.hasNext()) {
+            NPC npc = itr.next();
+            itr.remove();
             removeMetadata(npc);
             npc.despawn();
-            iterator().remove();
         }
     }
 
