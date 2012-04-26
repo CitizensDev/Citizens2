@@ -51,7 +51,7 @@ public class LookClose extends Trait implements Runnable, Toggleable {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        enabled = key.getBoolean("enabled");
+        enabled = key.getBoolean("");
     }
 
     @Override

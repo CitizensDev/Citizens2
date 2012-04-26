@@ -31,7 +31,7 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        enabled = key.getBoolean("enabled");
+        enabled = key.getBoolean("");
     }
 
     @EventHandler
