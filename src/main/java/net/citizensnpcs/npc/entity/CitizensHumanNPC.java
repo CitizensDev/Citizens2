@@ -27,7 +27,6 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         WorldServer ws = ((CraftWorld) loc.getWorld()).getHandle();
         EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
                 StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws), this);
-        handle.removeFromPlayerMap(getFullName());
         handle.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         return handle;
     }
@@ -37,8 +36,9 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         ItemStack hand = equipper.getItemInHand();
         Equipment trait = getTrait(Equipment.class);
         int slot = 0;
+        Material type = hand == null ? Material.AIR : hand.getType();
         // First, determine the slot to edit
-        switch (hand.getType()) {
+        switch (type) {
         case PUMPKIN:
         case JACK_O_LANTERN:
         case LEATHER_HELMET:
@@ -86,16 +86,15 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         if (trait.get(slot) != null && trait.get(slot).getType() != Material.AIR)
             equipper.getWorld().dropItemNaturally(getBukkitEntity().getLocation(), trait.get(slot));
 
-        ItemStack set = hand;
-        if (set != null && set.getType() != Material.AIR) {
+        if (type != Material.AIR) {
             if (hand.getAmount() > 1)
                 hand.setAmount(hand.getAmount() - 1);
             else
                 hand = null;
             equipper.setItemInHand(hand);
-            set.setAmount(1);
+            hand.setAmount(1);
         }
-        trait.set(slot, set);
+        trait.set(slot, hand);
     }
 
     @Override
