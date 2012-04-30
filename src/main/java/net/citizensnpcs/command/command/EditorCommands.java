@@ -37,7 +37,8 @@ public class EditorCommands {
             min = 1,
             max = 1,
             permission = "npc.edit.path")
-    @Requirements(selected = true, ownership = true)
+    @Requirements(selected = true, ownership = true, excludedTypes = { EntityType.ENDER_DRAGON, EntityType.SQUID,
+            EntityType.GHAST, EntityType.BLAZE })
     public void path(CommandContext args, Player player, NPC npc) {
         Editor.enterOrLeave(player, npc.getTrait(Waypoints.class).getEditor(player));
     }

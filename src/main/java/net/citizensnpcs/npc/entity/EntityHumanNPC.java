@@ -42,12 +42,15 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
     }
 
     @Override
-    public void d_() {
-        super.d_();
+    public void F_() {
+        super.F_();
         npc.update();
     }
 
     public void moveOnCurrentHeading() {
+        getControllerMove().c();
+        getControllerLook().a();
+        getControllerJump().b();
         if (this.aZ) {
             if (aT()) {
                 this.motY += 0.03999999910593033D;

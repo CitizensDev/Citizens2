@@ -60,7 +60,8 @@ public class LookClose extends Trait implements Runnable, Toggleable {
             return;
         if (hasInvalidTarget()) {
             findNewTarget();
-        } else {
+        }
+        if (lookingAt != null) {
             faceEntity(npc.getBukkitEntity(), lookingAt);
         }
     }
@@ -85,13 +86,18 @@ public class LookClose extends Trait implements Runnable, Toggleable {
     }
 
     private boolean hasInvalidTarget() {
-        return lookingAt == null || !lookingAt.isOnline()
-                || lookingAt.getLocation().distanceSquared(npc.getBukkitEntity().getLocation()) > 5;
+        if (lookingAt == null)
+            return true;
+        if (!lookingAt.isOnline() || lookingAt.getLocation().distanceSquared(npc.getBukkitEntity().getLocation()) > 5) {
+            lookingAt = null;
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void save(DataKey key) {
-        key.setBoolean("enabled", enabled);
+        key.setBoolean("", enabled);
     }
 
     @Override

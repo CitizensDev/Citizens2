@@ -98,6 +98,9 @@ public class CitizensAI implements AI {
     public void setDestination(Location destination) {
         if (destination == null)
             throw new IllegalArgumentException("destination cannot be null");
+        if (!npc.isSpawned())
+            throw new IllegalStateException("npc is not spawned");
+
         boolean replaced = executing != null;
         executing = new MCNavigationStrategy(npc, destination);
 
