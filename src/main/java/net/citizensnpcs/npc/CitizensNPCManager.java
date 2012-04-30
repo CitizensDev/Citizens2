@@ -38,6 +38,8 @@ public class CitizensNPCManager implements NPCManager {
 
     public NPC createNPC(EntityType type, int id, String name, Character character) {
         CitizensNPC npc = npcBuilder.getByType(type, this, id, name);
+        if (npc == null)
+            throw new IllegalStateException("could not create npc");
         if (character != null)
             npc.setCharacter(character);
         npcs.put(npc.getId(), npc);
@@ -106,14 +108,22 @@ public class CitizensNPCManager implements NPCManager {
 
     public void remove(NPC npc) {
         npcs.remove(npc.getId());
-        saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
-        removeMetadata(npc);
+        removeData(npc);
     }
 
     public void removeAll() {
         Iterator<NPC> itr = iterator();
-        while (itr.hasNext())
-            itr.next().remove();
+        while (itr.hasNext()) {
+            NPC npc = itr.next();
+            npc.despawn();
+            removeData(npc);
+            itr.remove();
+        }
+    }
+
+    private void removeData(NPC npc) {
+        saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
+        removeMetadata(npc);
     }
 
     private void removeMetadata(NPC npc) {

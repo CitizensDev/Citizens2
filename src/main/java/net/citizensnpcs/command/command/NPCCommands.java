@@ -15,6 +15,7 @@ import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
+import net.citizensnpcs.command.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.npc.CitizensNPCManager;
@@ -32,6 +33,7 @@ import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -140,6 +142,7 @@ public class NPCCommands {
                 type = EntityType.PLAYER;
             }
         }
+        Messaging.log(type);
         npc = npcManager.createNPC(type, name);
         String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(npc.getName());
         if (args.hasValueFlag("char")) {
@@ -216,15 +219,16 @@ public class NPCCommands {
             max = 2,
             permission = "npc.list")
     @Requirements
-    public void list(CommandContext args, Player player, NPC npc) throws CommandException {
+    @ServerCommand
+    public void list(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         List<NPC> npcs = new ArrayList<NPC>();
 
         if (args.hasFlag('a')) {
             for (NPC add : npcManager)
                 npcs.add(add);
-        } else if (args.getValueFlags().size() == 0 && args.argsLength() == 1 || args.argsLength() == 2) {
+        } else if (args.getValueFlags().size() == 0 && sender instanceof Player) {
             for (NPC add : npcManager) {
-                if (!npcs.contains(add) && add.getTrait(Owner.class).isOwner(player))
+                if (!npcs.contains(add) && add.getTrait(Owner.class).isOwner((Player) sender))
                     npcs.add(add);
             }
         } else {
@@ -270,7 +274,7 @@ public class NPCCommands {
         }
 
         int page = args.getInteger(1, 1);
-        if (!paginator.sendPage(player, page))
+        if (!paginator.sendPage(sender, page))
             throw new CommandException("The page '" + page + "' does not exist.");
     }
 
@@ -364,16 +368,20 @@ public class NPCCommands {
             min = 1,
             max = 2)
     @Requirements
-    public void remove(CommandContext args, Player player, NPC npc) throws CommandException {
+    @ServerCommand
+    public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
-            if (!args.getString(1).equals("all"))
+            if (!args.getString(1).equalsIgnoreCase("all"))
                 throw new CommandException("Incorrect syntax. /npc remove (all)");
-            if (!player.hasPermission("citizens.npc.remove.all") && !player.hasPermission("citizens.admin"))
+            if (!sender.hasPermission("citizens.npc.remove.all") && !sender.hasPermission("citizens.admin"))
                 throw new NoPermissionsException();
             npcManager.removeAll();
-            Messaging.send(player, "<a>You permanently removed all NPCs.");
+            Messaging.send(sender, "<a>You permanently removed all NPCs.");
             return;
         }
+        if (!(sender instanceof Player))
+            throw new CommandException("You must be ingame to use this command");
+        Player player = (Player) sender;
         if (npc == null)
             throw new CommandException("You must have an NPC selected to execute that command.");
         if (!npc.getTrait(Owner.class).isOwner(player))

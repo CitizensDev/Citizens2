@@ -33,7 +33,8 @@ public class CitizensZombieNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void d_() {
+        public void z_() {
+            super.z_();
             npc.update();
         }
 
