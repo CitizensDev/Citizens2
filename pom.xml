@@ -11,7 +11,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.2.5-R1.2-SNAPSHOT</bukkit.version>
 		<craftbukkit.version>1.2.5-R1.2-SNAPSHOT</craftbukkit.version>
 		<citizensapi.version>2.0-SNAPSHOT</citizensapi.version>
 		<build.number>Unknown</build.number>
@@ -43,13 +42,6 @@
 			<version>${citizensapi.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>${bukkit.version}</version>
-			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
