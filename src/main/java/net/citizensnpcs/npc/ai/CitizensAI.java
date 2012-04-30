@@ -146,7 +146,7 @@ public class CitizensAI implements AI {
                     entry.goal.reset();
                     executingGoals.remove(entry);
                 }
-            } else if (entry.goal.continueExecuting() && isGoalAllowable(entry)) {
+            } else if (entry.goal.shouldExecute() && isGoalAllowable(entry)) {
                 entry.goal.start();
                 executingGoals.add(entry);
             }
