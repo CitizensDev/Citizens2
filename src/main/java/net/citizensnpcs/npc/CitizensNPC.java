@@ -1,9 +1,5 @@
 package net.citizensnpcs.npc;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
@@ -24,9 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.Plugin;
 
 public abstract class CitizensNPC extends AbstractNPC {
     private final CitizensAI ai = new CitizensAI(this);
@@ -38,31 +32,6 @@ public abstract class CitizensNPC extends AbstractNPC {
         super(id, name);
         this.manager = manager;
         traitManager = (CitizensTraitManager) CitizensAPI.getTraitManager();
-    }
-
-    @Override
-    public void addTrait(Trait trait) {
-        // TODO: right now every addTrait call has to be wrapped with
-        // TraitManager.getTrait(Class, NPC) -- this is bad, need to fix this.
-        if (trait == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "Cannot register a null trait. Was it registered properly?");
-            return;
-        }
-
-        if (trait instanceof Runnable) {
-            runnables.add((Runnable) trait);
-            if (traits.containsKey(trait.getClass()))
-                runnables.remove(traits.get(trait.getClass()));
-        }
-        if (trait instanceof Listener) {
-            Bukkit.getPluginManager().registerEvents((Listener) trait, trait.getPlugin());
-        }
-
-        Map<Class<? extends Trait>, Trait> map = traits.get(trait.getPlugin());
-        if (map == null)
-            map = new HashMap<Class<? extends Trait>, Trait>();
-        map.put(trait.getClass(), trait);
-        traits.put(trait.getPlugin(), map);
     }
 
     @Override
@@ -115,16 +84,8 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public <T extends Trait> T getTrait(Class<T> clazz) {
-        Trait trait = null;
-        for (Plugin plugin : traits.keySet())
-            if (traits.get(plugin).containsKey(clazz))
-                trait = traits.get(plugin).get(clazz);
-        if (trait == null)
-            trait = traitManager.getTrait(clazz, this);
-
-        addTrait(trait);
-        return trait != null ? clazz.cast(trait) : null;
+    public Trait getTraitFor(Class<? extends Trait> clazz) {
+        return traitManager.getTrait(clazz, this);
     }
 
     @Override
@@ -187,10 +148,8 @@ public abstract class CitizensNPC extends AbstractNPC {
         }
 
         // Save all existing traits
-        for (Map<Class<? extends Trait>, Trait> map : traits.values()) {
-            for (Trait trait : map.values()) {
-                trait.save(root.getRelative("traits." + trait.getName()));
-            }
+        for (Trait trait : traits.values()) {
+            trait.save(root.getRelative("traits." + trait.getName()));
         }
     }
 
@@ -222,9 +181,8 @@ public abstract class CitizensNPC extends AbstractNPC {
         getTrait(Spawned.class).setSpawned(true);
 
         // Modify NPC using traits after the entity has been created
-        for (Plugin plugin : traits.keySet())
-            for (Trait trait : getTraits(plugin))
-                trait.onNPCSpawn();
+        for (Trait trait : traits.values())
+            trait.onNPCSpawn();
         return true;
     }
 

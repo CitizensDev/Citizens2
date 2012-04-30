@@ -13,6 +13,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.PluginProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
+import net.citizensnpcs.api.trait.TraitManager;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.NBTStorage;
@@ -57,7 +58,7 @@ public class Citizens extends JavaPlugin {
     private ClassLoader contextClassLoader;
     private CitizensNPCManager npcManager;
     private Storage saves;
-    private CitizensTraitManager traitManager;
+    private TraitManager traitManager;
 
     public CommandManager getCommandManager() {
         return commands;
@@ -153,6 +154,7 @@ public class Citizens extends JavaPlugin {
         CitizensAPI.setNPCManager(npcManager);
         CitizensAPI.setCharacterManager(characterManager);
         CitizensAPI.setTraitManager(traitManager);
+        CitizensAPI.setDataFolder(getDataFolder());
 
         getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
 

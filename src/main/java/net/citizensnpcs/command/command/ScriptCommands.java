@@ -44,11 +44,7 @@ public class ScriptCommands {
                 Script s = script.newInstance();
                 if (args.hasValueFlag("i")) {
                     for (String m : Splitter.on(',').split(args.getFlag("i"))) {
-                        try {
-                            s.invoke(m, new Object[] {});
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
+                        s.invoke(m, new Object[] {});
                     }
                 }
                 Messaging.send(sender, "<a>Done.");

@@ -170,10 +170,14 @@ public class CommandContext {
     }
 
     public String getJoinedStrings(int initialIndex) {
+        return getJoinedStrings(initialIndex, ' ');
+    }
+
+    public String getJoinedStrings(int initialIndex, char delimiter) {
         initialIndex = initialIndex + 1;
         StringBuilder buffer = new StringBuilder(args[initialIndex]);
         for (int i = initialIndex + 1; i < args.length; i++)
-            buffer.append(" ").append(args[i]);
+            buffer.append(delimiter).append(args[i]);
         return buffer.toString();
     }
 

@@ -19,8 +19,8 @@ import net.citizensnpcs.command.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.npc.CitizensNPCManager;
-import net.citizensnpcs.npc.CitizensTraitManager;
 import net.citizensnpcs.trait.Age;
+import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
@@ -40,11 +40,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import com.google.common.base.Splitter;
+
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
     private final CharacterManager characterManager = CitizensAPI.getCharacterManager();
     private final CitizensNPCManager npcManager;
-    private final CitizensTraitManager traitManager = (CitizensTraitManager) CitizensAPI.getTraitManager();
 
     public NPCCommands(Citizens plugin) {
         npcManager = plugin.getNPCManager();
@@ -88,6 +89,14 @@ public class NPCCommands {
             Messaging.send(player, "<a>Age " + (trait.toggle() ? "locked" : "unlocked") + ".");
     }
 
+    @Command(aliases = { "npc" }, usage = "behaviour [scripts]", desc = "Sets the behaviour of a NPC", modifiers = {
+            "behaviour", "ai" }, min = 2, max = -1)
+    public void behaviour(CommandContext args, Player player, NPC npc) throws CommandException {
+        Iterable<String> files = Splitter.on(',').split(args.getJoinedStrings(1, ','));
+        npc.getTrait(Behaviour.class).addScripts(files);
+        player.sendMessage(ChatColor.GREEN + "Behaviours added.");
+    }
+
     @Command(
             aliases = { "npc" },
             usage = "character [character]",
@@ -119,7 +128,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b) --type (type) --char (char))",
+            usage = "create [name] ((-b) --type (type) --char (char) --behaviour (behaviour))",
             desc = "Create a new NPC",
             flags = "b",
             modifiers = { "create" },
@@ -142,7 +151,6 @@ public class NPCCommands {
                 type = EntityType.PLAYER;
             }
         }
-        Messaging.log(type);
         npc = npcManager.createNPC(type, name);
         String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(npc.getName());
         if (args.hasValueFlag("char")) {
@@ -175,16 +183,21 @@ public class NPCCommands {
             }
         }
 
+        if (args.hasValueFlag("behaviour")) {
+            npc.getTrait(Behaviour.class).addScripts(Splitter.on(",").split(args.getFlag("behaviour")));
+            msg += " with the specified behaviours";
+        }
+
         msg += ".";
 
         // Initialize necessary traits
-        npc.addTrait(traitManager.getTrait(Owner.class));
+        npc.addTrait(Owner.class);
         if (!Setting.SERVER_OWNS_NPCS.asBoolean())
             npc.getTrait(Owner.class).setOwner(player.getName());
         npc.getTrait(MobType.class).setType(type.toString());
-        npc.addTrait(traitManager.getTrait(LookClose.class, npc));
-        npc.addTrait(traitManager.getTrait(Text.class, npc));
-        npc.addTrait(traitManager.getTrait(Saddle.class, npc));
+        npc.addTrait(LookClose.class);
+        npc.addTrait(Text.class);
+        npc.addTrait(Saddle.class);
 
         npc.spawn(player.getLocation());
 
