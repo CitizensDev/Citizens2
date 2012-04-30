@@ -16,6 +16,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.trait.Age;
+import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
@@ -52,6 +53,7 @@ public class CitizensTraitManager implements TraitManager {
         registerTrait(new TraitFactory(Waypoints.class).withName("waypoints").withPlugin(plugin));
         registerTrait(new TraitFactory(WoolColor.class).withName("woolcolor").withPlugin(plugin));
         registerTrait(new TraitFactory(Controllable.class).withName("controllable").withPlugin(plugin));
+        registerTrait(new TraitFactory(Behaviour.class).withName("behaviour").withPlugin(plugin));
     }
 
     @SuppressWarnings("unchecked")
