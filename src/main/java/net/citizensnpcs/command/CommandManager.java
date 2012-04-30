@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -106,8 +108,12 @@ public class CommandManager {
                         && !player.hasPermission("citizens.admin"))
                     throw new RequirementMissingException("You must be the owner of this NPC to execute that command.");
 
-                Set<EntityType> types = Sets.newHashSet(cmdRequirements.types());
-                if (!types.contains(EntityType.UNKNOWN)) {
+                if (npc != null) {
+                    Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()), EntityType.class);
+                    if (types.contains(EntityType.UNKNOWN))
+                        types = EnumSet.allOf(EntityType.class);
+                    types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));
+
                     EntityType type = EntityType.valueOf(npc.getTrait(MobType.class).getType());
                     if (!types.contains(type)) {
                         throw new RequirementMissingException("The NPC cannot be the mob type '"

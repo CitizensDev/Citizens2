@@ -13,4 +13,6 @@ public @interface Requirements {
     boolean selected() default false;
 
     EntityType[] types() default { EntityType.UNKNOWN };
+
+    EntityType[] excludedTypes() default { EntityType.UNKNOWN };
 }

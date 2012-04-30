@@ -62,9 +62,6 @@ public class MCNavigationStrategy implements PathStrategy {
     public boolean update() {
         if (entity != null) {
             navigation.d();
-            entity.getControllerMove().c();
-            entity.getControllerLook().a();
-            entity.getControllerJump().b();
             entity.moveOnCurrentHeading();
         }
         return navigation.e();
