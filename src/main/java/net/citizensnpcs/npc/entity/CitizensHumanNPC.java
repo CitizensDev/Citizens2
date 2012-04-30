@@ -28,6 +28,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
                 StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws), this);
         handle.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        handle.X = loc.getYaw();
         return handle;
     }
 
