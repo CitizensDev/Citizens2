@@ -30,10 +30,6 @@ public class ScriptRunnerCallback implements CompileCallback {
     private void invokeMethodIfAvailable(Script script) {
         if (methodToInvoke == null)
             return;
-        try {
-            script.invoke(methodToInvoke, methodArgs);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        script.invoke(methodToInvoke, methodArgs);
     }
 }

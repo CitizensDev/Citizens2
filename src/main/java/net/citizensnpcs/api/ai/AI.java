@@ -45,6 +45,14 @@ public interface AI {
     public void registerNavigationCallback(NavigationCallback callback);
 
     /**
+     * Removes a previously registered {@link Goal}.
+     * 
+     * @param goal
+     *            The goal to remove
+     */
+    public void removeGoal(Goal goal);
+
+    /**
      * Creates a path to the given destination
      * 
      * @param destination
