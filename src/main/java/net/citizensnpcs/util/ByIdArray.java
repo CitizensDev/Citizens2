@@ -14,7 +14,7 @@ public class ByIdArray<T> implements Iterable<T> {
     private int size;
 
     public ByIdArray() {
-        this(1000);
+        this(100);
     }
 
     public ByIdArray(int capacity) {
@@ -138,22 +138,16 @@ public class ByIdArray<T> implements Iterable<T> {
                     recalcHighest();
                 if (lowest == Integer.MAX_VALUE || elementData[lowest] == null)
                     recalcLowest();
-                idx = lowest;
-                if (elementData[lowest] == null) {
-                    idx = 0;
-                    while (elementData.length > idx && elementData[idx++] == null)
-                        ;
-                    if (elementData[idx] == null)
-                        Messaging.debug("idx is still null!");
-                }
+                idx = lowest - 1;
             }
         }
 
         @Override
         public boolean hasNext() {
-            if (modCount != expected)
+            if (modCount != expected) {
                 throw new ConcurrentModificationException();
-            return size > 0 && highest + 1 > idx;
+            }
+            return size > 0 && highest > idx;
         }
 
         @Override
@@ -161,12 +155,14 @@ public class ByIdArray<T> implements Iterable<T> {
         public T next() {
             if (modCount != expected)
                 throw new ConcurrentModificationException();
-            T next = (T) elementData[idx];
-            if (next == null || idx > highest)
+            if (idx > highest)
                 throw new NoSuchElementException();
             do
                 idx++;
             while (idx != highest + 1 && elementData[idx] == null);
+            T next = (T) elementData[idx];
+            if (next == null)
+                throw new NoSuchElementException();
             return next;
         }
 
@@ -176,11 +172,6 @@ public class ByIdArray<T> implements Iterable<T> {
                 throw new ConcurrentModificationException();
             fastRemove(idx);
             expected = modCount;
-            if (hasNext()) {
-                do
-                    idx++;
-                while (idx != highest + 1 && elementData[idx] == null);
-            }
         }
     }
 
