@@ -25,6 +25,10 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
     public static class EntitySlimeNPC extends EntitySlime implements NPCHandle {
         private final CitizensNPC npc;
 
+        public EntitySlimeNPC(World world) {
+            this(world, null);
+        }
+
         public EntitySlimeNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
@@ -36,7 +40,8 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
         @Override
         public void z_() {
             super.z_();
-            npc.update();
+            if (npc != null)
+                npc.update();
         }
 
         @Override

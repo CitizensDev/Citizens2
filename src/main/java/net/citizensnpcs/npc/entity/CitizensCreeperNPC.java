@@ -26,6 +26,10 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHandle {
         private final CitizensNPC npc;
 
+        public EntityCreeperNPC(World world) {
+            this(world, null);
+        }
+
         public EntityCreeperNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
@@ -40,7 +44,8 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
         @Override
         public void z_() {
             super.z_();
-            npc.update();
+            if (npc != null)
+                npc.update();
         }
 
         @Override

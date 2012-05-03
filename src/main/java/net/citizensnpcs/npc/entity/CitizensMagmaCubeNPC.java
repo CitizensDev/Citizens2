@@ -25,6 +25,10 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
     public static class EntityMagmaCubeNPC extends EntityMagmaCube implements NPCHandle {
         private final CitizensNPC npc;
 
+        public EntityMagmaCubeNPC(World world) {
+            this(world, null);
+        }
+
         public EntityMagmaCubeNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
@@ -35,7 +39,10 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
-            npc.update();
+            if (npc != null)
+                npc.update();
+            else
+                super.d_();
         }
 
         @Override

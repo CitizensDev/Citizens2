@@ -63,6 +63,10 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
     public static class EntityEndermanNPC extends EntityEnderman implements NPCHandle {
         private final CitizensNPC npc;
 
+        public EntityEndermanNPC(World world) {
+            this(world, null);
+        }
+
         public EntityEndermanNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
@@ -76,7 +80,10 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
 
         @Override
         public void e() {
-            npc.update();
+            if (npc != null)
+                npc.update();
+            else
+                super.e();
         }
 
         @Override

@@ -25,6 +25,10 @@ public class CitizensSkeletonNPC extends CitizensMobNPC {
     public static class EntitySkeletonNPC extends EntitySkeleton implements NPCHandle {
         private final CitizensNPC npc;
 
+        public EntitySkeletonNPC(World world) {
+            this(world, null);
+        }
+
         public EntitySkeletonNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
@@ -35,7 +39,8 @@ public class CitizensSkeletonNPC extends CitizensMobNPC {
         @Override
         public void z_() {
             super.z_();
-            npc.update();
+            if (npc != null)
+                npc.update();
         }
 
         @Override
