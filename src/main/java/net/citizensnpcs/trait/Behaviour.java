@@ -2,6 +2,8 @@ package net.citizensnpcs.trait;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
@@ -11,22 +13,37 @@ import net.citizensnpcs.api.scripting.CompileCallback;
 import net.citizensnpcs.api.scripting.ScriptFactory;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.npc.ai.CitizensAI.GoalEntry;
 
 import org.apache.commons.lang.Validate;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class Behaviour extends Trait {
-    private final List<File> scripts = Lists.newArrayList();
-    private final List<GoalEntry> addedGoals = Lists.newArrayList();
-    private final File rootFolder = new File(CitizensAPI.getScriptFolder(), "behaviours");
+    private final Map<Goal, Integer> addedGoals = Maps.newHashMap();
+    private final Function<String, File> fileConverterFunction = new Function<String, File>() {
+        @Override
+        public File apply(String arg0) {
+            return new File(rootFolder, arg0);
+        }
+    };
     private final NPC npc;
+    private final File rootFolder = new File(CitizensAPI.getScriptFolder(), "behaviours");
+
+    private final List<File> scripts = Lists.newArrayList();
 
     public Behaviour(NPC npc) {
         this.npc = npc;
+    }
+
+    public void addScripts(Iterable<String> scripts) {
+        BehaviourCallback callback = new BehaviourCallback(new Goals());
+        Iterable<File> transformed = Iterables.transform(scripts, fileConverterFunction);
+        CitizensAPI.getScriptCompiler().compile(transformed).withCallback(callback).begin();
     }
 
     @Override
@@ -38,22 +55,10 @@ public class Behaviour extends Trait {
         addScripts(Splitter.on(",").split(scripts));
     }
 
-    private void reset() {
-        removeGoals();
-        scripts.clear();
-        addedGoals.clear();
-    }
-
-    private void removeGoals() {
-        for (GoalEntry entry : addedGoals) {
-            npc.getAI().removeGoal(entry.getGoal());
-        }
-    }
-
     @Override
     public void onNPCSpawn() {
-        for (GoalEntry entry : addedGoals) {
-            npc.getAI().addGoal(entry.getPriority(), entry.getGoal());
+        for (Entry<Goal, Integer> entry : addedGoals.entrySet()) {
+            npc.getAI().addGoal(entry.getValue(), entry.getKey());
         }
     }
 
@@ -62,20 +67,16 @@ public class Behaviour extends Trait {
         removeGoals();
     }
 
-    public void addScripts(Iterable<String> scripts) {
-        BehaviourCallback callback = new BehaviourCallback(new Goals());
-        for (String script : scripts) {
-            File file = new File(rootFolder, script);
-            if (!file.exists())
-                continue;
-            CitizensAPI.getScriptCompiler().compile(file).withCallback(callback).begin();
-            this.scripts.add(file);
+    private void removeGoals() {
+        for (Goal entry : addedGoals.keySet()) {
+            npc.getAI().removeGoal(entry);
         }
-        List<GoalEntry> added = callback.goals.goals;
-        for (GoalEntry entry : added) {
-            npc.getAI().addGoal(entry.getPriority(), entry.getGoal());
-        }
-        addedGoals.addAll(added);
+    }
+
+    private void reset() {
+        removeGoals();
+        scripts.clear();
+        addedGoals.clear();
     }
 
     @Override
@@ -91,17 +92,27 @@ public class Behaviour extends Trait {
         }
 
         @Override
+        public void onCompileTaskFinished() {
+            addedGoals.putAll(goals.goals);
+            if (!npc.isSpawned())
+                return;
+            for (Entry<Goal, Integer> entry : goals.goals.entrySet()) {
+                npc.getAI().addGoal(entry.getValue(), entry.getKey());
+            }
+        }
+
+        @Override
         public void onScriptCompiled(ScriptFactory script) {
             script.newInstance().invoke("addGoals", goals, npc);
         }
     }
 
     public static class Goals {
-        private final List<GoalEntry> goals = Lists.newArrayList();
+        private final Map<Goal, Integer> goals = Maps.newHashMap();
 
         public void addGoal(int priority, Goal goal) {
             Validate.notNull(goal);
-            this.goals.add(new GoalEntry(priority, goal));
+            goals.put(goal, priority);
         }
     }
 }

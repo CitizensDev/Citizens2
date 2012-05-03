@@ -1,7 +1,6 @@
 package net.citizensnpcs.npc.ai;
 
 import java.lang.ref.WeakReference;
-import java.util.Collections;
 import java.util.List;
 
 import net.citizensnpcs.api.ai.AI;
@@ -33,7 +32,6 @@ public class CitizensAI implements AI {
         if (goals.contains(goal))
             return;
         goals.add(new GoalEntry(priority, goal));
-        Collections.sort(goals);
     }
 
     @Override
@@ -59,8 +57,8 @@ public class CitizensAI implements AI {
             GoalEntry item = goals.get(i);
             if (item == test)
                 continue;
-            if (test.priority >= item.priority) {
-                if (!test.goal.isCompatibleWith(item.goal) && executingGoals.contains(item)) {
+            if (test.getPriority() >= item.getPriority()) {
+                if (!test.getGoal().isCompatibleWith(item.getGoal()) && executingGoals.contains(item)) {
                     return false;
                 }
             } /*else if (executingGoals.contains(item) && !item.goal.requiresUpdates()) {
@@ -153,18 +151,18 @@ public class CitizensAI implements AI {
             boolean executing = executingGoals.contains(entry);
 
             if (executing) {
-                if (!entry.goal.continueExecuting() || !isGoalAllowable(entry)) {
-                    entry.goal.reset();
+                if (!entry.getGoal().continueExecuting() || !isGoalAllowable(entry)) {
+                    entry.getGoal().reset();
                     executingGoals.remove(entry);
                 }
-            } else if (entry.goal.shouldExecute() && isGoalAllowable(entry)) {
-                entry.goal.start();
+            } else if (entry.getGoal().shouldExecute() && isGoalAllowable(entry)) {
+                entry.getGoal().start();
                 executingGoals.add(entry);
             }
         }
 
         for (int i = 0; i < executingGoals.size(); ++i) {
-            executingGoals.get(i).goal.update();
+            executingGoals.get(i).getGoal().update();
         }
     }
 
@@ -174,14 +172,14 @@ public class CitizensAI implements AI {
         for (Goal goal : toRemove) {
             for (int i = 0; i < executingGoals.size(); ++i) {
                 GoalEntry entry = executingGoals.get(i);
-                if (entry.goal.equals(goal)) {
-                    entry.goal.reset();
+                if (entry.getGoal().equals(goal)) {
+                    entry.getGoal().reset();
                     executingGoals.remove(i);
                 }
             }
             for (int i = 0; i < goals.size(); ++i) {
                 GoalEntry entry = goals.get(i);
-                if (entry.goal.equals(goal))
+                if (entry.getGoal().equals(goal))
                     goals.remove(i);
             }
         }
@@ -190,8 +188,8 @@ public class CitizensAI implements AI {
     }
 
     public static class GoalEntry implements Comparable<GoalEntry> {
-        final Goal goal;
-        final int priority;
+        private final Goal goal;
+        private final int priority;
 
         public GoalEntry(int priority, Goal goal) {
             this.priority = priority;
@@ -213,10 +211,7 @@ public class CitizensAI implements AI {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((goal == null) ? 0 : goal.hashCode());
-            return result;
+            return 31 + ((goal == null) ? 0 : goal.hashCode());
         }
 
         @Override
@@ -224,10 +219,7 @@ public class CitizensAI implements AI {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
             GoalEntry other = (GoalEntry) obj;

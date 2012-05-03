@@ -56,7 +56,7 @@ public class CitizensNPCManager implements NPCManager {
         return createNPC(type, generateUniqueId(), name, character);
     }
 
-    public void despawn(NPC npc, boolean keepSelected) {
+    void despawn(NPC npc, boolean keepSelected) {
         if (!keepSelected)
             npc.removeMetadata("selectors", plugin);
         npc.getBukkitEntity().remove();
@@ -106,7 +106,7 @@ public class CitizensNPCManager implements NPCManager {
         return npcs.iterator();
     }
 
-    public void remove(NPC npc) {
+    void remove(NPC npc) {
         npcs.remove(npc.getId());
         removeData(npc);
     }
