@@ -11,8 +11,9 @@ import javax.script.Invocable;
 public interface Script {
 
     /**
-     * Converts an object returned by a script to the given Java interface. The class should be an interface, as
-     * although abstract classes are accepted by the Rhino engine, this is not standard behaviour.
+     * Converts an object returned by a script to the given Java interface. The
+     * class should be an interface, as although abstract classes are accepted
+     * by the Rhino engine, this is not standard behaviour.
      * 
      * @param obj
      *            The object to convert
@@ -23,8 +24,9 @@ public interface Script {
     public <T> T convertToInterface(Object obj, Class<T> expected);
 
     /**
-     * Fetches the attribute with the specified name, or null if not found. The returned attribute can be user-stored or
-     * a script variable, such as a function. Script objects should be accessed through
+     * Fetches the attribute with the specified name, or null if not found. The
+     * returned attribute can be user-stored or a script variable, such as a
+     * function. Script objects should be accessed through
      * {@link Script#invoke(String, Object...)}
      * 
      * @param name
@@ -34,7 +36,8 @@ public interface Script {
     public Object getAttribute(String name);
 
     /**
-     * Invokes a method on the given object, which should be a return value or scripting object.
+     * Invokes a method on the given object, which should be a return value or
+     * scripting object.
      * 
      * @param instance
      *            The object instance to invoke the method on
@@ -46,16 +49,17 @@ public interface Script {
      * @throws NoSuchMethodException
      *             If no such method was found on the object
      */
-    public Object invoke(Object instance, String name, Object... args) throws NoSuchMethodException;
+    public Object invoke(Object instance, String name, Object... args);
 
     /**
-     * Invokes a root-level method using the method name and args and returns the result.
+     * Invokes a root-level method using the method name and args and returns
+     * the result.
      * 
      * @param name
      * @param args
      * @return The result of the method call, or null if there was none
      */
-    public Object invoke(String name, Object... args) throws NoSuchMethodException;
+    public Object invoke(String name, Object... args);
 
     /**
      * Sets the attribute with the given name and value.

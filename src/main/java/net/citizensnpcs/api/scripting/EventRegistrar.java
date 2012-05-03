@@ -92,8 +92,6 @@ public class EventRegistrar implements ContextProvider {
                         } else {
                             script.invoke(functionName, event);
                         }
-                    } catch (NoSuchMethodException e) {
-                        System.err.println("[Citizens]: Listener method not found " + e.getMessage() + ".");
                     } catch (Throwable t) {
                         throw new EventException(t);
                     }

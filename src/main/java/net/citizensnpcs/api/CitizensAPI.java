@@ -1,5 +1,7 @@
 package net.citizensnpcs.api;
 
+import java.io.File;
+
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
@@ -10,6 +12,7 @@ import net.citizensnpcs.api.trait.TraitManager;
  */
 public final class CitizensAPI {
     private CharacterManager characterManager;
+    private File dataFolder;
     private NPCManager npcManager;
     private final ScriptCompiler scriptCompiler;
     private TraitManager traitManager;
@@ -21,6 +24,10 @@ public final class CitizensAPI {
     private CitizensAPI() {
     }
 
+    public static File getScriptFolder() {
+        return new File(instance.dataFolder, "scripts");
+    }
+
     private static final CitizensAPI instance = new CitizensAPI();
 
     /**
@@ -30,6 +37,10 @@ public final class CitizensAPI {
      */
     public static CharacterManager getCharacterManager() {
         return instance.characterManager;
+    }
+
+    public static File getDataFolder() {
+        return instance.dataFolder;
     }
 
     /**
@@ -57,6 +68,11 @@ public final class CitizensAPI {
     public static void setCharacterManager(CharacterManager characterManager) {
         if (instance.characterManager == null)
             instance.characterManager = characterManager;
+    }
+
+    public static void setDataFolder(File file) {
+        if (instance.dataFolder == null)
+            instance.dataFolder = file;
     }
 
     public static void setNPCManager(NPCManager npcManager) {

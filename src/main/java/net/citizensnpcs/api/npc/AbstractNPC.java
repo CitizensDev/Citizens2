@@ -1,14 +1,12 @@
 package net.citizensnpcs.api.npc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.trait.Trait;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -16,16 +14,45 @@ import org.bukkit.metadata.MetadataStoreBase;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 public abstract class AbstractNPC implements NPC {
     private Character character;
     private final int id;
     private String name;
-    protected final List<Runnable> runnables = new ArrayList<Runnable>();
-    protected final Map<Plugin, Map<Class<? extends Trait>, Trait>> traits = new HashMap<Plugin, Map<Class<? extends Trait>, Trait>>();
+    protected final List<Runnable> runnables = Lists.newArrayList();
+    protected final Map<Class<? extends Trait>, Trait> traits = Maps.newHashMap();
 
     protected AbstractNPC(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    @Override
+    public void addTrait(Class<? extends Trait> clazz) {
+        addTrait(getTraitFor(clazz));
+    }
+
+    @Override
+    public void addTrait(Trait trait) {
+        // TODO: right now every addTrait call has to be wrapped with
+        // TraitManager.getTrait(Class, NPC) -- this is bad, need to fix this.
+        if (trait == null) {
+            System.err.println("[Citizens] Cannot register a null trait. Was it registered properly?");
+            return;
+        }
+
+        if (trait instanceof Runnable) {
+            runnables.add((Runnable) trait);
+            if (traits.containsKey(trait.getClass()))
+                runnables.remove(traits.get(trait.getClass()));
+        }
+
+        if (trait instanceof Listener) {
+            Bukkit.getPluginManager().registerEvents((Listener) trait, trait.getPlugin());
+        }
+        traits.put(trait.getClass(), trait);
     }
 
     @Override
@@ -58,13 +85,16 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public Iterable<Trait> getTraits(Plugin plugin) {
-        if (plugin == null)
-            throw new IllegalArgumentException("Plugin cannot be null.");
-        if (traits.get(plugin) == null)
-            throw new IllegalArgumentException("Plugin has no traits.");
-        return Collections.unmodifiableCollection(traits.get(plugin).values());
+    public <T extends Trait> T getTrait(Class<T> clazz) {
+        Trait trait = traits.get(clazz);
+        if (trait == null) {
+            trait = getTraitFor(clazz);
+            addTrait(trait);
+        }
+        return trait != null ? clazz.cast(trait) : null;
     }
+
+    protected abstract Trait getTraitFor(Class<? extends Trait> clazz);
 
     @Override
     public boolean hasMetadata(String key) {
@@ -79,10 +109,11 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void remove() {
         runnables.clear();
-        for (Plugin plugin : traits.keySet())
-            for (Trait trait : traits.get(plugin).values())
-                if (trait instanceof Listener)
-                    HandlerList.unregisterAll((Listener) trait);
+        for (Trait trait : traits.values()) {
+            if (trait instanceof Listener) {
+                HandlerList.unregisterAll((Listener) trait);
+            }
+        }
         traits.clear();
     }
 
@@ -93,14 +124,12 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void removeTrait(Class<? extends Trait> trait) {
-        for (Plugin plugin : traits.keySet())
-            if (traits.get(plugin).containsKey(trait)) {
-                Trait t = traits.get(plugin).get(trait);
-                if (t instanceof Runnable)
-                    runnables.remove(t);
-                t.onRemove();
-            }
-        traits.remove(trait);
+        Trait t = traits.remove(trait);
+        if (t != null) {
+            if (t instanceof Runnable)
+                runnables.remove(t);
+            t.onRemove();
+        }
     }
 
     @Override

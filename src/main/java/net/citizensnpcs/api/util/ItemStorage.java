@@ -10,7 +10,10 @@ import org.bukkit.inventory.ItemStack;
 public class ItemStorage {
 
     public static ItemStack loadItemStack(DataKey root) {
-        ItemStack res = new ItemStack(Material.matchMaterial(root.getString("id")), root.getInt("amount"),
+        Material matched = Material.matchMaterial(root.getString("id"));
+        if (matched == null)
+            return null;
+        ItemStack res = new ItemStack(matched, root.getInt("amount"),
                 (short) (root.keyExists("data") ? root.getInt("data") : 0));
         if (root.keyExists("enchantments")) {
             Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();

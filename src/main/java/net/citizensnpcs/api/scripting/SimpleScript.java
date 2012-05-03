@@ -45,7 +45,7 @@ public class SimpleScript implements Script {
     }
 
     @Override
-    public Object invoke(Object instance, String name, Object... args) throws NoSuchMethodException {
+    public Object invoke(Object instance, String name, Object... args) {
         if (instance == null || name == null)
             throw new IllegalArgumentException("instance and method name should not be null");
         try {
@@ -58,12 +58,14 @@ public class SimpleScript implements Script {
             }
         } catch (ScriptException e) {
             e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public Object invoke(String name, Object... args) throws NoSuchMethodException {
+    public Object invoke(String name, Object... args) {
         if (name == null)
             throw new IllegalArgumentException("name should not be null");
         try {
@@ -75,6 +77,8 @@ public class SimpleScript implements Script {
                 return ret;
             }
         } catch (ScriptException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;

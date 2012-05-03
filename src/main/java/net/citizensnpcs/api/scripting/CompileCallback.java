@@ -12,4 +12,6 @@ public interface CompileCallback {
      *            The newly created script
      */
     public void onScriptCompiled(ScriptFactory script);
+
+    public void onCompileTaskFinished();
 }
