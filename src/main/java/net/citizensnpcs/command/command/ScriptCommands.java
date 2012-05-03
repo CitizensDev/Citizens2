@@ -38,7 +38,7 @@ public class ScriptCommands {
         File file = new File(plugin.getDataFolder(), args.getString(1));
         if (!file.exists())
             throw new CommandException("The file '" + args.getString(1) + "' doesn't exist!");
-        boolean success = CitizensAPI.getScriptCompiler().compile(file).withCallback(new CompileCallback() {
+        CitizensAPI.getScriptCompiler().compile(file).withCallback(new CompileCallback() {
             @Override
             public void onScriptCompiled(ScriptFactory script) {
                 Script s = script.newInstance();
@@ -49,11 +49,11 @@ public class ScriptCommands {
                 }
                 Messaging.send(sender, "<a>Done.");
             }
+
+            @Override
+            public void onCompileTaskFinished() {
+            }
         }).begin();
-        if (success) {
-            sender.sendMessage("Compiling...");
-        } else {
-            sender.sendMessage("Could not schedule compilation.");
-        }
+        sender.sendMessage("Compiling...");
     }
 }
