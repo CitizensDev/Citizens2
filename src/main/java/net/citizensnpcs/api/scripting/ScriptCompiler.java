@@ -69,6 +69,10 @@ public class ScriptCompiler implements Runnable {
         return new CompileTaskBuilder(Iterables.toArray(toCompile, FileEngine.class));
     }
 
+    public CompileTaskBuilder compile(Iterable<File> files) {
+        return compile(Iterables.toArray(files, File.class));
+    }
+
     /**
      * Registers a global {@link ContextProvider}, which will be invoked on all
      * scripts created by this ScriptCompiler.
@@ -95,9 +99,10 @@ public class ScriptCompiler implements Runnable {
                     try {
                         reader = new FileReader(engine.file);
                         CompiledScript src = compiler.compile(reader);
+                        ScriptFactory compiled = new SimpleScriptFactory(src, task.contextProviders);
                         for (CompileCallback callback : task.callbacks) {
                             synchronized (callback) {
-                                callback.onScriptCompiled(new SimpleScriptFactory(src, task.contextProviders));
+                                callback.onScriptCompiled(compiled);
                             }
                         }
                     } catch (IOException e) {

@@ -32,4 +32,8 @@ public class ScriptRunnerCallback implements CompileCallback {
             return;
         script.invoke(methodToInvoke, methodArgs);
     }
+
+    @Override
+    public void onCompileTaskFinished() {
+    }
 }
