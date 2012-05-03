@@ -62,6 +62,10 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
     public static class EntitySheepNPC extends EntitySheep implements NPCHandle {
         private final CitizensNPC npc;
 
+        public EntitySheepNPC(World world) {
+            this(world, null);
+        }
+
         public EntitySheepNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
@@ -72,7 +76,8 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         @Override
         public void z_() {
             super.z_();
-            npc.update();
+            if (npc != null)
+                npc.update();
         }
 
         @Override

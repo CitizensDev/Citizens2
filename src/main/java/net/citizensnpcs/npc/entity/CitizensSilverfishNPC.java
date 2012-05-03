@@ -25,6 +25,10 @@ public class CitizensSilverfishNPC extends CitizensMobNPC {
     public static class EntitySilverfishNPC extends EntitySilverfish implements NPCHandle {
         private final CitizensNPC npc;
 
+        public EntitySilverfishNPC(World world) {
+            this(world, null);
+        }
+
         public EntitySilverfishNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
@@ -35,7 +39,8 @@ public class CitizensSilverfishNPC extends CitizensMobNPC {
         @Override
         public void z_() {
             super.z_();
-            npc.update();
+            if (npc != null)
+                npc.update();
         }
 
         @Override

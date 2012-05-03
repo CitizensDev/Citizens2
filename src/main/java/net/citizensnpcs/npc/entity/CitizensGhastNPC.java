@@ -25,6 +25,10 @@ public class CitizensGhastNPC extends CitizensMobNPC {
     public static class EntityGhastNPC extends EntityGhast implements NPCHandle {
         private final CitizensNPC npc;
 
+        public EntityGhastNPC(World world) {
+            this(world, null);
+        }
+
         public EntityGhastNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
@@ -34,7 +38,10 @@ public class CitizensGhastNPC extends CitizensMobNPC {
 
         @Override
         public void d_() {
-            npc.update();
+            if (npc != null)
+                npc.update();
+            else
+                super.d_();
         }
 
         @Override
