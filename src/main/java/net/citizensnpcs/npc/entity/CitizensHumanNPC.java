@@ -90,8 +90,9 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         // Now edit the equipment based on the slot
         if (type != Material.AIR) {
             // Set the proper slot with one of the item
-            hand.setAmount(1);
-            trait.set(slot, hand);
+            ItemStack clone = hand.clone();
+            clone.setAmount(1);
+            trait.set(slot, clone);
 
             if (hand.getAmount() > 1)
                 hand.setAmount(hand.getAmount() - 1);
