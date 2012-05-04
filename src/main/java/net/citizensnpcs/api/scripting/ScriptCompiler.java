@@ -120,6 +120,11 @@ public class ScriptCompiler implements Runnable {
                         Closeables.closeQuietly(reader);
                     }
                 }
+                for (CompileCallback callback : task.callbacks) {
+                    synchronized (callback) {
+                        callback.onCompileTaskFinished();
+                    }
+                }
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
