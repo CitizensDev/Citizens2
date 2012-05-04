@@ -105,6 +105,14 @@ public class LookClose extends Trait implements Runnable, Toggleable {
         enabled = !enabled;
         return enabled;
     }
+    
+    public void turnOn() {
+        enabled = true;
+    }
+
+    public void turnOff() {
+        enabled = false;
+    }
 
     @Override
     public String toString() {
