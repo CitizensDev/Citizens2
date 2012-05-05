@@ -195,7 +195,7 @@ public class Citizens extends JavaPlugin {
                         graph.addPlotter(new Metrics.Plotter(i.toString()) {
                             @Override
                             public int getValue() {
-                                return 1; // Number of players who used a diamond sword
+                                return 1;
                             }
                         });
                     }
