@@ -183,20 +183,24 @@ public class Citizens extends JavaPlugin {
             @Override
             public void run() {
                 try {
-                    Metrics metrics = new Metrics();
-                    metrics.addCustomData(Citizens.this, new Metrics.Plotter() {
-                        @Override
-                        public String getColumnName() {
-                            return "Total NPCs";
-                        }
-
+                    Metrics metrics = new Metrics(Citizens.this);
+                    metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
                         @Override
                         public int getValue() {
                             return Iterators.size(npcManager.iterator());
                         }
                     });
-                    metrics.beginMeasuringPlugin(Citizens.this);
-                } catch (IOException ex) {
+                    Metrics.Graph graph = metrics.createGraph("Character Type Usage");
+                    for(Object i : characterManager.getRegistered()){
+                        graph.addPlotter(new Metrics.Plotter(i.toString()) {
+                            @Override
+                            public int getValue() {
+                                return 1; // Number of players who used a diamond sword
+                            }
+                        });
+                    }
+                    metrics.start();
+                } catch (IOException e) {
                     Messaging.log("Unable to load metrics");
                 }
             }
