@@ -200,7 +200,7 @@ public class Citizens extends JavaPlugin {
                         });
                     }
                     metrics.start();
-                } catch (IOException e) {
+                } catch (IOException ex) {
                     Messaging.log("Unable to load metrics");
                 }
             }
