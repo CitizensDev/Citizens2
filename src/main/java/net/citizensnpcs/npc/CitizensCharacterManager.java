@@ -27,7 +27,7 @@ public class CitizensCharacterManager implements CharacterManager {
             ex.printStackTrace();
         }
     }
-    public Iterable getRegistered(){
-        return (Iterable) registered;
+    public Iterable<Character> getRegistered(){
+        return registered.values();
     }
 }
