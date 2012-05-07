@@ -183,6 +183,7 @@ public class Citizens extends JavaPlugin {
             @Override
             public void run() {
                 try {
+                    Messaging.log("Starting Metrics");
                     Metrics metrics = new Metrics(Citizens.this);
                     metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
                         @Override
@@ -191,12 +192,11 @@ public class Citizens extends JavaPlugin {
                         }
                     });
                     Metrics.Graph graph = metrics.createGraph("Character Type Usage");
-                    Messaging.log("Starting Metrics");
-                    for(Character character : characterManager.getRegistered()){                        
+                    for(final Character character : characterManager.getRegistered()){            
                         graph.addPlotter(new Metrics.Plotter(StringHelper.capitalize(character.getName())) {
                             @Override
                             public int getValue() {
-                                return 1;
+                                return npcManager.getNPCs(character.getClass()).size();
                             }
                         });
                     }
