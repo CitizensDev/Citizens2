@@ -65,8 +65,13 @@ public class ScriptCompiler implements Runnable {
     public CompileTaskBuilder compile(File... files) {
         if (files == null || files.length == 0)
             throw new IllegalArgumentException("files should have a length of at least one");
-        Iterable<FileEngine> toCompile = Iterables.transform(Lists.newArrayList(files), fileEngineConverter);
-        return new CompileTaskBuilder(Iterables.toArray(toCompile, FileEngine.class));
+        List<FileEngine> toCompile = Lists.newArrayList();
+        for (File file : files) {
+            FileEngine res = fileEngineConverter.apply(file);
+            if (res != null)
+                toCompile.add(res);
+        }
+        return new CompileTaskBuilder(toCompile.toArray(new FileEngine[0]));
     }
 
     public CompileTaskBuilder compile(Iterable<File> files) {
