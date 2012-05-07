@@ -192,8 +192,8 @@ public class Citizens extends JavaPlugin {
                     });
                     Metrics.Graph graph = metrics.createGraph("Character Type Usage");
                     Messaging.log("Starting Metrics");
-                    for(Character character : characterManager.getRegistered()){
-                        graph.addPlotter(new Metrics.Plotter(character.getName()) {
+                    for(Character character : characterManager.getRegistered()){                        
+                        graph.addPlotter(new Metrics.Plotter(StringHelper.capitalize(character.getName())) {
                             @Override
                             public int getValue() {
                                 return 1;
