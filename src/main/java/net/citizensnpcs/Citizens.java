@@ -19,6 +19,7 @@ import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.NBTStorage;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
+import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Injector;
 import net.citizensnpcs.command.command.AdminCommands;
@@ -167,15 +168,14 @@ public class Citizens extends JavaPlugin {
         if (getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                setupNPCs();
+                setupNPCs(); 
+                // Run metrics "last"
+                startMetrics();
             }
         }) == -1) {
             Messaging.log(Level.SEVERE, "Issue enabling plugin. Disabling.");
             getServer().getPluginManager().disablePlugin(this);
         }
-
-        // Run metrics last
-        startMetrics();
     }
 
     private void startMetrics() {
@@ -191,8 +191,9 @@ public class Citizens extends JavaPlugin {
                         }
                     });
                     Metrics.Graph graph = metrics.createGraph("Character Type Usage");
-                    for(Object i : characterManager.getRegistered()){
-                        graph.addPlotter(new Metrics.Plotter(i.toString()) {
+                    Messaging.log("Starting Metrics");
+                    for(Character character : characterManager.getRegistered()){
+                        graph.addPlotter(new Metrics.Plotter(character.getName()) {
                             @Override
                             public int getValue() {
                                 return 1;
