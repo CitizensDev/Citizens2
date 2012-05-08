@@ -1,9 +1,10 @@
 package net.citizensnpcs.npc.ai;
 
 import net.citizensnpcs.npc.CitizensNPC;
-import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityMonster;
+import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.Packet18ArmAnimation;
 
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
@@ -36,9 +37,12 @@ public class MCTargetStrategy implements PathStrategy {
         handle.getControllerLook().a(target, 10.0F, handle.D());
         if (aggro && canAttack()) {
             if (handle instanceof EntityMonster) {
-                ((EntityMonster) handle).a(target);
-            } else if (handle instanceof EntityHuman) {
-                ((EntityHuman) handle).attack(target);
+                ((EntityMonster) handle).a((net.minecraft.server.Entity) target);
+                // the cast is necessary to resolve overloaded method a
+            } else if (handle instanceof EntityPlayer) {
+                EntityPlayer humanHandle = (EntityPlayer) handle;
+                humanHandle.attack(target);
+                humanHandle.netServerHandler.sendPacket(new Packet18ArmAnimation(humanHandle, 1));
             }
         }
 
