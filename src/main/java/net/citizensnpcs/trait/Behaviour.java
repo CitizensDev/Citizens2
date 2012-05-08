@@ -33,8 +33,11 @@ public class Behaviour extends Trait {
     };
     private final NPC npc;
     private final File rootFolder = new File(CitizensAPI.getScriptFolder(), "behaviours");
-
     private final List<File> scripts = Lists.newArrayList();
+    {
+        if (!rootFolder.exists())
+            rootFolder.mkdirs();
+    }
 
     public Behaviour(NPC npc) {
         this.npc = npc;
