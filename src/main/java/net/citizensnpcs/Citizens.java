@@ -7,9 +7,11 @@ import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
@@ -19,7 +21,6 @@ import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.NBTStorage;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
-import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Injector;
 import net.citizensnpcs.command.command.AdminCommands;
@@ -41,6 +42,7 @@ import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Metrics;
 import net.citizensnpcs.util.StringHelper;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -51,7 +53,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Iterators;
 
-public class Citizens extends JavaPlugin {
+public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
@@ -61,12 +63,28 @@ public class Citizens extends JavaPlugin {
     private Storage saves;
     private TraitManager traitManager;
 
-    public CommandManager getCommandManager() {
-        return commands;
+    @Override
+    public CharacterManager getCharacterManager() {
+        return characterManager;
     }
 
+    public CommandManager getCommandManager() {
+        return commands; // TODO: this doesn't need to be exposed.
+    }
+
+    @Override
     public CitizensNPCManager getNPCManager() {
         return npcManager;
+    }
+
+    @Override
+    public File getScriptFolder() {
+        return new File(getDataFolder(), "scripts");
+    }
+
+    @Override
+    public TraitManager getTraitManager() {
+        return traitManager;
     }
 
     @Override
@@ -111,7 +129,7 @@ public class Citizens extends JavaPlugin {
             Messaging.sendError(player, "That is not a valid number.");
         } catch (Throwable ex) {
             ex.printStackTrace();
-            if (sender instanceof Player) {
+            if (player != null) {
                 Messaging.sendError(player, "Please report this error: [See console]");
                 Messaging.sendError(player, ex.getClass().getName() + ": " + ex.getMessage());
             }
@@ -121,6 +139,8 @@ public class Citizens extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
+
         tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
@@ -152,10 +172,7 @@ public class Citizens extends JavaPlugin {
 
         npcManager = new CitizensNPCManager(this, saves);
         traitManager = new CitizensTraitManager(this);
-        CitizensAPI.setNPCManager(npcManager);
-        CitizensAPI.setCharacterManager(characterManager);
-        CitizensAPI.setTraitManager(traitManager);
-        CitizensAPI.setDataFolder(getDataFolder());
+        CitizensAPI.setImplementation(this);
 
         getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
 
@@ -168,7 +185,7 @@ public class Citizens extends JavaPlugin {
         if (getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                setupNPCs(); 
+                setupNPCs();
                 // Run metrics "last"
                 startMetrics();
             }
@@ -176,57 +193,6 @@ public class Citizens extends JavaPlugin {
             Messaging.log(Level.SEVERE, "Issue enabling plugin. Disabling.");
             getServer().getPluginManager().disablePlugin(this);
         }
-    }
-
-    private void startMetrics() {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Messaging.log("Starting Metrics");
-                    Metrics metrics = new Metrics(Citizens.this);
-                    metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
-                        @Override
-                        public int getValue() {
-                            return Iterators.size(npcManager.iterator());
-                        }
-                    });
-                    Metrics.Graph graph = metrics.createGraph("Character Type Usage");
-                    for(final Character character : characterManager.getRegistered()){            
-                        graph.addPlotter(new Metrics.Plotter(StringHelper.capitalize(character.getName())) {
-                            @Override
-                            public int getValue() {
-                                return npcManager.getNPCs(character.getClass()).size();
-                            }
-                        });
-                    }
-                    metrics.start();
-                } catch (IOException ex) {
-                    Messaging.log("Unable to load metrics");
-                }
-            }
-        }.start();
-    }
-
-    private void setupStorage() {
-        String type = Setting.STORAGE_TYPE.asString();
-        if (type.equalsIgnoreCase("db") || type.equalsIgnoreCase("database")) {
-            try {
-                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
-                        Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
-            } catch (SQLException e) {
-                e.printStackTrace();
-                Messaging.log("Unable to connect to database, falling back to YAML");
-            }
-        } else if (type.equalsIgnoreCase("nbt")) {
-            saves = new NBTStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
-                    "Citizens NPC Storage");
-        }
-        if (saves == null) {
-            saves = new YamlStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
-                    "Citizens NPC Storage");
-        }
-        Messaging.log("Save method set to", saves.toString());
     }
 
     private void registerCommands() {
@@ -254,16 +220,6 @@ public class Citizens extends JavaPlugin {
         setupNPCs();
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
-    }
-
-    private void setupScripting() {
-        contextClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(getClassLoader());
-        // workaround to fix scripts not loading plugin classes properly
-    }
-
-    private void tearDownScripting() {
-        Thread.currentThread().setContextClassLoader(contextClassLoader);
     }
 
     public void save() {
@@ -304,6 +260,56 @@ public class Citizens extends JavaPlugin {
         Messaging.log("Loaded " + created + " NPCs (" + spawned + " spawned).");
     }
 
+    private void setupScripting() {
+        contextClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClassLoader());
+        // workaround to fix scripts not loading plugin classes properly
+    }
+
+    private void setupStorage() {
+        String type = Setting.STORAGE_TYPE.asString();
+        if (type.equalsIgnoreCase("db") || type.equalsIgnoreCase("database")) {
+            try {
+                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
+                        Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                Messaging.log("Unable to connect to database, falling back to YAML");
+            }
+        } else if (type.equalsIgnoreCase("nbt")) {
+            saves = new NBTStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
+                    "Citizens NPC Storage");
+        }
+        if (saves == null) {
+            saves = new YamlStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
+                    "Citizens NPC Storage");
+        }
+        Messaging.log("Save method set to", saves.toString());
+    }
+
+    private void startMetrics() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Messaging.log("Starting Metrics");
+                    Metrics metrics = new Metrics(Citizens.this);
+                    metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
+                        @Override
+                        public int getValue() {
+                            return Iterators.size(npcManager.iterator());
+                        }
+                    });
+                    Metrics.Graph graph = metrics.createGraph("Character Type Usage");
+                    characterManager.addPlotters(graph);
+                    metrics.start();
+                } catch (IOException ex) {
+                    Messaging.log("Unable to load metrics");
+                }
+            }
+        }.start();
+    }
+
     private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {
         int minDist = Integer.MAX_VALUE;
         String closest = "";
@@ -322,5 +328,15 @@ public class Citizens extends JavaPlugin {
         return false;
     }
 
+    private void tearDownScripting() {
+        Thread.currentThread().setContextClassLoader(contextClassLoader);
+    }
+
     private static final String COMPATIBLE_MC_VERSION = "1.2.5";
+
+    @Override
+    public void onImplementationChanged() {
+        Messaging.severe("Citizens implementation changed, disabling plugin.");
+        Bukkit.getPluginManager().disablePlugin(this);
+    }
 }

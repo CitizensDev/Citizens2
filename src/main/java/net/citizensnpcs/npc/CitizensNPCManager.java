@@ -111,12 +111,6 @@ public class CitizensNPCManager implements NPCManager {
         return createNPC(type, generateUniqueId(), name, character);
     }
 
-    void despawn(NPC npc, boolean keepSelected) {
-        if (!keepSelected)
-            npc.removeMetadata("selectors", plugin);
-        npc.getBukkitEntity().remove();
-    }
-
     private int generateUniqueId() {
         int count = 0;
         while (getNPC(count++) != null)
@@ -184,9 +178,11 @@ public class CitizensNPCManager implements NPCManager {
     private void removeMetadata(NPC npc) {
         // Remove metadata from selectors
         if (npc.hasMetadata("selectors")) {
-            for (MetadataValue value : npc.getMetadata("selectors"))
-                if (Bukkit.getPlayer(value.asString()) != null)
-                    Bukkit.getPlayer(value.asString()).removeMetadata("selected", plugin);
+            for (MetadataValue value : npc.getMetadata("selectors")) {
+                Player search = Bukkit.getPlayerExact(value.asString());
+                if (search != null)
+                    search.removeMetadata("selected", plugin);
+            }
             npc.removeMetadata("selectors", plugin);
         }
     }
