@@ -7,15 +7,14 @@ import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitManager;
 
+import org.bukkit.plugin.Plugin;
+
 /**
  * Contains methods used in order to utilize the Citizens API.
  */
 public final class CitizensAPI {
-    private CharacterManager characterManager;
-    private File dataFolder;
-    private NPCManager npcManager;
     private final ScriptCompiler scriptCompiler;
-    private TraitManager traitManager;
+    private CitizensPlugin implementation;
     {
         scriptCompiler = new ScriptCompiler();
         new Thread(scriptCompiler).start();
@@ -24,11 +23,11 @@ public final class CitizensAPI {
     private CitizensAPI() {
     }
 
-    public static File getScriptFolder() {
-        return new File(instance.dataFolder, "scripts");
-    }
-
     private static final CitizensAPI instance = new CitizensAPI();
+
+    public static File getScriptFolder() {
+        return instance.implementation.getScriptFolder();
+    }
 
     /**
      * Gets the CharacterManager.
@@ -36,11 +35,15 @@ public final class CitizensAPI {
      * @return Citizens character manager
      */
     public static CharacterManager getCharacterManager() {
-        return instance.characterManager;
+        return instance.implementation.getCharacterManager();
+    }
+
+    public static Plugin getPlugin() {
+        return instance.implementation;
     }
 
     public static File getDataFolder() {
-        return instance.dataFolder;
+        return instance.implementation.getDataFolder();
     }
 
     /**
@@ -49,7 +52,7 @@ public final class CitizensAPI {
      * @return Citizens NPC manager
      */
     public static NPCManager getNPCManager() {
-        return instance.npcManager;
+        return instance.implementation.getNPCManager();
     }
 
     public static ScriptCompiler getScriptCompiler() {
@@ -62,26 +65,12 @@ public final class CitizensAPI {
      * @return Citizens trait manager
      */
     public static TraitManager getTraitManager() {
-        return instance.traitManager;
+        return instance.implementation.getTraitManager();
     }
 
-    public static void setCharacterManager(CharacterManager characterManager) {
-        if (instance.characterManager == null)
-            instance.characterManager = characterManager;
-    }
-
-    public static void setDataFolder(File file) {
-        if (instance.dataFolder == null)
-            instance.dataFolder = file;
-    }
-
-    public static void setNPCManager(NPCManager npcManager) {
-        if (instance.npcManager == null)
-            instance.npcManager = npcManager;
-    }
-
-    public static void setTraitManager(TraitManager traitManager) {
-        if (instance.traitManager == null)
-            instance.traitManager = traitManager;
+    public static void setImplementation(CitizensPlugin implementation) {
+        if (instance.implementation != null)
+            instance.implementation.onImplementationChanged();
+        instance.implementation = implementation;
     }
 }
