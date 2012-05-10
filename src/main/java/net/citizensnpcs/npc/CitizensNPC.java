@@ -55,8 +55,10 @@ public abstract class CitizensNPC extends AbstractNPC {
         }
 
         Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
-
-        manager.despawn(this, getTrait(Spawned.class).shouldSpawn());
+        boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
+        if (!keepSelected)
+            removeMetadata("selectors", CitizensAPI.getPlugin());
+        getBukkitEntity().remove();
         mcEntity = null;
 
         return true;

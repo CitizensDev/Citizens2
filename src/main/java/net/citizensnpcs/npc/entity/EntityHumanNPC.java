@@ -44,6 +44,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
     @Override
     public void F_() {
         super.F_();
+        if (noDamageTicks > 0)
+            --noDamageTicks;
         npc.update();
     }
 
@@ -51,24 +53,24 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
         getControllerMove().c();
         getControllerLook().a();
         getControllerJump().b();
-        if (this.aZ) {
+        if (aZ) {
             if (aT() || aU()) {
-                this.motY += 0.04;
-            } else if (this.onGround && this.q == 0) {
-                this.motY = 0.5;
-                this.q = 10;
+                motY += 0.04;
+            } else if (onGround && q == 0) {
+                motY = 0.5;
+                q = 10;
             }
         } else {
-            this.q = 0;
+            q = 0;
         }
 
         aX *= 0.98F;
-        this.a(aW, aX);
+        a(aW, aX);
         X = yaw; // TODO: this looks jerky
     }
 
     @Override
     public NPC getNPC() {
-        return this.npc;
+        return npc;
     }
 }
