@@ -4,18 +4,16 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.text.Text;
-import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -34,7 +32,6 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.gson.internal.Pair;
@@ -45,18 +42,6 @@ public class EventListen implements Listener {
 
     public EventListen(CitizensNPCManager npcManager) {
         this.npcManager = npcManager;
-    }
-
-    private boolean isSettingFulfilled(Player player, Setting setting) {
-        String parts = setting.asString();
-        if (parts.contains("*"))
-            return true;
-        for (String part : Splitter.on(',').split(parts)) {
-            if (Material.matchMaterial(part) == player.getItemInHand().getType()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /*
@@ -140,19 +125,9 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(rightClickEvent);
         if (rightClickEvent.isCancelled())
             return;
-
-        if (!player.hasMetadata("selected") || player.getMetadata("selected").size() == 0
-                || player.getMetadata("selected").get(0).asInt() != npc.getId()) {
-            if (isSettingFulfilled(player, Setting.SELECTION_ITEM) && (npc.getTrait(Owner.class).isOwner(player))) {
-                npcManager.selectNPC(player, npc);
-                Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), npc);
-                if (!Setting.QUICK_SELECT.asBoolean())
-                    return;
-            }
-        }
         // If the NPC isn't a close talker
         // TODO: move this into text.class
-        if (isSettingFulfilled(player, Setting.TALK_ITEM) && !npc.getTrait(Text.class).shouldTalkClose())
+        if (Util.isSettingFulfilled(player, Setting.TALK_ITEM) && !npc.getTrait(Text.class).shouldTalkClose())
             npc.getTrait(Text.class).sendText(player);
 
         if (npc.getCharacter() != null)

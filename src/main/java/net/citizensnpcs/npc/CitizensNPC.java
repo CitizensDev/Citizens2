@@ -16,6 +16,7 @@ import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 import net.minecraft.server.EntityLiving;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -50,7 +51,7 @@ public abstract class CitizensNPC extends AbstractNPC {
     @Override
     public boolean despawn() {
         if (!isSpawned()) {
-            Messaging.debug("The NPC with the ID '" + getId() + "' is already despawned.");
+            Messaging.debug(String.format("The NPC with the ID '%d' is already despawned.", getId()));
             return false;
         }
 
@@ -103,7 +104,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             try {
                 character.load(root.getRelative("characters." + character.getName()));
             } catch (NPCLoadException e) {
-                Messaging.severe("Unable to load character " + character.getName() + ".");
+                Messaging.severe(String.format("Unable to load character '%s'.", character.getName()));
                 e.printStackTrace();
             }
             setCharacter(character);
@@ -113,23 +114,27 @@ public abstract class CitizensNPC extends AbstractNPC {
         for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
             Trait trait = traitManager.getTrait(traitKey.name(), this);
             if (trait == null) {
-                Messaging.severe("Skipping trait with name '" + traitKey.name() + "' while loading '" + getId()
-                        + "': trait does not exist. Was it registered properly or has the name changed?");
+                Messaging.severe(String.format(
+                        "Found missing trait '%s' while loading NPC ID: '%d' - skipped. Has the name changed?",
+                        traitKey.name(), getId()));
                 continue;
             }
             addTrait(trait);
             try {
                 getTrait(trait.getClass()).load(traitKey);
             } catch (Exception ex) {
-                Messaging.log("[Citizens] The trait '" + traitKey.name()
-                        + "' failed to load properly for the NPC with the ID '" + getId() + "'. " + ex.getMessage());
+                Messaging.log(String.format("The trait '%s' failed to load properly for NPC ID: '%d'.",
+                        traitKey.name(), getId()), ex.getMessage());
                 ex.printStackTrace();
             }
         }
 
         // Spawn the NPC
-        if (getTrait(Spawned.class).shouldSpawn())
-            spawn(getTrait(CurrentLocation.class).getLocation());
+        if (getTrait(Spawned.class).shouldSpawn()) {
+            Location spawnLoc = getTrait(CurrentLocation.class).getLocation();
+            if (spawnLoc != null)
+                spawn(spawnLoc);
+        }
     }
 
     @Override
@@ -162,11 +167,11 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean spawn(Location loc) {
+        Validate.notNull(loc, "location cannot be null");
         if (isSpawned()) {
-            Messaging.debug("The NPC with the ID '" + getId() + "' is already spawned.");
+            Messaging.debug("NPC (ID: " + getId() + ") is already spawned.");
             return false;
         }
-
         NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, loc);
         Bukkit.getPluginManager().callEvent(spawnEvent);
         if (spawnEvent.isCancelled())
@@ -177,9 +182,8 @@ public abstract class CitizensNPC extends AbstractNPC {
         mcEntity.world.addEntity(mcEntity);
         mcEntity.world.players.remove(mcEntity);
 
-        // Set the location
-        getTrait(CurrentLocation.class).spawn(loc);
         // Set the spawned state
+        getTrait(CurrentLocation.class).setLocation(loc);
         getTrait(Spawned.class).setSpawned(true);
 
         // Modify NPC using traits after the entity has been created

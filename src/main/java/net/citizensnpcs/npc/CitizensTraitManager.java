@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
@@ -34,9 +33,9 @@ public class CitizensTraitManager implements TraitManager {
     private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = new HashMap<Class<? extends Trait>, Constructor<? extends Trait>>();
     private final Map<Plugin, Map<String, Class<? extends Trait>>> registered = new HashMap<Plugin, Map<String, Class<? extends Trait>>>();
 
-    public CitizensTraitManager(Citizens plugin) {
-        // Register Citizens traits
-        // TODO: make it automatic without hax (annotations)
+    // TODO: handle Plugin-setting/names better and avoid cruft. also find a
+    // way to avoid naming conflicts
+    public CitizensTraitManager(Plugin plugin) {
         registerTrait(new TraitFactory(Age.class).withName("age").withPlugin(plugin));
         registerTrait(new TraitFactory(CurrentLocation.class).withName("location").withPlugin(plugin));
         registerTrait(new TraitFactory(Equipment.class).withName("equipment").withPlugin(plugin));
@@ -62,8 +61,8 @@ public class CitizensTraitManager implements TraitManager {
 
         if (!CACHED_CTORS.containsKey(trait)) {
             try {
-                // TODO: perhaps replace this fixed constructor with a context
-                // class of sorts, which can have extra environment variables.
+                // TODO: replace this fixed constructor with a context class
+                // which can have extra environment variables.
                 constructor = trait.getConstructor(NPC.class);
                 if (constructor == null)
                     constructor = trait.getConstructor(CitizensNPC.class);
@@ -110,18 +109,18 @@ public class CitizensTraitManager implements TraitManager {
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Trait> T getTrait(String name) {
-        for (Plugin plugin : registered.keySet()) {
-            if (!registered.get(plugin).containsKey(name))
-                return null;
-            return (T) create(registered.get(plugin).get(name), null);
+        for (Map<String, Class<? extends Trait>> entry : registered.values()) {
+            if (!entry.containsKey(name))
+                continue;
+            return (T) create(entry.get(name), null);
         }
         return null;
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(String name, NPC npc) {
-        for (Plugin plugin : registered.keySet()) {
-            Class<? extends Trait> clazz = registered.get(plugin).get(name);
+        for (Map<String, Class<? extends Trait>> entry : registered.values()) {
+            Class<? extends Trait> clazz = entry.get(name);
             if (clazz == null)
                 continue;
             return (T) getTrait(clazz, npc);

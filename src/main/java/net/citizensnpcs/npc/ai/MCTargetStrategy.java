@@ -1,19 +1,14 @@
 package net.citizensnpcs.npc.ai;
 
 import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityMonster;
 import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.Packet;
 import net.minecraft.server.Packet18ArmAnimation;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 
 public class MCTargetStrategy implements PathStrategy {
     private final boolean aggro;
@@ -48,25 +43,12 @@ public class MCTargetStrategy implements PathStrategy {
             } else if (handle instanceof EntityPlayer) {
                 EntityPlayer humanHandle = (EntityPlayer) handle;
                 humanHandle.attack(target);
-                sendPacketNearby(handle.getBukkitEntity().getLocation(), new Packet18ArmAnimation(humanHandle, 1), 64);
+                Util.sendPacketNearby(handle.getBukkitEntity().getLocation(), new Packet18ArmAnimation(humanHandle, 1),
+                        64);
             }
         }
 
         return false;
-    }
-
-    private void sendPacketNearby(Location location, Packet packet, double radius) {
-        radius *= radius;
-        final World world = location.getWorld();
-        for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
-            if (ply == null || world != ply.getWorld()) {
-                continue;
-            }
-            if (location.distanceSquared(ply.getLocation()) > radius) {
-                continue;
-            }
-            ((CraftPlayer) ply).getHandle().netServerHandler.sendPacket(packet);
-        }
     }
 
     private static final double ATTACK_DISTANCE = 1.75 * 1.75;

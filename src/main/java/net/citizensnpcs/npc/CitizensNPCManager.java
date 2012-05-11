@@ -7,13 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.citizensnpcs.Citizens;
-import net.citizensnpcs.api.event.NPCSelectEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCManager;
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.util.Storage;
-import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.npc.entity.CitizensBlazeNPC;
 import net.citizensnpcs.npc.entity.CitizensCaveSpiderNPC;
@@ -43,24 +40,18 @@ import net.citizensnpcs.npc.entity.CitizensWolfNPC;
 import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 import net.citizensnpcs.util.ByIdArray;
 
-import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 
 public class CitizensNPCManager implements NPCManager {
     private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
-    private final Citizens plugin;
     private final Storage saves;
     private final Map<EntityType, Class<? extends CitizensNPC>> types = new EnumMap<EntityType, Class<? extends CitizensNPC>>(
             EntityType.class);
 
-    public CitizensNPCManager(Citizens plugin, Storage saves) {
-        this.plugin = plugin;
+    public CitizensNPCManager(Storage saves) {
         this.saves = saves;
 
         types.put(EntityType.BLAZE, CitizensBlazeNPC.class);
@@ -132,6 +123,8 @@ public class CitizensNPCManager implements NPCManager {
 
     @Override
     public NPC getNPC(int id) {
+        if (id < 0)
+            throw new IllegalArgumentException("invalid id");
         return npcs.get(id);
     }
 
@@ -164,27 +157,14 @@ public class CitizensNPCManager implements NPCManager {
         Iterator<NPC> itr = iterator();
         while (itr.hasNext()) {
             NPC npc = itr.next();
+            itr.remove();
             npc.despawn();
             removeData(npc);
-            itr.remove();
         }
     }
 
     private void removeData(NPC npc) {
         saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
-        removeMetadata(npc);
-    }
-
-    private void removeMetadata(NPC npc) {
-        // Remove metadata from selectors
-        if (npc.hasMetadata("selectors")) {
-            for (MetadataValue value : npc.getMetadata("selectors")) {
-                Player search = Bukkit.getPlayerExact(value.asString());
-                if (search != null)
-                    search.removeMetadata("selected", plugin);
-            }
-            npc.removeMetadata("selectors", plugin);
-        }
     }
 
     public void safeRemove() {
@@ -193,24 +173,8 @@ public class CitizensNPCManager implements NPCManager {
         while (itr.hasNext()) {
             NPC npc = itr.next();
             itr.remove();
-            removeMetadata(npc);
             npc.despawn();
         }
-    }
-
-    public void selectNPC(Player player, NPC npc) {
-        // Remove existing selection if any
-        if (player.hasMetadata("selected"))
-            player.removeMetadata("selected", plugin);
-
-        player.setMetadata("selected", new FixedMetadataValue(plugin, npc.getId()));
-        npc.setMetadata("selectors", new FixedMetadataValue(plugin, player.getName()));
-
-        // Remove editor if the player has one
-        Editor.leave(player);
-
-        // Call selection event
-        player.getServer().getPluginManager().callEvent(new NPCSelectEvent(npc, player));
     }
 
     private CitizensNPC getByType(EntityType type, int id, String name) {

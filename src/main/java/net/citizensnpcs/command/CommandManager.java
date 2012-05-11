@@ -26,6 +26,7 @@ import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -58,25 +59,26 @@ public class CommandManager {
      * Attempt to execute a command. This version takes a separate command name
      * (for the root command) and then a list of following arguments.
      */
-    public void execute(String cmd, String[] args, Player player, Object... methodArgs) throws CommandException {
+    public void execute(String cmd, String[] args, CommandSender sender, Object... methodArgs) throws CommandException {
         String[] newArgs = new String[args.length + 1];
         System.arraycopy(args, 0, newArgs, 1, args.length);
         newArgs[0] = cmd;
         Object[] newMethodArgs = new Object[methodArgs.length + 1];
         System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
 
-        executeMethod(null, newArgs, player, newMethodArgs);
+        executeMethod(null, newArgs, sender, newMethodArgs);
     }
 
     // Attempt to execute a command.
-    public void execute(String[] args, Player player, Object... methodArgs) throws CommandException {
+    public void execute(String[] args, CommandSender sender, Object... methodArgs) throws CommandException {
         Object[] newMethodArgs = new Object[methodArgs.length + 1];
         System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
-        executeMethod(null, args, player, newMethodArgs);
+        executeMethod(null, args, sender, newMethodArgs);
     }
 
     // Attempt to execute a command.
-    public void executeMethod(Method parent, String[] args, Player player, Object[] methodArgs) throws CommandException {
+    public void executeMethod(Method parent, String[] args, CommandSender sender, Object[] methodArgs)
+            throws CommandException {
         String cmdName = args[0];
         String modifier = args.length > 1 ? args[1] : "";
 
@@ -91,34 +93,31 @@ public class CommandManager {
         if (method == null && parent == null)
             throw new UnhandledCommandException();
 
-        if (methodArgs[1] instanceof Player && !hasPermission(method, player))
+        if (methodArgs[1] instanceof Player && !hasPermission(method, sender))
             throw new NoPermissionsException();
 
-        if (methodArgs[1] instanceof Player) {
-            Requirements cmdRequirements = requirements.get(method);
-            if (cmdRequirements != null) {
-                NPC npc = (NPC) methodArgs[2];
+        Requirements cmdRequirements = requirements.get(method);
+        if (cmdRequirements != null) {
+            NPC npc = (NPC) methodArgs[2];
 
-                // Requirements
-                if (cmdRequirements.selected() && npc == null)
-                    throw new RequirementMissingException("You must have an NPC selected to execute that command.");
+            // Requirements
+            if (cmdRequirements.selected() && npc == null)
+                throw new RequirementMissingException("You must have an NPC selected to execute that command.");
 
-                if (cmdRequirements.ownership() && npc != null
-                        && !npc.getTrait(Owner.class).getOwner().equals(player.getName())
-                        && !player.hasPermission("citizens.admin"))
-                    throw new RequirementMissingException("You must be the owner of this NPC to execute that command.");
+            if (cmdRequirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
+                    && !npc.getTrait(Owner.class).isOwnedBy(sender))
+                throw new RequirementMissingException("You must be the owner of this NPC to execute that command.");
 
-                if (npc != null) {
-                    Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()), EntityType.class);
-                    if (types.contains(EntityType.UNKNOWN))
-                        types = EnumSet.allOf(EntityType.class);
-                    types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));
+            if (npc != null) {
+                Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()), EntityType.class);
+                if (types.contains(EntityType.UNKNOWN))
+                    types = EnumSet.allOf(EntityType.class);
+                types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));
 
-                    EntityType type = EntityType.valueOf(npc.getTrait(MobType.class).getType());
-                    if (!types.contains(type)) {
-                        throw new RequirementMissingException("The NPC cannot be the mob type '"
-                                + type.name().toLowerCase().replace('_', '-') + "' to use that command.");
-                    }
+                EntityType type = EntityType.valueOf(npc.getTrait(MobType.class).getType());
+                if (!types.contains(type)) {
+                    throw new RequirementMissingException("The NPC cannot be the mob type '"
+                            + type.name().toLowerCase().replace('_', '-') + "' to use that command.");
                 }
             }
         }
@@ -201,17 +200,17 @@ public class CommandManager {
     }
 
     // Returns whether a player has access to a command.
-    private boolean hasPermission(Method method, Player player) {
+    private boolean hasPermission(Method method, CommandSender sender) {
         Command cmd = method.getAnnotation(Command.class);
-        if (cmd.permission().isEmpty() || hasPermission(player, cmd.permission()) || hasPermission(player, "admin"))
+        if (cmd.permission().isEmpty() || hasPermission(sender, cmd.permission()) || hasPermission(sender, "admin"))
             return true;
 
         return false;
     }
 
     // Returns whether a player has permission.
-    private boolean hasPermission(Player player, String perm) {
-        return player.hasPermission("citizens." + perm);
+    private boolean hasPermission(CommandSender sender, String perm) {
+        return sender.hasPermission("citizens." + perm);
     }
 
     /*
