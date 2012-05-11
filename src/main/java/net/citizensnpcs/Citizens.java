@@ -38,6 +38,7 @@ import net.citizensnpcs.npc.CitizensCharacterManager;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.CitizensTraitManager;
+import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Metrics;
 import net.citizensnpcs.util.StringHelper;
@@ -61,6 +62,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private ClassLoader contextClassLoader;
     private CitizensNPCManager npcManager;
     private Storage saves;
+    private NPCSelector selector;
     private TraitManager traitManager;
 
     @Override
@@ -77,6 +79,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return npcManager;
     }
 
+    public NPCSelector getNPCSelector() {
+        return selector;
+    }
+
     @Override
     public File getScriptFolder() {
         return new File(getDataFolder(), "scripts");
@@ -89,10 +95,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
-        Player player = null;
-        if (sender instanceof Player)
-            player = (Player) sender;
-
         try {
             // must put command into split.
             String[] split = new String[args.length + 1];
@@ -105,19 +107,17 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 return suggestClosestModifier(sender, split[0], modifier);
             }
 
-            NPC npc = null;
-            if (player != null && player.getMetadata("selected").size() > 0)
-                npc = npcManager.getNPC(player.getMetadata("selected").get(0).asInt());
+            NPC npc = selector.getSelected(sender);
             // TODO: change the args supplied to a context style system for
             // flexibility (ie. adding more context in the future without
             // changing everything)
             try {
-                commands.execute(split, player, player == null ? sender : player, npc);
+                commands.execute(split, sender, sender, npc);
             } catch (ServerCommandException ex) {
                 Messaging.send(sender, "You must be in-game to execute that command.");
             } catch (CommandUsageException ex) {
-                Messaging.sendError(player, ex.getMessage());
-                Messaging.sendError(player, ex.getUsage());
+                Messaging.sendError(sender, ex.getMessage());
+                Messaging.sendError(sender, ex.getUsage());
             } catch (WrappedCommandException ex) {
                 throw ex.getCause();
             } catch (UnhandledCommandException ex) {
@@ -126,12 +126,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 Messaging.sendError(sender, ex.getMessage());
             }
         } catch (NumberFormatException ex) {
-            Messaging.sendError(player, "That is not a valid number.");
+            Messaging.sendError(sender, "That is not a valid number.");
         } catch (Throwable ex) {
             ex.printStackTrace();
-            if (player != null) {
-                Messaging.sendError(player, "Please report this error: [See console]");
-                Messaging.sendError(player, ex.getClass().getName() + ": " + ex.getMessage());
+            if (sender instanceof Player) {
+                Messaging.sendError(sender, "Please report this error: [See console]");
+                Messaging.sendError(sender, ex.getClass().getName() + ": " + ex.getMessage());
             }
         }
         return true;
@@ -170,8 +170,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         setupStorage();
 
-        npcManager = new CitizensNPCManager(this, saves);
+        npcManager = new CitizensNPCManager(saves);
         traitManager = new CitizensTraitManager(this);
+        selector = new NPCSelector(this);
         CitizensAPI.setImplementation(this);
 
         getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
@@ -193,6 +194,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Messaging.log(Level.SEVERE, "Issue enabling plugin. Disabling.");
             getServer().getPluginManager().disablePlugin(this);
         }
+    }
+
+    @Override
+    public void onImplementationChanged() {
+        Messaging.severe("Citizens implementation changed, disabling plugin.");
+        Bukkit.getPluginManager().disablePlugin(this);
     }
 
     private void registerCommands() {
@@ -292,8 +299,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             @Override
             public void run() {
                 try {
-                    Messaging.log("Starting Metrics");
                     Metrics metrics = new Metrics(Citizens.this);
+                    if (metrics.isOptOut())
+                        return;
                     metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
                         @Override
                         public int getValue() {
@@ -303,8 +311,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     Metrics.Graph graph = metrics.createGraph("Character Type Usage");
                     characterManager.addPlotters(graph);
                     metrics.start();
+                    Messaging.log("Metrics started.");
                 } catch (IOException ex) {
-                    Messaging.log("Unable to load metrics");
+                    Messaging.log("Unable to load metrics.", ex.getMessage());
                 }
             }
         }.start();
@@ -333,10 +342,4 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private static final String COMPATIBLE_MC_VERSION = "1.2.5";
-
-    @Override
-    public void onImplementationChanged() {
-        Messaging.severe("Citizens implementation changed, disabling plugin.");
-        Bukkit.getPluginManager().disablePlugin(this);
-    }
 }

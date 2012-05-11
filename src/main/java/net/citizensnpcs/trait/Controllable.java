@@ -24,9 +24,11 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
     }
 
     private void jump() {
-        if (!npc.getHandle().onGround)
+        boolean allowed = npc.getHandle().onGround;
+        if (!allowed)
             return;
         npc.getHandle().motY = JUMP_VELOCITY;
+        // TODO: make jumping work in liquid or make liquids float the npc
     }
 
     @Override
@@ -36,22 +38,28 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if (!npc.isSpawned())
+            return;
         EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
         Action performed = event.getAction();
         if (performed == Action.PHYSICAL || !handle.equals(npc.getHandle().passenger))
             return;
         if (performed == Action.LEFT_CLICK_AIR || performed == Action.LEFT_CLICK_BLOCK) {
             jump();
-        } else if (-170F >= event.getPlayer().getLocation().getPitch()) {
-            event.getPlayer().leaveVehicle();
         }
     }
 
     @EventHandler
     public void onRightClick(NPCRightClickEvent event) {
-        if (!event.getNPC().equals(npc) || npc.getHandle().passenger != null)
+        if (!npc.isSpawned() || !event.getNPC().equals(npc))
             return;
         EntityPlayer handle = ((CraftPlayer) event.getClicker()).getHandle();
+        if (npc.getHandle().passenger != null) {
+            if (npc.getHandle().passenger == handle) {
+                event.getClicker().leaveVehicle();
+            }
+            return;
+        }
         handle.setPassengerOf(npc.getHandle());
     }
 
@@ -59,8 +67,9 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
     public void run() {
         if (!npc.isSpawned() || npc.getHandle().passenger == null)
             return;
-        npc.getHandle().motX += npc.getHandle().passenger.motX;
-        npc.getHandle().motZ += npc.getHandle().passenger.motZ;
+        boolean onGround = npc.getHandle().onGround;
+        npc.getHandle().motX += npc.getHandle().passenger.motX * (onGround ? GROUND_SPEED : AIR_SPEED);
+        npc.getHandle().motZ += npc.getHandle().passenger.motZ * (onGround ? GROUND_SPEED : AIR_SPEED);
     }
 
     @Override
@@ -68,6 +77,8 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
         key.setBoolean("enabled", enabled);
     }
 
+    private static final double GROUND_SPEED = 4;
+    private static final double AIR_SPEED = 1.5;
     private static final double JUMP_VELOCITY = 0.6;
 
     @Override

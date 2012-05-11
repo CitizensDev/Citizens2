@@ -44,6 +44,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
     @Override
     public void F_() {
         super.F_();
+        if (motX != 0 || motZ != 0 || motY != 0) {
+            a(0, 0);
+        }
         if (noDamageTicks > 0)
             --noDamageTicks;
         npc.update();
@@ -54,7 +57,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
         getControllerLook().a();
         getControllerJump().b();
         if (aZ) {
-            if (aT() || aU()) {
+            if (aV() || aU()) {
                 motY += 0.04;
             } else if (onGround && q == 0) {
                 motY = 0.5;

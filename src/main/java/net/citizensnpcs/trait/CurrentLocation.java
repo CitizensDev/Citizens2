@@ -20,6 +20,10 @@ public class CurrentLocation extends Trait implements Runnable {
         return loc;
     }
 
+    public void setLocation(Location loc) {
+        this.loc = loc;
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         if (Bukkit.getWorld(key.getString("world")) == null)
@@ -31,7 +35,7 @@ public class CurrentLocation extends Trait implements Runnable {
 
     @Override
     public void run() {
-        if (npc.getBukkitEntity() == null)
+        if (!npc.isSpawned())
             return;
 
         loc = npc.getBukkitEntity().getLocation();
@@ -39,16 +43,17 @@ public class CurrentLocation extends Trait implements Runnable {
 
     @Override
     public void save(DataKey key) {
+        if (loc == null) {
+            key.removeKey(getName());
+            return;
+        }
+
         key.setString("world", loc.getWorld().getName());
         key.setDouble("x", loc.getX());
         key.setDouble("y", loc.getY());
         key.setDouble("z", loc.getZ());
         key.setDouble("yaw", loc.getYaw());
         key.setDouble("pitch", loc.getPitch());
-    }
-
-    public void spawn(Location loc) {
-        this.loc = loc;
     }
 
     @Override

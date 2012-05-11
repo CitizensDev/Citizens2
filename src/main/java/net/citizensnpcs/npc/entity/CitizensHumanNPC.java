@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.entity;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -10,6 +11,7 @@ import net.minecraft.server.EntityLiving;
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.WorldServer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -23,12 +25,19 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
     }
 
     @Override
-    protected EntityLiving createHandle(Location loc) {
+    protected EntityLiving createHandle(final Location loc) {
         WorldServer ws = ((CraftWorld) loc.getWorld()).getHandle();
-        EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
+        final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
                 StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws), this);
-        handle.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-        handle.X = loc.getYaw() % 360;
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                handle.X = loc.getYaw() % 360;
+                handle.getBukkitEntity().teleport(loc);
+                // set the position in another tick - if done immediately,
+                // minecraft will not update the player's position.
+            }
+        });
         return handle;
     }
 
@@ -124,7 +133,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
     public void update() {
         super.update();
         if (isSpawned() && getBukkitEntity().getLocation().getChunk().isLoaded()) {
-            mcEntity.move(0, -0.1, 0);
+            mcEntity.move(0, -0.2, 0);
             // gravity! also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
         }
