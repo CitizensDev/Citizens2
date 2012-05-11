@@ -1,19 +1,19 @@
 package net.citizensnpcs.api.event;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-
 import net.citizensnpcs.api.npc.NPC;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.HandlerList;
 
 /**
  * Called when an NPC is selected by a player.
  */
 public class NPCSelectEvent extends NPCEvent {
-    private final Player player;
+    private final CommandSender sender;
 
-    public NPCSelectEvent(NPC npc, Player player) {
+    public NPCSelectEvent(NPC npc, CommandSender sender) {
         super(npc);
-        this.player = player;
+        this.sender = sender;
     }
 
     @Override
@@ -22,12 +22,12 @@ public class NPCSelectEvent extends NPCEvent {
     }
 
     /**
-     * Gets the player that selected an NPC.
+     * Gets the selector of the NPC.
      * 
-     * @return Player that selected an NPC
+     * @return CommandSender that selected an NPC
      */
-    public Player getPlayer() {
-        return player;
+    public CommandSender getSelector() {
+        return sender;
     }
 
     private static final HandlerList handlers = new HandlerList();

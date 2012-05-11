@@ -3,6 +3,7 @@ package net.citizensnpcs.api.npc;
 import java.util.List;
 import java.util.Map;
 
+import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.trait.Trait;
 
@@ -108,6 +109,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void remove() {
+        Bukkit.getPluginManager().callEvent(new NPCRemoveEvent(this));
         runnables.clear();
         for (Trait trait : traits.values()) {
             if (trait instanceof Listener) {

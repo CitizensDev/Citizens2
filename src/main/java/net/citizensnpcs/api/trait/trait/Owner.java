@@ -1,16 +1,18 @@
 package net.citizensnpcs.api.trait.trait;
 
-import org.bukkit.entity.Player;
-
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * Represents the owner of an NPC.
  */
 public class Owner extends Trait {
-    private String owner = "server";
+    private static final String SERVER = "server";
+    private String owner = SERVER;
 
     /**
      * Gets the owner of an NPC.
@@ -21,6 +23,10 @@ public class Owner extends Trait {
         return owner;
     }
 
+    public boolean isOwnedBy(String name) {
+        return owner.equalsIgnoreCase(name);
+    }
+
     /**
      * Gets if the given player is the owner of an NPC.
      * 
@@ -28,9 +34,12 @@ public class Owner extends Trait {
      *            Player to check
      * @return Whether the given player is the owner of an NPC
      */
-    public boolean isOwner(Player player) {
-        return owner.equals(player.getName()) || player.hasPermission("citizens.admin")
-                || (owner.equals("server") && player.hasPermission("citizens.admin"));
+    public boolean isOwnedBy(CommandSender sender) {
+        if (sender instanceof Player) {
+            return owner.equalsIgnoreCase(sender.getName()) || sender.hasPermission("citizens.admin")
+                    || (owner.equals(SERVER) && sender.hasPermission("citizens.admin"));
+        }
+        return owner.equals(SERVER);
     }
 
     @Override
@@ -38,7 +47,7 @@ public class Owner extends Trait {
         try {
             owner = key.getString("");
         } catch (Exception ex) {
-            owner = "notch";
+            owner = SERVER;
             throw new NPCLoadException("Invalid owner.");
         }
     }
@@ -55,7 +64,7 @@ public class Owner extends Trait {
      *            Name of the player to set as owner of an NPC
      */
     public void setOwner(String owner) {
-        this.owner = owner;
+        this.owner = owner.toLowerCase();
     }
 
     @Override
