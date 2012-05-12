@@ -6,6 +6,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
+import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityPlayer;
 
 import org.bukkit.craftbukkit.entity.CraftPlayer;
@@ -38,7 +39,7 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (!npc.isSpawned())
+        if (!npc.isSpawned() || !enabled)
             return;
         EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
         Action performed = event.getAction();
@@ -67,9 +68,10 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
     public void run() {
         if (!npc.isSpawned() || npc.getHandle().passenger == null)
             return;
-        boolean onGround = npc.getHandle().onGround;
-        npc.getHandle().motX += npc.getHandle().passenger.motX * (onGround ? GROUND_SPEED : AIR_SPEED);
-        npc.getHandle().motZ += npc.getHandle().passenger.motZ * (onGround ? GROUND_SPEED : AIR_SPEED);
+        EntityLiving handle = npc.getHandle();
+        boolean onGround = handle.onGround;
+        handle.motX += handle.passenger.motX * (onGround ? GROUND_SPEED : AIR_SPEED);
+        handle.motZ += handle.passenger.motZ * (onGround ? GROUND_SPEED : AIR_SPEED);
     }
 
     @Override

@@ -7,6 +7,7 @@ import net.citizensnpcs.api.ai.NavigationCallback;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 
 import com.google.common.collect.Lists;
 
@@ -25,6 +27,7 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     @Override
     public Editor createEditor(final Player player) {
         return new Editor() {
+            int editingSlot = waypoints.size() - 1;
 
             @Override
             public void begin() {
@@ -37,6 +40,11 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                 player.sendMessage(ChatColor.AQUA + "Exited the linear waypoint editor.");
             }
 
+            private String formatLoc(Location location) {
+                return String.format("<e>%d<a>, <e>%d<a>, <e>%d<a>", location.getBlockX(), location.getBlockY(),
+                        location.getBlockZ());
+            }
+
             @EventHandler
             @SuppressWarnings("unused")
             public void onPlayerInteract(PlayerInteractEvent event) {
@@ -46,16 +54,45 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                     if (event.getClickedBlock() == null)
                         return;
                     Location at = event.getClickedBlock().getLocation();
-                    waypoints.add(new Waypoint(at));
-                    Messaging.send(player, String.format("<e>Added<a> a waypoint at (<e>%d<a>, <e>%d<a>, <e>%d<a>).",
-                            at.getBlockX(), at.getBlockY(), at.getBlockZ()));
+                    waypoints.add(Math.max(0, editingSlot), new Waypoint(at));
+                    editingSlot = Math.min(editingSlot + 1, waypoints.size());
+                    Messaging.send(player, String.format("<e>Added<a> a waypoint at (" + formatLoc(at)
+                            + ") (<e>%d<a>, <e>%d<a>)", editingSlot + 1, waypoints.size()));
                 } else if (waypoints.size() > 0) {
-                    waypoints.remove(waypoints.size() - 1);
-                    Messaging.send(player,
-                            String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining)", waypoints.size()));
+                    waypoints.remove(editingSlot);
+                    editingSlot = Math.max(0, editingSlot - 1);
+                    Messaging.send(player, String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining) (<e>%d<a>)",
+                            waypoints.size(), editingSlot + 1));
                 }
                 callback.onProviderChanged();
             }
+
+            @EventHandler
+            @SuppressWarnings("unused")
+            public void onPlayerItemHeldChange(PlayerItemHeldEvent event) {
+                if (!event.getPlayer().equals(player) || waypoints.size() == 0)
+                    return;
+                int previousSlot = event.getPreviousSlot(), newSlot = event.getNewSlot();
+                // handle wrap-arounds
+                if (previousSlot == 0 && newSlot == LARGEST_SLOT) {
+                    editingSlot--;
+                } else if (previousSlot == LARGEST_SLOT && newSlot == 0) {
+                    editingSlot++;
+                } else {
+                    int diff = newSlot - previousSlot;
+                    if (Math.abs(diff) != 1)
+                        return; // the player isn't scrolling
+                    editingSlot += diff > 0 ? 1 : -1;
+                }
+                if (editingSlot >= waypoints.size())
+                    editingSlot = 0;
+                if (editingSlot < 0)
+                    editingSlot = waypoints.size() - 1;
+                Messaging.send(player, "<a>Editing slot set to " + StringHelper.wrap(editingSlot) + " ("
+                        + formatLoc(waypoints.get(editingSlot).getLocation()) + ").");
+            }
+
+            private static final int LARGEST_SLOT = 8;
         };
     }
 
@@ -70,11 +107,6 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     }
 
     @Override
-    public void onAttach() {
-        callback.onProviderChanged();
-    }
-
-    @Override
     public void load(DataKey key) {
         for (DataKey root : key.getRelative("points").getIntegerSubKeys()) {
             root = root.getRelative("location");
@@ -82,6 +114,11 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                     .getDouble("y"), root.getDouble("z"), (float) root.getDouble("yaw", 0), (float) root.getDouble(
                     "pitch", 0))));
         }
+    }
+
+    @Override
+    public void onAttach() {
+        callback.onProviderChanged();
     }
 
     @Override

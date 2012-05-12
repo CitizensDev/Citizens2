@@ -194,7 +194,12 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public void update() {
-        super.update();
-        ai.update();
+        try {
+            super.update();
+            ai.update();
+        } catch (Exception ex) {
+            Messaging.log("Exception while updating " + getId() + ": " + ex.getMessage() + ".");
+            ex.printStackTrace();
+        }
     }
 }

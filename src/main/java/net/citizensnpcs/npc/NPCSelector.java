@@ -35,7 +35,6 @@ public class NPCSelector implements Listener {
     public void onNPCRightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
         NPC npc = event.getNPC();
-        npc.getMetadata(null);
         List<MetadataValue> selected = player.getMetadata("selected");
         if (selected == null || selected.size() == 0 || selected.get(0).asInt() != npc.getId()) {
             if (Util.isSettingFulfilled(player, Setting.SELECTION_ITEM)
