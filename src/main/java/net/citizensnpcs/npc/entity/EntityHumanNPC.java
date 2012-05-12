@@ -57,10 +57,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
         getControllerLook().a();
         getControllerJump().b();
         if (aZ) {
-            if (aV() || aU()) {
+            if (aT()) {
                 motY += 0.04;
             } else if (onGround && q == 0) {
-                motY = 0.5;
+                motY = 0.6;
                 q = 10;
             }
         } else {

@@ -1,6 +1,7 @@
 package net.citizensnpcs;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -85,22 +86,27 @@ public class EventListen implements Listener {
         if (!npcManager.isNPC(event.getEntity()))
             return;
 
-        event.setCancelled(true);
         if (event instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-            if (e.getDamager() instanceof Player) {
-                Player damager = (Player) e.getDamager();
-                NPC npc = npcManager.getNPC(event.getEntity());
+            NPC npc = npcManager.getNPC(event.getEntity());
 
-                // Call left-click event
-                NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
-                Bukkit.getPluginManager().callEvent(leftClickEvent);
-                if (leftClickEvent.isCancelled())
-                    return;
+            NPCDamageEvent damageEvent = new NPCDamageEvent(npc, e.getDamager());
+            Bukkit.getPluginManager().callEvent(event);
+            event.setCancelled(damageEvent.isCancelled());
 
-                if (npc.getCharacter() != null)
-                    npc.getCharacter().onLeftClick(npc, damager);
-            }
+            if (!damageEvent.isCancelled() || !(e.getDamager() instanceof Player))
+                return;
+            Player damager = (Player) e.getDamager();
+
+            // Call left-click event
+            NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
+            Bukkit.getPluginManager().callEvent(leftClickEvent);
+            if (leftClickEvent.isCancelled())
+                return;
+
+            if (npc.getCharacter() != null)
+                npc.getCharacter().onLeftClick(npc, damager);
+
         }
     }
 
