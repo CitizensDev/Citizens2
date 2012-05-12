@@ -5,28 +5,37 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 public class NPCDamageEvent extends NPCEvent implements Cancellable {
-    private final Entity damager;
-    private boolean cancelled = true;
+    private final EntityDamageByEntityEvent event;
 
-    public NPCDamageEvent(NPC npc, Entity damager) {
+    public NPCDamageEvent(NPC npc, EntityDamageByEntityEvent event) {
         super(npc);
-        this.damager = damager;
+        this.event = event;
+        event.setCancelled(true);
     }
 
     public Entity getDamager() {
-        return this.damager;
+        return event.getDamager();
+    }
+
+    public int getDamage() {
+        return event.getDamage();
     }
 
     @Override
     public boolean isCancelled() {
-        return cancelled;
+        return event.isCancelled();
     }
 
     @Override
     public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
+        event.setCancelled(cancel);
+    }
+
+    public void setDamage(int damage) {
+        event.setDamage(damage);
     }
 
     @Override
