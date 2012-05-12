@@ -41,4 +41,6 @@ public interface WaypointProvider {
      *            The key to save to
      */
     public void save(DataKey key);
+
+    public void onAttach();
 }

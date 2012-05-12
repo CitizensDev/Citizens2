@@ -40,9 +40,11 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
             @EventHandler
             @SuppressWarnings("unused")
             public void onPlayerInteract(PlayerInteractEvent event) {
-                if (!event.getPlayer().equals(player))
+                if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL)
                     return;
-                if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
+                    if (event.getClickedBlock() == null)
+                        return;
                     Location at = event.getClickedBlock().getLocation();
                     waypoints.add(new Waypoint(at));
                     Messaging.send(player, String.format("<e>Added<a> a waypoint at (<e>%d<a>, <e>%d<a>, <e>%d<a>).",
@@ -68,6 +70,11 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     }
 
     @Override
+    public void onAttach() {
+        callback.onProviderChanged();
+    }
+
+    @Override
     public void load(DataKey key) {
         for (DataKey root : key.getRelative("points").getIntegerSubKeys()) {
             root = root.getRelative("location");
@@ -75,7 +82,6 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                     .getDouble("y"), root.getDouble("z"), (float) root.getDouble("yaw", 0), (float) root.getDouble(
                     "pitch", 0))));
         }
-        callback.onProviderChanged();
     }
 
     @Override

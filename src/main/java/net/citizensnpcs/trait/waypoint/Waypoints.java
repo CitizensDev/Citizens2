@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class Waypoints extends Trait {
     private final NPC npc;
     private WaypointProvider provider = new LinearWaypointProvider();
-    private String providerName;
+    private String providerName = "linear";
 
     public Waypoints(NPC npc) {
         this.npc = npc;
@@ -30,6 +30,11 @@ public class Waypoints extends Trait {
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    @Override
+    public void onNPCSpawn() {
+        npc.getAI().registerNavigationCallback(provider.getCallback());
     }
 
     public Editor getEditor(Player player) {
@@ -49,7 +54,6 @@ public class Waypoints extends Trait {
         if (provider == null)
             return;
         provider.load(key.getRelative(providerName));
-        npc.getAI().registerNavigationCallback(provider.getCallback());
     }
 
     @Override
