@@ -15,12 +15,12 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.Maps;
 
 public class MCNavigationStrategy implements PathStrategy {
-    private EntityHumanNPC entity = null;
+    private final EntityLiving entity;
     private final Navigation navigation;
 
     MCNavigationStrategy(CitizensNPC npc, Location dest) {
+        entity = npc.getHandle();
         if (npc.getBukkitEntity() instanceof Player) {
-            entity = (EntityHumanNPC) npc.getHandle();
             entity.onGround = true;
             // not sure of a better way around this - if onGround is false, then
             // navigation won't execute, and calling entity.move doesn't
@@ -32,8 +32,8 @@ public class MCNavigationStrategy implements PathStrategy {
     }
 
     MCNavigationStrategy(EntityLiving entity, EntityLiving target) {
+        this.entity = entity;
         if (entity instanceof EntityHumanNPC) {
-            this.entity = (EntityHumanNPC) entity;
             entity.onGround = true; // see above
         }
         navigation = entity.al();
@@ -60,9 +60,9 @@ public class MCNavigationStrategy implements PathStrategy {
 
     @Override
     public boolean update() {
-        if (entity != null) {
+        if (entity instanceof EntityHumanNPC) {
             navigation.d();
-            entity.moveOnCurrentHeading();
+            ((EntityHumanNPC) entity).moveOnCurrentHeading();
         }
         return navigation.e();
     }

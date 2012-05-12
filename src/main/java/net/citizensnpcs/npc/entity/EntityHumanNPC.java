@@ -44,7 +44,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
     @Override
     public void F_() {
         super.F_();
-        if (motX != 0 || motZ != 0 || motY != 0) {
+        if (!npc.getAI().hasDestination() && (motX != 0 || motZ != 0 || motY != 0)) {
             a(0, 0);
         }
         if (noDamageTicks > 0)
