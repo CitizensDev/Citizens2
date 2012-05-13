@@ -4,7 +4,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.WoolColor;
@@ -22,8 +21,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
 
-    public CitizensSheepNPC(CitizensNPCManager manager, int id, String name) {
-        super(manager, id, name, EntitySheepNPC.class);
+    public CitizensSheepNPC(int id, String name) {
+        super(id, name, EntitySheepNPC.class);
     }
 
     @Override

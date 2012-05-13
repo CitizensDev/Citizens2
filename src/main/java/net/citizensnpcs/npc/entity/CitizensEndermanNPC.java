@@ -5,7 +5,6 @@ import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.EntityEnderman;
@@ -20,8 +19,8 @@ import org.bukkit.material.MaterialData;
 
 public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
 
-    public CitizensEndermanNPC(CitizensNPCManager manager, int id, String name) {
-        super(manager, id, name, EntityEndermanNPC.class);
+    public CitizensEndermanNPC(int id, String name) {
+        super(id, name, EntityEndermanNPC.class);
     }
 
     @Override

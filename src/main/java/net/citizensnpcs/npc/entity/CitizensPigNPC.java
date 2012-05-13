@@ -4,7 +4,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.util.Messaging;
@@ -21,8 +20,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
 
-    public CitizensPigNPC(CitizensNPCManager manager, int id, String name) {
-        super(manager, id, name, EntityPigNPC.class);
+    public CitizensPigNPC(int id, String name) {
+        super(id, name, EntityPigNPC.class);
     }
 
     @Override

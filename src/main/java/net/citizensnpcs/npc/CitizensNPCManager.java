@@ -148,9 +148,10 @@ public class CitizensNPCManager implements NPCManager {
         return npcs.iterator();
     }
 
-    void remove(NPC npc) {
+    @Override
+    public void deregister(NPC npc) {
         npcs.remove(npc.getId());
-        removeData(npc);
+        saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
     }
 
     public void removeAll() {
@@ -159,21 +160,7 @@ public class CitizensNPCManager implements NPCManager {
             NPC npc = itr.next();
             itr.remove();
             npc.despawn();
-            removeData(npc);
-        }
-    }
-
-    private void removeData(NPC npc) {
-        saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
-    }
-
-    public void safeRemove() {
-        // Destroy all NPCs everywhere besides storage
-        Iterator<NPC> itr = this.iterator();
-        while (itr.hasNext()) {
-            NPC npc = itr.next();
-            itr.remove();
-            npc.despawn();
+            saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
         }
     }
 
@@ -182,8 +169,7 @@ public class CitizensNPCManager implements NPCManager {
         if (npcClass == null)
             throw new IllegalArgumentException("Invalid EntityType: " + type);
         try {
-            return npcClass.getConstructor(CitizensNPCManager.class, int.class, String.class).newInstance(this, id,
-                    name);
+            return npcClass.getConstructor(int.class, String.class).newInstance(id, name);
         } catch (Exception ex) {
             return null;
         }

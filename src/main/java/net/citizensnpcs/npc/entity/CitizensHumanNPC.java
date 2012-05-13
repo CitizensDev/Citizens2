@@ -4,7 +4,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 import net.minecraft.server.EntityLiving;
@@ -20,8 +19,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class CitizensHumanNPC extends CitizensNPC implements Equipable {
 
-    public CitizensHumanNPC(CitizensNPCManager manager, int id, String name) {
-        super(manager, id, name);
+    public CitizensHumanNPC(int id, String name) {
+        super(id, name);
     }
 
     @Override

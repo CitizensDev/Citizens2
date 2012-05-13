@@ -3,6 +3,7 @@ package net.citizensnpcs;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
@@ -145,7 +146,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
             save();
-            npcManager.safeRemove();
+            despawnNPCs();
             npcManager = null;
             getServer().getScheduler().cancelTasks(this);
         }
@@ -223,10 +224,19 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void reload() throws NPCLoadException {
         Editor.leaveAll();
         config.reload();
-        npcManager.safeRemove();
+        despawnNPCs();
         setupNPCs();
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
+    }
+
+    private void despawnNPCs() {
+        Iterator<NPC> itr = npcManager.iterator();
+        while (itr.hasNext()) {
+            NPC npc = itr.next();
+            itr.remove();
+            npc.despawn();
+        }
     }
 
     public void save() {
