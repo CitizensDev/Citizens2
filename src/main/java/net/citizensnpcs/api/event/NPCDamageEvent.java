@@ -2,22 +2,17 @@ package net.citizensnpcs.api.event;
 
 import net.citizensnpcs.api.npc.NPC;
 
-import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 public class NPCDamageEvent extends NPCEvent implements Cancellable {
-    private final EntityDamageByEntityEvent event;
+    private final EntityDamageEvent event;
 
-    public NPCDamageEvent(NPC npc, EntityDamageByEntityEvent event) {
+    public NPCDamageEvent(NPC npc, EntityDamageEvent event) {
         super(npc);
         this.event = event;
         event.setCancelled(true);
-    }
-
-    public Entity getDamager() {
-        return event.getDamager();
     }
 
     public int getDamage() {

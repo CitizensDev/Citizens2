@@ -36,6 +36,8 @@ public interface NPCManager extends Iterable<NPC> {
      */
     public NPC createNPC(EntityType type, String name, Character character);
 
+    public void deregister(NPC npc);
+
     /**
      * Gets an NPC from the given LivingEntity.
      * 
