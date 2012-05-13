@@ -3,7 +3,6 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityCreeper;
 import net.minecraft.server.EntityWeatherLighting;
@@ -14,8 +13,8 @@ import org.bukkit.entity.Creeper;
 
 public class CitizensCreeperNPC extends CitizensMobNPC {
 
-    public CitizensCreeperNPC(CitizensNPCManager manager, int id, String name) {
-        super(manager, id, name, EntityCreeperNPC.class);
+    public CitizensCreeperNPC(int id, String name) {
+        super(id, name, EntityCreeperNPC.class);
     }
 
     @Override

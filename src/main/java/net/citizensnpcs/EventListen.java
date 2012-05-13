@@ -1,6 +1,7 @@
 package net.citizensnpcs;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -86,11 +87,11 @@ public class EventListen implements Listener {
         if (!npcManager.isNPC(event.getEntity()))
             return;
 
+        NPC npc = npcManager.getNPC(event.getEntity());
         if (event instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-            NPC npc = npcManager.getNPC(event.getEntity());
 
-            NPCDamageEvent damageEvent = new NPCDamageEvent(npc, e);
+            NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, e);
             Bukkit.getPluginManager().callEvent(event);
 
             if (!damageEvent.isCancelled() || !(e.getDamager() instanceof Player))
@@ -105,7 +106,8 @@ public class EventListen implements Listener {
 
             if (npc.getCharacter() != null)
                 npc.getCharacter().onLeftClick(npc, damager);
-
+        } else {
+            Bukkit.getPluginManager().callEvent(new NPCDamageEvent(npc, event));
         }
     }
 

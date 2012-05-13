@@ -3,7 +3,6 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityGiantZombie;
 import net.minecraft.server.PathfinderGoalSelector;
@@ -13,8 +12,8 @@ import org.bukkit.entity.Giant;
 
 public class CitizensGiantNPC extends CitizensMobNPC {
 
-    public CitizensGiantNPC(CitizensNPCManager manager, int id, String name) {
-        super(manager, id, name, EntityGiantNPC.class);
+    public CitizensGiantNPC(int id, String name) {
+        super(id, name, EntityGiantNPC.class);
     }
 
     @Override

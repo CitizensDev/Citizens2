@@ -25,13 +25,11 @@ import org.bukkit.inventory.Inventory;
 
 public abstract class CitizensNPC extends AbstractNPC {
     private final CitizensAI ai = new CitizensAI(this);
-    private final CitizensNPCManager manager;
     protected EntityLiving mcEntity;
     private final CitizensTraitManager traitManager;
 
-    protected CitizensNPC(CitizensNPCManager manager, int id, String name) {
+    protected CitizensNPC(int id, String name) {
         super(id, name);
-        this.manager = manager;
         traitManager = (CitizensTraitManager) CitizensAPI.getTraitManager();
     }
 
@@ -140,7 +138,7 @@ public abstract class CitizensNPC extends AbstractNPC {
     @Override
     public void remove() {
         super.remove();
-        manager.remove(this);
+        CitizensAPI.getNPCManager().deregister(this);
         if (isSpawned())
             despawn();
     }

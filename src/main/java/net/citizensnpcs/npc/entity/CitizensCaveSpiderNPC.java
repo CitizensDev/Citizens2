@@ -3,7 +3,6 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityCaveSpider;
 import net.minecraft.server.PathfinderGoalSelector;
@@ -13,8 +12,8 @@ import org.bukkit.entity.CaveSpider;
 
 public class CitizensCaveSpiderNPC extends CitizensMobNPC {
 
-    public CitizensCaveSpiderNPC(CitizensNPCManager manager, int id, String name) {
-        super(manager, id, name, EntityCaveSpiderNPC.class);
+    public CitizensCaveSpiderNPC(int id, String name) {
+        super(id, name, EntityCaveSpiderNPC.class);
     }
 
     @Override

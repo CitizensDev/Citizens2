@@ -17,8 +17,8 @@ import org.bukkit.craftbukkit.CraftWorld;
 public abstract class CitizensMobNPC extends CitizensNPC {
     private final Constructor<? extends EntityLiving> constructor;
 
-    protected CitizensMobNPC(CitizensNPCManager manager, int id, String name, Class<? extends EntityLiving> clazz) {
-        super(manager, id, name);
+    protected CitizensMobNPC(int id, String name, Class<? extends EntityLiving> clazz) {
+        super(id, name);
         try {
             this.constructor = clazz.getConstructor(World.class, NPC.class);
         } catch (Exception ex) {

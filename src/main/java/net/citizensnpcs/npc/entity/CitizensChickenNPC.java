@@ -3,7 +3,6 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityChicken;
 import net.minecraft.server.PathfinderGoalSelector;
@@ -13,8 +12,8 @@ import org.bukkit.entity.Chicken;
 
 public class CitizensChickenNPC extends CitizensMobNPC {
 
-    public CitizensChickenNPC(CitizensNPCManager manager, int id, String name) {
-        super(manager, id, name, EntityChickenNPC.class);
+    public CitizensChickenNPC(int id, String name) {
+        super(id, name, EntityChickenNPC.class);
     }
 
     @Override
