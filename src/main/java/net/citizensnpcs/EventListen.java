@@ -89,14 +89,12 @@ public class EventListen implements Listener {
 
         NPC npc = npcManager.getNPC(event.getEntity());
         if (event instanceof EntityDamageByEntityEvent) {
-            EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
+            NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, (EntityDamageByEntityEvent) event);
+            Bukkit.getPluginManager().callEvent(damageEvent);
 
-            NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, e);
-            Bukkit.getPluginManager().callEvent(event);
-
-            if (!damageEvent.isCancelled() || !(e.getDamager() instanceof Player))
+            if (!damageEvent.isCancelled() || !(damageEvent.getDamager() instanceof Player))
                 return;
-            Player damager = (Player) e.getDamager();
+            Player damager = (Player) damageEvent.getDamager();
 
             // Call left-click event
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
