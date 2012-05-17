@@ -12,6 +12,7 @@ import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
@@ -37,7 +38,7 @@ import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensCharacterManager;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.CitizensNPCManager;
+import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitManager;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.util.Messaging;
@@ -61,8 +62,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private boolean compatible;
     private Settings config;
     private ClassLoader contextClassLoader;
-    private CitizensNPCManager npcManager;
-    private Storage saves;
+    private CitizensNPCRegistry npcRegistry;
+    private Storage saves; // TODO: refactor this, it's used in too many places
     private NPCSelector selector;
     private TraitManager traitManager;
 
@@ -71,13 +72,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return characterManager;
     }
 
-    public CommandManager getCommandManager() {
-        return commands; // TODO: this doesn't need to be exposed.
+    public Iterable<net.citizensnpcs.command.Command> getCommands(String base) {
+        return commands.getCommands(base);
     }
 
     @Override
-    public CitizensNPCManager getNPCManager() {
-        return npcManager;
+    public NPCRegistry getNPCRegistry() {
+        return npcRegistry;
     }
 
     public NPCSelector getNPCSelector() {
@@ -147,7 +148,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (compatible) {
             save();
             despawnNPCs();
-            npcManager = null;
+            npcRegistry = null;
             getServer().getScheduler().cancelTasks(this);
         }
 
@@ -171,12 +172,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         setupStorage();
 
-        npcManager = new CitizensNPCManager(saves);
+        npcRegistry = new CitizensNPCRegistry(saves);
         traitManager = new CitizensTraitManager(this);
         selector = new NPCSelector(this);
         CitizensAPI.setImplementation(this);
 
-        getServer().getPluginManager().registerEvents(new EventListen(npcManager), this);
+        getServer().getPluginManager().registerEvents(new EventListen(), this);
 
         registerCommands();
 
@@ -231,7 +232,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void despawnNPCs() {
-        Iterator<NPC> itr = npcManager.iterator();
+        Iterator<NPC> itr = npcRegistry.iterator();
         while (itr.hasNext()) {
             NPC npc = itr.next();
             itr.remove();
@@ -240,7 +241,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     public void save() {
-        for (NPC npc : npcManager)
+        for (NPC npc : npcRegistry)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
 
         saves.save();
@@ -267,7 +268,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     continue;
                 }
             }
-            NPC npc = npcManager.createNPC(type, id, key.getString("name"), null);
+            NPC npc = npcRegistry.createNPC(type, id, key.getString("name"), null);
             ((CitizensNPC) npc).load(key);
 
             ++created;
@@ -315,7 +316,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
                         @Override
                         public int getValue() {
-                            return Iterators.size(npcManager.iterator());
+                            return Iterators.size(npcRegistry.iterator());
                         }
                     });
                     Metrics.Graph graph = metrics.createGraph("Character Type Usage");

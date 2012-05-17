@@ -37,7 +37,7 @@ public class CitizensCharacterManager implements CharacterManager {
             graph.addPlotter(new Metrics.Plotter(StringHelper.capitalize(character.getName())) {
                 @Override
                 public int getValue() {
-                    return CitizensAPI.getNPCManager().getNPCs(character.getClass()).size();
+                    return CitizensAPI.getNPCRegistry().getNPCs(character.getClass()).size();
                 }
             });
         }

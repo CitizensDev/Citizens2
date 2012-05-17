@@ -98,8 +98,8 @@ public class CitizensTraitManager implements TraitManager {
                 Trait trait = create(subEntry.getValue(), npc);
                 if (trait == null)
                     return null;
-                trait.setName(subEntry.getKey());
                 trait.setPlugin(entry.getKey());
+                trait.setName(subEntry.getKey());
                 return (T) trait;
             }
         }

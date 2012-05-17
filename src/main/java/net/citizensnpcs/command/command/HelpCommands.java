@@ -9,7 +9,6 @@ import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
-import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
@@ -19,10 +18,10 @@ import org.bukkit.command.CommandSender;
 
 @Requirements
 public class HelpCommands {
-    private final CommandManager cmdManager;
+    private final Citizens plugin;
 
     public HelpCommands(Citizens plugin) {
-        cmdManager = plugin.getCommandManager();
+        this.plugin = plugin;
     }
 
     @Command(
@@ -48,7 +47,7 @@ public class HelpCommands {
         // Ensures that commands with multiple modifiers are only added once
         Set<Command> cmds = new HashSet<Command>();
         List<String> lines = new ArrayList<String>();
-        for (Command cmd : cmdManager.getCommands(baseCommand)) {
+        for (Command cmd : plugin.getCommands(baseCommand)) {
             if (cmds.contains(cmd)
                     || (!sender.hasPermission("citizens.admin") && !sender
                             .hasPermission("citizens." + cmd.permission())))

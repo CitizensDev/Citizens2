@@ -1,13 +1,14 @@
 package net.citizensnpcs;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.text.Text;
@@ -39,12 +40,8 @@ import com.google.common.collect.ListMultimap;
 import com.google.gson.internal.Pair;
 
 public class EventListen implements Listener {
-    private volatile CitizensNPCManager npcManager;
+    private final NPCRegistry npcManager = CitizensAPI.getNPCRegistry();
     private final ListMultimap<Pair<Integer, Integer>, Integer> toRespawn = ArrayListMultimap.create();
-
-    public EventListen(CitizensNPCManager npcManager) {
-        this.npcManager = npcManager;
-    }
 
     /*
      * Chunk events

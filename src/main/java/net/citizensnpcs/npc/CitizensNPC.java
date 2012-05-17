@@ -95,6 +95,13 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     public void load(DataKey root) {
+        // Spawn the NPC
+        if (getTrait(Spawned.class).shouldSpawn()) {
+            Location spawnLoc = getTrait(CurrentLocation.class).getLocation();
+            if (spawnLoc != null)
+                spawn(spawnLoc);
+        }
+
         Character character = CitizensAPI.getCharacterManager().getCharacter(root.getString("character"));
 
         // Load the character if it exists
@@ -102,8 +109,8 @@ public abstract class CitizensNPC extends AbstractNPC {
             try {
                 character.load(root.getRelative("characters." + character.getName()));
             } catch (NPCLoadException e) {
-                Messaging.severe(String.format("Unable to load character '%s'.", character.getName()));
-                e.printStackTrace();
+                Messaging.severe(String.format("Unable to load character '%s': %s.", character.getName(),
+                        e.getMessage()));
             }
             setCharacter(character);
         }
@@ -113,34 +120,25 @@ public abstract class CitizensNPC extends AbstractNPC {
             Trait trait = traitManager.getTrait(traitKey.name(), this);
             if (trait == null) {
                 Messaging.severe(String.format(
-                        "Found missing trait '%s' while loading NPC ID: '%d' - skipped. Has the name changed?",
+                        "Skipped missing trait '%s' while loading NPC ID: '%d'. Has the name changed?",
                         traitKey.name(), getId()));
                 continue;
             }
             addTrait(trait);
             try {
                 getTrait(trait.getClass()).load(traitKey);
-            } catch (Exception ex) {
-                Messaging.log(String.format("The trait '%s' failed to load properly for NPC ID: '%d'.",
-                        traitKey.name(), getId()), ex.getMessage());
-                ex.printStackTrace();
+            } catch (NPCLoadException ex) {
+                Messaging.log(
+                        String.format("The trait '%s' failed to load for NPC ID: '%d'.", traitKey.name(), getId()),
+                        ex.getMessage());
             }
-        }
-
-        // Spawn the NPC
-        if (getTrait(Spawned.class).shouldSpawn()) {
-            Location spawnLoc = getTrait(CurrentLocation.class).getLocation();
-            if (spawnLoc != null)
-                spawn(spawnLoc);
         }
     }
 
     @Override
     public void remove() {
         super.remove();
-        CitizensAPI.getNPCManager().deregister(this);
-        if (isSpawned())
-            despawn();
+        CitizensAPI.getNPCRegistry().deregister(this);
     }
 
     public void save(DataKey root) {

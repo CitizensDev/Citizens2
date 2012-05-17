@@ -76,7 +76,7 @@ public class NPCSelector implements Listener {
             // Remove editor if the player has one
             Editor.leave(player);
         } else {
-            this.consoleSelectedNPC = npc.getId();
+            consoleSelectedNPC = npc.getId();
             npc.setMetadata("selectors", new FixedMetadataValue(plugin, "console"));
         }
 
@@ -88,11 +88,11 @@ public class NPCSelector implements Listener {
             List<MetadataValue> metadata = ((Player) sender).getMetadata("selected");
             if (metadata.size() == 0)
                 return null;
-            return CitizensAPI.getNPCManager().getNPC(metadata.get(0).asInt());
+            return CitizensAPI.getNPCRegistry().getNPC(metadata.get(0).asInt());
         } else {
             if (consoleSelectedNPC == -1)
                 return null;
-            return CitizensAPI.getNPCManager().getNPC(consoleSelectedNPC);
+            return CitizensAPI.getNPCRegistry().getNPC(consoleSelectedNPC);
         }
     }
 }
