@@ -28,7 +28,8 @@ public class Saddle extends Trait implements Toggleable, Listener {
 
     @Override
     public void onNPCSpawn() {
-        ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
+        if (npc.getBukkitEntity() instanceof Pig)
+            ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
     }
 
     @EventHandler

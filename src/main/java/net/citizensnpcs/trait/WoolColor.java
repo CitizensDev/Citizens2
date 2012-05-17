@@ -33,7 +33,8 @@ public class WoolColor extends Trait implements Listener {
 
     @Override
     public void onNPCSpawn() {
-        ((Sheep) npc.getBukkitEntity()).setColor(color);
+        if (npc.getBukkitEntity() instanceof Sheep)
+            ((Sheep) npc.getBukkitEntity()).setColor(color);
     }
 
     @EventHandler
