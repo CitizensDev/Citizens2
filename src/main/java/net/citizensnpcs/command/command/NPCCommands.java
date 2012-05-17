@@ -204,7 +204,8 @@ public class NPCCommands {
         npc.spawn(player.getLocation());
 
         // Set age after entity spawns
-        npc.getTrait(Age.class).setAge(age);
+        if (npc.getBukkitEntity() instanceof Ageable)
+            npc.getTrait(Age.class).setAge(age);
 
         selector.select(player, npc);
         Messaging.send(player, msg);
