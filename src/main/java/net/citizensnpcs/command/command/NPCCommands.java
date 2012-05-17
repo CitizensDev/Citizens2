@@ -25,7 +25,6 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
-import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.util.Messaging;
@@ -199,7 +198,6 @@ public class NPCCommands {
         npc.getTrait(MobType.class).setType(type.toString());
         npc.addTrait(LookClose.class);
         npc.addTrait(Text.class);
-        npc.addTrait(Saddle.class);
 
         npc.spawn(player.getLocation());
 
