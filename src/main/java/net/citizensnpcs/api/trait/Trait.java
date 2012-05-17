@@ -1,9 +1,9 @@
 package net.citizensnpcs.api.trait;
 
-import org.bukkit.plugin.Plugin;
-
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.util.DataKey;
+
+import org.bukkit.plugin.Plugin;
 
 /**
  * Represents a Trait that can be loaded and saved.
@@ -41,8 +41,9 @@ public abstract class Trait {
     public abstract void load(DataKey key) throws NPCLoadException;
 
     /**
-     * Called when an NPC is spawned. NPCs cannot be physically modified until the entity is created in-game. This is
-     * called after the entity has been created.
+     * Called when an NPC is spawned. NPCs cannot be physically modified until
+     * the entity is created in-game. This is called after the entity has been
+     * created.
      */
     public void onNPCSpawn() {
     }
@@ -62,9 +63,8 @@ public abstract class Trait {
     public abstract void save(DataKey key);
 
     public final void setName(String name) {
-        if (this.name != null)
-            throw new IllegalStateException("Cannot change the name of a trait.");
-
+        if (name != null)
+            throw new IllegalArgumentException("name is already set");
         this.name = name;
     }
 

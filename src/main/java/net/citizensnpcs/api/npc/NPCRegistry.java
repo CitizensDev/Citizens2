@@ -10,7 +10,7 @@ import org.bukkit.entity.EntityType;
 /**
  * Handles various NPC-related methods.
  */
-public interface NPCManager extends Iterable<NPC> {
+public interface NPCRegistry extends Iterable<NPC> {
 
     /**
      * Creates an NPC with no attached character. This does not spawn the NPC.
@@ -36,7 +36,18 @@ public interface NPCManager extends Iterable<NPC> {
      */
     public NPC createNPC(EntityType type, String name, Character character);
 
+    /**
+     * Deregisters the {@link NPC} and removes all data about it from the data
+     * store.
+     * 
+     * @param npc
+     */
     public void deregister(NPC npc);
+
+    /**
+     * Deregisters all {@link NPC}s from this registry. {@link #deregister(NPC)}
+     */
+    public void deregisterAll();
 
     /**
      * Gets an NPC from the given LivingEntity.

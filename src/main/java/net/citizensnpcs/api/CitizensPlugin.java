@@ -2,7 +2,7 @@ package net.citizensnpcs.api;
 
 import java.io.File;
 
-import net.citizensnpcs.api.npc.NPCManager;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.trait.TraitManager;
 
@@ -19,11 +19,11 @@ public interface CitizensPlugin extends Plugin {
     public CharacterManager getCharacterManager();
 
     /**
-     * Gets the NPCManager.
+     * Gets the {@link NPCRegistry}.
      * 
-     * @return Citizens NPC manager
+     * @return The NPC registry
      */
-    public NPCManager getNPCManager();
+    public NPCRegistry getNPCRegistry();
 
     /**
      * Gets the TraitManager.

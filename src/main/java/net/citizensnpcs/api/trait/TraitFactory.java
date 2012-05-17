@@ -6,9 +6,9 @@ import org.bukkit.plugin.Plugin;
  * Builds a trait.
  */
 public final class TraitFactory {
-    private String name;
     private Plugin plugin;
     private final Class<? extends Trait> trait;
+    private String name;
 
     /**
      * Constructs a factory with the given trait class.
@@ -24,21 +24,14 @@ public final class TraitFactory {
         return trait;
     }
 
-    public String getTraitName() {
-        return name;
-    }
-
     public Plugin getTraitPlugin() {
         return plugin;
     }
 
-    /**
-     * Assigns a name to the trait. This is used as a key to save trait data.
-     * 
-     * @param name
-     *            Name to assign to the trait
-     * @return This TraitFactory
-     */
+    public String getTraitName() {
+        return name;
+    }
+
     public TraitFactory withName(String name) {
         this.name = name;
         return this;

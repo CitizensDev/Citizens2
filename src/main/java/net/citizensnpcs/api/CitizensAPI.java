@@ -2,7 +2,7 @@ package net.citizensnpcs.api;
 
 import java.io.File;
 
-import net.citizensnpcs.api.npc.NPCManager;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitManager;
@@ -47,12 +47,12 @@ public final class CitizensAPI {
     }
 
     /**
-     * Gets the NPCManager.
+     * Gets the {@link NPCRegistry}.
      * 
-     * @return Citizens NPC manager
+     * @return The NPC registry
      */
-    public static NPCManager getNPCManager() {
-        return instance.implementation.getNPCManager();
+    public static NPCRegistry getNPCRegistry() {
+        return instance.implementation.getNPCRegistry();
     }
 
     public static ScriptCompiler getScriptCompiler() {
