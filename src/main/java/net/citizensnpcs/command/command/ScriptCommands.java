@@ -10,7 +10,6 @@ import net.citizensnpcs.api.scripting.Script;
 import net.citizensnpcs.api.scripting.ScriptFactory;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
-import net.citizensnpcs.command.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Messaging;
 
@@ -33,7 +32,6 @@ public class ScriptCommands {
             min = 2,
             max = 2,
             permission = "script.compile")
-    @ServerCommand
     public void runScript(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         File file = new File(plugin.getDataFolder(), args.getString(1));
         if (!file.exists())
@@ -42,8 +40,8 @@ public class ScriptCommands {
             @Override
             public void onScriptCompiled(ScriptFactory script) {
                 Script s = script.newInstance();
-                if (args.hasValueFlag("i")) {
-                    for (String m : Splitter.on(',').split(args.getFlag("i"))) {
+                if (args.hasValueFlag("methods")) {
+                    for (String m : Splitter.on(',').split(args.getFlag("methods"))) {
                         s.invoke(m, new Object[] {});
                     }
                 }

@@ -40,10 +40,10 @@ import net.citizensnpcs.npc.entity.CitizensWolfNPC;
 import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 import net.citizensnpcs.util.ByIdArray;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 
 public class CitizensNPCRegistry implements NPCRegistry {
     private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
@@ -113,12 +113,9 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC getNPC(Entity entity) {
-        if (!(entity instanceof LivingEntity))
-            return null;
+        Validate.notNull(entity);
         net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
-        if (handle instanceof NPCHandle)
-            return ((NPCHandle) handle).getNPC();
-        return null;
+        return handle instanceof NPCHandle ? ((NPCHandle) handle).getNPC() : null;
     }
 
     @Override

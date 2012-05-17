@@ -21,7 +21,7 @@ public class Saddle extends Trait implements Toggleable, Listener {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (!(npc.getBukkitEntity() instanceof Pig))
+        if (npc.isSpawned() && !(npc.getBukkitEntity() instanceof Pig))
             throw new NPCLoadException("NPC must be a pig to have this trait");
         saddle = key.getBoolean("");
     }

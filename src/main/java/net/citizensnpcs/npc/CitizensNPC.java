@@ -31,6 +31,7 @@ public abstract class CitizensNPC extends AbstractNPC {
     protected CitizensNPC(int id, String name) {
         super(id, name);
         traitManager = (CitizensTraitManager) CitizensAPI.getTraitManager();
+        // TODO: remove this dependency
     }
 
     @Override

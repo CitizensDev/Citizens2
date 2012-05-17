@@ -10,7 +10,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
-import net.citizensnpcs.command.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Paginator;
 
@@ -33,7 +32,6 @@ public class HelpCommands {
             max = 2,
             permission = "help")
     @Requirements
-    @ServerCommand
     public void citizensHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         Paginator paginator = new Paginator().header("Citizens Help");
@@ -70,7 +68,6 @@ public class HelpCommands {
             max = 2,
             permission = "script.help")
     @Requirements
-    @ServerCommand
     public void scriptHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         Paginator paginator = new Paginator().header("Script Help");
@@ -89,7 +86,6 @@ public class HelpCommands {
             max = 2,
             permission = "npc.help")
     @Requirements
-    @ServerCommand
     public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         Paginator paginator = new Paginator().header("NPC Help");

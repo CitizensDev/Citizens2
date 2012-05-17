@@ -51,7 +51,7 @@ public class CommandManager {
 
     private final Map<Method, Requirements> requirements = new HashMap<Method, Requirements>();
 
-    private final Map<Method, ServerCommand> serverCommands = new HashMap<Method, ServerCommand>();
+    private final Set<Method> serverCommands = new HashSet<Method>();
 
     private final Map<String, List<Command>> subCommands = new HashMap<String, List<Command>>();
 
@@ -86,14 +86,13 @@ public class CommandManager {
         if (method == null)
             method = commands.get(cmdName.toLowerCase() + " *");
 
-        if (method != null && methodArgs != null && serverCommands.get(method) == null
-                && methodArgs[1] instanceof ConsoleCommandSender)
-            throw new ServerCommandException();
-
         if (method == null && parent == null)
             throw new UnhandledCommandException();
 
-        if (methodArgs[1] instanceof Player && !hasPermission(method, sender))
+        if (!serverCommands.contains(method) && methodArgs[1] instanceof ConsoleCommandSender)
+            throw new ServerCommandException();
+
+        if (!hasPermission(method, sender) && methodArgs[1] instanceof Player)
             throw new NoPermissionsException();
 
         Requirements cmdRequirements = requirements.get(method);
@@ -258,12 +257,9 @@ public class CommandManager {
             if (requirements != null)
                 requirements.put(method, cmdRequirements);
 
-            ServerCommand serverCommand = null;
-            if (method.isAnnotationPresent(ServerCommand.class))
-                serverCommand = method.getAnnotation(ServerCommand.class);
-
-            if (serverCommand != null)
-                serverCommands.put(method, serverCommand);
+            Class<?> senderClass = method.getParameterTypes()[1];
+            if (senderClass == CommandSender.class)
+                serverCommands.add(method);
 
             // We want to be able invoke with an instance
             if (!isStatic) {

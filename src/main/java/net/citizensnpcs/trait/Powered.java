@@ -17,7 +17,7 @@ public class Powered extends Trait implements Toggleable {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (!(npc.getBukkitEntity() instanceof Creeper))
+        if (npc.isSpawned() && !(npc.getBukkitEntity() instanceof Creeper))
             throw new NPCLoadException("NPC must be a creeper");
         powered = key.getBoolean("");
     }

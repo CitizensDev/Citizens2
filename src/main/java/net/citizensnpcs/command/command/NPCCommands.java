@@ -16,7 +16,6 @@ import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
-import net.citizensnpcs.command.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.npc.NPCSelector;
@@ -65,7 +64,7 @@ public class NPCCommands {
             permission = "npc.age")
     @Requirements(selected = true, ownership = true, types = { EntityType.CHICKEN, EntityType.COW, EntityType.OCELOT,
             EntityType.PIG, EntityType.SHEEP, EntityType.VILLAGER, EntityType.WOLF })
-    public void age(CommandContext args, Player player, NPC npc) throws CommandException {
+    public void age(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Age trait = npc.getTrait(Age.class);
 
         if (args.argsLength() > 1) {
@@ -85,19 +84,19 @@ public class NPCCommands {
             }
 
             trait.setAge(age);
-            Messaging.send(player, StringHelper.wrap(npc.getName()) + " is now " + ageStr + ".");
+            Messaging.send(sender, StringHelper.wrap(npc.getName()) + " is now " + ageStr + ".");
         }
 
         if (args.hasFlag('l'))
-            Messaging.send(player, "<a>Age " + (trait.toggle() ? "locked" : "unlocked") + ".");
+            Messaging.send(sender, "<a>Age " + (trait.toggle() ? "locked" : "unlocked") + ".");
     }
 
     @Command(aliases = { "npc" }, usage = "behaviour [scripts]", desc = "Sets the behaviour of a NPC", modifiers = {
             "behaviour", "ai" }, min = 2, max = -1)
-    public void behaviour(CommandContext args, Player player, NPC npc) throws CommandException {
+    public void behaviour(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Iterable<String> files = Splitter.on(',').split(args.getJoinedStrings(1, ','));
         npc.getTrait(Behaviour.class).addScripts(files);
-        player.sendMessage(ChatColor.GREEN + "Behaviours added.");
+        sender.sendMessage(ChatColor.GREEN + "Behaviours added.");
     }
 
     @Command(
@@ -107,7 +106,7 @@ public class NPCCommands {
             modifiers = { "character" },
             min = 2,
             max = 2)
-    public void character(CommandContext args, Player player, NPC npc) throws CommandException {
+    public void character(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String name = args.getString(1).toLowerCase();
         Character character = characterManager.getCharacter(name);
 
@@ -115,16 +114,16 @@ public class NPCCommands {
             throw new CommandException("The character '" + args.getString(1) + "' does not exist.");
         if (npc.getCharacter() != null && npc.getCharacter().getName().equalsIgnoreCase(character.getName()))
             throw new CommandException("The NPC already has the character '" + name + "'.");
-        if (!player.hasPermission("citizens.npc.character." + character.getName())
-                && !player.hasPermission("citizens.npc.character.*") && !player.hasPermission("citizens.admin"))
+        if (!sender.hasPermission("citizens.npc.character." + character.getName())
+                && !sender.hasPermission("citizens.npc.character.*") && !sender.hasPermission("citizens.admin"))
             throw new NoPermissionsException();
 
         EntityType type = EntityType.valueOf(npc.getTrait(MobType.class).getType());
         if (!character.getValidTypes().isEmpty() && !character.getValidTypes().contains(type)) {
-            Messaging.sendError(player, "This NPC cannot be given the character '" + character.getName() + "'.");
+            Messaging.sendError(sender, "This NPC cannot be given the character '" + character.getName() + "'.");
             return;
         }
-        Messaging.send(player, StringHelper.wrap(npc.getName() + "'s") + " character is now " + StringHelper.wrap(name)
+        Messaging.send(sender, StringHelper.wrap(npc.getName() + "'s") + " character is now " + StringHelper.wrap(name)
                 + ".");
         npc.setCharacter(character);
     }
@@ -219,10 +218,10 @@ public class NPCCommands {
             min = 1,
             max = 1,
             permission = "npc.despawn")
-    public void despawn(CommandContext args, Player player, NPC npc) {
+    public void despawn(CommandContext args, CommandSender sender, NPC npc) {
         npc.getTrait(Spawned.class).setSpawned(false);
         npc.despawn();
-        Messaging.send(player, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
+        Messaging.send(sender, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }
 
     @Command(
@@ -235,7 +234,6 @@ public class NPCCommands {
             max = 2,
             permission = "npc.list")
     @Requirements
-    @ServerCommand
     public void list(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         List<NPC> npcs = new ArrayList<NPC>();
 
@@ -302,19 +300,19 @@ public class NPCCommands {
             min = 1,
             max = 1,
             permission = "npc.lookclose")
-    public void lookClose(CommandContext args, Player player, NPC npc) {
+    public void lookClose(CommandContext args, CommandSender sender, NPC npc) {
         String msg = StringHelper.wrap(npc.getName()) + " will "
                 + (npc.getTrait(LookClose.class).toggle() ? "now rotate" : "no longer rotate");
-        Messaging.send(player, msg + " when a player is nearby.");
+        Messaging.send(sender, msg + " when a player is nearby.");
     }
 
     @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0)
-    public void npc(CommandContext args, Player player, NPC npc) {
-        Messaging.send(player, StringHelper.wrapHeader(npc.getName()));
-        Messaging.send(player, "    <a>ID: <e>" + npc.getId());
-        Messaging.send(player, "    <a>Character: <e>"
+    public void npc(CommandContext args, CommandSender sender, NPC npc) {
+        Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
+        Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
+        Messaging.send(sender, "    <a>Character: <e>"
                 + (npc.getCharacter() != null ? npc.getCharacter().getName() : "None"));
-        Messaging.send(player, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
+        Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
     }
 
     @Command(
@@ -325,7 +323,6 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "npc.owner")
-    @ServerCommand
     public void owner(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 1) {
             Messaging.send(sender, StringHelper.wrap(npc.getName() + "'s Owner: ")
@@ -348,7 +345,6 @@ public class NPCCommands {
             min = 1,
             max = 1,
             permission = "npc.power")
-    @ServerCommand
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         String msg = StringHelper.wrap(npc.getName()) + " will "
@@ -364,7 +360,6 @@ public class NPCCommands {
             min = 2,
             max = 2,
             permission = "npc.profession")
-    @ServerCommand
     @Requirements(selected = true, ownership = true, types = { EntityType.VILLAGER })
     public void profession(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String profession = args.getString(1);
@@ -387,7 +382,6 @@ public class NPCCommands {
             min = 1,
             max = 2)
     @Requirements
-    @ServerCommand
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
             if (!args.getString(1).equalsIgnoreCase("all"))
@@ -419,7 +413,6 @@ public class NPCCommands {
             min = 2,
             max = 2,
             permission = "npc.rename")
-    @ServerCommand
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
         String newName = args.getString(1);
@@ -441,7 +434,6 @@ public class NPCCommands {
             max = 2,
             permission = "npc.select")
     @Requirements(ownership = true)
-    @ServerCommand
     public void select(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         NPC toSelect = npcRegistry.getNPC(args.getInteger(1));
         if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn())
@@ -486,7 +478,6 @@ public class NPCCommands {
             min = 1,
             max = 1,
             permission = "npc.controllable")
-    @ServerCommand
     public void controllable(CommandContext args, CommandSender sender, NPC npc) {
         boolean enabled = npc.getTrait(Controllable.class).toggle();
         if (enabled) {
@@ -494,7 +485,6 @@ public class NPCCommands {
         } else {
             Messaging.send(sender, StringHelper.wrap(npc.getName()) + " can no longer be controlled.");
         }
-
     }
 
     @Command(

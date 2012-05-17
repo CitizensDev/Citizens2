@@ -18,7 +18,7 @@ public class Age extends Trait implements Runnable, Toggleable {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (!(npc.getBukkitEntity() instanceof Ageable))
+        if (npc.isSpawned() && !(npc.getBukkitEntity() instanceof Ageable))
             throw new NPCLoadException("NPC must be ageable");
         age = key.getInt("age");
         locked = key.getBoolean("locked");

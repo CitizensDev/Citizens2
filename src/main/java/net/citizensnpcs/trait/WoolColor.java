@@ -22,7 +22,7 @@ public class WoolColor extends Trait implements Listener {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (!(npc.getBukkitEntity() instanceof Sheep))
+        if (npc.isSpawned() && !(npc.getBukkitEntity() instanceof Sheep))
             throw new NPCLoadException("NPC must be a sheep");
         try {
             color = DyeColor.valueOf(key.getString(""));
