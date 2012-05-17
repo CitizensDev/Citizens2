@@ -96,13 +96,6 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     public void load(DataKey root) {
-        // Spawn the NPC
-        if (getTrait(Spawned.class).shouldSpawn()) {
-            Location spawnLoc = getTrait(CurrentLocation.class).getLocation();
-            if (spawnLoc != null)
-                spawn(spawnLoc);
-        }
-
         Character character = CitizensAPI.getCharacterManager().getCharacter(root.getString("character"));
 
         // Load the character if it exists
@@ -133,6 +126,13 @@ public abstract class CitizensNPC extends AbstractNPC {
                         String.format("The trait '%s' failed to load for NPC ID: '%d'.", traitKey.name(), getId()),
                         ex.getMessage());
             }
+        }
+
+        // Spawn the NPC
+        if (getTrait(Spawned.class).shouldSpawn()) {
+            Location spawnLoc = getTrait(CurrentLocation.class).getLocation();
+            if (spawnLoc != null)
+                spawn(spawnLoc);
         }
     }
 

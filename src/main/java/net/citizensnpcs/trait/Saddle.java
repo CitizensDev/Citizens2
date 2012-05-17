@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 public class Saddle extends Trait implements Toggleable, Listener {
     private final NPC npc;
     private boolean saddle;
+    private boolean pig;
 
     public Saddle(NPC npc) {
         this.npc = npc;
@@ -21,20 +22,21 @@ public class Saddle extends Trait implements Toggleable, Listener {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (npc.isSpawned() && !(npc.getBukkitEntity() instanceof Pig))
-            throw new NPCLoadException("NPC must be a pig to have this trait");
         saddle = key.getBoolean("");
     }
 
     @Override
     public void onNPCSpawn() {
-        if (npc.getBukkitEntity() instanceof Pig)
+        if (npc.getBukkitEntity() instanceof Pig) {
             ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
+            pig = true;
+        } else
+            pig = false;
     }
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
+        if (pig && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
             event.setCancelled(true);
     }
 
@@ -46,7 +48,8 @@ public class Saddle extends Trait implements Toggleable, Listener {
     @Override
     public boolean toggle() {
         saddle = !saddle;
-        ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
+        if (pig)
+            ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
         return saddle;
     }
 

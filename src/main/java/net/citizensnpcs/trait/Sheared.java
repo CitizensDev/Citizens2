@@ -21,8 +21,6 @@ public class Sheared extends Trait implements Toggleable, Listener {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (!(npc.getBukkitEntity() instanceof Sheep))
-            throw new NPCLoadException("NPC must be a sheep to be sheared");
         sheared = key.getBoolean("");
     }
 
@@ -45,7 +43,8 @@ public class Sheared extends Trait implements Toggleable, Listener {
     @Override
     public boolean toggle() {
         sheared = !sheared;
-        ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
+        if (npc.getBukkitEntity() instanceof Sheep)
+            ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
         return sheared;
     }
 

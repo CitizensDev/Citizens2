@@ -15,6 +15,7 @@ import org.bukkit.event.entity.SheepDyeWoolEvent;
 public class WoolColor extends Trait implements Listener {
     private DyeColor color = DyeColor.WHITE;
     private final NPC npc;
+    boolean sheep = false;
 
     public WoolColor(NPC npc) {
         this.npc = npc;
@@ -22,8 +23,6 @@ public class WoolColor extends Trait implements Listener {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (npc.isSpawned() && !(npc.getBukkitEntity() instanceof Sheep))
-            throw new NPCLoadException("NPC must be a sheep");
         try {
             color = DyeColor.valueOf(key.getString(""));
         } catch (Exception ex) {
@@ -33,8 +32,11 @@ public class WoolColor extends Trait implements Listener {
 
     @Override
     public void onNPCSpawn() {
-        if (npc.getBukkitEntity() instanceof Sheep)
+        if (npc.getBukkitEntity() instanceof Sheep) {
             ((Sheep) npc.getBukkitEntity()).setColor(color);
+            sheep = true;
+        } else
+            sheep = false;
     }
 
     @EventHandler
@@ -50,7 +52,8 @@ public class WoolColor extends Trait implements Listener {
 
     public void setColor(DyeColor color) {
         this.color = color;
-        ((Sheep) npc.getBukkitEntity()).setColor(color);
+        if (sheep)
+            ((Sheep) npc.getBukkitEntity()).setColor(color);
     }
 
     @Override
