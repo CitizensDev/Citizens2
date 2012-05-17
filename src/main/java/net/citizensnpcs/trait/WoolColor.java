@@ -1,16 +1,16 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.DyeColor;
-import org.bukkit.entity.Sheep;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.SheepDyeWoolEvent;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+
+import org.bukkit.DyeColor;
+import org.bukkit.entity.Sheep;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.SheepDyeWoolEvent;
 
 public class WoolColor extends Trait implements Listener {
     private DyeColor color = DyeColor.WHITE;
@@ -22,6 +22,8 @@ public class WoolColor extends Trait implements Listener {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
+        if (!(npc.getBukkitEntity() instanceof Sheep))
+            throw new NPCLoadException("NPC must be a sheep");
         try {
             color = DyeColor.valueOf(key.getString(""));
         } catch (Exception ex) {
@@ -31,13 +33,12 @@ public class WoolColor extends Trait implements Listener {
 
     @Override
     public void onNPCSpawn() {
-        if (npc.getBukkitEntity() instanceof Sheep)
-            ((Sheep) npc.getBukkitEntity()).setColor(color);
+        ((Sheep) npc.getBukkitEntity()).setColor(color);
     }
 
     @EventHandler
     public void onSheepDyeWool(SheepDyeWoolEvent event) {
-        if (CitizensAPI.getNPCManager().isNPC(event.getEntity()))
+        if (npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity())))
             event.setCancelled(true);
     }
 

@@ -2,7 +2,6 @@ package net.citizensnpcs.editor;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.entity.Player;
@@ -40,15 +39,12 @@ public class EquipmentEditor extends Editor {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (!CitizensAPI.getNPCManager().isNPC(event.getRightClicked())
-                || !CitizensAPI.getNPCManager().getNPC(event.getRightClicked()).equals(npc)
+        if (!npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked()))
                 || !event.getPlayer().equals(player))
             return;
 
-        CitizensNPC handle = (CitizensNPC) npc;
-        if (!(handle instanceof Equipable))
-            return;
-
-        ((Equipable) handle).equip(event.getPlayer());
+        if (npc instanceof Equipable) {
+            ((Equipable) npc).equip(event.getPlayer());
+        }
     }
 }

@@ -7,6 +7,7 @@ import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.trait.trait.MobType;
@@ -18,7 +19,6 @@ import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
-import net.citizensnpcs.npc.CitizensNPCManager;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Behaviour;
@@ -46,11 +46,11 @@ import com.google.common.base.Splitter;
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
     private final CharacterManager characterManager = CitizensAPI.getCharacterManager();
-    private final CitizensNPCManager npcManager;
+    private final NPCRegistry npcRegistry;
     private final NPCSelector selector;
 
     public NPCCommands(Citizens plugin) {
-        npcManager = plugin.getNPCManager();
+        npcRegistry = CitizensAPI.getNPCRegistry();
         selector = plugin.getNPCSelector();
     }
 
@@ -154,7 +154,7 @@ public class NPCCommands {
                 type = EntityType.PLAYER;
             }
         }
-        npc = npcManager.createNPC(type, name);
+        npc = npcRegistry.createNPC(type, name);
         String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(npc.getName());
         if (args.hasValueFlag("char")) {
             String character = args.getFlag("char").toLowerCase();
@@ -240,17 +240,17 @@ public class NPCCommands {
         List<NPC> npcs = new ArrayList<NPC>();
 
         if (args.hasFlag('a')) {
-            for (NPC add : npcManager)
+            for (NPC add : npcRegistry)
                 npcs.add(add);
         } else if (args.getValueFlags().size() == 0 && sender instanceof Player) {
-            for (NPC add : npcManager) {
+            for (NPC add : npcRegistry) {
                 if (!npcs.contains(add) && add.getTrait(Owner.class).isOwnedBy(sender))
                     npcs.add(add);
             }
         } else {
             if (args.hasValueFlag("owner")) {
                 String name = args.getFlag("owner");
-                for (NPC add : npcManager) {
+                for (NPC add : npcRegistry) {
                     if (!npcs.contains(add) && add.getTrait(Owner.class).isOwnedBy(name))
                         npcs.add(add);
                 }
@@ -262,7 +262,7 @@ public class NPCCommands {
                 if (EntityType.fromName(type.replace('-', '_')) == null)
                     throw new CommandException("'" + type + "' is not a valid mob type.");
 
-                for (NPC add : npcManager) {
+                for (NPC add : npcRegistry) {
                     if (!npcs.contains(add) && add.getTrait(MobType.class).getType().equalsIgnoreCase(type))
                         npcs.add(add);
                 }
@@ -273,7 +273,7 @@ public class NPCCommands {
                 if (characterManager.getCharacter(character) == null)
                     throw new CommandException("'" + character + "' is not a valid character.");
 
-                for (NPC add : npcManager.getNPCs(characterManager.getCharacter(character).getClass())) {
+                for (NPC add : npcRegistry.getNPCs(characterManager.getCharacter(character).getClass())) {
                     if (!npcs.contains(add))
                         npcs.add(add);
                 }
@@ -394,7 +394,7 @@ public class NPCCommands {
                 throw new CommandException("Incorrect syntax. /npc remove (all)");
             if (!sender.hasPermission("citizens.npc.remove.all") && !sender.hasPermission("citizens.admin"))
                 throw new NoPermissionsException();
-            npcManager.removeAll();
+            npcRegistry.deregisterAll();
             Messaging.send(sender, "<a>You permanently removed all NPCs.");
             return;
         }
@@ -443,7 +443,7 @@ public class NPCCommands {
     @Requirements(ownership = true)
     @ServerCommand
     public void select(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        NPC toSelect = npcManager.getNPC(args.getInteger(1));
+        NPC toSelect = npcRegistry.getNPC(args.getInteger(1));
         if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn())
             throw new CommandException("No NPC with the ID '" + args.getInteger(1) + "' is spawned.");
         if (npc != null && toSelect.getId() == npc.getId())
@@ -462,7 +462,7 @@ public class NPCCommands {
             permission = "npc.spawn")
     @Requirements
     public void spawn(CommandContext args, Player player, NPC npc) throws CommandException {
-        NPC respawn = npcManager.getNPC(args.getInteger(1));
+        NPC respawn = npcRegistry.getNPC(args.getInteger(1));
         if (respawn == null)
             throw new CommandException("No NPC with the ID '" + args.getInteger(1) + "' exists.");
 

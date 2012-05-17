@@ -1,11 +1,11 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.entity.Ageable;
-
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+
+import org.bukkit.entity.Ageable;
 
 public class Age extends Trait implements Runnable, Toggleable {
     private int age = 0;
@@ -18,17 +18,17 @@ public class Age extends Trait implements Runnable, Toggleable {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
+        if (!(npc.getBukkitEntity() instanceof Ageable))
+            throw new NPCLoadException("NPC must be ageable");
         age = key.getInt("age");
         locked = key.getBoolean("locked");
     }
 
     @Override
     public void onNPCSpawn() {
-        if (npc.getBukkitEntity() instanceof Ageable) {
-            Ageable entity = (Ageable) npc.getBukkitEntity();
-            entity.setAge(age);
-            entity.setAgeLock(locked);
-        }
+        Ageable entity = (Ageable) npc.getBukkitEntity();
+        entity.setAge(age);
+        entity.setAgeLock(locked);
     }
 
     @Override
@@ -45,8 +45,7 @@ public class Age extends Trait implements Runnable, Toggleable {
 
     public void setAge(int age) {
         this.age = age;
-        if (npc.getBukkitEntity() instanceof Ageable)
-            ((Ageable) npc.getBukkitEntity()).setAge(age);
+        ((Ageable) npc.getBukkitEntity()).setAge(age);
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCManager;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.npc.ai.NPCHandle;
@@ -45,13 +45,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
-public class CitizensNPCManager implements NPCManager {
+public class CitizensNPCRegistry implements NPCRegistry {
     private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
     private final Storage saves;
     private final Map<EntityType, Class<? extends CitizensNPC>> types = new EnumMap<EntityType, Class<? extends CitizensNPC>>(
             EntityType.class);
 
-    public CitizensNPCManager(Storage saves) {
+    public CitizensNPCRegistry(Storage saves) {
         this.saves = saves;
 
         types.put(EntityType.BLAZE, CitizensBlazeNPC.class);
@@ -152,9 +152,11 @@ public class CitizensNPCManager implements NPCManager {
     public void deregister(NPC npc) {
         npcs.remove(npc.getId());
         saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
+        npc.despawn();
     }
 
-    public void removeAll() {
+    @Override
+    public void deregisterAll() {
         Iterator<NPC> itr = iterator();
         while (itr.hasNext()) {
             NPC npc = itr.next();

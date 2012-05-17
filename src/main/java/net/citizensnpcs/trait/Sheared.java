@@ -1,15 +1,15 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.entity.Sheep;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerShearEntityEvent;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+
+import org.bukkit.entity.Sheep;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 
 public class Sheared extends Trait implements Toggleable, Listener {
     private final NPC npc;
@@ -21,18 +21,19 @@ public class Sheared extends Trait implements Toggleable, Listener {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
+        if (!(npc.getBukkitEntity() instanceof Sheep))
+            throw new NPCLoadException("NPC must be a sheep to be sheared");
         sheared = key.getBoolean("");
     }
 
     @Override
     public void onNPCSpawn() {
-        if (npc.getBukkitEntity() instanceof Sheep)
-            ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
+        ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
     }
 
     @EventHandler
     public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
-        if (CitizensAPI.getNPCManager().isNPC(event.getEntity()))
+        if (npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity())))
             event.setCancelled(true);
     }
 
