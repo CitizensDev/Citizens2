@@ -10,6 +10,7 @@ import org.bukkit.entity.Ageable;
 public class Age extends Trait implements Runnable, Toggleable {
     private int age = 0;
     private boolean locked = true;
+    private boolean ageable = false;
     private final NPC npc;
 
     public Age(NPC npc) {
@@ -26,14 +27,18 @@ public class Age extends Trait implements Runnable, Toggleable {
 
     @Override
     public void onNPCSpawn() {
-        Ageable entity = (Ageable) npc.getBukkitEntity();
-        entity.setAge(age);
-        entity.setAgeLock(locked);
+        if (npc instanceof Ageable) {
+            Ageable entity = (Ageable) npc.getBukkitEntity();
+            entity.setAge(age);
+            entity.setAgeLock(locked);
+            ageable = true;
+        } else
+            ageable = false;
     }
 
     @Override
     public void run() {
-        if (!locked)
+        if (!locked && ageable)
             age = ((Ageable) npc.getBukkitEntity()).getAge();
     }
 
@@ -45,13 +50,15 @@ public class Age extends Trait implements Runnable, Toggleable {
 
     public void setAge(int age) {
         this.age = age;
-        ((Ageable) npc.getBukkitEntity()).setAge(age);
+        if (ageable)
+            ((Ageable) npc.getBukkitEntity()).setAge(age);
     }
 
     @Override
     public boolean toggle() {
         locked = !locked;
-        ((Ageable) npc.getBukkitEntity()).setAgeLock(locked);
+        if (ageable)
+            ((Ageable) npc.getBukkitEntity()).setAgeLock(locked);
         return locked;
     }
 
