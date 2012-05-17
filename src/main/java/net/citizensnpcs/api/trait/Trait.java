@@ -63,14 +63,14 @@ public abstract class Trait {
     public abstract void save(DataKey key);
 
     public final void setName(String name) {
-        if (name != null)
-            throw new IllegalArgumentException("name is already set");
+        if (this.name != null)
+            throw new IllegalArgumentException("Cannot change the name of a trait");
         this.name = name;
     }
 
     public final void setPlugin(Plugin plugin) {
         if (this.plugin != null)
-            throw new IllegalStateException("Cannot change the plugin of a trait.");
+            throw new IllegalArgumentException("Cannot change the plugin of a trait.");
 
         this.plugin = plugin;
     }
