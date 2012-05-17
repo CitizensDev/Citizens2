@@ -40,7 +40,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.gson.internal.Pair;
 
 public class EventListen implements Listener {
-    private final NPCRegistry npcManager = CitizensAPI.getNPCRegistry();
+    private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
     private final ListMultimap<Pair<Integer, Integer>, Integer> toRespawn = ArrayListMultimap.create();
 
     /*
@@ -52,7 +52,7 @@ public class EventListen implements Listener {
         if (!toRespawn.containsKey(coord))
             return;
         for (int id : toRespawn.get(coord)) {
-            NPC npc = npcManager.getNPC(id);
+            NPC npc = npcRegistry.getNPC(id);
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         }
         toRespawn.removeAll(coord);
@@ -64,7 +64,7 @@ public class EventListen implements Listener {
             return;
 
         Pair<Integer, Integer> coord = toIntPair(event.getChunk());
-        for (NPC npc : npcManager) {
+        for (NPC npc : npcRegistry) {
             if (!npc.isSpawned())
                 continue;
             Location loc = npc.getBukkitEntity().getLocation();
@@ -81,10 +81,10 @@ public class EventListen implements Listener {
      */
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (!npcManager.isNPC(event.getEntity()))
+        if (!npcRegistry.isNPC(event.getEntity()))
             return;
 
-        NPC npc = npcManager.getNPC(event.getEntity());
+        NPC npc = npcRegistry.getNPC(event.getEntity());
         if (event instanceof EntityDamageByEntityEvent) {
             NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, (EntityDamageByEntityEvent) event);
             Bukkit.getPluginManager().callEvent(damageEvent);
@@ -108,18 +108,18 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        if (!npcManager.isNPC(event.getEntity()))
+        if (!npcRegistry.isNPC(event.getEntity()))
             return;
-        NPC npc = npcManager.getNPC(event.getEntity());
+        NPC npc = npcRegistry.getNPC(event.getEntity());
         npc.despawn();
     }
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (event.isCancelled() || !npcManager.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
+        if (event.isCancelled() || !npcRegistry.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
             return;
 
-        NPC npc = npcManager.getNPC(event.getEntity());
+        NPC npc = npcRegistry.getNPC(event.getEntity());
         Player player = (Player) event.getTarget();
 
         // Call right-click event
@@ -149,7 +149,7 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (!npcManager.isNPC(event.getRightClicked()))
+        if (!npcRegistry.isNPC(event.getRightClicked()))
             return;
 
         // Call target event for NPCs
@@ -171,7 +171,7 @@ public class EventListen implements Listener {
             if (!event.getWorld().isChunkLoaded(chunk.first, chunk.second))
                 continue;
             for (int id : toRespawn.get(chunk)) {
-                NPC npc = npcManager.getNPC(id);
+                NPC npc = npcRegistry.getNPC(id);
                 npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
             }
             toRespawn.removeAll(chunk);
@@ -183,7 +183,7 @@ public class EventListen implements Listener {
         if (event.isCancelled())
             return;
 
-        for (NPC npc : npcManager) {
+        for (NPC npc : npcRegistry) {
             if (!npc.isSpawned() || !npc.getBukkitEntity().getWorld().equals(event.getWorld()))
                 continue;
 

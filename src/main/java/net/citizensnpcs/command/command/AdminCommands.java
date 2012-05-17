@@ -6,7 +6,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
-import net.citizensnpcs.command.ServerCommand;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
@@ -22,7 +21,6 @@ public class AdminCommands {
     }
 
     @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "admin")
-    @ServerCommand
     public void citizens(CommandContext args, CommandSender player, NPC npc) {
         Messaging.send(player,
                 "          " + StringHelper.wrapHeader("<e>Citizens v" + plugin.getDescription().getVersion()));
@@ -39,7 +37,6 @@ public class AdminCommands {
             min = 1,
             max = 1,
             permission = "admin")
-    @ServerCommand
     public void reload(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.send(sender, "<e>Reloading Citizens...");
         try {
@@ -59,7 +56,6 @@ public class AdminCommands {
             min = 1,
             max = 1,
             permission = "admin")
-    @ServerCommand
     public void save(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, "<e>Saving Citizens...");
         plugin.save();
