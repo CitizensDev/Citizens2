@@ -113,17 +113,15 @@ public abstract class CitizensNPC extends AbstractNPC {
         for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
             Trait trait = traitManager.getTrait(traitKey.name(), this);
             if (trait == null) {
-                Messaging.severe(String.format(
-                        "Skipped missing trait '%s' while loading NPC ID: '%d'. Has the name changed?",
-                        traitKey.name(), getId()));
+                Messaging.severeF("Skipped missing trait '%s' while loading NPC ID: '%d'. Has the name changed?",
+                        traitKey.name(), getId());
                 continue;
             }
             addTrait(trait);
             try {
                 getTrait(trait.getClass()).load(traitKey);
             } catch (NPCLoadException ex) {
-                Messaging.log(
-                        String.format("The trait '%s' failed to load for NPC ID: '%d'.", traitKey.name(), getId()),
+                Messaging.logF("The trait '%s' failed to load for NPC ID: '%d'.", traitKey.name(), getId(),
                         ex.getMessage());
             }
         }
@@ -195,7 +193,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             super.update();
             ai.update();
         } catch (Exception ex) {
-            Messaging.log("Exception while updating " + getId() + ": " + ex.getMessage() + ".");
+            Messaging.logF("Exception while updating %d: %s.", getId(), ex.getMessage());
             ex.printStackTrace();
         }
     }

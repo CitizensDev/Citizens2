@@ -11,6 +11,7 @@ import net.citizensnpcs.npc.network.NPCSocket;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.Navigation;
 import net.minecraft.server.NetHandler;
 import net.minecraft.server.NetworkManager;
 import net.minecraft.server.World;
@@ -44,7 +45,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
     @Override
     public void F_() {
         super.F_();
-        if (!npc.getAI().hasDestination() && (motX != 0 || motZ != 0 || motY != 0)) {
+        Navigation navigation = al();
+        if (!navigation.e()) {
+            navigation.d();
+            moveOnCurrentHeading();
+        } else if (motX != 0 || motZ != 0 || motY != 0) {
             a(0, 0);
         }
         if (noDamageTicks > 0)
@@ -52,7 +57,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
         npc.update();
     }
 
-    public void moveOnCurrentHeading() {
+    private void moveOnCurrentHeading() {
         getControllerMove().c();
         getControllerLook().a();
         getControllerJump().b();

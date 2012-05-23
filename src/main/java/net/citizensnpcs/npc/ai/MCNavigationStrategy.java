@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.Navigation;
 
@@ -18,7 +17,7 @@ public class MCNavigationStrategy implements PathStrategy {
     private final EntityLiving entity;
     private final Navigation navigation;
 
-    MCNavigationStrategy(CitizensNPC npc, Location dest) {
+    MCNavigationStrategy(final CitizensNPC npc, final Location dest) {
         entity = npc.getHandle();
         if (npc.getBukkitEntity() instanceof Player) {
             entity.onGround = true;
@@ -26,14 +25,14 @@ public class MCNavigationStrategy implements PathStrategy {
             // navigation won't execute, and calling entity.move doesn't
             // entirely fix the problem.
         }
-        navigation = npc.getHandle().al();
+        navigation = entity.al();
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), getSpeed(npc.getHandle()));
 
     }
 
     MCNavigationStrategy(EntityLiving entity, EntityLiving target) {
         this.entity = entity;
-        if (entity instanceof EntityHumanNPC) {
+        if (entity.getBukkitEntity() instanceof Player) {
             entity.onGround = true; // see above
         }
         navigation = entity.al();
@@ -60,10 +59,6 @@ public class MCNavigationStrategy implements PathStrategy {
 
     @Override
     public boolean update() {
-        if (entity instanceof EntityHumanNPC) {
-            navigation.d();
-            ((EntityHumanNPC) entity).moveOnCurrentHeading();
-        }
         return navigation.e();
     }
 

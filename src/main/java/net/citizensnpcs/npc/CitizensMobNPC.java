@@ -5,12 +5,14 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.minecraft.server.Block;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityTypes;
 import net.minecraft.server.World;
 
 import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftWorld;
 
 @SuppressWarnings("unchecked")
@@ -41,6 +43,16 @@ public abstract class CitizensMobNPC extends CitizensNPC {
     protected EntityLiving createHandle(Location loc) {
         EntityLiving entity = createEntityFromClass(((CraftWorld) loc.getWorld()).getHandle());
         entity.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+
+        // entity.onGround isn't updated right away - we approximate here so
+        // that things like pathfinding still work *immediately* after spawn.
+        org.bukkit.Material beneath = loc.getBlock().getRelative(BlockFace.DOWN).getType();
+        if (beneath.isBlock()) {
+            Block block = Block.byId[beneath.getId()];
+            if (block != null && block.material != null) {
+                entity.onGround = block.material.isSolid();
+            }
+        }
         return entity;
     }
 

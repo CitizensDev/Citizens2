@@ -28,13 +28,13 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         WorldServer ws = ((CraftWorld) loc.getWorld()).getHandle();
         final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
                 StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws), this);
+        handle.getBukkitEntity().teleport(loc);
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
                 handle.X = loc.getYaw() % 360;
-                handle.getBukkitEntity().teleport(loc);
-                // set the position in another tick - if done immediately,
-                // minecraft will not update the player's position.
+                // set the head yaw in another tick - if done immediately,
+                // minecraft will not update it.
             }
         });
         return handle;
@@ -89,7 +89,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
                     trait.set(i, null);
                 }
             }
-            Messaging.send(equipper, "<e>" + getName() + " <a>had all of its items removed.");
+            Messaging.sendF(equipper, "<e>%s<a>had all of its items removed.", getName());
         }
         // Drop any previous equipment on the ground
         if (trait.get(slot) != null && trait.get(slot).getType() != Material.AIR)
