@@ -99,8 +99,7 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
     }
 
     private void populateDefaultText() {
-        for (String line : Setting.DEFAULT_TEXT.asList("npc.default.text"))
-            text.add(line);
+        text.addAll(Setting.DEFAULT_TEXT.asList());
     }
 
     public void remove(int index) {

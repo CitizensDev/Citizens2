@@ -9,7 +9,7 @@ import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 public class TextRemovePrompt extends StringPrompt {
-    private Text text;
+    private final Text text;
 
     public TextRemovePrompt(Text text) {
         this.text = text;
@@ -21,11 +21,11 @@ public class TextRemovePrompt extends StringPrompt {
         try {
             int index = Integer.parseInt(input);
             if (!text.hasIndex(index)) {
-                Messaging.sendError(player, "'" + index + "' is not a valid index!");
+                Messaging.sendErrorF(player, "'%d' is not a valid index!", index);
                 return new StartPrompt(text);
             }
             text.remove(index);
-            Messaging.send(player, "<e>Removed <a>entry at index <e>" + index + "<a>.");
+            Messaging.sendF(player, "<e>Removed <a>entry at index <e>%d<a>.", index);
             return new StartPrompt(text);
         } catch (NumberFormatException ex) {
             if (input.equalsIgnoreCase("page")) {

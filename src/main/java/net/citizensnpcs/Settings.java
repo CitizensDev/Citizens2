@@ -10,6 +10,7 @@ import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 
 public class Settings {
+    private final Storage config;
     private final DataKey root;
 
     public Settings(File folder) {
@@ -22,7 +23,7 @@ public class Settings {
                 Messaging.logF("Writing default setting: '%s'", setting.path);
                 root.setRaw(setting.path, setting.value);
             } else
-                setting.set(root.getRaw(setting.path));
+                setting.load(root);
         }
 
         save();
@@ -32,7 +33,7 @@ public class Settings {
         config.load();
         for (Setting setting : Setting.values())
             if (root.keyExists(setting.path))
-                setting.set(root.getRaw(setting.path));
+                setting.load(root);
 
         save();
     }
@@ -51,7 +52,15 @@ public class Settings {
         DEFAULT_LOOK_CLOSE("npc.default.look-close", false),
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", true),
         DEFAULT_TALK_CLOSE("npc.default.talk-close", false),
-        DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!"),
+        DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!") {
+            @Override
+            public void load(DataKey root) {
+                List<String> list = new ArrayList<String>();
+                for (DataKey key : root.getRelative("npc.default.text").getSubKeys())
+                    list.add(key.getString(""));
+                value = list;
+            }
+        },
         QUICK_SELECT("npc.selection.quick-select", false),
         SELECTION_ITEM("npc.selection.item", "280"),
         SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
@@ -62,8 +71,8 @@ public class Settings {
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 30),
         TALK_ITEM("npc.text.talk-item", "340");
 
-        private String path;
-        private Object value;
+        protected String path;
+        protected Object value;
 
         Setting(String path, Object value) {
             this.path = path;
@@ -82,12 +91,9 @@ public class Settings {
             return Integer.parseInt(value.toString());
         }
 
-        // TODO: single values only in a field, remove this
-        public List<String> asList(String path) {
-            List<String> list = new ArrayList<String>();
-            for (DataKey key : config.getKey(path).getIntegerSubKeys())
-                list.add(key.getString(""));
-            return list;
+        @SuppressWarnings("unchecked")
+        public List<String> asList() {
+            return (List<String>) value;
         }
 
         public long asLong() {
@@ -98,10 +104,8 @@ public class Settings {
             return value.toString();
         }
 
-        private void set(Object value) {
-            this.value = value;
+        protected void load(DataKey root) {
+            this.value = root.getRaw(path);
         }
     }
-
-    private static Storage config;
 }
