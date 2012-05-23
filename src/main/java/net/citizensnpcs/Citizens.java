@@ -1,7 +1,6 @@
 package net.citizensnpcs;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 
@@ -41,7 +40,6 @@ import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitManager;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.Metrics;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.Bukkit;
@@ -53,10 +51,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.google.common.collect.Iterators;
-
 public class Citizens extends JavaPlugin implements CitizensPlugin {
-    private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
+    private final CharacterManager characterManager = new CitizensCharacterManager();
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
@@ -148,7 +144,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             save();
             despawnNPCs();
             npcRegistry = null;
-            getServer().getScheduler().cancelTasks(this);
         }
 
         Messaging.logF("v%s disabled.", getDescription().getVersion());
@@ -188,8 +183,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             @Override
             public void run() {
                 setupNPCs();
-                // Run metrics "last"
-                startMetrics();
             }
         }) == -1) {
             Messaging.severe("Issue enabling plugin. Disabling.");
@@ -301,31 +294,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     "Citizens NPC Storage");
         }
         Messaging.logF("Save method set to %s.", saves.toString());
-    }
-
-    private void startMetrics() {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Metrics metrics = new Metrics(Citizens.this);
-                    if (metrics.isOptOut())
-                        return;
-                    metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
-                        @Override
-                        public int getValue() {
-                            return Iterators.size(npcRegistry.iterator());
-                        }
-                    });
-                    Metrics.Graph graph = metrics.createGraph("Character Type Usage");
-                    characterManager.addPlotters(graph);
-                    metrics.start();
-                    Messaging.log("Metrics started.");
-                } catch (IOException ex) {
-                    Messaging.log("Unable to load metrics.", ex.getMessage());
-                }
-            }
-        }.start();
     }
 
     private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {

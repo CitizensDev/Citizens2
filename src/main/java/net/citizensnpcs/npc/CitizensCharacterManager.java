@@ -3,14 +3,10 @@ package net.citizensnpcs.npc;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.CharacterException;
 import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.npc.character.CharacterFactory;
 import net.citizensnpcs.api.npc.character.CharacterManager;
-import net.citizensnpcs.util.Metrics;
-import net.citizensnpcs.util.Metrics.Graph;
-import net.citizensnpcs.util.StringHelper;
 
 public class CitizensCharacterManager implements CharacterManager {
     private final Map<String, Character> registered = new HashMap<String, Character>();
@@ -30,17 +26,5 @@ public class CitizensCharacterManager implements CharacterManager {
         } catch (CharacterException ex) {
             ex.printStackTrace();
         }
-    }
-
-    public void addPlotters(Graph graph) {
-        for (final Character character : registered.values()) {
-            graph.addPlotter(new Metrics.Plotter(StringHelper.capitalize(character.getName())) {
-                @Override
-                public int getValue() {
-                    return CitizensAPI.getNPCRegistry().getNPCs(character.getClass()).size();
-                }
-            });
-        }
-
     }
 }
