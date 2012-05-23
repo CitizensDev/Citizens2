@@ -19,7 +19,7 @@ public class Settings {
         config.load();
         for (Setting setting : Setting.values()) {
             if (!root.keyExists(setting.path)) {
-                Messaging.log("Writing default setting: '" + setting.path + "'");
+                Messaging.logF("Writing default setting: '%s'", setting.path);
                 root.setRaw(setting.path, setting.value);
             } else
                 setting.set(root.getRaw(setting.path));

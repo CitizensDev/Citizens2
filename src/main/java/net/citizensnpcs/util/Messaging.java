@@ -1,5 +1,6 @@
 package net.citizensnpcs.util;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
@@ -29,12 +30,34 @@ public class Messaging {
         log(Level.INFO, msg);
     }
 
-    public static void send(CommandSender sender, Object msg) {
-        sender.sendMessage(StringHelper.parseColors(msg.toString()));
+    private static String getFormatted(Object[] msg) {
+        String toFormat = msg[0].toString();
+        Object[] args = msg.length > 1 ? Arrays.copyOfRange(msg, 1, msg.length) : new Object[] {};
+        return String.format(toFormat, args);
     }
 
-    public static void sendError(CommandSender sender, Object msg) {
-        send(sender, ChatColor.RED.toString() + msg);
+    public static void logF(Object... msg) {
+        log(getFormatted(msg));
+    }
+
+    public static void send(CommandSender sender, Object... msg) {
+        String joined = SPACE.join(msg);
+        joined = StringHelper.parseColors(joined);
+        sender.sendMessage(joined);
+    }
+
+    public static void sendF(CommandSender sender, Object... msg) {
+        String joined = getFormatted(msg);
+        joined = StringHelper.parseColors(joined);
+        sender.sendMessage(joined);
+    }
+
+    public static void sendError(CommandSender sender, Object... msg) {
+        send(sender, ChatColor.RED.toString() + SPACE.join(msg));
+    }
+
+    public static void sendErrorF(CommandSender sender, Object... msg) {
+        sendF(sender, ChatColor.RED.toString() + SPACE.join(msg));
     }
 
     public static void sendWithNPC(CommandSender sender, Object msg, NPC npc) {
@@ -54,5 +77,9 @@ public class Messaging {
 
     public static void severe(Object... messages) {
         log(Level.SEVERE, messages);
+    }
+
+    public static void severeF(Object... messages) {
+        log(Level.SEVERE, getFormatted(messages));
     }
 }

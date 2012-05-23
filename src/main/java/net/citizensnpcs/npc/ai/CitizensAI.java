@@ -1,6 +1,7 @@
 package net.citizensnpcs.npc.ai;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.List;
 
 import net.citizensnpcs.api.ai.AI;
@@ -98,12 +99,11 @@ public class CitizensAI implements AI {
             throw new IllegalArgumentException("destination cannot be null");
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
+        if (destination.getWorld() != npc.getBukkitEntity().getWorld())
+            throw new IllegalArgumentException("location is not in the same world");
 
         boolean replaced = executing != null;
         executing = new MCNavigationStrategy(npc, destination);
-
-        if (!replaced)
-            return;
 
         for (int i = 0; i < callbacks.size(); ++i) {
             NavigationCallback next = callbacks.get(i).get();
@@ -121,8 +121,6 @@ public class CitizensAI implements AI {
         boolean replaced = executing != null;
         executing = new MCTargetStrategy(npc, target, aggressive);
 
-        if (!replaced)
-            return;
         for (int i = 0; i < callbacks.size(); ++i) {
             NavigationCallback next = callbacks.get(i).get();
             if (next == null || (replaced && next.onCancel(this, CancelReason.REPLACE)) || next.onBegin(this)) {
@@ -170,17 +168,19 @@ public class CitizensAI implements AI {
         if (toRemove == null)
             return;
         for (Goal goal : toRemove) {
-            for (int i = 0; i < executingGoals.size(); ++i) {
-                GoalEntry entry = executingGoals.get(i);
+            Iterator<GoalEntry> itr = executingGoals.iterator();
+            while (itr.hasNext()) {
+                GoalEntry entry = itr.next();
                 if (entry.getGoal().equals(goal)) {
                     entry.getGoal().reset();
-                    executingGoals.remove(i);
+                    itr.remove();
                 }
             }
-            for (int i = 0; i < goals.size(); ++i) {
-                GoalEntry entry = goals.get(i);
+            itr = goals.iterator();
+            while (itr.hasNext()) {
+                GoalEntry entry = itr.next();
                 if (entry.getGoal().equals(goal))
-                    goals.remove(i);
+                    itr.remove();
             }
         }
 

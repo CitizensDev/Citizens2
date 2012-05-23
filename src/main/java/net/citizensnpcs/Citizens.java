@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -152,7 +151,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             getServer().getScheduler().cancelTasks(this);
         }
 
-        Messaging.log("v" + getDescription().getVersion() + " disabled.");
+        Messaging.logF("v%s disabled.", getDescription().getVersion());
     }
 
     @Override
@@ -161,8 +160,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
         compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
         if (!compatible) {
-            Messaging.log(Level.SEVERE, "v" + getDescription().getVersion() + " is not compatible with Minecraft v"
-                    + mcVersion + ". Disabling.");
+            Messaging.severeF("v%s is not compatible with Minecraft v%s. Disabling.", getDescription().getVersion(),
+                    mcVersion);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -181,7 +180,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         registerCommands();
 
-        Messaging.log("v" + getDescription().getVersion() + " enabled.");
+        Messaging.logF("v%s enabled.", getDescription().getVersion());
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)
@@ -193,7 +192,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 startMetrics();
             }
         }) == -1) {
-            Messaging.log(Level.SEVERE, "Issue enabling plugin. Disabling.");
+            Messaging.severe("Issue enabling plugin. Disabling.");
             getServer().getPluginManager().disablePlugin(this);
         }
     }
@@ -254,7 +253,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name")) {
-                Messaging.log("Could not find a name for the NPC with ID '" + id + "'.");
+                Messaging.logF("Could not find a name for the NPC with ID '%s'.", id);
                 continue;
             }
             String unparsedEntityType = key.getString("traits.type", "PLAYER");
@@ -263,8 +262,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 try {
                     type = EntityType.valueOf(unparsedEntityType);
                 } catch (IllegalArgumentException ex) {
-                    Messaging.log("NPC type '" + unparsedEntityType
-                            + "' was not recognized. Did you spell it correctly?");
+                    Messaging.logF("NPC type '%s' was not recognized. Did you spell it correctly?", unparsedEntityType);
                     continue;
                 }
             }
@@ -275,7 +273,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             if (npc.isSpawned())
                 ++spawned;
         }
-        Messaging.log("Loaded " + created + " NPCs (" + spawned + " spawned).");
+        Messaging.logF("Loaded %d NPCs (%d spawned).", created, spawned);
     }
 
     private void setupScripting() {
@@ -302,7 +300,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             saves = new YamlStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
                     "Citizens NPC Storage");
         }
-        Messaging.log("Save method set to", saves.toString());
+        Messaging.logF("Save method set to %s.", saves.toString());
     }
 
     private void startMetrics() {

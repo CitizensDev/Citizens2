@@ -137,7 +137,7 @@ public class NPCCommands {
             max = 5,
             permission = "npc.create")
     @Requirements
-    public void create(CommandContext args, Player player, NPC npc) {
+    public void create(CommandContext args, final Player player, NPC npc) {
         String name = args.getString(1);
         if (name.length() > 16) {
             Messaging.sendError(player, "NPC names cannot be longer than 16 characters. The name has been shortened.");
