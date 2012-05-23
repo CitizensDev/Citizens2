@@ -1,6 +1,7 @@
 package net.citizensnpcs.api;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.character.CharacterManager;
@@ -13,21 +14,13 @@ import org.bukkit.plugin.Plugin;
  * Contains methods used in order to utilize the Citizens API.
  */
 public final class CitizensAPI {
-    private final ScriptCompiler scriptCompiler;
-    private CitizensPlugin implementation;
-    {
-        scriptCompiler = new ScriptCompiler();
-        new Thread(scriptCompiler).start();
-    }
+    private WeakReference<CitizensPlugin> implementation;
 
     private CitizensAPI() {
     }
 
     private static final CitizensAPI instance = new CitizensAPI();
-
-    public static File getScriptFolder() {
-        return instance.implementation.getScriptFolder();
-    }
+    private static final ScriptCompiler scriptCompiler = new ScriptCompiler();
 
     /**
      * Gets the CharacterManager.
@@ -35,15 +28,11 @@ public final class CitizensAPI {
      * @return Citizens character manager
      */
     public static CharacterManager getCharacterManager() {
-        return instance.implementation.getCharacterManager();
-    }
-
-    public static Plugin getPlugin() {
-        return instance.implementation;
+        return getImplementation().getCharacterManager();
     }
 
     public static File getDataFolder() {
-        return instance.implementation.getDataFolder();
+        return getImplementation().getDataFolder();
     }
 
     /**
@@ -52,11 +41,19 @@ public final class CitizensAPI {
      * @return The NPC registry
      */
     public static NPCRegistry getNPCRegistry() {
-        return instance.implementation.getNPCRegistry();
+        return getImplementation().getNPCRegistry();
+    }
+
+    public static Plugin getPlugin() {
+        return getImplementation();
     }
 
     public static ScriptCompiler getScriptCompiler() {
-        return instance.scriptCompiler;
+        return scriptCompiler;
+    }
+
+    public static File getScriptFolder() {
+        return getImplementation().getScriptFolder();
     }
 
     /**
@@ -65,12 +62,24 @@ public final class CitizensAPI {
      * @return Citizens trait manager
      */
     public static TraitManager getTraitManager() {
-        return instance.implementation.getTraitManager();
+        return getImplementation().getTraitManager();
     }
 
     public static void setImplementation(CitizensPlugin implementation) {
-        if (instance.implementation != null)
-            instance.implementation.onImplementationChanged();
-        instance.implementation = implementation;
+        if (hasImplementation())
+            getImplementation().onImplementationChanged();
+        instance.implementation = new WeakReference<CitizensPlugin>(implementation);
+    }
+
+    public static boolean hasImplementation() {
+        return getImplementation() != null;
+    }
+
+    private static CitizensPlugin getImplementation() {
+        return instance.implementation != null ? instance.implementation.get() : null;
+    }
+
+    static {
+        new Thread(scriptCompiler).start();
     }
 }
