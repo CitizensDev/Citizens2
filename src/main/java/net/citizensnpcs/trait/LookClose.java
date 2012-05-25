@@ -88,7 +88,8 @@ public class LookClose extends Trait implements Runnable, Toggleable {
     private boolean hasInvalidTarget() {
         if (lookingAt == null)
             return true;
-        if (!lookingAt.isOnline() || lookingAt.getLocation().distanceSquared(npc.getBukkitEntity().getLocation()) > 5) {
+        if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getBukkitEntity().getWorld()
+                || lookingAt.getLocation().distanceSquared(npc.getBukkitEntity().getLocation()) > 5) {
             lookingAt = null;
             return true;
         }
