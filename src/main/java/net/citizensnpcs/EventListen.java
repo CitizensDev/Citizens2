@@ -1,7 +1,9 @@
 package net.citizensnpcs;
 
+import javassist.compiler.ast.Pair;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.abstraction.WorldVector;
 import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
@@ -16,9 +18,6 @@ import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,7 +36,6 @@ import org.bukkit.event.world.WorldUnloadEvent;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.gson.internal.Pair;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
@@ -52,8 +50,8 @@ public class EventListen implements Listener {
         if (!toRespawn.containsKey(coord))
             return;
         for (int id : toRespawn.get(coord)) {
-            NPC npc = npcRegistry.getNPC(id);
-            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+            NPC npc = npcRegistry.getById(id);
+            npc.spawn(npc.getAttachment(CurrentLocation.class).getLocation());
         }
         toRespawn.removeAll(coord);
     }
@@ -67,9 +65,8 @@ public class EventListen implements Listener {
         for (NPC npc : npcRegistry) {
             if (!npc.isSpawned())
                 continue;
-            Location loc = npc.getBukkitEntity().getLocation();
-            if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == loc.getChunk().getX()
-                    && event.getChunk().getZ() == loc.getChunk().getZ()) {
+            WorldVector loc = npc.getEntity().getLocation();
+            if (event.getWorld().equals(loc.getWorld()) && event.getChunk().equals(loc.getChunk())) {
                 npc.despawn();
                 toRespawn.put(coord, npc.getId());
             }
@@ -87,22 +84,15 @@ public class EventListen implements Listener {
         NPC npc = npcRegistry.getNPC(event.getEntity());
         if (event instanceof EntityDamageByEntityEvent) {
             NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, (EntityDamageByEntityEvent) event);
-            Bukkit.getPluginManager().callEvent(damageEvent);
+            CitizensAPI.getServer().callEvent(damageEvent);
 
             if (!damageEvent.isCancelled() || !(damageEvent.getDamager() instanceof Player))
                 return;
             Player damager = (Player) damageEvent.getDamager();
 
-            // Call left-click event
-            NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
-            Bukkit.getPluginManager().callEvent(leftClickEvent);
-            if (leftClickEvent.isCancelled())
-                return;
-
-            if (npc.getCharacter() != null)
-                npc.getCharacter().onLeftClick(npc, damager);
+            CitizensAPI.getServer().callEvent(new NPCLeftClickEvent(npc, damager));
         } else {
-            Bukkit.getPluginManager().callEvent(new NPCDamageEvent(npc, event));
+            CitizensAPI.getServer().callEvent(new NPCDamageEvent(npc, event));
         }
     }
 
@@ -131,9 +121,6 @@ public class EventListen implements Listener {
         // TODO: move this into text.class
         if (Util.isSettingFulfilled(player, Setting.TALK_ITEM) && !npc.getTrait(Text.class).shouldTalkClose())
             npc.getTrait(Text.class).sendText(player);
-
-        if (npc.getCharacter() != null)
-            npc.getCharacter().onRightClick(npc, player);
     }
 
     /*

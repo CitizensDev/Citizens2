@@ -15,9 +15,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.citizensnpcs.api.abstraction.MobType;
+import net.citizensnpcs.api.attachment.builtin.Owner;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.trait.MobType;
-import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
@@ -104,19 +104,19 @@ public class CommandManager {
                 throw new RequirementMissingException("You must have an NPC selected to execute that command.");
 
             if (cmdRequirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
-                    && !npc.getTrait(Owner.class).isOwnedBy(sender))
+                    && !npc.getAttachment(Owner.class).isOwnedBy(sender))
                 throw new RequirementMissingException("You must be the owner of this NPC to execute that command.");
 
             if (npc != null) {
-                Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()), EntityType.class);
+                Set<MobType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()), MobType.class);
                 if (types.contains(EntityType.UNKNOWN))
-                    types = EnumSet.allOf(EntityType.class);
+                    types = EnumSet.allOf(MobType.class);
                 types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));
 
-                EntityType type = EntityType.valueOf(npc.getTrait(MobType.class).getType());
-                if (!types.contains(type)) {
+                if (!types.contains(npc.getEntity().getType())) {
                     throw new RequirementMissingException("The NPC cannot be the mob type '"
-                            + type.name().toLowerCase().replace('_', '-') + "' to use that command.");
+                            + npc.getEntity().getType().name().toLowerCase().replace('_', '-')
+                            + "' to use that command.");
                 }
             }
         }

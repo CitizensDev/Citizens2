@@ -3,7 +3,7 @@ package net.citizensnpcs.command;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.bukkit.entity.EntityType;
+import net.citizensnpcs.api.abstraction.MobType;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Requirements {
@@ -12,7 +12,7 @@ public @interface Requirements {
 
     boolean selected() default false;
 
-    EntityType[] types() default { EntityType.UNKNOWN };
+    MobType[] types() default { MobType.UNKNOWN };
 
-    EntityType[] excludedTypes() default { EntityType.UNKNOWN };
+    MobType[] excludedTypes() default { MobType.UNKNOWN };
 }

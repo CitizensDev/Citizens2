@@ -7,16 +7,15 @@ import java.util.Comparator;
 import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
-import net.minecraft.server.Packet;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import com.avaje.ebeaninternal.server.cluster.Packet;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

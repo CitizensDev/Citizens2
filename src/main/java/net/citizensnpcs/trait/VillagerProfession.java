@@ -1,14 +1,14 @@
 package net.citizensnpcs.trait;
 
+import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 
-public class VillagerProfession extends Trait {
+public class VillagerProfession extends Attachment {
     private final NPC npc;
     private Profession profession = Profession.FARMER;
 
@@ -26,9 +26,9 @@ public class VillagerProfession extends Trait {
     }
 
     @Override
-    public void onNPCSpawn() {
-        if (npc.getBukkitEntity() instanceof Villager)
-            ((Villager) npc.getBukkitEntity()).setProfession(profession);
+    public void onSpawn() {
+        if (npc.getEntity() instanceof Villager)
+            ((Villager) npc.getEntity()).setProfession(profession);
     }
 
     @Override
@@ -38,8 +38,8 @@ public class VillagerProfession extends Trait {
 
     public void setProfession(Profession profession) {
         this.profession = profession;
-        if (npc.getBukkitEntity() instanceof Villager)
-            ((Villager) npc.getBukkitEntity()).setProfession(profession);
+        if (npc.getEntity() instanceof Villager)
+            ((Villager) npc.getEntity()).setProfession(profession);
     }
 
     @Override

@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.abstraction.CommandSender;
+import net.citizensnpcs.api.abstraction.Player;
+import net.citizensnpcs.api.attachment.builtin.Owner;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.trait.Owner;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
 
@@ -68,7 +68,7 @@ public class Messaging {
             send = send.replace("<player>", player.getName());
             send = send.replace("<world>", player.getWorld().getName());
         }
-        send = send.replace("<owner>", npc.getTrait(Owner.class).getOwner());
+        send = send.replace("<owner>", npc.getAttachment(Owner.class).getOwner());
         send = send.replace("<npc>", npc.getName());
         send = send.replace("<id>", Integer.toString(npc.getId()));
 

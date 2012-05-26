@@ -4,9 +4,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHandle;
-import net.minecraft.server.EntityBlaze;
-import net.minecraft.server.PathfinderGoalSelector;
-import net.minecraft.server.World;
 
 import org.bukkit.entity.Blaze;
 

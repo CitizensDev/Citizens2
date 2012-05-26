@@ -7,11 +7,11 @@ import java.util.Map.Entry;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.scripting.CompileCallback;
 import net.citizensnpcs.api.scripting.ScriptFactory;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.apache.commons.lang.Validate;
@@ -23,7 +23,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class Behaviour extends Trait {
+public class Behaviour extends Attachment {
     private final Map<Goal, Integer> addedGoals = Maps.newHashMap();
     private final Function<String, File> fileConverterFunction = new Function<String, File>() {
         @Override
@@ -59,7 +59,7 @@ public class Behaviour extends Trait {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         for (Entry<Goal, Integer> entry : addedGoals.entrySet()) {
             npc.getAI().addGoal(entry.getValue(), entry.getKey());
         }

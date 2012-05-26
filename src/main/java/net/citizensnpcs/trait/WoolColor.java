@@ -1,9 +1,9 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.DyeColor;
@@ -12,7 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
 
-public class WoolColor extends Trait implements Listener {
+public class WoolColor extends Attachment implements Listener {
     private DyeColor color = DyeColor.WHITE;
     private final NPC npc;
     boolean sheep = false;
@@ -31,9 +31,9 @@ public class WoolColor extends Trait implements Listener {
     }
 
     @Override
-    public void onNPCSpawn() {
-        if (npc.getBukkitEntity() instanceof Sheep) {
-            ((Sheep) npc.getBukkitEntity()).setColor(color);
+    public void onSpawn() {
+        if (npc.getEntity() instanceof Sheep) {
+            ((Sheep) npc.getEntity()).setColor(color);
             sheep = true;
         } else
             sheep = false;
@@ -53,7 +53,7 @@ public class WoolColor extends Trait implements Listener {
     public void setColor(DyeColor color) {
         this.color = color;
         if (sheep)
-            ((Sheep) npc.getBukkitEntity()).setColor(color);
+            ((Sheep) npc.getEntity()).setColor(color);
     }
 
     @Override

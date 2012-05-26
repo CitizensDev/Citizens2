@@ -8,15 +8,14 @@ import java.util.Iterator;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
+import net.citizensnpcs.api.attachment.AttachmentFactory;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
-import net.citizensnpcs.api.trait.TraitManager;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.NBTStorage;
@@ -35,7 +34,7 @@ import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.npc.CitizensCharacterManager;
+import net.citizensnpcs.npc.CitizensAttachmentFactory;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitManager;
@@ -47,7 +46,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -55,7 +53,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.Iterables;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
-    private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
@@ -63,12 +60,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private CitizensNPCRegistry npcRegistry;
     private Storage saves; // TODO: refactor this, it's used in too many places
     private NPCSelector selector;
-    private TraitManager traitManager;
-
-    @Override
-    public CharacterManager getCharacterManager() {
-        return characterManager;
-    }
+    private CitizensAttachmentFactory attachmentFactory;
 
     public Iterable<net.citizensnpcs.command.Command> getCommands(String base) {
         return commands.getCommands(base);
@@ -89,8 +81,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
-    public TraitManager getTraitManager() {
-        return traitManager;
+    public AttachmentFactory getAttachmentFactory() {
+        return attachmentFactory;
     }
 
     @Override
@@ -139,7 +131,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onDisable() {
-        Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
+        CitizensAPI.getServer().callEvent(new CitizensDisableEvent());
 
         tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
@@ -155,7 +147,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     @Override
     public void onEnable() {
         // Disable if the server is not using the compatible Minecraft version
-        String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
+        String mcVersion = CitizensAPI.getServer().getMinecraftVersion();
         compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
         if (!compatible) {
             Messaging.severeF("v%s is not compatible with Minecraft v%s. Disabling.", getDescription().getVersion(),
@@ -170,7 +162,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         setupStorage();
 
         npcRegistry = new CitizensNPCRegistry(saves);
-        traitManager = new CitizensTraitManager(this);
+        attachmentFactory = new CitizensTraitManager(this);
         selector = new NPCSelector(this);
         CitizensAPI.setImplementation(this);
 
@@ -203,7 +195,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                                     return Iterables.size(npcRegistry);
                                 }
                             });
-                            characterManager.addPlotters(metrics);
+                            attachmentFactory.addPlotters(metrics);
                             metrics.start();
                             Messaging.log("Metrics started.");
                         } catch (IOException e) {
@@ -248,7 +240,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         despawnNPCs();
         setupNPCs();
 
-        getServer().getPluginManager().callEvent(new CitizensReloadEvent());
+        CitizensAPI.getServer().callEvent(new CitizensReloadEvent());
     }
 
     private void despawnNPCs() {

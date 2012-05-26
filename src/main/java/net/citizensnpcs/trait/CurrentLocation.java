@@ -1,26 +1,27 @@
 package net.citizensnpcs.trait;
 
+import net.citizensnpcs.api.abstraction.WorldVector;
+import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-public class CurrentLocation extends Trait implements Runnable {
-    private Location loc;
+public class CurrentLocation extends Attachment implements Runnable {
+    private WorldVector loc;
     private final NPC npc;
 
     public CurrentLocation(NPC npc) {
         this.npc = npc;
     }
 
-    public Location getLocation() {
+    public WorldVector getLocation() {
         return loc;
     }
 
-    public void setLocation(Location loc) {
+    public void setLocation(WorldVector loc) {
         this.loc = loc;
     }
 
@@ -38,7 +39,7 @@ public class CurrentLocation extends Trait implements Runnable {
         if (!npc.isSpawned())
             return;
 
-        loc = npc.getBukkitEntity().getLocation();
+        loc = npc.getEntity().getLocation();
     }
 
     @Override

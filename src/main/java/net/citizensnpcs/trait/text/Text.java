@@ -8,17 +8,15 @@ import java.util.Map;
 import java.util.Random;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.trait.Toggleable;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
-import net.minecraft.server.EntityHuman;
-import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.conversations.Conversation;
@@ -28,7 +26,7 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class Text extends Trait implements Runnable, Toggleable, ConversationAbandonedListener {
+public class Text extends Attachment implements Runnable, Toggleable, ConversationAbandonedListener {
     private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();
     private int currentIndex;
     private final NPC npc;
@@ -93,7 +91,7 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (text.isEmpty())
             populateDefaultText();
     }

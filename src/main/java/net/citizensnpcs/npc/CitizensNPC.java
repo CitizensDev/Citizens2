@@ -1,51 +1,27 @@
 package net.citizensnpcs.npc;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.abstraction.LivingEntity;
+import net.citizensnpcs.api.abstraction.WorldVector;
+import net.citizensnpcs.api.attachment.Attachment;
+import net.citizensnpcs.api.attachment.builtin.Spawned;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.AbstractNPC;
-import net.citizensnpcs.api.npc.character.Character;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.trait.Spawned;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.npc.ai.CitizensAI;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StringHelper;
-import net.minecraft.server.EntityLiving;
 
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-
-public abstract class CitizensNPC extends AbstractNPC {
-    private final CitizensAI ai = new CitizensAI(this);
-    protected EntityLiving mcEntity;
-    private final CitizensTraitManager traitManager;
-
-    protected CitizensNPC(int id, String name) {
-        super(id, name);
-        traitManager = (CitizensTraitManager) CitizensAPI.getTraitManager();
-        // TODO: remove this dependency
+public class CitizensNPC extends AbstractNPC {
+    public CitizensNPC(String name) {
+        super(CitizensAPI.getNPCRegistry(), name);
     }
 
-    @Override
-    public void chat(Player player, String message) {
-        Messaging.sendWithNPC(player, Setting.CHAT_PREFIX.asString() + message, this);
+    public CitizensNPC(NPCRegistry registry, String name) {
+        super(registry, name);
     }
-
-    @Override
-    public void chat(String message) {
-        for (Player player : Bukkit.getOnlinePlayers())
-            chat(player, message);
-    }
-
-    protected abstract EntityLiving createHandle(Location loc);
 
     @Override
     public boolean despawn() {
@@ -54,136 +30,85 @@ public abstract class CitizensNPC extends AbstractNPC {
             return false;
         }
 
-        Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
-        boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
-        if (!keepSelected)
-            removeMetadata("selectors", CitizensAPI.getPlugin());
-        getBukkitEntity().remove();
-        mcEntity = null;
+        CitizensAPI.getServer().callEvent(new NPCDespawnEvent(this));
+        getEntity().remove();
+        controller = null;
 
         return true;
     }
 
     @Override
-    public CitizensAI getAI() {
-        return ai;
-    }
-
-    @Override
-    public LivingEntity getBukkitEntity() {
-        return (LivingEntity) getHandle().getBukkitEntity();
-    }
-
-    public EntityLiving getHandle() {
-        return mcEntity;
-    }
-
-    @Override
-    public org.bukkit.inventory.Inventory getInventory() {
-        Inventory inventory = Bukkit.getServer().createInventory(this, 36, StringHelper.parseColors(getFullName()));
-        inventory.setContents(getTrait(net.citizensnpcs.api.trait.trait.Inventory.class).getContents());
-        return inventory;
-    }
-
-    @Override
-    public Trait getTraitFor(Class<? extends Trait> clazz) {
-        return traitManager.getTrait(clazz, this);
+    public LivingEntity getEntity() {
+        return (LivingEntity) controller.getEntity();
     }
 
     @Override
     public boolean isSpawned() {
-        return getHandle() != null;
+        return getEntity() != null;
+    }
+
+    @Override
+    protected Attachment getAttachmentFor(Class<? extends Attachment> clazz) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public void load(DataKey root) {
-        Character character = CitizensAPI.getCharacterManager().getCharacter(root.getString("character"));
-
-        // Load the character if it exists
-        if (character != null) {
-            try {
-                character.load(root.getRelative("characters." + character.getName()));
-            } catch (NPCLoadException e) {
-                Messaging.severe(String.format("Unable to load character '%s': %s.", character.getName(),
-                        e.getMessage()));
-            }
-            setCharacter(character);
-        }
-
         // Load traits
-        for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
-            Trait trait = traitManager.getTrait(traitKey.name(), this);
+        for (DataKey attachmentKey : root.getRelative("traits").getSubKeys()) {
+            Attachment trait = attachmentFactory.getTrait(attachmentKey.name(), this);
             if (trait == null) {
-                Messaging.severeF("Skipped missing trait '%s' while loading NPC ID: '%d'. Has the name changed?",
-                        traitKey.name(), getId());
+                Messaging.severeF("Skipped missing attachment '%s' while loading NPC ID: '%d'. Has the name changed?",
+                        attachmentKey.name(), getId());
                 continue;
             }
-            addTrait(trait);
+            addAttachment(trait);
             try {
-                getTrait(trait.getClass()).load(traitKey);
+                getAttachment(trait.getClass()).load(attachmentKey);
             } catch (NPCLoadException ex) {
-                Messaging.logF("The trait '%s' failed to load for NPC ID: '%d'.", traitKey.name(), getId(),
+                Messaging.logF("The attachment '%s' failed to load for NPC ID: '%d'.", attachmentKey.name(), getId(),
                         ex.getMessage());
             }
         }
 
         // Spawn the NPC
-        if (getTrait(Spawned.class).shouldSpawn()) {
-            Location spawnLoc = getTrait(CurrentLocation.class).getLocation();
+        if (getAttachment(Spawned.class).shouldSpawn()) {
+            WorldVector spawnLoc = getAttachment(CurrentLocation.class).getLocation();
             if (spawnLoc != null)
                 spawn(spawnLoc);
         }
     }
 
-    @Override
-    public void remove() {
-        super.remove();
-        CitizensAPI.getNPCRegistry().deregister(this);
-    }
-
     public void save(DataKey root) {
         root.setString("name", getFullName());
-
-        // Save the character if it exists
-        if (getCharacter() != null) {
-            root.setString("character", getCharacter().getName());
-            getCharacter().save(root.getRelative("characters." + getCharacter().getName()));
-        }
-
         // Save all existing traits
-        for (Trait trait : traits.values()) {
+        for (Attachment trait : attachments.values()) {
             trait.save(root.getRelative("traits." + trait.getName()));
         }
     }
 
     @Override
-    public void setName(String name) {
-        super.setName(name);
-    }
-
-    @Override
-    public boolean spawn(Location loc) {
-        Validate.notNull(loc, "location cannot be null");
+    public boolean spawn(WorldVector at) {
+        if (at == null)
+            throw new IllegalArgumentException("location cannot be null");
         if (isSpawned()) {
             Messaging.debug("NPC (ID: " + getId() + ") is already spawned.");
             return false;
         }
-        NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, loc);
-        Bukkit.getPluginManager().callEvent(spawnEvent);
+        NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at);
+        CitizensAPI.getServer().callEvent(spawnEvent);
         if (spawnEvent.isCancelled())
             return false;
 
-        mcEntity = createHandle(loc);
-
-        mcEntity.world.addEntity(mcEntity);
-        mcEntity.world.players.remove(mcEntity);
+        controller.spawn(at);
 
         // Set the spawned state
-        getTrait(CurrentLocation.class).setLocation(loc);
-        getTrait(Spawned.class).setSpawned(true);
+        getAttachment(CurrentLocation.class).setLocation(at);
+        getAttachment(Spawned.class).setSpawned(true);
 
         // Modify NPC using traits after the entity has been created
-        for (Trait trait : traits.values())
-            trait.onNPCSpawn();
+        for (Attachment attached : attachments.values())
+            attached.onSpawn();
         return true;
     }
 
@@ -191,7 +116,6 @@ public abstract class CitizensNPC extends AbstractNPC {
     public void update() {
         try {
             super.update();
-            ai.update();
         } catch (Exception ex) {
             Messaging.logF("Exception while updating %d: %s.", getId(), ex.getMessage());
             ex.printStackTrace();
