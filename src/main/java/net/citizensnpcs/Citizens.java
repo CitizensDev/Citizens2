@@ -1,6 +1,7 @@
 package net.citizensnpcs;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 
@@ -51,8 +52,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.common.collect.Iterables;
+
 public class Citizens extends JavaPlugin implements CitizensPlugin {
-    private final CharacterManager characterManager = new CitizensCharacterManager();
+    private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
@@ -183,6 +186,31 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             @Override
             public void run() {
                 setupNPCs();
+                startMetrics();
+            }
+
+            private void startMetrics() {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Metrics metrics = new Metrics(Citizens.this);
+                            if (metrics.isOptOut())
+                                return;
+                            metrics.addCustomData(new Metrics.Plotter() {
+                                @Override
+                                public int getValue() {
+                                    return Iterables.size(npcRegistry);
+                                }
+                            });
+                            characterManager.addPlotters(metrics);
+                            metrics.start();
+                            Messaging.log("Metrics started.");
+                        } catch (IOException e) {
+                            Messaging.logF("Unable to start metrics: %s.", e.getMessage());
+                        }
+                    }
+                }.start();
             }
         }) == -1) {
             Messaging.severe("Issue enabling plugin. Disabling.");
