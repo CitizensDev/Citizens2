@@ -197,7 +197,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                             Metrics metrics = new Metrics(Citizens.this);
                             if (metrics.isOptOut())
                                 return;
-                            metrics.addCustomData(new Metrics.Plotter() {
+                            metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
                                 @Override
                                 public int getValue() {
                                     return Iterables.size(npcRegistry);
