@@ -52,18 +52,13 @@ public class Settings {
         DEFAULT_LOOK_CLOSE("npc.default.look-close", false),
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", true),
         DEFAULT_TALK_CLOSE("npc.default.talk-close", false),
-        DEFAULT_TEXT("npc.default.text.0", Lists.newArrayList("Hi, I'm <npc>!")) {
+        DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!") {
             @Override
             public void load(DataKey root) {
                 List<String> list = new ArrayList<String>();
                 for (DataKey key : root.getRelative("npc.default.text").getSubKeys())
                     list.add(key.getString(""));
                 value = list;
-            }
-            
-            @Override
-            public void set(DataKey root) {
-                root.setString("npc.default.text.0", "Hi, I'm <npc>!");
             }
         },
         QUICK_SELECT("npc.selection.quick-select", false),
