@@ -9,6 +9,8 @@ import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 
+import com.google.common.collect.Lists;
+
 public class Settings {
     private final Storage config;
     private final DataKey root;
@@ -93,7 +95,7 @@ public class Settings {
 
         @SuppressWarnings("unchecked")
         public List<String> asList() {
-            if (value instanceof String) {
+            if (!(value instanceof List)) {
                 value = Lists.newArrayList(value);
             }
             return (List<String>) value;
@@ -110,7 +112,7 @@ public class Settings {
         protected void set(DataKey root) {
             root.setRaw(path, value);
         }
-        
+
         protected void load(DataKey root) {
             value = root.getRaw(path);
         }
