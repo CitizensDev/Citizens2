@@ -93,7 +93,10 @@ public class Settings {
 
         @SuppressWarnings("unchecked")
         public List<String> asList() {
-            return value instanceof List<String> ? (List<String>) value : (value = Lists.newArrayList(value));
+            if (value instanceof String) {
+                value = Lists.newArrayList(value);
+            }
+            return (List<String>) value;
         }
 
         public long asLong() {
