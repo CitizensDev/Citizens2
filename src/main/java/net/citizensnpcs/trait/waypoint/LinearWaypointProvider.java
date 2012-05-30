@@ -59,6 +59,7 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                     Messaging.send(player, String.format("<e>Added<a> a waypoint at (" + formatLoc(at)
                             + ") (<e>%d<a>, <e>%d<a>)", editingSlot + 1, waypoints.size()));
                 } else if (waypoints.size() > 0) {
+                    editingSlot = Math.min(0, Math.max(waypoints.size() - 1, editingSlot));
                     waypoints.remove(editingSlot);
                     editingSlot = Math.max(0, editingSlot - 1);
                     Messaging.send(player, String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining) (<e>%d<a>)",
