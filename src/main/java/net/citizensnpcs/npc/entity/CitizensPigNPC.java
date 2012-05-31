@@ -1,22 +1,16 @@
 package net.citizensnpcs.npc.entity;
 
+import net.citizensnpcs.api.abstraction.ItemStack;
+import net.citizensnpcs.api.abstraction.Material;
+import net.citizensnpcs.api.abstraction.World;
+import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
-import net.minecraft.server.EntityPig;
-import net.minecraft.server.EntityWeatherLighting;
-import net.minecraft.server.PathfinderGoalSelector;
-import net.minecraft.server.World;
-
-import org.bukkit.Material;
-import org.bukkit.entity.Pig;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
 

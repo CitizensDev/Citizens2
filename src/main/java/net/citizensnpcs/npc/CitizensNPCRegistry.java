@@ -38,7 +38,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC createAndSpawn(String name, WorldVector at, MobType type) {
-        NPC npc = new CitizensNPC(this, name);
+        CitizensNPC npc = new CitizensNPC(this, name);
         npc.setEntityController(null); // TODO;
         npc.spawn(at);
         return npc;

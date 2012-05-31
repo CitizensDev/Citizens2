@@ -1,20 +1,18 @@
 package net.citizensnpcs;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Storage;
-import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.util.Messaging;
 
 public class Settings {
     private final Storage config;
     private final DataKey root;
 
-    public Settings(File folder) {
-        config = new YamlStorage(folder + File.separator + "config.yml", "Citizens Configuration");
+    public Settings(Storage storage) {
+        config = storage;
         root = config.getKey("");
 
         config.load();

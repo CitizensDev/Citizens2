@@ -2,19 +2,12 @@ package net.citizensnpcs.npc.entity;
 
 import java.io.IOException;
 
+import net.citizensnpcs.api.abstraction.World;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.npc.network.NPCNetHandler;
 import net.citizensnpcs.npc.network.NPCNetworkManager;
 import net.citizensnpcs.npc.network.NPCSocket;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.ItemInWorldManager;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.Navigation;
-import net.minecraft.server.NetHandler;
-import net.minecraft.server.NetworkManager;
-import net.minecraft.server.World;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
     private CitizensNPC npc;

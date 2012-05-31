@@ -6,9 +6,6 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-
 public class CurrentLocation extends Attachment implements Runnable {
     private WorldVector loc;
     private final NPC npc;

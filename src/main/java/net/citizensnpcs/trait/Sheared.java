@@ -1,17 +1,15 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.abstraction.EventHandler;
+import net.citizensnpcs.api.abstraction.Listener;
+import net.citizensnpcs.api.abstraction.entity.Sheep;
+import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
-import org.bukkit.entity.Sheep;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerShearEntityEvent;
-
-public class Sheared extends Trait implements Toggleable, Listener {
+public class Sheared extends Attachment implements Toggleable, Listener {
     private final NPC npc;
     private boolean sheared;
 
@@ -25,8 +23,8 @@ public class Sheared extends Trait implements Toggleable, Listener {
     }
 
     @Override
-    public void onNPCSpawn() {
-        ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
+    public void onSpawn() {
+        ((Sheep) npc.getEntity()).setSheared(sheared);
     }
 
     @EventHandler
@@ -43,8 +41,8 @@ public class Sheared extends Trait implements Toggleable, Listener {
     @Override
     public boolean toggle() {
         sheared = !sheared;
-        if (npc.getBukkitEntity() instanceof Sheep)
-            ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
+        if (npc.getEntity() instanceof Sheep)
+            ((Sheep) npc.getEntity()).setSheared(sheared);
         return sheared;
     }
 

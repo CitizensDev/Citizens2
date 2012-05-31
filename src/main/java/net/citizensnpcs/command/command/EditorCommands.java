@@ -1,5 +1,7 @@
 package net.citizensnpcs.command.command;
 
+import net.citizensnpcs.api.abstraction.MobType;
+import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
@@ -8,9 +10,6 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.editor.EquipmentEditor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
-
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 @Requirements(selected = true, ownership = true)
 public class EditorCommands {
@@ -23,8 +22,8 @@ public class EditorCommands {
             min = 1,
             max = 1,
             permission = "npc.edit.equip")
-    @Requirements(selected = true, ownership = true, types = { EntityType.ENDERMAN, EntityType.PLAYER, EntityType.PIG,
-            EntityType.SHEEP })
+    @Requirements(selected = true, ownership = true, types = { MobType.ENDERMAN, MobType.PLAYER, MobType.PIG,
+            MobType.SHEEP })
     public void equip(CommandContext args, Player player, NPC npc) {
         Editor.enterOrLeave(player, new EquipmentEditor(player, npc));
     }
@@ -37,10 +36,10 @@ public class EditorCommands {
             min = 1,
             max = 1,
             permission = "npc.edit.path")
-    @Requirements(selected = true, ownership = true, excludedTypes = { EntityType.ENDER_DRAGON, EntityType.SQUID,
-            EntityType.GHAST, EntityType.BLAZE })
+    @Requirements(selected = true, ownership = true, excludedTypes = { MobType.ENDER_DRAGON, MobType.SQUID,
+            MobType.GHAST, MobType.BLAZE })
     public void path(CommandContext args, Player player, NPC npc) {
-        Editor.enterOrLeave(player, npc.getTrait(Waypoints.class).getEditor(player));
+        Editor.enterOrLeave(player, npc.getAttachment(Waypoints.class).getEditor(player));
     }
 
     @Command(
@@ -52,6 +51,6 @@ public class EditorCommands {
             max = 1,
             permission = "npc.edit.text")
     public void text(CommandContext args, Player player, NPC npc) {
-        Editor.enterOrLeave(player, npc.getTrait(Text.class).getEditor(player));
+        Editor.enterOrLeave(player, npc.getAttachment(Text.class).getEditor(player));
     }
 }

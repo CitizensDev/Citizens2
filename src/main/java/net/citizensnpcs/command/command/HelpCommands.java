@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.citizensnpcs.Citizens;
+import net.citizensnpcs.CitizensBukkit;
+import net.citizensnpcs.api.abstraction.CommandSender;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
@@ -13,13 +14,11 @@ import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Paginator;
 
-import org.bukkit.command.CommandSender;
-
 @Requirements
 public class HelpCommands {
-    private final Citizens plugin;
+    private final CitizensBukkit plugin;
 
-    public HelpCommands(Citizens plugin) {
+    public HelpCommands(CitizensBukkit plugin) {
         this.plugin = plugin;
     }
 

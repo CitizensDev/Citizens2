@@ -2,8 +2,9 @@ package net.citizensnpcs.command.command;
 
 import java.io.File;
 
-import net.citizensnpcs.Citizens;
+import net.citizensnpcs.CitizensBukkit;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.abstraction.CommandSender;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.scripting.CompileCallback;
 import net.citizensnpcs.api.scripting.Script;
@@ -13,14 +14,12 @@ import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Messaging;
 
-import org.bukkit.command.CommandSender;
-
 import com.google.common.base.Splitter;
 
 public class ScriptCommands {
-    private final Citizens plugin;
+    private final CitizensBukkit plugin;
 
-    public ScriptCommands(Citizens plugin) {
+    public ScriptCommands(CitizensBukkit plugin) {
         this.plugin = plugin;
     }
 

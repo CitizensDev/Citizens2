@@ -14,8 +14,6 @@ import net.citizensnpcs.api.scripting.CompileCallback;
 import net.citizensnpcs.api.scripting.ScriptFactory;
 import net.citizensnpcs.api.util.DataKey;
 
-import org.apache.commons.lang.Validate;
-
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -114,7 +112,8 @@ public class Behaviour extends Attachment {
         private final Map<Goal, Integer> goals = Maps.newHashMap();
 
         public void addGoal(int priority, Goal goal) {
-            Validate.notNull(goal);
+            if (goal == null)
+                throw new IllegalArgumentException("goal cannot be null");
             goals.put(goal, priority);
         }
     }

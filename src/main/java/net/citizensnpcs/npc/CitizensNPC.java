@@ -1,10 +1,9 @@
 package net.citizensnpcs.npc;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.abstraction.LivingEntity;
 import net.citizensnpcs.api.abstraction.WorldVector;
+import net.citizensnpcs.api.abstraction.entity.LivingEntity;
 import net.citizensnpcs.api.attachment.Attachment;
-import net.citizensnpcs.api.attachment.builtin.Spawned;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -15,12 +14,14 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messaging;
 
 public class CitizensNPC extends AbstractNPC {
-    public CitizensNPC(String name) {
-        super(CitizensAPI.getNPCRegistry(), name);
-    }
+    private boolean spawned;
 
     public CitizensNPC(NPCRegistry registry, String name) {
         super(registry, name);
+    }
+
+    public CitizensNPC(String name) {
+        super(CitizensAPI.getNPCRegistry(), name);
     }
 
     @Override
@@ -38,6 +39,17 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    protected Attachment getAttachmentFor(Class<? extends Attachment> clazz) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private Attachment getAttachmentFor(String name) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public LivingEntity getEntity() {
         return (LivingEntity) controller.getEntity();
     }
@@ -47,22 +59,16 @@ public class CitizensNPC extends AbstractNPC {
         return getEntity() != null;
     }
 
-    @Override
-    protected Attachment getAttachmentFor(Class<? extends Attachment> clazz) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public void load(DataKey root) {
         // Load traits
         for (DataKey attachmentKey : root.getRelative("traits").getSubKeys()) {
-            Attachment trait = attachmentFactory.getTrait(attachmentKey.name(), this);
+            Attachment trait = getAttachmentFor(attachmentKey.name());
             if (trait == null) {
                 Messaging.severeF("Skipped missing attachment '%s' while loading NPC ID: '%d'. Has the name changed?",
                         attachmentKey.name(), getId());
                 continue;
             }
-            addAttachment(trait);
+            attach(trait);
             try {
                 getAttachment(trait.getClass()).load(attachmentKey);
             } catch (NPCLoadException ex) {
@@ -72,7 +78,8 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         // Spawn the NPC
-        if (getAttachment(Spawned.class).shouldSpawn()) {
+        spawned = root.getBoolean("spawned");
+        if (spawned) {
             WorldVector spawnLoc = getAttachment(CurrentLocation.class).getLocation();
             if (spawnLoc != null)
                 spawn(spawnLoc);
@@ -80,7 +87,7 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     public void save(DataKey root) {
-        root.setString("name", getFullName());
+        root.setString("name", name);
         // Save all existing traits
         for (Attachment trait : attachments.values()) {
             trait.save(root.getRelative("traits." + trait.getName()));
@@ -104,7 +111,7 @@ public class CitizensNPC extends AbstractNPC {
 
         // Set the spawned state
         getAttachment(CurrentLocation.class).setLocation(at);
-        getAttachment(Spawned.class).setSpawned(true);
+        spawned = true;
 
         // Modify NPC using traits after the entity has been created
         for (Attachment attached : attachments.values())

@@ -5,9 +5,6 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.Villager.Profession;
-
 public class VillagerProfession extends Attachment {
     private final NPC npc;
     private Profession profession = Profession.FARMER;

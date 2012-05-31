@@ -1,6 +1,7 @@
 package net.citizensnpcs.command.command;
 
-import net.citizensnpcs.Citizens;
+import net.citizensnpcs.CitizensBukkit;
+import net.citizensnpcs.api.abstraction.CommandSender;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.command.Command;
@@ -10,13 +11,11 @@ import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
-import org.bukkit.command.CommandSender;
-
 @Requirements
 public class AdminCommands {
-    private final Citizens plugin;
+    private final CitizensBukkit plugin;
 
-    public AdminCommands(Citizens plugin) {
+    public AdminCommands(CitizensBukkit plugin) {
         this.plugin = plugin;
     }
 

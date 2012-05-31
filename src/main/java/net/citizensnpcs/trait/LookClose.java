@@ -5,18 +5,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.abstraction.WorldVector;
+import net.citizensnpcs.api.abstraction.entity.Entity;
+import net.citizensnpcs.api.abstraction.entity.Player;
+import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
-import net.minecraft.server.EntityLiving;
 
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
-public class LookClose extends Trait implements Runnable, Toggleable {
+public class LookClose extends Attachment implements Runnable, Toggleable {
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
     private final NPC npc;
@@ -28,7 +25,7 @@ public class LookClose extends Trait implements Runnable, Toggleable {
     private void faceEntity(Entity from, Entity at) {
         if (from.getWorld() != at.getWorld())
             return;
-        Location loc = from.getLocation();
+        WorldVector loc = from.getLocation();
 
         double xDiff = at.getLocation().getX() - loc.getX();
         double yDiff = at.getLocation().getY() - loc.getY();
@@ -43,10 +40,7 @@ public class LookClose extends Trait implements Runnable, Toggleable {
             yaw = yaw + (Math.abs(180 - yaw) * 2);
         }
 
-        EntityLiving handle = ((CraftLivingEntity) from).getHandle();
-        handle.yaw = (float) yaw - 90;
-        handle.pitch = (float) pitch;
-        handle.X = handle.yaw;
+        from.setRotation((float) yaw - 90, (float) pitch);
     }
 
     @Override
@@ -62,17 +56,17 @@ public class LookClose extends Trait implements Runnable, Toggleable {
             findNewTarget();
         }
         if (lookingAt != null) {
-            faceEntity(npc.getBukkitEntity(), lookingAt);
+            faceEntity(npc.getEntity(), lookingAt);
         }
     }
 
     private void findNewTarget() {
-        List<Entity> nearby = npc.getBukkitEntity().getNearbyEntities(2.5, 5, 2.5);
+        List<Entity> nearby = npc.getEntity().getNearbyEntities(2.5, 5, 2.5);
         Collections.sort(nearby, new Comparator<Entity>() {
             @Override
             public int compare(Entity o1, Entity o2) {
-                double d1 = o1.getLocation().distanceSquared(npc.getBukkitEntity().getLocation());
-                double d2 = o2.getLocation().distanceSquared(npc.getBukkitEntity().getLocation());
+                double d1 = o1.getLocation().distanceSquared(npc.getEntity().getLocation());
+                double d2 = o2.getLocation().distanceSquared(npc.getEntity().getLocation());
                 return Double.compare(d1, d2);
             }
         });
@@ -88,8 +82,8 @@ public class LookClose extends Trait implements Runnable, Toggleable {
     private boolean hasInvalidTarget() {
         if (lookingAt == null)
             return true;
-        if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getBukkitEntity().getWorld()
-                || lookingAt.getLocation().distanceSquared(npc.getBukkitEntity().getLocation()) > 5) {
+        if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getEntity().getWorld()
+                || lookingAt.getLocation().distanceSquared(npc.getEntity().getLocation()) > 5) {
             lookingAt = null;
             return true;
         }
@@ -103,8 +97,7 @@ public class LookClose extends Trait implements Runnable, Toggleable {
 
     @Override
     public boolean toggle() {
-        enabled = !enabled;
-        return enabled;
+        return (enabled = !enabled);
     }
 
     @Override

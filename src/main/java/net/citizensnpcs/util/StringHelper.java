@@ -1,6 +1,5 @@
 package net.citizensnpcs.util;
 
-import org.bukkit.ChatColor;
 
 public class StringHelper {
 

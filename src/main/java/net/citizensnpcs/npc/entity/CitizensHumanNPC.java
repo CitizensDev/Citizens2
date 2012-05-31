@@ -1,21 +1,16 @@
 package net.citizensnpcs.npc.entity;
 
+import javax.xml.stream.Location;
+
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.abstraction.Equipment;
+import net.citizensnpcs.api.abstraction.ItemStack;
+import net.citizensnpcs.api.abstraction.Material;
+import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.ItemInWorldManager;
-import net.minecraft.server.WorldServer;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class CitizensHumanNPC extends CitizensNPC implements Equipable {
 

@@ -3,20 +3,14 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Iterator;
 import java.util.List;
 
-import net.citizensnpcs.api.ai.NavigationCallback;
+import javax.xml.stream.Location;
+
+import net.citizensnpcs.api.abstraction.EventHandler;
+import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
 
 import com.google.common.collect.Lists;
 
@@ -59,6 +53,8 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                     Messaging.send(player, String.format("<e>Added<a> a waypoint at (" + formatLoc(at)
                             + ") (<e>%d<a>, <e>%d<a>)", editingSlot + 1, waypoints.size()));
                 } else if (waypoints.size() > 0) {
+                    editingSlot = Math.min(0, Math.max(waypoints.size() - 1, editingSlot));
+                    // normalise editing slot.
                     waypoints.remove(editingSlot);
                     editingSlot = Math.max(0, editingSlot - 1);
                     Messaging.send(player, String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining) (<e>%d<a>)",

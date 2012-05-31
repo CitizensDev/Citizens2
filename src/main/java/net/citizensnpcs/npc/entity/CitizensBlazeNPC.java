@@ -1,11 +1,9 @@
 package net.citizensnpcs.npc.entity;
 
+import net.citizensnpcs.api.abstraction.World;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHandle;
-
-import org.bukkit.entity.Blaze;
 
 public class CitizensBlazeNPC extends CitizensMobNPC {
 

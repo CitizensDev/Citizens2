@@ -1,6 +1,6 @@
 package net.citizensnpcs.editor;
 
-import org.bukkit.entity.Player;
+import net.citizensnpcs.api.abstraction.entity.Player;
 
 public interface Equipable {
 

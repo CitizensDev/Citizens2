@@ -1,9 +1,13 @@
 package net.citizensnpcs.npc;
 
+import java.security.acl.Owner;
 import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.abstraction.CommandSender;
+import net.citizensnpcs.api.abstraction.EventHandler;
+import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -11,23 +15,10 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Util;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
+import org.mozilla.javascript.ContextFactory.Listener;
 
 public class NPCSelector implements Listener {
-    private final Plugin plugin;
     private int consoleSelectedNPC = -1;
-
-    public NPCSelector(Plugin plugin) {
-        this.plugin = plugin;
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-    }
 
     @EventHandler
     public void onNPCRightClick(NPCRightClickEvent event) {

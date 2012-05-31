@@ -3,6 +3,7 @@ package net.citizensnpcs.command;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -15,8 +16,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.citizensnpcs.api.abstraction.CommandSender;
+import net.citizensnpcs.api.abstraction.ConsoleCommandSender;
 import net.citizensnpcs.api.abstraction.MobType;
-import net.citizensnpcs.api.attachment.builtin.Owner;
+import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
@@ -25,11 +28,6 @@ import net.citizensnpcs.command.exception.RequirementMissingException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 import com.google.common.collect.Sets;
 
@@ -109,7 +107,7 @@ public class CommandManager {
 
             if (npc != null) {
                 Set<MobType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()), MobType.class);
-                if (types.contains(EntityType.UNKNOWN))
+                if (types.contains(MobType.UNKNOWN))
                     types = EnumSet.allOf(MobType.class);
                 types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));
 

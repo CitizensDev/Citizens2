@@ -3,7 +3,7 @@ package net.citizensnpcs.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.command.CommandSender;
+import net.citizensnpcs.api.abstraction.CommandSender;
 
 public class Paginator {
     private String header;

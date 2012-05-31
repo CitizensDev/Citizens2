@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import net.citizensnpcs.api.abstraction.EventHandler;
 import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -7,10 +8,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.mozilla.javascript.ContextFactory.Listener;
 
 //TODO: reduce reliance on CitizensNPC
 public class Controllable extends Attachment implements Runnable, Listener, Toggleable {

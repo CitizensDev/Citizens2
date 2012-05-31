@@ -1,15 +1,16 @@
 package net.citizensnpcs.command.command;
 
+import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.citizensnpcs.Citizens;
+import net.citizensnpcs.CitizensBukkit;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.abstraction.CommandSender;
 import net.citizensnpcs.api.abstraction.MobType;
-import net.citizensnpcs.api.attachment.builtin.Owner;
-import net.citizensnpcs.api.attachment.builtin.Spawned;
+import net.citizensnpcs.api.abstraction.entity.Ageable;
+import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.command.Command;
@@ -31,7 +32,6 @@ import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -42,7 +42,7 @@ public class NPCCommands {
     private final NPCRegistry npcRegistry;
     private final NPCSelector selector;
 
-    public NPCCommands(Citizens plugin) {
+    public NPCCommands(CitizensBukkit plugin) {
         npcRegistry = CitizensAPI.getNPCRegistry();
         selector = plugin.getNPCSelector();
     }
@@ -90,7 +90,7 @@ public class NPCCommands {
     public void behaviour(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Iterable<String> files = Splitter.on(',').split(args.getJoinedStrings(1, ','));
         npc.getAttachment(Behaviour.class).addScripts(files);
-        sender.sendMessage(ChatColor.GREEN + "Behaviours added.");
+        sender.sendMessage("<a>Behaviours added.");
     }
 
     @Command(
@@ -187,12 +187,11 @@ public class NPCCommands {
         msg += ".";
 
         // Initialize necessary traits
-        npc.addTrait(Owner.class);
+        npc.attach(Owner.class);
         if (!Setting.SERVER_OWNS_NPCS.asBoolean())
             npc.getAttachment(Owner.class).setOwner(player.getName());
-        npc.getAttachment(MobType.class).setType(type.toString());
-        npc.addTrait(LookClose.class);
-        npc.addTrait(Text.class);
+        npc.attach(LookClose.class);
+        npc.attach(Text.class);
 
         npc.spawn(player.getLocation());
 
@@ -213,7 +212,6 @@ public class NPCCommands {
             max = 1,
             permission = "npc.despawn")
     public void despawn(CommandContext args, CommandSender sender, NPC npc) {
-        npc.getAttachment(Spawned.class).setSpawned(false);
         npc.despawn();
         Messaging.send(sender, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
     }

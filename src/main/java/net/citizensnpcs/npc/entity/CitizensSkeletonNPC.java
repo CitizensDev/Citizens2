@@ -1,14 +1,11 @@
 package net.citizensnpcs.npc.entity;
 
+import java.rmi.server.Skeleton;
+
+import net.citizensnpcs.api.abstraction.World;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHandle;
-import net.minecraft.server.EntitySkeleton;
-import net.minecraft.server.PathfinderGoalSelector;
-import net.minecraft.server.World;
-
-import org.bukkit.entity.Skeleton;
 
 public class CitizensSkeletonNPC extends CitizensMobNPC {
 

@@ -1,15 +1,13 @@
 package net.citizensnpcs.trait;
 
+import net.citizensnpcs.api.abstraction.entity.Ageable;
 import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
-import org.bukkit.entity.Ageable;
-
 public class Age extends Attachment implements Runnable, Toggleable {
     private int age = 0;
-    private boolean locked = true;
     private boolean ageable = false;
     private final NPC npc;
 
@@ -19,18 +17,16 @@ public class Age extends Attachment implements Runnable, Toggleable {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (npc.isSpawned() && !(npc.getBukkitEntity() instanceof Ageable))
+        if (npc.isSpawned() && !(npc.getEntity() instanceof Ageable))
             throw new NPCLoadException("NPC must be ageable");
         age = key.getInt("age");
-        locked = key.getBoolean("locked");
     }
 
     @Override
     public void onSpawn() {
-        if (npc instanceof Ageable) {
-            Ageable entity = (Ageable) npc.getBukkitEntity();
+        if (npc.getEntity() instanceof Ageable) {
+            Ageable entity = (Ageable) npc.getEntity();
             entity.setAge(age);
-            entity.setAgeLock(locked);
             ageable = true;
         } else
             ageable = false;
@@ -38,32 +34,29 @@ public class Age extends Attachment implements Runnable, Toggleable {
 
     @Override
     public void run() {
-        if (!locked && ageable)
-            age = ((Ageable) npc.getBukkitEntity()).getAge();
+        if (ageable)
+            age = ((Ageable) npc.getEntity()).getAge();
     }
 
     @Override
     public void save(DataKey key) {
         key.setInt("age", age);
-        key.setBoolean("locked", locked);
     }
 
     public void setAge(int age) {
         this.age = age;
         if (ageable)
-            ((Ageable) npc.getBukkitEntity()).setAge(age);
+            ((Ageable) npc.getEntity()).setAge(age);
     }
 
     @Override
     public boolean toggle() {
-        locked = !locked;
-        if (ageable)
-            ((Ageable) npc.getBukkitEntity()).setAgeLock(locked);
-        return locked;
+        ageable = !ageable;
+        return ageable;
     }
 
     @Override
     public String toString() {
-        return "Age{age=" + age + ",locked=" + locked + "}";
+        return "Age{age=" + age + "}";
     }
 }

@@ -1,16 +1,14 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.abstraction.EventHandler;
+import net.citizensnpcs.api.abstraction.entity.Sheep;
 import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
-import org.bukkit.DyeColor;
-import org.bukkit.entity.Sheep;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.SheepDyeWoolEvent;
+import org.mozilla.javascript.ContextFactory.Listener;
 
 public class WoolColor extends Attachment implements Listener {
     private DyeColor color = DyeColor.WHITE;

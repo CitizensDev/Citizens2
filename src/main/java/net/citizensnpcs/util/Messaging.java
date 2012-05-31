@@ -1,16 +1,13 @@
 package net.citizensnpcs.util;
 
+import java.security.acl.Owner;
 import java.util.Arrays;
 import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.abstraction.CommandSender;
-import net.citizensnpcs.api.abstraction.Player;
-import net.citizensnpcs.api.attachment.builtin.Owner;
+import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.npc.NPC;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import com.google.common.base.Joiner;
 

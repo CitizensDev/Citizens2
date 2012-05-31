@@ -3,10 +3,6 @@ package net.citizensnpcs.npc.network;
 import java.lang.reflect.Field;
 import java.net.Socket;
 
-import net.minecraft.server.NetHandler;
-import net.minecraft.server.NetworkManager;
-import net.minecraft.server.Packet;
-
 public class NPCNetworkManager extends NetworkManager {
 
     public NPCNetworkManager(Socket socket, String string, NetHandler netHandler) {

@@ -1,6 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
-import org.bukkit.Location;
+import javax.xml.stream.Location;
 
 public class Waypoint {
     private final Location location;

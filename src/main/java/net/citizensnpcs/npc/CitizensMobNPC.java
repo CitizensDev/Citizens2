@@ -4,16 +4,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.Block;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityTypes;
-import net.minecraft.server.World;
+import javax.xml.stream.Location;
 
-import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.CraftWorld;
+import net.citizensnpcs.api.abstraction.World;
+import net.citizensnpcs.api.npc.NPC;
 
 @SuppressWarnings("unchecked")
 public abstract class CitizensMobNPC extends CitizensNPC {

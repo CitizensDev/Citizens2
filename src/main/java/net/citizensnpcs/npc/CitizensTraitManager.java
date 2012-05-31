@@ -1,19 +1,14 @@
 package net.citizensnpcs.npc;
 
 import java.lang.reflect.Constructor;
+import java.security.acl.Owner;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.citizensnpcs.api.abstraction.Equipment;
+import net.citizensnpcs.api.abstraction.MobType;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.TraitFactory;
-import net.citizensnpcs.api.trait.TraitManager;
-import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.api.trait.trait.Inventory;
-import net.citizensnpcs.api.trait.trait.MobType;
-import net.citizensnpcs.api.trait.trait.Owner;
-import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
@@ -26,8 +21,6 @@ import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
-
-import org.bukkit.plugin.Plugin;
 
 public class CitizensTraitManager implements TraitManager {
     private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = new HashMap<Class<? extends Trait>, Constructor<? extends Trait>>();
