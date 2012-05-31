@@ -4,6 +4,7 @@ import java.security.acl.Owner;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.abstraction.CommandSender;
 import net.citizensnpcs.api.abstraction.entity.Player;
@@ -20,7 +21,7 @@ public class Messaging {
     }
 
     public static void log(Level level, Object... msg) {
-        Bukkit.getLogger().log(level, "[Citizens] " + SPACE.join(msg));
+        Citizens.getLogger().log(level, "[Citizens] " + SPACE.join(msg));
     }
 
     public static void log(Object... msg) {

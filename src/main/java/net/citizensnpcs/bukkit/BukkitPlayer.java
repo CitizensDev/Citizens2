@@ -1,4 +1,4 @@
-package net.citizensnpcs.abstraction.bukkit;
+package net.citizensnpcs.bukkit;
 
 import net.citizensnpcs.api.abstraction.Equipment;
 import net.citizensnpcs.api.abstraction.ItemStack;

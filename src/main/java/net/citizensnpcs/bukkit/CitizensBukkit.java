@@ -1,4 +1,4 @@
-package net.citizensnpcs;
+package net.citizensnpcs.bukkit;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +7,13 @@ import java.util.Iterator;
 
 import javassist.ClassPool;
 import javassist.Loader;
+import net.citizensnpcs.Citizens;
+import net.citizensnpcs.CitizensDisableEvent;
+import net.citizensnpcs.EventListen;
+import net.citizensnpcs.Metrics;
+import net.citizensnpcs.Settings;
+import net.citizensnpcs.Metrics.Plotter;
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.abstraction.bukkit.BukkitEventConverter;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.abstraction.MobType;
 import net.citizensnpcs.api.abstraction.entity.Player;

@@ -2,13 +2,13 @@ package net.citizensnpcs.command.command;
 
 import java.io.File;
 
-import net.citizensnpcs.CitizensBukkit;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.abstraction.CommandSender;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.scripting.CompileCallback;
 import net.citizensnpcs.api.scripting.Script;
 import net.citizensnpcs.api.scripting.ScriptFactory;
+import net.citizensnpcs.bukkit.CitizensBukkit;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.exception.CommandException;

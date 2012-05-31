@@ -1,6 +1,7 @@
 package net.citizensnpcs;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.abstraction.Server;
@@ -10,6 +11,7 @@ import net.citizensnpcs.npc.CitizensAttachmentFactory;
 import net.citizensnpcs.npc.NPCSelector;
 
 public class Citizens implements CitizensPlugin {
+    private static final Logger logger = Logger.getLogger("Minecraft");
     private final CitizensAttachmentFactory attachmentFactory = new CitizensAttachmentFactory();
     private final File dataFolder;
     private final Server server;
@@ -49,5 +51,9 @@ public class Citizens implements CitizensPlugin {
     @Override
     public Server getServer() {
         return server;
+    }
+
+    public static Logger getLogger() {
+        return logger;
     }
 }

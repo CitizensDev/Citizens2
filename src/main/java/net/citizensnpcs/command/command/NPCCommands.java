@@ -4,7 +4,6 @@ import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.citizensnpcs.CitizensBukkit;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.abstraction.CommandSender;
@@ -13,6 +12,7 @@ import net.citizensnpcs.api.abstraction.entity.Ageable;
 import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.bukkit.CitizensBukkit;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;

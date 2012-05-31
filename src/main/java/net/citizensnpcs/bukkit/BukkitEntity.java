@@ -1,4 +1,4 @@
-package net.citizensnpcs.abstraction.bukkit;
+package net.citizensnpcs.bukkit;
 
 import java.util.List;
 

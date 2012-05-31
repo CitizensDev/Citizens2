@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.xml.stream.Location;
 
+import org.apache.commons.lang.Validate;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.abstraction.Material;
 import net.citizensnpcs.api.abstraction.World;

@@ -1,10 +1,10 @@
 package net.citizensnpcs.editor;
 
-import net.citizensnpcs.abstraction.bukkit.BukkitPlayer;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.abstraction.EventHandler;
 import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.bukkit.BukkitPlayer;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.event.Event.Result;

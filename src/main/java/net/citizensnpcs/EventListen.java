@@ -1,20 +1,19 @@
 package net.citizensnpcs;
 
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.abstraction.bukkit.BukkitConverter;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.abstraction.Chunk;
 import net.citizensnpcs.api.abstraction.EventHandler;
 import net.citizensnpcs.api.abstraction.Listener;
 import net.citizensnpcs.api.abstraction.WorldVector;
 import net.citizensnpcs.api.abstraction.entity.Player;
-import net.citizensnpcs.api.event.CitizensImplementationChangedEvent;
 import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.bukkit.BukkitConverter;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.trait.CurrentLocation;
@@ -44,12 +43,6 @@ import com.google.common.collect.ListMultimap;
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
     private final ListMultimap<ChunkCoord, Integer> toRespawn = ArrayListMultimap.create();
-
-    @EventHandler
-    public void onImplementationChanged(CitizensImplementationChangedEvent event) {
-        Messaging.severe("Citizens implementation changed, disabling plugin.");
-        Bukkit.getPluginManager().disablePlugin(Bukkit.getPluginManager().getPlugin("Citizens"));
-    }
 
     /*
      * Chunk events

@@ -1,51 +1,17 @@
-<!-- Citizens build file -->
+<!-- Citizens2 Build File -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<!-- Project Properties -->
 	<groupId>net.citizensnpcs</groupId>
 	<artifactId>citizens</artifactId>
 	<version>2.0-SNAPSHOT</version>
 	<name>Citizens</name>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<craftbukkit.version>1.2.5-R1.2-SNAPSHOT</craftbukkit.version>
-		<citizensapi.version>2.0-SNAPSHOT</citizensapi.version>
-		<build.number>Unknown</build.number>
-	</properties>
-
-	<repositories>
-		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
-		</repository>
-
-		<repository>
-			<id>everything</id>
-			<url>http://repo.citizensnpcs.net</url>
-		</repository>
-	</repositories>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>${craftbukkit.version}</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.citizensnpcs</groupId>
-			<artifactId>citizensapi</artifactId>
-			<version>${citizensapi.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
-
 	<url>http://www.citizensnpcs.net</url>
+
+	<!-- Web Information -->
 	<ciManagement>
 		<system>jenkins</system>
 		<url>http://ci.citizensnpcs.net</url>
@@ -55,6 +21,61 @@
 		<developerConnection>scm:git:git:@github.com:CitizensDev/Citizens2.git</developerConnection>
 		<url>https://github.com/CitizensDev/Citizens2/tree/master/</url>
 	</scm>
+
+	<!-- Global Properties -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!-- Repositories -->
+	<repositories>
+		<repository>
+			<id>bukkit-repo</id>
+			<url>http://repo.bukkit.org/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>spout-repo</id>
+			<url>http://nexus.spout.org/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>everything</id>
+			<url>http://repo.citizensnpcs.net</url>
+		</repository>
+	</repositories>
+
+	<!-- Dependencies -->
+	<dependencies>
+		<dependency>
+			<groupId>net.citizensnpcs</groupId>
+			<artifactId>citizensapi</artifactId>
+			<version>2.0-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit</artifactId>
+			<version>1.2.5-R1.4-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.spout</groupId>
+			<artifactId>spoutapi</artifactId>
+			<version>dev-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.spout</groupId>
+			<artifactId>vanilla</artifactId>
+			<version>1.2.5-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<!-- Build Information -->
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
 		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
