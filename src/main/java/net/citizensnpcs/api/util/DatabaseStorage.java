@@ -105,7 +105,7 @@ public class DatabaseStorage implements Storage {
         case Types.INTEGER:
             directType = "INTEGER";
             if (autoIncrement)
-                primaryType += " AUTOINCREMENT";
+                primaryType += " AUTO_INCREMENT";
             break;
         case Types.VARCHAR:
             directType = "VARCHAR(255)";
