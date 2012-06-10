@@ -31,6 +31,7 @@ import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
 
+import org.bukkit.Location;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
