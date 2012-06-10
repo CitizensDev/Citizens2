@@ -313,7 +313,35 @@ public class NPCCommands {
                 + (npc.getCharacter() != null ? npc.getCharacter().getName() : "None"));
         Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
     }
-
+    
+    @Command(aliases = { "npc" }, usage = "moveto", desc = "Teleports a NPC to a given location", modifiers = "moveto",
+            min = 1, max = 1, permission = "npc.moveto")
+    public void moveto(CommandContext args, CommandSender sender, NPC npc) {
+        // Spawn the NPC if it isn't spawned to prevent NPEs
+        if (!npc.isSpawned())
+            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+        Location current = npc.getBukkitEntity().getLocation();
+        Location to = current.clone();
+        if (args.hasFlag("x")) 
+            to.setX(args.getFlagInteger("x"));
+        if (args.hasFlag("y")) 
+            to.setY(args.getFlagInteger("y"));
+        if (args.hasFlag("z"))
+            to.setZ(args.getFlagInteger("z"));
+        if (args.hasFlag("yaw"))
+            to.setYaw((float) args.getFlagDouble("yaw"));
+        if (args.hasFlag("pitch"))
+            to.setPitch((float) args.getFlagDouble("pitch"));
+        if (args.hasFlag("world")){
+            World world = Bukkit.getWorld(args.getFlag("world"));
+            if (world == null)
+                throw new CommandException("Given world not found.");
+            to.setWorld(world);
+        }
+        npc.getBukkitEntity().teleport(to, TeleportCause.COMMAND);
+        Messaging.send(sender, StringHelper.wrap(npc.getName()) + " was teleported to " + to + ".");
+    }
+    
     @Command(
             aliases = { "npc" },
             usage = "owner [name]",
