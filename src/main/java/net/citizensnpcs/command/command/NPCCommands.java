@@ -323,17 +323,17 @@ public class NPCCommands {
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         Location current = npc.getBukkitEntity().getLocation();
         Location to = current.clone();
-        if (args.hasFlag("x")) 
+        if (args.hasValueFlag("x")) 
             to.setX(args.getFlagInteger("x"));
-        if (args.hasFlag("y")) 
+        if (args.hasValueFlag("y")) 
             to.setY(args.getFlagInteger("y"));
-        if (args.hasFlag("z"))
+        if (args.hasValueFlag("z"))
             to.setZ(args.getFlagInteger("z"));
-        if (args.hasFlag("yaw"))
+        if (args.hasValueFlag("yaw"))
             to.setYaw((float) args.getFlagDouble("yaw"));
-        if (args.hasFlag("pitch"))
+        if (args.hasValueFlag("pitch"))
             to.setPitch((float) args.getFlagDouble("pitch"));
-        if (args.hasFlag("world")){
+        if (args.hasValueFlag("world")){
             World world = Bukkit.getWorld(args.getFlag("world"));
             if (world == null)
                 throw new CommandException("Given world not found.");
