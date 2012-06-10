@@ -319,7 +319,7 @@ public class NPCCommands {
     
     @Command(aliases = { "npc" }, usage = "moveto", desc = "Teleports a NPC to a given location", modifiers = "moveto",
             min = 1, max = 1, permission = "npc.moveto")
-    public void moveto(CommandContext args, CommandSender sender, NPC npc) {
+    public void moveto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
