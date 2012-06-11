@@ -41,8 +41,15 @@ public class GenericWaypointCallback extends NavigationCallback {
         }
     }
 
+    boolean hackfix = false;
+    
     @Override
     public boolean onCancel(AI ai, CancelReason reason) {
+        if (hackfix) {
+            hackfix = false;
+            return false;
+        }
+        hackfix = false;
         if (executing && reason == CancelReason.REPLACE) {
             executing = false;
             return false;
@@ -52,7 +59,9 @@ public class GenericWaypointCallback extends NavigationCallback {
         if (dest == null && itr.hasNext())
             dest = itr.next().getLocation();
         if (dest != null) {
+            hackfix = true;
             ai.setDestination(dest);
+            hackfix = false;
         }
         return false;
     }
