@@ -71,7 +71,8 @@ public class Equipment extends Trait {
             Player player = (Player) npc.getBukkitEntity();
             if (equipment[0] != null)
                 player.setItemInHand(equipment[0]);
-            ItemStack[] armor = { equipment[1], equipment[2], equipment[3], equipment[4] };
+            ItemStack[] armor = { equipment[4], equipment[3], equipment[2], equipment[1] };
+            // bukkit ordering is boots, leggings, chestplate, helmet
             player.getInventory().setArmorContents(armor);
         }
     }
