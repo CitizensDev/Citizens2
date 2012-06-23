@@ -6,14 +6,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
-import javax.xml.stream.Location;
-
-import org.apache.commons.lang.Validate;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.abstraction.Material;
-import net.citizensnpcs.api.abstraction.World;
 import net.citizensnpcs.api.abstraction.entity.Player;
+
+import org.apache.commons.lang.Validate;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
@@ -115,14 +112,14 @@ public class Util {
         if (parts.contains("*"))
             return true;
         for (String part : Splitter.on(',').split(parts)) {
-            if (Material.matchMaterial(part) == player.getItemInHand().getType()) {
+            if (Material.match(part) == player.getItemInHand().getType()) {
                 return true;
             }
         }
         return false;
     }
 
-    public static void sendToOnline(Packet... packets) {
+    /*public static void sendToOnline(Packet... packets) {
         Validate.notNull(packets, "packets cannot be null");
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player == null || !player.isOnline())
@@ -145,5 +142,5 @@ public class Util {
             }
             ((CraftPlayer) ply).getHandle().netServerHandler.sendPacket(packet);
         }
-    }
+    }*/
 }

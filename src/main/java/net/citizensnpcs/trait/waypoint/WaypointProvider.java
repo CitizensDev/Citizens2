@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
 import net.citizensnpcs.api.abstraction.entity.Player;
-import net.citizensnpcs.api.ai.AI;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 
@@ -15,14 +14,6 @@ public interface WaypointProvider {
      * @return The editor
      */
     public Editor createEditor(Player player);
-
-    /**
-     * Returns the {@link NavigationCallback} linked to this provider. This will
-     * be linked to the NPC's {@link AI}.
-     * 
-     * @return The callback in use
-     */
-    public NavigationCallback getCallback();
 
     /**
      * Loads from the specified {@link DataKey}.

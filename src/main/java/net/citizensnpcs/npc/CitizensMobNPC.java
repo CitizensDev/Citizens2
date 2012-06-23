@@ -8,6 +8,10 @@ import javax.xml.stream.Location;
 
 import net.citizensnpcs.api.abstraction.World;
 import net.citizensnpcs.api.npc.NPC;
+import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityTypes;
+
+import org.bukkit.craftbukkit.CraftWorld;
 
 @SuppressWarnings("unchecked")
 public abstract class CitizensMobNPC extends CitizensNPC {

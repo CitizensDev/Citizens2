@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.abstraction.EventHandler;
 import net.citizensnpcs.api.abstraction.Listener;
 import net.citizensnpcs.api.abstraction.entity.Sheep;
@@ -8,6 +7,9 @@ import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.bukkit.BukkitConverter;
+
+import org.bukkit.event.player.PlayerShearEntityEvent;
 
 public class Sheared extends Attachment implements Toggleable, Listener {
     private final NPC npc;
@@ -29,7 +31,7 @@ public class Sheared extends Attachment implements Toggleable, Listener {
 
     @EventHandler
     public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
-        if (npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity())))
+        if (npc.equals(BukkitConverter.toNPC(event.getEntity())))
             event.setCancelled(true);
     }
 

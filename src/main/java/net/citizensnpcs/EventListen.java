@@ -15,10 +15,8 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.bukkit.BukkitConverter;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.text.Text;
-import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
@@ -27,8 +25,6 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -81,10 +77,10 @@ public class EventListen implements Listener {
      */
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (!npcRegistry.isNPC(event.getEntity()))
+        NPC npc = BukkitConverter.toNPC(event.getEntity());
+        if (npc == null)
             return;
 
-        NPC npc = npcRegistry.getNPC(event.getEntity());
         NPCDamageEvent damageEvent;
         if (event instanceof EntityDamageByEntityEvent) {
             NPCDamageByEntityEvent damageByEntityEvent = new NPCDamageByEntityEvent(npc, event.getDamage(),
@@ -108,19 +104,34 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        if (!npcRegistry.isNPC(event.getEntity()))
+        NPC npc = BukkitConverter.toNPC(event.getEntity());
+        if (npc == null)
             return;
-        NPC npc = npcRegistry.getNPC(event.getEntity());
+
         npc.despawn();
     }
 
+    /*
+     * Player events
+     */
     @EventHandler
-    public void onEntityTarget(EntityTargetEvent event) {
-        if (event.isCancelled() || !npcRegistry.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        if (!BukkitConverter.isNPC(event.getPlayer()))
             return;
 
-        NPC npc = npcRegistry.getNPC(event.getEntity());
-        Player player = (Player) event.getTarget();
+        ((CraftServer) Bukkit.getServer()).getHandle().players.remove(((CraftPlayer) event.getPlayer()).getHandle());
+    }
+
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (event.isCancelled())
+            return;
+
+        NPC npc = BukkitConverter.toNPC(event.getRightClicked());
+        if (npc == null)
+            return;
+
+        Player player = BukkitConverter.toPlayer(event.getPlayer());
 
         // Call right-click event
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
@@ -131,27 +142,6 @@ public class EventListen implements Listener {
         // TODO: move this into text.class
         if (Util.isSettingFulfilled(player, Setting.TALK_ITEM) && !npc.getAttachment(Text.class).shouldTalkClose())
             npc.getAttachment(Text.class).sendText(player);
-    }
-
-    /*
-     * Player events
-     */
-    @EventHandler
-    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        if (!(((CraftPlayer) event.getPlayer()).getHandle() instanceof EntityHumanNPC))
-            return;
-
-        ((CraftServer) Bukkit.getServer()).getHandle().players.remove(((CraftPlayer) event.getPlayer()).getHandle());
-    }
-
-    @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (!npcRegistry.isNPC(event.getRightClicked()))
-            return;
-
-        // Call target event for NPCs
-        Bukkit.getPluginManager().callEvent(
-                new EntityTargetEvent(event.getRightClicked(), event.getPlayer(), TargetReason.CUSTOM));
     }
 
     @EventHandler

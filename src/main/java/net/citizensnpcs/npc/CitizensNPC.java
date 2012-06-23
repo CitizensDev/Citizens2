@@ -2,10 +2,7 @@ package net.citizensnpcs.npc;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.abstraction.WorldVector;
-import net.citizensnpcs.api.abstraction.entity.LivingEntity;
 import net.citizensnpcs.api.attachment.Attachment;
-import net.citizensnpcs.api.event.NPCDespawnEvent;
-import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -25,38 +22,12 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public boolean despawn() {
-        if (!isSpawned()) {
-            Messaging.debug(String.format("The NPC with the ID '%d' is already despawned.", getId()));
-            return false;
-        }
-
-        CitizensAPI.getServer().callEvent(new NPCDespawnEvent(this));
-        getEntity().remove();
-        controller = null;
-
-        return true;
-    }
-
-    @Override
     protected Attachment getAttachmentFor(Class<? extends Attachment> clazz) {
-        // TODO Auto-generated method stub
-        return null;
+        return CitizensAPI.getAttachmentFactory().getAttachment(clazz);
     }
 
     private Attachment getAttachmentFor(String name) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public LivingEntity getEntity() {
-        return (LivingEntity) controller.getEntity();
-    }
-
-    @Override
-    public boolean isSpawned() {
-        return getEntity() != null;
+        return CitizensAPI.getAttachmentFactory().getAttachment(name);
     }
 
     public void load(DataKey root) {
@@ -92,31 +63,6 @@ public class CitizensNPC extends AbstractNPC {
         for (Attachment trait : attachments.values()) {
             trait.save(root.getRelative("traits." + trait.getName()));
         }
-    }
-
-    @Override
-    public boolean spawn(WorldVector at) {
-        if (at == null)
-            throw new IllegalArgumentException("location cannot be null");
-        if (isSpawned()) {
-            Messaging.debug("NPC (ID: " + getId() + ") is already spawned.");
-            return false;
-        }
-        NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at);
-        CitizensAPI.getServer().callEvent(spawnEvent);
-        if (spawnEvent.isCancelled())
-            return false;
-
-        controller.spawn(at);
-
-        // Set the spawned state
-        getAttachment(CurrentLocation.class).setLocation(at);
-        spawned = true;
-
-        // Modify NPC using traits after the entity has been created
-        for (Attachment attached : attachments.values())
-            attached.onSpawn();
-        return true;
     }
 
     @Override

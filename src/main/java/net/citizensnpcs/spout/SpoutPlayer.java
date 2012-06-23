@@ -1,13 +1,13 @@
 package net.citizensnpcs.spout;
 
-import org.spout.vanilla.controller.VanillaControllerTypes;
-import org.spout.vanilla.controller.living.player.VanillaPlayer;
-import org.spout.vanilla.controller.source.HealthChangeReason;
-
 import net.citizensnpcs.api.abstraction.Equipment;
 import net.citizensnpcs.api.abstraction.ItemStack;
 import net.citizensnpcs.api.abstraction.MobType;
 import net.citizensnpcs.api.abstraction.entity.Player;
+
+import org.spout.vanilla.controller.VanillaControllerTypes;
+import org.spout.vanilla.controller.living.player.VanillaPlayer;
+import org.spout.vanilla.controller.source.HealthChangeReason;
 
 public class SpoutPlayer extends SpoutEntity implements Player {
     private final VanillaPlayer player;
@@ -24,7 +24,7 @@ public class SpoutPlayer extends SpoutEntity implements Player {
 
     @Override
     public MobType getType() {
-        return SpoutConverter.toMobType(VanillaControllerTypes.PLAYER);
+        return SpoutConverter.toMobType(VanillaControllerTypes.HUMAN);
     }
 
     @Override
@@ -59,13 +59,13 @@ public class SpoutPlayer extends SpoutEntity implements Player {
         case CARRIED:
             return SpoutConverter.toItemStack(player.getInventory().getCurrentItem());
         case HELMET:
-            return SpoutConverter.toItemStack(player.getInventory().getHelmet());
+            return SpoutConverter.toItemStack(player.getInventory().getArmor().getHelmet().getItem());
         case BOOTS:
-            return SpoutConverter.toItemStack(player.getInventory().getBoots());
+            return SpoutConverter.toItemStack(player.getInventory().getArmor().getBoots().getItem());
         case CHESTPLATE:
-            return SpoutConverter.toItemStack(player.getInventory().getChestPlate());
+            return SpoutConverter.toItemStack(player.getInventory().getArmor().getChestPlate().getItem());
         case LEGGINGS:
-            return SpoutConverter.toItemStack(player.getInventory().getLeggings());
+            return SpoutConverter.toItemStack(player.getInventory().getArmor().getLeggings().getItem());
         default:
             return null;
         }

@@ -73,4 +73,9 @@ public class BukkitEntity implements Entity {
         }
         return true;
     }
+
+    @Override
+    public boolean isDead() {
+        return entity.isDead();
+    }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.abstraction.WorldVector;
 import net.citizensnpcs.api.abstraction.entity.Entity;
+import net.citizensnpcs.api.abstraction.entity.LandMob;
 import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -16,10 +17,10 @@ import net.citizensnpcs.api.util.DataKey;
 public class LookClose extends Attachment implements Runnable, Toggleable {
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
-    private final NPC npc;
+    private final LandMob entity;
 
     public LookClose(NPC npc) {
-        this.npc = npc;
+        this.entity = (LandMob) npc.getEntity();
     }
 
     private void faceEntity(Entity from, Entity at) {
@@ -50,23 +51,22 @@ public class LookClose extends Attachment implements Runnable, Toggleable {
 
     @Override
     public void run() {
-        if (!enabled || npc.getAI().hasDestination())
+        if (!enabled || entity.hasDestination())
             return;
-        if (hasInvalidTarget()) {
+        if (hasInvalidTarget())
             findNewTarget();
-        }
-        if (lookingAt != null) {
-            faceEntity(npc.getEntity(), lookingAt);
-        }
+
+        if (lookingAt != null)
+            faceEntity(entity, lookingAt);
     }
 
     private void findNewTarget() {
-        List<Entity> nearby = npc.getEntity().getNearbyEntities(2.5, 5, 2.5);
+        List<Entity> nearby = entity.getNearbyEntities(2.5, 5, 2.5);
         Collections.sort(nearby, new Comparator<Entity>() {
             @Override
             public int compare(Entity o1, Entity o2) {
-                double d1 = o1.getLocation().distanceSquared(npc.getEntity().getLocation());
-                double d2 = o2.getLocation().distanceSquared(npc.getEntity().getLocation());
+                double d1 = o1.getLocation().distanceSquared(entity.getLocation());
+                double d2 = o2.getLocation().distanceSquared(entity.getLocation());
                 return Double.compare(d1, d2);
             }
         });
@@ -82,8 +82,8 @@ public class LookClose extends Attachment implements Runnable, Toggleable {
     private boolean hasInvalidTarget() {
         if (lookingAt == null)
             return true;
-        if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getEntity().getWorld()
-                || lookingAt.getLocation().distanceSquared(npc.getEntity().getLocation()) > 5) {
+        if (!lookingAt.isOnline() || lookingAt.getWorld() != entity.getWorld()
+                || lookingAt.getLocation().distanceSquared(entity.getLocation()) > 5) {
             lookingAt = null;
             return true;
         }

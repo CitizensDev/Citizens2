@@ -15,6 +15,9 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Util;
 
+import org.bukkit.Bukkit;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.mozilla.javascript.ContextFactory.Listener;
 
 public class NPCSelector implements Listener {
@@ -69,7 +72,7 @@ public class NPCSelector implements Listener {
             npc.setMetadata("selectors", new FixedMetadataValue(plugin, "console"));
         }
 
-        Bukkit.getPluginManager().callEvent(new NPCSelectEvent(npc, sender));
+        CitizensAPI.getServer().callEvent(new NPCSelectEvent(npc, sender));
     }
 
     public NPC getSelected(CommandSender sender) {

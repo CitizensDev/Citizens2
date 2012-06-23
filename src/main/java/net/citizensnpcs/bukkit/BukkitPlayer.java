@@ -17,6 +17,11 @@ public class BukkitPlayer extends BukkitLivingEntity implements Player {
     }
 
     @Override
+    public ItemStack getItemInHand() {
+        return getEquipment(Equipment.CARRIED);
+    }
+
+    @Override
     public boolean hasPermission(String perm) {
         return getPlayer().hasPermission(perm);
     }

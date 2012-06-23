@@ -6,16 +6,19 @@ import java.util.List;
 import javax.xml.stream.Location;
 
 import net.citizensnpcs.api.abstraction.EventHandler;
+import net.citizensnpcs.api.abstraction.WorldVector;
 import net.citizensnpcs.api.abstraction.entity.Player;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+
 import com.google.common.collect.Lists;
 
 public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoint> {
-    private final GenericWaypointCallback callback = new GenericWaypointCallback(this);
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
     @Override
@@ -93,11 +96,6 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     }
 
     @Override
-    public NavigationCallback getCallback() {
-        return callback;
-    }
-
-    @Override
     public Iterator<Waypoint> iterator() {
         return waypoints.iterator();
     }
@@ -114,7 +112,6 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
 
     @Override
     public void onAttach() {
-        callback.onProviderChanged();
     }
 
     @Override
@@ -122,7 +119,7 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
         key.removeKey("points");
         key = key.getRelative("points");
         for (int i = 0; i < waypoints.size(); ++i) {
-            Location location = waypoints.get(i).getLocation();
+            WorldVector location = waypoints.get(i).getLocation();
             DataKey root = key.getRelative(Integer.toString(i) + ".location");
             root.setString("world", location.getWorld().getName());
             root.setDouble("x", location.getX());

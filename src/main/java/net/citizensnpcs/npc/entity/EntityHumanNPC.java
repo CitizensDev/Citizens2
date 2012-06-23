@@ -2,30 +2,36 @@ package net.citizensnpcs.npc.entity;
 
 import java.io.IOException;
 
-import net.citizensnpcs.api.abstraction.World;
+import net.citizensnpcs.api.abstraction.entity.NPCHolder;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.network.NPCNetHandler;
-import net.citizensnpcs.npc.network.NPCNetworkManager;
-import net.citizensnpcs.npc.network.NPCSocket;
+import net.citizensnpcs.npc.network.EmptyNetHandler;
+import net.citizensnpcs.npc.network.EmptyNetworkManager;
+import net.citizensnpcs.npc.network.EmptySocket;
+import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.ItemInWorldManager;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.Navigation;
+import net.minecraft.server.NetHandler;
+import net.minecraft.server.NetworkManager;
 
-public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
+public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private CitizensNPC npc;
 
-    public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
+    public EntityHumanNPC(MinecraftServer minecraftServer, net.minecraft.server.World world, String string,
             ItemInWorldManager itemInWorldManager, NPC npc) {
         super(minecraftServer, world, string, itemInWorldManager);
         this.npc = (CitizensNPC) npc;
         itemInWorldManager.setGameMode(0);
 
-        NPCSocket socket = new NPCSocket();
-        NetworkManager netMgr = new NPCNetworkManager(socket, "npc mgr", new NetHandler() {
+        EmptySocket socket = new EmptySocket();
+        NetworkManager netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
             @Override
             public boolean c() {
                 return false;
             }
         });
-        netServerHandler = new NPCNetHandler(minecraftServer, netMgr, this);
+        netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
         netMgr.a(netServerHandler);
 
         try {

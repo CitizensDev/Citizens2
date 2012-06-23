@@ -1,14 +1,17 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.abstraction.EventHandler;
+import net.citizensnpcs.api.abstraction.Listener;
 import net.citizensnpcs.api.attachment.Attachment;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
+import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityPlayer;
 
-import org.mozilla.javascript.ContextFactory.Listener;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 
 //TODO: reduce reliance on CitizensNPC
 public class Controllable extends Attachment implements Runnable, Listener, Toggleable {
