@@ -20,6 +20,11 @@ public class NPCDamageEvent extends NPCEvent implements Cancellable {
     }
 
     @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    @Override
     public boolean isCancelled() {
         return event.isCancelled();
     }
@@ -31,11 +36,6 @@ public class NPCDamageEvent extends NPCEvent implements Cancellable {
 
     public void setDamage(int damage) {
         event.setDamage(damage);
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
     }
 
     private static final HandlerList handlers = new HandlerList();

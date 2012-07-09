@@ -5,6 +5,8 @@ package net.citizensnpcs.api.scripting;
  */
 public interface CompileCallback {
 
+    public void onCompileTaskFinished();
+
     /**
      * Called when a script has been compiled using the relevant script engine.
      * 
@@ -12,6 +14,4 @@ public interface CompileCallback {
      *            The newly created script
      */
     public void onScriptCompiled(ScriptFactory script);
-
-    public void onCompileTaskFinished();
 }

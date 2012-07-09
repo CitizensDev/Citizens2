@@ -12,6 +12,10 @@ import net.citizensnpcs.api.util.DataKey;
 public class Spawned extends Trait {
     private boolean shouldSpawn = true;
 
+    public Spawned() {
+        super("spawned");
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         shouldSpawn = key.getBoolean("");

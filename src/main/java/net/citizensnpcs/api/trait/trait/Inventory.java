@@ -14,6 +14,7 @@ public class Inventory extends Trait {
     private ItemStack[] contents;
 
     public Inventory() {
+        super("inventory");
         contents = new ItemStack[36];
     }
 

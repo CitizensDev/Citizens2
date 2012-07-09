@@ -1,9 +1,5 @@
 package net.citizensnpcs.api.npc;
 
-import java.util.Collection;
-
-import net.citizensnpcs.api.npc.character.Character;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -24,19 +20,6 @@ public interface NPCRegistry extends Iterable<NPC> {
     public NPC createNPC(EntityType type, String name);
 
     /**
-     * Creates an NPC with the given character. This does not spawn the NPC.
-     * 
-     * @param type
-     *            Entity type to assign to the NPC
-     * @param name
-     *            Name to give the NPC
-     * @param character
-     *            Character to attach to an NPC
-     * @return Created NPC with the given character
-     */
-    public NPC createNPC(EntityType type, String name, Character character);
-
-    /**
      * Deregisters the {@link NPC} and removes all data about it from the data
      * store.
      * 
@@ -50,6 +33,15 @@ public interface NPCRegistry extends Iterable<NPC> {
     public void deregisterAll();
 
     /**
+     * Gets an NPC with the given ID.
+     * 
+     * @param id
+     *            ID of the NPC
+     * @return NPC with the given ID (may or may not be spawned)
+     */
+    public NPC getById(int id);
+
+    /**
      * Gets an NPC from the given LivingEntity.
      * 
      * @param entity
@@ -57,24 +49,6 @@ public interface NPCRegistry extends Iterable<NPC> {
      * @return NPC from the given entity (must be spawned)
      */
     public NPC getNPC(Entity entity);
-
-    /**
-     * Gets an NPC with the given ID.
-     * 
-     * @param id
-     *            ID of the NPC
-     * @return NPC with the given ID (may or may not be spawned)
-     */
-    public NPC getNPC(int id);
-
-    /**
-     * Gets all NPCs with the given character.
-     * 
-     * @param character
-     *            Character to search for
-     * @return All NPCs with the given character
-     */
-    public Collection<NPC> getNPCs(Class<? extends Character> character);
 
     /**
      * Checks whether the given Bukkit entity is an NPC.
