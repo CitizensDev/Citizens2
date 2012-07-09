@@ -1,13 +1,13 @@
 package net.citizensnpcs.npc;
 
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import net.citizensnpcs.Metrics;
-import net.citizensnpcs.Metrics.Graph;
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.TraitInfo;
+import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitManager;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Inventory;
@@ -27,53 +27,57 @@ import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import org.bukkit.plugin.Plugin;
 
 public class CitizensTraitManager implements TraitManager {
-    private final Map<String, Class<? extends Trait>> registered = Maps.newHashMap();
+    private final Map<Class<? extends Trait>, Constructor<? extends Trait>> CACHED_CTORS = new HashMap<Class<? extends Trait>, Constructor<? extends Trait>>();
+    private final Map<Plugin, Map<String, Class<? extends Trait>>> registered = new HashMap<Plugin, Map<String, Class<? extends Trait>>>();
 
-    // TODO: find a way to avoid naming conflicts
-    public CitizensTraitManager() {
-        registerTrait(TraitInfo.create(Age.class).withName("age"));
-        registerTrait(TraitInfo.create(CurrentLocation.class).withName("location"));
-        registerTrait(TraitInfo.create(Equipment.class).withName("equipment"));
-        registerTrait(TraitInfo.create(Inventory.class).withName("inventory"));
-        registerTrait(TraitInfo.create(LookClose.class).withName("lookclose"));
-        registerTrait(TraitInfo.create(MobType.class).withName("type"));
-        registerTrait(TraitInfo.create(Owner.class).withName("owner"));
-        registerTrait(TraitInfo.create(Powered.class).withName("powered"));
-        registerTrait(TraitInfo.create(Saddle.class).withName("saddle"));
-        registerTrait(TraitInfo.create(Sheared.class).withName("sheared"));
-        registerTrait(TraitInfo.create(Spawned.class).withName("spawned"));
-        registerTrait(TraitInfo.create(Text.class).withName("text"));
-        registerTrait(TraitInfo.create(VillagerProfession.class).withName("profession"));
-        registerTrait(TraitInfo.create(Waypoints.class).withName("waypoints"));
-        registerTrait(TraitInfo.create(WoolColor.class).withName("woolcolor"));
-        registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));
-        registerTrait(TraitInfo.create(Behaviour.class).withName("behaviour"));
+    // TODO: handle Plugin-setting/names better and avoid cruft. also find a
+    // way to avoid naming conflicts
+    public CitizensTraitManager(Plugin plugin) {
+        registerTrait(new TraitFactory(Age.class).withName("age").withPlugin(plugin));
+        registerTrait(new TraitFactory(CurrentLocation.class).withName("location").withPlugin(plugin));
+        registerTrait(new TraitFactory(Equipment.class).withName("equipment").withPlugin(plugin));
+        registerTrait(new TraitFactory(Inventory.class).withName("inventory").withPlugin(plugin));
+        registerTrait(new TraitFactory(LookClose.class).withName("lookclose").withPlugin(plugin));
+        registerTrait(new TraitFactory(MobType.class).withName("type").withPlugin(plugin));
+        registerTrait(new TraitFactory(Owner.class).withName("owner").withPlugin(plugin));
+        registerTrait(new TraitFactory(Powered.class).withName("powered").withPlugin(plugin));
+        registerTrait(new TraitFactory(Saddle.class).withName("saddle").withPlugin(plugin));
+        registerTrait(new TraitFactory(Sheared.class).withName("sheared").withPlugin(plugin));
+        registerTrait(new TraitFactory(Spawned.class).withName("spawned").withPlugin(plugin));
+        registerTrait(new TraitFactory(Text.class).withName("text").withPlugin(plugin));
+        registerTrait(new TraitFactory(VillagerProfession.class).withName("profession").withPlugin(plugin));
+        registerTrait(new TraitFactory(Waypoints.class).withName("waypoints").withPlugin(plugin));
+        registerTrait(new TraitFactory(WoolColor.class).withName("woolcolor").withPlugin(plugin));
+        registerTrait(new TraitFactory(Controllable.class).withName("controllable").withPlugin(plugin));
+        registerTrait(new TraitFactory(Behaviour.class).withName("behaviour").withPlugin(plugin));
     }
 
-    public void addPlotters(Graph graph) {
-        for (Map.Entry<String, Class<? extends Trait>> entry : registered.entrySet()) {
-            final Class<? extends Trait> traitClass = entry.getValue();
-            graph.addPlotter(new Metrics.Plotter(entry.getKey()) {
-                @Override
-                public int getValue() {
-                    int numberUsingTrait = 0;
-                    for (NPC npc : CitizensAPI.getNPCRegistry()) {
-                        if (npc.hasTrait(traitClass))
-                            ++numberUsingTrait;
-                    }
-                    return numberUsingTrait;
-                }
-            });
-        }
-    }
-
+    @SuppressWarnings("unchecked")
     private <T extends Trait> T create(Class<T> trait, NPC npc) {
+        Constructor<? extends Trait> constructor;
+
+        if (!CACHED_CTORS.containsKey(trait)) {
+            try {
+                // TODO: replace this fixed constructor with a context class
+                // which can have extra environment variables.
+                constructor = trait.getConstructor(NPC.class);
+                if (constructor == null)
+                    constructor = trait.getConstructor(CitizensNPC.class);
+                constructor.setAccessible(true);
+            } catch (Exception ex) {
+                constructor = null;
+            }
+            CACHED_CTORS.put(trait, constructor);
+        } else
+            constructor = CACHED_CTORS.get(trait);
+
         try {
-            return trait.newInstance();
+            if (constructor == null || npc == null)
+                return trait.newInstance();
+            return (T) constructor.newInstance(npc);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
@@ -81,24 +85,55 @@ public class CitizensTraitManager implements TraitManager {
     }
 
     @Override
-    public <T extends Trait> T getTrait(Class<T> clazz, NPC npc) {
-        if (!registered.containsValue(clazz))
-            return null;
-        return create(clazz, npc);
+    public <T extends Trait> T getTrait(Class<T> clazz) {
+        return getTrait(clazz, null);
     }
 
+    @SuppressWarnings("unchecked")
+    public <T extends Trait> T getTrait(Class<T> clazz, NPC npc) {
+        for (Entry<Plugin, Map<String, Class<? extends Trait>>> entry : registered.entrySet()) {
+            for (Entry<String, Class<? extends Trait>> subEntry : entry.getValue().entrySet()) {
+                if (!subEntry.getValue().equals(clazz))
+                    continue;
+                Trait trait = create(subEntry.getValue(), npc);
+                if (trait == null)
+                    return null;
+                trait.setPlugin(entry.getKey());
+                trait.setName(subEntry.getKey());
+                return (T) trait;
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
     @Override
+    public <T extends Trait> T getTrait(String name) {
+        for (Map<String, Class<? extends Trait>> entry : registered.values()) {
+            if (!entry.containsKey(name))
+                continue;
+            return (T) create(entry.get(name), null);
+        }
+        return null;
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(String name, NPC npc) {
-        Class<? extends Trait> clazz = registered.get(name);
-        if (clazz == null)
-            return null;
-        return (T) create(clazz, npc);
+        for (Map<String, Class<? extends Trait>> entry : registered.values()) {
+            Class<? extends Trait> clazz = entry.get(name);
+            if (clazz == null)
+                continue;
+            return (T) getTrait(clazz, npc);
+        }
+        return null;
     }
 
     @Override
-    public void registerTrait(TraitInfo info) {
-        Preconditions.checkNotNull(info, "info cannot be null");
-        registered.put(info.getTraitName(), info.getTraitClass());
+    public void registerTrait(TraitFactory factory) {
+        Map<String, Class<? extends Trait>> map = registered.get(factory.getTraitPlugin());
+        if (map == null)
+            map = new HashMap<String, Class<? extends Trait>>();
+        map.put(factory.getTraitName(), factory.getTraitClass());
+        registered.put(factory.getTraitPlugin(), map);
     }
 }

@@ -4,7 +4,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.util.Messaging;
@@ -58,7 +58,7 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         return (Sheep) getHandle().getBukkitEntity();
     }
 
-    public static class EntitySheepNPC extends EntitySheep implements NPCHolder {
+    public static class EntitySheepNPC extends EntitySheep implements NPCHandle {
         private final CitizensNPC npc;
 
         public EntitySheepNPC(World world) {
@@ -73,15 +73,15 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
-        @Override
         public void z_() {
             super.z_();
             if (npc != null)
                 npc.update();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

@@ -3,7 +3,7 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityIronGolem;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
@@ -21,7 +21,7 @@ public class CitizensIronGolemNPC extends CitizensMobNPC {
         return (IronGolem) getHandle().getBukkitEntity();
     }
 
-    public static class EntityIronGolemNPC extends EntityIronGolem implements NPCHolder {
+    public static class EntityIronGolemNPC extends EntityIronGolem implements NPCHandle {
         private final CitizensNPC npc;
 
         public EntityIronGolemNPC(World world, NPC npc) {
@@ -32,14 +32,14 @@ public class CitizensIronGolemNPC extends CitizensMobNPC {
         }
 
         @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
-        @Override
         public void z_() {
             super.z_();
             npc.update();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

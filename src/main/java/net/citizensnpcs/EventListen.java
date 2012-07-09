@@ -1,5 +1,6 @@
 package net.citizensnpcs;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
@@ -10,6 +11,8 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.text.Text;
+import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -49,7 +52,7 @@ public class EventListen implements Listener {
         if (!toRespawn.containsKey(coord))
             return;
         for (int id : toRespawn.get(coord)) {
-            NPC npc = npcRegistry.getById(id);
+            NPC npc = npcRegistry.getNPC(id);
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         }
         toRespawn.removeAll(coord);
@@ -93,6 +96,11 @@ public class EventListen implements Listener {
             // Call left-click event
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
             Bukkit.getPluginManager().callEvent(leftClickEvent);
+            if (leftClickEvent.isCancelled())
+                return;
+
+            if (npc.getCharacter() != null)
+                npc.getCharacter().onLeftClick(npc, damager);
         } else {
             Bukkit.getPluginManager().callEvent(new NPCDamageEvent(npc, event));
         }
@@ -117,6 +125,15 @@ public class EventListen implements Listener {
         // Call right-click event
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
         Bukkit.getPluginManager().callEvent(rightClickEvent);
+        if (rightClickEvent.isCancelled())
+            return;
+        // If the NPC isn't a close talker
+        // TODO: move this into text.class
+        if (Util.isSettingFulfilled(player, Setting.TALK_ITEM) && !npc.getTrait(Text.class).shouldTalkClose())
+            npc.getTrait(Text.class).sendText(player);
+
+        if (npc.getCharacter() != null)
+            npc.getCharacter().onRightClick(npc, player);
     }
 
     /*
@@ -154,7 +171,7 @@ public class EventListen implements Listener {
             if (!event.getWorld().isChunkLoaded(chunk.first, chunk.second))
                 continue;
             for (int id : toRespawn.get(chunk)) {
-                NPC npc = npcRegistry.getById(id);
+                NPC npc = npcRegistry.getNPC(id);
                 npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
             }
             toRespawn.removeAll(chunk);

@@ -11,9 +11,7 @@ public class GenericWaypointCallback extends NavigationCallback {
     private AI ai;
     private Location dest;
     private boolean executing;
-    boolean hackfix = false;
     private Iterator<Waypoint> itr;
-
     private final Iterable<Waypoint> provider;
 
     public GenericWaypointCallback(Iterable<Waypoint> provider) {
@@ -42,6 +40,8 @@ public class GenericWaypointCallback extends NavigationCallback {
             ai.setDestination(dest);
         }
     }
+
+    boolean hackfix = false;
     
     @Override
     public boolean onCancel(AI ai, CancelReason reason) {

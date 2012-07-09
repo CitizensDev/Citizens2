@@ -198,11 +198,6 @@ public class CommandManager {
                 || commands.containsKey(command.toLowerCase() + " *");
     }
 
-    // Returns whether a player has permission.
-    private boolean hasPermission(CommandSender sender, String perm) {
-        return sender.hasPermission("citizens." + perm);
-    }
-
     // Returns whether a player has access to a command.
     private boolean hasPermission(Method method, CommandSender sender) {
         Command cmd = method.getAnnotation(Command.class);
@@ -210,6 +205,11 @@ public class CommandManager {
             return true;
 
         return false;
+    }
+
+    // Returns whether a player has permission.
+    private boolean hasPermission(CommandSender sender, String perm) {
+        return sender.hasPermission("citizens." + perm);
     }
 
     /*

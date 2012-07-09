@@ -26,8 +26,6 @@ public class Util {
     private Util() {
     }
 
-    private static final Map<Class<?>, Class<?>> primitiveClassMap = Maps.newHashMap();
-
     /**
      * Given a set of instantiation parameters, attempts to find a matching
      * constructor with the greatest number of matching class parameters and
@@ -87,17 +85,6 @@ public class Util {
         return null;
     }
 
-    public static boolean isSettingFulfilled(Player player, Setting setting) {
-        String parts = setting.asString();
-        if (parts.contains("*"))
-            return true;
-        for (String part : Splitter.on(',').split(parts)) {
-            if (Material.matchMaterial(part) == player.getItemInHand().getType()) {
-                return true;
-            }
-        }
-        return false;
-    }
     private static boolean searchInterfaces(Class<?> class1, Class<?> class2) {
         for (Class<?> test : class1.getInterfaces())
             if (test == class2)
@@ -105,31 +92,7 @@ public class Util {
         return false;
     }
 
-    public static void sendPacketNearby(Location location, Packet packet, double radius) {
-        radius *= radius;
-        final World world = location.getWorld();
-        for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
-            if (ply == null || world != ply.getWorld()) {
-                continue;
-            }
-            if (location.distanceSquared(ply.getLocation()) > radius) {
-                continue;
-            }
-            ((CraftPlayer) ply).getHandle().netServerHandler.sendPacket(packet);
-        }
-    }
-
-    public static void sendToOnline(Packet... packets) {
-        Validate.notNull(packets, "packets cannot be null");
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player == null || !player.isOnline())
-                continue;
-            for (Packet packet : packets) {
-                ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
-            }
-        }
-    }
-
+    private static final Map<Class<?>, Class<?>> primitiveClassMap = Maps.newHashMap();
     static {
         primitiveClassMap.put(Boolean.class, boolean.class);
         primitiveClassMap.put(Byte.class, byte.class);
@@ -147,5 +110,42 @@ public class Util {
         primitiveClassMap.put(long.class, Long.class);
         primitiveClassMap.put(float.class, Float.class);
         primitiveClassMap.put(double.class, Double.class);
+    }
+
+    public static boolean isSettingFulfilled(Player player, Setting setting) {
+        String parts = setting.asString();
+        if (parts.contains("*"))
+            return true;
+        for (String part : Splitter.on(',').split(parts)) {
+            if (Material.matchMaterial(part) == player.getItemInHand().getType()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void sendToOnline(Packet... packets) {
+        Validate.notNull(packets, "packets cannot be null");
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player == null || !player.isOnline())
+                continue;
+            for (Packet packet : packets) {
+                ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
+            }
+        }
+    }
+
+    public static void sendPacketNearby(Location location, Packet packet, double radius) {
+        radius *= radius;
+        final World world = location.getWorld();
+        for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
+            if (ply == null || world != ply.getWorld()) {
+                continue;
+            }
+            if (location.distanceSquared(ply.getLocation()) > radius) {
+                continue;
+            }
+            ((CraftPlayer) ply).getHandle().netServerHandler.sendPacket(packet);
+        }
     }
 }

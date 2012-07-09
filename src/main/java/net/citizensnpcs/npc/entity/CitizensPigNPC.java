@@ -4,7 +4,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
@@ -48,7 +48,7 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
         return (Pig) getHandle().getBukkitEntity();
     }
 
-    public static class EntityPigNPC extends EntityPig implements NPCHolder {
+    public static class EntityPigNPC extends EntityPig implements NPCHandle {
         private final CitizensNPC npc;
 
         public EntityPigNPC(World world) {
@@ -67,15 +67,15 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
-        @Override
         public void z_() {
             super.z_();
             if (npc != null)
                 npc.update();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

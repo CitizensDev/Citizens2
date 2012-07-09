@@ -3,7 +3,7 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.npc.ai.NPCHandle;
 import net.minecraft.server.EntityPigZombie;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
@@ -21,7 +21,7 @@ public class CitizensPigZombieNPC extends CitizensMobNPC {
         return (PigZombie) getHandle().getBukkitEntity();
     }
 
-    public static class EntityPigZombieNPC extends EntityPigZombie implements NPCHolder {
+    public static class EntityPigZombieNPC extends EntityPigZombie implements NPCHandle {
         private final CitizensNPC npc;
 
         public EntityPigZombieNPC(World world) {
