@@ -60,24 +60,6 @@ public class HelpCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "help (page)",
-            desc = "NPC help menu",
-            modifiers = { "help" },
-            min = 1,
-            max = 2,
-            permission = "npc.help")
-    @Requirements
-    public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
-        Paginator paginator = new Paginator().header("NPC Help");
-        for (String line : getLines(sender, "npc"))
-            paginator.addLine(line);
-        if (!paginator.sendPage(sender, page))
-            throw new CommandException("The page '" + page + "' does not exist.");
-    }
-
-    @Command(
             aliases = { "script" },
             usage = "help (page)",
             desc = "Script help menu",
@@ -90,6 +72,24 @@ public class HelpCommands {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         Paginator paginator = new Paginator().header("Script Help");
         for (String line : getLines(sender, "script"))
+            paginator.addLine(line);
+        if (!paginator.sendPage(sender, page))
+            throw new CommandException("The page '" + page + "' does not exist.");
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "help (page)",
+            desc = "NPC help menu",
+            modifiers = { "help" },
+            min = 1,
+            max = 2,
+            permission = "npc.help")
+    @Requirements
+    public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
+        Paginator paginator = new Paginator().header("NPC Help");
+        for (String line : getLines(sender, "npc"))
             paginator.addLine(line);
         if (!paginator.sendPage(sender, page))
             throw new CommandException("The page '" + page + "' does not exist.");

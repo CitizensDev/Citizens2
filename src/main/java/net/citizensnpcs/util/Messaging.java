@@ -22,18 +22,18 @@ public class Messaging {
             log(msg);
     }
 
-    private static String getFormatted(Object[] msg) {
-        String toFormat = msg[0].toString();
-        Object[] args = msg.length > 1 ? Arrays.copyOfRange(msg, 1, msg.length) : new Object[] {};
-        return String.format(toFormat, args);
-    }
-
     public static void log(Level level, Object... msg) {
         Bukkit.getLogger().log(level, "[Citizens] " + SPACE.join(msg));
     }
 
     public static void log(Object... msg) {
         log(Level.INFO, msg);
+    }
+
+    private static String getFormatted(Object[] msg) {
+        String toFormat = msg[0].toString();
+        Object[] args = msg.length > 1 ? Arrays.copyOfRange(msg, 1, msg.length) : new Object[] {};
+        return String.format(toFormat, args);
     }
 
     public static void logF(Object... msg) {
@@ -46,18 +46,18 @@ public class Messaging {
         sender.sendMessage(joined);
     }
 
+    public static void sendF(CommandSender sender, Object... msg) {
+        String joined = getFormatted(msg);
+        joined = StringHelper.parseColors(joined);
+        sender.sendMessage(joined);
+    }
+
     public static void sendError(CommandSender sender, Object... msg) {
         send(sender, ChatColor.RED.toString() + SPACE.join(msg));
     }
 
     public static void sendErrorF(CommandSender sender, Object... msg) {
         sendF(sender, ChatColor.RED.toString() + SPACE.join(msg));
-    }
-
-    public static void sendF(CommandSender sender, Object... msg) {
-        String joined = getFormatted(msg);
-        joined = StringHelper.parseColors(joined);
-        sender.sendMessage(joined);
     }
 
     public static void sendWithNPC(CommandSender sender, Object msg, NPC npc) {

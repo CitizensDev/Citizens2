@@ -23,9 +23,9 @@ public class Settings {
         for (Setting setting : Setting.values()) {
             if (!root.keyExists(setting.path)) {
                 Messaging.logF("Writing default setting: '%s'", setting.path);
-                setting.setAtKey(root);
+                setting.set(root);
             } else
-                setting.loadFromKey(root);
+                setting.load(root);
         }
 
         save();
@@ -35,7 +35,7 @@ public class Settings {
         config.load();
         for (Setting setting : Setting.values())
             if (root.keyExists(setting.path))
-                setting.loadFromKey(root);
+                setting.load(root);
 
         save();
     }
@@ -56,7 +56,7 @@ public class Settings {
         DEFAULT_TALK_CLOSE("npc.default.talk-close", false),
         DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!") {
             @Override
-            public void loadFromKey(DataKey root) {
+            public void load(DataKey root) {
                 List<String> list = new ArrayList<String>();
                 for (DataKey key : root.getRelative("npc.default.text").getSubKeys())
                     list.add(key.getString(""));
@@ -109,12 +109,12 @@ public class Settings {
             return value.toString();
         }
 
-        protected void loadFromKey(DataKey root) {
-            value = root.getRaw(path);
+        protected void set(DataKey root) {
+            root.setRaw(path, value);
         }
 
-        protected void setAtKey(DataKey root) {
-            root.setRaw(path, value);
+        protected void load(DataKey root) {
+            value = root.getRaw(path);
         }
     }
 }

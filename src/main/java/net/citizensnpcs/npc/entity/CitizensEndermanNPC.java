@@ -5,7 +5,7 @@ import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.npc.ai.NPCHandle;
 import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.EntityEnderman;
 import net.minecraft.server.PathfinderGoalSelector;
@@ -59,7 +59,7 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         return (Enderman) getHandle().getBukkitEntity();
     }
 
-    public static class EntityEndermanNPC extends EntityEnderman implements NPCHolder {
+    public static class EntityEndermanNPC extends EntityEnderman implements NPCHandle {
         private final CitizensNPC npc;
 
         public EntityEndermanNPC(World world) {

@@ -38,10 +38,6 @@ public class ScriptCommands {
             throw new CommandException("The file '" + args.getString(1) + "' doesn't exist!");
         CitizensAPI.getScriptCompiler().compile(file).withCallback(new CompileCallback() {
             @Override
-            public void onCompileTaskFinished() {
-            }
-
-            @Override
             public void onScriptCompiled(ScriptFactory script) {
                 Script s = script.newInstance();
                 if (args.hasValueFlag("methods")) {
@@ -50,6 +46,10 @@ public class ScriptCommands {
                     }
                 }
                 Messaging.send(sender, "<a>Done.");
+            }
+
+            @Override
+            public void onCompileTaskFinished() {
             }
         }).begin();
         sender.sendMessage("Compiling...");

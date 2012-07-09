@@ -5,10 +5,10 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityPlayer;
 
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,21 +17,18 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 //TODO: reduce reliance on CitizensNPC
 public class Controllable extends Trait implements Runnable, Listener, Toggleable {
+    private final CitizensNPC npc;
     private boolean enabled;
 
     public Controllable(NPC npc) {
-        super("controllable");
-    }
-
-    private EntityLiving getHandle() {
-        return ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
+        this.npc = (CitizensNPC) npc;
     }
 
     private void jump() {
-        boolean allowed = getHandle().onGround;
+        boolean allowed = npc.getHandle().onGround;
         if (!allowed)
             return;
-        getHandle().motY = JUMP_VELOCITY;
+        npc.getHandle().motY = JUMP_VELOCITY;
         // TODO: make jumping work in liquid or make liquids float the npc
     }
 
@@ -46,7 +43,7 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
             return;
         EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
         Action performed = event.getAction();
-        if (performed == Action.PHYSICAL || !handle.equals(getHandle().passenger))
+        if (performed == Action.PHYSICAL || !handle.equals(npc.getHandle().passenger))
             return;
         if (performed == Action.LEFT_CLICK_AIR || performed == Action.LEFT_CLICK_BLOCK) {
             jump();
@@ -58,20 +55,20 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
         if (!npc.isSpawned() || !event.getNPC().equals(npc))
             return;
         EntityPlayer handle = ((CraftPlayer) event.getClicker()).getHandle();
-        if (getHandle().passenger != null) {
-            if (getHandle().passenger == handle) {
+        if (npc.getHandle().passenger != null) {
+            if (npc.getHandle().passenger == handle) {
                 event.getClicker().leaveVehicle();
             }
             return;
         }
-        handle.setPassengerOf(getHandle());
+        handle.setPassengerOf(npc.getHandle());
     }
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || getHandle().passenger == null)
+        if (!npc.isSpawned() || npc.getHandle().passenger == null)
             return;
-        EntityLiving handle = getHandle();
+        EntityLiving handle = npc.getHandle();
         boolean onGround = handle.onGround;
         handle.motX += handle.passenger.motX * (onGround ? GROUND_SPEED : AIR_SPEED);
         handle.motZ += handle.passenger.motZ * (onGround ? GROUND_SPEED : AIR_SPEED);
@@ -82,12 +79,12 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
         key.setBoolean("enabled", enabled);
     }
 
+    private static final double GROUND_SPEED = 4;
+    private static final double AIR_SPEED = 1.5;
+    private static final double JUMP_VELOCITY = 0.6;
+
     @Override
     public boolean toggle() {
         return (enabled = !enabled);
     }
-    private static final double AIR_SPEED = 1.5;
-    private static final double GROUND_SPEED = 4;
-
-    private static final double JUMP_VELOCITY = 0.6;
 }

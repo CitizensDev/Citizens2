@@ -22,46 +22,13 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
-import com.google.common.collect.Lists;
-
 public class NPCSelector implements Listener {
-    private int consoleSelectedNPC = -1;
     private final Plugin plugin;
+    private int consoleSelectedNPC = -1;
 
     public NPCSelector(Plugin plugin) {
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
-    }
-
-    public NPC getSelected(CommandSender sender) {
-        if (sender instanceof Player) {
-            List<MetadataValue> metadata = ((Player) sender).getMetadata("selected");
-            if (metadata.size() == 0)
-                return null;
-            return CitizensAPI.getNPCRegistry().getById(metadata.get(0).asInt());
-        } else {
-            if (consoleSelectedNPC == -1)
-                return null;
-            return CitizensAPI.getNPCRegistry().getById(consoleSelectedNPC);
-        }
-    }
-
-    @EventHandler
-    public void onNPCRemove(NPCRemoveEvent event) {
-        NPC npc = event.getNPC();
-        List<String> selectors = npc.data().get("selectors");
-        if (selectors == null)
-            return;
-        for (String value : selectors) {
-            if (value.equals("console")) {
-                consoleSelectedNPC = -1;
-            } else {
-                Player search = Bukkit.getPlayerExact(value);
-                if (search != null)
-                    search.removeMetadata("selected", plugin);
-            }
-        }
-        npc.data().remove("selectors");
     }
 
     @EventHandler
@@ -81,24 +48,51 @@ public class NPCSelector implements Listener {
         }
     }
 
+    @EventHandler
+    public void onNPCRemove(NPCRemoveEvent event) {
+        NPC npc = event.getNPC();
+        for (MetadataValue value : npc.getMetadata("selectors")) {
+            if (value.asString().equals("console")) {
+                consoleSelectedNPC = -1;
+            } else {
+                Player search = Bukkit.getPlayerExact(value.asString());
+                if (search != null)
+                    search.removeMetadata("selected", plugin);
+            }
+        }
+        npc.removeMetadata("selectors", plugin);
+    }
+
     public void select(CommandSender sender, NPC npc) {
         // Remove existing selection if any
-        List<Object> selectors = npc.data().get("selectors", Lists.newArrayList());
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (player.hasMetadata("selected"))
                 player.removeMetadata("selected", plugin);
 
             player.setMetadata("selected", new FixedMetadataValue(plugin, npc.getId()));
-            selectors.add(player.getName());
+            npc.setMetadata("selectors", new FixedMetadataValue(plugin, player.getName()));
 
             // Remove editor if the player has one
             Editor.leave(player);
         } else {
             consoleSelectedNPC = npc.getId();
-            selectors.add("console");
+            npc.setMetadata("selectors", new FixedMetadataValue(plugin, "console"));
         }
 
         Bukkit.getPluginManager().callEvent(new NPCSelectEvent(npc, sender));
+    }
+
+    public NPC getSelected(CommandSender sender) {
+        if (sender instanceof Player) {
+            List<MetadataValue> metadata = ((Player) sender).getMetadata("selected");
+            if (metadata.size() == 0)
+                return null;
+            return CitizensAPI.getNPCRegistry().getNPC(metadata.get(0).asInt());
+        } else {
+            if (consoleSelectedNPC == -1)
+                return null;
+            return CitizensAPI.getNPCRegistry().getNPC(consoleSelectedNPC);
+        }
     }
 }
