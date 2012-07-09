@@ -8,8 +8,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.npc.character.Character;
-import net.citizensnpcs.api.npc.character.CharacterManager;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
@@ -26,15 +25,14 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.VillagerProfession;
-import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.Location;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
@@ -46,7 +44,6 @@ import com.google.common.base.Splitter;
 
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
-    private final CharacterManager characterManager = CitizensAPI.getCharacterManager();
     private final NPCRegistry npcRegistry;
     private final NPCSelector selector;
 
@@ -103,31 +100,19 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "character [character]",
-            desc = "Set the character of a NPC",
-            modifiers = { "character" },
-            min = 2,
-            max = 2)
-    public void character(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        String name = args.getString(1).toLowerCase();
-        Character character = characterManager.getCharacter(name);
-
-        if (character == null)
-            throw new CommandException("The character '" + args.getString(1) + "' does not exist.");
-        if (npc.getCharacter() != null && npc.getCharacter().getName().equalsIgnoreCase(character.getName()))
-            throw new CommandException("The NPC already has the character '" + name + "'.");
-        if (!sender.hasPermission("citizens.npc.character." + character.getName())
-                && !sender.hasPermission("citizens.npc.character.*") && !sender.hasPermission("citizens.admin"))
-            throw new NoPermissionsException();
-
-        EntityType type = EntityType.valueOf(npc.getTrait(MobType.class).getType());
-        if (!character.getValidTypes().isEmpty() && !character.getValidTypes().contains(type)) {
-            Messaging.sendError(sender, "This NPC cannot be given the character '" + character.getName() + "'.");
-            return;
+            usage = "controllable",
+            desc = "Toggles whether the NPC can be ridden and controlled",
+            modifiers = { "controllable" },
+            min = 1,
+            max = 1,
+            permission = "npc.controllable")
+    public void controllable(CommandContext args, CommandSender sender, NPC npc) {
+        boolean enabled = npc.getTrait(Controllable.class).toggle();
+        if (enabled) {
+            Messaging.send(sender, StringHelper.wrap(npc.getName()) + " can now be controlled.");
+        } else {
+            Messaging.send(sender, StringHelper.wrap(npc.getName()) + " can no longer be controlled.");
         }
-        Messaging.send(sender, StringHelper.wrap(npc.getName() + "'s") + " character is now " + StringHelper.wrap(name)
-                + ".");
-        npc.setCharacter(character);
     }
 
     @Command(
@@ -156,25 +141,7 @@ public class NPCCommands {
             }
         }
         npc = npcRegistry.createNPC(type, name);
-        String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(npc.getName());
-        if (args.hasValueFlag("char")) {
-            String character = args.getFlag("char").toLowerCase();
-            if (characterManager.getCharacter(character) == null) {
-                Messaging.sendError(player, "'" + args.getFlag("char") + "' is not a valid character.");
-                return;
-            } else {
-                Character set = characterManager.getCharacter(character);
-                if (!set.getValidTypes().isEmpty() && !set.getValidTypes().contains(type)) {
-                    Messaging.sendError(player, "The character '" + set.getName() + "' cannot be given the mob type '"
-                            + type.name().toLowerCase() + "'.");
-                    npc.remove();
-                    return;
-                }
-                npc.setCharacter(characterManager.getCharacter(character));
-                msg += " with the character " + StringHelper.wrap(character);
-            }
-        }
-        msg += " at your location";
+        String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(npc.getName()) + " at your location";
 
         int age = 0;
         if (args.hasFlag('b')) {
@@ -195,19 +162,15 @@ public class NPCCommands {
         msg += ".";
 
         // Initialize necessary traits
-        npc.addTrait(Owner.class);
         if (!Setting.SERVER_OWNS_NPCS.asBoolean())
             npc.getTrait(Owner.class).setOwner(player.getName());
         npc.getTrait(MobType.class).setType(type.toString());
-        npc.addTrait(LookClose.class);
-        npc.addTrait(Text.class);
 
         npc.spawn(player.getLocation());
 
         // Set age after entity spawns
         if (npc.getBukkitEntity() instanceof Ageable)
             npc.getTrait(Age.class).setAge(age);
-
         selector.select(player, npc);
         Messaging.send(player, msg);
     }
@@ -267,17 +230,6 @@ public class NPCCommands {
                         npcs.add(add);
                 }
             }
-
-            if (args.hasValueFlag("char")) {
-                String character = args.getFlag("char");
-                if (characterManager.getCharacter(character) == null)
-                    throw new CommandException("'" + character + "' is not a valid character.");
-
-                for (NPC add : npcRegistry.getNPCs(characterManager.getCharacter(character).getClass())) {
-                    if (!npcs.contains(add))
-                        npcs.add(add);
-                }
-            }
         }
 
         Paginator paginator = new Paginator().header("NPCs");
@@ -308,26 +260,23 @@ public class NPCCommands {
         Messaging.send(sender, msg + " when a player is nearby.");
     }
 
-    @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0)
-    public void npc(CommandContext args, CommandSender sender, NPC npc) {
-        Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
-        Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
-        Messaging.send(sender, "    <a>Character: <e>"
-                + (npc.getCharacter() != null ? npc.getCharacter().getName() : "None"));
-        Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
-    }
-    
-    @Command(aliases = { "npc" }, usage = "moveto", desc = "Teleports a NPC to a given location", modifiers = "moveto",
-            min = 1, max = 1, permission = "npc.moveto")
+    @Command(
+            aliases = { "npc" },
+            usage = "moveto",
+            desc = "Teleports a NPC to a given location",
+            modifiers = "moveto",
+            min = 1,
+            max = 1,
+            permission = "npc.moveto")
     public void moveto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         Location current = npc.getBukkitEntity().getLocation();
         Location to = current.clone();
-        if (args.hasValueFlag("x")) 
+        if (args.hasValueFlag("x"))
             to.setX(args.getFlagInteger("x"));
-        if (args.hasValueFlag("y")) 
+        if (args.hasValueFlag("y"))
             to.setY(args.getFlagInteger("y"));
         if (args.hasValueFlag("z"))
             to.setZ(args.getFlagInteger("z"));
@@ -335,16 +284,24 @@ public class NPCCommands {
             to.setYaw((float) args.getFlagDouble("yaw"));
         if (args.hasValueFlag("pitch"))
             to.setPitch((float) args.getFlagDouble("pitch"));
-        if (args.hasValueFlag("world")){
+        if (args.hasValueFlag("world")) {
             World world = Bukkit.getWorld(args.getFlag("world"));
             if (world == null)
                 throw new CommandException("Given world not found.");
             to.setWorld(world);
         }
+
         npc.getBukkitEntity().teleport(to, TeleportCause.COMMAND);
         Messaging.send(sender, StringHelper.wrap(npc.getName()) + " was teleported to " + to + ".");
     }
-    
+
+    @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0)
+    public void npc(CommandContext args, CommandSender sender, NPC npc) {
+        Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
+        Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
+        Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
+    }
+
     @Command(
             aliases = { "npc" },
             usage = "owner [name]",
@@ -431,7 +388,7 @@ public class NPCCommands {
             throw new CommandException("You must be the owner of this NPC to execute that command.");
         if (!player.hasPermission("citizens.npc.remove") && !player.hasPermission("citizens.admin"))
             throw new NoPermissionsException();
-        npc.remove();
+        npc.destroy();
         Messaging.send(player, "<a>You permanently removed " + StringHelper.wrap(npc.getName()) + ".");
     }
 
@@ -465,7 +422,7 @@ public class NPCCommands {
             permission = "npc.select")
     @Requirements(ownership = true)
     public void select(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        NPC toSelect = npcRegistry.getNPC(args.getInteger(1));
+        NPC toSelect = npcRegistry.getById(args.getInteger(1));
         if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn())
             throw new CommandException("No NPC with the ID '" + args.getInteger(1) + "' is spawned.");
         if (npc != null && toSelect.getId() == npc.getId())
@@ -484,7 +441,7 @@ public class NPCCommands {
             permission = "npc.spawn")
     @Requirements
     public void spawn(CommandContext args, Player player, NPC npc) throws CommandException {
-        NPC respawn = npcRegistry.getNPC(args.getInteger(1));
+        NPC respawn = npcRegistry.getById(args.getInteger(1));
         if (respawn == null)
             throw new CommandException("No NPC with the ID '" + args.getInteger(1) + "' exists.");
 
@@ -498,23 +455,6 @@ public class NPCCommands {
         } else
             throw new CommandException(respawn.getName() + " is already spawned at another location."
                     + " Use '/npc tphere' to teleport the NPC to your location.");
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "controllable",
-            desc = "Toggles whether the NPC can be ridden and controlled",
-            modifiers = { "controllable" },
-            min = 1,
-            max = 1,
-            permission = "npc.controllable")
-    public void controllable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean enabled = npc.getTrait(Controllable.class).toggle();
-        if (enabled) {
-            Messaging.send(sender, StringHelper.wrap(npc.getName()) + " can now be controlled.");
-        } else {
-            Messaging.send(sender, StringHelper.wrap(npc.getName()) + " can no longer be controlled.");
-        }
     }
 
     @Command(
@@ -541,5 +481,21 @@ public class NPCCommands {
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "trait [trait name]",
+            desc = "Adds a trait to the NPC",
+            modifiers = { "trait" },
+            min = 2,
+            max = 2,
+            permission = "npc.trait")
+    public void trait(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        Trait trait = CitizensAPI.getTraitManager().getTrait(args.getString(1), npc);
+        if (trait == null)
+            throw new CommandException("Trait not found.");
+        npc.addTrait(trait);
+        Messaging.sendF(sender, ChatColor.GREEN + "Trait %s added successfully.", StringHelper.wrap(trait.getName()));
     }
 }

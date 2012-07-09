@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.scripting.CompileCallback;
 import net.citizensnpcs.api.scripting.ScriptFactory;
 import net.citizensnpcs.api.trait.Trait;
@@ -31,7 +30,6 @@ public class Behaviour extends Trait {
             return new File(rootFolder, arg0);
         }
     };
-    private final NPC npc;
     private final File rootFolder = new File(CitizensAPI.getScriptFolder(), "behaviours");
     private final List<File> scripts = Lists.newArrayList();
     {
@@ -39,8 +37,8 @@ public class Behaviour extends Trait {
             rootFolder.mkdirs();
     }
 
-    public Behaviour(NPC npc) {
-        this.npc = npc;
+    public Behaviour() {
+        super("behaviour");
     }
 
     public void addScripts(Iterable<String> scripts) {

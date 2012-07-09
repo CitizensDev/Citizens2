@@ -3,7 +3,7 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHandle;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.minecraft.server.EntityVillager;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
@@ -21,7 +21,7 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
         return (Villager) getHandle().getBukkitEntity();
     }
 
-    public static class EntityVillagerNPC extends EntityVillager implements NPCHandle {
+    public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
         private final CitizensNPC npc;
 
         public EntityVillagerNPC(World world) {
@@ -36,15 +36,15 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
         }
 
         @Override
+        public NPC getNPC() {
+            return npc;
+        }
+
+        @Override
         public void z_() {
             super.z_();
             if (npc != null)
                 npc.update();
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

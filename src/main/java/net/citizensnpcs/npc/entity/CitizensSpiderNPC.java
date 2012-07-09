@@ -3,7 +3,7 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHandle;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.minecraft.server.EntitySpider;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
@@ -21,7 +21,7 @@ public class CitizensSpiderNPC extends CitizensMobNPC {
         return (Spider) getHandle().getBukkitEntity();
     }
 
-    public static class EntitySpiderNPC extends EntitySpider implements NPCHandle {
+    public static class EntitySpiderNPC extends EntitySpider implements NPCHolder {
         private final CitizensNPC npc;
 
         public EntitySpiderNPC(World world) {
@@ -36,15 +36,15 @@ public class CitizensSpiderNPC extends CitizensMobNPC {
         }
 
         @Override
+        public NPC getNPC() {
+            return npc;
+        }
+
+        @Override
         public void z_() {
             super.z_();
             if (npc != null)
                 npc.update();
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

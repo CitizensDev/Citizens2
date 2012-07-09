@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -9,12 +8,11 @@ import org.bukkit.entity.Ageable;
 
 public class Age extends Trait implements Runnable, Toggleable {
     private int age = 0;
-    private boolean locked = true;
     private boolean ageable = false;
-    private final NPC npc;
+    private boolean locked = true;
 
-    public Age(NPC npc) {
-        this.npc = npc;
+    public Age() {
+        super("age");
     }
 
     @Override

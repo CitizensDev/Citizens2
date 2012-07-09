@@ -2,7 +2,6 @@ package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -12,12 +11,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 public class Saddle extends Trait implements Toggleable, Listener {
-    private final NPC npc;
-    private boolean saddle;
     private boolean pig;
+    private boolean saddle;
 
-    public Saddle(NPC npc) {
-        this.npc = npc;
+    public Saddle() {
+        super("saddle");
     }
 
     @Override

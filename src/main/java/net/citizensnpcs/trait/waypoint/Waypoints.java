@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
@@ -13,13 +12,11 @@ import net.citizensnpcs.editor.Editor;
 import org.bukkit.entity.Player;
 
 public class Waypoints extends Trait {
-    private final NPC npc;
     private WaypointProvider provider = new LinearWaypointProvider();
     private String providerName = "linear";
 
-    public Waypoints(NPC npc) {
-        this.npc = npc;
-        npc.getAI().registerNavigationCallback(provider.getCallback());
+    public Waypoints() {
+        super("waypoints");
     }
 
     private WaypointProvider create(Class<? extends WaypointProvider> clazz) {
@@ -30,11 +27,6 @@ public class Waypoints extends Trait {
         } catch (Exception ex) {
             return null;
         }
-    }
-
-    @Override
-    public void onNPCSpawn() {
-        npc.getAI().registerNavigationCallback(provider.getCallback());
     }
 
     public Editor getEditor(Player player) {
@@ -54,6 +46,11 @@ public class Waypoints extends Trait {
         if (provider == null)
             return;
         provider.load(key.getRelative(providerName));
+    }
+
+    @Override
+    public void onNPCSpawn() {
+        npc.getAI().registerNavigationCallback(provider.getCallback());
     }
 
     @Override
