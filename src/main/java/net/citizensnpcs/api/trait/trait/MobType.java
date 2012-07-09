@@ -9,10 +9,6 @@ import net.citizensnpcs.api.util.DataKey;
 public class MobType extends Trait {
     private String type;
 
-    public MobType() {
-        super("type");
-    }
-
     /**
      * Gets the type of mob that an NPC is.
      * 

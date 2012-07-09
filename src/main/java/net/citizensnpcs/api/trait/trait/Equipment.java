@@ -16,9 +16,10 @@ import org.bukkit.inventory.ItemStack;
  */
 public class Equipment extends Trait {
     private final ItemStack[] equipment = new ItemStack[5];
+    private final NPC npc;
 
     public Equipment(NPC npc) {
-        super("equipment");
+        this.npc = npc;
     }
 
     /**

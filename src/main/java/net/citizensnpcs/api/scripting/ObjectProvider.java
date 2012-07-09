@@ -10,18 +10,18 @@ public class ObjectProvider implements ContextProvider {
     private final String name;
     private final Callable<Object> provider;
 
-    public ObjectProvider(String name, Callable<Object> provider) {
-        Validate.notNull(provider, "provider cannot be null");
-        Validate.notNull(name, "name cannot be null");
-        this.name = name;
-        this.provider = provider;
-    }
-
     public ObjectProvider(String name, Object obj) {
         Validate.notNull(obj, "provided object cannot be null");
         Validate.notNull(name, "name cannot be null");
         this.name = name;
         this.provider = Callables.returning(obj);
+    }
+
+    public ObjectProvider(String name, Callable<Object> provider) {
+        Validate.notNull(provider, "provider cannot be null");
+        Validate.notNull(name, "name cannot be null");
+        this.name = name;
+        this.provider = provider;
     }
 
     @Override

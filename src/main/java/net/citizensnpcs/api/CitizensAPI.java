@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitManager;
 
@@ -21,12 +22,17 @@ public final class CitizensAPI {
     private static final CitizensAPI instance = new CitizensAPI();
     private static final ScriptCompiler scriptCompiler = new ScriptCompiler();
 
-    public static File getDataFolder() {
-        return getImplementation().getDataFolder();
+    /**
+     * Gets the CharacterManager.
+     * 
+     * @return Citizens character manager
+     */
+    public static CharacterManager getCharacterManager() {
+        return getImplementation().getCharacterManager();
     }
 
-    private static CitizensPlugin getImplementation() {
-        return instance.implementation != null ? instance.implementation.get() : null;
+    public static File getDataFolder() {
+        return getImplementation().getDataFolder();
     }
 
     /**
@@ -59,14 +65,18 @@ public final class CitizensAPI {
         return getImplementation().getTraitManager();
     }
 
-    public static boolean hasImplementation() {
-        return getImplementation() != null;
-    }
-
     public static void setImplementation(CitizensPlugin implementation) {
         if (hasImplementation())
             getImplementation().onImplementationChanged();
         instance.implementation = new WeakReference<CitizensPlugin>(implementation);
+    }
+
+    public static boolean hasImplementation() {
+        return getImplementation() != null;
+    }
+
+    private static CitizensPlugin getImplementation() {
+        return instance.implementation != null ? instance.implementation.get() : null;
     }
 
     static {

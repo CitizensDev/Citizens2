@@ -1,19 +1,16 @@
 package net.citizensnpcs.api.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
+
+import org.bukkit.plugin.Plugin;
 
 /**
  * Represents a Trait that can be loaded and saved.
  */
 public abstract class Trait {
-    private final String name;
-    protected NPC npc = null;
-
-    protected Trait(String name) {
-        this.name = name;
-    }
+    private String name;
+    private Plugin plugin;
 
     /**
      * Gets the name of this trait.
@@ -24,8 +21,13 @@ public abstract class Trait {
         return name;
     }
 
-    public NPC getNPC() {
-        return this.npc;
+    /**
+     * Gets the plugin that this trait is associated with.
+     * 
+     * @return Plugin attached to this trait
+     */
+    public final Plugin getPlugin() {
+        return plugin;
     }
 
     /**
@@ -60,9 +62,16 @@ public abstract class Trait {
      */
     public abstract void save(DataKey key);
 
-    public void setNPC(NPC npc) {
-        if (this.npc != null)
-            throw new IllegalArgumentException("npc may only be set once");
-        this.npc = npc;
+    public final void setName(String name) {
+        if (this.name != null)
+            throw new IllegalArgumentException("Cannot change the name of a trait");
+        this.name = name;
+    }
+
+    public final void setPlugin(Plugin plugin) {
+        if (this.plugin != null)
+            throw new IllegalArgumentException("Cannot change the plugin of a trait.");
+
+        this.plugin = plugin;
     }
 }

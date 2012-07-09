@@ -110,6 +110,13 @@ public class EventRegistrar implements ContextProvider {
         }
 
         @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = prime + ((functionName == null) ? 0 : functionName.hashCode());
+            return prime * result + ((instance == null) ? 0 : instance.hashCode());
+        }
+
+        @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
@@ -133,13 +140,6 @@ public class EventRegistrar implements ContextProvider {
                 return false;
             }
             return true;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = prime + ((functionName == null) ? 0 : functionName.hashCode());
-            return prime * result + ((instance == null) ? 0 : instance.hashCode());
         }
     }
 }

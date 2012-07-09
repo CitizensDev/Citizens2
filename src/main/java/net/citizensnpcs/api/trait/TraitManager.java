@@ -1,7 +1,5 @@
 package net.citizensnpcs.api.trait;
 
-import net.citizensnpcs.api.npc.NPC;
-
 public interface TraitManager {
 
     /**
@@ -11,7 +9,7 @@ public interface TraitManager {
      *            Class of the trait
      * @return Trait with the given class
      */
-    public <T extends Trait> T getTrait(Class<T> clazz, NPC npc);
+    public <T extends Trait> T getTrait(Class<T> clazz);
 
     /**
      * Gets a trait with the given name.
@@ -20,13 +18,13 @@ public interface TraitManager {
      *            Name of the trait
      * @return Trait with the given name
      */
-    public <T extends Trait> T getTrait(String name, NPC npc);
+    public <T extends Trait> T getTrait(String name);
 
     /**
-     * Registers a trait using the given information.
+     * Registers a trait using the given factory.
      * 
-     * @param info
-     *            Registration information
+     * @param factory
+     *            Factory to use to register a trait with
      */
-    public void registerTrait(TraitInfo info);
+    public void registerTrait(TraitFactory factory);
 }
