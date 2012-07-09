@@ -12,7 +12,6 @@ import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
@@ -35,7 +34,6 @@ import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.npc.CitizensCharacterManager;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitManager;
@@ -55,7 +53,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.Iterables;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
-    private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
@@ -63,11 +60,15 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private CitizensNPCRegistry npcRegistry;
     private Storage saves; // TODO: refactor this, it's used in too many places
     private NPCSelector selector;
-    private TraitManager traitManager;
+    private CitizensTraitManager traitManager;
 
-    @Override
-    public CharacterManager getCharacterManager() {
-        return characterManager;
+    private void despawnNPCs() {
+        Iterator<NPC> itr = npcRegistry.iterator();
+        while (itr.hasNext()) {
+            NPC npc = itr.next();
+            itr.remove();
+            npc.despawn();
+        }
     }
 
     public Iterable<net.citizensnpcs.command.Command> getCommands(String base) {
@@ -170,7 +171,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         setupStorage();
 
         npcRegistry = new CitizensNPCRegistry(saves);
-        traitManager = new CitizensTraitManager(this);
+        traitManager = new CitizensTraitManager();
         selector = new NPCSelector(this);
         CitizensAPI.setImplementation(this);
 
@@ -203,7 +204,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                                     return Iterables.size(npcRegistry);
                                 }
                             });
-                            characterManager.addPlotters(metrics);
+
+                            traitManager.addPlotters(metrics.createGraph("traits"));
                             metrics.start();
                             Messaging.log("Metrics started.");
                         } catch (IOException e) {
@@ -251,15 +253,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
 
-    private void despawnNPCs() {
-        Iterator<NPC> itr = npcRegistry.iterator();
-        while (itr.hasNext()) {
-            NPC npc = itr.next();
-            itr.remove();
-            npc.despawn();
-        }
-    }
-
     public void save() {
         for (NPC npc : npcRegistry)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
@@ -287,7 +280,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     continue;
                 }
             }
-            NPC npc = npcRegistry.createNPC(type, id, key.getString("name"), null);
+            NPC npc = npcRegistry.createNPC(type, id, key.getString("name"));
             ((CitizensNPC) npc).load(key);
 
             ++created;

@@ -2,7 +2,6 @@ package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -14,11 +13,10 @@ import org.bukkit.event.entity.SheepDyeWoolEvent;
 
 public class WoolColor extends Trait implements Listener {
     private DyeColor color = DyeColor.WHITE;
-    private final NPC npc;
     boolean sheep = false;
 
-    public WoolColor(NPC npc) {
-        this.npc = npc;
+    public WoolColor() {
+        super("woolcolor");
     }
 
     @Override

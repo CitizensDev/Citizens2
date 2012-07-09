@@ -20,9 +20,9 @@ public class CitizensAI implements AI {
     private PathStrategy executing;
     private final List<GoalEntry> executingGoals = Lists.newArrayList();
     private final List<GoalEntry> goals = Lists.newArrayList();
-    private List<Goal> toRemove = null;
     private final CitizensNPC npc;
     private boolean paused;
+    private List<Goal> toRemove = null;
 
     public CitizensAI(CitizensNPC npc) {
         this.npc = npc;
@@ -87,6 +87,29 @@ public class CitizensAI implements AI {
         if (toRemove == null)
             toRemove = Lists.newArrayList();
         toRemove.add(goal);
+    }
+
+    private void removeGoals() {
+        if (toRemove == null)
+            return;
+        for (Goal goal : toRemove) {
+            Iterator<GoalEntry> itr = executingGoals.iterator();
+            while (itr.hasNext()) {
+                GoalEntry entry = itr.next();
+                if (entry.getGoal().equals(goal)) {
+                    entry.getGoal().reset();
+                    itr.remove();
+                }
+            }
+            itr = goals.iterator();
+            while (itr.hasNext()) {
+                GoalEntry entry = itr.next();
+                if (entry.getGoal().equals(goal))
+                    itr.remove();
+            }
+        }
+
+        toRemove = null;
     }
 
     public void resume() {
@@ -164,29 +187,6 @@ public class CitizensAI implements AI {
         }
     }
 
-    private void removeGoals() {
-        if (toRemove == null)
-            return;
-        for (Goal goal : toRemove) {
-            Iterator<GoalEntry> itr = executingGoals.iterator();
-            while (itr.hasNext()) {
-                GoalEntry entry = itr.next();
-                if (entry.getGoal().equals(goal)) {
-                    entry.getGoal().reset();
-                    itr.remove();
-                }
-            }
-            itr = goals.iterator();
-            while (itr.hasNext()) {
-                GoalEntry entry = itr.next();
-                if (entry.getGoal().equals(goal))
-                    itr.remove();
-            }
-        }
-
-        toRemove = null;
-    }
-
     public static class GoalEntry implements Comparable<GoalEntry> {
         private final Goal goal;
         private final int priority;
@@ -199,19 +199,6 @@ public class CitizensAI implements AI {
         @Override
         public int compareTo(GoalEntry o) {
             return o.priority > priority ? 1 : o.priority < priority ? -1 : 0;
-        }
-
-        public Goal getGoal() {
-            return goal;
-        }
-
-        public int getPriority() {
-            return priority;
-        }
-
-        @Override
-        public int hashCode() {
-            return 31 + ((goal == null) ? 0 : goal.hashCode());
         }
 
         @Override
@@ -231,6 +218,19 @@ public class CitizensAI implements AI {
                 return false;
             }
             return true;
+        }
+
+        public Goal getGoal() {
+            return goal;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 + ((goal == null) ? 0 : goal.hashCode());
         }
     }
 }

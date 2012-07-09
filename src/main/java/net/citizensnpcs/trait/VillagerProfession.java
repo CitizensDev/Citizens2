@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -9,11 +8,10 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 
 public class VillagerProfession extends Trait {
-    private final NPC npc;
     private Profession profession = Profession.FARMER;
 
-    public VillagerProfession(NPC npc) {
-        this.npc = npc;
+    public VillagerProfession() {
+        super("profession");
     }
 
     @Override

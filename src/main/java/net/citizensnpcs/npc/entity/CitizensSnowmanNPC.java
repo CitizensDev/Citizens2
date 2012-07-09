@@ -3,7 +3,7 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHandle;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.minecraft.server.EntitySnowman;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
@@ -21,7 +21,7 @@ public class CitizensSnowmanNPC extends CitizensMobNPC {
         return (Snowman) getHandle().getBukkitEntity();
     }
 
-    public static class EntitySnowmanNPC extends EntitySnowman implements NPCHandle {
+    public static class EntitySnowmanNPC extends EntitySnowman implements NPCHolder {
         private final CitizensNPC npc;
 
         public EntitySnowmanNPC(World world, NPC npc) {
@@ -32,14 +32,14 @@ public class CitizensSnowmanNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void z_() {
-            super.z_();
-            npc.update();
+        public NPC getNPC() {
+            return npc;
         }
 
         @Override
-        public NPC getNPC() {
-            return npc;
+        public void z_() {
+            super.z_();
+            npc.update();
         }
     }
 }
