@@ -5,7 +5,7 @@ import java.lang.ref.WeakReference;
 
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
-import net.citizensnpcs.api.trait.TraitManager;
+import net.citizensnpcs.api.trait.TraitFactory;
 
 import org.bukkit.plugin.Plugin;
 
@@ -30,8 +30,9 @@ public final class CitizensAPI {
     }
 
     /**
-     * Gets the {@link NPCRegistry}.
+     * Gets the current implementation's {@link NPCRegistry}.
      * 
+     * @see CitizensPlugin
      * @return The NPC registry
      */
     public static NPCRegistry getNPCRegistry() {
@@ -51,12 +52,13 @@ public final class CitizensAPI {
     }
 
     /**
-     * Gets the TraitManager.
+     * Gets the current implementation's {@link TraitFactory}.
      * 
-     * @return Citizens trait manager
+     * @see CitizensPlugin
+     * @return Citizens trait factory
      */
-    public static TraitManager getTraitManager() {
-        return getImplementation().getTraitManager();
+    public static TraitFactory getTraitFactory() {
+        return getImplementation().getTraitFactory();
     }
 
     public static boolean hasImplementation() {

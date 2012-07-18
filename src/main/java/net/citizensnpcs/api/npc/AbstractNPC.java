@@ -4,18 +4,20 @@ import java.util.List;
 import java.util.Map;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.GoalController;
+import net.citizensnpcs.api.ai.SimpleGoalController;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.trait.Trait;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public abstract class AbstractNPC implements NPC {
+    private final GoalController goalController = new SimpleGoalController();
     private final int id;
     private final MetadataStore metadata = new SimpleMetadataStore();
     private String name;
@@ -34,25 +36,22 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void addTrait(Trait trait) {
-        // TODO: right now every addTrait call has to be wrapped with
-        // TraitManager.getTrait(Class, NPC) -- this is bad, need to fix this.
         if (trait == null) {
             System.err.println("[Citizens] Cannot register a null trait. Was it registered properly?");
             return;
         }
 
-        if (trait.getNPC() == null) // link the trait
-            trait.setNPC(this);
+        if (trait.getNPC() == null)
+            trait.linkToNPC(this);
 
-        if (trait instanceof Runnable) {
-            runnables.add((Runnable) trait);
-            if (traits.containsKey(trait.getClass()))
-                runnables.remove(traits.get(trait.getClass()));
-        }
+        runnables.add(trait);
+        // if an existing trait is being replaced, we need to remove the
+        // currently registered runnable to avoid conflicts
+        if (traits.containsKey(trait.getClass()))
+            runnables.remove(traits.get(trait.getClass()));
 
-        if (trait instanceof Listener) {
-            Bukkit.getPluginManager().registerEvents((Listener) trait, CitizensAPI.getPlugin());
-        }
+        Bukkit.getPluginManager().registerEvents(trait, CitizensAPI.getPlugin());
+
         traits.put(trait.getClass(), trait);
     }
 
@@ -66,11 +65,15 @@ public abstract class AbstractNPC implements NPC {
         Bukkit.getPluginManager().callEvent(new NPCRemoveEvent(this));
         runnables.clear();
         for (Trait trait : traits.values()) {
-            if (trait instanceof Listener) {
-                HandlerList.unregisterAll((Listener) trait);
-            }
+            HandlerList.unregisterAll(trait);
         }
         traits.clear();
+        CitizensAPI.getNPCRegistry().deregister(this);
+    }
+
+    @Override
+    public GoalController getDefaultGoalController() {
+        return goalController;
     }
 
     @Override
@@ -113,8 +116,8 @@ public abstract class AbstractNPC implements NPC {
     public void removeTrait(Class<? extends Trait> trait) {
         Trait t = traits.remove(trait);
         if (t != null) {
-            if (t instanceof Runnable)
-                runnables.remove(t);
+            runnables.remove(t);
+            HandlerList.unregisterAll(t);
             t.onRemove();
         }
     }
@@ -127,5 +130,6 @@ public abstract class AbstractNPC implements NPC {
     public void update() {
         for (int i = 0; i < runnables.size(); ++i)
             runnables.get(i).run();
+        goalController.run();
     }
 }

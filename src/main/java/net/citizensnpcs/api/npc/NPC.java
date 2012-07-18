@@ -1,16 +1,16 @@
 package net.citizensnpcs.api.npc;
 
-import net.citizensnpcs.api.ai.AI;
+import net.citizensnpcs.api.ai.GoalController;
+import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.trait.Trait;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.inventory.InventoryHolder;
 
 /**
- * Represents an NPC with a Character and separate traits.
+ * Represents an NPC with optional {@link Trait}s.
  */
-public interface NPC extends InventoryHolder {
+public interface NPC {
 
     /**
      * Adds a trait to this NPC.
@@ -47,18 +47,18 @@ public interface NPC extends InventoryHolder {
     public void destroy();
 
     /**
-     * Gets the {@link AI} of this NPC.
-     * 
-     * @return AI of this NPC
-     */
-    public AI getAI();
-
-    /**
      * Gets the Bukkit entity associated with this NPC.
      * 
      * @return Entity associated with this NPC
      */
     public LivingEntity getBukkitEntity();
+
+    /**
+     * Gets the default {@link GoalController} of this NPC.
+     * 
+     * @return Default goal controller
+     */
+    public GoalController getDefaultGoalController();
 
     /**
      * Gets the full name of this NPC.
@@ -80,6 +80,11 @@ public interface NPC extends InventoryHolder {
      * @return Stripped name of this NPC
      */
     public String getName();
+
+    /**
+     * @return The {@link Navigator} of this NPC.
+     */
+    public Navigator getNavigator();
 
     /**
      * Gets a trait from the given class.

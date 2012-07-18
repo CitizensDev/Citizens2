@@ -4,10 +4,12 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
+import org.bukkit.event.Listener;
+
 /**
  * Represents a Trait that can be loaded and saved.
  */
-public abstract class Trait {
+public abstract class Trait implements Listener, Runnable {
     private final String name;
     protected NPC npc = null;
 
@@ -24,8 +26,17 @@ public abstract class Trait {
         return name;
     }
 
-    public NPC getNPC() {
-        return this.npc;
+    /**
+     * @return The {@link NPC} this trait is attached to. May be null.
+     */
+    public final NPC getNPC() {
+        return npc;
+    }
+
+    public void linkToNPC(NPC npc) {
+        if (this.npc != null)
+            throw new IllegalArgumentException("npc may only be set once");
+        this.npc = npc;
     }
 
     /**
@@ -43,13 +54,17 @@ public abstract class Trait {
      * the entity is created in-game. This is called after the entity has been
      * created.
      */
-    public void onNPCSpawn() {
+    public void onSpawn() {
     }
 
     /**
      * Called when a trait is removed from the given NPC.
      */
     public void onRemove() {
+    }
+
+    @Override
+    public void run() {
     }
 
     /**
@@ -59,10 +74,4 @@ public abstract class Trait {
      *            DataKey to save to
      */
     public abstract void save(DataKey key);
-
-    public void setNPC(NPC npc) {
-        if (this.npc != null)
-            throw new IllegalArgumentException("npc may only be set once");
-        this.npc = npc;
-    }
 }

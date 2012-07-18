@@ -61,7 +61,7 @@ public class Equipment extends Trait {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getBukkitEntity();
             if (equipment[0] != null)
