@@ -24,7 +24,7 @@ public class VillagerProfession extends Trait {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Villager)
             ((Villager) npc.getBukkitEntity()).setProfession(profession);
     }

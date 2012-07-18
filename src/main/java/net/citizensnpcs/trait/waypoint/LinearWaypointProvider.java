@@ -3,7 +3,6 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Iterator;
 import java.util.List;
 
-import net.citizensnpcs.api.ai.NavigationCallback;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
@@ -21,7 +20,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import com.google.common.collect.Lists;
 
 public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoint> {
-    private final GenericWaypointCallback callback = new GenericWaypointCallback(this);
+    private final PassiveWaypointCycler cycler = new PassiveWaypointCycler(this);
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
     @Override
@@ -41,35 +40,37 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
             }
 
             private String formatLoc(Location location) {
-                return String.format("<e>%d<a>, <e>%d<a>, <e>%d<a>", location.getBlockX(), location.getBlockY(),
-                        location.getBlockZ());
+                return String.format("<e>%d<a>, <e>%d<a>, <e>%d<a>", location.getBlockX(),
+                        location.getBlockY(), location.getBlockZ());
             }
 
             @EventHandler
-            @SuppressWarnings("unused")
             public void onPlayerInteract(PlayerInteractEvent event) {
                 if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL)
                     return;
-                if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
+                if (event.getAction() == Action.LEFT_CLICK_BLOCK
+                        || event.getAction() == Action.LEFT_CLICK_AIR) {
                     if (event.getClickedBlock() == null)
                         return;
                     Location at = event.getClickedBlock().getLocation();
                     waypoints.add(Math.max(0, editingSlot), new Waypoint(at));
                     editingSlot = Math.min(editingSlot + 1, waypoints.size());
-                    Messaging.send(player, String.format("<e>Added<a> a waypoint at (" + formatLoc(at)
-                            + ") (<e>%d<a>, <e>%d<a>)", editingSlot + 1, waypoints.size()));
+                    Messaging.send(
+                            player,
+                            String.format("<e>Added<a> a waypoint at (" + formatLoc(at)
+                                    + ") (<e>%d<a>, <e>%d<a>)", editingSlot + 1, waypoints.size()));
                 } else if (waypoints.size() > 0) {
                     editingSlot = Math.min(0, Math.max(waypoints.size() - 1, editingSlot));
                     waypoints.remove(editingSlot);
                     editingSlot = Math.max(0, editingSlot - 1);
-                    Messaging.send(player, String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining) (<e>%d<a>)",
-                            waypoints.size(), editingSlot + 1));
+                    Messaging.send(player, String.format(
+                            "<e>Removed<a> a waypoint (<e>%d<a> remaining) (<e>%d<a>)", waypoints.size(),
+                            editingSlot + 1));
                 }
-                callback.onProviderChanged();
+                cycler.onProviderChanged();
             }
 
             @EventHandler
-            @SuppressWarnings("unused")
             public void onPlayerItemHeldChange(PlayerItemHeldEvent event) {
                 if (!event.getPlayer().equals(player) || waypoints.size() == 0)
                     return;
@@ -98,11 +99,6 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     }
 
     @Override
-    public NavigationCallback getCallback() {
-        return callback;
-    }
-
-    @Override
     public Iterator<Waypoint> iterator() {
         return waypoints.iterator();
     }
@@ -111,15 +107,15 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     public void load(DataKey key) {
         for (DataKey root : key.getRelative("points").getIntegerSubKeys()) {
             root = root.getRelative("location");
-            waypoints.add(new Waypoint(new Location(Bukkit.getWorld(root.getString("world")), root.getDouble("x"), root
-                    .getDouble("y"), root.getDouble("z"), (float) root.getDouble("yaw", 0), (float) root.getDouble(
-                    "pitch", 0))));
+            waypoints.add(new Waypoint(new Location(Bukkit.getWorld(root.getString("world")), root
+                    .getDouble("x"), root.getDouble("y"), root.getDouble("z"), (float) root.getDouble("yaw",
+                    0), (float) root.getDouble("pitch", 0))));
         }
     }
 
     @Override
-    public void onAttach() {
-        callback.onProviderChanged();
+    public void onSpawn() {
+        cycler.onProviderChanged();
     }
 
     @Override

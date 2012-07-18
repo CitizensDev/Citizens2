@@ -31,9 +31,11 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
         public EntityMagmaCubeNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            setSize(3);
-            goalSelector = new PathfinderGoalSelector();
-            targetSelector = new PathfinderGoalSelector();
+            if (npc != null) {
+                setSize(3);
+                goalSelector = new PathfinderGoalSelector();
+                targetSelector = new PathfinderGoalSelector();
+            }
         }
 
         @Override
@@ -47,6 +49,12 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public void b_(double x, double y, double z) {
+            // when another entity collides, b_ is called to push the NPC
+            // so we prevent b_ from doing anything.
         }
     }
 }

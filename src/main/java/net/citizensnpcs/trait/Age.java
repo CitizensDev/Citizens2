@@ -6,7 +6,7 @@ import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Ageable;
 
-public class Age extends Trait implements Runnable, Toggleable {
+public class Age extends Trait implements Toggleable {
     private int age = 0;
     private boolean ageable = false;
     private boolean locked = true;
@@ -24,7 +24,7 @@ public class Age extends Trait implements Runnable, Toggleable {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (npc instanceof Ageable) {
             Ageable entity = (Ageable) npc.getBukkitEntity();
             entity.setAge(age);

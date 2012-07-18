@@ -49,8 +49,9 @@ public class Waypoints extends Trait {
     }
 
     @Override
-    public void onNPCSpawn() {
-        npc.getAI().registerNavigationCallback(provider.getCallback());
+    public void onSpawn() {
+        if (provider != null)
+            provider.onSpawn();
     }
 
     @Override

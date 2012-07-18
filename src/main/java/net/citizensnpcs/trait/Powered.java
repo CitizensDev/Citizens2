@@ -19,7 +19,7 @@ public class Powered extends Trait implements Toggleable {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Creeper)
             ((Creeper) npc.getBukkitEntity()).setPowered(powered);
     }

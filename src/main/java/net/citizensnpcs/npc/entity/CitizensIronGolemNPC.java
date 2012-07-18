@@ -27,8 +27,10 @@ public class CitizensIronGolemNPC extends CitizensMobNPC {
         public EntityIronGolemNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            goalSelector = new PathfinderGoalSelector();
-            targetSelector = new PathfinderGoalSelector();
+            if (npc != null) {
+                goalSelector = new PathfinderGoalSelector();
+                targetSelector = new PathfinderGoalSelector();
+            }
         }
 
         @Override
@@ -39,7 +41,14 @@ public class CitizensIronGolemNPC extends CitizensMobNPC {
         @Override
         public void z_() {
             super.z_();
-            npc.update();
+            if (npc != null)
+                npc.update();
+        }
+
+        @Override
+        public void b_(double x, double y, double z) {
+            // when another entity collides, b_ is called to push the NPC
+            // so we prevent b_ from doing anything.
         }
     }
 }

@@ -7,10 +7,9 @@ import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Pig;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-public class Saddle extends Trait implements Toggleable, Listener {
+public class Saddle extends Trait implements Toggleable {
     private boolean pig;
     private boolean saddle;
 
@@ -24,7 +23,7 @@ public class Saddle extends Trait implements Toggleable, Listener {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Pig) {
             ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
             pig = true;

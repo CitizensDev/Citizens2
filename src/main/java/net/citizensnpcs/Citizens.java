@@ -15,7 +15,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
-import net.citizensnpcs.api.trait.TraitManager;
+import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.NBTStorage;
@@ -36,7 +36,7 @@ import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
-import net.citizensnpcs.npc.CitizensTraitManager;
+import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
@@ -48,6 +48,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Iterables;
@@ -60,7 +61,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private CitizensNPCRegistry npcRegistry;
     private Storage saves; // TODO: refactor this, it's used in too many places
     private NPCSelector selector;
-    private CitizensTraitManager traitManager;
+    private CitizensTraitFactory traitFactory;
 
     private void despawnNPCs() {
         Iterator<NPC> itr = npcRegistry.iterator();
@@ -90,8 +91,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
-    public TraitManager getTraitManager() {
-        return traitManager;
+    public TraitFactory getTraitFactory() {
+        return traitFactory;
     }
 
     @Override
@@ -171,7 +172,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         setupStorage();
 
         npcRegistry = new CitizensNPCRegistry(saves);
-        traitManager = new CitizensTraitManager();
+        traitFactory = new CitizensTraitFactory();
         selector = new NPCSelector(this);
         CitizensAPI.setImplementation(this);
 
@@ -188,31 +189,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             public void run() {
                 setupNPCs();
                 startMetrics();
-            }
-
-            private void startMetrics() {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            Metrics metrics = new Metrics(Citizens.this);
-                            if (metrics.isOptOut())
-                                return;
-                            metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
-                                @Override
-                                public int getValue() {
-                                    return Iterables.size(npcRegistry);
-                                }
-                            });
-
-                            traitManager.addPlotters(metrics.createGraph("traits"));
-                            metrics.start();
-                            Messaging.log("Metrics started.");
-                        } catch (IOException e) {
-                            Messaging.logF("Unable to start metrics: %s.", e.getMessage());
-                        }
-                    }
-                }.start();
+                enableSubPlugins();
             }
         }) == -1) {
             Messaging.severe("Issue enabling plugin. Disabling.");
@@ -224,6 +201,48 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void onImplementationChanged() {
         Messaging.severe("Citizens implementation changed, disabling plugin.");
         Bukkit.getPluginManager().disablePlugin(this);
+    }
+
+    private void enableSubPlugins() {
+        File root = new File(getDataFolder(), Setting.SUBPLUGIN_FOLDER.asString());
+        if (!root.exists() || !root.isDirectory())
+            return;
+        Plugin[] plugins = Bukkit.getPluginManager().loadPlugins(root);
+        // code beneath modified from CraftServer
+        for (Plugin plugin : plugins) {
+            try {
+                Messaging.logF("Loading %s", plugin.getDescription().getFullName());
+                plugin.onLoad();
+            } catch (Throwable ex) {
+                Messaging.severe(ex.getMessage() + " initializing " + plugin.getDescription().getFullName());
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void startMetrics() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Metrics metrics = new Metrics(Citizens.this);
+                    if (metrics.isOptOut())
+                        return;
+                    metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
+                        @Override
+                        public int getValue() {
+                            return Iterables.size(npcRegistry);
+                        }
+                    });
+
+                    traitFactory.addPlotters(metrics.createGraph("traits"));
+                    metrics.start();
+                    Messaging.log("Metrics started.");
+                } catch (IOException e) {
+                    Messaging.logF("Unable to start metrics: %s.", e.getMessage());
+                }
+            }
+        }.start();
     }
 
     private void registerCommands() {
@@ -293,7 +312,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private void setupScripting() {
         contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClassLoader());
-        // workaround to fix scripts not loading plugin classes properly
+        // Workaround to fix scripts not loading plugin classes properly.
+        // The built in Sun Rhino Javascript engine uses the context classloader
+        // to search for class imports. Since the context classloader only has
+        // CraftBukkit classes, we replace it with a PluginClassLoader, which
+        // allows all plugin classes to be imported.
     }
 
     private void setupStorage() {
