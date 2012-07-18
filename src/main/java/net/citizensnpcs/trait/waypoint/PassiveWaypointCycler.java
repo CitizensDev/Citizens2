@@ -2,21 +2,16 @@ package net.citizensnpcs.trait.waypoint;
 
 import java.util.Iterator;
 
-import net.citizensnpcs.api.ai.AI;
-import net.citizensnpcs.api.ai.NavigationCallback;
-
 import org.bukkit.Location;
 
-public class GenericWaypointCallback extends NavigationCallback {
-    private AI ai;
+public class PassiveWaypointCycler {
     private Location dest;
     private boolean executing;
-    boolean hackfix = false;
     private Iterator<Waypoint> itr;
 
     private final Iterable<Waypoint> provider;
 
-    public GenericWaypointCallback(Iterable<Waypoint> provider) {
+    public PassiveWaypointCycler(Iterable<Waypoint> provider) {
         this.provider = provider;
     }
 
@@ -26,24 +21,7 @@ public class GenericWaypointCallback extends NavigationCallback {
         }
     }
 
-    @Override
-    public void onAttach(AI ai) {
-        this.ai = ai;
-        executing |= !ai.hasDestination();
-        if (!executing)
-            return;
-        if (dest == null) {
-            ensureItr();
-            if (itr.hasNext()) {
-                dest = itr.next().getLocation();
-            }
-        }
-        if (dest != null) {
-            ai.setDestination(dest);
-        }
-    }
-    
-    @Override
+    /*@Override
     public boolean onCancel(AI ai, CancelReason reason) {
         if (hackfix) {
             hackfix = false;
@@ -90,5 +68,8 @@ public class GenericWaypointCallback extends NavigationCallback {
         if (dest != null) {
             ai.setDestination(dest);
         }
+    }*/
+
+    public void onProviderChanged() {
     }
 }

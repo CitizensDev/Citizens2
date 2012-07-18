@@ -7,10 +7,9 @@ import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
-public class Sheared extends Trait implements Toggleable, Listener {
+public class Sheared extends Trait implements Toggleable {
     private boolean sheared;
 
     public Sheared() {
@@ -23,7 +22,7 @@ public class Sheared extends Trait implements Toggleable, Listener {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
     }
 

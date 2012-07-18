@@ -8,10 +8,9 @@ import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
 
-public class WoolColor extends Trait implements Listener {
+public class WoolColor extends Trait {
     private DyeColor color = DyeColor.WHITE;
     boolean sheep = false;
 
@@ -29,7 +28,7 @@ public class WoolColor extends Trait implements Listener {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Sheep) {
             ((Sheep) npc.getBukkitEntity()).setColor(color);
             sheep = true;

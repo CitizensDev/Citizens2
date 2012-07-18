@@ -11,12 +11,11 @@ import net.minecraft.server.EntityPlayer;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 //TODO: reduce reliance on CitizensNPC
-public class Controllable extends Trait implements Runnable, Listener, Toggleable {
+public class Controllable extends Trait implements Toggleable {
     private boolean enabled;
 
     public Controllable(NPC npc) {
@@ -86,6 +85,7 @@ public class Controllable extends Trait implements Runnable, Listener, Toggleabl
     public boolean toggle() {
         return (enabled = !enabled);
     }
+
     private static final double AIR_SPEED = 1.5;
     private static final double GROUND_SPEED = 4;
 

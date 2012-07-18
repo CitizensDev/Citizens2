@@ -61,8 +61,8 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "npc.age")
-    @Requirements(selected = true, ownership = true, types = { EntityType.CHICKEN, EntityType.COW, EntityType.OCELOT,
-            EntityType.PIG, EntityType.SHEEP, EntityType.VILLAGER, EntityType.WOLF })
+    @Requirements(selected = true, ownership = true, types = { EntityType.CHICKEN, EntityType.COW,
+            EntityType.OCELOT, EntityType.PIG, EntityType.SHEEP, EntityType.VILLAGER, EntityType.WOLF })
     public void age(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Age trait = npc.getTrait(Age.class);
 
@@ -90,8 +90,13 @@ public class NPCCommands {
             Messaging.send(sender, "<a>Age " + (trait.toggle() ? "locked" : "unlocked") + ".");
     }
 
-    @Command(aliases = { "npc" }, usage = "behaviour [scripts]", desc = "Sets the behaviour of a NPC", modifiers = {
-            "behaviour", "ai" }, min = 2, max = -1)
+    @Command(
+            aliases = { "npc" },
+            usage = "behaviour [scripts]",
+            desc = "Sets the behaviour of a NPC",
+            modifiers = { "behaviour", "ai" },
+            min = 2,
+            max = -1)
     public void behaviour(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Iterable<String> files = Splitter.on(',').split(args.getJoinedStrings(1, ','));
         npc.getTrait(Behaviour.class).addScripts(files);
@@ -128,7 +133,8 @@ public class NPCCommands {
     public void create(CommandContext args, final Player player, NPC npc) {
         String name = args.getString(1);
         if (name.length() > 16) {
-            Messaging.sendError(player, "NPC names cannot be longer than 16 characters. The name has been shortened.");
+            Messaging.sendError(player,
+                    "NPC names cannot be longer than 16 characters. The name has been shortened.");
             name = name.substring(0, 15);
         }
         EntityType type = EntityType.PLAYER;
@@ -141,7 +147,8 @@ public class NPCCommands {
             }
         }
         npc = npcRegistry.createNPC(type, name);
-        String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(npc.getName()) + " at your location";
+        String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(npc.getName())
+                + " at your location";
 
         int age = 0;
         if (args.hasFlag('b')) {
@@ -177,13 +184,21 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "despawn",
+            usage = "despawn (id)",
             desc = "Despawn a NPC",
             modifiers = { "despawn" },
             min = 1,
-            max = 1,
+            max = 2,
             permission = "npc.despawn")
-    public void despawn(CommandContext args, CommandSender sender, NPC npc) {
+    @Requirements
+    public void despawn(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (npc == null || args.argsLength() == 2) {
+            if (args.argsLength() < 2)
+                throw new CommandException("No NPC selected.");
+            npc = CitizensAPI.getNPCRegistry().getById(args.getInteger(2));
+            if (npc == null)
+                throw new CommandException("No NPC found with that ID.");
+        }
         npc.getTrait(Spawned.class).setSpawned(false);
         npc.despawn();
         Messaging.send(sender, ChatColor.GREEN + "You despawned " + StringHelper.wrap(npc.getName()) + ".");
@@ -351,11 +366,10 @@ public class NPCCommands {
     public void profession(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String profession = args.getString(1);
         try {
-            npc.getTrait(VillagerProfession.class).setProfession(Profession.valueOf(profession.toUpperCase()));
-            Messaging.send(
-                    sender,
-                    StringHelper.wrap(npc.getName()) + " is now the profession "
-                            + StringHelper.wrap(profession.toUpperCase()) + ".");
+            npc.getTrait(VillagerProfession.class)
+                    .setProfession(Profession.valueOf(profession.toUpperCase()));
+            Messaging.send(sender, StringHelper.wrap(npc.getName()) + " is now the profession "
+                    + StringHelper.wrap(profession.toUpperCase()) + ".");
         } catch (IllegalArgumentException ex) {
             throw new CommandException("'" + profession + "' is not a valid profession.");
         }
@@ -404,11 +418,13 @@ public class NPCCommands {
         String oldName = npc.getName();
         String newName = args.getString(1);
         if (newName.length() > 16) {
-            Messaging.sendError(sender, "NPC names cannot be longer than 16 characters. The name has been shortened.");
+            Messaging.sendError(sender,
+                    "NPC names cannot be longer than 16 characters. The name has been shortened.");
             newName = newName.substring(0, 15);
         }
         npc.setName(newName);
-        String msg = String.format("You renamed %s to %s.", StringHelper.wrap(oldName), StringHelper.wrap(newName));
+        String msg = String.format("You renamed %s to %s.", StringHelper.wrap(oldName),
+                StringHelper.wrap(newName));
         Messaging.send(sender, ChatColor.GREEN + msg);
     }
 
@@ -439,22 +455,25 @@ public class NPCCommands {
             min = 2,
             max = 2,
             permission = "npc.spawn")
-    @Requirements
-    public void spawn(CommandContext args, Player player, NPC npc) throws CommandException {
+    @Requirements(ownership = true)
+    public void spawn(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         NPC respawn = npcRegistry.getById(args.getInteger(1));
         if (respawn == null)
             throw new CommandException("No NPC with the ID '" + args.getInteger(1) + "' exists.");
-
-        if (!respawn.getTrait(Owner.class).isOwnedBy(player))
-            throw new CommandException("You must be the owner of this NPC to execute that command.");
-
-        if (respawn.spawn(player.getLocation())) {
-            selector.select(player, respawn);
-            Messaging.send(player, ChatColor.GREEN + "You respawned " + StringHelper.wrap(respawn.getName())
-                    + " at your location.");
-        } else
+        if (respawn.isSpawned())
             throw new CommandException(respawn.getName() + " is already spawned at another location."
                     + " Use '/npc tphere' to teleport the NPC to your location.");
+
+        Location location = respawn.getTrait(CurrentLocation.class).getLocation();
+        if (location == null && sender instanceof Player)
+            location = ((Player) sender).getLocation();
+        else
+            throw new CommandException("No stored location available - command must be used ingame.");
+        if (respawn.spawn(location)) {
+            selector.select(sender, respawn);
+            Messaging.send(sender, ChatColor.GREEN + "You respawned " + StringHelper.wrap(respawn.getName())
+                    + " at your location.");
+        }
     }
 
     @Command(
@@ -470,11 +489,12 @@ public class NPCCommands {
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
-        Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName()) + ".");
+        Messaging.send(player, ChatColor.GREEN + "You teleported to " + StringHelper.wrap(npc.getName())
+                + ".");
     }
 
-    @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport a NPC to your location", modifiers = { "tphere",
-            "move" }, min = 1, max = 1, permission = "npc.tphere")
+    @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport a NPC to your location", modifiers = {
+            "tphere", "move" }, min = 1, max = 1, permission = "npc.tphere")
     public void tphere(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
@@ -492,10 +512,11 @@ public class NPCCommands {
             max = 2,
             permission = "npc.trait")
     public void trait(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        Trait trait = CitizensAPI.getTraitManager().getTrait(args.getString(1), npc);
+        Trait trait = CitizensAPI.getTraitFactory().getTrait(args.getString(1));
         if (trait == null)
             throw new CommandException("Trait not found.");
         npc.addTrait(trait);
-        Messaging.sendF(sender, ChatColor.GREEN + "Trait %s added successfully.", StringHelper.wrap(trait.getName()));
+        Messaging.sendF(sender, ChatColor.GREEN + "Trait %s added successfully.",
+                StringHelper.wrap(trait.getName()));
     }
 }

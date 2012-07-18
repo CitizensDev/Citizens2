@@ -57,9 +57,9 @@ public class Behaviour extends Trait {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         for (Entry<Goal, Integer> entry : addedGoals.entrySet()) {
-            npc.getAI().addGoal(entry.getValue(), entry.getKey());
+            npc.getDefaultGoalController().addGoal(entry.getKey(), entry.getValue());
         }
     }
 
@@ -70,7 +70,7 @@ public class Behaviour extends Trait {
 
     private void removeGoals() {
         for (Goal entry : addedGoals.keySet()) {
-            npc.getAI().removeGoal(entry);
+            npc.getDefaultGoalController().removeGoal(entry);
         }
     }
 
@@ -98,7 +98,7 @@ public class Behaviour extends Trait {
             if (!npc.isSpawned())
                 return;
             for (Entry<Goal, Integer> entry : goals.goals.entrySet()) {
-                npc.getAI().addGoal(entry.getValue(), entry.getKey());
+                npc.getDefaultGoalController().addGoal(entry.getKey(), entry.getValue());
             }
         }
 
@@ -111,7 +111,7 @@ public class Behaviour extends Trait {
     public static class Goals {
         private final Map<Goal, Integer> goals = Maps.newHashMap();
 
-        public void addGoal(int priority, Goal goal) {
+        public void addGoal(Goal goal, int priority) {
             Validate.notNull(goal);
             goals.put(goal, priority);
         }

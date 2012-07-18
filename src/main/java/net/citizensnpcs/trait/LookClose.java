@@ -15,7 +15,7 @@ import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class LookClose extends Trait implements Runnable, Toggleable {
+public class LookClose extends Trait implements Toggleable {
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
 
@@ -84,7 +84,7 @@ public class LookClose extends Trait implements Runnable, Toggleable {
 
     @Override
     public void run() {
-        if (!enabled || npc.getAI().hasDestination())
+        if (!enabled || npc.getNavigator().isNavigating())
             return;
         if (hasInvalidTarget()) {
             findNewTarget();

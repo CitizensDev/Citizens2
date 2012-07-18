@@ -96,7 +96,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (text.isEmpty())
             populateDefaultText();
     }

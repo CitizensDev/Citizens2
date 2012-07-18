@@ -8,7 +8,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
-import net.citizensnpcs.api.trait.TraitManager;
+import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.MobType;
@@ -30,11 +30,11 @@ import net.citizensnpcs.trait.waypoint.Waypoints;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-public class CitizensTraitManager implements TraitManager {
+public class CitizensTraitFactory implements TraitFactory {
     private final Map<String, Class<? extends Trait>> registered = Maps.newHashMap();
 
     // TODO: find a way to avoid naming conflicts
-    public CitizensTraitManager() {
+    public CitizensTraitFactory() {
         registerTrait(TraitInfo.create(Age.class).withName("age"));
         registerTrait(TraitInfo.create(CurrentLocation.class).withName("location"));
         registerTrait(TraitInfo.create(Equipment.class).withName("equipment"));
@@ -71,7 +71,7 @@ public class CitizensTraitManager implements TraitManager {
         }
     }
 
-    private <T extends Trait> T create(Class<T> trait, NPC npc) {
+    private <T extends Trait> T create(Class<T> trait) {
         try {
             return trait.newInstance();
         } catch (Exception ex) {
@@ -81,19 +81,19 @@ public class CitizensTraitManager implements TraitManager {
     }
 
     @Override
-    public <T extends Trait> T getTrait(Class<T> clazz, NPC npc) {
+    public <T extends Trait> T getTrait(Class<T> clazz) {
         if (!registered.containsValue(clazz))
             return null;
-        return create(clazz, npc);
+        return create(clazz);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Trait> T getTrait(String name, NPC npc) {
+    public <T extends Trait> T getTrait(String name) {
         Class<? extends Trait> clazz = registered.get(name);
         if (clazz == null)
             return null;
-        return (T) create(clazz, npc);
+        return (T) create(clazz);
     }
 
     @Override

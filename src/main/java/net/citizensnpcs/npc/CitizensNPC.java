@@ -1,6 +1,7 @@
 package net.citizensnpcs.npc;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -8,21 +9,20 @@ import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.npc.ai.CitizensAI;
+import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StringHelper;
 import net.minecraft.server.EntityLiving;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.metadata.FixedMetadataValue;
 
 public abstract class CitizensNPC extends AbstractNPC {
-    private final CitizensAI ai = new CitizensAI(this);
     protected EntityLiving mcEntity;
+    private final CitizensNavigator navigator = new CitizensNavigator(this);
 
     protected CitizensNPC(int id, String name) {
         super(id, name);
@@ -48,17 +48,6 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public void destroy() {
-        super.destroy();
-        CitizensAPI.getNPCRegistry().deregister(this);
-    }
-
-    @Override
-    public CitizensAI getAI() {
-        return ai;
-    }
-
-    @Override
     public LivingEntity getBukkitEntity() {
         return (LivingEntity) getHandle().getBukkitEntity();
     }
@@ -68,15 +57,13 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public org.bukkit.inventory.Inventory getInventory() {
-        Inventory inventory = Bukkit.getServer().createInventory(this, 36, StringHelper.parseColors(getFullName()));
-        inventory.setContents(getTrait(net.citizensnpcs.api.trait.trait.Inventory.class).getContents());
-        return inventory;
+    public Navigator getNavigator() {
+        return navigator;
     }
 
     @Override
     public Trait getTraitFor(Class<? extends Trait> clazz) {
-        return CitizensAPI.getTraitManager().getTrait(clazz, this);
+        return CitizensAPI.getTraitFactory().getTrait(clazz);
     }
 
     @Override
@@ -87,9 +74,10 @@ public abstract class CitizensNPC extends AbstractNPC {
     public void load(DataKey root) {
         // Load traits
         for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
-            Trait trait = CitizensAPI.getTraitManager().getTrait(traitKey.name(), this);
+            Trait trait = CitizensAPI.getTraitFactory().getTrait(traitKey.name());
             if (trait == null) {
-                Messaging.severeF("Skipped missing trait '%s' while loading NPC ID: '%d'. Has the name changed?",
+                Messaging.severeF(
+                        "Skipped missing trait '%s' while loading NPC ID: '%d'. Has the name changed?",
                         traitKey.name(), getId());
                 continue;
             }
@@ -135,6 +123,8 @@ public abstract class CitizensNPC extends AbstractNPC {
 
         mcEntity.world.addEntity(mcEntity);
         mcEntity.world.players.remove(mcEntity);
+        getBukkitEntity().setMetadata(NPC_METADATA_MARKER,
+                new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         // Set the spawned state
         getTrait(CurrentLocation.class).setLocation(loc);
@@ -142,7 +132,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
         // Modify NPC using traits after the entity has been created
         for (Trait trait : traits.values())
-            trait.onNPCSpawn();
+            trait.onSpawn();
         return true;
     }
 
@@ -150,10 +140,12 @@ public abstract class CitizensNPC extends AbstractNPC {
     public void update() {
         try {
             super.update();
-            ai.update();
+            navigator.update();
         } catch (Exception ex) {
             Messaging.logF("Exception while updating %d: %s.", getId(), ex.getMessage());
             ex.printStackTrace();
         }
     }
+
+    private static final String NPC_METADATA_MARKER = "NPC";
 }

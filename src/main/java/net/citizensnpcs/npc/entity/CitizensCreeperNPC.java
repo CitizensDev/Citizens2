@@ -32,12 +32,16 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
         public EntityCreeperNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            goalSelector = new PathfinderGoalSelector();
-            targetSelector = new PathfinderGoalSelector();
+            if (npc != null) {
+                goalSelector = new PathfinderGoalSelector();
+                targetSelector = new PathfinderGoalSelector();
+            }
         }
 
         @Override
         public void a(EntityWeatherLighting entityweatherlighting) {
+            if (npc == null)
+                super.a(entityweatherlighting);
         }
 
         @Override
@@ -50,6 +54,12 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
             super.z_();
             if (npc != null)
                 npc.update();
+        }
+
+        @Override
+        public void b_(double x, double y, double z) {
+            // when another entity collides, b_ is called to push the NPC
+            // so we prevent b_ from doing anything.
         }
     }
 }

@@ -49,7 +49,8 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
             equipper.setItemInHand(hand);
         } else {
             getTrait(WoolColor.class).setColor(DyeColor.WHITE);
-            Messaging.send(equipper, StringHelper.wrap(getName()) + " is now " + StringHelper.wrap("white") + ".");
+            Messaging.send(equipper, StringHelper.wrap(getName()) + " is now " + StringHelper.wrap("white")
+                    + ".");
         }
     }
 
@@ -68,8 +69,10 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         public EntitySheepNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            goalSelector = new PathfinderGoalSelector();
-            targetSelector = new PathfinderGoalSelector();
+            if (npc != null) {
+                goalSelector = new PathfinderGoalSelector();
+                targetSelector = new PathfinderGoalSelector();
+            }
         }
 
         @Override
@@ -82,6 +85,12 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
             super.z_();
             if (npc != null)
                 npc.update();
+        }
+
+        @Override
+        public void b_(double x, double y, double z) {
+            // when another entity collides, b_ is called to push the NPC
+            // so we prevent b_ from doing anything.
         }
     }
 }

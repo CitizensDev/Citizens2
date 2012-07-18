@@ -7,7 +7,7 @@ import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-public class CurrentLocation extends Trait implements Runnable {
+public class CurrentLocation extends Trait {
     private Location loc;
 
     public CurrentLocation() {
