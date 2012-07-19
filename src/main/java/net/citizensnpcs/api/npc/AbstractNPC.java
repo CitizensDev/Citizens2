@@ -130,6 +130,7 @@ public abstract class AbstractNPC implements NPC {
     public void update() {
         for (int i = 0; i < runnables.size(); ++i)
             runnables.get(i).run();
-        goalController.run();
+        if (isSpawned())
+            goalController.run();
     }
 }
