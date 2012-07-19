@@ -11,9 +11,11 @@ import org.bukkit.entity.Player;
  * Represents the owner of an NPC.
  */
 public class Owner extends Trait {
-    private static final String SERVER = "server";
     private String owner = SERVER;
 
+    public Owner() {
+        super("owner");
+    }
     /**
      * Gets the owner of an NPC.
      * 
@@ -21,10 +23,6 @@ public class Owner extends Trait {
      */
     public String getOwner() {
         return owner;
-    }
-
-    public boolean isOwnedBy(String name) {
-        return owner.equalsIgnoreCase(name);
     }
 
     /**
@@ -40,6 +38,10 @@ public class Owner extends Trait {
                     || (owner.equals(SERVER) && sender.hasPermission("citizens.admin"));
         }
         return owner.equals(SERVER);
+    }
+
+    public boolean isOwnedBy(String name) {
+        return owner.equalsIgnoreCase(name);
     }
 
     @Override
@@ -71,4 +73,6 @@ public class Owner extends Trait {
     public String toString() {
         return "Owner{" + owner + "}";
     }
+
+    private static final String SERVER = "server";
 }

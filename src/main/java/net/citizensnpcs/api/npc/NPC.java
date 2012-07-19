@@ -1,27 +1,16 @@
 package net.citizensnpcs.api.npc;
 
-import net.citizensnpcs.api.ai.AI;
-import net.citizensnpcs.api.npc.character.Character;
+import net.citizensnpcs.api.ai.GoalController;
+import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.trait.Trait;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.metadata.Metadatable;
 
 /**
- * Represents an NPC with a Character and separate traits.
+ * Represents an NPC with optional {@link Trait}s.
  */
-public interface NPC extends Metadatable, InventoryHolder {
-
-    /**
-     * Adds a trait to this NPC.
-     * 
-     * @param trait
-     *            Trait to add
-     */
-    public void addTrait(Trait trait);
+public interface NPC {
 
     /**
      * Adds a trait to this NPC.
@@ -32,22 +21,17 @@ public interface NPC extends Metadatable, InventoryHolder {
     public void addTrait(Class<? extends Trait> trait);
 
     /**
-     * Sends a message to the given player with the NPC's formatted name.
+     * Adds a trait to this NPC.
      * 
-     * @param player
-     *            Player to send message to
-     * @param message
-     *            Message to send
+     * @param trait
+     *            Trait to add
      */
-    public void chat(Player player, String message);
+    public void addTrait(Trait trait);
 
     /**
-     * Sends a message to all players online with this NPC's formatted name.
-     * 
-     * @param message
-     *            Message to send
+     * @return The metadata store of this NPC.
      */
-    public void chat(String message);
+    public MetadataStore data();
 
     /**
      * Despawns this NPC.
@@ -57,11 +41,10 @@ public interface NPC extends Metadatable, InventoryHolder {
     public boolean despawn();
 
     /**
-     * Gets the {@link AI} of this NPC.
-     * 
-     * @return AI of this NPC
+     * Permanently removes this NPC and all data about it from the registry it's
+     * attached to.
      */
-    public AI getAI();
+    public void destroy();
 
     /**
      * Gets the Bukkit entity associated with this NPC.
@@ -71,11 +54,11 @@ public interface NPC extends Metadatable, InventoryHolder {
     public LivingEntity getBukkitEntity();
 
     /**
-     * Gets the character of this NPC.
+     * Gets the default {@link GoalController} of this NPC.
      * 
-     * @return Character of this NPC
+     * @return Default goal controller
      */
-    public Character getCharacter();
+    public GoalController getDefaultGoalController();
 
     /**
      * Gets the full name of this NPC.
@@ -97,6 +80,11 @@ public interface NPC extends Metadatable, InventoryHolder {
      * @return Stripped name of this NPC
      */
     public String getName();
+
+    /**
+     * @return The {@link Navigator} of this NPC.
+     */
+    public Navigator getNavigator();
 
     /**
      * Gets a trait from the given class.
@@ -124,25 +112,12 @@ public interface NPC extends Metadatable, InventoryHolder {
     public boolean isSpawned();
 
     /**
-     * Permanently removes this NPC.
-     */
-    public void remove();
-
-    /**
      * Removes a trait from this NPC.
      * 
      * @param trait
      *            Trait to remove
      */
     public void removeTrait(Class<? extends Trait> trait);
-
-    /**
-     * Sets the character of this NPC.
-     * 
-     * @param character
-     *            Character to set this NPC to
-     */
-    public void setCharacter(Character character);
 
     /**
      * Sets the name of this NPC.

@@ -1,52 +1,31 @@
 package net.citizensnpcs.api.trait;
 
-import org.bukkit.plugin.Plugin;
 
-/**
- * Builds a trait.
- */
-public final class TraitFactory {
-    private Plugin plugin;
-    private final Class<? extends Trait> trait;
-    private String name;
+public interface TraitFactory {
 
     /**
-     * Constructs a factory with the given trait class.
+     * Gets a trait with the given class.
      * 
-     * @param character
+     * @param clazz
      *            Class of the trait
+     * @return Trait with the given class
      */
-    public TraitFactory(Class<? extends Trait> trait) {
-        this.trait = trait;
-    }
-
-    public Class<? extends Trait> getTraitClass() {
-        return trait;
-    }
-
-    public Plugin getTraitPlugin() {
-        return plugin;
-    }
-
-    public String getTraitName() {
-        return name;
-    }
-
-    public TraitFactory withName(String name) {
-        this.name = name;
-        return this;
-    }
+    public <T extends Trait> T getTrait(Class<T> clazz);
 
     /**
-     * Attaches a plugin instance to a trait. This is used for dynamically
-     * registering and unregistering listeners per trait.
+     * Gets a trait with the given name.
      * 
-     * @param plugin
-     *            Plugin to attach to a trait
-     * @return This TraitFactory
+     * @param name
+     *            Name of the trait
+     * @return Trait with the given name
      */
-    public TraitFactory withPlugin(Plugin plugin) {
-        this.plugin = plugin;
-        return this;
-    }
+    public <T extends Trait> T getTrait(String name);
+
+    /**
+     * Registers a trait using the given information.
+     * 
+     * @param info
+     *            Registration information
+     */
+    public void registerTrait(TraitInfo info);
 }

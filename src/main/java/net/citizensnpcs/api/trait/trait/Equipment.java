@@ -16,10 +16,9 @@ import org.bukkit.inventory.ItemStack;
  */
 public class Equipment extends Trait {
     private final ItemStack[] equipment = new ItemStack[5];
-    private final NPC npc;
 
     public Equipment(NPC npc) {
-        this.npc = npc;
+        super("equipment");
     }
 
     /**
@@ -62,7 +61,7 @@ public class Equipment extends Trait {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getBukkitEntity();
             if (equipment[0] != null)

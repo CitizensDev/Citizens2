@@ -67,8 +67,8 @@ public class DatabaseStorage implements Storage {
     private final QueryRunner queryRunner = new QueryRunner();
     private final Map<String, Table> tables = Maps.newHashMap();
     private final Map<String, Traversed> traverseCache = Maps.newHashMap();
-    private final String url, username, password;
     private final DatabaseType type;
+    private final String url, username, password;
 
     public DatabaseStorage(String driver, String url, String username, String password) throws SQLException {
         this.url = "jdbc:" + url;
@@ -236,12 +236,12 @@ public class DatabaseStorage implements Storage {
     public class DatabaseKey extends DataKey {
         private final String current;
 
-        private DatabaseKey(String root) {
-            current = root;
-        }
-
         private DatabaseKey() {
             this("");
+        }
+
+        private DatabaseKey(String root) {
+            current = root;
         }
 
         private String createRelativeKey(String from) {
@@ -333,30 +333,6 @@ public class DatabaseStorage implements Storage {
             return null;
         }
 
-        @Override
-        public String getString(String key) {
-            final Traversed t = traverse(createRelativeKey(key), false);
-            if (t == INVALID_TRAVERSAL)
-                return "";
-            String value = getValue(t, new ResultSetHandler<String>() {
-                @Override
-                public String handle(ResultSet rs) throws SQLException {
-                    return rs.next() ? rs.getString(t.column) : null;
-                }
-            });
-            return value == null ? "" : value;
-        }
-
-        @Override
-        public Iterable<DataKey> getSubKeys() {
-            List<DataKey> keys = Lists.newArrayList();
-            if (current.split("\\.").length == 1) {
-                return getSingleKeys(keys);
-            }
-            // TODO: handle longer case
-            return keys;
-        }
-
         private Iterable<DataKey> getSingleKeys(List<DataKey> keys) {
             if (!tables.containsKey(current))
                 return keys;
@@ -384,6 +360,30 @@ public class DatabaseStorage implements Storage {
                 closeQuietly(stmt);
                 closeQuietly(rs);
             }
+            return keys;
+        }
+
+        @Override
+        public String getString(String key) {
+            final Traversed t = traverse(createRelativeKey(key), false);
+            if (t == INVALID_TRAVERSAL)
+                return "";
+            String value = getValue(t, new ResultSetHandler<String>() {
+                @Override
+                public String handle(ResultSet rs) throws SQLException {
+                    return rs.next() ? rs.getString(t.column) : null;
+                }
+            });
+            return value == null ? "" : value;
+        }
+
+        @Override
+        public Iterable<DataKey> getSubKeys() {
+            List<DataKey> keys = Lists.newArrayList();
+            if (current.split("\\.").length == 1) {
+                return getSingleKeys(keys);
+            }
+            // TODO: handle longer case
             return keys;
         }
 
@@ -545,22 +545,18 @@ public class DatabaseStorage implements Storage {
         String primaryKey;
         String primaryKeyType;
 
-        public void addForeignKey(String fk) {
-            if (columns.contains(fk))
-                throw new IllegalArgumentException(fk + " already exists in " + name);
-            columns.add(fk);
-        }
-
-        public boolean hasColumn(String column) {
-            return columns.contains(column);
-        }
-
         public void addColumn(String column) {
             if (columns.contains(column))
                 throw new IllegalArgumentException(column + " already exists in " + name);
             if (column.equalsIgnoreCase(primaryKey) || column.equalsIgnoreCase(name))
                 return;
             columns.add(column);
+        }
+
+        public void addForeignKey(String fk) {
+            if (columns.contains(fk))
+                throw new IllegalArgumentException(fk + " already exists in " + name);
+            columns.add(fk);
         }
 
         public String generateRow() {
@@ -589,6 +585,10 @@ public class DatabaseStorage implements Storage {
                 closeQuietly(rs);
             }
             return null;
+        }
+
+        public boolean hasColumn(String column) {
+            return columns.contains(column);
         }
 
         public void insert(String primary) {
@@ -650,18 +650,18 @@ public class DatabaseStorage implements Storage {
         }
     }
 
-    private static void closeQuietly(Statement stmt) {
-        try {
-            if (stmt != null)
-                stmt.close();
-        } catch (SQLException e) {
-        }
-    }
-
     private static void closeQuietly(ResultSet rs) {
         try {
             if (rs != null)
                 rs.close();
+        } catch (SQLException e) {
+        }
+    }
+
+    private static void closeQuietly(Statement stmt) {
+        try {
+            if (stmt != null)
+                stmt.close();
         } catch (SQLException e) {
         }
     }

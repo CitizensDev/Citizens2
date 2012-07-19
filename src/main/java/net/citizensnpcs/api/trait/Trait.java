@@ -1,16 +1,21 @@
 package net.citizensnpcs.api.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
-import org.bukkit.plugin.Plugin;
+import org.bukkit.event.Listener;
 
 /**
  * Represents a Trait that can be loaded and saved.
  */
-public abstract class Trait {
-    private String name;
-    private Plugin plugin;
+public abstract class Trait implements Listener, Runnable {
+    private final String name;
+    protected NPC npc = null;
+
+    protected Trait(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the name of this trait.
@@ -22,12 +27,16 @@ public abstract class Trait {
     }
 
     /**
-     * Gets the plugin that this trait is associated with.
-     * 
-     * @return Plugin attached to this trait
+     * @return The {@link NPC} this trait is attached to. May be null.
      */
-    public final Plugin getPlugin() {
-        return plugin;
+    public final NPC getNPC() {
+        return npc;
+    }
+
+    public void linkToNPC(NPC npc) {
+        if (this.npc != null)
+            throw new IllegalArgumentException("npc may only be set once");
+        this.npc = npc;
     }
 
     /**
@@ -45,13 +54,17 @@ public abstract class Trait {
      * the entity is created in-game. This is called after the entity has been
      * created.
      */
-    public void onNPCSpawn() {
+    public void onSpawn() {
     }
 
     /**
      * Called when a trait is removed from the given NPC.
      */
     public void onRemove() {
+    }
+
+    @Override
+    public void run() {
     }
 
     /**
@@ -61,17 +74,4 @@ public abstract class Trait {
      *            DataKey to save to
      */
     public abstract void save(DataKey key);
-
-    public final void setName(String name) {
-        if (this.name != null)
-            throw new IllegalArgumentException("Cannot change the name of a trait");
-        this.name = name;
-    }
-
-    public final void setPlugin(Plugin plugin) {
-        if (this.plugin != null)
-            throw new IllegalArgumentException("Cannot change the plugin of a trait.");
-
-        this.plugin = plugin;
-    }
 }

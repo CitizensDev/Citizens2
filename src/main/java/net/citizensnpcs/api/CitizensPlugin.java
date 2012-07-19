@@ -3,21 +3,11 @@ package net.citizensnpcs.api;
 import java.io.File;
 
 import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.npc.character.CharacterManager;
-import net.citizensnpcs.api.trait.TraitManager;
+import net.citizensnpcs.api.trait.TraitFactory;
 
 import org.bukkit.plugin.Plugin;
 
 public interface CitizensPlugin extends Plugin {
-    public File getScriptFolder();
-
-    /**
-     * Gets the CharacterManager.
-     * 
-     * @return Citizens character manager
-     */
-    public CharacterManager getCharacterManager();
-
     /**
      * Gets the {@link NPCRegistry}.
      * 
@@ -25,12 +15,14 @@ public interface CitizensPlugin extends Plugin {
      */
     public NPCRegistry getNPCRegistry();
 
+    public File getScriptFolder();
+
     /**
-     * Gets the TraitManager.
+     * Gets the TraitFactory.
      * 
-     * @return Citizens trait manager
+     * @return Citizens trait factory
      */
-    public TraitManager getTraitManager();
+    public TraitFactory getTraitFactory();
 
     public void onImplementationChanged();
 }

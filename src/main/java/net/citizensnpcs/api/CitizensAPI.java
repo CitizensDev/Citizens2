@@ -4,9 +4,8 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
-import net.citizensnpcs.api.trait.TraitManager;
+import net.citizensnpcs.api.trait.TraitFactory;
 
 import org.bukkit.plugin.Plugin;
 
@@ -22,22 +21,18 @@ public final class CitizensAPI {
     private static final CitizensAPI instance = new CitizensAPI();
     private static final ScriptCompiler scriptCompiler = new ScriptCompiler();
 
-    /**
-     * Gets the CharacterManager.
-     * 
-     * @return Citizens character manager
-     */
-    public static CharacterManager getCharacterManager() {
-        return getImplementation().getCharacterManager();
-    }
-
     public static File getDataFolder() {
         return getImplementation().getDataFolder();
     }
 
+    private static CitizensPlugin getImplementation() {
+        return instance.implementation != null ? instance.implementation.get() : null;
+    }
+
     /**
-     * Gets the {@link NPCRegistry}.
+     * Gets the current implementation's {@link NPCRegistry}.
      * 
+     * @see CitizensPlugin
      * @return The NPC registry
      */
     public static NPCRegistry getNPCRegistry() {
@@ -57,26 +52,23 @@ public final class CitizensAPI {
     }
 
     /**
-     * Gets the TraitManager.
+     * Gets the current implementation's {@link TraitFactory}.
      * 
-     * @return Citizens trait manager
+     * @see CitizensPlugin
+     * @return Citizens trait factory
      */
-    public static TraitManager getTraitManager() {
-        return getImplementation().getTraitManager();
-    }
-
-    public static void setImplementation(CitizensPlugin implementation) {
-        if (hasImplementation())
-            getImplementation().onImplementationChanged();
-        instance.implementation = new WeakReference<CitizensPlugin>(implementation);
+    public static TraitFactory getTraitFactory() {
+        return getImplementation().getTraitFactory();
     }
 
     public static boolean hasImplementation() {
         return getImplementation() != null;
     }
 
-    private static CitizensPlugin getImplementation() {
-        return instance.implementation != null ? instance.implementation.get() : null;
+    public static void setImplementation(CitizensPlugin implementation) {
+        if (hasImplementation())
+            getImplementation().onImplementationChanged();
+        instance.implementation = new WeakReference<CitizensPlugin>(implementation);
     }
 
     static {
