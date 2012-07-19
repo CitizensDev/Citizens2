@@ -36,6 +36,26 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     @Override
+    public LivingEntity getTarget() {
+        return (LivingEntity) target.getBukkitEntity();
+    }
+
+    @Override
+    public Location getTargetAsLocation() {
+        return getTarget().getLocation();
+    }
+
+    @Override
+    public TargetType getTargetType() {
+        return TargetType.ENTITY;
+    }
+
+    @Override
+    public boolean isAggressive() {
+        return aggro;
+    }
+
+    @Override
     public boolean update() {
         if (target == null || target.dead)
             return true;
@@ -57,24 +77,4 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     private static final double ATTACK_DISTANCE = 1.75 * 1.75;
-
-    @Override
-    public LivingEntity getTarget() {
-        return (LivingEntity) target.getBukkitEntity();
-    }
-
-    @Override
-    public boolean isAggressive() {
-        return aggro;
-    }
-
-    @Override
-    public Location getTargetAsLocation() {
-        return getTarget().getLocation();
-    }
-
-    @Override
-    public TargetType getTargetType() {
-        return TargetType.ENTITY;
-    }
 }

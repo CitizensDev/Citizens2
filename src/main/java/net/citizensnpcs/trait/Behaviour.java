@@ -57,15 +57,15 @@ public class Behaviour extends Trait {
     }
 
     @Override
+    public void onRemove() {
+        removeGoals();
+    }
+
+    @Override
     public void onSpawn() {
         for (Entry<Goal, Integer> entry : addedGoals.entrySet()) {
             npc.getDefaultGoalController().addGoal(entry.getKey(), entry.getValue());
         }
-    }
-
-    @Override
-    public void onRemove() {
-        removeGoals();
     }
 
     private void removeGoals() {

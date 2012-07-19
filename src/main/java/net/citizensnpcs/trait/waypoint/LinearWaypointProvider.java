@@ -3,6 +3,8 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Iterator;
 import java.util.List;
 
+import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
@@ -20,7 +22,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import com.google.common.collect.Lists;
 
 public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoint> {
-    private final PassiveWaypointCycler cycler = new PassiveWaypointCycler(this);
+    private WaypointGoal currentGoal;
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
     @Override
@@ -67,7 +69,7 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                             "<e>Removed<a> a waypoint (<e>%d<a> remaining) (<e>%d<a>)", waypoints.size(),
                             editingSlot + 1));
                 }
-                cycler.onProviderChanged();
+                currentGoal.onProviderChanged();
             }
 
             @EventHandler
@@ -99,6 +101,13 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     }
 
     @Override
+    public Goal getGoal(NPC npc) {
+        if (currentGoal == null)
+            currentGoal = new WaypointGoal(this, npc.getNavigator());
+        return currentGoal;
+    }
+
+    @Override
     public Iterator<Waypoint> iterator() {
         return waypoints.iterator();
     }
@@ -111,11 +120,6 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                     .getDouble("x"), root.getDouble("y"), root.getDouble("z"), (float) root.getDouble("yaw",
                     0), (float) root.getDouble("pitch", 0))));
         }
-    }
-
-    @Override
-    public void onSpawn() {
-        cycler.onProviderChanged();
     }
 
     @Override

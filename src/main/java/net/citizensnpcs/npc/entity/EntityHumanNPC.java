@@ -43,6 +43,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
+    public void b_(double x, double y, double z) {
+        // when another entity collides, b_ is called to push the NPC
+        // so we prevent b_ from doing anything.
+    }
+
+    @Override
     public void F_() {
         super.F_();
         Navigation navigation = al();
@@ -80,11 +86,5 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         aX *= 0.98F;
         a(aW, aX);
         X = yaw; // TODO: this looks jerky
-    }
-
-    @Override
-    public void b_(double x, double y, double z) {
-        // when another entity collides, b_ is called to push the NPC
-        // so we prevent b_ from doing anything.
     }
 }

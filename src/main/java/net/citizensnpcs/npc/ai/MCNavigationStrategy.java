@@ -35,11 +35,6 @@ public class MCNavigationStrategy implements PathStrategy {
     }
 
     @Override
-    public boolean update() {
-        return navigation.e();
-    }
-
-    @Override
     public Location getTargetAsLocation() {
         return target;
     }
@@ -47,5 +42,10 @@ public class MCNavigationStrategy implements PathStrategy {
     @Override
     public TargetType getTargetType() {
         return TargetType.LOCATION;
+    }
+
+    @Override
+    public boolean update() {
+        return navigation.e();
     }
 }

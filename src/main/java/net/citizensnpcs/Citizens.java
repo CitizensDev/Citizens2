@@ -72,6 +72,23 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
     }
 
+    private void enableSubPlugins() {
+        File root = new File(getDataFolder(), Setting.SUBPLUGIN_FOLDER.asString());
+        if (!root.exists() || !root.isDirectory())
+            return;
+        Plugin[] plugins = Bukkit.getPluginManager().loadPlugins(root);
+        // code beneath modified from CraftServer
+        for (Plugin plugin : plugins) {
+            try {
+                Messaging.logF("Loading %s", plugin.getDescription().getFullName());
+                plugin.onLoad();
+            } catch (Throwable ex) {
+                Messaging.severe(ex.getMessage() + " initializing " + plugin.getDescription().getFullName());
+                ex.printStackTrace();
+            }
+        }
+    }
+
     public Iterable<net.citizensnpcs.command.Command> getCommands(String base) {
         return commands.getCommands(base);
     }
@@ -203,48 +220,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Bukkit.getPluginManager().disablePlugin(this);
     }
 
-    private void enableSubPlugins() {
-        File root = new File(getDataFolder(), Setting.SUBPLUGIN_FOLDER.asString());
-        if (!root.exists() || !root.isDirectory())
-            return;
-        Plugin[] plugins = Bukkit.getPluginManager().loadPlugins(root);
-        // code beneath modified from CraftServer
-        for (Plugin plugin : plugins) {
-            try {
-                Messaging.logF("Loading %s", plugin.getDescription().getFullName());
-                plugin.onLoad();
-            } catch (Throwable ex) {
-                Messaging.severe(ex.getMessage() + " initializing " + plugin.getDescription().getFullName());
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    private void startMetrics() {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Metrics metrics = new Metrics(Citizens.this);
-                    if (metrics.isOptOut())
-                        return;
-                    metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
-                        @Override
-                        public int getValue() {
-                            return Iterables.size(npcRegistry);
-                        }
-                    });
-
-                    traitFactory.addPlotters(metrics.createGraph("traits"));
-                    metrics.start();
-                    Messaging.log("Metrics started.");
-                } catch (IOException e) {
-                    Messaging.logF("Unable to start metrics: %s.", e.getMessage());
-                }
-            }
-        }.start();
-    }
-
     private void registerCommands() {
         commands.setInjector(new Injector(this));
 
@@ -338,6 +313,31 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     "Citizens NPC Storage");
         }
         Messaging.logF("Save method set to %s.", saves.toString());
+    }
+
+    private void startMetrics() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Metrics metrics = new Metrics(Citizens.this);
+                    if (metrics.isOptOut())
+                        return;
+                    metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
+                        @Override
+                        public int getValue() {
+                            return Iterables.size(npcRegistry);
+                        }
+                    });
+
+                    traitFactory.addPlotters(metrics.createGraph("traits"));
+                    metrics.start();
+                    Messaging.log("Metrics started.");
+                } catch (IOException e) {
+                    Messaging.logF("Unable to start metrics: %s.", e.getMessage());
+                }
+            }
+        }.start();
     }
 
     private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {

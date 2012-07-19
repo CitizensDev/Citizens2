@@ -140,7 +140,8 @@ public abstract class CitizensNPC extends AbstractNPC {
     public void update() {
         try {
             super.update();
-            navigator.update();
+            if (isSpawned())
+                navigator.update();
         } catch (Exception ex) {
             Messaging.logF("Exception while updating %d: %s.", getId(), ex.getMessage());
             ex.printStackTrace();

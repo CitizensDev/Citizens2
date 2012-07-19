@@ -27,6 +27,12 @@ public class WoolColor extends Trait {
         }
     }
 
+    @EventHandler
+    public void onSheepDyeWool(SheepDyeWoolEvent event) {
+        if (npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity())))
+            event.setCancelled(true);
+    }
+
     @Override
     public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Sheep) {
@@ -34,12 +40,6 @@ public class WoolColor extends Trait {
             sheep = true;
         } else
             sheep = false;
-    }
-
-    @EventHandler
-    public void onSheepDyeWool(SheepDyeWoolEvent event) {
-        if (npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity())))
-            event.setCancelled(true);
     }
 
     @Override
