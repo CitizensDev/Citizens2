@@ -34,6 +34,12 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
         }
 
         @Override
+        public void b_(double x, double y, double z) {
+            // when another entity collides, b_ is called to push the NPC
+            // so we prevent b_ from doing anything.
+        }
+
+        @Override
         public NPC getNPC() {
             return npc;
         }
@@ -42,12 +48,6 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
         public void z_() {
             super.z_();
             npc.update();
-        }
-
-        @Override
-        public void b_(double x, double y, double z) {
-            // when another entity collides, b_ is called to push the NPC
-            // so we prevent b_ from doing anything.
         }
     }
 }

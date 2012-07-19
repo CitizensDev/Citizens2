@@ -20,23 +20,13 @@ import org.bukkit.entity.LivingEntity;
 import com.google.common.collect.Maps;
 
 public class CitizensNavigator implements Navigator {
+    private PathStrategy executing;
     private final CitizensNPC npc;
     private float speed;
-    private PathStrategy executing;
 
     public CitizensNavigator(CitizensNPC npc) {
         this.npc = npc;
         this.speed = getSpeedFor(npc.getHandle());
-    }
-
-    public void update() {
-        if (executing == null)
-            return;
-        boolean finished = executing.update();
-        if (finished) {
-            Bukkit.getPluginManager().callEvent(new NavigationCompleteEvent(this));
-            executing = null;
-        }
     }
 
     @Override
@@ -48,13 +38,32 @@ public class CitizensNavigator implements Navigator {
     }
 
     @Override
+    public EntityTarget getEntityTarget() {
+        return executing instanceof EntityTarget ? (EntityTarget) executing : null;
+    }
+
+    @Override
     public float getSpeed() {
         return speed;
     }
 
-    @Override
-    public EntityTarget getEntityTarget() {
-        return executing instanceof EntityTarget ? (EntityTarget) executing : null;
+    private float getSpeedFor(EntityLiving from) {
+        EntityType entityType = from.getBukkitEntity().getType();
+        Float cached = MOVEMENT_SPEEDS.get(entityType);
+        if (cached != null)
+            return cached;
+        if (SPEED_FIELD == null) {
+            MOVEMENT_SPEEDS.put(entityType, DEFAULT_SPEED);
+            return DEFAULT_SPEED;
+        }
+        try {
+            float speed = SPEED_FIELD.getFloat(from);
+            MOVEMENT_SPEEDS.put(entityType, speed);
+            return speed;
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+            return DEFAULT_SPEED;
+        }
     }
 
     @Override
@@ -83,6 +92,12 @@ public class CitizensNavigator implements Navigator {
         switchStrategyTo(newStrategy);
     }
 
+    @Override
+    public void setTarget(Location target) {
+        PathStrategy newStrategy = new MCNavigationStrategy(npc, target, speed);
+        switchStrategyTo(newStrategy);
+    }
+
     private void switchStrategyTo(PathStrategy newStrategy) {
         if (executing != null)
             Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
@@ -92,28 +107,13 @@ public class CitizensNavigator implements Navigator {
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
     }
 
-    @Override
-    public void setTarget(Location target) {
-        PathStrategy newStrategy = new MCNavigationStrategy(npc, target, speed);
-        switchStrategyTo(newStrategy);
-    }
-
-    private float getSpeedFor(EntityLiving from) {
-        EntityType entityType = from.getBukkitEntity().getType();
-        Float cached = MOVEMENT_SPEEDS.get(entityType);
-        if (cached != null)
-            return cached;
-        if (SPEED_FIELD == null) {
-            MOVEMENT_SPEEDS.put(entityType, DEFAULT_SPEED);
-            return DEFAULT_SPEED;
-        }
-        try {
-            float speed = SPEED_FIELD.getFloat(from);
-            MOVEMENT_SPEEDS.put(entityType, speed);
-            return speed;
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-            return DEFAULT_SPEED;
+    public void update() {
+        if (executing == null)
+            return;
+        boolean finished = executing.update();
+        if (finished) {
+            Bukkit.getPluginManager().callEvent(new NavigationCompleteEvent(this));
+            executing = null;
         }
     }
 

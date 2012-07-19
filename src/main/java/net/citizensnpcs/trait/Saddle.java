@@ -22,6 +22,12 @@ public class Saddle extends Trait implements Toggleable {
         saddle = key.getBoolean("");
     }
 
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (pig && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
+            event.setCancelled(true);
+    }
+
     @Override
     public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Pig) {
@@ -29,12 +35,6 @@ public class Saddle extends Trait implements Toggleable {
             pig = true;
         } else
             pig = false;
-    }
-
-    @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (pig && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
-            event.setCancelled(true);
     }
 
     @Override

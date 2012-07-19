@@ -1,5 +1,7 @@
 package net.citizensnpcs.trait.waypoint;
 
+import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 
@@ -17,18 +19,20 @@ public interface WaypointProvider {
     public Editor createEditor(Player player);
 
     /**
+     * 
+     * @param npc
+     *            The attached {@link NPC} the goal is for.
+     * @return The {@link Goal} to attach to the NPC.
+     */
+    public Goal getGoal(NPC npc);
+
+    /**
      * Loads from the specified {@link DataKey}.
      * 
      * @param key
      *            The key to load from
      */
     public void load(DataKey key);
-
-    /**
-     * Called when the NPC attached to this provider's {@link Waypoints} is
-     * spawned.
-     */
-    public void onSpawn();
 
     /**
      * Saves to the specified {@link DataKey}.

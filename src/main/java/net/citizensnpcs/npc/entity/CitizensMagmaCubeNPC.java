@@ -39,6 +39,12 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
         }
 
         @Override
+        public void b_(double x, double y, double z) {
+            // when another entity collides, b_ is called to push the NPC
+            // so we prevent b_ from doing anything.
+        }
+
+        @Override
         public void d_() {
             if (npc != null)
                 npc.update();
@@ -49,12 +55,6 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public void b_(double x, double y, double z) {
-            // when another entity collides, b_ is called to push the NPC
-            // so we prevent b_ from doing anything.
         }
     }
 }

@@ -76,6 +76,12 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
+        public void b_(double x, double y, double z) {
+            // when another entity collides, b_ is called to push the NPC
+            // so we prevent b_ from doing anything.
+        }
+
+        @Override
         public NPC getNPC() {
             return npc;
         }
@@ -85,12 +91,6 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
             super.z_();
             if (npc != null)
                 npc.update();
-        }
-
-        @Override
-        public void b_(double x, double y, double z) {
-            // when another entity collides, b_ is called to push the NPC
-            // so we prevent b_ from doing anything.
         }
     }
 }
