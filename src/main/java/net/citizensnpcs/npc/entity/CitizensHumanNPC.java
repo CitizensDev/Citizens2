@@ -48,48 +48,50 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         Material type = hand == null ? Material.AIR : hand.getType();
         // First, determine the slot to edit
         switch (type) {
-        case PUMPKIN:
-        case JACK_O_LANTERN:
-        case LEATHER_HELMET:
-        case CHAINMAIL_HELMET:
-        case GOLD_HELMET:
-        case IRON_HELMET:
-        case DIAMOND_HELMET:
-            if (!equipper.isSneaking())
-                slot = 1;
-            break;
-        case LEATHER_CHESTPLATE:
-        case CHAINMAIL_CHESTPLATE:
-        case GOLD_CHESTPLATE:
-        case IRON_CHESTPLATE:
-        case DIAMOND_CHESTPLATE:
-            if (!equipper.isSneaking())
-                slot = 2;
-            break;
-        case LEATHER_LEGGINGS:
-        case CHAINMAIL_LEGGINGS:
-        case GOLD_LEGGINGS:
-        case IRON_LEGGINGS:
-        case DIAMOND_LEGGINGS:
-            if (!equipper.isSneaking())
-                slot = 3;
-            break;
-        case LEATHER_BOOTS:
-        case CHAINMAIL_BOOTS:
-        case GOLD_BOOTS:
-        case IRON_BOOTS:
-        case DIAMOND_BOOTS:
-            if (!equipper.isSneaking())
-                slot = 4;
-            break;
-        case AIR:
-            for (int i = 0; i < 5; i++) {
-                if (trait.get(i) != null && trait.get(i).getType() != Material.AIR) {
-                    equipper.getWorld().dropItemNaturally(getBukkitEntity().getLocation(), trait.get(i));
-                    trait.set(i, null);
+            case PUMPKIN:
+            case JACK_O_LANTERN:
+            case LEATHER_HELMET:
+            case CHAINMAIL_HELMET:
+            case GOLD_HELMET:
+            case IRON_HELMET:
+            case DIAMOND_HELMET:
+                if (!equipper.isSneaking())
+                    slot = 1;
+                break;
+            case LEATHER_CHESTPLATE:
+            case CHAINMAIL_CHESTPLATE:
+            case GOLD_CHESTPLATE:
+            case IRON_CHESTPLATE:
+            case DIAMOND_CHESTPLATE:
+                if (!equipper.isSneaking())
+                    slot = 2;
+                break;
+            case LEATHER_LEGGINGS:
+            case CHAINMAIL_LEGGINGS:
+            case GOLD_LEGGINGS:
+            case IRON_LEGGINGS:
+            case DIAMOND_LEGGINGS:
+                if (!equipper.isSneaking())
+                    slot = 3;
+                break;
+            case LEATHER_BOOTS:
+            case CHAINMAIL_BOOTS:
+            case GOLD_BOOTS:
+            case IRON_BOOTS:
+            case DIAMOND_BOOTS:
+                if (!equipper.isSneaking())
+                    slot = 4;
+                break;
+            case AIR:
+                for (int i = 0; i < 5; i++) {
+                    if (trait.get(i) != null && trait.get(i).getType() != Material.AIR) {
+                        equipper.getWorld().dropItemNaturally(getBukkitEntity().getLocation(), trait.get(i));
+                        trait.set(i, null);
+                    }
                 }
-            }
-            Messaging.sendF(equipper, "<e>%s<a>had all of its items removed.", getName());
+                Messaging.sendF(equipper, "<e>%s<a>had all of its items removed.", getName());
+            default:
+                break;
         }
         // Drop any previous equipment on the ground
         if (trait.get(slot) != null && trait.get(slot).getType() != Material.AIR)

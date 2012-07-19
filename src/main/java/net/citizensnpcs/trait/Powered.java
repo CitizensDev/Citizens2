@@ -1,18 +1,16 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Creeper;
 
 public class Powered extends Trait implements Toggleable {
-    private final NPC npc;
     private boolean powered;
 
-    public Powered(NPC npc) {
-        this.npc = npc;
+    public Powered() {
+        super("powered");
     }
 
     @Override
@@ -21,7 +19,7 @@ public class Powered extends Trait implements Toggleable {
     }
 
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Creeper)
             ((Creeper) npc.getBukkitEntity()).setPowered(powered);
     }

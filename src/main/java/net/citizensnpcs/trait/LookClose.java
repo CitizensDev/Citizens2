@@ -6,7 +6,6 @@ import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.minecraft.server.EntityLiving;
@@ -16,13 +15,12 @@ import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class LookClose extends Trait implements Runnable, Toggleable {
+public class LookClose extends Trait implements Toggleable {
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
-    private final NPC npc;
 
-    public LookClose(NPC npc) {
-        this.npc = npc;
+    public LookClose() {
+        super("lookclose");
     }
 
     private void faceEntity(Entity from, Entity at) {
@@ -47,23 +45,6 @@ public class LookClose extends Trait implements Runnable, Toggleable {
         handle.yaw = (float) yaw - 90;
         handle.pitch = (float) pitch;
         handle.X = handle.yaw;
-    }
-
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        enabled = key.getBoolean("");
-    }
-
-    @Override
-    public void run() {
-        if (!enabled || npc.getAI().hasDestination())
-            return;
-        if (hasInvalidTarget()) {
-            findNewTarget();
-        }
-        if (lookingAt != null) {
-            faceEntity(npc.getBukkitEntity(), lookingAt);
-        }
     }
 
     private void findNewTarget() {
@@ -94,6 +75,23 @@ public class LookClose extends Trait implements Runnable, Toggleable {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void load(DataKey key) throws NPCLoadException {
+        enabled = key.getBoolean("");
+    }
+
+    @Override
+    public void run() {
+        if (!enabled || npc.getNavigator().isNavigating())
+            return;
+        if (hasInvalidTarget()) {
+            findNewTarget();
+        }
+        if (lookingAt != null) {
+            faceEntity(npc.getBukkitEntity(), lookingAt);
+        }
     }
 
     @Override

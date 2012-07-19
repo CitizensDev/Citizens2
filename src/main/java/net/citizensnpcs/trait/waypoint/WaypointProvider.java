@@ -1,7 +1,7 @@
 package net.citizensnpcs.trait.waypoint;
 
-import net.citizensnpcs.api.ai.AI;
-import net.citizensnpcs.api.ai.NavigationCallback;
+import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 
@@ -19,12 +19,12 @@ public interface WaypointProvider {
     public Editor createEditor(Player player);
 
     /**
-     * Returns the {@link NavigationCallback} linked to this provider. This will
-     * be linked to the NPC's {@link AI}.
      * 
-     * @return The callback in use
+     * @param npc
+     *            The attached {@link NPC} the goal is for.
+     * @return The {@link Goal} to attach to the NPC.
      */
-    public NavigationCallback getCallback();
+    public Goal getGoal(NPC npc);
 
     /**
      * Loads from the specified {@link DataKey}.
@@ -41,6 +41,4 @@ public interface WaypointProvider {
      *            The key to save to
      */
     public void save(DataKey key);
-
-    public void onAttach();
 }
