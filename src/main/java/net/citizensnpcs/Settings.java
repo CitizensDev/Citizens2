@@ -23,9 +23,9 @@ public class Settings {
         for (Setting setting : Setting.values()) {
             if (!root.keyExists(setting.path)) {
                 Messaging.logF("Writing default setting: '%s'", setting.path);
-                setting.set(root);
+                setting.setAtKey(root);
             } else
-                setting.load(root);
+                setting.loadFromKey(root);
         }
 
         save();
@@ -35,7 +35,7 @@ public class Settings {
         config.load();
         for (Setting setting : Setting.values())
             if (root.keyExists(setting.path))
-                setting.load(root);
+                setting.loadFromKey(root);
 
         save();
     }
@@ -56,7 +56,7 @@ public class Settings {
         DEFAULT_TALK_CLOSE("npc.default.talk-close", false),
         DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!") {
             @Override
-            public void load(DataKey root) {
+            public void loadFromKey(DataKey root) {
                 List<String> list = new ArrayList<String>();
                 for (DataKey key : root.getRelative("npc.default.text").getSubKeys())
                     list.add(key.getString(""));
@@ -69,6 +69,7 @@ public class Settings {
         SERVER_OWNS_NPCS("npc.server-ownership", false),
         STORAGE_FILE("storage.file", "saves.yml"),
         STORAGE_TYPE("storage.type", "yaml"),
+        SUBPLUGIN_FOLDER("subplugins.folder", "plugins"),
         TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 60),
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 30),
         TALK_ITEM("npc.text.talk-item", "340");
@@ -109,12 +110,12 @@ public class Settings {
             return value.toString();
         }
 
-        protected void set(DataKey root) {
-            root.setRaw(path, value);
+        protected void loadFromKey(DataKey root) {
+            value = root.getRaw(path);
         }
 
-        protected void load(DataKey root) {
-            value = root.getRaw(path);
+        protected void setAtKey(DataKey root) {
+            root.setRaw(path, value);
         }
     }
 }

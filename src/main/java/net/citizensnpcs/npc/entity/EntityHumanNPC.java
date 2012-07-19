@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHandle;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.network.NPCNetHandler;
 import net.citizensnpcs.npc.network.NPCNetworkManager;
 import net.citizensnpcs.npc.network.NPCSocket;
@@ -16,7 +16,7 @@ import net.minecraft.server.NetHandler;
 import net.minecraft.server.NetworkManager;
 import net.minecraft.server.World;
 
-public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
+public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private CitizensNPC npc;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
@@ -43,6 +43,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
     }
 
     @Override
+    public void b_(double x, double y, double z) {
+        // when another entity collides, b_ is called to push the NPC
+        // so we prevent b_ from doing anything.
+    }
+
+    @Override
     public void F_() {
         super.F_();
         Navigation navigation = al();
@@ -55,6 +61,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
         if (noDamageTicks > 0)
             --noDamageTicks;
         npc.update();
+    }
+
+    @Override
+    public NPC getNPC() {
+        return npc;
     }
 
     private void moveOnCurrentHeading() {
@@ -75,10 +86,5 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHandle {
         aX *= 0.98F;
         a(aW, aX);
         X = yaw; // TODO: this looks jerky
-    }
-
-    @Override
-    public NPC getNPC() {
-        return npc;
     }
 }

@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.scripting.CompileCallback;
 import net.citizensnpcs.api.scripting.ScriptFactory;
 import net.citizensnpcs.api.trait.Trait;
@@ -31,7 +30,6 @@ public class Behaviour extends Trait {
             return new File(rootFolder, arg0);
         }
     };
-    private final NPC npc;
     private final File rootFolder = new File(CitizensAPI.getScriptFolder(), "behaviours");
     private final List<File> scripts = Lists.newArrayList();
     {
@@ -39,8 +37,8 @@ public class Behaviour extends Trait {
             rootFolder.mkdirs();
     }
 
-    public Behaviour(NPC npc) {
-        this.npc = npc;
+    public Behaviour() {
+        super("behaviour");
     }
 
     public void addScripts(Iterable<String> scripts) {
@@ -59,20 +57,20 @@ public class Behaviour extends Trait {
     }
 
     @Override
-    public void onNPCSpawn() {
-        for (Entry<Goal, Integer> entry : addedGoals.entrySet()) {
-            npc.getAI().addGoal(entry.getValue(), entry.getKey());
-        }
-    }
-
-    @Override
     public void onRemove() {
         removeGoals();
     }
 
+    @Override
+    public void onSpawn() {
+        for (Entry<Goal, Integer> entry : addedGoals.entrySet()) {
+            npc.getDefaultGoalController().addGoal(entry.getKey(), entry.getValue());
+        }
+    }
+
     private void removeGoals() {
         for (Goal entry : addedGoals.keySet()) {
-            npc.getAI().removeGoal(entry);
+            npc.getDefaultGoalController().removeGoal(entry);
         }
     }
 
@@ -100,7 +98,7 @@ public class Behaviour extends Trait {
             if (!npc.isSpawned())
                 return;
             for (Entry<Goal, Integer> entry : goals.goals.entrySet()) {
-                npc.getAI().addGoal(entry.getValue(), entry.getKey());
+                npc.getDefaultGoalController().addGoal(entry.getKey(), entry.getValue());
             }
         }
 
@@ -113,7 +111,7 @@ public class Behaviour extends Trait {
     public static class Goals {
         private final Map<Goal, Integer> goals = Maps.newHashMap();
 
-        public void addGoal(int priority, Goal goal) {
+        public void addGoal(Goal goal, int priority) {
             Validate.notNull(goal);
             goals.put(goal, priority);
         }

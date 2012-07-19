@@ -4,7 +4,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHandle;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.util.Messaging;
@@ -49,7 +49,8 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
             equipper.setItemInHand(hand);
         } else {
             getTrait(WoolColor.class).setColor(DyeColor.WHITE);
-            Messaging.send(equipper, StringHelper.wrap(getName()) + " is now " + StringHelper.wrap("white") + ".");
+            Messaging.send(equipper, StringHelper.wrap(getName()) + " is now " + StringHelper.wrap("white")
+                    + ".");
         }
     }
 
@@ -58,7 +59,7 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         return (Sheep) getHandle().getBukkitEntity();
     }
 
-    public static class EntitySheepNPC extends EntitySheep implements NPCHandle {
+    public static class EntitySheepNPC extends EntitySheep implements NPCHolder {
         private final CitizensNPC npc;
 
         public EntitySheepNPC(World world) {
@@ -68,8 +69,21 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         public EntitySheepNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            goalSelector = new PathfinderGoalSelector();
-            targetSelector = new PathfinderGoalSelector();
+            if (npc != null) {
+                goalSelector = new PathfinderGoalSelector();
+                targetSelector = new PathfinderGoalSelector();
+            }
+        }
+
+        @Override
+        public void b_(double x, double y, double z) {
+            // when another entity collides, b_ is called to push the NPC
+            // so we prevent b_ from doing anything.
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
 
         @Override
@@ -77,11 +91,6 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
             super.z_();
             if (npc != null)
                 npc.update();
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

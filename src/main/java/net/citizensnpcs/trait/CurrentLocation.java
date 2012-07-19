@@ -1,27 +1,21 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-public class CurrentLocation extends Trait implements Runnable {
+public class CurrentLocation extends Trait {
     private Location loc;
-    private final NPC npc;
 
-    public CurrentLocation(NPC npc) {
-        this.npc = npc;
+    public CurrentLocation() {
+        super("location");
     }
 
     public Location getLocation() {
         return loc;
-    }
-
-    public void setLocation(Location loc) {
-        this.loc = loc;
     }
 
     @Override
@@ -54,6 +48,10 @@ public class CurrentLocation extends Trait implements Runnable {
         key.setDouble("z", loc.getZ());
         key.setDouble("yaw", loc.getYaw());
         key.setDouble("pitch", loc.getPitch());
+    }
+
+    public void setLocation(Location loc) {
+        this.loc = loc;
     }
 
     @Override

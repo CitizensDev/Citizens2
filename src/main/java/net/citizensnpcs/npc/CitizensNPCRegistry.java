@@ -1,17 +1,13 @@
 package net.citizensnpcs.npc;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.util.Storage;
-import net.citizensnpcs.npc.ai.NPCHandle;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.CitizensBlazeNPC;
 import net.citizensnpcs.npc.entity.CitizensCaveSpiderNPC;
 import net.citizensnpcs.npc.entity.CitizensChickenNPC;
@@ -82,67 +78,17 @@ public class CitizensNPCRegistry implements NPCRegistry {
         types.put(EntityType.ZOMBIE, CitizensZombieNPC.class);
     }
 
-    public NPC createNPC(EntityType type, int id, String name, Character character) {
+    public NPC createNPC(EntityType type, int id, String name) {
         CitizensNPC npc = getByType(type, id, name);
         if (npc == null)
             throw new IllegalStateException("Could not create NPC.");
-        if (character != null)
-            npc.setCharacter(character);
         npcs.put(npc.getId(), npc);
         return npc;
     }
 
     @Override
     public NPC createNPC(EntityType type, String name) {
-        return createNPC(type, name, null);
-    }
-
-    @Override
-    public NPC createNPC(EntityType type, String name, Character character) {
-        return createNPC(type, generateUniqueId(), name, character);
-    }
-
-    private int generateUniqueId() {
-        int count = 0;
-        while (getNPC(count++) != null)
-            ; // TODO: doesn't respect existing save data that might not have
-              // been loaded. This causes DBs with NPCs that weren't loaded to
-              // have conflicting primary keys.
-        return count - 1;
-    }
-
-    @Override
-    public NPC getNPC(Entity entity) {
-        Validate.notNull(entity);
-        net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
-        return handle instanceof NPCHandle ? ((NPCHandle) handle).getNPC() : null;
-    }
-
-    @Override
-    public NPC getNPC(int id) {
-        if (id < 0)
-            throw new IllegalArgumentException("invalid id");
-        return npcs.get(id);
-    }
-
-    @Override
-    public Collection<NPC> getNPCs(Class<? extends Character> character) {
-        List<NPC> npcs = new ArrayList<NPC>();
-        for (NPC npc : this) {
-            if (npc.getCharacter() != null && npc.getCharacter().getClass().equals(character))
-                npcs.add(npc);
-        }
-        return npcs;
-    }
-
-    @Override
-    public boolean isNPC(Entity entity) {
-        return getNPC(entity) != null;
-    }
-
-    @Override
-    public Iterator<NPC> iterator() {
-        return npcs.iterator();
+        return createNPC(type, generateUniqueId(), name);
     }
 
     @Override
@@ -163,6 +109,22 @@ public class CitizensNPCRegistry implements NPCRegistry {
         }
     }
 
+    private int generateUniqueId() {
+        int count = 0;
+        while (getById(count++) != null)
+            ; // TODO: doesn't respect existing save data that might not have
+              // been loaded. This causes DBs with NPCs that weren't loaded to
+              // have conflicting primary keys.
+        return count - 1;
+    }
+
+    @Override
+    public NPC getById(int id) {
+        if (id < 0)
+            throw new IllegalArgumentException("invalid id");
+        return npcs.get(id);
+    }
+
     private CitizensNPC getByType(EntityType type, int id, String name) {
         Class<? extends CitizensNPC> npcClass = types.get(type);
         if (npcClass == null)
@@ -172,5 +134,22 @@ public class CitizensNPCRegistry implements NPCRegistry {
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    @Override
+    public NPC getNPC(Entity entity) {
+        Validate.notNull(entity);
+        net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
+        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
+    }
+
+    @Override
+    public boolean isNPC(Entity entity) {
+        return getNPC(entity) != null;
+    }
+
+    @Override
+    public Iterator<NPC> iterator() {
+        return npcs.iterator();
     }
 }

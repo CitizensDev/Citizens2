@@ -2,21 +2,18 @@ package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
-public class Sheared extends Trait implements Toggleable, Listener {
-    private final NPC npc;
+public class Sheared extends Trait implements Toggleable {
     private boolean sheared;
 
-    public Sheared(NPC npc) {
-        this.npc = npc;
+    public Sheared() {
+        super("sheared");
     }
 
     @Override
@@ -24,15 +21,15 @@ public class Sheared extends Trait implements Toggleable, Listener {
         sheared = key.getBoolean("");
     }
 
-    @Override
-    public void onNPCSpawn() {
-        ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
-    }
-
     @EventHandler
     public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
         if (npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity())))
             event.setCancelled(true);
+    }
+
+    @Override
+    public void onSpawn() {
+        ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
     }
 
     @Override

@@ -3,7 +3,7 @@ package net.citizensnpcs.npc.entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHandle;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.minecraft.server.EntityGhast;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
@@ -21,7 +21,7 @@ public class CitizensGhastNPC extends CitizensMobNPC {
         return (Ghast) getHandle().getBukkitEntity();
     }
 
-    public static class EntityGhastNPC extends EntityGhast implements NPCHandle {
+    public static class EntityGhastNPC extends EntityGhast implements NPCHolder {
         private final CitizensNPC npc;
 
         public EntityGhastNPC(World world) {
@@ -31,8 +31,16 @@ public class CitizensGhastNPC extends CitizensMobNPC {
         public EntityGhastNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            goalSelector = new PathfinderGoalSelector();
-            targetSelector = new PathfinderGoalSelector();
+            if (npc != null) {
+                goalSelector = new PathfinderGoalSelector();
+                targetSelector = new PathfinderGoalSelector();
+            }
+        }
+
+        @Override
+        public void b_(double x, double y, double z) {
+            // when another entity collides, b_ is called to push the NPC
+            // so we prevent b_ from doing anything.
         }
 
         @Override

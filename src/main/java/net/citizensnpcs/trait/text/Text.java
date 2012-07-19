@@ -1,15 +1,16 @@
 package net.citizensnpcs.trait.text;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
@@ -17,6 +18,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.trait.Toggleable;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
+import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
 
@@ -26,19 +28,20 @@ import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-public class Text extends Trait implements Runnable, Toggleable, ConversationAbandonedListener {
-    private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();
+public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
+    private final Map<String, Date> cooldowns = new HashMap<String, Date>();
     private int currentIndex;
-    private final NPC npc;
     private final Plugin plugin;
     private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
     private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
     private final List<String> text = new ArrayList<String>();
 
-    public Text(NPC npc) {
-        this.npc = npc;
+    public Text() {
+        super("text");
         this.plugin = Bukkit.getPluginManager().getPlugin("Citizens");
     }
 
@@ -92,8 +95,16 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
             randomTalker = key.getBoolean("random-talker");
     }
 
+    @EventHandler
+    public void onRightClick(NPCRightClickEvent event) {
+        if (!event.getNPC().equals(npc))
+            return;
+        if (Util.isSettingFulfilled(event.getClicker(), Setting.TALK_ITEM) && !shouldTalkClose())
+            sendText(event.getClicker());
+    }
+
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (text.isEmpty())
             populateDefaultText();
     }
@@ -116,17 +127,17 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
             Player player = (Player) search.getBukkitEntity();
             // If the cooldown is not expired, do not send text
             if (cooldowns.get(player.getName()) != null) {
-                if (!Calendar.getInstance().after(cooldowns.get(player.getName())))
+                if (!new Date().after(cooldowns.get(player.getName())))
                     return;
                 cooldowns.remove(player.getName());
             }
             if (sendText(player)) {
                 // Add a cooldown if the text was successfully sent
-                Calendar wait = Calendar.getInstance();
-                wait.add(
-                        Calendar.SECOND,
-                        (new Random().nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt()) + Setting.TALK_CLOSE_MINIMUM_COOLDOWN
-                                .asInt()));
+                Date wait = new Date();
+                int secondsDelta = new Random().nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt())
+                        + Setting.TALK_CLOSE_MINIMUM_COOLDOWN.asInt();
+                long millisecondsDelta = TimeUnit.MILLISECONDS.convert(secondsDelta, TimeUnit.SECONDS);
+                wait.setTime(wait.getTime() + millisecondsDelta);
                 cooldowns.put(player.getName(), wait);
             }
         }
@@ -162,7 +173,7 @@ public class Text extends Trait implements Runnable, Toggleable, ConversationAba
                 currentIndex = 0;
             index = currentIndex++;
         }
-        npc.chat(player, text.get(index));
+        Messaging.sendWithNPC(player, Setting.CHAT_PREFIX.asString() + text.get(index), npc);
         return true;
     }
 

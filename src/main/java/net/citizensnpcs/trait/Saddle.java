@@ -2,22 +2,19 @@ package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Pig;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-public class Saddle extends Trait implements Toggleable, Listener {
-    private final NPC npc;
-    private boolean saddle;
+public class Saddle extends Trait implements Toggleable {
     private boolean pig;
+    private boolean saddle;
 
-    public Saddle(NPC npc) {
-        this.npc = npc;
+    public Saddle() {
+        super("saddle");
     }
 
     @Override
@@ -25,19 +22,19 @@ public class Saddle extends Trait implements Toggleable, Listener {
         saddle = key.getBoolean("");
     }
 
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (pig && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
+            event.setCancelled(true);
+    }
+
     @Override
-    public void onNPCSpawn() {
+    public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Pig) {
             ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
             pig = true;
         } else
             pig = false;
-    }
-
-    @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (pig && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
-            event.setCancelled(true);
     }
 
     @Override

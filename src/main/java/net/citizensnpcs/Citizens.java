@@ -12,11 +12,10 @@ import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.npc.character.CharacterManager;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
-import net.citizensnpcs.api.trait.TraitManager;
+import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.NBTStorage;
@@ -35,10 +34,9 @@ import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.npc.CitizensCharacterManager;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
-import net.citizensnpcs.npc.CitizensTraitManager;
+import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
@@ -50,12 +48,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Iterables;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
-    private final CitizensCharacterManager characterManager = new CitizensCharacterManager();
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
@@ -63,11 +61,32 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private CitizensNPCRegistry npcRegistry;
     private Storage saves; // TODO: refactor this, it's used in too many places
     private NPCSelector selector;
-    private TraitManager traitManager;
+    private CitizensTraitFactory traitFactory;
 
-    @Override
-    public CharacterManager getCharacterManager() {
-        return characterManager;
+    private void despawnNPCs() {
+        Iterator<NPC> itr = npcRegistry.iterator();
+        while (itr.hasNext()) {
+            NPC npc = itr.next();
+            itr.remove();
+            npc.despawn();
+        }
+    }
+
+    private void enableSubPlugins() {
+        File root = new File(getDataFolder(), Setting.SUBPLUGIN_FOLDER.asString());
+        if (!root.exists() || !root.isDirectory())
+            return;
+        Plugin[] plugins = Bukkit.getPluginManager().loadPlugins(root);
+        // code beneath modified from CraftServer
+        for (Plugin plugin : plugins) {
+            try {
+                Messaging.logF("Loading %s", plugin.getDescription().getFullName());
+                plugin.onLoad();
+            } catch (Throwable ex) {
+                Messaging.severe(ex.getMessage() + " initializing " + plugin.getDescription().getFullName());
+                ex.printStackTrace();
+            }
+        }
     }
 
     public Iterable<net.citizensnpcs.command.Command> getCommands(String base) {
@@ -89,8 +108,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
-    public TraitManager getTraitManager() {
-        return traitManager;
+    public TraitFactory getTraitFactory() {
+        return traitFactory;
     }
 
     @Override
@@ -170,7 +189,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         setupStorage();
 
         npcRegistry = new CitizensNPCRegistry(saves);
-        traitManager = new CitizensTraitManager(this);
+        traitFactory = new CitizensTraitFactory();
         selector = new NPCSelector(this);
         CitizensAPI.setImplementation(this);
 
@@ -187,30 +206,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             public void run() {
                 setupNPCs();
                 startMetrics();
-            }
-
-            private void startMetrics() {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            Metrics metrics = new Metrics(Citizens.this);
-                            if (metrics.isOptOut())
-                                return;
-                            metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
-                                @Override
-                                public int getValue() {
-                                    return Iterables.size(npcRegistry);
-                                }
-                            });
-                            characterManager.addPlotters(metrics);
-                            metrics.start();
-                            Messaging.log("Metrics started.");
-                        } catch (IOException e) {
-                            Messaging.logF("Unable to start metrics: %s.", e.getMessage());
-                        }
-                    }
-                }.start();
+                enableSubPlugins();
             }
         }) == -1) {
             Messaging.severe("Issue enabling plugin. Disabling.");
@@ -251,15 +247,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
 
-    private void despawnNPCs() {
-        Iterator<NPC> itr = npcRegistry.iterator();
-        while (itr.hasNext()) {
-            NPC npc = itr.next();
-            itr.remove();
-            npc.despawn();
-        }
-    }
-
     public void save() {
         for (NPC npc : npcRegistry)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
@@ -287,7 +274,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     continue;
                 }
             }
-            NPC npc = npcRegistry.createNPC(type, id, key.getString("name"), null);
+            NPC npc = npcRegistry.createNPC(type, id, key.getString("name"));
             ((CitizensNPC) npc).load(key);
 
             ++created;
@@ -300,7 +287,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private void setupScripting() {
         contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClassLoader());
-        // workaround to fix scripts not loading plugin classes properly
+        // Workaround to fix scripts not loading plugin classes properly.
+        // The built in Sun Rhino Javascript engine uses the context classloader
+        // to search for class imports. Since the context classloader only has
+        // CraftBukkit classes, we replace it with a PluginClassLoader, which
+        // allows all plugin classes to be imported.
     }
 
     private void setupStorage() {
@@ -322,6 +313,31 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     "Citizens NPC Storage");
         }
         Messaging.logF("Save method set to %s.", saves.toString());
+    }
+
+    private void startMetrics() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Metrics metrics = new Metrics(Citizens.this);
+                    if (metrics.isOptOut())
+                        return;
+                    metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
+                        @Override
+                        public int getValue() {
+                            return Iterables.size(npcRegistry);
+                        }
+                    });
+
+                    traitFactory.addPlotters(metrics.createGraph("traits"));
+                    metrics.start();
+                    Messaging.log("Metrics started.");
+                } catch (IOException e) {
+                    Messaging.logF("Unable to start metrics: %s.", e.getMessage());
+                }
+            }
+        }.start();
     }
 
     private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {
