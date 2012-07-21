@@ -56,7 +56,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             navigation.d();
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0) {
-            a(0, 0);
+            // a(0, 0);
+
         }
         if (noDamageTicks > 0)
             --noDamageTicks;

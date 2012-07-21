@@ -72,6 +72,7 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     public void load(DataKey root) {
+        metadata.loadFrom(root.getRelative("metadata"));
         // Load traits
         for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
             Trait trait = CitizensAPI.getTraitFactory().getTrait(traitKey.name());
@@ -100,6 +101,8 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     public void save(DataKey root) {
         root.setString("name", getFullName());
+
+        metadata.saveTo(root.getRelative("metadata"));
 
         // Save all existing traits
         for (Trait trait : traits.values()) {
@@ -133,6 +136,7 @@ public abstract class CitizensNPC extends AbstractNPC {
         // Modify NPC using traits after the entity has been created
         for (Trait trait : traits.values())
             trait.onSpawn();
+        navigator.onSpawn();
         return true;
     }
 

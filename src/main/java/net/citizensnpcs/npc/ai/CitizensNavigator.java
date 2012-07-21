@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.ai;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Set;
 
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
@@ -10,6 +11,7 @@ import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
@@ -18,15 +20,15 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class CitizensNavigator implements Navigator {
     private PathStrategy executing;
     private final CitizensNPC npc;
-    private float speed;
+    private float speed = -1;
 
     public CitizensNavigator(CitizensNPC npc) {
         this.npc = npc;
-        this.speed = getSpeedFor(npc.getHandle());
     }
 
     @Override
@@ -88,23 +90,36 @@ public class CitizensNavigator implements Navigator {
 
     @Override
     public void setTarget(LivingEntity target, boolean aggressive) {
+        if (!npc.isSpawned())
+            throw new IllegalStateException("npc is not spawned");
         PathStrategy newStrategy = new MCTargetStrategy(npc, target, aggressive, speed);
         switchStrategyTo(newStrategy);
     }
 
     @Override
     public void setTarget(Location target) {
+        if (!npc.isSpawned())
+            throw new IllegalStateException("npc is not spawned");
+        if (!logged.contains(target)) {
+            Messaging.log(target);
+            logged.add(target);
+        }
         PathStrategy newStrategy = new MCNavigationStrategy(npc, target, speed);
         switchStrategyTo(newStrategy);
     }
 
+    private final Set<Location> logged = Sets.newHashSet();
+
     private void switchStrategyTo(PathStrategy newStrategy) {
         if (executing != null)
             Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
-
         executing = newStrategy;
-
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
+    }
+
+    public void onSpawn() {
+        if (speed == -1)
+            this.speed = getSpeedFor(npc.getHandle());
     }
 
     public void update() {
@@ -127,6 +142,7 @@ public class CitizensNavigator implements Navigator {
         MOVEMENT_SPEEDS.put(EntityType.SHEEP, 0.25F);
         MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
         MOVEMENT_SPEEDS.put(EntityType.SNOWMAN, 0.25F);
+        MOVEMENT_SPEEDS.put(EntityType.CREEPER, 0.3F);
         try {
             SPEED_FIELD = EntityLiving.class.getDeclaredField("bb");
             SPEED_FIELD.setAccessible(true);
