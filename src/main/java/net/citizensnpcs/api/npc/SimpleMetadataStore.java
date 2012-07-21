@@ -60,6 +60,14 @@ public class SimpleMetadataStore implements MetadataStore {
     }
 
     @Override
+    public void loadFrom(DataKey key) {
+        persistentMetadata.clear();
+        for (DataKey subKey : key.getSubKeys()) {
+            persistentMetadata.put(subKey.name(), subKey.getRaw(""));
+        }
+    }
+
+    @Override
     public void set(String key, Object data) {
         Preconditions.checkNotNull(data, "data cannot be null");
         Preconditions.checkNotNull(key, "key cannot be null");

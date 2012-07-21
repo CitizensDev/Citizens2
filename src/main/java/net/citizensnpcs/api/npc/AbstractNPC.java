@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
     private final int id;
-    private final MetadataStore metadata = new SimpleMetadataStore();
+    protected final MetadataStore metadata = new SimpleMetadataStore();
     private String name;
     protected final List<Runnable> runnables = Lists.newArrayList();
     protected final Map<Class<? extends Trait>, Trait> traits = Maps.newHashMap();
@@ -51,7 +51,8 @@ public abstract class AbstractNPC implements NPC {
             runnables.remove(traits.get(trait.getClass()));
 
         Bukkit.getPluginManager().registerEvents(trait, CitizensAPI.getPlugin());
-
+        if (isSpawned())
+            trait.onSpawn();
         traits.put(trait.getClass(), trait);
     }
 

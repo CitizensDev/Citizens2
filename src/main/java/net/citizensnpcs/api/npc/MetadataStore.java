@@ -15,26 +15,26 @@ public interface MetadataStore {
      */
     <T> T get(String key);
 
-    /**
-         * Fetches metadata from the given key. Sets the default value provided via
-         * {@link #set(String, Object) if the metadata is not already stored.
-         * 
-         * @param key
-         *            The key to get metadata from
-         * @param def
-         *            The default value to return
-         * @return The metadata at the given key, or def if not found
-         */
-        <T> T get(String string, T def);
-
 /**
- * Returns whether the metadata exists.
- * 
- * @param key
- *            The metadata key
- * @return Whether the metadata exists
- */
-boolean has(String key);
+     *  Fetches metadata from the given key. Sets the default value provided via
+     * {@link #set(String, Object) if the metadata is not already stored.
+     * 
+     * @param key
+     *            The key to get metadata from
+     * @param def
+     *            The default value to return
+     * @return The metadata at the given key, or def if not found
+     */
+    <T> T get(String string, T def);
+
+    /**
+     * Returns whether the metadata exists.
+     * 
+     * @param key
+     *            The metadata key
+     * @return Whether the metadata exists
+     */
+    boolean has(String key);
 
     /**
      * Removes any metadata at the given metadata key.
@@ -45,12 +45,20 @@ boolean has(String key);
     void remove(String key);
 
     /**
-     * Saves metadata to the given {@link DataKey}.
+     * Saves persistent metadata to the given {@link DataKey}.
      * 
      * @param key
      *            The key to save to.
      */
     void saveTo(DataKey key);
+
+    /**
+     * Loads persistent metadata from the given {@link DataKey}.
+     * 
+     * @param key
+     *            The key to load from
+     */
+    void loadFrom(DataKey key);
 
     /**
      * Stores data at the given key. Data will not persist.
