@@ -1,14 +1,15 @@
 package net.citizensnpcs.npc;
 
 import java.util.Map;
+import java.util.Set;
 
 import net.citizensnpcs.Metrics;
 import net.citizensnpcs.Metrics.Graph;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.trait.TraitFactory;
+import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.MobType;
@@ -29,6 +30,7 @@ import net.citizensnpcs.trait.waypoint.Waypoints;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class CitizensTraitFactory implements TraitFactory {
     private final Map<String, Class<? extends Trait>> registered = Maps.newHashMap();
@@ -52,10 +54,17 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(WoolColor.class).withName("woolcolor"));
         registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));
         registerTrait(TraitInfo.create(Behaviour.class).withName("behaviour"));
+
+        for (String trait : registered.keySet())
+            INTERNAL_TRAITS.add(trait);
     }
+
+    private static final Set<String> INTERNAL_TRAITS = Sets.newHashSet();
 
     public void addPlotters(Graph graph) {
         for (Map.Entry<String, Class<? extends Trait>> entry : registered.entrySet()) {
+            if (INTERNAL_TRAITS.contains(entry.getKey()))
+                continue;
             final Class<? extends Trait> traitClass = entry.getValue();
             graph.addPlotter(new Metrics.Plotter(entry.getKey()) {
                 @Override

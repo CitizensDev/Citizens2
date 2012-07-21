@@ -2,7 +2,6 @@ package net.citizensnpcs.npc.ai;
 
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Set;
 
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
@@ -11,7 +10,6 @@ import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
@@ -20,7 +18,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 public class CitizensNavigator implements Navigator {
     private PathStrategy executing;
@@ -100,15 +97,9 @@ public class CitizensNavigator implements Navigator {
     public void setTarget(Location target) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
-        if (!logged.contains(target)) {
-            Messaging.log(target);
-            logged.add(target);
-        }
         PathStrategy newStrategy = new MCNavigationStrategy(npc, target, speed);
         switchStrategyTo(newStrategy);
     }
-
-    private final Set<Location> logged = Sets.newHashSet();
 
     private void switchStrategyTo(PathStrategy newStrategy) {
         if (executing != null)
