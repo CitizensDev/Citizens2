@@ -36,6 +36,12 @@ public class Messaging {
         log(Level.INFO, msg);
     }
 
+    public static void log(Throwable ex) {
+        if (ex.getCause() != null)
+            ex = ex.getCause();
+        ex.printStackTrace();
+    }
+
     public static void logF(Object... msg) {
         log(getFormatted(msg));
     }

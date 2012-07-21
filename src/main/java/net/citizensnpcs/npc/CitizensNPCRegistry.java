@@ -35,6 +35,7 @@ import net.citizensnpcs.npc.entity.CitizensVillagerNPC;
 import net.citizensnpcs.npc.entity.CitizensWolfNPC;
 import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 import net.citizensnpcs.util.ByIdArray;
+import net.citizensnpcs.util.Messaging;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -132,6 +133,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         try {
             return npcClass.getConstructor(int.class, String.class).newInstance(id, name);
         } catch (Exception ex) {
+            Messaging.log(ex);
             return null;
         }
     }
