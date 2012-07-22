@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
@@ -51,10 +50,8 @@ public class Waypoints extends Trait {
 
     @Override
     public void onSpawn() {
-        if (provider != null) {
-            Goal goal = provider.getGoal(getNPC());
-            getNPC().getDefaultGoalController().addGoal(goal, 1);
-        }
+        if (provider != null)
+            provider.onSpawn(getNPC());
     }
 
     @Override
