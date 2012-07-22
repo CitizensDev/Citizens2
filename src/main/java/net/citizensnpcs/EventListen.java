@@ -133,6 +133,11 @@ public class EventListen implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Editor.leave(event.getPlayer());
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         if (!npcRegistry.isNPC(event.getRightClicked()))
             return;
@@ -140,11 +145,6 @@ public class EventListen implements Listener {
         // Call target event for NPCs
         Bukkit.getPluginManager().callEvent(
                 new EntityTargetEvent(event.getRightClicked(), event.getPlayer(), TargetReason.CUSTOM));
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Editor.leave(event.getPlayer());
     }
 
     /*
@@ -186,19 +186,13 @@ public class EventListen implements Listener {
         private final int x;
         private final int z;
 
-        private ChunkCoord(int x, int z) {
-            this.x = x;
-            this.z = z;
-        }
-
         private ChunkCoord(Chunk chunk) {
             this(chunk.getX(), chunk.getZ());
         }
 
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            return prime * (prime + x) + z;
+        private ChunkCoord(int x, int z) {
+            this.x = x;
+            this.z = z;
         }
 
         @Override
@@ -211,6 +205,12 @@ public class EventListen implements Listener {
             }
             ChunkCoord other = (ChunkCoord) obj;
             return x == other.x && z == other.z;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            return prime * (prime + x) + z;
         }
     }
 }

@@ -59,8 +59,6 @@ public class CitizensTraitFactory implements TraitFactory {
             INTERNAL_TRAITS.add(trait);
     }
 
-    private static final Set<String> INTERNAL_TRAITS = Sets.newHashSet();
-
     public void addPlotters(Graph graph) {
         for (Map.Entry<String, Class<? extends Trait>> entry : registered.entrySet()) {
             if (INTERNAL_TRAITS.contains(entry.getKey()))
@@ -110,4 +108,6 @@ public class CitizensTraitFactory implements TraitFactory {
         Preconditions.checkNotNull(info, "info cannot be null");
         registered.put(info.getTraitName(), info.getTraitClass());
     }
+
+    private static final Set<String> INTERNAL_TRAITS = Sets.newHashSet();
 }

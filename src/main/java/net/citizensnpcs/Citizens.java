@@ -159,6 +159,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     @Override
     public void onDisable() {
         Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
+        Editor.leaveAll();
+        CitizensAPI.shutdown();
 
         tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
@@ -177,8 +179,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
         compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
         if (!compatible) {
-            Messaging.severeF("v%s is not compatible with Minecraft v%s. Disabling.", getDescription().getVersion(),
-                    mcVersion);
+            Messaging.severeF("v%s is not compatible with Minecraft v%s. Disabling.", getDescription()
+                    .getVersion(), mcVersion);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -270,7 +272,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 try {
                     type = EntityType.valueOf(unparsedEntityType);
                 } catch (IllegalArgumentException ex) {
-                    Messaging.logF("NPC type '%s' was not recognized. Did you spell it correctly?", unparsedEntityType);
+                    Messaging.logF("NPC type '%s' was not recognized. Did you spell it correctly?",
+                            unparsedEntityType);
                     continue;
                 }
             }
@@ -298,8 +301,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         String type = Setting.STORAGE_TYPE.asString();
         if (type.equalsIgnoreCase("db") || type.equalsIgnoreCase("database")) {
             try {
-                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
-                        Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
+                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(),
+                        Setting.DATABASE_URL.asString(), Setting.DATABASE_USERNAME.asString(),
+                        Setting.DATABASE_PASSWORD.asString());
             } catch (SQLException e) {
                 e.printStackTrace();
                 Messaging.log("Unable to connect to database, falling back to YAML");
@@ -359,7 +363,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void tearDownScripting() {
-        Thread.currentThread().setContextClassLoader(contextClassLoader);
+        if (Thread.currentThread().getContextClassLoader() == getClassLoader())
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
     }
 
     private static final String COMPATIBLE_MC_VERSION = "1.2.5";

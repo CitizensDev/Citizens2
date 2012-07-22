@@ -80,6 +80,11 @@ public class CitizensNavigator implements Navigator {
         return executing != null;
     }
 
+    public void onSpawn() {
+        if (speed == -1)
+            this.speed = getSpeedFor(npc.getHandle());
+    }
+
     @Override
     public void setSpeed(float speed) {
         this.speed = speed;
@@ -106,11 +111,6 @@ public class CitizensNavigator implements Navigator {
             Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
         executing = newStrategy;
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
-    }
-
-    public void onSpawn() {
-        if (speed == -1)
-            this.speed = getSpeedFor(npc.getHandle());
     }
 
     public void update() {

@@ -2,6 +2,7 @@ package net.citizensnpcs.editor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.citizensnpcs.util.Messaging;
 
@@ -46,6 +47,10 @@ public abstract class Editor implements Listener {
     }
 
     public static void leaveAll() {
+        for (Entry<String, Editor> entry : editing.entrySet()) {
+            entry.getValue().end();
+            HandlerList.unregisterAll(entry.getValue());
+        }
         editing.clear();
     }
 }
