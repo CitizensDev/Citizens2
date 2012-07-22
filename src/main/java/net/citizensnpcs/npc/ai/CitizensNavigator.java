@@ -127,6 +127,7 @@ public class CitizensNavigator implements Navigator {
     private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
     private static Field SPEED_FIELD;
     static {
+
         MOVEMENT_SPEEDS.put(EntityType.IRON_GOLEM, 0.15F);
         MOVEMENT_SPEEDS.put(EntityType.CHICKEN, 0.25F);
         MOVEMENT_SPEEDS.put(EntityType.COW, 0.2F);
@@ -134,6 +135,7 @@ public class CitizensNavigator implements Navigator {
         MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
         MOVEMENT_SPEEDS.put(EntityType.SNOWMAN, 0.25F);
         MOVEMENT_SPEEDS.put(EntityType.CREEPER, 0.3F);
+        MOVEMENT_SPEEDS.put(EntityType.PIG, 0.25F);
         try {
             SPEED_FIELD = EntityLiving.class.getDeclaredField("bb");
             SPEED_FIELD.setAccessible(true);

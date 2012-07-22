@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait.waypoint;
 
-import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
@@ -19,14 +18,6 @@ public interface WaypointProvider {
     public Editor createEditor(Player player);
 
     /**
-     * 
-     * @param npc
-     *            The attached {@link NPC} the goal is for.
-     * @return The {@link Goal} to attach to the NPC.
-     */
-    public Goal getGoal(NPC npc);
-
-    /**
      * Loads from the specified {@link DataKey}.
      * 
      * @param key
@@ -41,4 +32,6 @@ public interface WaypointProvider {
      *            The key to save to
      */
     public void save(DataKey key);
+
+    public void onSpawn(NPC npc);
 }

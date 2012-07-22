@@ -3,7 +3,7 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Iterator;
 import java.util.List;
 
-import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoint> {
     private WaypointGoal currentGoal;
     private final List<Waypoint> waypoints = Lists.newArrayList();
+    private NPC npc;
 
     @Override
     public Editor createEditor(final Player player) {
@@ -73,6 +74,12 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
             }
 
             @EventHandler
+            public void onNPCDespawn(NPCDespawnEvent event) {
+                if (event.getNPC().equals(npc))
+                    end();
+            }
+
+            @EventHandler
             public void onPlayerItemHeldChange(PlayerItemHeldEvent event) {
                 if (!event.getPlayer().equals(player) || waypoints.size() == 0)
                     return;
@@ -101,10 +108,11 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     }
 
     @Override
-    public Goal getGoal(NPC npc) {
+    public void onSpawn(NPC npc) {
+        this.npc = npc;
         if (currentGoal == null)
             currentGoal = new WaypointGoal(this, npc.getNavigator());
-        return currentGoal;
+        npc.getDefaultGoalController().addGoal(currentGoal, 1);
     }
 
     @Override

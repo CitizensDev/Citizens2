@@ -73,10 +73,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         getControllerMove().c();
         getControllerLook().a();
         getControllerJump().b();
+
+        // taken from EntityLiving
         if (aZ) {
-            if (aT()) {
+            boolean inLiquid = aT() || aU();
+            if (inLiquid) {
                 motY += 0.04;
             } else if (onGround && q == 0) {
+                // ac(); - this doesn't jump high enough
                 motY = 0.6;
                 q = 10;
             }
@@ -86,6 +90,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
         aX *= 0.98F;
         a(aW, aX);
-        X = yaw; // TODO: this looks jerky
+        X = yaw;
     }
 }
