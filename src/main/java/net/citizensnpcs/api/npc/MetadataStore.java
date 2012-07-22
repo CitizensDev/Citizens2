@@ -37,6 +37,14 @@ public interface MetadataStore {
     boolean has(String key);
 
     /**
+     * Loads persistent metadata from the given {@link DataKey}.
+     * 
+     * @param key
+     *            The key to load from
+     */
+    void loadFrom(DataKey key);
+
+    /**
      * Removes any metadata at the given metadata key.
      * 
      * @param key
@@ -51,14 +59,6 @@ public interface MetadataStore {
      *            The key to save to.
      */
     void saveTo(DataKey key);
-
-    /**
-     * Loads persistent metadata from the given {@link DataKey}.
-     * 
-     * @param key
-     *            The key to load from
-     */
-    void loadFrom(DataKey key);
 
     /**
      * Stores data at the given key. Data will not persist.

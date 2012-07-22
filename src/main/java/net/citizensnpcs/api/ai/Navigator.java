@@ -14,20 +14,20 @@ public interface Navigator {
     void cancelNavigation();
 
     /**
-     * Returns the current entity movement speed of the navigator.
-     * 
-     * @see #getSpeed()
-     * @return The entity movement speed
-     */
-    float getSpeed();
-
-    /**
      * Returns the current {@link EntityTarget} of the navigator, if any. May
      * return null.
      * 
      * @return The current entity target
      */
     EntityTarget getEntityTarget();
+
+    /**
+     * Returns the current entity movement speed of the navigator.
+     * 
+     * @see #getSpeed()
+     * @return The entity movement speed
+     */
+    float getSpeed();
 
     /**
      * Returns the current {@link Location} being navigated towards - this is

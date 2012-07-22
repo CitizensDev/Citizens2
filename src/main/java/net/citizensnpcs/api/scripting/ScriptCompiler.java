@@ -9,8 +9,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -30,7 +30,7 @@ import com.google.common.io.Closeables;
  * thread - {@link ScriptCompiler#run()} will block while waiting for new tasks
  * to compile.
  */
-public class ScriptCompiler implements Runnable {
+public class ScriptCompiler extends Thread {
     private final ScriptEngineManager engineManager = new ScriptEngineManager();
     private final Map<String, ScriptEngine> engines = Maps.newHashMap();
     private final Function<File, FileEngine> fileEngineConverter = new Function<File, FileEngine>() {
@@ -53,7 +53,11 @@ public class ScriptCompiler implements Runnable {
         }
     };
     private final List<ContextProvider> globalContextProviders = Lists.newArrayList();
-    private final BlockingQueue<CompileTask> toCompile = new LinkedBlockingQueue<CompileTask>();
+    private final BlockingQueue<CompileTask> toCompile = new ArrayBlockingQueue<CompileTask>(50);
+
+    public ScriptCompiler() {
+        super("Citizens Script Compiler");
+    }
 
     /**
      * Create a builder to compile the given files.
@@ -95,44 +99,46 @@ public class ScriptCompiler implements Runnable {
 
     @Override
     public void run() {
-        try {
-            while (true) {
-                CompileTask task = toCompile.take();
-                for (FileEngine engine : task.files) {
-                    Compilable compiler = (Compilable) engine.engine;
-                    Reader reader = null;
-                    try {
-                        reader = new FileReader(engine.file);
-                        CompiledScript src = compiler.compile(reader);
-                        ScriptFactory compiled = new SimpleScriptFactory(src, task.contextProviders);
-                        for (CompileCallback callback : task.callbacks) {
-                            synchronized (callback) {
-                                callback.onScriptCompiled(compiled);
-                            }
+        while (true) {
+            CompileTask task;
+            try {
+                task = toCompile.take();
+            } catch (InterruptedException e) {
+                return;
+            }
+            for (FileEngine engine : task.files) {
+                Compilable compiler = (Compilable) engine.engine;
+                Reader reader = null;
+                try {
+                    reader = new FileReader(engine.file);
+                    CompiledScript src = compiler.compile(reader);
+                    ScriptFactory compiled = new SimpleScriptFactory(src, task.contextProviders);
+                    for (CompileCallback callback : task.callbacks) {
+                        synchronized (callback) {
+                            callback.onScriptCompiled(compiled);
                         }
-                    } catch (IOException e) {
-                        System.err.println("[Citizens]: IO fail while reading " + engine.file + " for scripting.");
-                        e.printStackTrace();
-                    } catch (ScriptException e) {
-                        System.err.println("[Citizens]: Compile error while parsing script at " + engine.file.getName()
-                                + ".");
-                        e.printStackTrace();
-                    } catch (Throwable t) {
-                        System.err.println("[Citizens]: Unexpected error while parsing script at "
-                                + engine.file.getName() + ".");
-                        t.printStackTrace();
-                    } finally {
-                        Closeables.closeQuietly(reader);
                     }
-                }
-                for (CompileCallback callback : task.callbacks) {
-                    synchronized (callback) {
-                        callback.onCompileTaskFinished();
-                    }
+                } catch (IOException e) {
+                    System.err
+                            .println("[Citizens]: IO fail while reading " + engine.file + " for scripting.");
+                    e.printStackTrace();
+                } catch (ScriptException e) {
+                    System.err.println("[Citizens]: Compile error while parsing script at "
+                            + engine.file.getName() + ".");
+                    e.printStackTrace();
+                } catch (Throwable t) {
+                    System.err.println("[Citizens]: Unexpected error while parsing script at "
+                            + engine.file.getName() + ".");
+                    t.printStackTrace();
+                } finally {
+                    Closeables.closeQuietly(reader);
                 }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            for (CompileCallback callback : task.callbacks) {
+                synchronized (callback) {
+                    callback.onCompileTaskFinished();
+                }
+            }
         }
     }
 

@@ -93,6 +93,7 @@ public final class NBTInputStream implements Closeable {
         this.is = new DataInputStream(is);
     }
 
+    @Override
     public void close() throws IOException {
         is.close();
     }

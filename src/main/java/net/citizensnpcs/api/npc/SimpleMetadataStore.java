@@ -46,6 +46,14 @@ public class SimpleMetadataStore implements MetadataStore {
     }
 
     @Override
+    public void loadFrom(DataKey key) {
+        persistentMetadata.clear();
+        for (DataKey subKey : key.getSubKeys()) {
+            persistentMetadata.put(subKey.name(), subKey.getRaw(""));
+        }
+    }
+
+    @Override
     public void remove(String key) {
         normalMetadata.remove(key);
         persistentMetadata.remove(key);
@@ -56,14 +64,6 @@ public class SimpleMetadataStore implements MetadataStore {
         Preconditions.checkNotNull(key, "key cannot be null");
         for (Entry<String, Object> entry : persistentMetadata.entrySet()) {
             key.setRaw(entry.getKey(), entry.getValue());
-        }
-    }
-
-    @Override
-    public void loadFrom(DataKey key) {
-        persistentMetadata.clear();
-        for (DataKey subKey : key.getSubKeys()) {
-            persistentMetadata.put(subKey.name(), subKey.getRaw(""));
         }
     }
 

@@ -19,7 +19,7 @@ public final class CitizensAPI {
     }
 
     private static final CitizensAPI instance = new CitizensAPI();
-    private static final ScriptCompiler scriptCompiler = new ScriptCompiler();
+    private static ScriptCompiler scriptCompiler;
 
     public static File getDataFolder() {
         return getImplementation().getDataFolder();
@@ -44,6 +44,10 @@ public final class CitizensAPI {
     }
 
     public static ScriptCompiler getScriptCompiler() {
+        if (scriptCompiler == null) {
+            scriptCompiler = new ScriptCompiler();
+            scriptCompiler.start();
+        }
         return scriptCompiler;
     }
 
@@ -66,12 +70,19 @@ public final class CitizensAPI {
     }
 
     public static void setImplementation(CitizensPlugin implementation) {
+        if (implementation == null) {
+            instance.implementation = null;
+            return;
+        }
         if (hasImplementation())
             getImplementation().onImplementationChanged();
         instance.implementation = new WeakReference<CitizensPlugin>(implementation);
     }
 
-    static {
-        new Thread(scriptCompiler).start();
+    public static void shutdown() {
+        if (scriptCompiler != null) {
+            scriptCompiler.interrupt();
+            scriptCompiler = null;
+        }
     }
 }

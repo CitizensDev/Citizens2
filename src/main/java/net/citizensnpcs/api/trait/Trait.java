@@ -50,17 +50,17 @@ public abstract class Trait implements Listener, Runnable {
     public abstract void load(DataKey key) throws NPCLoadException;
 
     /**
+     * Called when a trait is removed from the given NPC.
+     */
+    public void onRemove() {
+    }
+
+    /**
      * Called when an NPC is spawned. NPCs cannot be physically modified until
      * the entity is created in-game. This is called after the entity has been
      * created.
      */
     public void onSpawn() {
-    }
-
-    /**
-     * Called when a trait is removed from the given NPC.
-     */
-    public void onRemove() {
     }
 
     @Override
