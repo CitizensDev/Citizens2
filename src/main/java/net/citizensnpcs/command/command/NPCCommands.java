@@ -510,13 +510,28 @@ public class NPCCommands {
             modifiers = { "trait" },
             min = 2,
             max = 2,
+            flags = "r",
             permission = "npc.trait")
     public void trait(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        Trait trait = CitizensAPI.getTraitFactory().getTrait(args.getString(1));
+        String traitName = args.getString(1);
+        if (!sender.hasPermission("citizens.npc.trait." + traitName))
+            throw new NoPermissionsException();
+        if (args.hasFlag('r')) {
+            Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(1));
+            if (clazz == null)
+                throw new CommandException("Trait not found.");
+            if (!npc.hasTrait(clazz))
+                throw new CommandException("The NPC doesn't have that trait.");
+            npc.removeTrait(clazz);
+            Messaging.sendF(sender, ChatColor.GREEN + "Trait %s removed successfully.",
+                    StringHelper.wrap(traitName));
+            return;
+        }
+        Trait trait = CitizensAPI.getTraitFactory().getTrait(traitName);
         if (trait == null)
             throw new CommandException("Trait not found.");
         npc.addTrait(trait);
         Messaging.sendF(sender, ChatColor.GREEN + "Trait %s added successfully.",
-                StringHelper.wrap(trait.getName()));
+                StringHelper.wrap(traitName));
     }
 }
