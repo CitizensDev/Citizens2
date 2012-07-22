@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.trait;
 
-
 public interface TraitFactory {
 
     /**
@@ -10,7 +9,7 @@ public interface TraitFactory {
      *            Class of the trait
      * @return Trait with the given class
      */
-    public <T extends Trait> T getTrait(Class<T> clazz);
+    <T extends Trait> T getTrait(Class<T> clazz);
 
     /**
      * Gets a trait with the given name.
@@ -19,7 +18,7 @@ public interface TraitFactory {
      *            Name of the trait
      * @return Trait with the given name
      */
-    public <T extends Trait> T getTrait(String name);
+    <T extends Trait> T getTrait(String name);
 
     /**
      * Registers a trait using the given information.
@@ -27,5 +26,14 @@ public interface TraitFactory {
      * @param info
      *            Registration information
      */
-    public void registerTrait(TraitInfo info);
+    void registerTrait(TraitInfo info);
+
+    /**
+     * Gets the {@link Trait} class with the given name, or null if not found.
+     * 
+     * @param name
+     *            The trait name
+     * @return The trait class
+     */
+    Class<? extends Trait> getTraitClass(String name);
 }
