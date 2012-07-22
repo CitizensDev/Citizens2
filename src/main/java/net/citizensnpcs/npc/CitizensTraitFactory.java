@@ -35,7 +35,6 @@ import com.google.common.collect.Sets;
 public class CitizensTraitFactory implements TraitFactory {
     private final Map<String, Class<? extends Trait>> registered = Maps.newHashMap();
 
-    // TODO: find a way to avoid naming conflicts
     public CitizensTraitFactory() {
         registerTrait(TraitInfo.create(Age.class).withName("age"));
         registerTrait(TraitInfo.create(CurrentLocation.class).withName("location"));
@@ -104,8 +103,15 @@ public class CitizensTraitFactory implements TraitFactory {
     }
 
     @Override
+    public Class<? extends Trait> getTraitClass(String name) {
+        return registered.get(name);
+    }
+
+    @Override
     public void registerTrait(TraitInfo info) {
         Preconditions.checkNotNull(info, "info cannot be null");
+        if (registered.containsKey(info))
+            throw new IllegalArgumentException("trait name already registered");
         registered.put(info.getTraitName(), info.getTraitClass());
     }
 
