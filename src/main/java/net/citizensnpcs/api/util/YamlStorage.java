@@ -11,6 +11,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import com.google.common.io.Files;
+
 public class YamlStorage implements Storage {
     private final FileConfiguration config;
     private final File file;
@@ -56,7 +58,13 @@ public class YamlStorage implements Storage {
     @Override
     public void save() {
         try {
-            config.save(file);
+            Files.createParentDirs(file);
+            File temporaryFile = File.createTempFile(file.getName(), null, file.getParentFile());
+            temporaryFile.deleteOnExit();
+            config.save(temporaryFile);
+            file.delete();
+            temporaryFile.renameTo(file);
+            temporaryFile.delete();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

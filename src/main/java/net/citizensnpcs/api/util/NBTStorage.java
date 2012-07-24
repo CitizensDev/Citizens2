@@ -26,6 +26,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 
 public class NBTStorage implements Storage {
     private final File file;
@@ -81,8 +82,17 @@ public class NBTStorage implements Storage {
     public void save() {
         NBTOutputStream stream = null;
         try {
-            stream = new NBTOutputStream(new FileOutputStream(file));
+            Files.createParentDirs(file);
+            File temporaryFile = File.createTempFile(file.getName(), null, file.getParentFile());
+            temporaryFile.deleteOnExit();
+
+            stream = new NBTOutputStream(new FileOutputStream(temporaryFile));
             stream.writeTag(new CompoundTag(name, root));
+            stream.close();
+
+            file.delete();
+            temporaryFile.renameTo(file);
+            temporaryFile.delete();
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
@@ -126,8 +136,8 @@ public class NBTStorage implements Storage {
         }
 
         private Tag findLastTag(String key, boolean relative) {
-            String[] parts = Iterables.toArray(Splitter.on('.').split(relative ? createRelativeKey(key) : key),
-                    String.class);
+            String[] parts = Iterables.toArray(Splitter.on('.')
+                    .split(relative ? createRelativeKey(key) : key), String.class);
             Map<String, Tag> map = findLastParent(key);
             if (!map.containsKey(parts[parts.length - 1]))
                 return null;

@@ -1,7 +1,6 @@
 package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
@@ -17,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 public class Equipment extends Trait {
     private final ItemStack[] equipment = new ItemStack[5];
 
-    public Equipment(NPC npc) {
+    public Equipment() {
         super("equipment");
     }
 
@@ -61,6 +60,7 @@ public class Equipment extends Trait {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onSpawn() {
         if (npc.getBukkitEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getBukkitEntity();
@@ -73,6 +73,7 @@ public class Equipment extends Trait {
             ItemStack[] armor = { equipment[4], equipment[3], equipment[2], equipment[1] };
             // bukkit ordering is boots, leggings, chestplate, helmet
             player.getInventory().setArmorContents(armor);
+            player.updateInventory();
         }
     }
 
@@ -112,23 +113,23 @@ public class Equipment extends Trait {
         } else if (npc.getBukkitEntity() instanceof Player) {
             Player player = (Player) npc.getBukkitEntity();
             switch (slot) {
-            case 0:
-                player.setItemInHand(item);
-                break;
-            case 1:
-                player.getInventory().setHelmet(item);
-                break;
-            case 2:
-                player.getInventory().setChestplate(item);
-                break;
-            case 3:
-                player.getInventory().setLeggings(item);
-                break;
-            case 4:
-                player.getInventory().setBoots(item);
-                break;
-            default:
-                throw new IllegalArgumentException("Slot must be between 0 and 4");
+                case 0:
+                    player.setItemInHand(item);
+                    break;
+                case 1:
+                    player.getInventory().setHelmet(item);
+                    break;
+                case 2:
+                    player.getInventory().setChestplate(item);
+                    break;
+                case 3:
+                    player.getInventory().setLeggings(item);
+                    break;
+                case 4:
+                    player.getInventory().setBoots(item);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Slot must be between 0 and 4");
             }
             player.updateInventory();
         }
@@ -137,7 +138,7 @@ public class Equipment extends Trait {
 
     @Override
     public String toString() {
-        return "{hand =" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2] + ",leggings="
-                + equipment[3] + ",boots=" + equipment[4] + "}";
+        return "{hand =" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2]
+                + ",leggings=" + equipment[3] + ",boots=" + equipment[4] + "}";
     }
 }
