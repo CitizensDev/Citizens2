@@ -114,7 +114,7 @@ public class CitizensNavigator implements Navigator {
     }
 
     public void update() {
-        if (executing == null)
+        if (executing == null || !npc.isSpawned())
             return;
         boolean finished = executing.update();
         if (finished) {
