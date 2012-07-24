@@ -89,13 +89,14 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
                         trait.set(i, null);
                     }
                 }
-                Messaging.sendF(equipper, "<e>%s<a>had all of its items removed.", getName());
+                Messaging.sendF(equipper, "<e>%s<a> had all of its items removed.", getName());
             default:
                 break;
         }
         // Drop any previous equipment on the ground
-        if (trait.get(slot) != null && trait.get(slot).getType() != Material.AIR)
-            equipper.getWorld().dropItemNaturally(getBukkitEntity().getLocation(), trait.get(slot));
+        ItemStack equippedItem = trait.get(slot);
+        if (equippedItem != null && equippedItem.getType() != Material.AIR)
+            equipper.getWorld().dropItemNaturally(getBukkitEntity().getLocation(), equippedItem);
 
         // Now edit the equipment based on the slot
         if (type != Material.AIR) {

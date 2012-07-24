@@ -169,8 +169,8 @@ public class EventListen implements Listener {
             if (!npc.isSpawned() || !npc.getBukkitEntity().getWorld().equals(event.getWorld()))
                 continue;
 
-            npc.despawn();
             storeForRespawn(npc);
+            npc.despawn();
         }
     }
 

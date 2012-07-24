@@ -57,7 +57,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0) {
             // a(0, 0);
-
         }
         if (noDamageTicks > 0)
             --noDamageTicks;
@@ -80,7 +79,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             if (inLiquid) {
                 motY += 0.04;
             } else if (onGround && q == 0) {
-                // ac(); - this doesn't jump high enough
+                // this.ac(); - this doesn't jump high enough
                 motY = 0.6;
                 q = 10;
             }

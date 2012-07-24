@@ -67,8 +67,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Iterator<NPC> itr = npcRegistry.iterator();
         while (itr.hasNext()) {
             NPC npc = itr.next();
-            itr.remove();
             npc.despawn();
+            itr.remove();
         }
     }
 
@@ -211,7 +211,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 enableSubPlugins();
             }
         }) == -1) {
-            Messaging.severe("Issue enabling plugin. Disabling.");
+            Messaging.severe("NPC load task couldn't be scheduled - disabling...");
             getServer().getPluginManager().disablePlugin(this);
         }
     }

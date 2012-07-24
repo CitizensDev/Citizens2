@@ -39,8 +39,8 @@ public class EquipmentEditor extends Editor {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (!npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked()))
-                || !event.getPlayer().equals(player))
+        if (!event.getPlayer().equals(player)
+                || !npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
             return;
 
         if (npc instanceof Equipable) {
