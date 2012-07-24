@@ -23,8 +23,8 @@ import com.google.common.collect.Lists;
 
 public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoint> {
     private WaypointGoal currentGoal;
-    private final List<Waypoint> waypoints = Lists.newArrayList();
     private NPC npc;
+    private final List<Waypoint> waypoints = Lists.newArrayList();
 
     @Override
     public Editor createEditor(final Player player) {
@@ -45,6 +45,12 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
             private String formatLoc(Location location) {
                 return String.format("<e>%d<a>, <e>%d<a>, <e>%d<a>", location.getBlockX(),
                         location.getBlockY(), location.getBlockZ());
+            }
+
+            @EventHandler
+            public void onNPCDespawn(NPCDespawnEvent event) {
+                if (event.getNPC().equals(npc))
+                    end();
             }
 
             @EventHandler
@@ -71,12 +77,6 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                             editingSlot + 1));
                 }
                 currentGoal.onProviderChanged();
-            }
-
-            @EventHandler
-            public void onNPCDespawn(NPCDespawnEvent event) {
-                if (event.getNPC().equals(npc))
-                    end();
             }
 
             @EventHandler
@@ -108,14 +108,6 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     }
 
     @Override
-    public void onSpawn(NPC npc) {
-        this.npc = npc;
-        if (currentGoal == null)
-            currentGoal = new WaypointGoal(this, npc.getNavigator());
-        npc.getDefaultGoalController().addGoal(currentGoal, 1);
-    }
-
-    @Override
     public Iterator<Waypoint> iterator() {
         return waypoints.iterator();
     }
@@ -128,6 +120,14 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
                     .getDouble("x"), root.getDouble("y"), root.getDouble("z"), (float) root.getDouble("yaw",
                     0), (float) root.getDouble("pitch", 0))));
         }
+    }
+
+    @Override
+    public void onSpawn(NPC npc) {
+        this.npc = npc;
+        if (currentGoal == null)
+            currentGoal = new WaypointGoal(this, npc.getNavigator());
+        npc.getDefaultGoalController().addGoal(currentGoal, 1);
     }
 
     @Override

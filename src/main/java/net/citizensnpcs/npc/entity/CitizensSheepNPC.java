@@ -62,6 +62,8 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
     public static class EntitySheepNPC extends EntitySheep implements NPCHolder {
         private final CitizensNPC npc;
 
+        private boolean pushable = false;
+
         public EntitySheepNPC(World world) {
             this(world, null);
         }
@@ -77,6 +79,8 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
 
         @Override
         public void b_(double x, double y, double z) {
+            if (npc == null || pushable)
+                super.b_(x, y, z);
             // when another entity collides, b_ is called to push the NPC
             // so we prevent b_ from doing anything.
         }
@@ -84,6 +88,16 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return pushable;
+        }
+
+        @Override
+        public void setPushable(boolean pushable) {
+            this.pushable = pushable;
         }
 
         @Override

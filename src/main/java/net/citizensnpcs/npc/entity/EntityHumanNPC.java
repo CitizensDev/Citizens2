@@ -19,6 +19,8 @@ import net.minecraft.server.World;
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private CitizensNPC npc;
 
+    private boolean pushable = false;
+
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
             ItemInWorldManager itemInWorldManager, NPC npc) {
         super(minecraftServer, world, string, itemInWorldManager);
@@ -44,6 +46,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     @Override
     public void b_(double x, double y, double z) {
+        if (npc == null || pushable)
+            super.b_(x, y, z);
         // when another entity collides, b_ is called to push the NPC
         // so we prevent b_ from doing anything.
     }
@@ -68,6 +72,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return npc;
     }
 
+    @Override
+    public boolean isPushable() {
+        return pushable;
+    }
+
     private void moveOnCurrentHeading() {
         getControllerMove().c();
         getControllerLook().a();
@@ -90,5 +99,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         aX *= 0.98F;
         a(aW, aX);
         X = yaw;
+    }
+
+    @Override
+    public void setPushable(boolean pushable) {
+        this.pushable = pushable;
     }
 }
