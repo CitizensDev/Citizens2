@@ -465,14 +465,16 @@ public class NPCCommands {
                     + " Use '/npc tphere' to teleport the NPC to your location.");
 
         Location location = respawn.getTrait(CurrentLocation.class).getLocation();
-        if (location == null && sender instanceof Player)
-            location = ((Player) sender).getLocation();
-        else
-            throw new CommandException("No stored location available - command must be used ingame.");
+        if (location == null) {
+            if (sender instanceof Player)
+                location = ((Player) sender).getLocation();
+            else
+                throw new CommandException("No stored location available - command must be used ingame.");
+        }
         if (respawn.spawn(location)) {
             selector.select(sender, respawn);
-            Messaging.send(sender, ChatColor.GREEN + "You respawned " + StringHelper.wrap(respawn.getName())
-                    + " at your location.");
+            Messaging.send(sender, ChatColor.GREEN + "You spawned " + StringHelper.wrap(respawn.getName())
+                    + ".");
         }
     }
 
