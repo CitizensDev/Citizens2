@@ -59,7 +59,8 @@ public class CommandManager {
      * Attempt to execute a command. This version takes a separate command name
      * (for the root command) and then a list of following arguments.
      */
-    public void execute(String cmd, String[] args, CommandSender sender, Object... methodArgs) throws CommandException {
+    public void execute(String cmd, String[] args, CommandSender sender, Object... methodArgs)
+            throws CommandException {
         String[] newArgs = new String[args.length + 1];
         System.arraycopy(args, 0, newArgs, 1, args.length);
         newArgs[0] = cmd;
@@ -77,7 +78,7 @@ public class CommandManager {
     }
 
     // Attempt to execute a command.
-    public void executeMethod(Method parent, String[] args, CommandSender sender, Object[] methodArgs)
+    private void executeMethod(Method parent, String[] args, CommandSender sender, Object[] methodArgs)
             throws CommandException {
         String cmdName = args[0];
         String modifier = args.length > 1 ? args[1] : "";
@@ -101,22 +102,25 @@ public class CommandManager {
 
             // Requirements
             if (cmdRequirements.selected() && npc == null)
-                throw new RequirementMissingException("You must have an NPC selected to execute that command.");
+                throw new RequirementMissingException(
+                        "You must have an NPC selected to execute that command.");
 
             if (cmdRequirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
                     && !npc.getTrait(Owner.class).isOwnedBy(sender))
-                throw new RequirementMissingException("You must be the owner of this NPC to execute that command.");
+                throw new RequirementMissingException(
+                        "You must be the owner of this NPC to execute that command.");
 
             if (npc != null) {
-                Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()), EntityType.class);
+                Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()),
+                        EntityType.class);
                 if (types.contains(EntityType.UNKNOWN))
                     types = EnumSet.allOf(EntityType.class);
                 types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));
 
                 EntityType type = EntityType.valueOf(npc.getTrait(MobType.class).getType());
                 if (!types.contains(type)) {
-                    throw new RequirementMissingException("The NPC cannot be the mob type '"
-                            + type.name().toLowerCase().replace('_', '-') + "' to use that command.");
+                    throw new RequirementMissingException("The NPC cannot be the mob type '" + type.getName()
+                            + "' to use that command.");
                 }
             }
         }
@@ -206,7 +210,8 @@ public class CommandManager {
     // Returns whether a player has access to a command.
     private boolean hasPermission(Method method, CommandSender sender) {
         Command cmd = method.getAnnotation(Command.class);
-        if (cmd.permission().isEmpty() || hasPermission(sender, cmd.permission()) || hasPermission(sender, "admin"))
+        if (cmd.permission().isEmpty() || hasPermission(sender, cmd.permission())
+                || hasPermission(sender, "admin"))
             return true;
 
         return false;
