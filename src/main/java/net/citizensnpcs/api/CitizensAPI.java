@@ -7,6 +7,8 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -84,5 +86,9 @@ public final class CitizensAPI {
             scriptCompiler.interrupt();
             scriptCompiler = null;
         }
+    }
+
+    public static void registerEvents(Listener listener) {
+        Bukkit.getPluginManager().registerEvents(listener, getPlugin());
     }
 }
