@@ -6,6 +6,7 @@ import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
+import net.citizensnpcs.npc.ai.NavigationCompleteEvent;
 
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -30,7 +31,15 @@ public class WaypointGoal implements Goal {
 
     @EventHandler
     public void onNavigationCancel(NavigationCancelEvent event) {
-        if (!event.getNavigator().equals(navigator) || currentDestination == null)
+        if (currentDestination == null || !event.getNavigator().equals(navigator))
+            return;
+        if (currentDestination.equals(event.getNavigator().getTargetAsLocation()))
+            selector.finish();
+    }
+
+    @EventHandler
+    public void onNavigationComplete(NavigationCompleteEvent event) {
+        if (currentDestination == null || !event.getNavigator().equals(navigator))
             return;
         if (currentDestination.equals(event.getNavigator().getTargetAsLocation()))
             selector.finish();
@@ -55,7 +64,7 @@ public class WaypointGoal implements Goal {
     @Override
     public boolean shouldExecute(GoalSelector selector) {
         ensureItr();
-        boolean shouldExecute = itr.hasNext();
+        boolean shouldExecute = currentDestination == null && itr.hasNext();
         if (shouldExecute) {
             this.selector = selector;
             currentDestination = itr.next().getLocation();

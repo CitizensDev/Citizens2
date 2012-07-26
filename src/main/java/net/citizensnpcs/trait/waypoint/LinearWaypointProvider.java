@@ -3,6 +3,7 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Iterator;
 import java.util.List;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
@@ -125,8 +126,10 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     @Override
     public void onSpawn(NPC npc) {
         this.npc = npc;
-        if (currentGoal == null)
+        if (currentGoal == null) {
             currentGoal = new WaypointGoal(this, npc.getNavigator());
+            CitizensAPI.registerEvents(currentGoal);
+        }
         npc.getDefaultGoalController().addGoal(currentGoal, 1);
     }
 
