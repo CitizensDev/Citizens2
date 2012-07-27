@@ -18,6 +18,13 @@ public interface WaypointProvider {
     public Editor createEditor(Player player);
 
     /**
+     * Returns whether this provider has paused execution of waypoints.
+     * 
+     * @return Whether the provider is paused.
+     */
+    public boolean isPaused();
+
+    /**
      * Loads from the specified {@link DataKey}.
      * 
      * @param key
@@ -25,6 +32,12 @@ public interface WaypointProvider {
      */
     public void load(DataKey key);
 
+    /**
+     * Called when the {@link NPC} attached to this provider is spawned.
+     * 
+     * @param npc
+     *            The attached NPC
+     */
     public void onSpawn(NPC npc);
 
     /**
@@ -34,4 +47,12 @@ public interface WaypointProvider {
      *            The key to save to
      */
     public void save(DataKey key);
+
+    /**
+     * Pauses waypoint execution.
+     * 
+     * @param paused
+     *            Whether to pause waypoint execution.
+     */
+    public void setPaused(boolean paused);
 }

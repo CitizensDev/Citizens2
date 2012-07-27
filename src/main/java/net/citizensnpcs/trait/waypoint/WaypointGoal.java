@@ -15,6 +15,7 @@ public class WaypointGoal implements Goal {
     private Location currentDestination;
     private Iterator<Waypoint> itr;
     private final Navigator navigator;
+    private boolean paused;
     private final Iterable<Waypoint> provider;
     private GoalSelector selector;
 
@@ -27,6 +28,10 @@ public class WaypointGoal implements Goal {
         if (itr == null || !itr.hasNext()) {
             itr = provider.iterator();
         }
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 
     @EventHandler
@@ -61,10 +66,18 @@ public class WaypointGoal implements Goal {
     public void run() {
     }
 
+    public void setPaused(boolean paused) {
+        if (paused && currentDestination != null)
+            selector.finish();
+        this.paused = paused;
+    }
+
     @Override
     public boolean shouldExecute(GoalSelector selector) {
+        if (paused || currentDestination != null)
+            return false;
         ensureItr();
-        boolean shouldExecute = currentDestination == null && itr.hasNext();
+        boolean shouldExecute = itr.hasNext();
         if (shouldExecute) {
             this.selector = selector;
             currentDestination = itr.next().getLocation();
