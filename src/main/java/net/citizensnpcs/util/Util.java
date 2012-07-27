@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.event.NPCCollisionEvent;
+import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.server.Packet;
 
 import org.apache.commons.lang.Validate;
@@ -15,7 +17,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
@@ -27,6 +31,12 @@ public class Util {
     }
 
     private static final Map<Class<?>, Class<?>> primitiveClassMap = Maps.newHashMap();
+
+    public static NPCCollisionEvent callCollisionEvent(NPC npc, Vector vector) {
+        NPCCollisionEvent event = new NPCCollisionEvent(npc, vector);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
 
     /**
      * Given a set of instantiation parameters, attempts to find a matching
@@ -50,8 +60,9 @@ public class Util {
         }
     }
 
-    private static <T> T createInstance0(Class<? extends T> clazz, Object[] params) throws InstantiationException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private static <T> T createInstance0(Class<? extends T> clazz, Object[] params)
+            throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException {
 
         @SuppressWarnings("unchecked")
         Constructor<? extends T>[] constructors = (Constructor<? extends T>[]) clazz.getConstructors();
@@ -98,6 +109,20 @@ public class Util {
         }
         return false;
     }
+
+    public static EntityType matchEntityType(String toMatch) {
+        EntityType type = EntityType.fromName(toMatch);
+        if (type != null)
+            return type;
+        for (EntityType check : EntityType.values()) {
+            if (check.name().matches(toMatch) || check.name().replace('_', '-').equals(toMatch)) {
+                type = check;
+                break;
+            }
+        }
+        return type;
+    }
+
     private static boolean searchInterfaces(Class<?> class1, Class<?> class2) {
         for (Class<?> test : class1.getInterfaces())
             if (test == class2)
