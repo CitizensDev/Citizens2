@@ -21,14 +21,6 @@ public interface TraitFactory {
     <T extends Trait> T getTrait(String name);
 
     /**
-     * Registers a trait using the given information.
-     * 
-     * @param info
-     *            Registration information
-     */
-    void registerTrait(TraitInfo info);
-
-    /**
      * Gets the {@link Trait} class with the given name, or null if not found.
      * 
      * @param name
@@ -36,4 +28,12 @@ public interface TraitFactory {
      * @return The trait class
      */
     Class<? extends Trait> getTraitClass(String name);
+
+    /**
+     * Registers a trait using the given information.
+     * 
+     * @param info
+     *            Registration information
+     */
+    void registerTrait(TraitInfo info);
 }

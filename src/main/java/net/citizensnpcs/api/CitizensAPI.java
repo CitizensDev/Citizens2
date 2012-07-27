@@ -71,6 +71,10 @@ public final class CitizensAPI {
         return getImplementation() != null;
     }
 
+    public static void registerEvents(Listener listener) {
+        Bukkit.getPluginManager().registerEvents(listener, getPlugin());
+    }
+
     public static void setImplementation(CitizensPlugin implementation) {
         if (implementation == null) {
             instance.implementation = null;
@@ -86,9 +90,5 @@ public final class CitizensAPI {
             scriptCompiler.interrupt();
             scriptCompiler = null;
         }
-    }
-
-    public static void registerEvents(Listener listener) {
-        Bukkit.getPluginManager().registerEvents(listener, getPlugin());
     }
 }
