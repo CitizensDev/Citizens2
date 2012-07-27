@@ -29,6 +29,16 @@ public class Waypoints extends Trait {
         }
     }
 
+    /**
+     * Returns the current {@link WaypointProvider}. May be null during
+     * initialisation.
+     * 
+     * @return The current provider
+     */
+    public WaypointProvider getCurrentProvider() {
+        return provider;
+    }
+
     public Editor getEditor(Player player) {
         return provider.createEditor(player);
     }

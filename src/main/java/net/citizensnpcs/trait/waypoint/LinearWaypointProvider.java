@@ -109,6 +109,11 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     }
 
     @Override
+    public boolean isPaused() {
+        return currentGoal.isPaused();
+    }
+
+    @Override
     public Iterator<Waypoint> iterator() {
         return waypoints.iterator();
     }
@@ -147,5 +152,10 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
             root.setDouble("yaw", location.getYaw());
             root.setDouble("pitch", location.getPitch());
         }
+    }
+
+    @Override
+    public void setPaused(boolean paused) {
+        currentGoal.setPaused(paused);
     }
 }
