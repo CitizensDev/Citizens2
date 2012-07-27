@@ -28,6 +28,7 @@ import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
+import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -36,6 +37,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -139,10 +141,14 @@ public class NPCCommands {
         }
         EntityType type = EntityType.PLAYER;
         if (args.hasValueFlag("type")) {
-            type = EntityType.fromName(args.getFlag("type"));
+            String inputType = args.getFlag("type");
+            type = Util.matchEntityType(inputType);
             if (type == null) {
-                Messaging.sendError(player, "'" + args.getFlag("type")
-                        + "' is not a valid mob type. Using default NPC.");
+                Messaging.sendError(player, "'" + inputType
+                        + "' is not a valid mob type. Using default type.");
+                type = EntityType.PLAYER;
+            } else if (!LivingEntity.class.isAssignableFrom(type.getEntityClass())) {
+                Messaging.sendError(player, "'%s' is not a living entity type. Using default type.");
                 type = EntityType.PLAYER;
             }
         }
