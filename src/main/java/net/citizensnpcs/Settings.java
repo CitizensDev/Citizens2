@@ -88,15 +88,18 @@ public class Settings {
         }
 
         public double asDouble() {
-            return (Double) value;
+            return ((Number) value).doubleValue();
         }
 
         public float asFloat() {
-            return (Float) value;
+            return ((Number) value).floatValue();
         }
 
         public int asInt() {
-            return Integer.parseInt(value.toString());
+            if (value instanceof String) {
+                return Integer.parseInt(value.toString());
+            }
+            return ((Number) value).intValue();
         }
 
         @SuppressWarnings("unchecked")
@@ -108,7 +111,7 @@ public class Settings {
         }
 
         public long asLong() {
-            return (Long) value;
+            return ((Number) value).longValue();
         }
 
         public String asString() {
