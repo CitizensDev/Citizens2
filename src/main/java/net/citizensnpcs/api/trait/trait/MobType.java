@@ -3,11 +3,13 @@ package net.citizensnpcs.api.trait.trait;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
+import org.bukkit.entity.EntityType;
+
 /**
  * Represents an NPC's mob type.
  */
 public class MobType extends Trait {
-    private String type;
+    private EntityType type = EntityType.PLAYER;
 
     public MobType() {
         super("type");
@@ -16,24 +18,22 @@ public class MobType extends Trait {
     /**
      * Gets the type of mob that an NPC is.
      * 
-     * @return Name of the mob type of an NPC
+     * @return The mob type
      */
-    public String getType() {
+    public EntityType getType() {
         return type;
     }
 
     @Override
     public void load(DataKey key) {
-        try {
-            type = key.getString("").toUpperCase();
-        } catch (IllegalArgumentException ex) {
-            type = "PLAYER";
-        }
+        type = EntityType.fromName(key.getString(""));
+        if (type == null)
+            type = EntityType.PLAYER;
     }
 
     @Override
     public void save(DataKey key) {
-        key.setString("", type);
+        key.setString("", type.getName());
     }
 
     /**
@@ -42,7 +42,7 @@ public class MobType extends Trait {
      * @param type
      *            Mob type to set the NPC as
      */
-    public void setType(String type) {
+    public void setType(EntityType type) {
         this.type = type;
     }
 
