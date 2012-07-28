@@ -22,6 +22,16 @@ public interface Navigator {
     EntityTarget getEntityTarget();
 
     /**
+     * Returns the pathfinding range of this navigator. The pathfinding range is
+     * the maximum distance in blocks that the backing {@link Entity} will try
+     * to find a path. If a target exceeds this range, it may be cancelled.
+     * 
+     * @see #setPathfindingRange(float)
+     * @return The current pathfinding range
+     */
+    float getPathfindingRange();
+
+    /**
      * Returns the current entity movement speed of the navigator.
      * 
      * @see #getSpeed()
@@ -48,6 +58,17 @@ public interface Navigator {
      * @return Whether the navigator is currently pathing towards a target.
      */
     boolean isNavigating();
+
+    /**
+     * Sets the pathfinding range of this navigator.The pathfinding range is the
+     * maximum distance in blocks that the backing {@link Entity} will try to
+     * find a path. If a target exceeds this range, it may be cancelled.
+     * 
+     * @see #getPathfindingRange()
+     * @param newRange
+     *            The new pathfinding range
+     */
+    void setPathfindingRange(float newRange);
 
     /**
      * Sets the movement speed of the navigator. The default value is

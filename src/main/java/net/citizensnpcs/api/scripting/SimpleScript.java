@@ -11,6 +11,7 @@ public class SimpleScript implements Script {
     private final Bindings bindings;
     private final ScriptEngine engine;
     private final Invocable invocable;
+    @SuppressWarnings("unused")
     private final Object root;
 
     public SimpleScript(CompiledScript src, ContextProvider[] providers) throws ScriptException {
