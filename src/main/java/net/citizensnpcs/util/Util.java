@@ -8,6 +8,7 @@ import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
+import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.server.Packet;
 
@@ -32,8 +33,13 @@ public class Util {
 
     private static final Map<Class<?>, Class<?>> primitiveClassMap = Maps.newHashMap();
 
-    public static NPCCollisionEvent callCollisionEvent(NPC npc, Vector vector) {
-        NPCCollisionEvent event = new NPCCollisionEvent(npc, vector);
+    public static void callCollisionEvent(NPC npc, net.minecraft.server.Entity entity) {
+        if (NPCCollisionEvent.getHandlerList().getRegisteredListeners().length > 0)
+            Bukkit.getPluginManager().callEvent(new NPCCollisionEvent(npc, entity.getBukkitEntity()));
+    }
+
+    public static NPCPushEvent callPushEvent(NPC npc, Vector vector) {
+        NPCPushEvent event = new NPCPushEvent(npc, vector);
         Bukkit.getPluginManager().callEvent(event);
         return event;
     }

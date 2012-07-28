@@ -1,6 +1,6 @@
 package net.citizensnpcs.npc.entity;
 
-import net.citizensnpcs.api.event.NPCCollisionEvent;
+import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -46,13 +46,21 @@ public class CitizensOcelotNPC extends CitizensMobNPC {
                 super.b_(x, y, z);
                 return;
             }
-            if (NPCCollisionEvent.getHandlerList().getRegisteredListeners().length == 0)
+            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0)
                 return;
-            NPCCollisionEvent event = Util.callCollisionEvent(npc, new Vector(x, y, z));
+            NPCPushEvent event = Util.callPushEvent(npc, new Vector(x, y, z));
             if (!event.isCancelled())
                 super.b_(x, y, z);
             // when another entity collides, b_ is called to push the NPC
-            // so we prevent b_ from doing anything.
+            // so we prevent b_ from doing anything if the event is cancelled.
+        }
+
+        @Override
+        public void collide(net.minecraft.server.Entity entity) {
+            // this method is called by both the entities involved - cancelling
+            // it will not stop the NPC from moving.
+            super.collide(entity);
+            Util.callCollisionEvent(npc, entity);
         }
 
         @Override
