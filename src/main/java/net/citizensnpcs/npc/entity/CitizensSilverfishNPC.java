@@ -64,6 +64,14 @@ public class CitizensSilverfishNPC extends CitizensMobNPC {
         }
 
         @Override
+        public void d_() {
+            if (npc == null)
+                super.d_();
+            else
+                npc.update();
+        }
+
+        @Override
         public NPC getNPC() {
             return npc;
         }

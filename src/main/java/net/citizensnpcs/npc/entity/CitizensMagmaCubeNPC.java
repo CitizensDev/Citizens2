@@ -76,5 +76,12 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
         public NPC getNPC() {
             return npc;
         }
+
+        @Override
+        public void z_() {
+            super.z_();
+            if (npc != null)
+                npc.update();
+        }
     }
 }
