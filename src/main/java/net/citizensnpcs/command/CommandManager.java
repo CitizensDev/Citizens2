@@ -117,7 +117,7 @@ public class CommandManager {
                     types = EnumSet.allOf(EntityType.class);
                 types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));
 
-                EntityType type = EntityType.valueOf(npc.getTrait(MobType.class).getType());
+                EntityType type = npc.getTrait(MobType.class).getType();
                 if (!types.contains(type)) {
                     throw new RequirementMissingException("The NPC cannot be the mob type '" + type.getName()
                             + "' to use that command.");

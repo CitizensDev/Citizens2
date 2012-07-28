@@ -177,7 +177,7 @@ public class NPCCommands {
         // Initialize necessary traits
         if (!Setting.SERVER_OWNS_NPCS.asBoolean())
             npc.getTrait(Owner.class).setOwner(player.getName());
-        npc.getTrait(MobType.class).setType(type.toString());
+        npc.getTrait(MobType.class).setType(type);
 
         npc.spawn(player.getLocation());
 
@@ -241,13 +241,13 @@ public class NPCCommands {
             }
 
             if (args.hasValueFlag("type")) {
-                String type = args.getFlag("type");
+                EntityType type = Util.matchEntityType(args.getFlag("type"));
 
-                if (EntityType.fromName(type.replace('-', '_')) == null)
+                if (type == null)
                     throw new CommandException("'" + type + "' is not a valid mob type.");
 
                 for (NPC add : npcRegistry) {
-                    if (!npcs.contains(add) && add.getTrait(MobType.class).getType().equalsIgnoreCase(type))
+                    if (!npcs.contains(add) && add.getTrait(MobType.class).getType() == type)
                         npcs.add(add);
                 }
             }

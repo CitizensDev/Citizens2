@@ -149,21 +149,24 @@ public class CitizensNavigator implements Navigator {
         }
     }
 
-    private static final float DEFAULT_SPEED = 0.7F;
+    private static final float DEFAULT_SPEED = 0.4F;
 
     private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
     private static Field PATHFINDING_RANGE;
     private static Field SPEED_FIELD;
     static {
-        MOVEMENT_SPEEDS.put(EntityType.IRON_GOLEM, 0.15F);
+        // constants taken from source code
         MOVEMENT_SPEEDS.put(EntityType.CHICKEN, 0.25F);
         MOVEMENT_SPEEDS.put(EntityType.COW, 0.2F);
-        MOVEMENT_SPEEDS.put(EntityType.SHEEP, 0.25F);
-        MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
-        MOVEMENT_SPEEDS.put(EntityType.SNOWMAN, 0.25F);
         MOVEMENT_SPEEDS.put(EntityType.CREEPER, 0.3F);
+        MOVEMENT_SPEEDS.put(EntityType.IRON_GOLEM, 0.15F);
+        MOVEMENT_SPEEDS.put(EntityType.MUSHROOM_COW, 0.2F);
+        MOVEMENT_SPEEDS.put(EntityType.OCELOT, 0.23F);
+        MOVEMENT_SPEEDS.put(EntityType.SHEEP, 0.25F);
+        MOVEMENT_SPEEDS.put(EntityType.SNOWMAN, 0.25F);
         MOVEMENT_SPEEDS.put(EntityType.PIG, 0.27F);
         MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
+        MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
         try {
             SPEED_FIELD = EntityLiving.class.getDeclaredField("bb");
             SPEED_FIELD.setAccessible(true);

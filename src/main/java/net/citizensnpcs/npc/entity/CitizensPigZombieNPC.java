@@ -76,5 +76,11 @@ public class CitizensPigZombieNPC extends CitizensMobNPC {
             return npc;
         }
 
+        @Override
+        public void z_() {
+            super.z_();
+            if (npc != null)
+                npc.update();
+        }
     }
 }

@@ -105,13 +105,13 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         public void d_() {
             if (npc == null)
                 super.d_();
+            else
+                npc.update();
         }
 
         @Override
         public void e() {
-            if (npc != null)
-                npc.update();
-            else
+            if (npc == null)
                 super.e();
         }
 
@@ -120,5 +120,9 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
             return npc;
         }
 
+        @Override
+        public void z_() {
+
+        }
     }
 }

@@ -14,7 +14,6 @@ import org.bukkit.entity.Spider;
 import org.bukkit.util.Vector;
 
 public class CitizensSpiderNPC extends CitizensMobNPC {
-
     public CitizensSpiderNPC(int id, String name) {
         super(id, name, EntitySpiderNPC.class);
     }
@@ -61,6 +60,14 @@ public class CitizensSpiderNPC extends CitizensMobNPC {
             // it will not stop the NPC from moving.
             super.collide(entity);
             Util.callCollisionEvent(npc, entity);
+        }
+
+        @Override
+        public void d_() {
+            if (npc == null)
+                super.d_();
+            else
+                npc.update();
         }
 
         @Override

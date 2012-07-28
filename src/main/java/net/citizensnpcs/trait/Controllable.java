@@ -2,7 +2,6 @@ package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.minecraft.server.EntityLiving;
@@ -18,7 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class Controllable extends Trait implements Toggleable {
     private boolean enabled;
 
-    public Controllable(NPC npc) {
+    public Controllable() {
         super("controllable");
     }
 
@@ -54,13 +53,12 @@ public class Controllable extends Trait implements Toggleable {
 
     @EventHandler
     public void onRightClick(NPCRightClickEvent event) {
-        if (!npc.isSpawned() || !event.getNPC().equals(npc))
+        if (!enabled || !npc.isSpawned() || !event.getNPC().equals(npc))
             return;
         EntityPlayer handle = ((CraftPlayer) event.getClicker()).getHandle();
         if (getHandle().passenger != null) {
-            if (getHandle().passenger == handle) {
+            if (getHandle().passenger == handle)
                 event.getClicker().leaveVehicle();
-            }
             return;
         }
         handle.setPassengerOf(getHandle());
@@ -68,7 +66,7 @@ public class Controllable extends Trait implements Toggleable {
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || getHandle().passenger == null)
+        if (!enabled || !npc.isSpawned() || getHandle().passenger == null)
             return;
         EntityLiving handle = getHandle();
         boolean onGround = handle.onGround;
@@ -83,7 +81,10 @@ public class Controllable extends Trait implements Toggleable {
 
     @Override
     public boolean toggle() {
-        return (enabled = !enabled);
+        enabled = !enabled;
+        if (!enabled && getHandle().passenger != null)
+            getHandle().passenger.getBukkitEntity().leaveVehicle();
+        return enabled;
     }
 
     private static final double AIR_SPEED = 1.5;
