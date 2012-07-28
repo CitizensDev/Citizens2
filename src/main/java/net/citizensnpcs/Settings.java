@@ -52,6 +52,7 @@ public class Settings {
         DATABASE_USERNAME("storage.database.username", ""),
         DEBUG_MODE("general.debug-mode", false),
         DEFAULT_LOOK_CLOSE("npc.default.look-close", false),
+        DEFAULT_PATHFINDING_RANGE("npc.pathing.default-pathfinding-range", 25F),
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", true),
         DEFAULT_TALK_CLOSE("npc.default.talk-close", false),
         DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!") {
@@ -88,6 +89,10 @@ public class Settings {
 
         public double asDouble() {
             return (Double) value;
+        }
+
+        public float asFloat() {
+            return (Float) value;
         }
 
         public int asInt() {

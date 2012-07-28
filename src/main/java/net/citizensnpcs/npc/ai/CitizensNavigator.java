@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.ai;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.TargetType;
@@ -10,7 +11,9 @@ import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.EntityLiving;
+import net.minecraft.server.Navigation;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,6 +25,7 @@ import com.google.common.collect.Maps;
 public class CitizensNavigator implements Navigator {
     private PathStrategy executing;
     private final CitizensNPC npc;
+    private float pathfindingRange = Setting.DEFAULT_PATHFINDING_RANGE.asFloat();
     private float speed = -1;
 
     public CitizensNavigator(CitizensNPC npc) {
@@ -39,6 +43,11 @@ public class CitizensNavigator implements Navigator {
     @Override
     public EntityTarget getEntityTarget() {
         return executing instanceof EntityTarget ? (EntityTarget) executing : null;
+    }
+
+    @Override
+    public float getPathfindingRange() {
+        return pathfindingRange;
     }
 
     @Override
@@ -83,6 +92,12 @@ public class CitizensNavigator implements Navigator {
     public void onSpawn() {
         if (speed == -1)
             this.speed = getSpeedFor(npc.getHandle());
+        updatePathfindingRange();
+    }
+
+    @Override
+    public void setPathfindingRange(float newRange) {
+        pathfindingRange = newRange;
     }
 
     @Override
@@ -123,8 +138,21 @@ public class CitizensNavigator implements Navigator {
         }
     }
 
+    private void updatePathfindingRange() {
+        if (PATHFINDING_RANGE == null)
+            return;
+        Navigation navigation = npc.getHandle().al();
+        try {
+            PATHFINDING_RANGE.set(navigation, pathfindingRange);
+        } catch (Exception ex) {
+            Messaging.logF("Could not update pathfinding range: %s.", ex.getMessage());
+        }
+    }
+
     private static final float DEFAULT_SPEED = 0.7F;
+
     private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
+    private static Field PATHFINDING_RANGE;
     private static Field SPEED_FIELD;
     static {
         MOVEMENT_SPEEDS.put(EntityType.IRON_GOLEM, 0.15F);
@@ -139,8 +167,12 @@ public class CitizensNavigator implements Navigator {
         try {
             SPEED_FIELD = EntityLiving.class.getDeclaredField("bb");
             SPEED_FIELD.setAccessible(true);
+            PATHFINDING_RANGE = Navigation.class.getDeclaredField("e");
+            PATHFINDING_RANGE.setAccessible(true);
         } catch (Exception ex) {
             ex.printStackTrace();
+            PATHFINDING_RANGE = null;
+            SPEED_FIELD = null;
         }
     }
 }
