@@ -15,6 +15,9 @@ public class ItemStorage {
             return null;
         ItemStack res = new ItemStack(matched, root.getInt("amount"),
                 (short) (root.keyExists("data") ? root.getInt("data") : 0));
+        if (root.keyExists("mdata") && res.getData() != null) {
+            res.getData().setData((byte) root.getInt("mdata"));
+        }
         if (root.keyExists("enchantments")) {
             Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
             for (DataKey subKey : root.getRelative("enchantments").getSubKeys()) {
@@ -32,6 +35,9 @@ public class ItemStorage {
         key.setString("id", item.getType().name());
         key.setInt("amount", item.getAmount());
         key.setInt("data", item.getDurability());
+        if (item.getData() != null) {
+            key.setInt("mdata", item.getData().getData());
+        }
 
         key = key.getRelative("enchantments");
         for (Enchantment enchantment : item.getEnchantments().keySet())
