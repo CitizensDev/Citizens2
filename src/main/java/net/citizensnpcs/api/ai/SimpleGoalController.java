@@ -150,6 +150,14 @@ public class SimpleGoalController implements GoalController {
         }
 
         @Override
+        public void finishAndRemove() {
+            Goal toRemove = executingRootGoal;
+            finish();
+            if (toRemove != null)
+                removeGoal(toRemove);
+        }
+
+        @Override
         public void select(Goal goal) {
             resetGoalList();
             addGoalToExecution(goal);

@@ -8,6 +8,12 @@ public interface GoalSelector {
     void finish();
 
     /**
+     * Calls {@link #finish()} and removes the {@link Goal} from the list of
+     * possible goals to execute.
+     */
+    void finishAndRemove();
+
+    /**
      * Replaces the execution of any running {@link Goal}s with the specified
      * goal.
      * 

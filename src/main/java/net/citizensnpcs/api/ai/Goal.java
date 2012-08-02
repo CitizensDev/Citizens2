@@ -4,6 +4,11 @@ import org.bukkit.event.Listener;
 
 /**
  * Represents a Goal that can be added to a {@link GoalController}.
+ * 
+ * A Goal represents an abstract node in a tree of events. It can be anything
+ * from attacking players to a villager. By using the {@link GoalSelector}
+ * provided in {@link #shouldExecute(GoalSelector)} the Goal can traverse its
+ * tree of behaviours.
  */
 public interface Goal extends Listener {
     /**
