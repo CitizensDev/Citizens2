@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.ai;
 
+import net.citizensnpcs.api.ai.GoalController.GoalEntry;
+
 /**
  * Represents a collection of goals that are prioritised and executed, allowing
  * behaviour trees via a {@link GoalSelector}.
@@ -8,7 +10,7 @@ package net.citizensnpcs.api.ai;
  * {@link Goal#shouldExecute(GoalSelector)} is executed. Any existing goals with
  * a lower priority are replaced via {@link Goal#reset()}.
  */
-public interface GoalController extends Runnable {
+public interface GoalController extends Runnable, Iterable<GoalEntry> {
     /**
      * Registers a {@link Goal} with a given priority. Priority must be greater
      * than 0.
@@ -27,4 +29,10 @@ public interface GoalController extends Runnable {
      *            The goal to remove
      */
     void removeGoal(Goal goal);
+
+    public static interface GoalEntry extends Comparable<GoalEntry> {
+        Goal getGoal();
+
+        int getPriority();
+    }
 }

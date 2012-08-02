@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.ai;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -15,7 +16,7 @@ public class SimpleGoalController implements GoalController {
     private final List<Goal> executingGoals = Lists.newArrayList();
     private int executingPriority = -1;
     private Goal executingRootGoal;
-    private final List<GoalEntry> possibleGoals = Lists.newArrayList();
+    private final List<SimpleGoalEntry> possibleGoals = Lists.newArrayList();
     private final GoalSelector selector = new SimpleGoalSelector();
     private final List<Goal> toRemove = Lists.newArrayList();
 
@@ -24,7 +25,7 @@ public class SimpleGoalController implements GoalController {
         Preconditions.checkNotNull(goal, "goal cannot be null");
         Preconditions.checkState(priority > 0 && priority < Integer.MAX_VALUE,
                 "priority must be greater than 0");
-        GoalEntry entry = new GoalEntry(goal, priority);
+        SimpleGoalEntry entry = new SimpleGoalEntry(goal, priority);
         if (possibleGoals.contains(entry))
             return;
         possibleGoals.add(entry);
@@ -83,7 +84,7 @@ public class SimpleGoalController implements GoalController {
         }
     }
 
-    private void setupExecution(GoalEntry entry) {
+    private void setupExecution(SimpleGoalEntry entry) {
         finishCurrentGoalExecution();
         executingPriority = entry.priority;
         executingRootGoal = entry.goal;
@@ -93,7 +94,7 @@ public class SimpleGoalController implements GoalController {
     private void trySelectGoal() {
         int searchPriority = Math.min(executingPriority, 1);
         for (int i = possibleGoals.size() - 1; i >= 0; --i) {
-            GoalEntry entry = possibleGoals.get(i);
+            SimpleGoalEntry entry = possibleGoals.get(i);
             if (searchPriority > entry.priority)
                 return;
             if (!entry.goal.shouldExecute(selector))
@@ -103,18 +104,18 @@ public class SimpleGoalController implements GoalController {
         }
     }
 
-    private static class GoalEntry implements Comparable<GoalEntry> {
-        Goal goal;
-        int priority;
+    private static class SimpleGoalEntry implements GoalEntry {
+        final Goal goal;
+        final int priority;
 
-        private GoalEntry(Goal goal, int priority) {
+        private SimpleGoalEntry(Goal goal, int priority) {
             this.goal = goal;
             this.priority = priority;
         }
 
         @Override
         public int compareTo(GoalEntry o) {
-            return o.priority > priority ? 1 : o.priority < priority ? -1 : 0;
+            return o.getPriority() > priority ? 1 : o.getPriority() < priority ? -1 : 0;
         }
 
         @Override
@@ -125,7 +126,7 @@ public class SimpleGoalController implements GoalController {
             if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
-            GoalEntry other = (GoalEntry) obj;
+            SimpleGoalEntry other = (SimpleGoalEntry) obj;
             if (goal == null) {
                 if (other.goal != null) {
                     return false;
@@ -140,6 +141,16 @@ public class SimpleGoalController implements GoalController {
         public int hashCode() {
             final int prime = 31;
             return prime * (prime + ((goal == null) ? 0 : goal.hashCode())) + priority;
+        }
+
+        @Override
+        public Goal getGoal() {
+            return goal;
+        }
+
+        @Override
+        public int getPriority() {
+            return priority;
         }
     }
 
@@ -169,5 +180,26 @@ public class SimpleGoalController implements GoalController {
                 addGoalToExecution(goal);
             }
         }
+    }
+
+    @Override
+    public Iterator<GoalEntry> iterator() {
+        final Iterator<SimpleGoalEntry> itr = possibleGoals.iterator();
+        return new Iterator<GoalEntry>() {
+            @Override
+            public boolean hasNext() {
+                return itr.hasNext();
+            }
+
+            @Override
+            public GoalEntry next() {
+                return itr.next();
+            }
+
+            @Override
+            public void remove() {
+                itr.remove();
+            }
+        };
     }
 }
