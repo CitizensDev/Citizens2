@@ -201,7 +201,7 @@ public class NPCCommands {
         if (npc == null || args.argsLength() == 2) {
             if (args.argsLength() < 2)
                 throw new CommandException("No NPC selected.");
-            npc = CitizensAPI.getNPCRegistry().getById(args.getInteger(2));
+            npc = CitizensAPI.getNPCRegistry().getById(args.getInteger(1));
             if (npc == null)
                 throw new CommandException("No NPC found with that ID.");
         }

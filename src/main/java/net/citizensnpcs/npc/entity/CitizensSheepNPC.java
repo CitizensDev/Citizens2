@@ -12,7 +12,6 @@ import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntitySheep;
-import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
 
 import org.bukkit.DyeColor;
@@ -73,24 +72,15 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                goalSelector = new PathfinderGoalSelector();
-                targetSelector = new PathfinderGoalSelector();
+                Util.clearGoals(goalSelector, targetSelector);
             }
         }
 
         @Override
-        public void b_(double x, double y, double z) {
-            if (npc == null) {
-                super.b_(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0)
-                return;
-            NPCPushEvent event = Util.callPushEvent(npc, new Vector(x, y, z));
-            if (!event.isCancelled())
-                super.b_(x, y, z);
-            // when another entity collides, b_ is called to push the NPC
-            // so we prevent b_ from doing anything if the event is cancelled.
+        public void bc() {
+            super.bc();
+            if (npc != null)
+                npc.update();
         }
 
         @Override
@@ -102,15 +92,24 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
-        public NPC getNPC() {
-            return npc;
+        public void g(double x, double y, double z) {
+            if (npc == null) {
+                super.g(x, y, z);
+                return;
+            }
+            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0)
+                return;
+            NPCPushEvent event = Util.callPushEvent(npc, new Vector(x, y, z));
+            if (!event.isCancelled())
+                super.g(x, y, z);
+            // when another entity collides, this method is called to push the
+            // NPC so we prevent it from doing anything if the event is
+            // cancelled.
         }
 
         @Override
-        public void z_() {
-            super.z_();
-            if (npc != null)
-                npc.update();
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

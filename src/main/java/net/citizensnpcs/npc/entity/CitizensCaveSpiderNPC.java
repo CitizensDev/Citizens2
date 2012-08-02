@@ -7,7 +7,6 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityCaveSpider;
-import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
 
 import org.bukkit.entity.CaveSpider;
@@ -31,24 +30,22 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                goalSelector = new PathfinderGoalSelector();
-                targetSelector = new PathfinderGoalSelector();
+                Util.clearGoals(goalSelector, targetSelector);
             }
         }
 
         @Override
-        public void b_(double x, double y, double z) {
-            if (npc == null) {
-                super.b_(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0)
-                return;
-            NPCPushEvent event = Util.callPushEvent(npc, new Vector(x, y, z));
-            if (!event.isCancelled())
-                super.b_(x, y, z);
-            // when another entity collides, b_ is called to push the NPC
-            // so we prevent b_ from doing anything if the event is cancelled.
+        public void bc() {
+            super.bc();
+            npc.update();
+        }
+
+        @Override
+        public void be() {
+            if (npc == null)
+                super.be();
+            else
+                npc.update();
         }
 
         @Override
@@ -60,22 +57,24 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void d_() {
-            if (npc == null)
-                super.d_();
-            else
-                npc.update();
+        public void g(double x, double y, double z) {
+            if (npc == null) {
+                super.g(x, y, z);
+                return;
+            }
+            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0)
+                return;
+            NPCPushEvent event = Util.callPushEvent(npc, new Vector(x, y, z));
+            if (!event.isCancelled())
+                super.g(x, y, z);
+            // when another entity collides, this method is called to push the
+            // NPC so we prevent it from doing anything if the event is
+            // cancelled.
         }
 
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public void z_() {
-            super.z_();
-            npc.update();
         }
     }
 }

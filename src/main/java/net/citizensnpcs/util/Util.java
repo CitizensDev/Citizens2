@@ -1,9 +1,11 @@
 package net.citizensnpcs.util;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
@@ -11,6 +13,7 @@ import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.server.Packet;
+import net.minecraft.server.PathfinderGoalSelector;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -31,6 +34,8 @@ public class Util {
     private Util() {
     }
 
+    private static Field GOAL_FIELD;
+
     private static final Map<Class<?>, Class<?>> primitiveClassMap = Maps.newHashMap();
 
     public static void callCollisionEvent(NPC npc, net.minecraft.server.Entity entity) {
@@ -42,6 +47,18 @@ public class Util {
         NPCPushEvent event = new NPCPushEvent(npc, vector);
         Bukkit.getPluginManager().callEvent(event);
         return event;
+    }
+
+    public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
+        if (GOAL_FIELD == null || goalSelectors == null)
+            return;
+        for (PathfinderGoalSelector selector : goalSelectors) {
+            try {
+                List<?> list = (List<?>) GOAL_FIELD.get(selector);
+                list.clear();
+            } catch (Exception e) {
+            }
+        }
     }
 
     /**
@@ -178,5 +195,10 @@ public class Util {
         primitiveClassMap.put(long.class, Long.class);
         primitiveClassMap.put(float.class, Float.class);
         primitiveClassMap.put(double.class, Double.class);
+        try {
+            GOAL_FIELD = PathfinderGoalSelector.class.getDeclaredField("a");
+        } catch (Exception e) {
+            GOAL_FIELD = null;
+        }
     }
 }

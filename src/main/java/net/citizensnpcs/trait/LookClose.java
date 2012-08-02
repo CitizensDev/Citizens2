@@ -44,7 +44,7 @@ public class LookClose extends Trait implements Toggleable {
         EntityLiving handle = ((CraftLivingEntity) from).getHandle();
         handle.yaw = (float) yaw - 90;
         handle.pitch = (float) pitch;
-        handle.X = handle.yaw;
+        handle.as = handle.yaw;
     }
 
     private void findNewTarget() {
