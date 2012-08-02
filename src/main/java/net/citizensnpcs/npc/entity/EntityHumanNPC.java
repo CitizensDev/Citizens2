@@ -109,8 +109,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             bE = 0;
         }
 
-        aX *= 0.98F;
-        a(aW, aX);
+        bs *= 0.98F;
+        e(br, bs);
         as = yaw;
     }
 
