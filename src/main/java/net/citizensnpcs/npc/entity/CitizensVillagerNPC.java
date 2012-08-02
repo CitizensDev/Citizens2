@@ -6,6 +6,7 @@ import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityVillager;
 import net.minecraft.server.World;
 
@@ -51,6 +52,13 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
             // it will not stop the NPC from moving.
             super.collide(entity);
             Util.callCollisionEvent(npc, entity);
+        }
+
+        @Override
+        public boolean c(EntityHuman entityhuman) {
+            if (npc == null)
+                return super.c(entityhuman);
+            return false; // block trades
         }
 
         @Override
