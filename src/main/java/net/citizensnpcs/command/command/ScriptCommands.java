@@ -18,22 +18,20 @@ import org.bukkit.command.CommandSender;
 import com.google.common.base.Splitter;
 
 public class ScriptCommands {
-    private final Citizens plugin;
-
     public ScriptCommands(Citizens plugin) {
-        this.plugin = plugin;
     }
 
     @Command(
             aliases = { "script" },
             modifiers = { "compile", "run" },
-            usage = "compile|run [file]",
+            usage = "compile|run [file] (--methods [methods])",
             desc = "compile and run a script",
             min = 2,
             max = 2,
             permission = "script.compile")
-    public void runScript(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
-        File file = new File(plugin.getDataFolder(), args.getString(1));
+    public void runScript(final CommandContext args, final CommandSender sender, NPC npc)
+            throws CommandException {
+        File file = new File(CitizensAPI.getScriptFolder(), args.getString(1));
         if (!file.exists())
             throw new CommandException("The file '" + args.getString(1) + "' doesn't exist!");
         CitizensAPI.getScriptCompiler().compile(file).withCallback(new CompileCallback() {

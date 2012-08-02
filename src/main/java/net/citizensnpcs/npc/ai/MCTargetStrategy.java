@@ -15,6 +15,7 @@ import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final boolean aggro;
+    private int attackTicks;
     private final EntityLiving handle, target;
     private final float speed;
 
@@ -26,9 +27,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     private boolean canAttack() {
-        return handle.attackTicks == 0
+        return attackTicks == 0
                 && (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
-                && distanceSquared() <= ATTACK_DISTANCE && handle.h(target);
+                && distanceSquared() <= ATTACK_DISTANCE && handle.l(target);
     }
 
     private double distanceSquared() {
@@ -60,10 +61,10 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (target == null || target.dead)
             return true;
         new MCNavigationStrategy(handle, target, speed).update();
-        handle.getControllerLook().a(target, 10.0F, handle.D());
+        handle.getControllerLook().a(target, 10.0F, handle.bf());
         if (aggro && canAttack()) {
             if (handle instanceof EntityMonster) {
-                ((EntityMonster) handle).a((net.minecraft.server.Entity) target);
+                ((EntityMonster) handle).k(target);
                 // the cast is necessary to resolve overloaded method a
             } else if (handle instanceof EntityPlayer) {
                 EntityPlayer humanHandle = (EntityPlayer) handle;
@@ -71,10 +72,15 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
                 Util.sendPacketNearby(handle.getBukkitEntity().getLocation(), new Packet18ArmAnimation(
                         humanHandle, 1), 64);
             }
+            attackTicks = ATTACK_DELAY_TICKS;
         }
+        if (attackTicks > 0)
+            attackTicks--;
 
         return false;
     }
+
+    private static final int ATTACK_DELAY_TICKS = 20;
 
     private static final double ATTACK_DISTANCE = 1.75 * 1.75;
 }

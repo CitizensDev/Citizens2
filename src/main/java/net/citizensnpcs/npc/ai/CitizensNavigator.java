@@ -141,7 +141,7 @@ public class CitizensNavigator implements Navigator {
     private void updatePathfindingRange() {
         if (PATHFINDING_RANGE == null)
             return;
-        Navigation navigation = npc.getHandle().al();
+        Navigation navigation = npc.getHandle().getNavigation();
         try {
             PATHFINDING_RANGE.set(navigation, pathfindingRange);
         } catch (Exception ex) {
@@ -168,7 +168,7 @@ public class CitizensNavigator implements Navigator {
         MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
         MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
         try {
-            SPEED_FIELD = EntityLiving.class.getDeclaredField("bb");
+            SPEED_FIELD = EntityLiving.class.getDeclaredField("bw");
             SPEED_FIELD.setAccessible(true);
             PATHFINDING_RANGE = Navigation.class.getDeclaredField("e");
             PATHFINDING_RANGE.setAccessible(true);

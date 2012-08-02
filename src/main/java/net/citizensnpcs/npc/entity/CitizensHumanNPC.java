@@ -32,11 +32,12 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                handle.X = loc.getYaw() % 360;
+                handle.as = loc.getYaw() % 360;
                 // set the head yaw in another tick - if done immediately,
                 // minecraft will not update it.
             }
         });
+        handle.getBukkitEntity().setSleepingIgnored(true);
         return handle;
     }
 

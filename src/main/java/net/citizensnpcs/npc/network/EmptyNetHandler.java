@@ -18,12 +18,9 @@ import net.minecraft.server.Packet3Chat;
 import net.minecraft.server.Packet51MapChunk;
 
 public class EmptyNetHandler extends NetServerHandler {
-    public EmptyNetHandler(MinecraftServer minecraftServer, NetworkManager networkManager, EntityPlayer entityPlayer) {
+    public EmptyNetHandler(MinecraftServer minecraftServer, NetworkManager networkManager,
+            EntityPlayer entityPlayer) {
         super(minecraftServer, networkManager, entityPlayer);
-    }
-
-    @Override
-    public void a() {
     }
 
     @Override
@@ -72,10 +69,6 @@ public class EmptyNetHandler extends NetServerHandler {
 
     @Override
     public void a(String string, Object[] objects) {
-    }
-
-    @Override
-    public void sendMessage(String string) {
     }
 
     @Override

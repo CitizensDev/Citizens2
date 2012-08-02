@@ -42,7 +42,7 @@ public class Behaviour extends Trait {
     }
 
     public void addScripts(Iterable<String> scripts) {
-        BehaviourCallback callback = new BehaviourCallback(new Goals());
+        BehaviourCallback callback = new BehaviourCallback();
         Iterable<File> transformed = Iterables.transform(scripts, fileConverterFunction);
         CitizensAPI.getScriptCompiler().compile(transformed).withCallback(callback).begin();
     }
@@ -85,35 +85,27 @@ public class Behaviour extends Trait {
         key.setString("scripts", Joiner.on(",").join(scripts));
     }
 
-    private class BehaviourCallback implements CompileCallback {
-        private final Goals goals;
+    public class BehaviourCallback implements CompileCallback {
+        private final Map<Goal, Integer> goals = Maps.newHashMap();
 
-        private BehaviourCallback(Goals goals) {
-            this.goals = goals;
+        public void addGoal(int priority, Goal goal) {
+            Validate.notNull(goal);
+            goals.put(goal, priority);
         }
 
         @Override
         public void onCompileTaskFinished() {
-            addedGoals.putAll(goals.goals);
+            addedGoals.putAll(goals);
             if (!npc.isSpawned())
                 return;
-            for (Entry<Goal, Integer> entry : goals.goals.entrySet()) {
+            for (Entry<Goal, Integer> entry : goals.entrySet()) {
                 npc.getDefaultGoalController().addGoal(entry.getKey(), entry.getValue());
             }
         }
 
         @Override
         public void onScriptCompiled(ScriptFactory script) {
-            script.newInstance().invoke("addGoals", goals, npc);
-        }
-    }
-
-    public static class Goals {
-        private final Map<Goal, Integer> goals = Maps.newHashMap();
-
-        public void addGoal(Goal goal, int priority) {
-            Validate.notNull(goal);
-            goals.put(goal, priority);
+            script.newInstance().invoke("addGoals", this, npc);
         }
     }
 }

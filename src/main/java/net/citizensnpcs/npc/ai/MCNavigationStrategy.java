@@ -31,7 +31,7 @@ public class MCNavigationStrategy implements PathStrategy {
             // navigation won't execute, and calling entity.move doesn't
             // entirely fix the problem.
         }
-        navigation = entity.al();
+        navigation = entity.getNavigation();
     }
 
     @Override
@@ -46,6 +46,6 @@ public class MCNavigationStrategy implements PathStrategy {
 
     @Override
     public boolean update() {
-        return navigation.e();
+        return navigation.f();
     }
 }
