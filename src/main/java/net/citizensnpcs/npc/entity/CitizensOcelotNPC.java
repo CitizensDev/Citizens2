@@ -5,6 +5,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMSReflection;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityOcelot;
 import net.minecraft.server.World;
@@ -34,7 +35,7 @@ public class CitizensOcelotNPC extends CitizensMobNPC {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                Util.clearGoals(goalSelector, targetSelector);
+                NMSReflection.clearGoals(goalSelector, targetSelector);
             }
         }
 

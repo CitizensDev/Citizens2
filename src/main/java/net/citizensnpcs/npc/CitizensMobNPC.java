@@ -1,33 +1,27 @@
 package net.citizensnpcs.npc;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.Map;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.NMSReflection;
 import net.minecraft.server.Block;
-import net.minecraft.server.Entity;
 import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityTypes;
 import net.minecraft.server.World;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftWorld;
 
-@SuppressWarnings("unchecked")
+import com.google.common.collect.Maps;
+
 public abstract class CitizensMobNPC extends CitizensNPC {
     private final Constructor<? extends EntityLiving> constructor;
-
     protected CitizensMobNPC(int id, String name, Class<? extends EntityLiving> clazz) {
         super(id, name);
-        try {
-            this.constructor = clazz.getConstructor(World.class, NPC.class);
-        } catch (Exception ex) {
-            throw new IllegalStateException("unable to find an entity constructor");
-        }
-        if (!classToInt.containsKey(clazz))
-            registerEntityClass(clazz);
+        this.constructor = getConstructor(clazz);
+
+        NMSReflection.registerEntityClass(clazz);
     }
 
     private EntityLiving createEntityFromClass(World world) {
@@ -56,32 +50,17 @@ public abstract class CitizensMobNPC extends CitizensNPC {
         return entity;
     }
 
-    private static Map<Class<? extends Entity>, Integer> classToInt;
-    private static Map<Integer, Class<? extends Entity>> intToClass;
+    private static final Map<Class<? extends EntityLiving>, Constructor<? extends EntityLiving>> CONSTRUCTOR_CACHE = Maps
+            .newHashMap();
 
-    private static void registerEntityClass(Class<? extends Entity> clazz) {
-        Class<?> search = clazz;
-        while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
-            if (!classToInt.containsKey(search))
-                continue;
-            int code = classToInt.get(search);
-            intToClass.put(code, clazz);
-            classToInt.put(clazz, code);
-            return;
-        }
-        throw new IllegalArgumentException("unable to find valid entity superclass");
-    }
-
-    static {
+    private static Constructor<? extends EntityLiving> getConstructor(Class<? extends EntityLiving> clazz) {
+        Constructor<? extends EntityLiving> constructor = CONSTRUCTOR_CACHE.get(clazz);
+        if (constructor != null)
+            return constructor;
         try {
-            Field field = EntityTypes.class.getDeclaredField("d");
-            field.setAccessible(true);
-            intToClass = (Map<Integer, Class<? extends Entity>>) field.get(null);
-            field = EntityTypes.class.getDeclaredField("e");
-            field.setAccessible(true);
-            classToInt = (Map<Class<? extends Entity>, Integer>) field.get(null);
+            return clazz.getConstructor(World.class, NPC.class);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new IllegalStateException("unable to find an entity constructor");
         }
     }
 }
