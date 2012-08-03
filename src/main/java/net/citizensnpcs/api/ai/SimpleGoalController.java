@@ -97,7 +97,7 @@ public class SimpleGoalController implements GoalController {
             SimpleGoalEntry entry = possibleGoals.get(i);
             if (searchPriority > entry.priority)
                 return;
-            if (!entry.goal.shouldExecute(selector))
+            if (entry.goal == executingRootGoal || !entry.goal.shouldExecute(selector))
                 continue;
             setupExecution(entry);
             return;
