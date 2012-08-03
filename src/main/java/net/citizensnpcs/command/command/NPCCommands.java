@@ -486,6 +486,21 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "speed [speed]",
+            desc = "Sets the movement speed of an NPC",
+            modifiers = { "speed" },
+            min = 2,
+            max = 2,
+            permission = "npc.speed")
+    public void speed(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        float newSpeed = (float) args.getDouble(1);
+        npc.getNavigator().setSpeed(newSpeed);
+
+        Messaging.sendF(sender, ChatColor.GREEN + "NPC speed set to %f.", newSpeed);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "tp",
             desc = "Teleport to a NPC",
             modifiers = { "tp", "teleport" },

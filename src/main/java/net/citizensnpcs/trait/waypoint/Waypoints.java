@@ -104,5 +104,6 @@ public class Waypoints extends Trait {
 
     static {
         providers.put(LinearWaypointProvider.class, "linear");
+        providers.put(WanderingWaypointProvider.class, "wander");
     }
 }

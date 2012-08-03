@@ -47,9 +47,7 @@ public class Messaging {
     }
 
     public static void send(CommandSender sender, Object... msg) {
-        String joined = SPACE.join(msg);
-        joined = StringHelper.parseColors(joined);
-        sender.sendMessage(joined);
+        sendMessageTo(sender, SPACE.join(msg));
     }
 
     public static void sendError(CommandSender sender, Object... msg) {
@@ -61,9 +59,12 @@ public class Messaging {
     }
 
     public static void sendF(CommandSender sender, Object... msg) {
-        String joined = getFormatted(msg);
-        joined = StringHelper.parseColors(joined);
-        sender.sendMessage(joined);
+        sendMessageTo(sender, getFormatted(msg));
+    }
+
+    private static void sendMessageTo(CommandSender sender, String msg) {
+        msg = StringHelper.parseColors(msg);
+        sender.sendMessage(msg);
     }
 
     public static void sendWithNPC(CommandSender sender, Object msg, NPC npc) {

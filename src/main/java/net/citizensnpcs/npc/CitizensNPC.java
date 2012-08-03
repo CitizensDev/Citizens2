@@ -98,12 +98,15 @@ public abstract class CitizensNPC extends AbstractNPC {
             if (spawnLoc != null)
                 spawn(spawnLoc);
         }
+
+        navigator.load(root.getRelative("navigator"));
     }
 
     public void save(DataKey root) {
         root.setString("name", getFullName());
 
         metadata.saveTo(root.getRelative("metadata"));
+        navigator.save(root.getRelative("navigator"));
 
         // Save all existing traits
         for (Trait trait : traits.values()) {
