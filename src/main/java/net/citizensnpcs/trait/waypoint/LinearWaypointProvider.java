@@ -1,7 +1,8 @@
 package net.citizensnpcs.trait.waypoint;
 
-import java.util.Iterator;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
@@ -20,9 +21,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoint> {
+public class LinearWaypointProvider implements WaypointProvider {
     private WaypointGoal currentGoal;
     private NPC npc;
     private final List<Waypoint> waypoints = Lists.newArrayList();
@@ -114,11 +117,6 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     }
 
     @Override
-    public Iterator<Waypoint> iterator() {
-        return waypoints.iterator();
-    }
-
-    @Override
     public void load(DataKey key) {
         for (DataKey root : key.getRelative("points").getIntegerSubKeys()) {
             root = root.getRelative("location");
@@ -132,7 +130,8 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {
-            currentGoal = new WaypointGoal(this, npc.getNavigator());
+            Iterable<Location> provider = Iterables.transform(waypoints, WAYPOINT_TRANSFORMER);
+            currentGoal = new WaypointGoal(provider, npc.getNavigator());
             CitizensAPI.registerEvents(currentGoal);
         }
         npc.getDefaultGoalController().addGoal(currentGoal, 1);
@@ -158,4 +157,11 @@ public class LinearWaypointProvider implements WaypointProvider, Iterable<Waypoi
     public void setPaused(boolean paused) {
         currentGoal.setPaused(paused);
     }
+
+    private static final Function<Waypoint, Location> WAYPOINT_TRANSFORMER = new Function<Waypoint, Location>() {
+        @Override
+        public Location apply(@Nullable Waypoint input) {
+            return input == null ? null : input.getLocation();
+        }
+    };
 }

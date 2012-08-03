@@ -7,6 +7,7 @@ import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
+import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.NMSReflection;
 
@@ -62,10 +63,20 @@ public class CitizensNavigator implements Navigator {
         return executing != null;
     }
 
+    public void load(DataKey root) {
+        speed = (float) root.getDouble("speed", speed);
+        pathfindingRange = (float) root.getDouble("pathfinding-range", pathfindingRange);
+    }
+
     public void onSpawn() {
         if (speed == -1)
             this.speed = NMSReflection.getSpeedFor(npc.getHandle());
         updatePathfindingRange();
+    }
+
+    public void save(DataKey root) {
+        root.setDouble("speed", speed);
+        root.setDouble("pathfinding-range", pathfindingRange);
     }
 
     @Override

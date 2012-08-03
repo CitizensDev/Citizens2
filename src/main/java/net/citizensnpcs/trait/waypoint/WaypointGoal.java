@@ -13,13 +13,13 @@ import org.bukkit.event.EventHandler;
 
 public class WaypointGoal implements Goal {
     private Location currentDestination;
-    private Iterator<Waypoint> itr;
+    private Iterator<Location> itr;
     private final Navigator navigator;
     private boolean paused;
-    private final Iterable<Waypoint> provider;
+    private final Iterable<Location> provider;
     private GoalSelector selector;
 
-    public WaypointGoal(Iterable<Waypoint> provider, Navigator navigator) {
+    public WaypointGoal(Iterable<Location> provider, Navigator navigator) {
         this.provider = provider;
         this.navigator = navigator;
     }
@@ -80,7 +80,7 @@ public class WaypointGoal implements Goal {
         boolean shouldExecute = itr.hasNext();
         if (shouldExecute) {
             this.selector = selector;
-            currentDestination = itr.next().getLocation();
+            currentDestination = itr.next();
             navigator.setTarget(currentDestination);
         }
         return shouldExecute;

@@ -88,6 +88,7 @@ public class NMSReflection {
         }
         throw new IllegalArgumentException("unable to find valid entity superclass");
     }
+
     public static void stopNetworkThreads(NetworkManager manager) {
         if (THREAD_STOPPER == null)
             return;
@@ -96,6 +97,7 @@ public class NMSReflection {
         } catch (Exception e) {
         }
     }
+
     public static void updatePathfindingRange(CitizensNPC npc, float pathfindingRange) {
         if (PATHFINDING_RANGE == null)
             return;
