@@ -5,6 +5,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMSReflection;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityVillager;
@@ -35,7 +36,7 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                Util.clearGoals(goalSelector, targetSelector);
+                NMSReflection.clearGoals(goalSelector, targetSelector);
             }
         }
 
@@ -47,18 +48,18 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
         }
 
         @Override
+        public boolean c(EntityHuman entityhuman) {
+            if (npc == null)
+                return super.c(entityhuman);
+            return false; // block trades
+        }
+
+        @Override
         public void collide(net.minecraft.server.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
             Util.callCollisionEvent(npc, entity);
-        }
-
-        @Override
-        public boolean c(EntityHuman entityhuman) {
-            if (npc == null)
-                return super.c(entityhuman);
-            return false; // block trades
         }
 
         @Override

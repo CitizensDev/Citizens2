@@ -5,6 +5,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMSReflection;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityMagmaCube;
 import net.minecraft.server.World;
@@ -35,7 +36,7 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 setSize(3);
-                Util.clearGoals(goalSelector, targetSelector);
+                NMSReflection.clearGoals(goalSelector, targetSelector);
             }
         }
 

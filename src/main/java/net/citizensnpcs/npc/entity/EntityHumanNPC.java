@@ -8,7 +8,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.network.EmptyNetHandler;
 import net.citizensnpcs.npc.network.EmptyNetworkManager;
-import net.citizensnpcs.npc.network.NPCSocket;
+import net.citizensnpcs.npc.network.EmptySocket;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.EnumGamemode;
@@ -30,7 +30,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         this.npc = (CitizensNPC) npc;
         itemInWorldManager.setGameMode(EnumGamemode.SURVIVAL);
 
-        NPCSocket socket = new NPCSocket();
+        EmptySocket socket = new EmptySocket();
         NetworkManager netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
             @Override
             public boolean a() {
