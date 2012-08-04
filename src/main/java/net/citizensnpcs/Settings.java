@@ -52,9 +52,12 @@ public class Settings {
         DATABASE_USERNAME("storage.database.username", ""),
         DEBUG_MODE("general.debug-mode", false),
         DEFAULT_LOOK_CLOSE("npc.default.look-close", false),
+        DEFAULT_LOOK_CLOSE_RANGE("npc.default.look-close.range", 5),
         DEFAULT_PATHFINDING_RANGE("npc.pathing.default-pathfinding-range", 25F),
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", true),
+        DEFAULT_REALISTIC_LOOKING("npc.default.realistic-looking", false),
         DEFAULT_TALK_CLOSE("npc.default.talk-close", false),
+        DEFAULT_TALK_CLOSE_RANGE("npc.default.talk-close.range", 5),
         DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!") {
             @Override
             public void loadFromKey(DataKey root) {

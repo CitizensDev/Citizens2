@@ -38,6 +38,11 @@ public class WanderingWaypointProvider implements WaypointProvider, Iterable<Loc
     }
 
     @Override
+    public Iterator<Location> iterator() {
+        return iterator;
+    }
+
+    @Override
     public void load(DataKey key) {
     }
 
@@ -58,10 +63,5 @@ public class WanderingWaypointProvider implements WaypointProvider, Iterable<Loc
     @Override
     public void setPaused(boolean paused) {
         currentGoal.setPaused(paused);
-    }
-
-    @Override
-    public Iterator<Location> iterator() {
-        return iterator;
     }
 }

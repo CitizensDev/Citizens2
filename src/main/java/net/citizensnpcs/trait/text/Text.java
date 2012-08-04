@@ -37,6 +37,8 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     private int currentIndex;
     private final Plugin plugin;
     private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
+    private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
+    private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
     private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
     private final List<String> text = new ArrayList<String>();
 
@@ -59,9 +61,9 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     }
 
     public Editor getEditor(final Player player) {
-        final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
-                .withLocalEcho(false).withEscapeSequence("/npc text").withModality(false)
-                .withFirstPrompt(new StartPrompt(this)).buildConversation(player);
+        final Conversation conversation = new ConversationFactory(plugin)
+                .addConversationAbandonedListener(this).withLocalEcho(false).withEscapeSequence("/npc text")
+                .withModality(false).withFirstPrompt(new StartPrompt(this)).buildConversation(player);
         return new Editor() {
 
             @Override
@@ -89,10 +91,10 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         if (text.isEmpty())
             populateDefaultText();
 
-        if (key.keyExists("talk-close"))
-            talkClose = key.getBoolean("talk-close");
-        if (key.keyExists("random-talker"))
-            randomTalker = key.getBoolean("random-talker");
+        talkClose = key.getBoolean("talk-close", talkClose);
+        realisticLooker = key.getBoolean("realistic-looking", realisticLooker);
+        randomTalker = key.getBoolean("random-talker", randomTalker);
+        range = key.getDouble("range", range);
     }
 
     @EventHandler
@@ -147,6 +149,8 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     public void save(DataKey key) {
         key.setBoolean("talk-close", talkClose);
         key.setBoolean("random-talker", randomTalker);
+        key.setBoolean("realistic-looking", realisticLooker);
+        key.setDouble("range", range);
         for (int i = 0; i < text.size(); i++)
             key.setString(String.valueOf(i), text.get(i));
     }
@@ -183,13 +187,15 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     @Override
     public boolean toggle() {
-        talkClose = !talkClose;
-        return talkClose;
+        return (talkClose = !talkClose);
     }
 
     public boolean toggleRandomTalker() {
-        randomTalker = !randomTalker;
-        return randomTalker;
+        return (randomTalker = !randomTalker);
+    }
+
+    public boolean toggleRealisticLooking() {
+        return (realisticLooker = !realisticLooker);
     }
 
     @Override

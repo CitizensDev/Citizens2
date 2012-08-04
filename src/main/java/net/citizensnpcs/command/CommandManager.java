@@ -135,9 +135,11 @@ public class CommandManager {
         if (cmd.max() != -1 && context.argsLength() > cmd.max())
             throw new CommandUsageException("Too many arguments.", getUsage(args, cmd));
 
-        for (char flag : context.getFlags())
-            if (cmd.flags().indexOf(String.valueOf(flag)) == -1)
-                throw new CommandUsageException("Unknown flag: " + flag, getUsage(args, cmd));
+        if (!context.getFlags().contains('*')) {
+            for (char flag : context.getFlags())
+                if (cmd.flags().indexOf(String.valueOf(flag)) == -1)
+                    throw new CommandUsageException("Unknown flag: " + flag, getUsage(args, cmd));
+        }
 
         methodArgs[0] = context;
         Object instance = instances.get(method);
