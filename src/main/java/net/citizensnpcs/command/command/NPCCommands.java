@@ -13,6 +13,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.command.Command;
+import net.citizensnpcs.command.CommandConfigurable;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
@@ -556,5 +557,28 @@ public class NPCCommands {
         npc.addTrait(trait);
         Messaging.sendF(sender, ChatColor.GREEN + "Trait %s added successfully.",
                 StringHelper.wrap(traitName));
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "traitc|tc [trait name] [flags]",
+            desc = "Configures a trait",
+            modifiers = { "traitc", "tc" },
+            min = 2,
+            flags = "*",
+            permission = "npc.trait-configure")
+    public void traitConfigure(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        String traitName = args.getString(1);
+        if (!sender.hasPermission("citizens.npc.trait-configure." + traitName))
+            throw new NoPermissionsException();
+        Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(1));
+        if (clazz == null)
+            throw new CommandException("Trait not found.");
+        if (!clazz.isAssignableFrom(CommandConfigurable.class))
+            throw new CommandException("That trait is not configurable");
+        if (!npc.hasTrait(clazz))
+            throw new CommandException("The NPC doesn't have that trait.");
+        CommandConfigurable trait = (CommandConfigurable) npc.getTrait(clazz);
+        trait.configure(args);
     }
 }

@@ -3,6 +3,7 @@ package net.citizensnpcs.trait.text;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -24,10 +25,14 @@ public class StartPrompt extends StringPrompt {
         else if (input.equalsIgnoreCase("remove"))
             return new TextRemovePrompt(text);
         else if (input.equalsIgnoreCase("random"))
-            Messaging.send((Player) context.getForWhom(), "<e>Random talker <a>set to <e>" + text.toggleRandomTalker()
-                    + "<a>.");
+            Messaging.send((Player) context.getForWhom(),
+                    "<e>Random talker <a>set to <e>" + text.toggleRandomTalker() + "<a>.");
+        else if (input.equalsIgnoreCase("realistic looking"))
+            Messaging.send((CommandSender) context.getForWhom(),
+                    "<e>Realistic looking <a>set to <e>" + text.toggleRealisticLooking() + "<a>.");
         else if (input.equalsIgnoreCase("close"))
-            Messaging.send((Player) context.getForWhom(), "<e>Close talker <a>set to <e>" + text.toggle() + "<a>.");
+            Messaging.send((Player) context.getForWhom(), "<e>Close talker <a>set to <e>" + text.toggle()
+                    + "<a>.");
         else
             Messaging.sendError((Player) context.getForWhom(), "Invalid edit type.");
 

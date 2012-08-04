@@ -4,6 +4,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.minecraft.server.EntityLiving;
 import net.minecraft.server.Packet;
 
 import org.apache.commons.lang.Validate;
@@ -11,8 +12,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -32,6 +36,30 @@ public class Util {
         NPCPushEvent event = new NPCPushEvent(npc, vector);
         Bukkit.getPluginManager().callEvent(event);
         return event;
+    }
+
+    public static void faceEntity(Entity from, Entity at) {
+        if (from.getWorld() != at.getWorld())
+            return;
+        Location loc = from.getLocation();
+    
+        double xDiff = at.getLocation().getX() - loc.getX();
+        double yDiff = at.getLocation().getY() - loc.getY();
+        double zDiff = at.getLocation().getZ() - loc.getZ();
+    
+        double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
+        double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
+    
+        double yaw = (Math.acos(xDiff / distanceXZ) * 180 / Math.PI);
+        double pitch = (Math.acos(yDiff / distanceY) * 180 / Math.PI) - 90;
+        if (zDiff < 0.0) {
+            yaw = yaw + (Math.abs(180 - yaw) * 2);
+        }
+    
+        EntityLiving handle = ((CraftLivingEntity) from).getHandle();
+        handle.yaw = (float) yaw - 90;
+        handle.pitch = (float) pitch;
+        handle.as = handle.yaw;
     }
 
     public static boolean isSettingFulfilled(Player player, Setting setting) {
@@ -57,6 +85,12 @@ public class Util {
             }
         }
         return type;
+    }
+
+    public static boolean rayTrace(LivingEntity entity, LivingEntity entity2) {
+        EntityLiving from = ((CraftLivingEntity) entity).getHandle();
+        EntityLiving to = ((CraftLivingEntity) entity2).getHandle();
+        return from.l(to);
     }
 
     public static void sendPacketNearby(Location location, Packet packet, double radius) {
