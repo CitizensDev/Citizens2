@@ -7,8 +7,10 @@ commands:
   script:
     description: Scripting commands
   citizens:
+    aliases: [citizens2]
     description: Administration commands
   npc:
+    aliases: [npc2]
     description: Basic commands for all NPC-related things
 permissions:
   citizens.*:
