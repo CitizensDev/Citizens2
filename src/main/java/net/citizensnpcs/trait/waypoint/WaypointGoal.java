@@ -6,7 +6,7 @@ import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
-import net.citizensnpcs.npc.ai.NavigationCompleteEvent;
+import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
