@@ -47,7 +47,8 @@ public abstract class Trait implements Listener, Runnable {
      * @throws NPCLoadException
      *             Thrown if this trait failed to load properly
      */
-    public abstract void load(DataKey key) throws NPCLoadException;
+    public void load(DataKey key) throws NPCLoadException {
+    }
 
     /**
      * Called when a trait is removed from the given NPC.
@@ -73,5 +74,6 @@ public abstract class Trait implements Listener, Runnable {
      * @param key
      *            DataKey to save to
      */
-    public abstract void save(DataKey key);
+    public void save(DataKey key) {
+    }
 }
