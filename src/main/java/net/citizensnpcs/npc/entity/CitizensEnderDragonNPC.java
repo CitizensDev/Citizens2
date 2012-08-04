@@ -65,9 +65,12 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
             }
             if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0)
                 return;
-            NPCPushEvent event = Util.callPushEvent(npc, new Vector(x, y, z));
-            if (!event.isCancelled())
-                super.g(x, y, z);
+            Vector vector = new Vector(x, y, z);
+            NPCPushEvent event = Util.callPushEvent(npc, vector);
+            if (!event.isCancelled()) {
+                vector = event.getCollisionVector();
+                super.g(vector.getX(), vector.getY(), vector.getZ());
+            }
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
