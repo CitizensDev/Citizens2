@@ -44,6 +44,27 @@ public class SimpleGoalController implements GoalController {
     }
 
     @Override
+    public Iterator<GoalEntry> iterator() {
+        final Iterator<SimpleGoalEntry> itr = possibleGoals.iterator();
+        return new Iterator<GoalEntry>() {
+            @Override
+            public boolean hasNext() {
+                return itr.hasNext();
+            }
+
+            @Override
+            public GoalEntry next() {
+                return itr.next();
+            }
+
+            @Override
+            public void remove() {
+                itr.remove();
+            }
+        };
+    }
+
+    @Override
     public void removeGoal(Goal goal) {
         Preconditions.checkNotNull(goal, "goal cannot be null");
         toRemove.add(goal);
@@ -138,12 +159,6 @@ public class SimpleGoalController implements GoalController {
         }
 
         @Override
-        public int hashCode() {
-            final int prime = 31;
-            return prime * (prime + ((goal == null) ? 0 : goal.hashCode())) + priority;
-        }
-
-        @Override
         public Goal getGoal() {
             return goal;
         }
@@ -151,6 +166,12 @@ public class SimpleGoalController implements GoalController {
         @Override
         public int getPriority() {
             return priority;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            return prime * (prime + ((goal == null) ? 0 : goal.hashCode())) + priority;
         }
     }
 
@@ -180,26 +201,5 @@ public class SimpleGoalController implements GoalController {
                 addGoalToExecution(goal);
             }
         }
-    }
-
-    @Override
-    public Iterator<GoalEntry> iterator() {
-        final Iterator<SimpleGoalEntry> itr = possibleGoals.iterator();
-        return new Iterator<GoalEntry>() {
-            @Override
-            public boolean hasNext() {
-                return itr.hasNext();
-            }
-
-            @Override
-            public GoalEntry next() {
-                return itr.next();
-            }
-
-            @Override
-            public void remove() {
-                itr.remove();
-            }
-        };
     }
 }
