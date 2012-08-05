@@ -10,11 +10,13 @@ public class EmptySocket extends Socket {
 
     @Override
     public InputStream getInputStream() {
-        return new ByteArrayInputStream(new byte[10]);
+        return new ByteArrayInputStream(EMPTY);
     }
 
     @Override
     public OutputStream getOutputStream() {
-        return new ByteArrayOutputStream();
+        return new ByteArrayOutputStream(1);
     }
+
+    private static final byte[] EMPTY = new byte[0];
 }
