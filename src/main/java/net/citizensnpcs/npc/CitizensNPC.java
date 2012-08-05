@@ -79,10 +79,12 @@ public abstract class CitizensNPC extends AbstractNPC {
             Trait trait = CitizensAPI.getTraitFactory().getTrait(traitKey.name());
             if (trait == null) {
                 Messaging.severeF(
-                        "Skipped missing trait '%s' while loading NPC ID: '%d'. Has the name changed?",
+                        "Skipped broken or missing trait '%s' while loading ID '%d'. Has the name changed?",
                         traitKey.name(), getId());
                 continue;
             }
+            if (traitKey.keyExists("enabled") && !traitKey.getBoolean("enabled"))
+                continue;
             addTrait(trait);
             try {
                 trait.load(traitKey);

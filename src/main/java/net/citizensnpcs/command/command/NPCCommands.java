@@ -423,7 +423,7 @@ public class NPCCommands {
             permission = "npc.rename")
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
-        String newName = args.getString(1);
+        String newName = args.getJoinedStrings(1);
         if (newName.length() > 16) {
             Messaging.sendError(sender,
                     "NPC names cannot be longer than 16 characters. The name has been shortened.");
