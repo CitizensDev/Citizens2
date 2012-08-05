@@ -419,7 +419,6 @@ public class NPCCommands {
             desc = "Rename a NPC",
             modifiers = { "rename" },
             min = 2,
-            max = 2,
             permission = "npc.rename")
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
