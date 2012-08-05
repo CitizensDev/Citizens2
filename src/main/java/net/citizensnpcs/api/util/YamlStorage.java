@@ -17,9 +17,9 @@ public class YamlStorage implements Storage {
     private final FileConfiguration config;
     private final File file;
 
-    public YamlStorage(String fileName, String header) {
+    public YamlStorage(File file, String header) {
         config = new YamlConfiguration();
-        file = new File(fileName);
+        this.file = file;
         if (!file.exists()) {
             create();
             config.options().header(header);
@@ -108,37 +108,36 @@ public class YamlStorage implements Storage {
 
         @Override
         public double getDouble(String key) {
-            String path = getKeyExt(key);
-            if (pathExists(path)) {
-                if (config.getString(path) == null) {
-                    if (config.get(path) instanceof Integer)
-                        return config.getInt(path);
-                    return config.getDouble(path);
-                }
-                return Double.parseDouble(config.getString(path));
-            }
-            return 0;
+            return getDouble(key, 0);
         }
 
         @Override
         public double getDouble(String key, double def) {
-            return config.getDouble(getKeyExt(key), def);
+            String path = getKeyExt(key);
+            if (pathExists(path)) {
+                Object value = config.get(path);
+                if (value instanceof Number)
+                    return ((Number) value).doubleValue();
+                return Double.parseDouble(value.toString());
+            }
+            return def;
         }
 
         @Override
         public int getInt(String key) {
-            String path = getKeyExt(key);
-            if (pathExists(path)) {
-                if (config.getString(path) == null)
-                    return config.getInt(path);
-                return Integer.parseInt(config.getString(path));
-            }
-            return 0;
+            return getInt(key, 0);
         }
 
         @Override
         public int getInt(String key, int def) {
-            return config.getInt(getKeyExt(key), def);
+            String path = getKeyExt(key);
+            if (pathExists(path)) {
+                Object value = config.get(path);
+                if (value instanceof Number)
+                    return ((Number) value).intValue();
+                return Integer.parseInt(value.toString());
+            }
+            return def;
         }
 
         private String getKeyExt(String from) {
@@ -151,21 +150,19 @@ public class YamlStorage implements Storage {
 
         @Override
         public long getLong(String key) {
-            String path = getKeyExt(key);
-            if (pathExists(path)) {
-                if (config.getString(path) == null) {
-                    if (config.get(path) instanceof Integer)
-                        return config.getInt(path);
-                    return config.getLong(path);
-                }
-                return Long.parseLong(config.getString(path));
-            }
-            return 0;
+            return getLong(key, 0L);
         }
 
         @Override
         public long getLong(String key, long def) {
-            return config.getLong(getKeyExt(key), def);
+            String path = getKeyExt(key);
+            if (pathExists(path)) {
+                Object value = config.get(path);
+                if (value instanceof Number)
+                    return ((Number) value).longValue();
+                return Long.parseLong(value.toString());
+            }
+            return def;
         }
 
         @Override
@@ -215,7 +212,6 @@ public class YamlStorage implements Storage {
         @Override
         public void removeKey(String key) {
             config.set(getKeyExt(key), null);
-            save();
         }
 
         @Override
