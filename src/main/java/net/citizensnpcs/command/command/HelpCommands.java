@@ -47,12 +47,12 @@ public class HelpCommands {
         List<String> lines = new ArrayList<String>();
         for (Command cmd : plugin.getCommands(baseCommand)) {
             if (cmds.contains(cmd)
-                    || (!sender.hasPermission("citizens.admin") && !sender
-                            .hasPermission("citizens." + cmd.permission())))
+                    || (!sender.hasPermission("citizens.admin") && !sender.hasPermission("citizens."
+                            + cmd.permission())))
                 continue;
 
-            lines.add("<7>/<c>" + cmd.aliases()[0] + (cmd.usage().isEmpty() ? "" : " " + cmd.usage()) + " <7>- <e>"
-                    + cmd.desc());
+            lines.add("<7>/<c>" + cmd.aliases()[0] + (cmd.usage().isEmpty() ? "" : " " + cmd.usage())
+                    + " <7>- <e>" + cmd.desc());
             if (cmd.modifiers().length > 1)
                 cmds.add(cmd);
         }
