@@ -4,6 +4,12 @@ version: 2.0
 main: net.citizensnpcs.Citizens
 website: http://www.citizensnpcs.net
 commands:
+  traitc:
+    description: Configures traits
+    aliases: [trc, tc]
+  trait:
+    description: Trait commands
+    aliases: [tr]
   script:
     description: Scripting commands
   citizens:

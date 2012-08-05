@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
@@ -44,7 +45,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     public Text() {
         super("text");
-        this.plugin = Bukkit.getPluginManager().getPlugin("Citizens");
+        this.plugin = CitizensAPI.getPlugin();
     }
 
     public void add(String string) {
@@ -62,8 +63,9 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     public Editor getEditor(final Player player) {
         final Conversation conversation = new ConversationFactory(plugin)
-                .addConversationAbandonedListener(this).withLocalEcho(false).withEscapeSequence("/npc text")
-                .withModality(false).withFirstPrompt(new StartPrompt(this)).buildConversation(player);
+                .addConversationAbandonedListener(this).withLocalEcho(false).withEscapeSequence("npc text")
+                .withEscapeSequence("exit").withModality(false).withFirstPrompt(new StartPrompt(this))
+                .buildConversation(player);
         return new Editor() {
 
             @Override
@@ -125,7 +127,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
             return;
         EntityHuman search = null;
         EntityLiving handle = ((CitizensNPC) npc).getHandle();
-        if ((search = handle.world.findNearbyPlayer(handle, 5)) != null && talkClose) {
+        if ((search = handle.world.findNearbyPlayer(handle, range)) != null && talkClose) {
             Player player = (Player) search.getBukkitEntity();
             // If the cooldown is not expired, do not send text
             if (cooldowns.get(player.getName()) != null) {

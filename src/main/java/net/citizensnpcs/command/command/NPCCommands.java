@@ -8,16 +8,17 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.command.Command;
-import net.citizensnpcs.command.CommandConfigurable;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Behaviour;
@@ -121,6 +122,30 @@ public class NPCCommands {
         } else {
             Messaging.send(sender, StringHelper.wrap(npc.getName()) + " can no longer be controlled.");
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "copy (--name newname)",
+            desc = "Copies an NPC",
+            modifiers = { "copy" },
+            min = 1,
+            max = 1,
+            permission = "npc.copy")
+    public void copy(CommandContext args, CommandSender sender, NPC npc) {
+        EntityType type = npc.getTrait(MobType.class).getType();
+        String name = args.getFlag("name", npc.getFullName());
+        CitizensNPC copy = (CitizensNPC) npcRegistry.createNPC(type, name);
+        CitizensNPC from = (CitizensNPC) npc;
+
+        DataKey key = new MemoryDataKey();
+        from.save(key);
+        copy.load(key);
+
+        if (copy.isSpawned() && sender instanceof Player)
+            copy.getBukkitEntity().teleport((Player) sender);
+
+        Messaging.sendF(sender, ChatColor.GREEN + "%s has been copied.", npc.getName());
     }
 
     @Command(
@@ -524,60 +549,5 @@ public class NPCCommands {
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "trait [trait name]",
-            desc = "Adds a trait to the NPC",
-            modifiers = { "trait" },
-            min = 2,
-            max = 2,
-            flags = "r",
-            permission = "npc.trait")
-    public void trait(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        String traitName = args.getString(1);
-        if (!sender.hasPermission("citizens.npc.trait." + traitName))
-            throw new NoPermissionsException();
-        if (args.hasFlag('r')) {
-            Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(1));
-            if (clazz == null)
-                throw new CommandException("Trait not found.");
-            if (!npc.hasTrait(clazz))
-                throw new CommandException("The NPC doesn't have that trait.");
-            npc.removeTrait(clazz);
-            Messaging.sendF(sender, ChatColor.GREEN + "Trait %s removed successfully.",
-                    StringHelper.wrap(traitName));
-            return;
-        }
-        Trait trait = CitizensAPI.getTraitFactory().getTrait(traitName);
-        if (trait == null)
-            throw new CommandException("Trait not found.");
-        npc.addTrait(trait);
-        Messaging.sendF(sender, ChatColor.GREEN + "Trait %s added successfully.",
-                StringHelper.wrap(traitName));
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "traitc|tc [trait name] [flags]",
-            desc = "Configures a trait",
-            modifiers = { "traitc", "tc" },
-            min = 2,
-            flags = "*",
-            permission = "npc.trait-configure")
-    public void traitConfigure(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        String traitName = args.getString(1);
-        if (!sender.hasPermission("citizens.npc.trait-configure." + traitName))
-            throw new NoPermissionsException();
-        Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(1));
-        if (clazz == null)
-            throw new CommandException("Trait not found.");
-        if (!clazz.isAssignableFrom(CommandConfigurable.class))
-            throw new CommandException("That trait is not configurable");
-        if (!npc.hasTrait(clazz))
-            throw new CommandException("The NPC doesn't have that trait.");
-        CommandConfigurable trait = (CommandConfigurable) npc.getTrait(clazz);
-        trait.configure(args);
     }
 }
