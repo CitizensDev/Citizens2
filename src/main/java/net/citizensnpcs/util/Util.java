@@ -23,6 +23,7 @@ import org.bukkit.util.Vector;
 import com.google.common.base.Splitter;
 
 public class Util {
+
     // Static class for small (emphasis small) utility methods
     private Util() {
     }
@@ -42,20 +43,20 @@ public class Util {
         if (from.getWorld() != at.getWorld())
             return;
         Location loc = from.getLocation();
-    
+
         double xDiff = at.getLocation().getX() - loc.getX();
         double yDiff = at.getLocation().getY() - loc.getY();
         double zDiff = at.getLocation().getZ() - loc.getZ();
-    
+
         double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
         double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
-    
+
         double yaw = (Math.acos(xDiff / distanceXZ) * 180 / Math.PI);
         double pitch = (Math.acos(yDiff / distanceY) * 180 / Math.PI) - 90;
         if (zDiff < 0.0) {
             yaw = yaw + (Math.abs(180 - yaw) * 2);
         }
-    
+
         EntityLiving handle = ((CraftLivingEntity) from).getHandle();
         handle.yaw = (float) yaw - 90;
         handle.pitch = (float) pitch;
