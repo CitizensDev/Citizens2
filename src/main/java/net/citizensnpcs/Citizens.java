@@ -313,7 +313,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     "Citizens NPC Storage");
         }
         if (saves == null) {
-            saves = new YamlStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
+            saves = new YamlStorage(new File(getDataFolder(), Setting.STORAGE_FILE.asString()),
                     "Citizens NPC Storage");
         }
         Messaging.logF("Save method set to %s.", saves.toString());
