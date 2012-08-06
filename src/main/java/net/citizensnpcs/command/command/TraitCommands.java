@@ -29,17 +29,18 @@ public class TraitCommands {
         String traitName = args.getString(0);
         if (!sender.hasPermission("citizens.npc.trait." + traitName))
             throw new NoPermissionsException();
-        if (args.hasFlag('r')) {
-            Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(1));
+
+        Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
+        boolean remove = npc.hasTrait(clazz);
+        if (remove) {
             if (clazz == null)
                 throw new CommandException("Trait not found.");
-            if (!npc.hasTrait(clazz))
-                throw new CommandException("The NPC doesn't have that trait.");
             npc.removeTrait(clazz);
             Messaging.sendF(sender, ChatColor.GREEN + "Trait %s removed successfully.",
                     StringHelper.wrap(traitName));
             return;
         }
+
         Trait trait = CitizensAPI.getTraitFactory().getTrait(traitName);
         if (trait == null)
             throw new CommandException("Trait not found.");
@@ -60,7 +61,7 @@ public class TraitCommands {
         String traitName = args.getString(0);
         if (!sender.hasPermission("citizens.npc.trait-configure." + traitName))
             throw new NoPermissionsException();
-        Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(1));
+        Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(0));
         if (clazz == null)
             throw new CommandException("Trait not found.");
         if (!clazz.isAssignableFrom(CommandConfigurable.class))
