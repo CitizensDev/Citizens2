@@ -73,7 +73,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        enabled = key.getBoolean("");
+        enabled = key.getBoolean("enabled", key.getBoolean(""));
+        // TODO: remove key.getBoolean("") ^ after a few updates
         range = key.getDouble("range", range);
         realisticLooking = key.getBoolean("realistic-looking", false);
     }
@@ -90,7 +91,11 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     @Override
     public void save(DataKey key) {
-        key.setBoolean("", enabled);
+        if (key.keyExists("")) {
+            // TODO: remove after a few updates
+            key.removeKey("");
+        }
+        key.setBoolean("enabled", enabled);
         key.setDouble("range", range);
         key.setBoolean("realistic-looking", realisticLooking);
     }

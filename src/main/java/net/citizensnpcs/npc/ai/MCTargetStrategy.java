@@ -7,6 +7,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityMonster;
 import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.Navigation;
 import net.minecraft.server.Packet18ArmAnimation;
 
 import org.bukkit.Location;
@@ -18,10 +19,12 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private int attackTicks;
     private final EntityLiving handle, target;
     private final float speed;
+    private final Navigation navigation;
 
     public MCTargetStrategy(CitizensNPC handle, LivingEntity target, boolean aggro, float speed) {
         this.handle = handle.getHandle();
         this.target = ((CraftLivingEntity) target).getHandle();
+        this.navigation = this.handle.getNavigation();
         this.aggro = aggro;
         this.speed = speed;
     }
@@ -60,7 +63,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     public boolean update() {
         if (target == null || target.dead)
             return true;
-        new MCNavigationStrategy(handle, target, speed).update();
+        navigation.a(target, speed);
         handle.getControllerLook().a(target, 10.0F, handle.bf());
         if (aggro && canAttack()) {
             if (handle instanceof EntityMonster) {

@@ -1,12 +1,13 @@
 package net.citizensnpcs.trait;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.ai.GoalController.GoalEntry;
+import net.citizensnpcs.api.ai.SimpleGoalEntry;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.scripting.CompileCallback;
 import net.citizensnpcs.api.scripting.ScriptFactory;
@@ -20,10 +21,9 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class Behaviour extends Trait {
-    private final Map<Goal, Integer> addedGoals = Maps.newHashMap();
+    private final List<BehaviourGoalEntry> addedGoals = Lists.newArrayList();
     private final Function<String, File> fileConverterFunction = new Function<String, File>() {
         @Override
         public File apply(String arg0) {
@@ -63,14 +63,14 @@ public class Behaviour extends Trait {
 
     @Override
     public void onSpawn() {
-        for (Entry<Goal, Integer> entry : addedGoals.entrySet()) {
-            npc.getDefaultGoalController().addGoal(entry.getKey(), entry.getValue());
+        for (GoalEntry entry : addedGoals) {
+            npc.getDefaultGoalController().addGoal(entry.getGoal(), entry.getPriority());
         }
     }
 
     private void removeGoals() {
-        for (Goal entry : addedGoals.keySet()) {
-            npc.getDefaultGoalController().removeGoal(entry);
+        for (GoalEntry entry : addedGoals) {
+            npc.getDefaultGoalController().removeGoal(entry.getGoal());
         }
     }
 
@@ -85,27 +85,60 @@ public class Behaviour extends Trait {
         key.setString("scripts", Joiner.on(",").join(scripts));
     }
 
+    private static class BehaviourGoalEntry extends SimpleGoalEntry {
+        private final File file;
+
+        private BehaviourGoalEntry(Goal goal, int priority, File file) {
+            super(goal, priority);
+            this.file = file;
+        }
+    }
+
     public class BehaviourCallback implements CompileCallback {
-        private final Map<Goal, Integer> goals = Maps.newHashMap();
+        private final List<BehaviourGoalEntry> goals = Lists.newArrayList();
+        private File fileInUse;
 
         public void addGoal(int priority, Goal goal) {
             Validate.notNull(goal);
-            goals.put(goal, priority);
+            goals.add(new BehaviourGoalEntry(goal, priority, fileInUse));
         }
 
         @Override
         public void onCompileTaskFinished() {
-            addedGoals.putAll(goals);
+            addedGoals.addAll(goals);
             if (!npc.isSpawned())
                 return;
-            for (Entry<Goal, Integer> entry : goals.entrySet()) {
-                npc.getDefaultGoalController().addGoal(entry.getKey(), entry.getValue());
+            for (GoalEntry entry : goals) {
+                npc.getDefaultGoalController().addGoal(entry.getGoal(), entry.getPriority());
             }
         }
 
         @Override
-        public void onScriptCompiled(ScriptFactory script) {
-            script.newInstance().invoke("addGoals", this, npc);
+        public void onScriptCompiled(File file, ScriptFactory script) {
+            synchronized (goals) {
+                fileInUse = file;
+                script.newInstance().invoke("addGoals", this, npc);
+                scripts.add(file);
+                fileInUse = null;
+            }
+        }
+    }
+
+    public void removeScripts(Iterable<String> files) {
+        Iterable<File> transformed = Iterables.transform(files, fileConverterFunction);
+        boolean isSpawned = npc.isSpawned();
+        for (File file : transformed) {
+            if (isSpawned) {
+                Iterator<BehaviourGoalEntry> itr = addedGoals.iterator();
+                while (itr.hasNext()) {
+                    BehaviourGoalEntry entry = itr.next();
+                    if (file.equals(entry.file)) {
+                        itr.remove();
+                        npc.getDefaultGoalController().removeGoal(entry.getGoal());
+                    }
+                }
+            }
+            scripts.remove(file);
         }
     }
 }

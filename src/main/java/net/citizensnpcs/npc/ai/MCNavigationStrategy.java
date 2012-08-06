@@ -15,12 +15,6 @@ public class MCNavigationStrategy implements PathStrategy {
     MCNavigationStrategy(final CitizensNPC npc, Location dest, float speed) {
         this(npc.getHandle(), dest);
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), speed);
-
-    }
-
-    MCNavigationStrategy(EntityLiving entity, EntityLiving target, float speed) {
-        this(entity, target.getBukkitEntity().getLocation());
-        navigation.a(target, speed);
     }
 
     private MCNavigationStrategy(EntityLiving entity, Location target) {

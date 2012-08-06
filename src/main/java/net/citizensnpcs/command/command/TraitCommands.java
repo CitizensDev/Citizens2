@@ -26,7 +26,7 @@ public class TraitCommands {
             flags = "r",
             permission = "npc.trait")
     public void add(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        String traitName = args.getString(1);
+        String traitName = args.getString(0);
         if (!sender.hasPermission("citizens.npc.trait." + traitName))
             throw new NoPermissionsException();
         if (args.hasFlag('r')) {
@@ -57,7 +57,7 @@ public class TraitCommands {
             flags = "*",
             permission = "npc.trait-configure")
     public void configure(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        String traitName = args.getString(1);
+        String traitName = args.getString(0);
         if (!sender.hasPermission("citizens.npc.trait-configure." + traitName))
             throw new NoPermissionsException();
         Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(1));
