@@ -115,7 +115,7 @@ public class ScriptCompiler extends Thread {
                     ScriptFactory compiled = new SimpleScriptFactory(src, task.contextProviders);
                     for (CompileCallback callback : task.callbacks) {
                         synchronized (callback) {
-                            callback.onScriptCompiled(compiled);
+                            callback.onScriptCompiled(engine.file, compiled);
                         }
                     }
                 } catch (IOException e) {

@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.scripting;
 
+import java.io.File;
+
 import org.apache.commons.lang.Validate;
 
 public class ScriptRunnerCallback implements CompileCallback {
@@ -32,7 +34,7 @@ public class ScriptRunnerCallback implements CompileCallback {
     }
 
     @Override
-    public void onScriptCompiled(ScriptFactory factory) {
+    public void onScriptCompiled(File file, ScriptFactory factory) {
         Script script = factory.newInstance();
         invokeMethodIfAvailable(script);
     }
