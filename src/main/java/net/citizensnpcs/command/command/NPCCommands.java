@@ -96,15 +96,20 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "behaviour [scripts]",
+            usage = "behaviour [scripts] (-r)",
             desc = "Sets the behaviour of a NPC",
             modifiers = { "behaviour", "ai" },
-            min = 2,
-            max = -1)
+            flags = "r",
+            min = 2)
     public void behaviour(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Iterable<String> files = Splitter.on(',').split(args.getJoinedStrings(1, ','));
-        npc.getTrait(Behaviour.class).addScripts(files);
-        sender.sendMessage(ChatColor.GREEN + "Behaviours added.");
+        if (args.hasFlag('r')) {
+            npc.getTrait(Behaviour.class).addScripts(files);
+            sender.sendMessage(ChatColor.GREEN + "Behaviours added.");
+        } else {
+            npc.getTrait(Behaviour.class).removeScripts(files);
+            sender.sendMessage(ChatColor.GREEN + "Behaviours removed.");
+        }
     }
 
     @Command(

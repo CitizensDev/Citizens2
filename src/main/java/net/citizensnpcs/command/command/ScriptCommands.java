@@ -40,7 +40,7 @@ public class ScriptCommands {
             }
 
             @Override
-            public void onScriptCompiled(ScriptFactory script) {
+            public void onScriptCompiled(File file, ScriptFactory script) {
                 Script s = script.newInstance();
                 if (args.hasValueFlag("methods")) {
                     for (String m : Splitter.on(',').split(args.getFlag("methods"))) {
