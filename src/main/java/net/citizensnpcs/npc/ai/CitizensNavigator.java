@@ -46,6 +46,8 @@ public class CitizensNavigator implements Navigator {
 
     @Override
     public float getSpeed() {
+        if (speed == -1)
+            throw new IllegalStateException("NPC has not been spawned");
         return speed;
     }
 
@@ -88,6 +90,8 @@ public class CitizensNavigator implements Navigator {
     @Override
     public void setSpeed(float speed) {
         this.speed = speed;
+        if (isNavigating())
+            executing.setSpeed(this.speed);
     }
 
     @Override

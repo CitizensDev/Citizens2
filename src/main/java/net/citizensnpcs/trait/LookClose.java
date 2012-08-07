@@ -40,7 +40,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     private void findNewTarget() {
-        List<Entity> nearby = npc.getBukkitEntity().getNearbyEntities(range / 2, range, range / 2);
+        List<Entity> nearby = npc.getBukkitEntity().getNearbyEntities(range, range, range);
         final Location npcLocation = npc.getBukkitEntity().getLocation();
         Collections.sort(nearby, new Comparator<Entity>() {
             @Override

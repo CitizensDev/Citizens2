@@ -8,6 +8,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
@@ -70,6 +71,10 @@ public class NPCCommands {
     public void age(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Age trait = npc.getTrait(Age.class);
 
+        boolean toggleLock = args.hasFlag('l');
+        if (toggleLock)
+            Messaging.send(sender, "<a>Age " + (trait.toggle() ? "locked" : "unlocked") + ".");
+
         if (args.argsLength() > 1) {
             int age = 0;
             String ageStr = "an adult";
@@ -77,7 +82,7 @@ public class NPCCommands {
                 age = args.getInteger(1);
                 if (age < -24000 || age > 0)
                     throw new CommandException("Invalid age. Valid: adult, baby, number between -24000 and 0");
-                ageStr = "age " + age;
+                ageStr = "age " + StringHelper.wrap(age);
             } catch (NumberFormatException ex) {
                 if (args.getString(1).equalsIgnoreCase("baby")) {
                     age = -24000;
@@ -87,11 +92,9 @@ public class NPCCommands {
             }
 
             trait.setAge(age);
-            Messaging.send(sender, StringHelper.wrap(npc.getName()) + " is now " + ageStr + ".");
-        }
-
-        if (args.hasFlag('l'))
-            Messaging.send(sender, "<a>Age " + (trait.toggle() ? "locked" : "unlocked") + ".");
+            Messaging.sendF(sender, StringHelper.wrap(npc.getName()) + " is now %s.", ageStr);
+        } else if (!toggleLock)
+            trait.describe(sender);
     }
 
     @Command(
@@ -104,19 +107,19 @@ public class NPCCommands {
     public void behaviour(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Iterable<String> files = Splitter.on(',').split(args.getJoinedStrings(1, ','));
         if (args.hasFlag('r')) {
-            npc.getTrait(Behaviour.class).addScripts(files);
-            sender.sendMessage(ChatColor.GREEN + "Behaviours added.");
-        } else {
             npc.getTrait(Behaviour.class).removeScripts(files);
             sender.sendMessage(ChatColor.GREEN + "Behaviours removed.");
+        } else {
+            npc.getTrait(Behaviour.class).addScripts(files);
+            sender.sendMessage(ChatColor.GREEN + "Behaviours added.");
         }
     }
 
     @Command(
             aliases = { "npc" },
-            usage = "controllable",
+            usage = "controllable|control",
             desc = "Toggles whether the NPC can be ridden and controlled",
-            modifiers = { "controllable" },
+            modifiers = { "controllable", "control" },
             min = 1,
             max = 1,
             permission = "npc.controllable")
@@ -155,16 +158,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b) --type (type) --char (char) --behaviour (behaviour))",
+            usage = "create [name] ((-b) --type (type) --trait ('trait1, trait2...') --b (behaviour))",
             desc = "Create a new NPC",
             flags = "b",
             modifiers = { "create" },
             min = 2,
-            max = 5,
             permission = "npc.create")
     @Requirements
     public void create(CommandContext args, final Player player, NPC npc) {
-        String name = args.getString(1);
+        String name = StringHelper.parseColors(args.getJoinedStrings(1));
         if (name.length() > 16) {
             Messaging.sendError(player,
                     "NPC names cannot be longer than 16 characters. The name has been shortened.");
@@ -183,6 +185,7 @@ public class NPCCommands {
                 type = EntityType.PLAYER;
             }
         }
+
         npc = npcRegistry.createNPC(type, name);
         String msg = ChatColor.GREEN + "You created " + StringHelper.wrap(npc.getName())
                 + " at your location";
@@ -197,8 +200,17 @@ public class NPCCommands {
                 msg += " as a baby";
             }
         }
+        if (args.hasValueFlag("trait")) {
+            Iterable<String> parts = Splitter.on(",").trimResults().split(args.getFlag("trait"));
+            for (String tr : parts) {
+                Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(tr);
+                if (clazz != null)
+                    npc.addTrait(clazz);
+            }
+            msg += " with the specified traits";
+        }
 
-        if (args.hasValueFlag("behaviour")) {
+        if (args.hasValueFlag("b")) {
             npc.getTrait(Behaviour.class).addScripts(Splitter.on(",").split(args.getFlag("behaviour")));
             msg += " with the specified behaviours";
         }
@@ -393,32 +405,28 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "profession [profession]",
+            usage = "profession|prof [profession]",
             desc = "Set a NPC's profession",
-            modifiers = { "profession" },
+            modifiers = { "profession", "prof" },
             min = 2,
             max = 2,
             permission = "npc.profession")
     @Requirements(selected = true, ownership = true, types = { EntityType.VILLAGER })
     public void profession(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String profession = args.getString(1);
+        Profession parsed;
         try {
-            npc.getTrait(VillagerProfession.class)
-                    .setProfession(Profession.valueOf(profession.toUpperCase()));
-            Messaging.send(sender, StringHelper.wrap(npc.getName()) + " is now the profession "
-                    + StringHelper.wrap(profession.toUpperCase()) + ".");
+            parsed = Profession.valueOf(profession.toUpperCase());
         } catch (IllegalArgumentException ex) {
             throw new CommandException("'" + profession + "' is not a valid profession.");
         }
+        npc.getTrait(VillagerProfession.class).setProfession(parsed);
+        Messaging.send(sender,
+                StringHelper.wrap(npc.getName()) + " is now a " + StringHelper.wrap(profession) + ".");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "remove (all)",
-            desc = "Remove a NPC",
-            modifiers = { "remove" },
-            min = 1,
-            max = 2)
+    @Command(aliases = { "npc" }, usage = "remove|rem (all)", desc = "Remove a NPC", modifiers = { "remove",
+            "rem" }, min = 1, max = 2)
     @Requirements
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
@@ -466,9 +474,9 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "select [id]",
+            usage = "select|sel [id]",
             desc = "Select a NPC with the given ID",
-            modifiers = { "select" },
+            modifiers = { "select", "sel" },
             min = 2,
             max = 2,
             permission = "npc.select")
@@ -547,7 +555,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport a NPC to your location", modifiers = {
-            "tphere", "move" }, min = 1, max = 1, permission = "npc.tphere")
+            "tphere", "tph", "move" }, min = 1, max = 1, permission = "npc.tphere")
     public void tphere(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
