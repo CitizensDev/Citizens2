@@ -67,6 +67,7 @@ public abstract class AbstractNPC implements NPC {
         runnables.clear();
         for (Trait trait : traits.values()) {
             HandlerList.unregisterAll(trait);
+            trait.onRemove();
         }
         traits.clear();
         CitizensAPI.getNPCRegistry().deregister(this);
