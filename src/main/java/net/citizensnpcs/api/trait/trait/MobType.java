@@ -36,6 +36,12 @@ public class MobType extends Trait {
         key.setString("", type.getName());
     }
 
+    @Override
+    public void onSpawn() {
+        if (type == null)
+            type = npc.getBukkitEntity().getType();
+    }
+
     /**
      * Sets the type of mob that an NPC is.
      * 

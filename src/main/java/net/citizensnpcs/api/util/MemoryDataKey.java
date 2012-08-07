@@ -12,51 +12,54 @@ import com.google.common.collect.Iterables;
 
 public class MemoryDataKey extends DataKey {
     private final ConfigurationSection section;
+    private final String path;
 
     public MemoryDataKey() {
         section = new MemoryConfiguration();
+        path = "";
     }
 
-    private MemoryDataKey(ConfigurationSection configurationSection) {
+    private MemoryDataKey(ConfigurationSection configurationSection, String path) {
         section = configurationSection;
+        this.path = path;
     }
 
     @Override
     public boolean getBoolean(String key) {
-        return section.getBoolean(key);
+        return section.getBoolean(getKeyFor(key));
     }
 
     @Override
     public double getDouble(String key) {
-        return section.getDouble(key);
+        return section.getDouble(getKeyFor(key));
     }
 
     @Override
     public int getInt(String key) {
-        return section.getInt(key);
+        return section.getInt(getKeyFor(key));
     }
 
     @Override
     public long getLong(String key) {
-        return section.getLong(key);
+        return section.getLong(getKeyFor(key));
     }
 
     @Override
     public Object getRaw(String key) {
-        return section.get(key);
+        return section.get(getKeyFor(key));
     }
 
     @Override
     public DataKey getRelative(String relative) {
         ConfigurationSection sub = section.getConfigurationSection(relative);
         if (sub == null)
-            section.createSection(relative);
-        return new MemoryDataKey(sub);
+            sub = section.createSection(relative);
+        return new MemoryDataKey(sub, getKeyFor(relative));
     }
 
     @Override
     public String getString(String key) {
-        return section.getString(key);
+        return section.getString(getKeyFor(key));
     }
 
     @Override
@@ -66,7 +69,7 @@ public class MemoryDataKey extends DataKey {
             @Override
             public DataKey apply(@Nullable String input) {
                 ConfigurationSection sub = section.getConfigurationSection(input);
-                return sub == null ? null : new MemoryDataKey(sub);
+                return sub == null ? null : new MemoryDataKey(sub, getKeyFor(sub.getName()));
             }
         });
     }
@@ -83,36 +86,44 @@ public class MemoryDataKey extends DataKey {
 
     @Override
     public void removeKey(String key) {
-        section.set(key, null);
+        section.set(getKeyFor(key), null);
     }
 
     @Override
     public void setBoolean(String key, boolean value) {
-        section.set(key, value);
+        section.set(getKeyFor(key), value);
     }
 
     @Override
     public void setDouble(String key, double value) {
-        section.set(key, value);
+        section.set(getKeyFor(key), value);
     }
 
     @Override
     public void setInt(String key, int value) {
-        section.set(key, value);
+        section.set(getKeyFor(key), value);
     }
 
     @Override
     public void setLong(String key, long value) {
-        section.set(key, value);
+        section.set(getKeyFor(key), value);
     }
 
     @Override
     public void setRaw(String key, Object value) {
-        section.set(key, value);
+        section.set(getKeyFor(key), value);
     }
 
     @Override
     public void setString(String key, String value) {
-        section.set(key, value);
+        section.set(getKeyFor(key), value);
+    }
+
+    private String getKeyFor(String key) {
+        if (key.isEmpty())
+            return path;
+        if (key.charAt(0) == '.')
+            return path.isEmpty() ? key.substring(1, key.length()) : path + key;
+        return path.isEmpty() ? key : path + "." + key;
     }
 }
