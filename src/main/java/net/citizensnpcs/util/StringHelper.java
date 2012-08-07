@@ -64,6 +64,7 @@ public class StringHelper {
         for (ChatColor color : ChatColor.values()) {
             parsed = parsed.replace("<" + color.getChar() + ">", color.toString());
         }
+        parsed = ChatColor.translateAlternateColorCodes('&', parsed);
         return parsed;
     }
 

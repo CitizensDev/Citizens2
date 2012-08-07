@@ -3,7 +3,10 @@ package net.citizensnpcs.trait;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.StringHelper;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 
 public class Age extends Trait implements Toggleable {
@@ -63,5 +66,10 @@ public class Age extends Trait implements Toggleable {
     @Override
     public String toString() {
         return "Age{age=" + age + ",locked=" + locked + "}";
+    }
+
+    public void describe(CommandSender sender) {
+        Messaging.sendF(sender, "%s's age is %s and %s locked.", StringHelper.wrap(npc.getName()),
+                StringHelper.wrap(age), StringHelper.wrap(locked ? "is" : "isn't"));
     }
 }

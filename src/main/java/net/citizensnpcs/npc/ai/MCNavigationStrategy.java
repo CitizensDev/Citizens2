@@ -39,6 +39,11 @@ public class MCNavigationStrategy implements PathStrategy {
     }
 
     @Override
+    public void setSpeed(float speed) {
+        navigation.a(speed);
+    }
+
+    @Override
     public boolean update() {
         return navigation.f();
     }
