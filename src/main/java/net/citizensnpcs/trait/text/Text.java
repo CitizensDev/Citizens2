@@ -54,7 +54,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent event) {
-        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
+        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "/npc text");
     }
 
     public void edit(int index, String newText) {

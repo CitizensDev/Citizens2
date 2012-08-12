@@ -21,6 +21,7 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
 
     @Override
     public CaveSpider getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (CaveSpider) getHandle().getBukkitEntity();
     }
 

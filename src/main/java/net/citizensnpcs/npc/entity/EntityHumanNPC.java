@@ -31,12 +31,20 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         itemInWorldManager.setGameMode(EnumGamemode.SURVIVAL);
 
         EmptySocket socket = new EmptySocket();
-        NetworkManager netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
-            @Override
-            public boolean a() {
-                return false;
-            }
-        }, server.E().getPrivate());
+        NetworkManager netMgr =null;
+	
+        try {
+			netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
+			    @Override
+			    public boolean a() {
+			        return false;
+			    }
+			}, server.E().getPrivate());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
         netMgr.a(netServerHandler);
 

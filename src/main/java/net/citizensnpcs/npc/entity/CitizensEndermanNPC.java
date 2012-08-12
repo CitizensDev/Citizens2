@@ -59,6 +59,7 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
 
     @Override
     public Enderman getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Enderman) getHandle().getBukkitEntity();
     }
 

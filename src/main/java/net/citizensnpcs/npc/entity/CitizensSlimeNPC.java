@@ -21,6 +21,7 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
 
     @Override
     public Slime getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Slime) getHandle().getBukkitEntity();
     }
 

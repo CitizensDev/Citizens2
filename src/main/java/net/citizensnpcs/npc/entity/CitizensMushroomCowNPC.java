@@ -21,6 +21,7 @@ public class CitizensMushroomCowNPC extends CitizensMobNPC {
 
     @Override
     public MushroomCow getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (MushroomCow) getHandle().getBukkitEntity();
     }
 

@@ -22,6 +22,7 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
 
     @Override
     public Creeper getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Creeper) getHandle().getBukkitEntity();
     }
 
