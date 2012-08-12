@@ -21,7 +21,7 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
 
     @Override
     public EnderDragon getBukkitEntity() {
-        return (EnderDragon) getHandle().getBukkitEntity();
+        return (EnderDragon) super.getBukkitEntity();
     }
 
     public static class EntityEnderDragonNPC extends EntityEnderDragon implements NPCHolder {

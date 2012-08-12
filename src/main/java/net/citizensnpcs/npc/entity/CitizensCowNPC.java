@@ -21,7 +21,7 @@ public class CitizensCowNPC extends CitizensMobNPC {
 
     @Override
     public Cow getBukkitEntity() {
-        return (Cow) getHandle().getBukkitEntity();
+        return (Cow) super.getBukkitEntity();
     }
 
     public static class EntityCowNPC extends EntityCow implements NPCHolder {

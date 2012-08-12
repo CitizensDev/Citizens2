@@ -21,7 +21,7 @@ public class CitizensSnowmanNPC extends CitizensMobNPC {
 
     @Override
     public Snowman getBukkitEntity() {
-        return (Snowman) getHandle().getBukkitEntity();
+        return (Snowman) super.getBukkitEntity();
     }
 
     public static class EntitySnowmanNPC extends EntitySnowman implements NPCHolder {

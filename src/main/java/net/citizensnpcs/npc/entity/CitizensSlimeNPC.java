@@ -21,7 +21,7 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
 
     @Override
     public Slime getBukkitEntity() {
-        return (Slime) getHandle().getBukkitEntity();
+        return (Slime) super.getBukkitEntity();
     }
 
     public static class EntitySlimeNPC extends EntitySlime implements NPCHolder {

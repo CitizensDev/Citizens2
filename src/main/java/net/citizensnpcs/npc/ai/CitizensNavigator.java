@@ -53,12 +53,12 @@ public class CitizensNavigator implements Navigator {
 
     @Override
     public Location getTargetAsLocation() {
-        return executing.getTargetAsLocation();
+        return isNavigating() ? executing.getTargetAsLocation() : null;
     }
 
     @Override
     public TargetType getTargetType() {
-        return executing.getTargetType();
+        return isNavigating() ? executing.getTargetType() : null;
     }
 
     @Override
@@ -98,6 +98,10 @@ public class CitizensNavigator implements Navigator {
     public void setTarget(LivingEntity target, boolean aggressive) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
+        if (target == null) {
+            cancelNavigation();
+            return;
+        }
         PathStrategy newStrategy = new MCTargetStrategy(npc, target, aggressive, speed);
         switchStrategyTo(newStrategy);
     }
@@ -106,6 +110,10 @@ public class CitizensNavigator implements Navigator {
     public void setTarget(Location target) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
+        if (target == null) {
+            cancelNavigation();
+            return;
+        }
         PathStrategy newStrategy = new MCNavigationStrategy(npc, target, speed);
         switchStrategyTo(newStrategy);
     }

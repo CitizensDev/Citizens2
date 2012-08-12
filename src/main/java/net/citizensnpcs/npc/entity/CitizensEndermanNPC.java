@@ -59,7 +59,7 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
 
     @Override
     public Enderman getBukkitEntity() {
-        return (Enderman) getHandle().getBukkitEntity();
+        return (Enderman) super.getBukkitEntity();
     }
 
     public static class EntityEndermanNPC extends EntityEnderman implements NPCHolder {

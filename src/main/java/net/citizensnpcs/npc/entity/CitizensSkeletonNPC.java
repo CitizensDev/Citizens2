@@ -21,7 +21,7 @@ public class CitizensSkeletonNPC extends CitizensMobNPC {
 
     @Override
     public Skeleton getBukkitEntity() {
-        return (Skeleton) getHandle().getBukkitEntity();
+        return (Skeleton) super.getBukkitEntity();
     }
 
     public static class EntitySkeletonNPC extends EntitySkeleton implements NPCHolder {
