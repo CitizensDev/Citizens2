@@ -21,6 +21,7 @@ public class CitizensSilverfishNPC extends CitizensMobNPC {
 
     @Override
     public Silverfish getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Silverfish) getHandle().getBukkitEntity();
     }
 

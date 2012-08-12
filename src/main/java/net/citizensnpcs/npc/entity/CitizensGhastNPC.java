@@ -21,6 +21,7 @@ public class CitizensGhastNPC extends CitizensMobNPC {
 
     @Override
     public Ghast getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Ghast) getHandle().getBukkitEntity();
     }
 

@@ -21,6 +21,7 @@ public class CitizensSkeletonNPC extends CitizensMobNPC {
 
     @Override
     public Skeleton getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Skeleton) getHandle().getBukkitEntity();
     }
 

@@ -21,6 +21,7 @@ public class CitizensGiantNPC extends CitizensMobNPC {
 
     @Override
     public Giant getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Giant) getHandle().getBukkitEntity();
     }
 

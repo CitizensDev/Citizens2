@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.network;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.security.PrivateKey;
 
@@ -10,8 +11,10 @@ import net.minecraft.server.Packet;
 
 public class EmptyNetworkManager extends NetworkManager {
 
-    public EmptyNetworkManager(Socket socket, String string, NetHandler netHandler, PrivateKey key) {
-        super(socket, string, netHandler, key);
+    public EmptyNetworkManager(Socket socket, String string, NetHandler netHandler, PrivateKey key) throws IOException {
+        	super(socket, string, netHandler, key);
+	        
+    	
 
         NMSReflection.stopNetworkThreads(this);
     }

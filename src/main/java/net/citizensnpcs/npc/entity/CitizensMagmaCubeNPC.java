@@ -21,6 +21,7 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
 
     @Override
     public MagmaCube getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (MagmaCube) getHandle().getBukkitEntity();
     }
 

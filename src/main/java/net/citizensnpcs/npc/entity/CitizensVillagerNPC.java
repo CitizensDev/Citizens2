@@ -22,6 +22,7 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
 
     @Override
     public Villager getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Villager) getHandle().getBukkitEntity();
     }
 

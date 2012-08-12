@@ -21,6 +21,7 @@ public class CitizensWolfNPC extends CitizensMobNPC {
 
     @Override
     public Wolf getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Wolf) getHandle().getBukkitEntity();
     }
 

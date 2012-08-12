@@ -21,6 +21,7 @@ public class CitizensChickenNPC extends CitizensMobNPC {
 
     @Override
     public Chicken getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Chicken) getHandle().getBukkitEntity();
     }
 

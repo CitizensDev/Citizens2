@@ -116,6 +116,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
 
     @Override
     public Player getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return getHandle().getBukkitEntity();
     }
 

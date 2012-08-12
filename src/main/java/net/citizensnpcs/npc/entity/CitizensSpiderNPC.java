@@ -20,6 +20,7 @@ public class CitizensSpiderNPC extends CitizensMobNPC {
 
     @Override
     public Spider getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Spider) getHandle().getBukkitEntity();
     }
 

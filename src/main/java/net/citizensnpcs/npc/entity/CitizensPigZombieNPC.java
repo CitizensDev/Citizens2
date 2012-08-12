@@ -21,6 +21,7 @@ public class CitizensPigZombieNPC extends CitizensMobNPC {
 
     @Override
     public PigZombie getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (PigZombie) getHandle().getBukkitEntity();
     }
 

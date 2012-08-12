@@ -10,6 +10,8 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
+import net.citizensnpcs.npc.ai.MCNavigationStrategy;
+import net.citizensnpcs.npc.ai.PathStrategy;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.EntityLiving;
@@ -50,6 +52,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public LivingEntity getBukkitEntity() {
+       	if (getHandle() == null) return null;
         return (LivingEntity) getHandle().getBukkitEntity();
     }
 

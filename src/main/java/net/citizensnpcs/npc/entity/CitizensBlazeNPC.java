@@ -21,6 +21,7 @@ public class CitizensBlazeNPC extends CitizensMobNPC {
 
     @Override
     public Blaze getBukkitEntity() {
+    	if (getHandle() == null) return null;
         return (Blaze) getHandle().getBukkitEntity();
     }
 
