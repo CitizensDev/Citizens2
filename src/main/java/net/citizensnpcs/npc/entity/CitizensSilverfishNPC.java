@@ -21,7 +21,7 @@ public class CitizensSilverfishNPC extends CitizensMobNPC {
 
     @Override
     public Silverfish getBukkitEntity() {
-        return (Silverfish) getHandle().getBukkitEntity();
+        return (Silverfish) super.getBukkitEntity();
     }
 
     public static class EntitySilverfishNPC extends EntitySilverfish implements NPCHolder {

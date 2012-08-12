@@ -21,7 +21,7 @@ public class CitizensBlazeNPC extends CitizensMobNPC {
 
     @Override
     public Blaze getBukkitEntity() {
-        return (Blaze) getHandle().getBukkitEntity();
+        return (Blaze) super.getBukkitEntity();
     }
 
     public static class EntityBlazeNPC extends EntityBlaze implements NPCHolder {

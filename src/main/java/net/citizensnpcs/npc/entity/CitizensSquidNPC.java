@@ -21,7 +21,7 @@ public class CitizensSquidNPC extends CitizensMobNPC {
 
     @Override
     public Squid getBukkitEntity() {
-        return (Squid) getHandle().getBukkitEntity();
+        return (Squid) super.getBukkitEntity();
     }
 
     public static class EntitySquidNPC extends EntitySquid implements NPCHolder {

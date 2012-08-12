@@ -21,7 +21,7 @@ public class CitizensIronGolemNPC extends CitizensMobNPC {
 
     @Override
     public IronGolem getBukkitEntity() {
-        return (IronGolem) getHandle().getBukkitEntity();
+        return (IronGolem) super.getBukkitEntity();
     }
 
     public static class EntityIronGolemNPC extends EntityIronGolem implements NPCHolder {

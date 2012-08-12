@@ -21,7 +21,7 @@ public class CitizensGiantNPC extends CitizensMobNPC {
 
     @Override
     public Giant getBukkitEntity() {
-        return (Giant) getHandle().getBukkitEntity();
+        return (Giant) super.getBukkitEntity();
     }
 
     public static class EntityGiantNPC extends EntityGiantZombie implements NPCHolder {

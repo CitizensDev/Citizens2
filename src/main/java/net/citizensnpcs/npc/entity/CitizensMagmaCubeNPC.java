@@ -21,7 +21,7 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
 
     @Override
     public MagmaCube getBukkitEntity() {
-        return (MagmaCube) getHandle().getBukkitEntity();
+        return (MagmaCube) super.getBukkitEntity();
     }
 
     public static class EntityMagmaCubeNPC extends EntityMagmaCube implements NPCHolder {

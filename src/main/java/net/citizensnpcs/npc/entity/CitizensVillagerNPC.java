@@ -22,7 +22,7 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
 
     @Override
     public Villager getBukkitEntity() {
-        return (Villager) getHandle().getBukkitEntity();
+        return (Villager) super.getBukkitEntity();
     }
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {

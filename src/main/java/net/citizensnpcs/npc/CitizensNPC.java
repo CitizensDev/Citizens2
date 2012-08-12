@@ -50,6 +50,8 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public LivingEntity getBukkitEntity() {
+        if (getHandle() == null)
+            return null;
         return (LivingEntity) getHandle().getBukkitEntity();
     }
 

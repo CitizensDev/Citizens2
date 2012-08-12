@@ -21,7 +21,7 @@ public class CitizensChickenNPC extends CitizensMobNPC {
 
     @Override
     public Chicken getBukkitEntity() {
-        return (Chicken) getHandle().getBukkitEntity();
+        return (Chicken) super.getBukkitEntity();
     }
 
     public static class EntityChickenNPC extends EntityChicken implements NPCHolder {

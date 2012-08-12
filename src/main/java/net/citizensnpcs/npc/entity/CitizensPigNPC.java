@@ -48,7 +48,7 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
 
     @Override
     public Pig getBukkitEntity() {
-        return (Pig) getHandle().getBukkitEntity();
+        return (Pig) super.getBukkitEntity();
     }
 
     public static class EntityPigNPC extends EntityPig implements NPCHolder {

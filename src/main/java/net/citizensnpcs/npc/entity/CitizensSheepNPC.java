@@ -59,7 +59,7 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
 
     @Override
     public Sheep getBukkitEntity() {
-        return (Sheep) getHandle().getBukkitEntity();
+        return (Sheep) super.getBukkitEntity();
     }
 
     public static class EntitySheepNPC extends EntitySheep implements NPCHolder {

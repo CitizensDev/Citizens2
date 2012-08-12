@@ -1,6 +1,7 @@
 package net.citizensnpcs.npc.entity;
 
 import java.io.IOException;
+import java.net.Socket;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -30,13 +31,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         this.npc = (CitizensNPC) npc;
         itemInWorldManager.setGameMode(EnumGamemode.SURVIVAL);
 
-        EmptySocket socket = new EmptySocket();
+        Socket socket = new EmptySocket();
         NetworkManager netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
             @Override
             public boolean a() {
                 return false;
             }
         }, server.E().getPrivate());
+
         netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
         netMgr.a(netServerHandler);
 

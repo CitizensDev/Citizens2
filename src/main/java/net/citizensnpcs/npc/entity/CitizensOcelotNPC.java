@@ -21,7 +21,7 @@ public class CitizensOcelotNPC extends CitizensMobNPC {
 
     @Override
     public Ocelot getBukkitEntity() {
-        return (Ocelot) getHandle().getBukkitEntity();
+        return (Ocelot) super.getBukkitEntity();
     }
 
     public static class EntityOcelotNPC extends EntityOcelot implements NPCHolder {
