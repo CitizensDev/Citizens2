@@ -54,7 +54,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent event) {
-        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "/npc text");
+        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
     }
 
     public void edit(int index, String newText) {
@@ -63,7 +63,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     public Editor getEditor(final Player player) {
         final Conversation conversation = new ConversationFactory(plugin)
-                .addConversationAbandonedListener(this).withLocalEcho(false).withEscapeSequence("npc text")
+                .addConversationAbandonedListener(this).withLocalEcho(false).withEscapeSequence("/npc text")
                 .withEscapeSequence("exit").withModality(false).withFirstPrompt(new StartPrompt(this))
                 .buildConversation(player);
         return new Editor() {
