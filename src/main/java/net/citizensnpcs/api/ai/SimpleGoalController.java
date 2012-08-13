@@ -18,7 +18,6 @@ public class SimpleGoalController implements GoalController {
     private Goal executingRootGoal;
     private final List<SimpleGoalEntry> possibleGoals = Lists.newArrayList();
     private final GoalSelector selector = new SimpleGoalSelector();
-    private final List<Goal> toRemove = Lists.newArrayList();
 
     @Override
     public void addGoal(Goal goal, int priority) {
@@ -37,6 +36,12 @@ public class SimpleGoalController implements GoalController {
         executingGoals.add(goal);
     }
 
+    @Override
+    public void clear() {
+        finishCurrentGoalExecution();
+        possibleGoals.clear();
+    }
+
     private void finishCurrentGoalExecution() {
         resetGoalList();
         executingPriority = -1;
@@ -47,6 +52,8 @@ public class SimpleGoalController implements GoalController {
     public Iterator<GoalEntry> iterator() {
         final Iterator<SimpleGoalEntry> itr = possibleGoals.iterator();
         return new Iterator<GoalEntry>() {
+            GoalEntry cur;
+
             @Override
             public boolean hasNext() {
                 return itr.hasNext();
@@ -54,12 +61,14 @@ public class SimpleGoalController implements GoalController {
 
             @Override
             public GoalEntry next() {
-                return itr.next();
+                return (cur = itr.next());
             }
 
             @Override
             public void remove() {
                 itr.remove();
+                if (cur.getGoal() == executingRootGoal)
+                    finishCurrentGoalExecution();
             }
         };
     }
@@ -67,21 +76,13 @@ public class SimpleGoalController implements GoalController {
     @Override
     public void removeGoal(Goal goal) {
         Preconditions.checkNotNull(goal, "goal cannot be null");
-        toRemove.add(goal);
-    }
-
-    private void removePendingGoals() {
-        for (int i = 0; i < toRemove.size(); ++i) {
-            Goal remove = toRemove.remove(i--);
-
-            for (int j = 0; j < possibleGoals.size(); ++j) {
-                Goal test = possibleGoals.get(j).goal;
-                if (!test.equals(remove))
-                    continue;
-                possibleGoals.remove(j--);
-                if (test == executingRootGoal)
-                    finishCurrentGoalExecution();
-            }
+        for (int j = 0; j < possibleGoals.size(); ++j) {
+            Goal test = possibleGoals.get(j).goal;
+            if (!test.equals(goal))
+                continue;
+            possibleGoals.remove(j--);
+            if (test == executingRootGoal)
+                finishCurrentGoalExecution();
         }
     }
 
@@ -97,7 +98,6 @@ public class SimpleGoalController implements GoalController {
     public void run() {
         if (possibleGoals.isEmpty())
             return;
-        removePendingGoals();
         trySelectGoal();
 
         for (int i = 0; i < executingGoals.size(); ++i) {

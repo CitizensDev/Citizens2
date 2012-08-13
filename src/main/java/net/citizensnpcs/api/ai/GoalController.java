@@ -23,6 +23,12 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
     void addGoal(Goal goal, int priority);
 
     /**
+     * Clears the goal controller of all {@link Goal}s. Will stop the execution
+     * of any current goal.
+     */
+    void clear();
+
+    /**
      * Removes a {@link Goal} from rotation.
      * 
      * @param goal

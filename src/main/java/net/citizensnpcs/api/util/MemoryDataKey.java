@@ -11,8 +11,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 public class MemoryDataKey extends DataKey {
-    private final ConfigurationSection section;
     private final String path;
+    private final ConfigurationSection section;
 
     public MemoryDataKey() {
         section = new MemoryConfiguration();
@@ -37,6 +37,14 @@ public class MemoryDataKey extends DataKey {
     @Override
     public int getInt(String key) {
         return section.getInt(getKeyFor(key));
+    }
+
+    private String getKeyFor(String key) {
+        if (key.isEmpty())
+            return path;
+        if (key.charAt(0) == '.')
+            return path.isEmpty() ? key.substring(1, key.length()) : path + key;
+        return path.isEmpty() ? key : path + "." + key;
     }
 
     @Override
@@ -117,13 +125,5 @@ public class MemoryDataKey extends DataKey {
     @Override
     public void setString(String key, String value) {
         section.set(getKeyFor(key), value);
-    }
-
-    private String getKeyFor(String key) {
-        if (key.isEmpty())
-            return path;
-        if (key.charAt(0) == '.')
-            return path.isEmpty() ? key.substring(1, key.length()) : path + key;
-        return path.isEmpty() ? key : path + "." + key;
     }
 }

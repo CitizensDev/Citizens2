@@ -32,14 +32,14 @@ public class MobType extends Trait {
     }
 
     @Override
-    public void save(DataKey key) {
-        key.setString("", type.getName());
-    }
-
-    @Override
     public void onSpawn() {
         if (type == null)
             type = npc.getBukkitEntity().getType();
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.setString("", type.getName());
     }
 
     /**
