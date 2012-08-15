@@ -18,6 +18,11 @@ public class Age extends Trait implements Toggleable {
         super("age");
     }
 
+    public void describe(CommandSender sender) {
+        Messaging.sendF(sender, "%s's age is %s and %s locked.", StringHelper.wrap(npc.getName()),
+                StringHelper.wrap(age), StringHelper.wrap(locked ? "is" : "isn't"));
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         if (npc.isSpawned() && !(npc.getBukkitEntity() instanceof Ageable))
@@ -66,10 +71,5 @@ public class Age extends Trait implements Toggleable {
     @Override
     public String toString() {
         return "Age{age=" + age + ",locked=" + locked + "}";
-    }
-
-    public void describe(CommandSender sender) {
-        Messaging.sendF(sender, "%s's age is %s and %s locked.", StringHelper.wrap(npc.getName()),
-                StringHelper.wrap(age), StringHelper.wrap(locked ? "is" : "isn't"));
     }
 }

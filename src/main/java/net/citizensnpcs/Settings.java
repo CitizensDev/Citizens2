@@ -67,7 +67,9 @@ public class Settings {
                 value = list;
             }
         },
+        NPC_COST("economy.npc.cost", 100D),
         QUICK_SELECT("npc.selection.quick-select", false),
+        SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
         SELECTION_ITEM("npc.selection.item", "280"),
         SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
         SERVER_OWNS_NPCS("npc.server-ownership", false),

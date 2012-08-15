@@ -6,6 +6,7 @@ import java.util.List;
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
@@ -165,7 +166,7 @@ public class NPCCommands {
             min = 2,
             permission = "npc.create")
     @Requirements
-    public void create(CommandContext args, final Player player, NPC npc) {
+    public void create(CommandContext args, final Player player, NPC npc) throws CommandException {
         String name = StringHelper.parseColors(args.getJoinedStrings(1));
         if (name.length() > 16) {
             Messaging.sendError(player,
@@ -223,6 +224,15 @@ public class NPCCommands {
         npc.getTrait(MobType.class).setType(type);
 
         npc.spawn(player.getLocation());
+
+        PlayerCreateNPCEvent event = new PlayerCreateNPCEvent(player, npc);
+        if (event.isCancelled()) {
+            npc.destroy();
+            String reason = "Couldn't create NPC.";
+            if (!event.getCancelReason().isEmpty())
+                reason += " Reason: " + event.getCancelReason();
+            throw new CommandException(reason);
+        }
 
         // Set age after entity spawns
         if (npc.getBukkitEntity() instanceof Ageable)

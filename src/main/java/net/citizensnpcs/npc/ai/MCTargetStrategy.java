@@ -18,8 +18,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final boolean aggro;
     private int attackTicks;
     private final EntityLiving handle, target;
-    private final float speed;
     private final Navigation navigation;
+    private final float speed;
 
     public MCTargetStrategy(CitizensNPC handle, LivingEntity target, boolean aggro, float speed) {
         this.handle = handle.getHandle();
@@ -60,6 +60,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     @Override
+    public void setSpeed(float speed) {
+        navigation.a(speed);
+    }
+
+    @Override
     public boolean update() {
         if (target == null || target.dead)
             return true;
@@ -82,12 +87,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         return false;
     }
-
     private static final int ATTACK_DELAY_TICKS = 20;
-    private static final double ATTACK_DISTANCE = 1.75 * 1.75;
 
-    @Override
-    public void setSpeed(float speed) {
-        navigation.a(speed);
-    }
+    private static final double ATTACK_DISTANCE = 1.75 * 1.75;
 }
