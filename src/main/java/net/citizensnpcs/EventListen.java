@@ -1,6 +1,7 @@
 package net.citizensnpcs;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCDamageByBlockEvent;
 import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
@@ -20,6 +21,7 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -92,6 +94,9 @@ public class EventListen implements Listener {
             // Call left-click event
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
             Bukkit.getPluginManager().callEvent(leftClickEvent);
+        } else if (event instanceof EntityDamageByBlockEvent) {
+            Bukkit.getPluginManager().callEvent(
+                    new NPCDamageByBlockEvent(npc, (EntityDamageByBlockEvent) event));
         } else {
             Bukkit.getPluginManager().callEvent(new NPCDamageEvent(npc, event));
         }
