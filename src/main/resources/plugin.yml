@@ -1,5 +1,6 @@
 name: Citizens
 authors: [aPunch, fullwall]
+softdepend: [Vault]
 version: 2.0
 main: net.citizensnpcs.Citizens
 website: http://www.citizensnpcs.net

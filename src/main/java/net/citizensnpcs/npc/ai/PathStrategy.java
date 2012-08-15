@@ -9,7 +9,7 @@ public interface PathStrategy {
 
     TargetType getTargetType();
 
-    boolean update();
-
     void setSpeed(float speed);
+
+    boolean update();
 }

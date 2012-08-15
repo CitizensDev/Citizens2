@@ -74,6 +74,24 @@ public class Behaviour extends Trait {
         }
     }
 
+    public void removeScripts(Iterable<String> files) {
+        Iterable<File> transformed = Iterables.transform(files, fileConverterFunction);
+        boolean isSpawned = npc.isSpawned();
+        for (File file : transformed) {
+            if (isSpawned) {
+                Iterator<BehaviourGoalEntry> itr = addedGoals.iterator();
+                while (itr.hasNext()) {
+                    BehaviourGoalEntry entry = itr.next();
+                    if (file.equals(entry.file)) {
+                        itr.remove();
+                        npc.getDefaultGoalController().removeGoal(entry.getGoal());
+                    }
+                }
+            }
+            scripts.remove(file);
+        }
+    }
+
     private void reset() {
         removeGoals();
         scripts.clear();
@@ -85,18 +103,9 @@ public class Behaviour extends Trait {
         key.setString("scripts", Joiner.on(",").join(scripts));
     }
 
-    private static class BehaviourGoalEntry extends SimpleGoalEntry {
-        private final File file;
-
-        private BehaviourGoalEntry(Goal goal, int priority, File file) {
-            super(goal, priority);
-            this.file = file;
-        }
-    }
-
     public class BehaviourCallback implements CompileCallback {
-        private final List<BehaviourGoalEntry> goals = Lists.newArrayList();
         private File fileInUse;
+        private final List<BehaviourGoalEntry> goals = Lists.newArrayList();
 
         public void addGoal(int priority, Goal goal) {
             Validate.notNull(goal);
@@ -124,21 +133,12 @@ public class Behaviour extends Trait {
         }
     }
 
-    public void removeScripts(Iterable<String> files) {
-        Iterable<File> transformed = Iterables.transform(files, fileConverterFunction);
-        boolean isSpawned = npc.isSpawned();
-        for (File file : transformed) {
-            if (isSpawned) {
-                Iterator<BehaviourGoalEntry> itr = addedGoals.iterator();
-                while (itr.hasNext()) {
-                    BehaviourGoalEntry entry = itr.next();
-                    if (file.equals(entry.file)) {
-                        itr.remove();
-                        npc.getDefaultGoalController().removeGoal(entry.getGoal());
-                    }
-                }
-            }
-            scripts.remove(file);
+    private static class BehaviourGoalEntry extends SimpleGoalEntry {
+        private final File file;
+
+        private BehaviourGoalEntry(Goal goal, int priority, File file) {
+            super(goal, priority);
+            this.file = file;
         }
     }
 }

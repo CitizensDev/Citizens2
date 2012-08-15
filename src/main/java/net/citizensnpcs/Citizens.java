@@ -41,6 +41,7 @@ import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
+import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -50,6 +51,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Iterables;
@@ -197,6 +199,16 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         CitizensAPI.setImplementation(this);
 
         getServer().getPluginManager().registerEvents(new EventListen(), this);
+        if (Setting.NPC_COST.asDouble() > 0) {
+            try {
+                RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(
+                        Economy.class);
+                Economy economy = provider.getProvider();
+                Bukkit.getPluginManager().registerEvents(new NPCPayListener(economy), this);
+            } catch (NoClassDefFoundError e) {
+                Messaging.log("Unable to use economy handling. Has Vault been enabled?");
+            }
+        }
 
         registerCommands();
 
@@ -210,6 +222,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 setupNPCs();
                 startMetrics();
                 enableSubPlugins();
+                scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
             }
         }) == -1) {
             Messaging.severe("NPC load task couldn't be scheduled - disabling...");
@@ -255,7 +268,21 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         for (NPC npc : npcRegistry)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
 
-        saves.save();
+        new Thread() {
+            @Override
+            public void run() {
+                saves.save();
+            }
+        }.start();
+    }
+
+    private void scheduleSaveTask(int delay) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+            @Override
+            public void run() {
+                save();
+            }
+        });
     }
 
     // TODO: refactor
