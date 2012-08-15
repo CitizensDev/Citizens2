@@ -2,19 +2,19 @@ package net.citizensnpcs.api.event;
 
 import net.citizensnpcs.api.npc.NPC;
 
-import org.bukkit.entity.Entity;
+import org.bukkit.block.Block;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 
-public class NPCDamageByEntityEvent extends NPCDamageEvent {
-    private final Entity damager;
+public class NPCDamageByBlockEvent extends NPCDamageEvent {
+    private final Block damager;
 
-    public NPCDamageByEntityEvent(NPC npc, EntityDamageByEntityEvent event) {
+    public NPCDamageByBlockEvent(NPC npc, EntityDamageByBlockEvent event) {
         super(npc, event);
         damager = event.getDamager();
     }
 
-    public Entity getDamager() {
+    public Block getDamager() {
         return damager;
     }
 
