@@ -16,6 +16,7 @@ public class SimpleGoalController implements GoalController {
     private final List<Goal> executingGoals = Lists.newArrayList();
     private int executingPriority = -1;
     private Goal executingRootGoal;
+    private volatile boolean paused;
     private final List<SimpleGoalEntry> possibleGoals = Lists.newArrayList();
     private final GoalSelector selector = new SimpleGoalSelector();
 
@@ -46,6 +47,11 @@ public class SimpleGoalController implements GoalController {
         resetGoalList();
         executingPriority = -1;
         executingRootGoal = null;
+    }
+
+    @Override
+    public boolean isPaused() {
+        return paused;
     }
 
     @Override
@@ -96,13 +102,18 @@ public class SimpleGoalController implements GoalController {
 
     @Override
     public void run() {
-        if (possibleGoals.isEmpty())
+        if (possibleGoals.isEmpty() || paused)
             return;
         trySelectGoal();
 
         for (int i = 0; i < executingGoals.size(); ++i) {
             executingGoals.get(i).run();
         }
+    }
+
+    @Override
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 
     private void setupExecution(SimpleGoalEntry entry) {

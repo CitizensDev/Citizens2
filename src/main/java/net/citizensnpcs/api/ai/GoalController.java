@@ -29,12 +29,27 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
     void clear();
 
     /**
+     * @see #setPaused(boolean)
+     * @return Whether the controller is currently paused
+     */
+    boolean isPaused();
+
+    /**
      * Removes a {@link Goal} from rotation.
      * 
      * @param goal
      *            The goal to remove
      */
     void removeGoal(Goal goal);
+
+    /**
+     * Sets whether the controller is paused. While paused, no new {@link Goal}s
+     * will be selected and any executing goals will be suspended.
+     * 
+     * @param paused
+     *            Whether to pause execution
+     */
+    void setPaused(boolean paused);
 
     public static interface GoalEntry extends Comparable<GoalEntry> {
         Goal getGoal();
