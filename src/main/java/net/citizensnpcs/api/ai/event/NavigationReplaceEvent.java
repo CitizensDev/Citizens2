@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 
 public class NavigationReplaceEvent extends NavigationCancelEvent {
     public NavigationReplaceEvent(Navigator navigator) {
-        super(navigator);
+        super(navigator, CancelReason.REPLACE);
     }
 
     @Override
