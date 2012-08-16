@@ -4,6 +4,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.TargetType;
+import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
@@ -29,7 +30,7 @@ public class CitizensNavigator implements Navigator {
     @Override
     public void cancelNavigation() {
         if (executing != null) {
-            Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this));
+            Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, CancelReason.PLUGIN));
         }
         executing = null;
     }

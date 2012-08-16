@@ -103,11 +103,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
         // taken from EntityLiving
         if (bu) {
-            boolean inLiquid = G() || H();
+            boolean inLiquid = H() || J();
             if (inLiquid) {
                 motY += 0.04;
             } else if (onGround && bE == 0) {
-                // this.ac(); - this doesn't jump high enough
+                // this.aZ(); - this doesn't jump high enough
                 motY = 0.6;
                 bE = 10;
             }
@@ -116,8 +116,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
 
         bs *= 0.98F;
+        aG *= bs();
         e(br, bs);
         as = yaw;
     }
-
 }

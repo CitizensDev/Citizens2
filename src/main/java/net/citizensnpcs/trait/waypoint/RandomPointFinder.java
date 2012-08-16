@@ -6,6 +6,10 @@ import org.bukkit.Location;
 
 public class RandomPointFinder implements Iterator<Location> {
 
+    public Location find() {
+        return null;
+    }
+
     @Override
     public boolean hasNext() {
         return true;
@@ -13,8 +17,7 @@ public class RandomPointFinder implements Iterator<Location> {
 
     @Override
     public Location next() {
-        // TODO Auto-generated method stub
-        return null;
+        return find();
     }
 
     @Override
