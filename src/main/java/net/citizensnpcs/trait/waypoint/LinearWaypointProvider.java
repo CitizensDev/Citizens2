@@ -1,10 +1,16 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.ai.GoalSelector;
+import net.citizensnpcs.api.ai.Navigator;
+import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
@@ -22,11 +28,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 public class LinearWaypointProvider implements WaypointProvider {
-    private WaypointGoal currentGoal;
+    private LinearWaypointGoal currentGoal;
     private NPC npc;
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
@@ -51,6 +57,15 @@ public class LinearWaypointProvider implements WaypointProvider {
                         location.getBlockY(), location.getBlockZ());
             }
 
+            private Location getPreviousWaypoint(int fromSlot) {
+                if (waypoints.size() <= 1)
+                    return null;
+                fromSlot--;
+                if (fromSlot < 0)
+                    fromSlot = waypoints.size() - 1;
+                return waypoints.get(fromSlot).getLocation();
+            }
+
             @EventHandler
             public void onNPCDespawn(NPCDespawnEvent event) {
                 if (event.getNPC().equals(npc))
@@ -61,11 +76,28 @@ public class LinearWaypointProvider implements WaypointProvider {
             public void onPlayerInteract(PlayerInteractEvent event) {
                 if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL)
                     return;
+                if (event.getPlayer().getWorld() != npc.getBukkitEntity().getWorld())
+                    return;
                 if (event.getAction() == Action.LEFT_CLICK_BLOCK
                         || event.getAction() == Action.LEFT_CLICK_AIR) {
                     if (event.getClickedBlock() == null)
                         return;
                     Location at = event.getClickedBlock().getLocation();
+                    Location prev = getPreviousWaypoint(editingSlot);
+
+                    if (prev != null) {
+                        double distance = at.distanceSquared(prev);
+                        double maxDistance = Setting.DEFAULT_PATHFINDING_RANGE.asDouble();
+                        maxDistance = Math.pow(maxDistance, 2);
+                        if (distance > maxDistance) {
+                            Messaging.sendF(player, ChatColor.RED
+                                    + "Previous waypoint is %d blocks away but the distance limit is %d.",
+                                    StringHelper.wrap(distance, ChatColor.RED),
+                                    StringHelper.wrap(maxDistance, ChatColor.RED));
+                            return;
+                        }
+                    }
+
                     waypoints.add(Math.max(0, editingSlot), new Waypoint(at));
                     editingSlot = Math.min(editingSlot + 1, waypoints.size());
                     Messaging.send(
@@ -130,8 +162,7 @@ public class LinearWaypointProvider implements WaypointProvider {
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {
-            Iterable<Location> provider = Iterables.transform(waypoints, WAYPOINT_TRANSFORMER);
-            currentGoal = new WaypointGoal(provider, npc.getNavigator());
+            currentGoal = new LinearWaypointGoal();
             CitizensAPI.registerEvents(currentGoal);
         }
         npc.getDefaultGoalController().addGoal(currentGoal, 1);
@@ -156,6 +187,77 @@ public class LinearWaypointProvider implements WaypointProvider {
     @Override
     public void setPaused(boolean paused) {
         currentGoal.setPaused(paused);
+    }
+
+    private class LinearWaypointGoal implements Goal {
+        private Location currentDestination;
+        private Iterator<Location> itr;
+        private boolean paused;
+        private GoalSelector selector;
+
+        private void ensureItr() {
+            if (itr == null || !itr.hasNext())
+                itr = Iterators.transform(waypoints.iterator(), WAYPOINT_TRANSFORMER);
+        }
+
+        private Navigator getNavigator() {
+            return npc.getNavigator();
+        }
+
+        public boolean isPaused() {
+            return paused;
+        }
+
+        @EventHandler
+        public void onNavigationComplete(NavigationCompleteEvent event) {
+            if (currentDestination == null || !event.getNavigator().equals(getNavigator()))
+                return;
+            if (currentDestination.equals(event.getNavigator().getTargetAsLocation()))
+                selector.finish();
+        }
+
+        public void onProviderChanged() {
+            itr = Iterators.transform(waypoints.iterator(), WAYPOINT_TRANSFORMER);
+            if (currentDestination != null)
+                selector.finish();
+        }
+
+        @Override
+        public void reset() {
+            currentDestination = null;
+            selector = null;
+        }
+
+        @Override
+        public void run() {
+        }
+
+        public void setPaused(boolean paused) {
+            if (paused && currentDestination != null)
+                selector.finish();
+            this.paused = paused;
+        }
+
+        @Override
+        public boolean shouldExecute(GoalSelector selector) {
+            if (paused || currentDestination != null || waypoints.size() == 0)
+                return false;
+            if (waypoints.size() == 1) {
+                // avoid repeatedly pathing to the same point and wasting
+                // memory.
+                Location dest = npc.getBukkitEntity().getLocation();
+                if (waypoints.get(0).getLocation().distanceSquared(dest) < 1)
+                    return false;
+            }
+            ensureItr();
+            boolean shouldExecute = itr.hasNext();
+            if (shouldExecute) {
+                this.selector = selector;
+                currentDestination = itr.next();
+                getNavigator().setTarget(currentDestination);
+            }
+            return shouldExecute;
+        }
     }
 
     private static final Function<Waypoint, Location> WAYPOINT_TRANSFORMER = new Function<Waypoint, Location>() {

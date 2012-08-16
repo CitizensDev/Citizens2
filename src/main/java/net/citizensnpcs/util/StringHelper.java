@@ -69,7 +69,11 @@ public class StringHelper {
     }
 
     public static String wrap(Object string) {
-        return ChatColor.YELLOW + string.toString() + ChatColor.GREEN;
+        return wrap(string, ChatColor.GREEN);
+    }
+
+    public static String wrap(Object string, ChatColor colour) {
+        return ChatColor.YELLOW + string.toString() + colour;
     }
 
     public static String wrapHeader(Object string) {

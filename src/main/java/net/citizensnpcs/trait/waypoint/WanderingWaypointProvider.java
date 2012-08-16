@@ -2,7 +2,6 @@ package net.citizensnpcs.trait.waypoint;
 
 import java.util.Iterator;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
@@ -11,9 +10,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class WanderingWaypointProvider implements WaypointProvider, Iterable<Location> {
-    private WaypointGoal currentGoal;
     private final Iterator<Location> iterator = new RandomPointFinder();
     private NPC npc;
+    private boolean paused;
 
     @Override
     public Editor createEditor(Player player) {
@@ -34,7 +33,7 @@ public class WanderingWaypointProvider implements WaypointProvider, Iterable<Loc
 
     @Override
     public boolean isPaused() {
-        return currentGoal.isPaused();
+        return paused;
     }
 
     @Override
@@ -49,11 +48,12 @@ public class WanderingWaypointProvider implements WaypointProvider, Iterable<Loc
     @Override
     public void onSpawn(NPC npc) {
         this.npc = npc;
+        /*
         if (currentGoal == null) {
             currentGoal = new WaypointGoal(this, npc.getNavigator());
             CitizensAPI.registerEvents(currentGoal);
         }
-        npc.getDefaultGoalController().addGoal(currentGoal, 1);
+        npc.getDefaultGoalController().addGoal(currentGoal, 1);TODO*/
     }
 
     @Override
@@ -62,6 +62,6 @@ public class WanderingWaypointProvider implements WaypointProvider, Iterable<Loc
 
     @Override
     public void setPaused(boolean paused) {
-        currentGoal.setPaused(paused);
+        // TODO
     }
 }
