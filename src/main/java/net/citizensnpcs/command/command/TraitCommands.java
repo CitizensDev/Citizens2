@@ -31,26 +31,22 @@ public class TraitCommands {
             throw new NoPermissionsException();
 
         Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
+        if (clazz == null)
+            throw new CommandException("Trait not found.");
         boolean remove = npc.hasTrait(clazz);
         if (remove) {
-            if (clazz == null)
-                throw new CommandException("Trait not found.");
             npc.removeTrait(clazz);
             Messaging.sendF(sender, ChatColor.GREEN + "Trait %s removed successfully.",
                     StringHelper.wrap(traitName));
             return;
         }
-
-        Trait trait = CitizensAPI.getTraitFactory().getTrait(traitName);
-        if (trait == null)
-            throw new CommandException("Trait not found.");
-        npc.addTrait(trait);
+        npc.addTrait(clazz);
         Messaging.sendF(sender, ChatColor.GREEN + "Trait %s added successfully.",
                 StringHelper.wrap(traitName));
     }
 
     @Command(
-            aliases = { "traitc, trc,tc" },
+            aliases = { "traitc", "trc", "tc" },
             usage = "[trait name] [flags]",
             desc = "Configures a trait",
             modifiers = { "*" },

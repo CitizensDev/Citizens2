@@ -21,8 +21,7 @@ public class CitizensNavigator implements Navigator {
     private PathStrategy executing;
     private final CitizensNPC npc;
     private float pathfindingRange = Setting.DEFAULT_PATHFINDING_RANGE.asFloat();
-    private float speed = -1;
-
+    private float speed = UNINITIALISED_SPEED;
     public CitizensNavigator(CitizensNPC npc) {
         this.npc = npc;
     }
@@ -73,8 +72,8 @@ public class CitizensNavigator implements Navigator {
     }
 
     public void onSpawn() {
-        if (speed == -1)
-            this.speed = NMSReflection.getSpeedFor(npc.getHandle());
+        if (speed == UNINITIALISED_SPEED)
+            speed = NMSReflection.getSpeedFor(npc.getHandle());
         updatePathfindingRange();
     }
 
@@ -139,4 +138,6 @@ public class CitizensNavigator implements Navigator {
     private void updatePathfindingRange() {
         NMSReflection.updatePathfindingRange(npc, pathfindingRange);
     }
+
+    private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;
 }

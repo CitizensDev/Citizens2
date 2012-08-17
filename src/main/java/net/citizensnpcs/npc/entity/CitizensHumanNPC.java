@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class CitizensHumanNPC extends CitizensNPC implements Equipable {
-
     public CitizensHumanNPC(int id, String name) {
         super(id, name);
     }
