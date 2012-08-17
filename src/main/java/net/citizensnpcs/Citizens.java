@@ -203,8 +203,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             try {
                 RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(
                         Economy.class);
-                Economy economy = provider.getProvider();
-                Bukkit.getPluginManager().registerEvents(new NPCPayListener(economy), this);
+                if (provider != null && provider.getProvider() != null) {
+                    Economy economy = provider.getProvider();
+                    Bukkit.getPluginManager().registerEvents(new NPCPayListener(economy), this);
+                }
             } catch (NoClassDefFoundError e) {
                 Messaging.log("Unable to use economy handling. Has Vault been enabled?");
             }
