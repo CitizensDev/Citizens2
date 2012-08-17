@@ -23,8 +23,10 @@ public class ItemStorage {
             for (DataKey subKey : root.getRelative("enchantments").getSubKeys()) {
                 Enchantment enchantment = Enchantment.getById(Integer.parseInt(subKey.name()));
                 if (enchantment != null && enchantment.canEnchantItem(res))
-                    enchantments.put(enchantment, subKey.getInt("") <= enchantment.getMaxLevel() ? subKey.getInt("")
-                            : enchantment.getMaxLevel());
+                    enchantments.put(
+                            enchantment,
+                            subKey.getInt("") <= enchantment.getMaxLevel() ? subKey.getInt("") : enchantment
+                                    .getMaxLevel());
             }
             res.addEnchantments(enchantments);
         }

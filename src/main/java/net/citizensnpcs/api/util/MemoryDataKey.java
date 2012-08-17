@@ -26,17 +26,17 @@ public class MemoryDataKey extends DataKey {
 
     @Override
     public boolean getBoolean(String key) {
-        return section.getBoolean(getKeyFor(key));
+        return section.getBoolean(getKeyFor(key), false);
     }
 
     @Override
     public double getDouble(String key) {
-        return section.getDouble(getKeyFor(key));
+        return section.getDouble(getKeyFor(key), 0D);
     }
 
     @Override
     public int getInt(String key) {
-        return section.getInt(getKeyFor(key));
+        return section.getInt(getKeyFor(key), 0);
     }
 
     private String getKeyFor(String key) {
@@ -49,7 +49,7 @@ public class MemoryDataKey extends DataKey {
 
     @Override
     public long getLong(String key) {
-        return section.getLong(getKeyFor(key));
+        return section.getLong(getKeyFor(key), 0L);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class MemoryDataKey extends DataKey {
 
     @Override
     public String getString(String key) {
-        return section.getString(getKeyFor(key));
+        return section.getString(getKeyFor(key), "");
     }
 
     @Override
