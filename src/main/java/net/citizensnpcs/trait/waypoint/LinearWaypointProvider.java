@@ -164,8 +164,8 @@ public class LinearWaypointProvider implements WaypointProvider {
         if (currentGoal == null) {
             currentGoal = new LinearWaypointGoal();
             CitizensAPI.registerEvents(currentGoal);
+            npc.getDefaultGoalController().addGoal(currentGoal, 1);
         }
-        npc.getDefaultGoalController().addGoal(currentGoal, 1);
     }
 
     @Override
