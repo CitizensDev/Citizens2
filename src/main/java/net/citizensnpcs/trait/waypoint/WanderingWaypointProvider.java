@@ -1,16 +1,12 @@
 package net.citizensnpcs.trait.waypoint;
 
-import java.util.Iterator;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class WanderingWaypointProvider implements WaypointProvider, Iterable<Location> {
-    private final Iterator<Location> iterator = new RandomPointFinder();
+public class WanderingWaypointProvider implements WaypointProvider {
     private NPC npc;
     private boolean paused;
 
@@ -34,11 +30,6 @@ public class WanderingWaypointProvider implements WaypointProvider, Iterable<Loc
     @Override
     public boolean isPaused() {
         return paused;
-    }
-
-    @Override
-    public Iterator<Location> iterator() {
-        return iterator;
     }
 
     @Override

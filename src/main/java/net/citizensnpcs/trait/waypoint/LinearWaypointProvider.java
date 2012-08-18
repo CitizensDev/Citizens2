@@ -232,21 +232,21 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void run() {
         }
 
-        public void setPaused(boolean paused) {
-            if (paused && currentDestination != null)
+        public void setPaused(boolean pause) {
+            if (pause && currentDestination != null)
                 selector.finish();
-            this.paused = paused;
+            this.paused = pause;
         }
 
         @Override
         public boolean shouldExecute(GoalSelector selector) {
-            if (paused || currentDestination != null || waypoints.size() == 0)
+            if (paused || currentDestination != null || !npc.isSpawned() || waypoints.size() == 0)
                 return false;
             if (waypoints.size() == 1) {
                 // avoid repeatedly pathing to the same point and wasting
                 // memory.
                 Location dest = npc.getBukkitEntity().getLocation();
-                if (waypoints.get(0).getLocation().distanceSquared(dest) < 1)
+                if (waypoints.get(0).getLocation().distanceSquared(dest) < 3)
                     return false;
             }
             ensureItr();
