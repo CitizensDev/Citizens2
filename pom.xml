@@ -38,7 +38,7 @@
             <artifactId>Vault</artifactId>
             <version>${vault.version}</version>
             <type>jar</type>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
