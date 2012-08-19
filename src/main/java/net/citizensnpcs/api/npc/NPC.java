@@ -96,6 +96,13 @@ public interface NPC {
     public <T extends Trait> T getTrait(Class<T> trait);
 
     /**
+     * Returns the currently attached {@link Trait}s
+     * 
+     * @return An Iterable of the current traits
+     */
+    public Iterable<Trait> getTraits();
+
+    /**
      * Checks if this NPC has the given trait.
      * 
      * @param trait

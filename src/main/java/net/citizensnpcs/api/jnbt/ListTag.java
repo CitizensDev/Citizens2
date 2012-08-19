@@ -36,9 +36,6 @@ package net.citizensnpcs.api.jnbt;
 import java.util.Collections;
 import java.util.List;
 
-import net.citizensnpcs.api.jnbt.NBTUtils;
-import net.citizensnpcs.api.jnbt.Tag;
-
 /**
  * The <code>TAG_List</code> tag.
  *

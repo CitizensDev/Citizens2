@@ -245,6 +245,7 @@ public class DatabaseStorage implements Storage {
         }
 
         private String createRelativeKey(String from) {
+            from = from.replace("-", "");
             if (from.isEmpty())
                 return current;
             if (from.charAt(0) == '.')
@@ -465,6 +466,7 @@ public class DatabaseStorage implements Storage {
             Traversed t = traverse(createRelativeKey(key), true);
             if (t == INVALID_TRAVERSAL) {
                 System.err.println("Could not set " + value + " at " + key);
+                return;
             }
             Connection conn = getConnection();
             try {
@@ -475,10 +477,12 @@ public class DatabaseStorage implements Storage {
                     closeQuietly(stmt);
                     t.found.addColumn(t.column);
                 }
-                queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`= ? WHERE `"
-                        + t.found.primaryKey + "` = ?", value, t.key);
+                queryRunner.update(conn, "UPDATE " + t.found.name + " SET " + t.column + "=? WHERE "
+                        + t.found.primaryKey + "=?", value, t.key);
             } catch (SQLException ex) {
                 ex.printStackTrace();
+                System.out.println("UPDATE " + t.found.name + " SET " + t.column + "=? WHERE "
+                        + t.found.primaryKey + "=?" + " " + value + " " + t.key);
             }
         }
 

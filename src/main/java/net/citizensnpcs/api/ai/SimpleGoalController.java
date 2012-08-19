@@ -105,7 +105,6 @@ public class SimpleGoalController implements GoalController {
         if (possibleGoals.isEmpty() || paused)
             return;
         trySelectGoal();
-
         for (int i = 0; i < executingGoals.size(); ++i) {
             executingGoals.get(i).run();
         }
@@ -131,7 +130,20 @@ public class SimpleGoalController implements GoalController {
                 return;
             if (entry.goal == executingRootGoal || !entry.goal.shouldExecute(selector))
                 continue;
-            setupExecution(entry);
+            for (int j = i - 1; j >= 0; --j) {
+                SimpleGoalEntry next = possibleGoals.get(j);
+                if (next.priority != entry.priority) {
+                    int ran = (int) Math.floor(Math.random() * (i + 1) + (j + 1));
+                    SimpleGoalEntry selected = possibleGoals.get(ran);
+                    if (selected.priority != entry.priority) {
+                        System.err.println("[Citizens]: bug - inform fullwall");
+                        setupExecution(entry);
+                        break;
+                    }
+                    setupExecution(selected);
+                    break;
+                }
+            }
             return;
         }
     }

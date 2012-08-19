@@ -110,6 +110,11 @@ public abstract class AbstractNPC implements NPC {
     protected abstract Trait getTraitFor(Class<? extends Trait> clazz);
 
     @Override
+    public Iterable<Trait> getTraits() {
+        return traits.values();
+    }
+
+    @Override
     public boolean hasTrait(Class<? extends Trait> trait) {
         return traits.containsKey(trait);
     }

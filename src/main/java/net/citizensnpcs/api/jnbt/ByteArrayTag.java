@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.jnbt;
 
-import net.citizensnpcs.api.jnbt.Tag;
 
 /*
  * JNBT License
