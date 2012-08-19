@@ -8,6 +8,8 @@ import java.util.Iterator;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
+import net.citizensnpcs.api.event.CitizensDisableEvent;
+import net.citizensnpcs.api.event.CitizensEnableEvent;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -225,6 +227,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 startMetrics();
                 enableSubPlugins();
                 scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
+                Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             }
         }) == -1) {
             Messaging.severe("NPC load task couldn't be scheduled - disabling...");
