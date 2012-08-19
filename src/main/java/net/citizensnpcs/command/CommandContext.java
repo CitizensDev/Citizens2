@@ -89,7 +89,7 @@ public class CommandContext {
         }
         List<String> copied = Lists.newArrayList();
         for (String arg : args) {
-            if (arg == null || arg.isEmpty())
+            if (arg == null || arg.trim().isEmpty())
                 continue;
             copied.add(arg);
         }
@@ -178,7 +178,7 @@ public class CommandContext {
         StringBuilder buffer = new StringBuilder(args[initialIndex]);
         for (int i = initialIndex + 1; i < args.length; i++)
             buffer.append(delimiter).append(args[i]);
-        return buffer.toString();
+        return buffer.toString().trim();
     }
 
     public String[] getPaddedSlice(int index, int padding) {

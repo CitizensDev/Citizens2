@@ -202,11 +202,13 @@ public class NPCCommands {
             }
         }
         if (args.hasValueFlag("trait")) {
+            msg += " with traits ";
             Iterable<String> parts = Splitter.on(",").trimResults().split(args.getFlag("trait"));
             for (String tr : parts) {
                 Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(tr);
-                if (clazz != null)
+                if (clazz != null) {
                     npc.addTrait(clazz);
+                }
             }
             msg += " with the specified traits";
         }
@@ -374,6 +376,12 @@ public class NPCCommands {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
         Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
+        Messaging.send(sender, "    <a>Traits<e>");
+        for (Trait trait : npc.getTraits()) {
+            if (CitizensAPI.getTraitFactory().isInternalTrait(trait))
+                continue;
+            Messaging.send(sender, "     <e>- <a>" + trait.getName() + "<e>");
+        }
     }
 
     @Command(

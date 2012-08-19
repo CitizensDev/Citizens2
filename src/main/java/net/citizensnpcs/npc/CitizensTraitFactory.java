@@ -104,7 +104,12 @@ public class CitizensTraitFactory implements TraitFactory {
 
     @Override
     public Class<? extends Trait> getTraitClass(String name) {
-        return registered.get(name);
+        return registered.get(name.toLowerCase());
+    }
+
+    @Override
+    public boolean isInternalTrait(Trait trait) {
+        return INTERNAL_TRAITS.contains(trait.getName());
     }
 
     @Override

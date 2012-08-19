@@ -41,6 +41,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
         netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
         netMgr.a(netServerHandler);
+        W = STEP_HEIGHT; // fix moving up slabs and steps
 
         try {
             socket.close();
@@ -89,7 +90,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             navigation.e();
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0) {
-            // a(0, 0);
+            // e(0, 0); is this necessary? it does gravity/controllable but
+            // sometimes players sink into the ground
         }
         if (noDamageTicks > 0)
             --noDamageTicks;
@@ -101,7 +103,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         getControllerLook().a();
         getControllerJump().b();
 
-        // taken from EntityLiving
+        // taken from EntityLiving update method
         if (bu) {
             boolean inLiquid = H() || J();
             if (inLiquid) {
@@ -114,10 +116,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         } else {
             bE = 0;
         }
-
+        br *= 0.98F;
         bs *= 0.98F;
+        bt *= 0.9F;
+
+        float prev = aG;
         aG *= bs();
-        e(br, bs);
-        as = yaw;
+        e(br, bs); // movement method
+        aG = prev;
+        as = yaw; // update head yaw to match entity yaw
     }
+
+    private static final float STEP_HEIGHT = 1F;
 }
