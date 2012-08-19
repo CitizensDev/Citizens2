@@ -42,6 +42,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
         netMgr.a(netServerHandler);
         W = STEP_HEIGHT; // fix moving up slabs and steps
+        getNavigation().e(true);
 
         try {
             socket.close();
