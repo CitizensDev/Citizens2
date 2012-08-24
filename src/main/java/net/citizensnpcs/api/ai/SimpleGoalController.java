@@ -130,6 +130,10 @@ public class SimpleGoalController implements GoalController {
                 return;
             if (entry.goal == executingRootGoal || !entry.goal.shouldExecute(selector))
                 continue;
+            if (i == 0) {
+                setupExecution(entry);
+                return;
+            }
             for (int j = i - 1; j >= 0; --j) {
                 SimpleGoalEntry next = possibleGoals.get(j);
                 if (next.priority != entry.priority) {
