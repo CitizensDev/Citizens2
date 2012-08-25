@@ -106,7 +106,7 @@ public class SimpleGoalController implements GoalController {
             return;
         trySelectGoal();
         for (int i = 0; i < executingGoals.size(); ++i) {
-            executingGoals.get(i).run();
+            executingGoals.get(i).run(selector);
         }
     }
 

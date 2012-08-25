@@ -14,6 +14,17 @@ public interface Navigator {
     void cancelNavigation();
 
     /**
+     * Returns the {@link NavigatorParameters} local to this navigator. These
+     * parameters are copied to local target parameters when a new target is
+     * started.
+     * 
+     * @see #getLocalParameters()
+     * @return The default parameters
+     */
+
+    NavigatorParameters getDefaultParameters();
+
+    /**
      * Returns the current {@link EntityTarget} of the navigator, if any. May
      * return null.
      * 
@@ -22,21 +33,34 @@ public interface Navigator {
     EntityTarget getEntityTarget();
 
     /**
+     * Returns the {@link NavigatorParameters} local to any current target
+     * execution. These are updated independently of the default parameters.
+     * 
+     * @see #getDefaultParameters()
+     * @return The local parameters
+     */
+    NavigatorParameters getLocalParameters();
+
+    /**
      * Returns the pathfinding range of this navigator. The pathfinding range is
      * the maximum distance in blocks that the backing {@link Entity} will try
      * to find a path. If a target exceeds this range, it may be cancelled.
      * 
      * @see #setPathfindingRange(float)
      * @return The current pathfinding range
+     * @deprecated @see {@link #getLocalParameters()}
      */
+    @Deprecated
     float getPathfindingRange();
 
     /**
      * Returns the current entity movement speed of the navigator.
      * 
      * @see #getSpeed()
+     * @deprecated @see {@link #getDefaultParameters()}
      * @return The entity movement speed
      */
+    @Deprecated
     float getSpeed();
 
     /**
@@ -67,7 +91,9 @@ public interface Navigator {
      * @see #getPathfindingRange()
      * @param newRange
      *            The new pathfinding range
+     * @deprecated @see {@link #getDefaultParameters()}
      */
+    @Deprecated
     void setPathfindingRange(float newRange);
 
     /**
@@ -78,7 +104,9 @@ public interface Navigator {
      * 
      * @param speed
      *            The new movement speed
+     * @deprecated @see {@link #getDefaultParameters()}
      */
+    @Deprecated
     void setSpeed(float speed);
 
     /**

@@ -19,7 +19,7 @@ public interface Goal extends Listener {
     /**
      * Updates the goal.
      */
-    public void run();
+    public void run(GoalSelector selector);
 
     /**
      * Returns whether the goal is ready to start.
