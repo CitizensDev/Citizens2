@@ -229,7 +229,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         }
 
         @Override
-        public void run() {
+        public void run(GoalSelector selector) {
         }
 
         public void setPaused(boolean pause) {
@@ -243,8 +243,7 @@ public class LinearWaypointProvider implements WaypointProvider {
             if (paused || currentDestination != null || !npc.isSpawned() || waypoints.size() == 0)
                 return false;
             if (waypoints.size() == 1) {
-                // avoid repeatedly pathing to the same point and wasting
-                // memory.
+                // avoid pathing to the same point and wasting memory.
                 Location dest = npc.getBukkitEntity().getLocation();
                 if (waypoints.get(0).getLocation().distanceSquared(dest) < 3)
                     return false;

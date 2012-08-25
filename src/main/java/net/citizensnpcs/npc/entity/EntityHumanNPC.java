@@ -28,27 +28,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
             ItemInWorldManager itemInWorldManager, NPC npc) {
         super(minecraftServer, world, string, itemInWorldManager);
-        this.npc = (CitizensNPC) npc;
         itemInWorldManager.setGameMode(EnumGamemode.SURVIVAL);
 
-        Socket socket = new EmptySocket();
-        NetworkManager netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
-            @Override
-            public boolean a() {
-                return false;
-            }
-        }, server.E().getPrivate());
-
-        netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
-        netMgr.a(netServerHandler);
-        W = STEP_HEIGHT; // fix moving up slabs and steps
-        getNavigation().e(true);
-
-        try {
-            socket.close();
-        } catch (IOException ex) {
-            // swallow
-        }
+        this.npc = (CitizensNPC) npc;
+        if (npc != null)
+            initialise(minecraftServer);
     }
 
     @Override
@@ -86,6 +70,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     @Override
     public void h_() {
         super.h_();
+        if (npc == null)
+            return;
         Navigation navigation = getNavigation();
         if (!navigation.f()) {
             navigation.e();
@@ -97,6 +83,27 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (noDamageTicks > 0)
             --noDamageTicks;
         npc.update();
+    }
+
+    private void initialise(MinecraftServer minecraftServer) {
+        Socket socket = new EmptySocket();
+        NetworkManager netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
+            @Override
+            public boolean a() {
+                return false;
+            }
+        }, server.E().getPrivate());
+
+        netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
+        netMgr.a(netServerHandler);
+        W = STEP_HEIGHT; // fix moving up slabs and steps
+        getNavigation().e(true);
+
+        try {
+            socket.close();
+        } catch (IOException ex) {
+            // swallow
+        }
     }
 
     private void moveOnCurrentHeading() {
