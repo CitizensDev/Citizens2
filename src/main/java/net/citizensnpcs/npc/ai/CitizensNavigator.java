@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.ai;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
+import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
@@ -18,20 +19,25 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
 public class CitizensNavigator implements Navigator {
+    private final NavigatorParameters defaultParams = new NavigatorParameters().speed(UNINITIALISED_SPEED);
     private PathStrategy executing;
+    private NavigatorParameters localParams = defaultParams;
     private final CitizensNPC npc;
-    private float pathfindingRange = Setting.DEFAULT_PATHFINDING_RANGE.asFloat();
-    private float speed = UNINITIALISED_SPEED;
+
     public CitizensNavigator(CitizensNPC npc) {
         this.npc = npc;
     }
 
     @Override
     public void cancelNavigation() {
-        if (executing != null) {
+        if (isNavigating())
             Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, CancelReason.PLUGIN));
-        }
-        executing = null;
+        stopNavigating();
+    }
+
+    @Override
+    public NavigatorParameters getDefaultParameters() {
+        return defaultParams;
     }
 
     @Override
@@ -40,15 +46,20 @@ public class CitizensNavigator implements Navigator {
     }
 
     @Override
+    public NavigatorParameters getLocalParameters() {
+        return localParams;
+    }
+
+    @Override
     public float getPathfindingRange() {
-        return pathfindingRange;
+        return defaultParams.range();
     }
 
     @Override
     public float getSpeed() {
-        if (speed == -1)
+        if (defaultParams.speed() == UNINITIALISED_SPEED)
             throw new IllegalStateException("NPC has not been spawned");
-        return speed;
+        return defaultParams.speed();
     }
 
     @Override
@@ -67,31 +78,34 @@ public class CitizensNavigator implements Navigator {
     }
 
     public void load(DataKey root) {
-        speed = (float) root.getDouble("speed", speed);
-        pathfindingRange = (float) root.getDouble("pathfinding-range", pathfindingRange);
+        defaultParams.speed((float) root.getDouble("speed", UNINITIALISED_SPEED));
+        defaultParams.range((float) root.getDouble("pathfinding-range",
+                Setting.DEFAULT_PATHFINDING_RANGE.asFloat()));
     }
 
     public void onSpawn() {
-        if (speed == UNINITIALISED_SPEED)
-            speed = NMSReflection.getSpeedFor(npc.getHandle());
+        if (defaultParams.speed() == UNINITIALISED_SPEED)
+            defaultParams.speed(NMSReflection.getSpeedFor(npc.getHandle()));
         updatePathfindingRange();
     }
 
     public void save(DataKey root) {
-        root.setDouble("speed", speed);
-        root.setDouble("pathfinding-range", pathfindingRange);
+        root.setDouble("speed", defaultParams.speed());
+        root.setDouble("pathfinding-range", defaultParams.range());
     }
 
     @Override
     public void setPathfindingRange(float newRange) {
-        pathfindingRange = newRange;
+        defaultParams.range(newRange);
+        if (isNavigating())
+            localParams.range(newRange);
     }
 
     @Override
     public void setSpeed(float speed) {
-        this.speed = speed;
+        defaultParams.speed(speed);
         if (isNavigating())
-            executing.setSpeed(this.speed);
+            localParams.speed(speed);
     }
 
     @Override
@@ -102,7 +116,7 @@ public class CitizensNavigator implements Navigator {
             cancelNavigation();
             return;
         }
-        PathStrategy newStrategy = new MCTargetStrategy(npc, target, aggressive, speed);
+        PathStrategy newStrategy = new MCTargetStrategy(npc, target, aggressive, localParams);
         switchStrategyTo(newStrategy);
     }
 
@@ -114,8 +128,13 @@ public class CitizensNavigator implements Navigator {
             cancelNavigation();
             return;
         }
-        PathStrategy newStrategy = new MCNavigationStrategy(npc, target, speed);
+        PathStrategy newStrategy = new MCNavigationStrategy(npc, target, localParams);
         switchStrategyTo(newStrategy);
+    }
+
+    private void stopNavigating() {
+        executing = null;
+        localParams = defaultParams;
     }
 
     private void switchStrategyTo(PathStrategy newStrategy) {
@@ -126,17 +145,17 @@ public class CitizensNavigator implements Navigator {
     }
 
     public void update() {
-        if (executing == null || !npc.isSpawned())
+        if (!isNavigating() || !npc.isSpawned())
             return;
         boolean finished = executing.update();
         if (finished) {
             Bukkit.getPluginManager().callEvent(new NavigationCompleteEvent(this));
-            executing = null;
+            stopNavigating();
         }
     }
 
     private void updatePathfindingRange() {
-        NMSReflection.updatePathfindingRange(npc, pathfindingRange);
+        NMSReflection.updatePathfindingRange(npc, localParams.range());
     }
 
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;

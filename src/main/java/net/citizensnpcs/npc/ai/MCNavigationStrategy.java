@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.ai;
 
+import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.minecraft.server.EntityLiving;
@@ -10,15 +11,17 @@ import org.bukkit.entity.Player;
 
 public class MCNavigationStrategy implements PathStrategy {
     private final Navigation navigation;
+    private final NavigatorParameters parameters;
     private final Location target;
 
-    MCNavigationStrategy(final CitizensNPC npc, Location dest, float speed) {
-        this(npc.getHandle(), dest);
-        navigation.a(dest.getX(), dest.getY(), dest.getZ(), speed);
+    MCNavigationStrategy(final CitizensNPC npc, Location dest, NavigatorParameters params) {
+        this(npc.getHandle(), dest, params);
+        navigation.a(dest.getX(), dest.getY(), dest.getZ(), parameters.speed());
     }
 
-    private MCNavigationStrategy(EntityLiving entity, Location target) {
+    private MCNavigationStrategy(EntityLiving entity, Location target, NavigatorParameters params) {
         this.target = target;
+        this.parameters = params;
         if (entity.getBukkitEntity() instanceof Player) {
             entity.onGround = true;
             // not sure of a better way around this - if onGround is false, then
@@ -39,12 +42,8 @@ public class MCNavigationStrategy implements PathStrategy {
     }
 
     @Override
-    public void setSpeed(float speed) {
-        navigation.a(speed);
-    }
-
-    @Override
     public boolean update() {
+        navigation.a(parameters.speed());
         return navigation.f();
     }
 }

@@ -1,6 +1,7 @@
 package net.citizensnpcs.npc.ai;
 
 import net.citizensnpcs.api.ai.EntityTarget;
+import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.Util;
@@ -19,14 +20,14 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private int attackTicks;
     private final EntityLiving handle, target;
     private final Navigation navigation;
-    private final float speed;
+    private final NavigatorParameters parameters;
 
-    public MCTargetStrategy(CitizensNPC handle, LivingEntity target, boolean aggro, float speed) {
+    public MCTargetStrategy(CitizensNPC handle, LivingEntity target, boolean aggro, NavigatorParameters params) {
         this.handle = handle.getHandle();
         this.target = ((CraftLivingEntity) target).getHandle();
         this.navigation = this.handle.getNavigation();
         this.aggro = aggro;
-        this.speed = speed;
+        this.parameters = params;
     }
 
     private boolean canAttack() {
@@ -60,15 +61,10 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     @Override
-    public void setSpeed(float speed) {
-        navigation.a(speed);
-    }
-
-    @Override
     public boolean update() {
         if (target == null || target.dead)
             return true;
-        navigation.a(target, speed);
+        navigation.a(target, parameters.speed());
         handle.getControllerLook().a(target, 10.0F, handle.bf());
         if (aggro && canAttack()) {
             if (handle instanceof EntityMonster) {
@@ -87,6 +83,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         return false;
     }
+
     private static final int ATTACK_DELAY_TICKS = 20;
 
     private static final double ATTACK_DISTANCE = 1.75 * 1.75;
