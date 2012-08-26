@@ -550,7 +550,7 @@ public class NPCCommands {
             permission = "npc.speed")
     public void speed(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         float newSpeed = (float) args.getDouble(1);
-        npc.getNavigator().setSpeed(newSpeed);
+        npc.getNavigator().getDefaultParameters().speed(newSpeed);
 
         Messaging.sendF(sender, ChatColor.GREEN + "NPC speed set to %f.", newSpeed);
     }

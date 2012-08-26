@@ -78,16 +78,23 @@ public abstract class CitizensNPC extends AbstractNPC {
         metadata.loadFrom(root.getRelative("metadata"));
         // Load traits
         for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
-            Trait trait = CitizensAPI.getTraitFactory().getTrait(traitKey.name());
-            if (trait == null) {
-                Messaging.severeF(
-                        "Skipped broken or missing trait '%s' while loading ID '%d'. Has the name changed?",
-                        traitKey.name(), getId());
-                continue;
-            }
             if (traitKey.keyExists("enabled") && !traitKey.getBoolean("enabled"))
                 continue;
-            addTrait(trait);
+            Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
+            Trait trait;
+            if (hasTrait(clazz)) {
+                trait = getTrait(clazz);
+            } else {
+                trait = CitizensAPI.getTraitFactory().getTrait(traitKey.name());
+                if (trait == null) {
+                    Messaging
+                            .severeF(
+                                    "Skipped broken or missing trait '%s' while loading ID '%d'. Has the name changed?",
+                                    traitKey.name(), getId());
+                    continue;
+                }
+                addTrait(trait);
+            }
             try {
                 trait.load(traitKey);
             } catch (NPCLoadException ex) {
