@@ -19,7 +19,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
 public class CitizensNavigator implements Navigator {
-    private final NavigatorParameters defaultParams = new NavigatorParameters().speed(UNINITIALISED_SPEED);
+    private final NavigatorParameters defaultParams = new NavigatorParameters().speed(UNINITIALISED_SPEED)
+            .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat());
     private PathStrategy executing;
     private NavigatorParameters localParams = defaultParams;
     private final CitizensNPC npc;
