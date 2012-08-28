@@ -206,11 +206,11 @@ public class NPCCommands {
             Iterable<String> parts = Splitter.on(",").trimResults().split(args.getFlag("trait"));
             for (String tr : parts) {
                 Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(tr);
-                if (clazz != null) {
-                    npc.addTrait(clazz);
-                }
+                if (clazz == null)
+                    continue;
+                npc.addTrait(clazz);
+                msg += StringHelper.wrap(tr) + ", ";
             }
-            msg += " with the specified traits";
         }
 
         if (args.hasValueFlag("b")) {
