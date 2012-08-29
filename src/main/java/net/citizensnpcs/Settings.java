@@ -53,6 +53,7 @@ public class Settings {
         DEBUG_MODE("general.debug-mode", false),
         DEFAULT_LOOK_CLOSE("npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("npc.default.look-close.range", 5),
+        DEFAULT_NPC_LIMIT("npc.limits.default-limit", 10),
         DEFAULT_PATHFINDING_RANGE("npc.default.pathfinding.range", 25F),
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", true),
         DEFAULT_REALISTIC_LOOKING("npc.default.realistic-looking", false),
@@ -67,6 +68,7 @@ public class Settings {
                 value = list;
             }
         },
+        MAX_NPC_LIMIT_CHECKS("npc.limits.max-permission-checks", 100),
         NPC_COST("economy.npc.cost", 100D),
         QUICK_SELECT("npc.selection.quick-select", false),
         SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
