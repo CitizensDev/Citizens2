@@ -1,13 +1,16 @@
 package net.citizensnpcs;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDamageByBlockEvent;
 import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.trait.CurrentLocation;
@@ -136,6 +139,31 @@ public class EventListen implements Listener {
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
         // on teleport, player NPCs are added to the server player list. this is
         // undesirable as player NPCs are not real players and confuse plugins.
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
+        if (event.getCreator().hasPermission("citizens.admin.avoid-limits"))
+            return;
+        int limit = Setting.DEFAULT_NPC_LIMIT.asInt();
+        int maxChecks = Setting.MAX_NPC_LIMIT_CHECKS.asInt();
+        for (int i = maxChecks; i >= 0; i--) {
+            if (!event.getCreator().hasPermission("citizens.npc.limit." + i))
+                continue;
+            limit = i;
+            break;
+        }
+        if (limit < 0)
+            return;
+        int owned = 0;
+        for (NPC npc : npcRegistry) {
+            if (npc.getTrait(Owner.class).isOwnedBy(event.getCreator()))
+                owned++;
+        }
+        if (limit >= owned + 1 || limit == 0) {
+            event.setCancelled(true);
+            event.setCancelReason(String.format("Over the NPC limit of %d.", limit));
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

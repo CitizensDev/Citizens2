@@ -201,6 +201,7 @@ public class NPCCommands {
                 msg += " as a baby";
             }
         }
+
         if (args.hasValueFlag("trait")) {
             msg += " with traits ";
             Iterable<String> parts = Splitter.on(",").trimResults().split(args.getFlag("trait"));
