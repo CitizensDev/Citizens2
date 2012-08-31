@@ -79,7 +79,7 @@ public class EventListen implements Listener {
     /*
      * Entity events
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         if (!npcRegistry.isNPC(event.getEntity()))
             return;
@@ -113,7 +113,7 @@ public class EventListen implements Listener {
         npc.despawn();
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
         if (!npcRegistry.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
             return;
