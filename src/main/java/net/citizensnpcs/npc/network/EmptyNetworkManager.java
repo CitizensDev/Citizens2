@@ -3,7 +3,7 @@ package net.citizensnpcs.npc.network;
 import java.net.Socket;
 import java.security.PrivateKey;
 
-import net.citizensnpcs.util.NMSReflection;
+import net.citizensnpcs.util.NMS;
 import net.minecraft.server.NetHandler;
 import net.minecraft.server.NetworkManager;
 import net.minecraft.server.Packet;
@@ -13,7 +13,7 @@ public class EmptyNetworkManager extends NetworkManager {
     public EmptyNetworkManager(Socket socket, String string, NetHandler netHandler, PrivateKey key) {
         super(socket, string, netHandler, key);
 
-        NMSReflection.stopNetworkThreads(this);
+        NMS.stopNetworkThreads(this);
     }
 
     @Override

@@ -17,8 +17,8 @@ import org.bukkit.entity.EntityType;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
-public class NMSReflection {
-    private NMSReflection() {
+public class NMS {
+    private NMS() {
         // util class
     }
 
@@ -34,11 +34,11 @@ public class NMSReflection {
     private static Field THREAD_STOPPER;
 
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
-        if (NMSReflection.GOAL_FIELD == null || goalSelectors == null)
+        if (NMS.GOAL_FIELD == null || goalSelectors == null)
             return;
         for (PathfinderGoalSelector selector : goalSelectors) {
             try {
-                List<?> list = (List<?>) NMSReflection.GOAL_FIELD.get(selector);
+                List<?> list = (List<?>) NMS.GOAL_FIELD.get(selector);
                 list.clear();
             } catch (Exception e) {
             }
@@ -96,6 +96,13 @@ public class NMSReflection {
             THREAD_STOPPER.set(manager, false);
         } catch (Exception e) {
         }
+    }
+
+    public static void updateAI(EntityLiving entity) {
+        entity.getNavigation().e();
+        entity.getControllerMove().c();
+        entity.getControllerLook().a();
+        entity.getControllerJump().b();
     }
 
     public static void updatePathfindingRange(CitizensNPC npc, float pathfindingRange) {

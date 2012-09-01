@@ -80,7 +80,7 @@ public class Util {
         if (type != null)
             return type;
         for (EntityType check : EntityType.values()) {
-            if (check.name().matches(toMatch) || check.name().replace('_', '-').equals(toMatch)) {
+            if (check.name().matches(toMatch) || check.name().replace('_', '-').equalsIgnoreCase(toMatch)) {
                 type = check;
                 break;
             }
