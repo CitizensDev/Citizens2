@@ -1,12 +1,34 @@
 package net.citizensnpcs.api.ai;
 
+import net.citizensnpcs.api.ai.event.CancelReason;
+
 public class NavigatorParameters implements Cloneable {
+    private boolean avoidWater;
     private float range;
     private float speed;
     private float speedModifier = 1F;
+    private int stationaryTicks = -1;
+    private StuckAction stuckAction = TeleportStuckAction.INSTANCE;
 
     /**
+     * @return Whether to avoid water while pathfinding
+     */
+    public boolean avoidWater() {
+        return avoidWater;
+    }
+
+    /**
+     * Sets whether to avoid water while pathfinding
      * 
+     * @param avoidWater
+     *            Whether to avoid water
+     */
+    public NavigatorParameters avoidWater(boolean avoidWater) {
+        this.avoidWater = avoidWater;
+        return this;
+    }
+
+    /**
      * @return The base movement speed
      */
     public float baseSpeed() {
@@ -83,6 +105,35 @@ public class NavigatorParameters implements Cloneable {
      */
     public NavigatorParameters speedModifier(float percent) {
         speedModifier = percent;
+        return this;
+    }
+
+    /**
+     * @return The number of stationary ticks
+     * @see #stationaryTicks(int)
+     */
+    public int stationaryTicks() {
+        return stationaryTicks;
+    }
+
+    /**
+     * Sets the number of stationary ticks before navigation is cancelled with a
+     * {@link CancelReason} of STUCK.
+     * 
+     * @param ticks
+     *            The new number of stationary ticks
+     */
+    public NavigatorParameters stationaryTicks(int ticks) {
+        stationaryTicks = ticks;
+        return this;
+    }
+
+    public StuckAction stuckAction() {
+        return stuckAction;
+    }
+
+    public NavigatorParameters stuckAction(StuckAction action) {
+        stuckAction = action;
         return this;
     }
 }
