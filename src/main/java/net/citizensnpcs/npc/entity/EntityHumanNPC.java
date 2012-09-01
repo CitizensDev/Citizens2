@@ -110,6 +110,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         getControllerMove().c();
         getControllerLook().a();
         getControllerJump().b();
+        e(npc.getNavigator().getDefaultParameters().speed());
 
         // taken from EntityLiving update method
         if (bu) {

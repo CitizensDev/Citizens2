@@ -72,7 +72,7 @@ public class Controllable extends Trait implements Toggleable {
         boolean onGround = handle.onGround;
         handle.motX += handle.passenger.motX * (onGround ? GROUND_SPEED : AIR_SPEED);
         handle.motZ += handle.passenger.motZ * (onGround ? GROUND_SPEED : AIR_SPEED);
-        handle.e(npc.getNavigator().getSpeed());
+        handle.e(npc.getNavigator().getDefaultParameters().speed());
     }
 
     @Override
