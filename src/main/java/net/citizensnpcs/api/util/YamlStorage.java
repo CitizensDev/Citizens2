@@ -3,6 +3,7 @@ package net.citizensnpcs.api.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -188,10 +189,10 @@ public class YamlStorage implements Storage {
 
         @Override
         public Iterable<DataKey> getSubKeys() {
-            List<DataKey> res = new ArrayList<DataKey>();
             ConfigurationSection section = config.getConfigurationSection(current);
             if (section == null)
-                return res;
+                return Collections.emptyList();
+            List<DataKey> res = new ArrayList<DataKey>();
             for (String key : section.getKeys(false)) {
                 res.add(getRelative(key));
             }
