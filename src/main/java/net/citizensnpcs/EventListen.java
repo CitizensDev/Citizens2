@@ -26,7 +26,9 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityCombustByBlockEvent;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
@@ -133,6 +135,12 @@ public class EventListen implements Listener {
             return;
         NPC npc = npcRegistry.getNPC(event.getEntity());
         npc.despawn();
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onEntitySpawn(CreatureSpawnEvent event) {
+        if (event.isCancelled() && npcRegistry.isNPC(event.getEntity()))
+            event.setCancelled(false);
     }
 
     @EventHandler

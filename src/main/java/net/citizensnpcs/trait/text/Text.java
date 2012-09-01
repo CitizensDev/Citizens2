@@ -71,7 +71,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
             @Override
             public void begin() {
                 Messaging.send(player, "<b>Entered the text editor!");
-
                 conversation.begin();
             }
 
@@ -83,12 +82,15 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     }
 
     public boolean hasIndex(int index) {
-        return text.size() > index;
+        return index >= 0 && text.size() > index;
     }
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
+        // TODO: backwards compat, remove later
         for (DataKey sub : key.getIntegerSubKeys())
+            text.add(sub.getString(""));
+        for (DataKey sub : key.getRelative("text").getIntegerSubKeys())
             text.add(sub.getString(""));
         if (text.isEmpty())
             populateDefaultText();
@@ -153,8 +155,12 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         key.setBoolean("random-talker", randomTalker);
         key.setBoolean("realistic-looking", realisticLooker);
         key.setDouble("range", range);
+        // TODO: for backwards compat purposes, remove later
+        for (int i = 0; i < 100; i++)
+            key.removeKey(String.valueOf(i));
+        key.removeKey("text");
         for (int i = 0; i < text.size(); i++)
-            key.setString(String.valueOf(i), text.get(i));
+            key.setString("text." + String.valueOf(i), text.get(i));
     }
 
     public boolean sendPage(Player player, int page) {

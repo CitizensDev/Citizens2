@@ -4,6 +4,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.ai.StuckAction;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
@@ -13,6 +14,7 @@ import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.NMS;
+import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,10 +22,14 @@ import org.bukkit.entity.LivingEntity;
 
 public class CitizensNavigator implements Navigator {
     private final NavigatorParameters defaultParams = new NavigatorParameters().speed(UNINITIALISED_SPEED)
-            .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat());
+            .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
+            .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt());
     private PathStrategy executing;
     private NavigatorParameters localParams = defaultParams;
     private final CitizensNPC npc;
+    private int stationaryTicks;
+
+    private boolean updatedAvoidWater = false;
 
     public CitizensNavigator(CitizensNPC npc) {
         this.npc = npc;
@@ -70,19 +76,32 @@ public class CitizensNavigator implements Navigator {
 
     public void load(DataKey root) {
         defaultParams.speed((float) root.getDouble("speed", UNINITIALISED_SPEED));
-        defaultParams.range((float) root.getDouble("pathfinding-range",
+        defaultParams.range((float) root.getDouble("pathfindingrange",
                 Setting.DEFAULT_PATHFINDING_RANGE.asFloat()));
+        defaultParams
+                .stationaryTicks(root.getInt("stationaryticks", Setting.DEFAULT_STATIONARY_TICKS.asInt()));
+        defaultParams.speedModifier((float) root.getDouble("speedmodifier", 1F));
+        if (root.keyExists("avoidwater"))
+            defaultParams.avoidWater(root.getBoolean("avoidwater"));
     }
 
     public void onSpawn() {
         if (defaultParams.speed() == UNINITIALISED_SPEED)
             defaultParams.speed(NMS.getSpeedFor(npc.getHandle()));
         updatePathfindingRange();
+        if (!updatedAvoidWater) {
+            boolean defaultAvoidWater = npc.getHandle().getNavigation().a();
+            defaultParams.avoidWater(defaultAvoidWater);
+            updatedAvoidWater = true;
+        }
     }
 
     public void save(DataKey root) {
-        root.setDouble("speed", defaultParams.speed());
-        root.setDouble("pathfinding-range", defaultParams.range());
+        root.setDouble("speed", defaultParams.baseSpeed());
+        root.setDouble("pathfindingrange", defaultParams.range());
+        root.setInt("stationaryticks", defaultParams.stationaryTicks());
+        root.setDouble("speedmodifier", defaultParams.speedModifier());
+        root.setBoolean("avoidwater", defaultParams.avoidWater());
     }
 
     @Override
@@ -122,7 +141,7 @@ public class CitizensNavigator implements Navigator {
     }
 
     public void update() {
-        if (!isNavigating() || !npc.isSpawned())
+        if (!isNavigating() || !npc.isSpawned() || updateStationaryStatus())
             return;
         boolean finished = executing.update();
         if (finished) {
@@ -133,6 +152,22 @@ public class CitizensNavigator implements Navigator {
 
     private void updatePathfindingRange() {
         NMS.updatePathfindingRange(npc, localParams.range());
+    }
+
+    private boolean updateStationaryStatus() {
+        if (localParams.stationaryTicks() < 0)
+            return false;
+        EntityLiving handle = npc.getHandle();
+        if ((int) handle.lastX == (int) handle.locX && (int) handle.lastY == (int) handle.locY
+                && (int) handle.lastZ == (int) handle.locZ
+                && ++stationaryTicks >= localParams.stationaryTicks()) {
+            StuckAction action = localParams.stuckAction();
+            if (action != null)
+                action.run(npc, this);
+            Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, CancelReason.STUCK));
+            stopNavigating();
+        }
+        return true;
     }
 
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;

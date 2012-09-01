@@ -5,13 +5,13 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
+import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
@@ -73,6 +73,12 @@ public class LinearWaypointProvider implements WaypointProvider {
             }
 
             @EventHandler
+            public void onNPCRemove(NPCRemoveEvent event) {
+                if (event.getNPC().equals(npc))
+                    end();
+            }
+
+            @EventHandler
             public void onPlayerInteract(PlayerInteractEvent event) {
                 if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL)
                     return;
@@ -82,12 +88,13 @@ public class LinearWaypointProvider implements WaypointProvider {
                         || event.getAction() == Action.LEFT_CLICK_AIR) {
                     if (event.getClickedBlock() == null)
                         return;
+                    event.setCancelled(true);
                     Location at = event.getClickedBlock().getLocation();
                     Location prev = getPreviousWaypoint(editingSlot);
 
                     if (prev != null) {
                         double distance = at.distanceSquared(prev);
-                        double maxDistance = Setting.DEFAULT_PATHFINDING_RANGE.asDouble();
+                        double maxDistance = npc.getNavigator().getDefaultParameters().range();
                         maxDistance = Math.pow(maxDistance, 2);
                         if (distance > maxDistance) {
                             Messaging.sendF(player, ChatColor.RED
@@ -105,6 +112,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                             String.format("<e>Added<a> a waypoint at (" + formatLoc(at)
                                     + ") (<e>%d<a>, <e>%d<a>)", editingSlot + 1, waypoints.size()));
                 } else if (waypoints.size() > 0) {
+                    event.setCancelled(true);
                     editingSlot = Math.min(0, Math.max(waypoints.size() - 1, editingSlot));
                     waypoints.remove(editingSlot);
                     editingSlot = Math.max(0, editingSlot - 1);

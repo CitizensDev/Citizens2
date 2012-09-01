@@ -104,7 +104,8 @@ public class NPCCommands {
             desc = "Sets the behaviour of a NPC",
             modifiers = { "behaviour", "ai" },
             flags = "r",
-            min = 2)
+            min = 2,
+            permission = "npc.behaviour")
     public void behaviour(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Iterable<String> files = Splitter.on(',').split(args.getJoinedStrings(1, ','));
         if (args.hasFlag('r')) {
