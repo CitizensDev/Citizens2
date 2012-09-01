@@ -35,6 +35,7 @@ public class Util {
 
     public static NPCPushEvent callPushEvent(NPC npc, Vector vector) {
         NPCPushEvent event = new NPCPushEvent(npc, vector);
+        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
         Bukkit.getPluginManager().callEvent(event);
         return event;
     }
