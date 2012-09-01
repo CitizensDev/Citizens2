@@ -52,8 +52,14 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
     void setPaused(boolean paused);
 
     public static interface GoalEntry extends Comparable<GoalEntry> {
+        /**
+         * @return The {@link Goal} held by this entry
+         */
         Goal getGoal();
 
+        /**
+         * @return The goal's priority
+         */
         int getPriority();
     }
 }

@@ -78,6 +78,9 @@ public class ScriptCompiler extends Thread {
         return new CompileTaskBuilder(toCompile.toArray(new FileEngine[0]));
     }
 
+    /**
+     * A helper method for {@link #compile(File...)}
+     */
     public CompileTaskBuilder compile(Iterable<File> files) {
         return compile(Iterables.toArray(files, File.class));
     }

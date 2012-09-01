@@ -12,6 +12,9 @@ public class NavigationCancelEvent extends NavigationCompleteEvent {
         this.reason = reason;
     }
 
+    /**
+     * @return The cancellation reason
+     */
     public CancelReason getCancelReason() {
         return reason;
     }

@@ -42,28 +42,6 @@ public interface Navigator {
     NavigatorParameters getLocalParameters();
 
     /**
-     * Returns the pathfinding range of this navigator. The pathfinding range is
-     * the maximum distance in blocks that the backing {@link Entity} will try
-     * to find a path. If a target exceeds this range, it may be cancelled.
-     * 
-     * @see #setPathfindingRange(float)
-     * @return The current pathfinding range
-     * @deprecated @see {@link #getLocalParameters()}
-     */
-    @Deprecated
-    float getPathfindingRange();
-
-    /**
-     * Returns the current entity movement speed of the navigator.
-     * 
-     * @see #getSpeed()
-     * @deprecated @see {@link #getDefaultParameters()}
-     * @return The entity movement speed
-     */
-    @Deprecated
-    float getSpeed();
-
-    /**
      * Returns the current {@link Location} being navigated towards - this is
      * not necessarily permanent and may change, for example when pathing
      * towards a moving {@link Entity}. May return null.
@@ -82,32 +60,6 @@ public interface Navigator {
      * @return Whether the navigator is currently pathing towards a target.
      */
     boolean isNavigating();
-
-    /**
-     * Sets the pathfinding range of this navigator.The pathfinding range is the
-     * maximum distance in blocks that the backing {@link Entity} will try to
-     * find a path. If a target exceeds this range, it may be cancelled.
-     * 
-     * @see #getPathfindingRange()
-     * @param newRange
-     *            The new pathfinding range
-     * @deprecated @see {@link #getDefaultParameters()}
-     */
-    @Deprecated
-    void setPathfindingRange(float newRange);
-
-    /**
-     * Sets the movement speed of the navigator. The default value is
-     * entity-dependent and Minecraft-specific but usually ranges around 0.3.
-     * Note that this may not necessarily change the movement speed of the
-     * current target.
-     * 
-     * @param speed
-     *            The new movement speed
-     * @deprecated @see {@link #getDefaultParameters()}
-     */
-    @Deprecated
-    void setSpeed(float speed);
 
     /**
      * Sets the current navigation to an entity target.

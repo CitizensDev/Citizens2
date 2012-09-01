@@ -15,6 +15,9 @@ public interface CitizensPlugin extends Plugin {
      */
     public NPCRegistry getNPCRegistry();
 
+    /**
+     * @return The folder for storing scripts
+     */
     public File getScriptFolder();
 
     /**
@@ -24,5 +27,8 @@ public interface CitizensPlugin extends Plugin {
      */
     public TraitFactory getTraitFactory();
 
+    /**
+     * Called when the current Citizens implementation is changed
+     */
     public void onImplementationChanged();
 }

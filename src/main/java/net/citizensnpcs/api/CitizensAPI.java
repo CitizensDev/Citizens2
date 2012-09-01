@@ -23,6 +23,9 @@ public final class CitizensAPI {
     private static final CitizensAPI instance = new CitizensAPI();
     private static ScriptCompiler scriptCompiler;
 
+    /**
+     * @return The data folder of the current implementation
+     */
     public static File getDataFolder() {
         return getImplementation().getDataFolder();
     }
@@ -34,17 +37,22 @@ public final class CitizensAPI {
     /**
      * Gets the current implementation's {@link NPCRegistry}.
      * 
-     * @see CitizensPlugin
      * @return The NPC registry
      */
     public static NPCRegistry getNPCRegistry() {
         return getImplementation().getNPCRegistry();
     }
 
+    /**
+     * @return The current {@link Plugin} providing an implementation
+     */
     public static Plugin getPlugin() {
         return getImplementation();
     }
 
+    /**
+     * @return The current {@link ScriptCompiler}
+     */
     public static ScriptCompiler getScriptCompiler() {
         if (scriptCompiler == null) {
             scriptCompiler = new ScriptCompiler();
@@ -53,6 +61,9 @@ public final class CitizensAPI {
         return scriptCompiler;
     }
 
+    /**
+     * @return The folder used for storing scripts
+     */
     public static File getScriptFolder() {
         return getImplementation().getScriptFolder();
     }
@@ -67,14 +78,31 @@ public final class CitizensAPI {
         return getImplementation().getTraitFactory();
     }
 
+    /**
+     * @return Whether a Citizens implementation is currently present
+     */
     public static boolean hasImplementation() {
         return getImplementation() != null;
     }
 
+    /**
+     * A helper method for registering events using the current implementation's
+     * {@link Plugin}.
+     * 
+     * @see #getPlugin()
+     * @param listener
+     *            The listener to register events for
+     */
     public static void registerEvents(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, getPlugin());
     }
 
+    /**
+     * Sets the current Citizens implementation.
+     * 
+     * @param implementation
+     *            The new implementation
+     */
     public static void setImplementation(CitizensPlugin implementation) {
         if (implementation == null) {
             instance.implementation = null;
@@ -85,6 +113,9 @@ public final class CitizensAPI {
         instance.implementation = new WeakReference<CitizensPlugin>(implementation);
     }
 
+    /**
+     * Shuts down any resources currently being held.
+     */
     public static void shutdown() {
         if (scriptCompiler != null) {
             scriptCompiler.interrupt();

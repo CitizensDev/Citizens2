@@ -6,7 +6,10 @@ import java.io.File;
  * A simple callback interface for use in {@link ScriptCompiler}.
  */
 public interface CompileCallback {
-
+    /**
+     * Called when the compile task is completely finished and all scripts have
+     * been compiled or rejected.
+     */
     public void onCompileTaskFinished();
 
     /**
