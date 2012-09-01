@@ -12,7 +12,7 @@ import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.util.NMSReflection;
+import net.citizensnpcs.util.NMS;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -48,19 +48,9 @@ public class CitizensNavigator implements Navigator {
 
     @Override
     public NavigatorParameters getLocalParameters() {
+        if (localParams == defaultParams)
+            throw new IllegalStateException("not navigating");
         return localParams;
-    }
-
-    @Override
-    public float getPathfindingRange() {
-        return defaultParams.range();
-    }
-
-    @Override
-    public float getSpeed() {
-        if (defaultParams.speed() == UNINITIALISED_SPEED)
-            throw new IllegalStateException("NPC has not been spawned");
-        return defaultParams.speed();
     }
 
     @Override
@@ -86,27 +76,13 @@ public class CitizensNavigator implements Navigator {
 
     public void onSpawn() {
         if (defaultParams.speed() == UNINITIALISED_SPEED)
-            defaultParams.speed(NMSReflection.getSpeedFor(npc.getHandle()));
+            defaultParams.speed(NMS.getSpeedFor(npc.getHandle()));
         updatePathfindingRange();
     }
 
     public void save(DataKey root) {
         root.setDouble("speed", defaultParams.speed());
         root.setDouble("pathfinding-range", defaultParams.range());
-    }
-
-    @Override
-    public void setPathfindingRange(float newRange) {
-        defaultParams.range(newRange);
-        if (isNavigating())
-            localParams.range(newRange);
-    }
-
-    @Override
-    public void setSpeed(float speed) {
-        defaultParams.speed(speed);
-        if (isNavigating())
-            localParams.speed(speed);
     }
 
     @Override
@@ -156,7 +132,7 @@ public class CitizensNavigator implements Navigator {
     }
 
     private void updatePathfindingRange() {
-        NMSReflection.updatePathfindingRange(npc, localParams.range());
+        NMS.updatePathfindingRange(npc, localParams.range());
     }
 
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;

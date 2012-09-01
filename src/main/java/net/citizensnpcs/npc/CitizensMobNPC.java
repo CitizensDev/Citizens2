@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.NMSReflection;
+import net.citizensnpcs.util.NMS;
 import net.minecraft.server.Block;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.World;
@@ -21,7 +21,7 @@ public abstract class CitizensMobNPC extends CitizensNPC {
         super(id, name);
         this.constructor = getConstructor(clazz);
 
-        NMSReflection.registerEntityClass(clazz);
+        NMS.registerEntityClass(clazz);
     }
 
     private EntityLiving createEntityFromClass(World world) {

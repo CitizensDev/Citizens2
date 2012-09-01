@@ -9,7 +9,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.NMSReflection;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntitySheep;
@@ -73,7 +73,7 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSReflection.clearGoals(goalSelector, targetSelector);
+                NMS.clearGoals(goalSelector, targetSelector);
             }
         }
 

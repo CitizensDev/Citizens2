@@ -5,7 +5,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.NMSReflection;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityCreeper;
 import net.minecraft.server.EntityLightning;
@@ -36,7 +36,7 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSReflection.clearGoals(goalSelector, targetSelector);
+                NMS.clearGoals(goalSelector, targetSelector);
             }
         }
 
@@ -44,6 +44,13 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
         public void a(EntityLightning entitylightning) {
             if (npc == null)
                 super.a(entitylightning);
+        }
+
+        @Override
+        public void bb() {
+            if (npc == null)
+                super.bb();
+            // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override

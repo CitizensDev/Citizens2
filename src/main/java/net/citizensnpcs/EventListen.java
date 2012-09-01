@@ -2,6 +2,9 @@ package net.citizensnpcs;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCCombustByBlockEvent;
+import net.citizensnpcs.api.event.NPCCombustByEntityEvent;
+import net.citizensnpcs.api.event.NPCCombustEvent;
 import net.citizensnpcs.api.event.NPCDamageByBlockEvent;
 import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
@@ -24,6 +27,9 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityCombustByBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -79,6 +85,22 @@ public class EventListen implements Listener {
     /*
      * Entity events
      */
+    @EventHandler
+    public void onEntityCombust(EntityCombustEvent event) {
+        NPC npc = npcRegistry.getNPC(event.getEntity());
+        if (npc == null)
+            return;
+        if (event instanceof EntityCombustByEntityEvent) {
+            Bukkit.getPluginManager().callEvent(
+                    new NPCCombustByEntityEvent((EntityCombustByEntityEvent) event, npc));
+        } else if (event instanceof EntityCombustByBlockEvent) {
+            Bukkit.getPluginManager().callEvent(
+                    new NPCCombustByBlockEvent((EntityCombustByBlockEvent) event, npc));
+        } else {
+            Bukkit.getPluginManager().callEvent(new NPCCombustEvent(event, npc));
+        }
+    }
+
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         if (!npcRegistry.isNPC(event.getEntity()))

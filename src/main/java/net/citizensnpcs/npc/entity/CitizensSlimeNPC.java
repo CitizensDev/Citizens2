@@ -5,7 +5,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.NMSReflection;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntitySlime;
 import net.minecraft.server.World;
@@ -36,8 +36,15 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 setSize(3);
-                NMSReflection.clearGoals(goalSelector, targetSelector);
+                NMS.clearGoals(goalSelector, targetSelector);
             }
+        }
+
+        @Override
+        public void bb() {
+            if (npc == null)
+                super.bb();
+            // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override
@@ -51,8 +58,10 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
         public void be() {
             if (npc == null)
                 super.be();
-            else
+            else {
                 npc.update();
+                NMS.updateAI(this);
+            }
         }
 
         @Override

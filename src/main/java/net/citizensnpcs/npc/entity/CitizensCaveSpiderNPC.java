@@ -5,7 +5,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.NMSReflection;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityCaveSpider;
 import net.minecraft.server.World;
@@ -14,7 +14,6 @@ import org.bukkit.entity.CaveSpider;
 import org.bukkit.util.Vector;
 
 public class CitizensCaveSpiderNPC extends CitizensMobNPC {
-
     public CitizensCaveSpiderNPC(int id, String name) {
         super(id, name, EntityCaveSpiderNPC.class);
     }
@@ -27,12 +26,23 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
     public static class EntityCaveSpiderNPC extends EntityCaveSpider implements NPCHolder {
         private final CitizensNPC npc;
 
+        public EntityCaveSpiderNPC(World world) {
+            this(world, null);
+        }
+
         public EntityCaveSpiderNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSReflection.clearGoals(goalSelector, targetSelector);
+                NMS.clearGoals(goalSelector, targetSelector);
             }
+        }
+
+        @Override
+        public void bb() {
+            if (npc == null)
+                super.bb();
+            // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override
@@ -45,8 +55,10 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
         public void be() {
             if (npc == null)
                 super.be();
-            else
+            else {
+                NMS.updateAI(this);
                 npc.update();
+            }
         }
 
         @Override

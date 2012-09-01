@@ -8,7 +8,7 @@ import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.NMSReflection;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityEnderman;
 import net.minecraft.server.World;
@@ -47,9 +47,9 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
 
         ItemStack set = hand;
         if (set.getType() != Material.AIR) {
-            if (hand.getAmount() > 1)
+            if (hand.getAmount() > 1) {
                 hand.setAmount(hand.getAmount() - 1);
-            else
+            } else
                 hand = null;
             equipper.setItemInHand(hand);
             set.setAmount(1);
@@ -73,15 +73,21 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSReflection.clearGoals(goalSelector, targetSelector);
+                NMS.clearGoals(goalSelector, targetSelector);
             }
         }
 
         @Override
-        public void bc() {
+        public void bb() {
             if (npc == null)
-                super.bc();
-            else
+                super.bb();
+            // check despawn method, we only want to despawn on chunk unload.
+        }
+
+        @Override
+        public void bc() {
+            super.bc();
+            if (npc != null)
                 npc.update();
         }
 
@@ -89,8 +95,10 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         public void be() {
             if (npc == null)
                 super.be();
-            else
+            else {
+                NMS.updateAI(this);
                 npc.update();
+            }
         }
 
         @Override
@@ -105,6 +113,10 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         public void d() {
             if (npc == null)
                 super.d();
+            else {
+                NMS.updateAI(this);
+                npc.update();
+            }
         }
 
         @Override
