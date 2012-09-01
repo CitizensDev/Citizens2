@@ -115,15 +115,14 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (!npcRegistry.isNPC(event.getEntity()) || !(event.getTarget() instanceof Player))
-            return;
+        if (npcRegistry.isNPC(event.getEntity()) && event.getTarget() instanceof Player) {
+            NPC npc = npcRegistry.getNPC(event.getEntity());
+            Player player = (Player) event.getTarget();
 
-        NPC npc = npcRegistry.getNPC(event.getEntity());
-        Player player = (Player) event.getTarget();
-
-        // Call right-click event
-        NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
-        Bukkit.getPluginManager().callEvent(rightClickEvent);
+            // Call right-click event
+            NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
+            Bukkit.getPluginManager().callEvent(rightClickEvent);
+        }
     }
 
     /*
