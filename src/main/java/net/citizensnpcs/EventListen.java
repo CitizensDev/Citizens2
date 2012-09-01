@@ -2,6 +2,7 @@ package net.citizensnpcs;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.EntityTargetNPCEvent;
 import net.citizensnpcs.api.event.NPCCombustByBlockEvent;
 import net.citizensnpcs.api.event.NPCCombustByEntityEvent;
 import net.citizensnpcs.api.event.NPCCombustEvent;
@@ -37,7 +38,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -92,6 +92,7 @@ public class EventListen implements Listener {
         NPC npc = npcRegistry.getNPC(event.getEntity());
         if (npc == null)
             return;
+        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
         if (event instanceof EntityCombustByEntityEvent) {
             Bukkit.getPluginManager().callEvent(
                     new NPCCombustByEntityEvent((EntityCombustByEntityEvent) event, npc));
@@ -109,6 +110,7 @@ public class EventListen implements Listener {
             return;
 
         NPC npc = npcRegistry.getNPC(event.getEntity());
+        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
         if (event instanceof EntityDamageByEntityEvent) {
             NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc,
                     (EntityDamageByEntityEvent) event);
@@ -145,13 +147,11 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (npcRegistry.isNPC(event.getEntity()) && event.getTarget() instanceof Player) {
-            NPC npc = npcRegistry.getNPC(event.getEntity());
-            Player player = (Player) event.getTarget();
+        if (npcRegistry.isNPC(event.getTarget())) {
+            NPC npc = npcRegistry.getNPC(event.getTarget());
 
-            // Call right-click event
-            NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
-            Bukkit.getPluginManager().callEvent(rightClickEvent);
+            event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+            Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
         }
     }
 
@@ -195,14 +195,17 @@ public class EventListen implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (!npcRegistry.isNPC(event.getRightClicked()))
+        NPC npc = npcRegistry.getNPC(event.getRightClicked());
+        if (npc == null)
             return;
 
-        // Call target event for NPCs
-        Bukkit.getPluginManager().callEvent(
-                new EntityTargetEvent(event.getRightClicked(), event.getPlayer(), TargetReason.CUSTOM));
+        Player player = event.getPlayer();
+
+        // Call right-click event
+        NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
+        Bukkit.getPluginManager().callEvent(rightClickEvent);
     }
 
     @EventHandler(ignoreCancelled = true)
