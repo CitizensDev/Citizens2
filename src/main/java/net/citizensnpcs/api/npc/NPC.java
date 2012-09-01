@@ -142,4 +142,6 @@ public interface NPC {
      * @return Whether this NPC was able to spawn at the location
      */
     public boolean spawn(Location location);
+
+    public static final String DEFAULT_PROTECTED_METADATA = "protected";
 }

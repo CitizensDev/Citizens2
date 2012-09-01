@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.util.Vector;
 
 public class NPCPushEvent extends NPCEvent implements Cancellable {
-    private boolean cancelled = true;
+    private boolean cancelled;
     private Vector collisionVector;
 
     public NPCPushEvent(NPC npc, Vector vector) {

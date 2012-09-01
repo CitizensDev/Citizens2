@@ -13,7 +13,6 @@ public class NPCCombustEvent extends NPCEvent implements Cancellable {
     public NPCCombustEvent(EntityCombustEvent event, NPC npc) {
         super(npc);
         this.event = event;
-        event.setCancelled(true);
     }
 
     /**

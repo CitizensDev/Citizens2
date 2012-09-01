@@ -13,7 +13,6 @@ public class NPCDamageEvent extends NPCEvent implements Cancellable {
     public NPCDamageEvent(NPC npc, EntityDamageEvent event) {
         super(npc);
         this.event = event;
-        event.setCancelled(true);
     }
 
     public DamageCause getCause() {
