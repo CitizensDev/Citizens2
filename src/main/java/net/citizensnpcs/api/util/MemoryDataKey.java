@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.util;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -11,19 +12,18 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 public class MemoryDataKey extends DataKey {
+    private String name;
     private final String path;
+
     private final ConfigurationSection root;
-    private final ConfigurationSection section;
 
     public MemoryDataKey() {
-        section = new MemoryConfiguration();
-        root = section;
+        root = new MemoryConfiguration();
         path = "";
     }
 
-    private MemoryDataKey(ConfigurationSection configurationSection, String path) {
-        section = configurationSection;
-        root = section.getRoot();
+    private MemoryDataKey(ConfigurationSection root, String path) {
+        this.root = root;
         this.path = path;
     }
 
@@ -63,11 +63,7 @@ public class MemoryDataKey extends DataKey {
     @Override
     public MemoryDataKey getRelative(String relative) {
         String key = getKeyFor(relative);
-        ConfigurationSection sub = root.getConfigurationSection(key);
-        if (sub == null)
-            sub = root.createSection(key);
-
-        return new MemoryDataKey(sub, key);
+        return new MemoryDataKey(root, key);
     }
 
     @Override
@@ -77,12 +73,14 @@ public class MemoryDataKey extends DataKey {
 
     @Override
     public Iterable<DataKey> getSubKeys() {
-        Set<String> keys = section.getKeys(false);
+        ConfigurationSection head = root.getConfigurationSection(path);
+        if (head == null)
+            return Collections.emptyList();
+        Set<String> keys = head.getKeys(false);
         return Iterables.transform(keys, new Function<String, DataKey>() {
             @Override
             public DataKey apply(@Nullable String input) {
-                ConfigurationSection sub = section.getConfigurationSection(input);
-                return sub == null ? null : new MemoryDataKey(sub, getKeyFor(input));
+                return new MemoryDataKey(root, getKeyFor(input));
             }
         });
     }
@@ -94,7 +92,11 @@ public class MemoryDataKey extends DataKey {
 
     @Override
     public String name() {
-        return section.getName();
+        if (name == null) {
+            int idx = path.lastIndexOf('.');
+            name = idx == -1 ? path : path.substring(idx + 1, path.length());
+        }
+        return name;
     }
 
     @Override
