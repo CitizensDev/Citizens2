@@ -87,15 +87,20 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     private void initialise(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
-        NetworkManager netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
-            @Override
-            public boolean a() {
-                return false;
-            }
-        }, server.E().getPrivate());
+        NetworkManager netMgr = null;
+        try {
+            netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
+                @Override
+                public boolean a() {
+                    return false;
+                }
+            }, server.E().getPrivate());
+            netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
+            netMgr.a(netServerHandler);
+        } catch (IOException e) {
+            // swallow
+        }
 
-        netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
-        netMgr.a(netServerHandler);
         W = STEP_HEIGHT; // fix moving up slabs and steps
         getNavigation().e(true);
 
