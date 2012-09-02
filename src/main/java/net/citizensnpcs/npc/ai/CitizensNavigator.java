@@ -54,7 +54,7 @@ public class CitizensNavigator implements Navigator {
 
     @Override
     public NavigatorParameters getLocalParameters() {
-        if (localParams == defaultParams)
+        if (!isNavigating())
             throw new IllegalStateException("not navigating");
         return localParams;
     }

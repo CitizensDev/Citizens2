@@ -139,7 +139,7 @@ public class EventListen implements Listener {
         npc.despawn();
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntitySpawn(CreatureSpawnEvent event) {
         if (event.isCancelled() && npcRegistry.isNPC(event.getEntity()))
             event.setCancelled(false);
