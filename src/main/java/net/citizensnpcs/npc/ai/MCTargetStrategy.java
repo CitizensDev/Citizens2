@@ -28,6 +28,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         this.navigation = this.handle.getNavigation();
         this.aggro = aggro;
         this.parameters = params;
+        this.navigation.a(parameters.avoidWater());
     }
 
     private boolean canAttack() {
@@ -88,6 +89,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         return false;
     }
+
     private static final int ATTACK_DELAY_TICKS = 20;
 
     private static final double ATTACK_DISTANCE = 1.75 * 1.75;

@@ -160,12 +160,13 @@ public class CitizensNavigator implements Navigator {
         NMS.updatePathfindingRange(npc, localParams.range());
     }
 
+    int lastX, lastY, lastZ;
+
     private boolean updateStationaryStatus() {
         if (localParams.stationaryTicks() < 0)
-            return false;
+            localParams.stationaryTicks(100);// return false;
         EntityLiving handle = npc.getHandle();
-        if ((int) handle.lastX == (int) handle.locX && (int) handle.lastY == (int) handle.locY
-                && (int) handle.lastZ == (int) handle.locZ) {
+        if (lastX == (int) handle.locX && lastY == (int) handle.locY && lastZ == (int) handle.locZ) {
             if (++stationaryTicks >= localParams.stationaryTicks()) {
                 StuckAction action = localParams.stuckAction();
                 if (action != null)
@@ -176,6 +177,9 @@ public class CitizensNavigator implements Navigator {
             }
         } else
             stationaryTicks = 0;
+        lastX = (int) handle.locX;
+        lastY = (int) handle.locY;
+        lastZ = (int) handle.locZ;
         return false;
     }
 
