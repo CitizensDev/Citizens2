@@ -112,6 +112,7 @@ public class CitizensNavigator implements Navigator {
             cancelNavigation();
             return;
         }
+        localParams = defaultParams.clone();
         PathStrategy newStrategy = new MCTargetStrategy(npc, target, aggressive, localParams);
         switchStrategyTo(newStrategy);
     }
@@ -124,6 +125,7 @@ public class CitizensNavigator implements Navigator {
             cancelNavigation();
             return;
         }
+        localParams = defaultParams.clone();
         PathStrategy newStrategy = new MCNavigationStrategy(npc, target, localParams);
         switchStrategyTo(newStrategy);
     }
