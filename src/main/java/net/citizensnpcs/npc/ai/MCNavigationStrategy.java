@@ -42,6 +42,11 @@ public class MCNavigationStrategy implements PathStrategy {
     }
 
     @Override
+    public void stop() {
+        navigation.g();
+    }
+
+    @Override
     public boolean update() {
         navigation.a(parameters.avoidWater());
         navigation.a(parameters.speed());

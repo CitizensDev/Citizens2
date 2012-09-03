@@ -9,5 +9,7 @@ public interface PathStrategy {
 
     TargetType getTargetType();
 
+    void stop();
+
     boolean update();
 }

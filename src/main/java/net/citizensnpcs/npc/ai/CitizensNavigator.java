@@ -129,6 +129,8 @@ public class CitizensNavigator implements Navigator {
     }
 
     private void stopNavigating() {
+        if (executing != null)
+            executing.stop();
         executing = null;
         localParams = defaultParams;
     }
