@@ -37,7 +37,6 @@ import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.Messaging;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -140,7 +139,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC getNPC(Entity entity) {
-        Validate.notNull(entity);
+        if (entity == null)
+            return null;
         net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
         return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
     }
