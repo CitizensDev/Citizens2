@@ -35,7 +35,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
                 // set the head yaw in another tick - if done immediately,
                 // minecraft will not update it.
             }
-        });
+        }, 1);
         handle.getBukkitEntity().setSleepingIgnored(true);
         return handle;
     }
