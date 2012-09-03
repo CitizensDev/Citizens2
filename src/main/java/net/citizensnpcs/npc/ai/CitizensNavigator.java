@@ -133,12 +133,14 @@ public class CitizensNavigator implements Navigator {
             executing.stop();
         executing = null;
         localParams = defaultParams;
+        stationaryTicks = 0;
     }
 
     private void switchStrategyTo(PathStrategy newStrategy) {
         if (executing != null)
             Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
         executing = newStrategy;
+        stationaryTicks = 0;
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
     }
 
@@ -161,15 +163,18 @@ public class CitizensNavigator implements Navigator {
             return false;
         EntityLiving handle = npc.getHandle();
         if ((int) handle.lastX == (int) handle.locX && (int) handle.lastY == (int) handle.locY
-                && (int) handle.lastZ == (int) handle.locZ
-                && ++stationaryTicks >= localParams.stationaryTicks()) {
-            StuckAction action = localParams.stuckAction();
-            if (action != null)
-                action.run(npc, this);
-            Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, CancelReason.STUCK));
-            stopNavigating();
-        }
-        return true;
+                && (int) handle.lastZ == (int) handle.locZ) {
+            if (++stationaryTicks >= localParams.stationaryTicks()) {
+                StuckAction action = localParams.stuckAction();
+                if (action != null)
+                    action.run(npc, this);
+                Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, CancelReason.STUCK));
+                stopNavigating();
+                return true;
+            }
+        } else
+            stationaryTicks = 0;
+        return false;
     }
 
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;
