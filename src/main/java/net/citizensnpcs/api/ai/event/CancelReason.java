@@ -3,5 +3,6 @@ package net.citizensnpcs.api.ai.event;
 public enum CancelReason {
     PLUGIN,
     REPLACE,
-    STUCK;
+    STUCK,
+    TARGET_DIED;
 }

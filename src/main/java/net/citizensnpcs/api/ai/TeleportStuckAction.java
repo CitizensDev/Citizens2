@@ -9,7 +9,7 @@ public class TeleportStuckAction implements StuckAction {
 
     @Override
     public void run(NPC npc, Navigator navigator) {
-        if (!npc.isSpawned())
+        if (!npc.isSpawned() || navigator.getTargetType() != TargetType.LOCATION)
             return;
         npc.getBukkitEntity().teleport(navigator.getTargetAsLocation());
     }
