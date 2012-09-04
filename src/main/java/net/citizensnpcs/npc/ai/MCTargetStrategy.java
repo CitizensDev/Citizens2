@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.ai;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
+import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityLiving;
@@ -18,6 +19,7 @@ import org.bukkit.entity.LivingEntity;
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final boolean aggro;
     private int attackTicks;
+    private CancelReason cancelReason;
     private final EntityLiving handle, target;
     private final Navigation navigation;
     private final NavigatorParameters parameters;
@@ -39,6 +41,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
     private double distanceSquared() {
         return handle.getBukkitEntity().getLocation().distanceSquared(target.getBukkitEntity().getLocation());
+    }
+
+    @Override
+    public CancelReason getCancelReason() {
+        return cancelReason;
     }
 
     @Override
@@ -68,8 +75,12 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
     @Override
     public boolean update() {
-        if (target == null || target.dead)
+        if (target == null)
             return true;
+        if (target.dead) {
+            cancelReason = CancelReason.TARGET_DIED;
+            return true;
+        }
         navigation.a(target, parameters.speed());
         handle.getControllerLook().a(target, 10.0F, handle.bf());
         if (aggro && canAttack()) {

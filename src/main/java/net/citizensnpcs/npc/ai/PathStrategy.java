@@ -1,10 +1,13 @@
 package net.citizensnpcs.npc.ai;
 
 import net.citizensnpcs.api.ai.TargetType;
+import net.citizensnpcs.api.ai.event.CancelReason;
 
 import org.bukkit.Location;
 
 public interface PathStrategy {
+    CancelReason getCancelReason();
+
     Location getTargetAsLocation();
 
     TargetType getTargetType();
