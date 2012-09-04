@@ -60,22 +60,24 @@ public class NBTStorage implements Storage {
     }
 
     @Override
-    public void load() {
+    public boolean load() {
         NBTInputStream stream = null;
         try {
             stream = new NBTInputStream(new GZIPInputStream(new FileInputStream(file)));
             Tag tag = stream.readTag();
             if (tag == null || !(tag instanceof CompoundTag)) {
-                return;
+                return false;
             } else {
                 root.clear();
                 root.putAll(((CompoundTag) tag).getValue());
             }
         } catch (IOException ex) {
             ex.printStackTrace();
+            return false;
         } finally {
             Closeables.closeQuietly(stream);
         }
+        return true;
     }
 
     @Override

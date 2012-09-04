@@ -13,8 +13,10 @@ public interface Storage {
 
     /**
      * Loads data from a file or other location.
+     * 
+     * @return Whether the load was successful
      */
-    public void load();
+    public boolean load();
 
     /**
      * Saves the in-memory aspects of the storage to disk.

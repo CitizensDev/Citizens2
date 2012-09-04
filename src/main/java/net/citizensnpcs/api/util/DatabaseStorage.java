@@ -188,7 +188,7 @@ public class DatabaseStorage implements Storage {
     }
 
     @Override
-    public void load() {
+    public boolean load() {
         tables.clear();
         traverseCache.clear();
         Connection conn = getConnection();
@@ -220,7 +220,9 @@ public class DatabaseStorage implements Storage {
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     @Override

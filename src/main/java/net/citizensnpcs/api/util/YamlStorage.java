@@ -44,11 +44,13 @@ public class YamlStorage implements Storage {
     }
 
     @Override
-    public void load() {
+    public boolean load() {
         try {
             config.load(file);
+            return true;
         } catch (Exception ex) {
             ex.printStackTrace();
+            return false;
         }
     }
 
