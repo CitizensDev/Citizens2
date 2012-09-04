@@ -194,6 +194,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         config = new Settings(getDataFolder());
 
         setupStorage();
+        if (!saves.load()) {
+            saves = null;
+            Messaging.severeF("Unable to load saves, disabling...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         npcRegistry = new CitizensNPCRegistry(saves);
         traitFactory = new CitizensTraitFactory();
@@ -270,6 +276,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     public void save() {
+        if (saves == null)
+            return;
         for (NPC npc : npcRegistry)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
 
@@ -292,7 +300,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     // TODO: refactor
     private void setupNPCs() {
-        saves.load();
         int created = 0, spawned = 0;
         for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
