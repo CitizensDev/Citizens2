@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.ai;
 
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
+import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.Navigation;
@@ -9,6 +10,7 @@ import net.minecraft.server.Navigation;
 import org.bukkit.Location;
 
 public class MCNavigationStrategy implements PathStrategy {
+    private CancelReason cancelReason;
     private final Navigation navigation;
     private final NavigatorParameters parameters;
     private final Location target;
@@ -25,6 +27,12 @@ public class MCNavigationStrategy implements PathStrategy {
         navigation = npc.getHandle().getNavigation();
         navigation.a(parameters.avoidWater());
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), parameters.speed());
+        if (navigation.f())
+            cancelReason = CancelReason.STUCK;
+    }
+
+    public CancelReason getCancelReason() {
+        return cancelReason;
     }
 
     @Override

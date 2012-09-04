@@ -25,8 +25,10 @@ public class CitizensNavigator implements Navigator {
             .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt());
     private PathStrategy executing;
+    int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
     private final CitizensNPC npc;
+
     private int stationaryTicks;
 
     private boolean updatedAvoidWater = false;
@@ -37,9 +39,7 @@ public class CitizensNavigator implements Navigator {
 
     @Override
     public void cancelNavigation() {
-        if (isNavigating())
-            Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, CancelReason.PLUGIN));
-        stopNavigating();
+        stopNavigating(CancelReason.PLUGIN);
     }
 
     @Override
@@ -138,6 +138,18 @@ public class CitizensNavigator implements Navigator {
         stationaryTicks = 0;
     }
 
+    private void stopNavigating(CancelReason reason) {
+        if (!isNavigating())
+            return;
+        if (reason == CancelReason.STUCK) {
+            StuckAction action = localParams.stuckAction();
+            if (action != null)
+                action.run(npc, this);
+        }
+        Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, reason));
+        stopNavigating();
+    }
+
     private void switchStrategyTo(PathStrategy newStrategy) {
         if (executing != null)
             Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
@@ -150,7 +162,11 @@ public class CitizensNavigator implements Navigator {
         if (!isNavigating() || !npc.isSpawned() || updateStationaryStatus())
             return;
         boolean finished = executing.update();
-        if (finished) {
+        if (!finished)
+            return;
+        if (executing.getCancelReason() != null)
+            stopNavigating(executing.getCancelReason());
+        else {
             Bukkit.getPluginManager().callEvent(new NavigationCompleteEvent(this));
             stopNavigating();
         }
@@ -160,19 +176,13 @@ public class CitizensNavigator implements Navigator {
         NMS.updatePathfindingRange(npc, localParams.range());
     }
 
-    int lastX, lastY, lastZ;
-
     private boolean updateStationaryStatus() {
         if (localParams.stationaryTicks() < 0)
             localParams.stationaryTicks(100);// return false;
         EntityLiving handle = npc.getHandle();
         if (lastX == (int) handle.locX && lastY == (int) handle.locY && lastZ == (int) handle.locZ) {
             if (++stationaryTicks >= localParams.stationaryTicks()) {
-                StuckAction action = localParams.stuckAction();
-                if (action != null)
-                    action.run(npc, this);
-                Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, CancelReason.STUCK));
-                stopNavigating();
+                stopNavigating(CancelReason.STUCK);
                 return true;
             }
         } else
