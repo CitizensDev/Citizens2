@@ -408,5 +408,5 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
     }
 
-    private static final String COMPATIBLE_MC_VERSION = "1.3.2";
+    private static final String COMPATIBLE_MC_VERSION = "1.3";
 }
