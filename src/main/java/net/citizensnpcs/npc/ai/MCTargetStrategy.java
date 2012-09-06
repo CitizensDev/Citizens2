@@ -75,12 +75,12 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
     @Override
     public boolean update() {
-        if (target == null)
-            return true;
-        if (target.dead) {
+        if (target == null || target.dead) {
             cancelReason = CancelReason.TARGET_DIED;
             return true;
         }
+        if (cancelReason != null)
+            return true;
         navigation.a(target, parameters.speed());
         handle.getControllerLook().a(target, 10.0F, handle.bf());
         if (aggro && canAttack()) {

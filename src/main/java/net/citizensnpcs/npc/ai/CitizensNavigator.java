@@ -28,9 +28,7 @@ public class CitizensNavigator implements Navigator {
     int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
     private final CitizensNPC npc;
-
     private int stationaryTicks;
-
     private boolean updatedAvoidWater = false;
 
     public CitizensNavigator(CitizensNPC npc) {

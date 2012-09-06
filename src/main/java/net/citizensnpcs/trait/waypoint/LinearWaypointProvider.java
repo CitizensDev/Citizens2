@@ -160,6 +160,8 @@ public class LinearWaypointProvider implements WaypointProvider {
     public void load(DataKey key) {
         for (DataKey root : key.getRelative("points").getIntegerSubKeys()) {
             root = root.getRelative("location");
+            if (Bukkit.getWorld(root.getString("world")) == null)
+                continue;
             waypoints.add(new Waypoint(new Location(Bukkit.getWorld(root.getString("world")), root
                     .getDouble("x"), root.getDouble("y"), root.getDouble("z"), (float) root.getDouble("yaw",
                     0), (float) root.getDouble("pitch", 0))));
