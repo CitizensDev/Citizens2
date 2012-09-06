@@ -31,6 +31,7 @@ public class MCNavigationStrategy implements PathStrategy {
             cancelReason = CancelReason.STUCK;
     }
 
+    @Override
     public CancelReason getCancelReason() {
         return cancelReason;
     }
@@ -52,6 +53,8 @@ public class MCNavigationStrategy implements PathStrategy {
 
     @Override
     public boolean update() {
+        if (cancelReason != null)
+            return true;
         navigation.a(parameters.avoidWater());
         navigation.a(parameters.speed());
         return navigation.f();

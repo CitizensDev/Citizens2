@@ -135,7 +135,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         bt *= 0.9F;
 
         float prev = aG;
-        aG *= bs();
+        aG *= bs() * npc.getNavigator().getDefaultParameters().speed();
         e(br, bs); // movement method
         aG = prev;
         as = yaw; // update head yaw to match entity yaw
