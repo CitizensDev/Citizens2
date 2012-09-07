@@ -77,7 +77,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (npc == null)
             return;
         Navigation navigation = getNavigation();
-        if (!navigation.f()) {
+        if (!navigation.f() || npc.getNavigator().isNavigating()) {
             navigation.e();
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0) {

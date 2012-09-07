@@ -54,8 +54,7 @@ public class TraitCommands {
             added.add(StringHelper.wrap(traitName));
         }
         if (added.size() > 0)
-            Messaging
-                    .sendF(sender, ChatColor.GREEN + "Added %s successfully.", Joiner.on(", ").join(removed));
+            Messaging.sendF(sender, ChatColor.GREEN + "Added %s successfully.", Joiner.on(", ").join(added));
         if (removed.size() > 0)
             Messaging.sendF(sender, ChatColor.GREEN + "Removed %s successfully.",
                     Joiner.on(", ").join(removed));

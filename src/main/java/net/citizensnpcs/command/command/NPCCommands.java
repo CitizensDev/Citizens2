@@ -204,15 +204,18 @@ public class NPCCommands {
         }
 
         if (args.hasValueFlag("trait")) {
-            msg += " with traits ";
             Iterable<String> parts = Splitter.on(",").trimResults().split(args.getFlag("trait"));
+            StringBuilder builder = new StringBuilder();
             for (String tr : parts) {
-                Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(tr);
-                if (clazz == null)
+                Trait trait = CitizensAPI.getTraitFactory().getTrait(tr);
+                if (trait == null)
                     continue;
-                npc.addTrait(clazz);
-                msg += StringHelper.wrap(tr) + ", ";
+                npc.addTrait(trait);
+                builder.append(StringHelper.wrap(tr) + ", ");
             }
+            if (builder.length() > 0)
+                builder.delete(builder.length() - 2, builder.length());
+            msg += " with traits " + builder.toString();
         }
 
         if (args.hasValueFlag("b")) {
@@ -336,6 +339,25 @@ public class NPCCommands {
         String msg = StringHelper.wrap(npc.getName()) + " will "
                 + (npc.getTrait(LookClose.class).toggle() ? "now rotate" : "no longer rotate");
         Messaging.send(sender, msg + " when a player is nearby.");
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "mount",
+            desc = "Mounts a controllable NPC",
+            modifiers = { "mount" },
+            min = 1,
+            max = 1,
+            permission = "npc.controllable")
+    public void mount(CommandContext args, Player player, NPC npc) {
+        boolean enabled = npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled();
+        if (!enabled) {
+            Messaging.send(player, StringHelper.wrap(npc.getName()) + " is not controllable.");
+            return;
+        }
+        boolean success = npc.getTrait(Controllable.class).mount(player);
+        if (!success)
+            Messaging.sendF(player, ChatColor.GREEN + "Couldn't mount %s.", StringHelper.wrap(npc.getName()));
     }
 
     @Command(
@@ -554,7 +576,8 @@ public class NPCCommands {
         float newSpeed = (float) args.getDouble(1);
         npc.getNavigator().getDefaultParameters().speedModifier(newSpeed);
 
-        Messaging.sendF(sender, ChatColor.GREEN + "NPC speed modifier set to %f.", newSpeed);
+        Messaging.sendF(sender, ChatColor.GREEN + "NPC speed modifier set to %s.",
+                StringHelper.wrap(newSpeed));
     }
 
     @Command(
