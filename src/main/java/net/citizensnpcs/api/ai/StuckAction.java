@@ -10,6 +10,7 @@ public interface StuckAction {
      *            The stuck {@link NPC}
      * @param navigator
      *            The navigator
+     * @return Whether to continue navigation
      */
-    void run(NPC npc, Navigator navigator);
+    boolean run(NPC npc, Navigator navigator);
 }
