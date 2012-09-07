@@ -12,7 +12,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<craftbukkit.version>LATEST</craftbukkit.version>
-		<citizensapi.version>2.0</citizensapi.version>
+		<citizensapi.version>LATEST</citizensapi.version>
 		<vault.version>1.2.18-SNAPSHOT</vault.version>
 		<build.number>Unknown</build.number>
 	</properties>
