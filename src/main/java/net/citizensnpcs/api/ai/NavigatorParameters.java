@@ -45,6 +45,17 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
+     * Modifieds the given speed value based on the current parameters.
+     * 
+     * @param toModify
+     *            The speed value to modify
+     * @return The modified speed
+     */
+    public float modifiedSpeed(float toModify) {
+        return toModify * speedModifier();
+    }
+
+    /**
      * @return The pathfinding range of the navigator in blocks.
      * @see #range(float)
      */
@@ -70,7 +81,7 @@ public class NavigatorParameters implements Cloneable {
      *         multiplied by {@link #speedModifier()}
      */
     public float speed() {
-        return speed * speedModifier;
+        return modifiedSpeed(speed);
     }
 
     /**
@@ -128,10 +139,23 @@ public class NavigatorParameters implements Cloneable {
         return this;
     }
 
+    /**
+     * Gets the {@link StuckAction} of these parameters. This will be run when
+     * the navigation is stuck and must either be fixed up or cancelled.
+     * 
+     * @return The current stuck action
+     */
     public StuckAction stuckAction() {
         return stuckAction;
     }
 
+    /**
+     * Sets the {@link StuckAction} of the parameters.
+     * 
+     * @param action
+     *            The new stuck action
+     * @see #stuckAction()
+     */
     public NavigatorParameters stuckAction(StuckAction action) {
         stuckAction = action;
         return this;
