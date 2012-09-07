@@ -141,8 +141,13 @@ public class CitizensNavigator implements Navigator {
             return;
         if (reason == CancelReason.STUCK) {
             StuckAction action = localParams.stuckAction();
-            if (action != null)
-                action.run(npc, this);
+            if (action != null) {
+                boolean shouldContinue = action.run(npc, this);
+                if (shouldContinue) {
+                    stationaryTicks = 0;
+                    return;
+                }
+            }
         }
         Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, reason));
         stopNavigating();
@@ -175,7 +180,7 @@ public class CitizensNavigator implements Navigator {
     }
 
     private boolean updateStationaryStatus() {
-        if (localParams.stationaryTicks() < 0 || executing.getTargetType() == TargetType.ENTITY)
+        if (localParams.stationaryTicks() < 0)
             return false;
         EntityLiving handle = npc.getHandle();
         if (lastX == (int) handle.locX && lastY == (int) handle.locY && lastZ == (int) handle.locZ) {
