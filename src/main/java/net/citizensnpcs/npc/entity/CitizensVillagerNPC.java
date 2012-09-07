@@ -66,7 +66,8 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            Util.callCollisionEvent(npc, entity);
+            if (npc != null)
+                Util.callCollisionEvent(npc, entity);
         }
 
         @Override
@@ -75,8 +76,11 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
                 super.g(x, y, z);
                 return;
             }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0)
+            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+                    super.g(x, y, z);
                 return;
+            }
             Vector vector = new Vector(x, y, z);
             NPCPushEvent event = Util.callPushEvent(npc, vector);
             if (!event.isCancelled()) {
