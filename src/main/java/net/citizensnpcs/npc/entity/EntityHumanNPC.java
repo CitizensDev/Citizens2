@@ -77,10 +77,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (npc == null)
             return;
         Navigation navigation = getNavigation();
-        if (!navigation.f() || npc.getNavigator().isNavigating()) {
+        if (!navigation.f()) {
             navigation.e();
             moveOnCurrentHeading();
-        } else if (motX != 0 || motZ != 0 || motY != 0) {
+        } else if (!npc.getNavigator().isNavigating() && (motX != 0 || motZ != 0 || motY != 0)) {
             e(0, 0);// is this necessary? it does gravity/controllable but
             // sometimes players sink into the ground
         }
