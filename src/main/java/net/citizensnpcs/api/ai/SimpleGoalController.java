@@ -137,7 +137,12 @@ public class SimpleGoalController implements GoalController {
             for (int j = i - 1; j >= 0; --j) {
                 SimpleGoalEntry next = possibleGoals.get(j);
                 if (next.priority != entry.priority) {
-                    int ran = (int) Math.floor(Math.random() * (i + 1) + (j + 1));
+                    int ran = (int) Math.floor(Math.random() * i + (j + 1));
+                    if (ran >= possibleGoals.size() || ran < 0) {
+                        System.err.println("[Citizens]: bug - inform fullwall");
+                        setupExecution(entry);
+                        break;
+                    }
                     SimpleGoalEntry selected = possibleGoals.get(ran);
                     if (selected.priority != entry.priority) {
                         System.err.println("[Citizens]: bug - inform fullwall");
