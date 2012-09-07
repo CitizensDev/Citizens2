@@ -53,8 +53,6 @@ public class CommandManager {
 
     private final Set<Method> serverCommands = new HashSet<Method>();
 
-    private final Map<String, List<Command>> subCommands = new HashMap<String, List<Command>>();
-
     /*
      * Attempt to execute a command. This version takes a separate command name
      * (for the root command) and then a list of following arguments.
@@ -168,17 +166,59 @@ public class CommandManager {
         return cmds.toArray(new String[cmds.size()]);
     }
 
-    public List<Command> getCommands(String command) {
-        if (subCommands.containsKey(command))
-            return subCommands.get(command);
-        List<Command> cmds = new ArrayList<Command>();
+    public List<CommandInfo> getCommands(String command) {
+        List<CommandInfo> cmds = new ArrayList<CommandInfo>();
         for (Entry<String, Method> entry : commands.entrySet()) {
-            if (!entry.getKey().split(" ")[0].equalsIgnoreCase(command)
-                    || !entry.getValue().isAnnotationPresent(Command.class))
+            if (!entry.getKey().split(" ")[0].equalsIgnoreCase(command))
                 continue;
-            cmds.add(entry.getValue().getAnnotation(Command.class));
+            Command commandAnnotation = entry.getValue().getAnnotation(Command.class);
+            if (commandAnnotation == null)
+                continue;
+            cmds.add(new CommandInfo(commandAnnotation, requirements.get(entry.getValue())));
         }
         return cmds;
+    }
+
+    public static class CommandInfo {
+        private final Command commandAnnotation;
+        private final Requirements requirements;
+
+        public CommandInfo(Command commandAnnotation, Requirements requirements) {
+            this.commandAnnotation = commandAnnotation;
+            this.requirements = requirements;
+        }
+
+        public Command getCommandAnnotation() {
+            return commandAnnotation;
+        }
+
+        public Requirements getRequirements() {
+            return requirements;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 + ((commandAnnotation == null) ? 0 : commandAnnotation.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            CommandInfo other = (CommandInfo) obj;
+            if (commandAnnotation == null) {
+                if (other.commandAnnotation != null) {
+                    return false;
+                }
+            } else if (!commandAnnotation.equals(other.commandAnnotation)) {
+                return false;
+            }
+            return true;
+        }
     }
 
     // Get the usage string for a command.
