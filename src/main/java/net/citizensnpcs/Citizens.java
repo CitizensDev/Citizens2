@@ -24,6 +24,7 @@ import net.citizensnpcs.api.util.NBTStorage;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.command.CommandManager;
+import net.citizensnpcs.command.CommandManager.CommandInfo;
 import net.citizensnpcs.command.Injector;
 import net.citizensnpcs.command.command.AdminCommands;
 import net.citizensnpcs.command.command.EditorCommands;
@@ -94,7 +95,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
     }
 
-    public Iterable<net.citizensnpcs.command.Command> getCommands(String base) {
+    public Iterable<CommandInfo> getCommands(String base) {
         return commands.getCommands(base);
     }
 

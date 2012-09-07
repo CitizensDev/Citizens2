@@ -1,19 +1,22 @@
 package net.citizensnpcs.command.command;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
+import net.citizensnpcs.command.CommandManager.CommandInfo;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Paginator;
 
 import org.bukkit.command.CommandSender;
+
+import com.google.common.collect.Sets;
 
 @Requirements
 public class HelpCommands {
@@ -35,26 +38,31 @@ public class HelpCommands {
     public void citizensHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         Paginator paginator = new Paginator().header("Citizens Help");
-        for (String line : getLines(sender, "citizens"))
+        for (String line : getLines(sender, npc, "citizens"))
             paginator.addLine(line);
         if (!paginator.sendPage(sender, page))
             throw new CommandException("The page '" + page + "' does not exist.");
     }
 
-    private List<String> getLines(CommandSender sender, String baseCommand) {
+    private List<String> getLines(CommandSender sender, NPC npc, String baseCommand) {
         // Ensures that commands with multiple modifiers are only added once
-        Set<Command> cmds = new HashSet<Command>();
+        Set<CommandInfo> processed = Sets.newHashSet();
         List<String> lines = new ArrayList<String>();
-        for (Command cmd : plugin.getCommands(baseCommand)) {
-            if (cmds.contains(cmd)
+        for (CommandInfo info : plugin.getCommands(baseCommand)) {
+            Command command = info.getCommandAnnotation();
+            if (processed.contains(info)
                     || (!sender.hasPermission("citizens.admin") && !sender.hasPermission("citizens."
-                            + cmd.permission())))
+                            + command.permission())))
                 continue;
-
-            lines.add("<7>/<c>" + cmd.aliases()[0] + (cmd.usage().isEmpty() ? "" : " " + cmd.usage())
-                    + " <7>- <e>" + cmd.desc());
-            if (cmd.modifiers().length > 1)
-                cmds.add(cmd);
+            Requirements requirements = info.getRequirements();
+            if (requirements != null && npc != null) {
+                if (requirements.ownership() && !npc.getTrait(Owner.class).isOwnedBy(sender))
+                    continue;
+            }
+            lines.add("<7>/<c>" + command.aliases()[0]
+                    + (command.usage().isEmpty() ? "" : " " + command.usage()) + " <7>- <e>" + command.desc());
+            if (command.modifiers().length > 1)
+                processed.add(info);
         }
         return lines;
     }
@@ -71,7 +79,7 @@ public class HelpCommands {
     public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         Paginator paginator = new Paginator().header("NPC Help");
-        for (String line : getLines(sender, "npc"))
+        for (String line : getLines(sender, npc, "npc"))
             paginator.addLine(line);
         if (!paginator.sendPage(sender, page))
             throw new CommandException("The page '" + page + "' does not exist.");
@@ -89,7 +97,7 @@ public class HelpCommands {
     public void scriptHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         Paginator paginator = new Paginator().header("Script Help");
-        for (String line : getLines(sender, "script"))
+        for (String line : getLines(sender, npc, "script"))
             paginator.addLine(line);
         if (!paginator.sendPage(sender, page))
             throw new CommandException("The page '" + page + "' does not exist.");
