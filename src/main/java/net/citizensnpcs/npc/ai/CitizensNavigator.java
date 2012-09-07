@@ -175,8 +175,8 @@ public class CitizensNavigator implements Navigator {
     }
 
     private boolean updateStationaryStatus() {
-        if (localParams.stationaryTicks() < 0)
-            localParams.stationaryTicks(100);// return false;
+        if (localParams.stationaryTicks() < 0 || executing.getTargetType() == TargetType.ENTITY)
+            return false;
         EntityLiving handle = npc.getHandle();
         if (lastX == (int) handle.locX && lastY == (int) handle.locY && lastZ == (int) handle.locZ) {
             if (++stationaryTicks >= localParams.stationaryTicks()) {
