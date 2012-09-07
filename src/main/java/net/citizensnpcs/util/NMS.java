@@ -26,6 +26,7 @@ public class NMS {
     private static Map<Class<? extends Entity>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Integer, Class<? extends Entity>> ENTITY_INT_TO_CLASS;
     private static Field GOAL_FIELD;
+    private static Field LAND_SPEED_MODIFIER_FIELD;
     private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
     private static Field PATHFINDING_RANGE;
 
@@ -89,6 +90,16 @@ public class NMS {
         throw new IllegalArgumentException("unable to find valid entity superclass");
     }
 
+    public static void setLandSpeedModifier(EntityLiving handle, float speed) {
+        if (LAND_SPEED_MODIFIER_FIELD == null)
+            return;
+        try {
+            LAND_SPEED_MODIFIER_FIELD.setFloat(handle, speed);
+        } catch (IllegalArgumentException e) {
+        } catch (IllegalAccessException e) {
+        }
+    }
+
     public static void stopNetworkThreads(NetworkManager manager) {
         if (THREAD_STOPPER == null)
             return;
@@ -133,6 +144,7 @@ public class NMS {
         MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
         MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
 
+        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bB");
         SPEED_FIELD = getField(EntityLiving.class, "bw");
         PATHFINDING_RANGE = getField(Navigation.class, "e");
         GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
