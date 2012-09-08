@@ -171,7 +171,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
-            save();
+            save(true);
             despawnNPCs();
             npcRegistry = null;
         }
@@ -276,12 +276,16 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
 
-    public void save() {
+    public void save(boolean immediate) {
         if (saves == null)
             return;
         for (NPC npc : npcRegistry)
             ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
 
+        if (immediate) {
+            saves.save();
+            return;
+        }
         new Thread() {
             @Override
             public void run() {
@@ -294,7 +298,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                save();
+                save(false);
             }
         });
     }

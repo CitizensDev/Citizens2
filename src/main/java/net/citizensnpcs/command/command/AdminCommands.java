@@ -52,15 +52,17 @@ public class AdminCommands {
 
     @Command(
             aliases = { "citizens" },
-            usage = "save",
+            usage = "save (-a)",
             desc = "Save NPCs",
             modifiers = { "save" },
             min = 1,
             max = 1,
+            flags = "a",
             permission = "admin")
     public void save(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, "<e>Saving Citizens...");
-        plugin.save();
+        boolean async = args.hasFlag('a');
+        plugin.save(!async);
         Messaging.send(sender, "<e>Citizens saved.");
     }
 }
