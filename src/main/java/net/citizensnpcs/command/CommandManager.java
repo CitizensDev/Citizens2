@@ -179,48 +179,6 @@ public class CommandManager {
         return cmds;
     }
 
-    public static class CommandInfo {
-        private final Command commandAnnotation;
-        private final Requirements requirements;
-
-        public CommandInfo(Command commandAnnotation, Requirements requirements) {
-            this.commandAnnotation = commandAnnotation;
-            this.requirements = requirements;
-        }
-
-        public Command getCommandAnnotation() {
-            return commandAnnotation;
-        }
-
-        public Requirements getRequirements() {
-            return requirements;
-        }
-
-        @Override
-        public int hashCode() {
-            return 31 + ((commandAnnotation == null) ? 0 : commandAnnotation.hashCode());
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
-                return false;
-            }
-            CommandInfo other = (CommandInfo) obj;
-            if (commandAnnotation == null) {
-                if (other.commandAnnotation != null) {
-                    return false;
-                }
-            } else if (!commandAnnotation.equals(other.commandAnnotation)) {
-                return false;
-            }
-            return true;
-        }
-    }
-
     // Get the usage string for a command.
     private String getUsage(String[] args, Command cmd) {
         StringBuilder command = new StringBuilder();
@@ -321,6 +279,48 @@ public class CommandManager {
 
     public void setInjector(Injector injector) {
         this.injector = injector;
+    }
+
+    public static class CommandInfo {
+        private final Command commandAnnotation;
+        private final Requirements requirements;
+
+        public CommandInfo(Command commandAnnotation, Requirements requirements) {
+            this.commandAnnotation = commandAnnotation;
+            this.requirements = requirements;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            CommandInfo other = (CommandInfo) obj;
+            if (commandAnnotation == null) {
+                if (other.commandAnnotation != null) {
+                    return false;
+                }
+            } else if (!commandAnnotation.equals(other.commandAnnotation)) {
+                return false;
+            }
+            return true;
+        }
+
+        public Command getCommandAnnotation() {
+            return commandAnnotation;
+        }
+
+        public Requirements getRequirements() {
+            return requirements;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 + ((commandAnnotation == null) ? 0 : commandAnnotation.hashCode());
+        }
     }
 
     // Logger for general errors.
