@@ -12,10 +12,10 @@ import org.bukkit.event.Listener;
 
 import com.google.common.base.Preconditions;
 
-public class NPCPayListener implements Listener {
+public class PaymentListener implements Listener {
     private final Economy provider;
 
-    public NPCPayListener(Economy provider) {
+    public PaymentListener(Economy provider) {
         Preconditions.checkNotNull(provider, "provider cannot be null");
         this.provider = provider;
     }
