@@ -362,7 +362,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "moveto (--x x --y y --z z --world world --pitch pitch --yaw yaw",
+            usage = "moveto (--x x --y y --z z --world world --pitch pitch --yaw yaw)",
             desc = "Teleports a NPC to a given location",
             modifiers = "moveto",
             min = 1,
