@@ -26,7 +26,7 @@ public class CitizensNavigator implements Navigator {
             .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt());
     private PathStrategy executing;
-    int lastX, lastY, lastZ;
+    private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
     private final CitizensNPC npc;
     private int stationaryTicks;
@@ -149,11 +149,10 @@ public class CitizensNavigator implements Navigator {
             StuckAction action = localParams.stuckAction();
             if (action != null) {
                 boolean shouldContinue = action.run(npc, this);
-                if (shouldContinue) {
-                    stationaryTicks = 0;
+                if (shouldContinue)
                     return;
-                }
             }
+            stationaryTicks = 0;
         }
         Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, reason));
         stopNavigating();
