@@ -622,4 +622,24 @@ public class NPCCommands {
         npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
         Messaging.send(player, StringHelper.wrap(npc.getName()) + " was teleported to your location.");
     }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "vulnerable (-t)",
+            desc = "Toggles an NPC's vulnerability",
+            modifiers = { "vulnerable" },
+            min = 1,
+            max = 1,
+            flags = "t",
+            permission = "npc.vulnerable")
+    public void vulnerable(CommandContext args, CommandSender sender, NPC npc) {
+        boolean vulnerable = !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+        if (args.hasFlag('t'))
+            npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
+        else
+            npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
+
+        Messaging.sendF(sender, ChatColor.GREEN + "%s is %s vulnerable.", StringHelper.wrap(npc.getName()),
+                vulnerable ? "now" : "no longer");
+    }
 }
