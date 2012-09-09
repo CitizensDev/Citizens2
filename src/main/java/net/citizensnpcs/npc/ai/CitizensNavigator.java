@@ -149,13 +149,18 @@ public class CitizensNavigator implements Navigator {
             StuckAction action = localParams.stuckAction();
             if (action != null) {
                 boolean shouldContinue = action.run(npc, this);
-                if (shouldContinue)
+                if (shouldContinue) {
+                    stationaryTicks = 0;
+                    executing.clearCancelReason();
                     return;
+                }
             }
-            stationaryTicks = 0;
         }
-        Bukkit.getPluginManager().callEvent(new NavigationCancelEvent(this, reason));
-        stopNavigating();
+        NavigationCancelEvent event = new NavigationCancelEvent(this, reason);
+        PathStrategy old = executing;
+        Bukkit.getPluginManager().callEvent(event);
+        if (old == executing)
+            stopNavigating();
     }
 
     private void switchStrategyTo(PathStrategy newStrategy) {
@@ -175,8 +180,11 @@ public class CitizensNavigator implements Navigator {
         if (executing.getCancelReason() != null)
             stopNavigating(executing.getCancelReason());
         else {
-            Bukkit.getPluginManager().callEvent(new NavigationCompleteEvent(this));
-            stopNavigating();
+            NavigationCompleteEvent event = new NavigationCompleteEvent(this);
+            PathStrategy old = executing;
+            Bukkit.getPluginManager().callEvent(event);
+            if (old == executing)
+                stopNavigating();
         }
     }
 
