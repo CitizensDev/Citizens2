@@ -11,6 +11,7 @@ import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.NMS;
@@ -55,6 +56,11 @@ public class CitizensNavigator implements Navigator {
         if (!isNavigating())
             throw new IllegalStateException("not navigating");
         return localParams;
+    }
+
+    @Override
+    public NPC getNPC() {
+        return npc;
     }
 
     @Override
