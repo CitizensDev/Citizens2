@@ -59,4 +59,9 @@ public class MCNavigationStrategy implements PathStrategy {
         navigation.a(parameters.speed());
         return navigation.f();
     }
+
+    @Override
+    public void clearCancelReason() {
+        cancelReason = null;
+    }
 }

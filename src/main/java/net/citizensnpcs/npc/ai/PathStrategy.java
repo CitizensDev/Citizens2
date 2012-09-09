@@ -15,4 +15,6 @@ public interface PathStrategy {
     void stop();
 
     boolean update();
+
+    void clearCancelReason();
 }

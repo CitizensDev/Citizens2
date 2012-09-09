@@ -101,7 +101,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         return false;
     }
 
-    private static final int ATTACK_DELAY_TICKS = 20;
+    @Override
+    public void clearCancelReason() {
+        cancelReason = null;
+    }
 
+    private static final int ATTACK_DELAY_TICKS = 20;
     private static final double ATTACK_DISTANCE = 1.75 * 1.75;
 }
