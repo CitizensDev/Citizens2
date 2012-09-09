@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
@@ -94,14 +95,39 @@ public class CommandManager {
         if (!hasPermission(method, sender) && methodArgs[1] instanceof Player)
             throw new NoPermissionsException();
 
+        Command cmd = method.getAnnotation(Command.class);
+        CommandContext context = new CommandContext(args);
+
+        if (context.argsLength() < cmd.min())
+            throw new CommandUsageException("Too few arguments.", getUsage(args, cmd));
+
+        if (cmd.max() != -1 && context.argsLength() > cmd.max())
+            throw new CommandUsageException("Too many arguments.", getUsage(args, cmd));
+
+        if (!context.getFlags().contains('*')) {
+            for (char flag : context.getFlags())
+                if (cmd.flags().indexOf(String.valueOf(flag)) == -1)
+                    throw new CommandUsageException("Unknown flag: " + flag, getUsage(args, cmd));
+        }
+
+        methodArgs[0] = context;
+
         Requirements cmdRequirements = requirements.get(method);
         if (cmdRequirements != null) {
             NPC npc = (NPC) methodArgs[2];
 
             // Requirements
-            if (cmdRequirements.selected() && npc == null)
-                throw new RequirementMissingException(
-                        "You must have an NPC selected to execute that command.");
+            if (cmdRequirements.selected() && npc == null) {
+                boolean canRedefineSelected = context.hasValueFlag("id")
+                        && sender.hasPermission("npc.select");
+                String error = "You must have an NPC selected to execute that command.";
+                if (canRedefineSelected) {
+                    npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
+                    if (npc == null)
+                        error += " Couldn't find any NPC with ID " + context.getFlagInteger("id") + ".";
+                }
+                throw new RequirementMissingException(error);
+            }
 
             if (cmdRequirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
                     && !npc.getTrait(Owner.class).isOwnedBy(sender))
@@ -123,23 +149,6 @@ public class CommandManager {
             }
         }
 
-        Command cmd = method.getAnnotation(Command.class);
-
-        CommandContext context = new CommandContext(args);
-
-        if (context.argsLength() < cmd.min())
-            throw new CommandUsageException("Too few arguments.", getUsage(args, cmd));
-
-        if (cmd.max() != -1 && context.argsLength() > cmd.max())
-            throw new CommandUsageException("Too many arguments.", getUsage(args, cmd));
-
-        if (!context.getFlags().contains('*')) {
-            for (char flag : context.getFlags())
-                if (cmd.flags().indexOf(String.valueOf(flag)) == -1)
-                    throw new CommandUsageException("Unknown flag: " + flag, getUsage(args, cmd));
-        }
-
-        methodArgs[0] = context;
         Object instance = instances.get(method);
         try {
             method.invoke(instance, methodArgs);
