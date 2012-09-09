@@ -47,6 +47,7 @@ import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
@@ -362,33 +363,47 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "moveto (--x x --y y --z z --world world --pitch pitch --yaw yaw)",
+            usage = "moveto x:y:z:world | x y z world",
             desc = "Teleports a NPC to a given location",
             modifiers = "moveto",
             min = 1,
-            max = 1,
             permission = "npc.moveto")
     public void moveto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         Location current = npc.getBukkitEntity().getLocation();
-        Location to = current.clone();
-        if (args.hasValueFlag("x"))
-            to.setX(args.getFlagInteger("x"));
-        if (args.hasValueFlag("y"))
-            to.setY(args.getFlagInteger("y"));
-        if (args.hasValueFlag("z"))
-            to.setZ(args.getFlagInteger("z"));
-        if (args.hasValueFlag("yaw"))
-            to.setYaw((float) args.getFlagDouble("yaw"));
-        if (args.hasValueFlag("pitch"))
-            to.setPitch((float) args.getFlagDouble("pitch"));
-        if (args.hasValueFlag("world")) {
-            World world = Bukkit.getWorld(args.getFlag("world"));
+        Location to;
+        if (args.argsLength() > 1) {
+            String[] parts = Iterables.toArray(Splitter.on(':').split(args.getJoinedStrings(1, ':')),
+                    String.class);
+            if (parts.length != 4 && parts.length != 3)
+                throw new CommandException("Format is x:y:z(:world) or x y z( world)");
+            double x = Double.parseDouble(parts[0]);
+            double y = Double.parseDouble(parts[1]);
+            double z = Double.parseDouble(parts[2]);
+            World world = parts.length == 4 ? Bukkit.getWorld(parts[3]) : current.getWorld();
             if (world == null)
-                throw new CommandException("Given world not found.");
-            to.setWorld(world);
+                throw new CommandException("world not found");
+            to = new Location(world, x, y, z, current.getYaw(), current.getPitch());
+        } else {
+            to = current.clone();
+            if (args.hasValueFlag("x"))
+                to.setX(args.getFlagInteger("x"));
+            if (args.hasValueFlag("y"))
+                to.setY(args.getFlagInteger("y"));
+            if (args.hasValueFlag("z"))
+                to.setZ(args.getFlagInteger("z"));
+            if (args.hasValueFlag("yaw"))
+                to.setYaw((float) args.getFlagDouble("yaw"));
+            if (args.hasValueFlag("pitch"))
+                to.setPitch((float) args.getFlagDouble("pitch"));
+            if (args.hasValueFlag("world")) {
+                World world = Bukkit.getWorld(args.getFlag("world"));
+                if (world == null)
+                    throw new CommandException("Given world not found.");
+                to.setWorld(world);
+            }
         }
 
         npc.getBukkitEntity().teleport(to, TeleportCause.COMMAND);
