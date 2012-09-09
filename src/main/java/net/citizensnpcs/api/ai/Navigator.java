@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.ai;
 
+import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
@@ -40,6 +42,11 @@ public interface Navigator {
      * @return The local parameters
      */
     NavigatorParameters getLocalParameters();
+
+    /**
+     * @return The {@link NPC} attached to this navigator
+     */
+    NPC getNPC();
 
     /**
      * Returns the current {@link Location} being navigated towards - this is
