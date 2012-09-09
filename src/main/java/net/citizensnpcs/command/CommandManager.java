@@ -117,7 +117,7 @@ public class CommandManager {
             NPC npc = (NPC) methodArgs[2];
 
             // Requirements
-            if (cmdRequirements.selected() && npc == null) {
+            if (cmdRequirements.selected()) {
                 boolean canRedefineSelected = context.hasValueFlag("id")
                         && sender.hasPermission("npc.select");
                 String error = "You must have an NPC selected to execute that command.";
@@ -126,7 +126,8 @@ public class CommandManager {
                     if (npc == null)
                         error += " Couldn't find any NPC with ID " + context.getFlagInteger("id") + ".";
                 }
-                throw new RequirementMissingException(error);
+                if (npc == null)
+                    throw new RequirementMissingException(error);
             }
 
             if (cmdRequirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
