@@ -32,6 +32,11 @@ public class MCNavigationStrategy implements PathStrategy {
     }
 
     @Override
+    public void clearCancelReason() {
+        cancelReason = null;
+    }
+
+    @Override
     public CancelReason getCancelReason() {
         return cancelReason;
     }
@@ -58,10 +63,5 @@ public class MCNavigationStrategy implements PathStrategy {
         navigation.a(parameters.avoidWater());
         navigation.a(parameters.speed());
         return navigation.f();
-    }
-
-    @Override
-    public void clearCancelReason() {
-        cancelReason = null;
     }
 }
