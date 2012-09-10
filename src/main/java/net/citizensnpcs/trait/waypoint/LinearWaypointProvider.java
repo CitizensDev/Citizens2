@@ -250,7 +250,8 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @Override
         public boolean shouldExecute(GoalSelector selector) {
-            if (paused || currentDestination != null || !npc.isSpawned() || waypoints.size() == 0)
+            if (paused || currentDestination != null || !npc.isSpawned() || getNavigator().isNavigating()
+                    || waypoints.size() == 0)
                 return false;
             if (waypoints.size() == 1) {
                 // avoid pathing to the same point and wasting memory.
