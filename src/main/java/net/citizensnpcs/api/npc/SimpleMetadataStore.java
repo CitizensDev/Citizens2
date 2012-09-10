@@ -71,8 +71,6 @@ public class SimpleMetadataStore implements MetadataStore {
     public void set(String key, Object data) {
         Preconditions.checkNotNull(data, "data cannot be null");
         Preconditions.checkNotNull(key, "key cannot be null");
-        if (persistentMetadata.containsKey(key))
-            throw new IllegalArgumentException("conflicting persistent key");
         normalMetadata.put(key, data);
     }
 
@@ -80,8 +78,6 @@ public class SimpleMetadataStore implements MetadataStore {
     public void setPersistent(String key, Object data) {
         Preconditions.checkNotNull(key, "key cannot be null");
         checkPrimitive(data);
-        if (normalMetadata.containsKey(key))
-            throw new IllegalArgumentException("conflicting normal key");
         persistentMetadata.put(key, data);
     }
 }

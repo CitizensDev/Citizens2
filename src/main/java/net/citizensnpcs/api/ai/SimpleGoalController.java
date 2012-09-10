@@ -46,6 +46,7 @@ public class SimpleGoalController implements GoalController {
     private void finishCurrentGoalExecution() {
         resetGoalList();
         executingPriority = -1;
+        HandlerList.unregisterAll(executingRootGoal);
         executingRootGoal = null;
     }
 
