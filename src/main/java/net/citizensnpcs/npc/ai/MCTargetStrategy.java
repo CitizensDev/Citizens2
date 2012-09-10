@@ -39,6 +39,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
                 && distanceSquared() <= ATTACK_DISTANCE && handle.l(target);
     }
 
+    @Override
+    public void clearCancelReason() {
+        cancelReason = null;
+    }
+
     private double distanceSquared() {
         return handle.getBukkitEntity().getLocation().distanceSquared(target.getBukkitEntity().getLocation());
     }
@@ -99,11 +104,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             attackTicks--;
 
         return false;
-    }
-
-    @Override
-    public void clearCancelReason() {
-        cancelReason = null;
     }
 
     private static final int ATTACK_DELAY_TICKS = 20;

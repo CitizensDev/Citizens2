@@ -172,7 +172,13 @@ public class CitizensNavigator implements Navigator {
     }
 
     public void update() {
-        if (!isNavigating() || !npc.isSpawned() || updateStationaryStatus())
+        if (!isNavigating())
+            return;
+        if (!npc.isSpawned()) {
+            stopNavigating(CancelReason.NPC_DESPAWNED);
+            return;
+        }
+        if (updateStationaryStatus())
             return;
         boolean finished = executing.update();
         if (!finished)

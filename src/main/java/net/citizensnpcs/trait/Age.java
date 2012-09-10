@@ -11,7 +11,6 @@ import org.bukkit.entity.Ageable;
 
 public class Age extends Trait implements Toggleable {
     private int age = 0;
-    private boolean ageable = false;
     private boolean locked = true;
 
     public Age() {
@@ -21,6 +20,10 @@ public class Age extends Trait implements Toggleable {
     public void describe(CommandSender sender) {
         Messaging.sendF(sender, "%s's age is %s and %s locked.", StringHelper.wrap(npc.getName()),
                 StringHelper.wrap(age), StringHelper.wrap(locked ? "is" : "isn't"));
+    }
+
+    private boolean isAgeable() {
+        return npc.getBukkitEntity() instanceof Ageable;
     }
 
     @Override
@@ -33,18 +36,16 @@ public class Age extends Trait implements Toggleable {
 
     @Override
     public void onSpawn() {
-        if (npc instanceof Ageable) {
+        if (isAgeable()) {
             Ageable entity = (Ageable) npc.getBukkitEntity();
             entity.setAge(age);
             entity.setAgeLock(locked);
-            ageable = true;
-        } else
-            ageable = false;
+        }
     }
 
     @Override
     public void run() {
-        if (!locked && ageable)
+        if (!locked && isAgeable())
             age = ((Ageable) npc.getBukkitEntity()).getAge();
     }
 
@@ -56,14 +57,14 @@ public class Age extends Trait implements Toggleable {
 
     public void setAge(int age) {
         this.age = age;
-        if (ageable)
+        if (isAgeable())
             ((Ageable) npc.getBukkitEntity()).setAge(age);
     }
 
     @Override
     public boolean toggle() {
         locked = !locked;
-        if (ageable)
+        if (isAgeable())
             ((Ageable) npc.getBukkitEntity()).setAgeLock(locked);
         return locked;
     }
