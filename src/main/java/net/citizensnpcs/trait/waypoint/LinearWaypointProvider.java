@@ -222,8 +222,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void onNavigationComplete(NavigationCompleteEvent event) {
             if (currentDestination == null || !event.getNavigator().equals(getNavigator()))
                 return;
-            if (currentDestination.equals(event.getNavigator().getTargetAsLocation()))
-                selector.finish();
+            selector.finish();
         }
 
         public void onProviderChanged() {
