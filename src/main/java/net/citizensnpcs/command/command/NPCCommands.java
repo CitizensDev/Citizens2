@@ -421,7 +421,6 @@ public class NPCCommands {
                 continue;
             Messaging.send(sender, "     <e>- <a>" + trait.getName() + "<e>");
         }
-        npc.getNavigator().setTarget((LivingEntity) sender, false);
     }
 
     @Command(
