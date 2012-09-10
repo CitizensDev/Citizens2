@@ -632,11 +632,11 @@ public class NPCCommands {
             flags = "t",
             permission = "npc.vulnerable")
     public void vulnerable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean vulnerable = !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+        boolean vulnerable = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
         if (args.hasFlag('t'))
-            npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
+            npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, !vulnerable);
         else
-            npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
+            npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, !vulnerable);
 
         Messaging.sendF(sender, ChatColor.GREEN + "%s is %s vulnerable.", StringHelper.wrap(npc.getName()),
                 vulnerable ? "now" : "no longer");
