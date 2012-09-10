@@ -1,5 +1,7 @@
 package net.citizensnpcs;
 
+import java.util.List;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.EntityTargetNPCEvent;
@@ -59,9 +61,9 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
-        if (!toRespawn.containsKey(coord))
-            return;
-        for (int id : toRespawn.get(coord)) {
+        List<Integer> ids = toRespawn.get(coord);
+        for (int i = 0; i < ids.size(); i++) {
+            int id = ids.get(i);
             NPC npc = npcRegistry.getById(id);
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         }
@@ -221,7 +223,9 @@ public class EventListen implements Listener {
         for (ChunkCoord chunk : toRespawn.keySet()) {
             if (!event.getWorld().isChunkLoaded(chunk.x, chunk.z))
                 continue;
-            for (int id : toRespawn.get(chunk)) {
+            List<Integer> ids = toRespawn.get(chunk);
+            for (int i = 0; i < ids.size(); i++) {
+                int id = ids.get(i);
                 NPC npc = npcRegistry.getById(id);
                 npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
             }
@@ -234,7 +238,6 @@ public class EventListen implements Listener {
         for (NPC npc : npcRegistry) {
             if (!npc.isSpawned() || !npc.getBukkitEntity().getWorld().equals(event.getWorld()))
                 continue;
-
             storeForRespawn(npc);
             npc.despawn();
         }
