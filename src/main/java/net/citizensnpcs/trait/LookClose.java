@@ -81,7 +81,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     @Override
     public void run() {
-        if (!enabled || npc.getNavigator().isNavigating())
+        if (!enabled || !npc.isSpawned() || npc.getNavigator().isNavigating())
             return;
         if (hasInvalidTarget())
             findNewTarget();
