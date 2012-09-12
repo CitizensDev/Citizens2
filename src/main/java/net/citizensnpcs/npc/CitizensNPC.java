@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.metadata.FixedMetadataValue;
 
 public abstract class CitizensNPC extends AbstractNPC {
     protected EntityLiving mcEntity;
@@ -140,6 +141,8 @@ public abstract class CitizensNPC extends AbstractNPC {
 
         mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
         mcEntity.world.players.remove(mcEntity);
+        getBukkitEntity().setMetadata(NPC_METADATA_MARKER,
+                new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         // Set the spawned state
         getTrait(CurrentLocation.class).setLocation(loc);
@@ -163,4 +166,6 @@ public abstract class CitizensNPC extends AbstractNPC {
             ex.printStackTrace();
         }
     }
+
+    private static final String NPC_METADATA_MARKER = "NPC";
 }
