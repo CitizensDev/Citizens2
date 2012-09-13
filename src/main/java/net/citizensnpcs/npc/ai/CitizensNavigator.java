@@ -180,6 +180,7 @@ public class CitizensNavigator implements Navigator {
         }
         if (updateStationaryStatus())
             return;
+        updatePathfindingRange();
         boolean finished = executing.update();
         if (!finished)
             return;
