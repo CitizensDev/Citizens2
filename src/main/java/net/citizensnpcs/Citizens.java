@@ -2,7 +2,6 @@ package net.citizensnpcs;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Iterator;
 
 import net.citizensnpcs.Settings.Setting;
@@ -18,11 +17,7 @@ import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.DatabaseStorage;
-import net.citizensnpcs.api.util.NBTStorage;
-import net.citizensnpcs.api.util.Storage;
-import net.citizensnpcs.api.util.YamlStorage;
+import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.CommandManager.CommandInfo;
 import net.citizensnpcs.command.Injector;
@@ -38,7 +33,6 @@ import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
@@ -51,7 +45,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLoadOrder;
@@ -66,7 +59,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private Settings config;
     private ClassLoader contextClassLoader;
     private CitizensNPCRegistry npcRegistry;
-    private Storage saves; // TODO: refactor this, it's used in too many places
+    private NPCDataStore saves;
     private NPCSelector selector;
     private CitizensTraitFactory traitFactory;
 
@@ -181,7 +174,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
-            save(true);
+            saves.saveToDiskImmediate();
             despawnNPCs();
             npcRegistry = null;
         }
@@ -203,10 +196,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         registerScriptHelpers();
 
         config = new Settings(getDataFolder());
-
-        setupStorage();
-        if (!saves.load()) {
-            saves = null;
+        saves = NPCDataStore.create(getDataFolder());
+        if (saves == null) {
             Messaging.severeF("Unable to load saves, disabling...");
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -240,7 +231,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                setupNPCs();
+                saves.loadInto(npcRegistry);
                 startMetrics();
                 enableSubPlugins();
                 scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
@@ -281,66 +272,19 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Editor.leaveAll();
         config.reload();
         despawnNPCs();
-        setupNPCs();
+        saves.loadInto(npcRegistry);
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
-    }
-
-    public void save(boolean immediate) {
-        if (saves == null)
-            return;
-        for (NPC npc : npcRegistry)
-            ((CitizensNPC) npc).save(saves.getKey("npc." + npc.getId()));
-
-        if (immediate) {
-            saves.save();
-            return;
-        }
-        new Thread() {
-            @Override
-            public void run() {
-                saves.save();
-            }
-        }.start();
     }
 
     private void scheduleSaveTask(int delay) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                save(false);
+                storeNPCs();
+                saves.saveToDisk();
             }
         });
-    }
-
-    // TODO: refactor
-    private void setupNPCs() {
-        int created = 0, spawned = 0;
-        for (DataKey key : saves.getKey("npc").getIntegerSubKeys()) {
-            int id = Integer.parseInt(key.name());
-            if (!key.keyExists("name")) {
-                Messaging.logF("Could not find a name for the NPC with ID '%s'.", id);
-                continue;
-            }
-            String unparsedEntityType = key.getString("traits.type", "PLAYER");
-            EntityType type = EntityType.fromName(unparsedEntityType);
-            if (type == null) {
-                try {
-                    type = EntityType.valueOf(unparsedEntityType);
-                } catch (IllegalArgumentException ex) {
-                    Messaging.logF("NPC type '%s' was not recognized. Did you spell it correctly?",
-                            unparsedEntityType);
-                    continue;
-                }
-            }
-            NPC npc = npcRegistry.createNPC(type, id, key.getString("name"));
-            ((CitizensNPC) npc).load(key);
-
-            ++created;
-            if (npc.isSpawned())
-                ++spawned;
-        }
-        Messaging.logF("Loaded %d NPCs (%d spawned).", created, spawned);
     }
 
     private void setupScripting() {
@@ -351,28 +295,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         // to search for class imports. Since the context classloader only has
         // CraftBukkit classes, we replace it with a PluginClassLoader, which
         // allows all plugin classes to be imported.
-    }
-
-    private void setupStorage() {
-        String type = Setting.STORAGE_TYPE.asString();
-        if (type.equalsIgnoreCase("db") || type.equalsIgnoreCase("database")) {
-            try {
-                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(),
-                        Setting.DATABASE_URL.asString(), Setting.DATABASE_USERNAME.asString(),
-                        Setting.DATABASE_PASSWORD.asString());
-            } catch (SQLException e) {
-                e.printStackTrace();
-                Messaging.log("Unable to connect to database, falling back to YAML");
-            }
-        } else if (type.equalsIgnoreCase("nbt")) {
-            saves = new NBTStorage(getDataFolder() + File.separator + Setting.STORAGE_FILE.asString(),
-                    "Citizens NPC Storage");
-        }
-        if (saves == null) {
-            saves = new YamlStorage(new File(getDataFolder(), Setting.STORAGE_FILE.asString()),
-                    "Citizens NPC Storage");
-        }
-        Messaging.logF("Save method set to %s.", saves.toString());
     }
 
     private void startMetrics() {
@@ -398,6 +320,22 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 }
             }
         }.start();
+    }
+
+    public void storeNPCs() {
+        if (saves == null)
+            return;
+        for (NPC npc : npcRegistry)
+            saves.store(npc);
+    }
+
+    public void storeNPCs(CommandContext args) {
+        storeNPCs();
+        boolean async = args.hasFlag('a');
+        if (async)
+            saves.saveToDisk();
+        else
+            saves.saveToDiskImmediate();
     }
 
     private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {
