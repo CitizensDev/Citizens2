@@ -45,9 +45,9 @@ public class NPCDataStore {
             NPC npc = registry.createNPC(type, id, key.getString("name"));
             ((CitizensNPC) npc).load(key);
 
-            ++created;
+            created++;
             if (npc.isSpawned())
-                ++spawned;
+                spawned++;
         }
         Messaging.logF("Loaded %d NPCs (%d spawned).", created, spawned);
     }
