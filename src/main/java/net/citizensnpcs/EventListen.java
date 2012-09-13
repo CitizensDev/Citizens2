@@ -191,7 +191,8 @@ public class EventListen implements Listener {
             if (npc.getTrait(Owner.class).isOwnedBy(event.getCreator()))
                 owned++;
         }
-        if (limit >= owned + 1 || limit == 0) {
+        int wouldOwn = owned + 1;
+        if (wouldOwn >= limit) {
             event.setCancelled(true);
             event.setCancelReason(String.format("Over the NPC limit of %d.", limit));
         }

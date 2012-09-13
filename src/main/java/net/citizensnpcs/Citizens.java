@@ -54,6 +54,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -82,9 +83,17 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         File root = new File(getDataFolder(), Setting.SUBPLUGIN_FOLDER.asString());
         if (!root.exists() || !root.isDirectory())
             return;
-        Plugin[] plugins = Bukkit.getPluginManager().loadPlugins(root);
-        // code beneath modified from CraftServer
-        for (Plugin plugin : plugins) {
+        File[] files = root.listFiles();
+        for (File file : files) {
+            Plugin plugin;
+            try {
+                plugin = Bukkit.getPluginManager().loadPlugin(file);
+            } catch (Exception e) {
+                continue;
+            }
+            if (plugin == null)
+                continue;
+            // code beneath modified from CraftServer
             try {
                 Messaging.logF("Loading %s", plugin.getDescription().getFullName());
                 plugin.onLoad();
@@ -93,6 +102,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 ex.printStackTrace();
             }
         }
+        ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.POSTWORLD);
     }
 
     public Iterable<CommandInfo> getCommands(String base) {
