@@ -4,9 +4,9 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.citizensnpcs.NPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.CitizensBlazeNPC;
 import net.citizensnpcs.npc.entity.CitizensCaveSpiderNPC;
@@ -43,11 +43,11 @@ import org.bukkit.entity.EntityType;
 
 public class CitizensNPCRegistry implements NPCRegistry {
     private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
-    private final Storage saves;
+    private final NPCDataStore saves;
     private final Map<EntityType, Class<? extends CitizensNPC>> types = new EnumMap<EntityType, Class<? extends CitizensNPC>>(
             EntityType.class);
 
-    public CitizensNPCRegistry(Storage saves) {
+    public CitizensNPCRegistry(NPCDataStore saves) {
         this.saves = saves;
 
         types.put(EntityType.BLAZE, CitizensBlazeNPC.class);
@@ -94,7 +94,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     @Override
     public void deregister(NPC npc) {
         npcs.remove(npc.getId());
-        saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
+        saves.remove(npc);
         npc.despawn();
     }
 
@@ -105,7 +105,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
             NPC npc = itr.next();
             itr.remove();
             npc.despawn();
-            saves.getKey("npc").removeKey(String.valueOf(npc.getId()));
+            saves.remove(npc);
         }
     }
 

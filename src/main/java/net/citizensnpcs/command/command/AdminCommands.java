@@ -61,8 +61,7 @@ public class AdminCommands {
             permission = "admin")
     public void save(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, "<e>Saving Citizens...");
-        boolean async = args.hasFlag('a');
-        plugin.save(!async);
+        plugin.storeNPCs(args);
         Messaging.send(sender, "<e>Citizens saved.");
     }
 }

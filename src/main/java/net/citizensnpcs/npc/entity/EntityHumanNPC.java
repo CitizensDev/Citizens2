@@ -73,22 +73,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public NPC getNPC() {
-        return npc;
-    }
-
-    @Override
     public CraftPlayer getBukkitEntity() {
         if (npc == null)
             return super.getBukkitEntity();
         if (bukkitEntity != null)
             return (CraftPlayer) bukkitEntity;
         return (CraftPlayer) (bukkitEntity = new CraftPlayer(((CraftServer) Bukkit.getServer()), this) {
-            @Override
-            public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
-                server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
-            }
-
             @Override
             public List<MetadataValue> getMetadata(String metadataKey) {
                 return server.getEntityMetadata().getMetadata(this, metadataKey);
@@ -103,7 +93,17 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             public void removeMetadata(String metadataKey, Plugin owningPlugin) {
                 server.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
             }
+
+            @Override
+            public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
+                server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
+            }
         });
+    }
+
+    @Override
+    public NPC getNPC() {
+        return npc;
     }
 
     @Override
