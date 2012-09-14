@@ -174,6 +174,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
+            saves.storeAll(npcRegistry);
             saves.saveToDiskImmediate();
             despawnNPCs();
             npcRegistry = null;
