@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.NBTStorage;
@@ -28,7 +29,7 @@ public class NPCDataStore {
         for (DataKey key : root.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name")) {
-                Messaging.logF("Could not find a name for the NPC with ID '%s'.", id);
+                Messaging.logF("Could not find a name for ID '%s'.", id);
                 continue;
             }
             String unparsedEntityType = key.getString("traits.type", "PLAYER");
@@ -71,6 +72,11 @@ public class NPCDataStore {
 
     public void store(NPC npc) {
         ((CitizensNPC) npc).save(root.getKey("npc." + npc.getId()));
+    }
+
+    public void storeAll(NPCRegistry registry) {
+        for (NPC npc : registry)
+            store(npc);
     }
 
     public static NPCDataStore create(File folder) {

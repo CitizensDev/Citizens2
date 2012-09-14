@@ -84,6 +84,10 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             cancelReason = CancelReason.TARGET_DIED;
             return true;
         }
+        if (target.world != handle.world) {
+            cancelReason = CancelReason.TARGET_MOVED_WORLD;
+            return true;
+        }
         if (cancelReason != null)
             return true;
         navigation.a(target, parameters.speed());

@@ -114,6 +114,7 @@ public class Controllable extends Trait implements Toggleable {
             return;
         controller.run((Player) getHandle().passenger.getBukkitEntity());
     }
+
     @Override
     public void save(DataKey key) {
         key.setBoolean("enabled", enabled);
@@ -176,10 +177,12 @@ public class Controllable extends Trait implements Toggleable {
                 return;
             getHandle().motY = JUMP_VELOCITY;
         }
+
         @Override
         public void leftClick(PlayerInteractEvent event) {
             jump();
         }
+
         @Override
         public void rightClick(PlayerInteractEvent event) {
         }
@@ -200,9 +203,7 @@ public class Controllable extends Trait implements Toggleable {
         }
 
         private static final float AIR_SPEED = 1.5F;
-
         private static final float GROUND_SPEED = 4F;
-
         private static final float JUMP_VELOCITY = 0.6F;
     }
 

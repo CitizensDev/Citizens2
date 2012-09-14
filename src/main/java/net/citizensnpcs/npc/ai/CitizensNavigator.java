@@ -22,8 +22,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
 public class CitizensNavigator implements Navigator {
-    private final NavigatorParameters defaultParams = new NavigatorParameters().speed(UNINITIALISED_SPEED)
-            .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
+    private final NavigatorParameters defaultParams = new NavigatorParameters()
+            .baseSpeed(UNINITIALISED_SPEED).range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt());
     private PathStrategy executing;
     private int lastX, lastY, lastZ;
@@ -79,7 +79,7 @@ public class CitizensNavigator implements Navigator {
     }
 
     public void load(DataKey root) {
-        defaultParams.speed((float) root.getDouble("speed", UNINITIALISED_SPEED));
+        defaultParams.baseSpeed((float) root.getDouble("speed", UNINITIALISED_SPEED));
         defaultParams.range((float) root.getDouble("pathfindingrange",
                 Setting.DEFAULT_PATHFINDING_RANGE.asFloat()));
         defaultParams
@@ -90,8 +90,8 @@ public class CitizensNavigator implements Navigator {
     }
 
     public void onSpawn() {
-        if (defaultParams.speed() == UNINITIALISED_SPEED)
-            defaultParams.speed(NMS.getSpeedFor(npc.getHandle()));
+        if (defaultParams.baseSpeed() == UNINITIALISED_SPEED)
+            defaultParams.baseSpeed(NMS.getSpeedFor(npc.getHandle()));
         updatePathfindingRange();
         if (!updatedAvoidWater) {
             boolean defaultAvoidWater = npc.getHandle().getNavigation().a();

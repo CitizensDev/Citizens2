@@ -39,6 +39,7 @@ public class LinearWaypointProvider implements WaypointProvider {
     @Override
     public Editor createEditor(final Player player) {
         return new Editor() {
+            boolean editing = true;
             int editingSlot = waypoints.size() - 1;
 
             @Override
@@ -49,7 +50,10 @@ public class LinearWaypointProvider implements WaypointProvider {
 
             @Override
             public void end() {
+                if (!editing)
+                    return;
                 player.sendMessage(ChatColor.AQUA + "Exited the linear waypoint editor.");
+                editing = false;
             }
 
             private String formatLoc(Location location) {
@@ -69,13 +73,13 @@ public class LinearWaypointProvider implements WaypointProvider {
             @EventHandler
             public void onNPCDespawn(NPCDespawnEvent event) {
                 if (event.getNPC().equals(npc))
-                    end();
+                    Editor.leave(player);
             }
 
             @EventHandler
             public void onNPCRemove(NPCRemoveEvent event) {
                 if (event.getNPC().equals(npc))
-                    end();
+                    Editor.leave(player);
             }
 
             @EventHandler
