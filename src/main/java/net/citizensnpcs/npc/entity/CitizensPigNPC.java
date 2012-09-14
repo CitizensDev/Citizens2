@@ -28,21 +28,18 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
     }
 
     @Override
-    public void equip(Player equipper) {
-        ItemStack hand = equipper.getItemInHand();
+    public void equip(Player equipper, ItemStack hand) {
         if (hand.getType() == Material.SADDLE) {
             if (!getBukkitEntity().hasSaddle()) {
                 getTrait(Saddle.class).toggle();
-                equipper.setItemInHand(null);
+                hand.setAmount(0);
                 Messaging.send(equipper, StringHelper.wrap(getName()) + " is now saddled.");
             }
-        } else {
-            if (getBukkitEntity().hasSaddle()) {
-                equipper.getWorld().dropItemNaturally(getBukkitEntity().getLocation(),
-                        new ItemStack(Material.SADDLE, 1));
-                getTrait(Saddle.class).toggle();
-                Messaging.send(equipper, StringHelper.wrap(getName()) + " is no longer saddled.");
-            }
+        } else if (getBukkitEntity().hasSaddle()) {
+            equipper.getWorld().dropItemNaturally(getBukkitEntity().getLocation(),
+                    new ItemStack(Material.SADDLE, 1));
+            getTrait(Saddle.class).toggle();
+            Messaging.send(equipper, StringHelper.wrap(getName()) + " is no longer saddled.");
         }
     }
 

@@ -35,6 +35,10 @@ public class NMS {
 
     private static Field THREAD_STOPPER;
 
+    public static void attack(EntityLiving handle, EntityLiving target) {
+        handle.k(target);
+    }
+
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
         if (NMS.GOAL_FIELD == null || goalSelectors == null)
             return;
@@ -74,6 +78,10 @@ public class NMS {
             ex.printStackTrace();
             return DEFAULT_SPEED;
         }
+    }
+
+    public static void look(ControllerLook controllerLook, EntityLiving handle, EntityLiving target) {
+        controllerLook.a(target, 10.0F, handle.bf());
     }
 
     public static void registerEntityClass(Class<? extends Entity> clazz) {
@@ -159,13 +167,5 @@ public class NMS {
             ENTITY_CLASS_TO_INT = (Map<Class<? extends Entity>, Integer>) field.get(null);
         } catch (Exception e) {
         }
-    }
-
-    public static void attack(EntityLiving handle, EntityLiving target) {
-        handle.k(target);
-    }
-
-    public static void look(ControllerLook controllerLook, EntityLiving handle, EntityLiving target) {
-        controllerLook.a(target, 10.0F, handle.bf());
     }
 }
