@@ -55,6 +55,10 @@ public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
     private final ListMultimap<ChunkCoord, Integer> toRespawn = ArrayListMultimap.create();
 
+    public EventListen() {
+        instance = this;
+    }
+
     /*
      * Chunk events
      */
@@ -283,4 +287,12 @@ public class EventListen implements Listener {
             return prime * (prime + x) + z;
         }
     }
+
+    public static void add(Location loc, int id) {
+        if (instance == null)
+            return;
+        instance.toRespawn.put(instance.toCoord(loc.getChunk()), id);
+    }
+
+    private static EventListen instance;
 }

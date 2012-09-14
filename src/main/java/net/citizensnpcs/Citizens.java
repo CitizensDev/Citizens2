@@ -210,17 +210,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         CitizensAPI.setImplementation(this);
 
         getServer().getPluginManager().registerEvents(new EventListen(), this);
+
         if (Setting.NPC_COST.asDouble() > 0) {
-            try {
-                RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(
-                        Economy.class);
-                if (provider != null && provider.getProvider() != null) {
-                    Economy economy = provider.getProvider();
-                    Bukkit.getPluginManager().registerEvents(new PaymentListener(economy), this);
-                }
-            } catch (NoClassDefFoundError e) {
-                Messaging.log("Unable to use economy handling. Has Vault been enabled?");
-            }
+            setupEconomy();
         }
 
         registerCommands();
@@ -241,6 +233,19 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }) == -1) {
             Messaging.severe("NPC load task couldn't be scheduled - disabling...");
             getServer().getPluginManager().disablePlugin(this);
+        }
+    }
+
+    private void setupEconomy() {
+        try {
+            RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(
+                    Economy.class);
+            if (provider != null && provider.getProvider() != null) {
+                Economy economy = provider.getProvider();
+                Bukkit.getPluginManager().registerEvents(new PaymentListener(economy), this);
+            }
+        } catch (NoClassDefFoundError e) {
+            Messaging.log("Unable to use economy handling. Has Vault been enabled?");
         }
     }
 

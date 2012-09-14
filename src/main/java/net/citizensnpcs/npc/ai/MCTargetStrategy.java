@@ -5,6 +5,7 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityMonster;
@@ -90,12 +91,12 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
         if (cancelReason != null)
             return true;
+        navigation.a(parameters.avoidWater());
         navigation.a(target, parameters.speed());
-        handle.getControllerLook().a(target, 10.0F, handle.bf());
+        NMS.look(handle.getControllerLook(), handle, target);
         if (aggro && canAttack()) {
             if (handle instanceof EntityMonster) {
-                ((EntityMonster) handle).k(target);
-                // the cast is necessary to resolve overloaded method a
+                NMS.attack(handle, target);
             } else if (handle instanceof EntityPlayer) {
                 EntityPlayer humanHandle = (EntityPlayer) handle;
                 humanHandle.attack(target);
