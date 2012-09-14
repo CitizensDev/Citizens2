@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.citizensnpcs.npc.CitizensNPC;
+import net.minecraft.server.ControllerLook;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityTypes;
@@ -158,5 +159,13 @@ public class NMS {
             ENTITY_CLASS_TO_INT = (Map<Class<? extends Entity>, Integer>) field.get(null);
         } catch (Exception e) {
         }
+    }
+
+    public static void attack(EntityLiving handle, EntityLiving target) {
+        handle.k(target);
+    }
+
+    public static void look(ControllerLook controllerLook, EntityLiving handle, EntityLiving target) {
+        controllerLook.a(target, 10.0F, handle.bf());
     }
 }

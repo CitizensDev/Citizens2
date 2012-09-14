@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import net.citizensnpcs.EventListen;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
@@ -132,15 +133,25 @@ public abstract class CitizensNPC extends AbstractNPC {
             Messaging.debug("NPC (ID: " + getId() + ") is already spawned.");
             return false;
         }
-        NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, loc);
-        Bukkit.getPluginManager().callEvent(spawnEvent);
-        if (spawnEvent.isCancelled())
-            return false;
 
         mcEntity = createHandle(loc);
 
-        mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
+        boolean couldSpawn = mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
+        if (!couldSpawn) {
+            // we need to wait for a chunk load before trying to spawn
+            mcEntity = null;
+            EventListen.add(loc, getId());
+            return true;
+        }
         mcEntity.world.players.remove(mcEntity);
+
+        NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, loc);
+        Bukkit.getPluginManager().callEvent(spawnEvent);
+        if (spawnEvent.isCancelled()) {
+            mcEntity = null;
+            return false;
+        }
+
         getBukkitEntity().setMetadata(NPC_METADATA_MARKER,
                 new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
