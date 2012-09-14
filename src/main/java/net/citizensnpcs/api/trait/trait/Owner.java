@@ -16,6 +16,7 @@ public class Owner extends Trait {
     public Owner() {
         super("owner");
     }
+
     /**
      * Gets the owner of an NPC.
      * 

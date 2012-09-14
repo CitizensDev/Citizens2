@@ -4,8 +4,8 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 
 public class NavigatorParameters implements Cloneable {
     private boolean avoidWater;
+    private float baseSpeed;
     private float range;
-    private float speed;
     private float speedModifier = 1F;
     private int stationaryTicks = -1;
     private StuckAction stuckAction = TeleportStuckAction.INSTANCE;
@@ -32,7 +32,21 @@ public class NavigatorParameters implements Cloneable {
      * @return The base movement speed
      */
     public float baseSpeed() {
-        return speed;
+        return baseSpeed;
+    }
+
+    /**
+     * Sets the base movement speed of the {@link Navigator}. Note that this is
+     * mob-specific and may not always be sane. Using {@link #speedModifier()}
+     * is preferred.
+     * 
+     * @see #speedModifier()
+     * @param speed
+     *            The new movement speed
+     */
+    public NavigatorParameters baseSpeed(float speed) {
+        this.baseSpeed = speed;
+        return this;
     }
 
     @Override
@@ -81,7 +95,7 @@ public class NavigatorParameters implements Cloneable {
      *         multiplied by {@link #speedModifier()}
      */
     public float speed() {
-        return modifiedSpeed(speed);
+        return modifiedSpeed(baseSpeed);
     }
 
     /**
@@ -92,9 +106,11 @@ public class NavigatorParameters implements Cloneable {
      * @see #speedModifier()
      * @param speed
      *            The new movement speed
+     * @deprecated @see {@link #baseSpeed(float)}
      */
+    @Deprecated
     public NavigatorParameters speed(float speed) {
-        this.speed = speed;
+        this.baseSpeed = speed;
         return this;
     }
 

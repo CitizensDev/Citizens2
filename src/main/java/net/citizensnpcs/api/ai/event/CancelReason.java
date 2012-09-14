@@ -5,5 +5,6 @@ public enum CancelReason {
     PLUGIN,
     REPLACE,
     STUCK,
-    TARGET_DIED;
+    TARGET_DIED,
+    TARGET_MOVED_WORLD;
 }
