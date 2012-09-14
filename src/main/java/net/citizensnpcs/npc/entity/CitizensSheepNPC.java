@@ -29,8 +29,7 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
     }
 
     @Override
-    public void equip(Player equipper) {
-        ItemStack hand = equipper.getItemInHand();
+    public void equip(Player equipper, ItemStack hand) {
         if (hand.getType() == Material.SHEARS) {
             Messaging.send(equipper, StringHelper.wrap(getName()) + " is "
                     + (getTrait(Sheared.class).toggle() ? "now" : "no longer") + " sheared.");
@@ -45,11 +44,7 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
                     StringHelper.wrap(getName()) + " is now "
                             + StringHelper.wrap(color.name().toLowerCase().replace("_", " ")) + ".");
 
-            if (hand.getAmount() > 1)
-                hand.setAmount(hand.getAmount() - 1);
-            else
-                hand = null;
-            equipper.setItemInHand(hand);
+            hand.setAmount(hand.getAmount() - 1);
         } else {
             getTrait(WoolColor.class).setColor(DyeColor.WHITE);
             Messaging.send(equipper, StringHelper.wrap(getName()) + " is now " + StringHelper.wrap("white")

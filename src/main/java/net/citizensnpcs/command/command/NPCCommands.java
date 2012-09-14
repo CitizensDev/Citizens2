@@ -153,8 +153,11 @@ public class NPCCommands {
         from.save(key);
         copy.load(key);
 
-        if (copy.isSpawned() && sender instanceof Player)
-            copy.getBukkitEntity().teleport((Player) sender);
+        if (copy.isSpawned() && sender instanceof Player) {
+            Player player = (Player) sender;
+            copy.getBukkitEntity().teleport(player);
+            copy.getTrait(CurrentLocation.class).setLocation(player.getLocation());
+        }
 
         Messaging.sendF(sender, ChatColor.GREEN + "%s has been copied.", StringHelper.wrap(npc.getName()));
     }

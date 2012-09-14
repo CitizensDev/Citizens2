@@ -21,14 +21,12 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
-
     public CitizensEndermanNPC(int id, String name) {
         super(id, name, EntityEndermanNPC.class);
     }
 
     @Override
-    public void equip(Player equipper) {
-        ItemStack hand = equipper.getItemInHand();
+    public void equip(Player equipper, ItemStack hand) {
         if (!hand.getType().isBlock()) {
             Messaging.sendError(equipper, "Invalid block!");
             return;
@@ -47,11 +45,7 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
 
         ItemStack set = hand;
         if (set.getType() != Material.AIR) {
-            if (hand.getAmount() > 1) {
-                hand.setAmount(hand.getAmount() - 1);
-            } else
-                hand = null;
-            equipper.setItemInHand(hand);
+            hand.setAmount(hand.getAmount() - 1);
             set.setAmount(1);
         }
         getTrait(Equipment.class).set(0, set);

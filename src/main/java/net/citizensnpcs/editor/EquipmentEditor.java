@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class EquipmentEditor extends Editor {
     private final NPC npc;
@@ -44,7 +45,9 @@ public class EquipmentEditor extends Editor {
             return;
 
         if (npc instanceof Equipable) {
-            ((Equipable) npc).equip(event.getPlayer());
+            ItemStack hand = event.getPlayer().getItemInHand();
+            ((Equipable) npc).equip(event.getPlayer(), hand);
+            event.getPlayer().setItemInHand(hand.getAmount() > 0 ? hand : null);
         }
     }
 }

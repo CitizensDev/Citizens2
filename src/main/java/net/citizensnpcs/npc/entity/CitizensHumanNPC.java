@@ -41,8 +41,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
     }
 
     @Override
-    public void equip(Player equipper) {
-        ItemStack hand = equipper.getItemInHand();
+    public void equip(Player equipper, ItemStack hand) {
         Equipment trait = getTrait(Equipment.class);
         int slot = 0;
         Material type = hand == null ? Material.AIR : hand.getType();
@@ -105,11 +104,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
             clone.setAmount(1);
             trait.set(slot, clone);
 
-            if (hand.getAmount() > 1)
-                hand.setAmount(hand.getAmount() - 1);
-            else
-                hand = null;
-            equipper.setItemInHand(hand);
+            hand.setAmount(hand.getAmount() - 1);
         }
     }
 

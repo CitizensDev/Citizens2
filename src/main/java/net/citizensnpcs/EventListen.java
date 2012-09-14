@@ -288,11 +288,11 @@ public class EventListen implements Listener {
         }
     }
 
+    private static EventListen instance;
+
     public static void add(Location loc, int id) {
         if (instance == null)
             return;
         instance.toRespawn.put(instance.toCoord(loc.getChunk()), id);
     }
-
-    private static EventListen instance;
 }
