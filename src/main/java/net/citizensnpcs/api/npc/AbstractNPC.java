@@ -51,9 +51,9 @@ public abstract class AbstractNPC implements NPC {
             runnables.remove(traits.get(trait.getClass()));
 
         Bukkit.getPluginManager().registerEvents(trait, CitizensAPI.getPlugin());
+        traits.put(trait.getClass(), trait);
         if (isSpawned())
             trait.onSpawn();
-        traits.put(trait.getClass(), trait);
     }
 
     @Override
