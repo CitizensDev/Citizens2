@@ -49,6 +49,7 @@ public class WanderingWaypointProvider implements WaypointProvider {
         xrange = key.getInt("xrange", DEFAULT_XRANGE);
         yrange = key.getInt("yrange", DEFAULT_YRANGE);
     }
+
     @Override
     public void onSpawn(NPC npc) {
         this.npc = npc;

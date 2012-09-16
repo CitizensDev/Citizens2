@@ -101,18 +101,18 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         range = key.getDouble("range", range);
     }
 
+    @Override
+    public void onAttach() {
+        if (text.isEmpty())
+            populateDefaultText();
+    }
+
     @EventHandler
     public void onRightClick(NPCRightClickEvent event) {
         if (!event.getNPC().equals(npc))
             return;
         if (Util.isSettingFulfilled(event.getClicker(), Setting.TALK_ITEM) && !shouldTalkClose())
             sendText(event.getClicker());
-    }
-
-    @Override
-    public void onSpawn() {
-        if (text.isEmpty())
-            populateDefaultText();
     }
 
     private void populateDefaultText() {
