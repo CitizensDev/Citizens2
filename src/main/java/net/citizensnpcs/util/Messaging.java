@@ -67,6 +67,14 @@ public class Messaging {
         sender.sendMessage(msg);
     }
 
+    public static void sendTr(CommandSender sender, String key) {
+        sendMessageTo(sender, Translator.tr(key));
+    }
+
+    public static void sendTr(CommandSender sender, String key, Object... msg) {
+        sendMessageTo(sender, Translator.tr(key, msg));
+    }
+
     public static void sendWithNPC(CommandSender sender, Object msg, NPC npc) {
         String send = msg.toString();
 
