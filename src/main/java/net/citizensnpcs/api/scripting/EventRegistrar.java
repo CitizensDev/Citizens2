@@ -77,8 +77,9 @@ public class EventRegistrar implements ContextProvider {
                 throw new IllegalArgumentException("Arguments should not be null");
             Listener listener = object != null ? script.convertToInterface(object, Listener.class) : null;
             if (listener == null) {
-                anonymousListeners.put(new FunctionReference(functionName, object), (listener = new Listener() {
-                }));
+                anonymousListeners.put(new FunctionReference(functionName, object),
+                        (listener = new Listener() {
+                        }));
             }
             PluginManager manager = plugin.getServer().getPluginManager();
             manager.registerEvent(eventClass, listener, EventPriority.NORMAL, new EventExecutor() {

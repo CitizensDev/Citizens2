@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.jnbt;
 
-
 /*
  * JNBT License
  * 

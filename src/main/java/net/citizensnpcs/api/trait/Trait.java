@@ -37,6 +37,7 @@ public abstract class Trait implements Listener, Runnable {
         if (this.npc != null)
             throw new IllegalArgumentException("npc may only be set once");
         this.npc = npc;
+        onAttach();
     }
 
     /**
@@ -51,15 +52,29 @@ public abstract class Trait implements Listener, Runnable {
     }
 
     /**
-     * Called when a trait is removed from the given NPC.
+     * Called when the trait has been attached to an {@link NPC}. {@link #npc}
+     * will be null until this is called.
+     */
+    public void onAttach() {
+    }
+
+    /**
+     * Called just before the attached {@link NPC} is despawned.
+     * {@link NPC#getBukkitEntity()} will be non-null.
+     */
+    public void onDespawn() {
+    }
+
+    /**
+     * Called when a trait is removed from the attached {@link NPC}.
      */
     public void onRemove() {
     }
 
     /**
-     * Called when an NPC is spawned. NPCs cannot be physically modified until
-     * the entity is created in-game. This is called after the entity has been
-     * created.
+     * Called when an {@link NPC} is spawned. {@link NPC#getBukkitEntity()} will
+     * return null until this is called. This is also called onAttach when the
+     * NPC is already spawned.
      */
     public void onSpawn() {
     }

@@ -13,6 +13,7 @@ public class NPCSpawnEvent extends NPCEvent implements Cancellable {
     private boolean cancelled = false;
 
     private final Location location;
+
     public NPCSpawnEvent(NPC npc, Location location) {
         super(npc);
         this.location = location;

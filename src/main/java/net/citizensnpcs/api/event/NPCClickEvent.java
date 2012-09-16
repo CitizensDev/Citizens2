@@ -13,6 +13,7 @@ public class NPCClickEvent extends NPCEvent implements Cancellable {
     private boolean cancelled = false;
 
     private final Player clicker;
+
     protected NPCClickEvent(NPC npc, Player clicker) {
         super(npc);
         this.clicker = clicker;

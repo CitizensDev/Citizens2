@@ -12,7 +12,8 @@ public class RhinoScriptEngineFactory implements ScriptEngineFactory {
     private final List<String> extensions = ImmutableList.of("js", "ecmascript", "javascript");
     private final List<String> mimeTypes = ImmutableList.of("application/javascript", "text/javascript",
             "application/ecmascript", "text/javascript");
-    private final List<String> names = ImmutableList.of("rhino", "javascript", "JavaScript", "ECMAScript", "js");
+    private final List<String> names = ImmutableList.of("rhino", "javascript", "JavaScript", "ECMAScript",
+            "js");
 
     @Override
     public String getEngineName() {

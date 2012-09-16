@@ -59,32 +59,32 @@ public final class NBTUtils {
      */
     public static Class<? extends Tag> getTypeClass(int type) {
         switch (type) {
-        case NBTConstants.TYPE_END:
-            return EndTag.class;
-        case NBTConstants.TYPE_BYTE:
-            return ByteTag.class;
-        case NBTConstants.TYPE_SHORT:
-            return ShortTag.class;
-        case NBTConstants.TYPE_INT:
-            return IntTag.class;
-        case NBTConstants.TYPE_LONG:
-            return LongTag.class;
-        case NBTConstants.TYPE_FLOAT:
-            return FloatTag.class;
-        case NBTConstants.TYPE_DOUBLE:
-            return DoubleTag.class;
-        case NBTConstants.TYPE_BYTE_ARRAY:
-            return ByteArrayTag.class;
-        case NBTConstants.TYPE_STRING:
-            return StringTag.class;
-        case NBTConstants.TYPE_LIST:
-            return ListTag.class;
-        case NBTConstants.TYPE_COMPOUND:
-            return CompoundTag.class;
-        case NBTConstants.TYPE_INT_ARRAY:
-            return IntArrayTag.class;
-        default:
-            throw new IllegalArgumentException("Invalid tag type : " + type + ".");
+            case NBTConstants.TYPE_END:
+                return EndTag.class;
+            case NBTConstants.TYPE_BYTE:
+                return ByteTag.class;
+            case NBTConstants.TYPE_SHORT:
+                return ShortTag.class;
+            case NBTConstants.TYPE_INT:
+                return IntTag.class;
+            case NBTConstants.TYPE_LONG:
+                return LongTag.class;
+            case NBTConstants.TYPE_FLOAT:
+                return FloatTag.class;
+            case NBTConstants.TYPE_DOUBLE:
+                return DoubleTag.class;
+            case NBTConstants.TYPE_BYTE_ARRAY:
+                return ByteArrayTag.class;
+            case NBTConstants.TYPE_STRING:
+                return StringTag.class;
+            case NBTConstants.TYPE_LIST:
+                return ListTag.class;
+            case NBTConstants.TYPE_COMPOUND:
+                return CompoundTag.class;
+            case NBTConstants.TYPE_INT_ARRAY:
+                return IntArrayTag.class;
+            default:
+                throw new IllegalArgumentException("Invalid tag type : " + type + ".");
         }
     }
 

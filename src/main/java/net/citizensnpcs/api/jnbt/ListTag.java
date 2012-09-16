@@ -38,9 +38,9 @@ import java.util.List;
 
 /**
  * The <code>TAG_List</code> tag.
- *
+ * 
  * @author Graham Edgecombe
- *
+ * 
  */
 public final class ListTag extends Tag {
 
@@ -56,7 +56,7 @@ public final class ListTag extends Tag {
 
     /**
      * Creates the tag.
-     *
+     * 
      * @param name
      *            The name.
      * @param type
@@ -72,7 +72,7 @@ public final class ListTag extends Tag {
 
     /**
      * Gets the type of item in this list.
-     *
+     * 
      * @return The type of item in this list.
      */
     public Class<? extends Tag> getType() {
@@ -92,12 +92,10 @@ public final class ListTag extends Tag {
             append = "(\"" + this.getName() + "\")";
         }
         StringBuilder bldr = new StringBuilder();
-        bldr.append("TAG_List" + append + ": " + value.size()
-                + " entries of type " + NBTUtils.getTypeName(type)
-                + "\r\n{\r\n");
+        bldr.append("TAG_List" + append + ": " + value.size() + " entries of type "
+                + NBTUtils.getTypeName(type) + "\r\n{\r\n");
         for (Tag t : value) {
-            bldr.append("   " + t.toString().replaceAll("\r\n", "\r\n   ")
-                    + "\r\n");
+            bldr.append("   " + t.toString().replaceAll("\r\n", "\r\n   ") + "\r\n");
         }
         bldr.append("}");
         return bldr.toString();

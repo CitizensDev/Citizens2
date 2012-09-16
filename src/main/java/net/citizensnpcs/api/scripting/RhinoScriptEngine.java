@@ -71,8 +71,8 @@ public class RhinoScriptEngine extends AbstractScriptEngine implements Invocable
         } catch (IOException e) {
             throw new ScriptException(e);
         } catch (RhinoException e) {
-            String msg = e instanceof JavaScriptException ? ((JavaScriptException) e).getValue().toString() : e
-                    .getMessage();
+            String msg = e instanceof JavaScriptException ? ((JavaScriptException) e).getValue().toString()
+                    : e.getMessage();
             int lineNumber = e.lineNumber() == 0 ? -1 : e.lineNumber();
             ScriptException scriptException = new ScriptException(msg, e.sourceName(), lineNumber);
             scriptException.initCause(e);
@@ -117,7 +117,8 @@ public class RhinoScriptEngine extends AbstractScriptEngine implements Invocable
     }
 
     @Override
-    public Object invokeMethod(Object thiz, String name, Object... args) throws ScriptException, NoSuchMethodException {
+    public Object invokeMethod(Object thiz, String name, Object... args) throws ScriptException,
+            NoSuchMethodException {
         // TODO Auto-generated method stub
         return null;
     }
