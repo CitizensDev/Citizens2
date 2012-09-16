@@ -17,15 +17,16 @@ import com.google.common.collect.Maps;
 public class Translator {
     private ResourceBundle bundle;
     private final Map<String, MessageFormat> messageFormatCache = Maps.newHashMap();
+    private final File resourceFile;
 
-    public Translator(File resourceFile, Locale locale) {
+    private Translator(File resourceFile, Locale locale) {
+        this.resourceFile = resourceFile;
         try {
             bundle = ResourceBundle.getBundle(PREFIX, locale,
                     new FileClassLoader(Translator.class.getClassLoader(), resourceFile));
         } catch (MissingResourceException e) {
             bundle = getDefaultBundle();
         }
-        instance = this;
     }
 
     public String format(String key, Object... msg) {
@@ -35,7 +36,7 @@ public class Translator {
     }
 
     private ResourceBundle getDefaultBundle() {
-        return Messages.getDefaultResourceBundle();
+        return Messages.getDefaultResourceBundle(resourceFile, PREFIX + "_en.properties");
     }
 
     private MessageFormat getFormatter(String unreplaced) {
@@ -91,7 +92,19 @@ public class Translator {
     }
 
     private static Translator instance;
+
     public static final String PREFIX = "messages";
+    public static void setInstance(File resourceFile, Locale locale) {
+        instance = new Translator(resourceFile, locale);
+    }
+
+    public static String tr(Messages key) {
+        return tr(key.getKey());
+    }
+
+    public static String tr(Messages key, Object... msg) {
+        return tr(key.getKey(), msg);
+    }
 
     public static String tr(String key, Object... msg) {
         return msg.length == 0 ? instance.translate(key) : instance.format(key, msg);

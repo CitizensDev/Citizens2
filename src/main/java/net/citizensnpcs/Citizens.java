@@ -3,6 +3,7 @@ package net.citizensnpcs;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Locale;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -36,8 +37,10 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
+import net.citizensnpcs.util.Translator;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -199,7 +202,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         config = new Settings(getDataFolder());
         saves = NPCDataStore.create(getDataFolder());
         if (saves == null) {
-            Messaging.severeF("Unable to load saves, disabling...");
+            Messaging.severeTr(Messages.FAILED_LOAD_SAVES);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -211,12 +214,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         getServer().getPluginManager().registerEvents(new EventListen(), this);
 
-        if (Setting.NPC_COST.asDouble() > 0) {
+        if (Setting.NPC_COST.asDouble() > 0)
             setupEconomy();
-        }
 
         registerCommands();
-
+        setupTranslator();
         Messaging.logF("v%s enabled.", getDescription().getVersion());
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
@@ -238,7 +240,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onImplementationChanged() {
-        Messaging.severe("Citizens implementation changed, disabling plugin.");
+        Messaging.severeTr(Messages.CITIZENS_IMPLEMENTATION_DISABLED);
         Bukkit.getPluginManager().disablePlugin(this);
     }
 
@@ -301,6 +303,26 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         // to search for class imports. Since the context classloader only has
         // CraftBukkit classes, we replace it with a PluginClassLoader, which
         // allows all plugin classes to be imported.
+    }
+
+    private void setupTranslator() {
+        Locale locale = Locale.getDefault();
+        String[] parts = Setting.LOCALE.asString().split("[\\._]");
+        switch (parts.length) {
+            case 1:
+                locale = new Locale(parts[0]);
+                break;
+            case 2:
+                locale = new Locale(parts[0], parts[1]);
+                break;
+            case 3:
+                locale = new Locale(parts[0], parts[1], parts[2]);
+                break;
+            default:
+                break;
+        }
+        Translator.setInstance(new File(getDataFolder(), "i18n"), locale);
+        Messaging.logF("Using locale %s.", locale);
     }
 
     private void startMetrics() {
