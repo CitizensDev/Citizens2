@@ -207,21 +207,6 @@ public class NPCCommands {
             }
         }
 
-        if (args.hasValueFlag("trait")) {
-            Iterable<String> parts = Splitter.on(",").trimResults().split(args.getFlag("trait"));
-            StringBuilder builder = new StringBuilder();
-            for (String tr : parts) {
-                Trait trait = CitizensAPI.getTraitFactory().getTrait(tr);
-                if (trait == null)
-                    continue;
-                npc.addTrait(trait);
-                builder.append(StringHelper.wrap(tr) + ", ");
-            }
-            if (builder.length() > 0)
-                builder.delete(builder.length() - 2, builder.length());
-            msg += " with traits " + builder.toString();
-        }
-
         if (args.hasValueFlag("b")) {
             npc.getTrait(Behaviour.class).addScripts(Splitter.on(",").split(args.getFlag("behaviour")));
             msg += " with the specified behaviours";
@@ -243,6 +228,21 @@ public class NPCCommands {
             if (!event.getCancelReason().isEmpty())
                 reason += " Reason: " + event.getCancelReason();
             throw new CommandException(reason);
+        }
+
+        if (args.hasValueFlag("trait")) {
+            Iterable<String> parts = Splitter.on(",").trimResults().split(args.getFlag("trait"));
+            StringBuilder builder = new StringBuilder();
+            for (String tr : parts) {
+                Trait trait = CitizensAPI.getTraitFactory().getTrait(tr);
+                if (trait == null)
+                    continue;
+                npc.addTrait(trait);
+                builder.append(StringHelper.wrap(tr) + ", ");
+            }
+            if (builder.length() > 0)
+                builder.delete(builder.length() - 2, builder.length());
+            msg += " with traits " + builder.toString();
         }
 
         // Set age after entity spawns
