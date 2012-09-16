@@ -72,6 +72,7 @@ public class Settings {
         MAX_NPC_LIMIT_CHECKS("npc.limits.max-permission-checks", 100),
         NPC_COST("economy.npc.cost", 100D),
         QUICK_SELECT("npc.selection.quick-select", false),
+        REMOVE_PLAYERS_FROM_PLAYER_LIST("npc.player.remove-from-list", true),
         SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
         SELECTION_ITEM("npc.selection.item", "280"),
         SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
