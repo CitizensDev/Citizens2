@@ -19,8 +19,8 @@ public class TextEditPrompt extends StringPrompt {
     public Prompt acceptInput(ConversationContext context, String input) {
         int index = (Integer) context.getSessionData("index");
         text.edit(index, input);
-        Messaging.send((Player) context.getForWhom(), "<a>Changed entry at index <e>" + index + " <a>to <e>" + input
-                + "<a>.");
+        Messaging.send((Player) context.getForWhom(), "<a>Changed entry at index <e>" + index + " <a>to <e>"
+                + input + "<a>.");
         return new StartPrompt(text);
     }
 

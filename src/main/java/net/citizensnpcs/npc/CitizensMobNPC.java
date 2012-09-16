@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 
 public abstract class CitizensMobNPC extends CitizensNPC {
     private final Constructor<? extends EntityLiving> constructor;
+
     protected CitizensMobNPC(int id, String name, Class<? extends EntityLiving> clazz) {
         super(id, name);
         this.constructor = getConstructor(clazz);

@@ -45,6 +45,8 @@ public abstract class CitizensNPC extends AbstractNPC {
         boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
         if (!keepSelected)
             data().remove("selectors");
+        for (Trait trait : traits.values())
+            trait.onDespawn();
         getBukkitEntity().remove();
         mcEntity = null;
 
