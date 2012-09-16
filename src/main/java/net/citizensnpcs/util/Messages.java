@@ -3,40 +3,45 @@ package net.citizensnpcs.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ListResourceBundle;
 import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-import net.citizensnpcs.api.CitizensAPI;
-
 import com.google.common.io.Closeables;
 
 public enum Messages {
-    ;
+    CITIZENS_IMPLEMENTATION_DISABLED("citizens.changed-implementation",
+            "Citizens implementation changed, disabling plugin."),
+    FAILED_LOAD_SAVES("citizens.saves.load-failed", "Unable to load saves, disabling...");
     private String defaultTranslation;
-
     private String key;
 
     Messages(String key, String defaultTranslation) {
         this.key = key;
         this.defaultTranslation = defaultTranslation;
     }
+
     public String getKey() {
         return key;
     }
 
     private static ResourceBundle defaultBundle;
 
-    public static ResourceBundle getDefaultResourceBundle() {
+    public static ResourceBundle getDefaultResourceBundle(File resourceDirectory, String fileName) {
         if (defaultBundle == null) {
-            File dir = new File(CitizensAPI.getDataFolder(), "i18n");
-            dir.mkdirs();
+            resourceDirectory.mkdirs();
 
-            File bundleFile = new File(dir, Translator.PREFIX + "_en.properties");
+            File bundleFile = new File(resourceDirectory, fileName);
             if (!bundleFile.exists())
-                populateDefaults(bundleFile);
+                try {
+                    bundleFile.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            populateDefaults(bundleFile);
             FileInputStream stream = null;
             try {
                 stream = new FileInputStream(bundleFile);
@@ -68,8 +73,17 @@ public enum Messages {
 
     private static void populateDefaults(File bundleFile) {
         Properties properties = new Properties();
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(bundleFile);
+            properties.load(in);
+        } catch (IOException e) {
+        } finally {
+            Closeables.closeQuietly(in);
+        }
         for (Messages message : values()) {
-            properties.put(message.key, message.defaultTranslation);
+            if (!properties.containsKey(message.key))
+                properties.put(message.key, message.defaultTranslation);
         }
         OutputStream stream = null;
         try {

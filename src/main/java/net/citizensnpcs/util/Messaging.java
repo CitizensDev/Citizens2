@@ -46,6 +46,14 @@ public class Messaging {
         log(getFormatted(msg));
     }
 
+    public static void logTr(Messages key) {
+        log(Level.INFO, Translator.tr(key));
+    }
+
+    public static void logTr(Messages key, Object... msg) {
+        log(Level.INFO, Translator.tr(key, msg));
+    }
+
     public static void send(CommandSender sender, Object... msg) {
         sendMessageTo(sender, SPACE.join(msg));
     }
@@ -67,11 +75,11 @@ public class Messaging {
         sender.sendMessage(msg);
     }
 
-    public static void sendTr(CommandSender sender, String key) {
+    public static void sendTr(CommandSender sender, Messages key) {
         sendMessageTo(sender, Translator.tr(key));
     }
 
-    public static void sendTr(CommandSender sender, String key, Object... msg) {
+    public static void sendTr(CommandSender sender, Messages key, Object... msg) {
         sendMessageTo(sender, Translator.tr(key, msg));
     }
 
@@ -96,5 +104,9 @@ public class Messaging {
 
     public static void severeF(Object... messages) {
         log(Level.SEVERE, getFormatted(messages));
+    }
+
+    public static void severeTr(Messages key) {
+        log(Level.SEVERE, Translator.tr(key));
     }
 }
