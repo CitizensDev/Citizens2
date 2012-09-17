@@ -87,6 +87,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
+        text.clear();
         // TODO: backwards compat, remove later
         for (DataKey sub : key.getIntegerSubKeys())
             text.add(sub.getString(""));
@@ -101,11 +102,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         range = key.getDouble("range", range);
     }
 
-    @Override
-    public void onAttach() {
-        if (text.isEmpty())
-            populateDefaultText();
-    }
 
     @EventHandler
     public void onRightClick(NPCRightClickEvent event) {
