@@ -165,9 +165,9 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b) --type (type) --trait ('trait1, trait2...') --b (behaviour))",
+            usage = "create [name] ((-b -u) --type (type) --trait ('trait1, trait2...') --b (behaviour))",
             desc = "Create a new NPC",
-            flags = "b",
+            flags = "bu",
             modifiers = { "create" },
             min = 2,
             permission = "npc.create")
@@ -220,7 +220,8 @@ public class NPCCommands {
             npc.getTrait(Owner.class).setOwner(player.getName());
         npc.getTrait(MobType.class).setType(type);
 
-        npc.spawn(player.getLocation());
+        if (!args.hasFlag('u'))
+            npc.spawn(player.getLocation());
 
         PlayerCreateNPCEvent event = new PlayerCreateNPCEvent(player, npc);
         Bukkit.getPluginManager().callEvent(event);
