@@ -160,6 +160,7 @@ public class NPCCommands {
         }
 
         Messaging.sendF(sender, ChatColor.GREEN + "%s has been copied.", StringHelper.wrap(npc.getName()));
+        selector.select(sender, npc);
     }
 
     @Command(
