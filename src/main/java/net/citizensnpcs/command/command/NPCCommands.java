@@ -592,7 +592,9 @@ public class NPCCommands {
             max = 2,
             permission = "npc.speed")
     public void speed(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        float newSpeed = (float) args.getDouble(1);
+        float newSpeed = (float) Math.abs(args.getDouble(1));
+        if (newSpeed >= Setting.MAX_SPEED.asDouble())
+            throw new CommandException("Speed is above the limit.");
         npc.getNavigator().getDefaultParameters().speedModifier(newSpeed);
 
         Messaging.sendF(sender, ChatColor.GREEN + "NPC speed modifier set to %s.",
