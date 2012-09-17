@@ -102,7 +102,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                         maxDistance = Math.pow(maxDistance, 2);
                         if (distance > maxDistance) {
                             Messaging.sendF(player, ChatColor.RED
-                                    + "Previous waypoint is %d blocks away but the distance limit is %d.",
+                                    + "Previous waypoint is %s blocks away but the distance limit is %s.",
                                     StringHelper.wrap(distance, ChatColor.RED),
                                     StringHelper.wrap(maxDistance, ChatColor.RED));
                             return;
