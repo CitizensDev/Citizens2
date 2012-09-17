@@ -91,10 +91,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 continue;
             // code beneath modified from CraftServer
             try {
-                Messaging.logF("Loading %s", plugin.getDescription().getFullName());
+                Messaging.logTr(Messages.LOADING_SUB_PLUGIN, plugin.getDescription().getFullName());
                 plugin.onLoad();
             } catch (Throwable ex) {
-                Messaging.severe(ex.getMessage() + " initializing " + plugin.getDescription().getFullName());
+                Messaging.severeTr(Messages.ERROR_INITALISING_SUB_PLUGIN, ex.getMessage(), plugin
+                        .getDescription().getFullName());
                 ex.printStackTrace();
             }
         }
@@ -145,7 +146,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             try {
                 commands.execute(split, sender, sender, npc);
             } catch (ServerCommandException ex) {
-                Messaging.send(sender, "You must be in-game to execute that command.");
+                Messaging.sendTr(sender, Messages.INGAME_COMMAND);
             } catch (CommandUsageException ex) {
                 Messaging.sendError(sender, ex.getMessage());
                 Messaging.sendError(sender, ex.getUsage());
@@ -157,11 +158,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 Messaging.sendError(sender, ex.getMessage());
             }
         } catch (NumberFormatException ex) {
-            Messaging.sendError(sender, "That is not a valid number.");
+            Messaging.sendErrorTr(sender, Messages.COMMAND_INVALID_NUMBER);
         } catch (Throwable ex) {
             ex.printStackTrace();
             if (sender instanceof Player) {
-                Messaging.sendError(sender, "Please report this error: [See console]");
+                Messaging.sendErrorTr(sender, Messages.COMMAND_REPORT_ERROR);
                 Messaging.sendError(sender, ex.getClass().getName() + ": " + ex.getMessage());
             }
         }
@@ -197,6 +198,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        setupTranslator();
         registerScriptHelpers();
 
         config = new Settings(getDataFolder());
@@ -218,7 +220,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             setupEconomy();
 
         registerCommands();
-        setupTranslator();
         Messaging.logF("v%s enabled.", getDescription().getVersion());
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
@@ -233,7 +234,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             }
         }) == -1) {
-            Messaging.severe("NPC load task couldn't be scheduled - disabling...");
+            Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
             getServer().getPluginManager().disablePlugin(this);
         }
     }
@@ -291,7 +292,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 Bukkit.getPluginManager().registerEvents(new PaymentListener(economy), this);
             }
         } catch (NoClassDefFoundError e) {
-            Messaging.log("Unable to use economy handling. Has Vault been enabled?");
+            Messaging.logTr(Messages.ERROR_LOADING_ECONOMY);
         }
     }
 
@@ -322,7 +323,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 break;
         }
         Translator.setInstance(new File(getDataFolder(), "i18n"), locale);
-        Messaging.logF("Using locale %s.", locale);
+        Messaging.logTr(Messages.LOCALE_NOTIFICATION, locale);
     }
 
     private void startMetrics() {
@@ -342,9 +343,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
                     traitFactory.addPlotters(metrics.createGraph("traits"));
                     metrics.start();
-                    Messaging.log("Metrics started.");
+                    Messaging.logTr(Messages.METRICS_NOTIFICATION);
                 } catch (IOException e) {
-                    Messaging.logF("Unable to start metrics: %s.", e.getMessage());
+                    Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
                 }
             }
         }.start();
@@ -377,7 +378,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             }
         }
         if (!closest.isEmpty()) {
-            sender.sendMessage(ChatColor.GRAY + "Unknown command. Did you mean:");
+            sender.sendMessage(ChatColor.GRAY + Translator.tr(Messages.UNKNOWN_COMMAND));
             sender.sendMessage(StringHelper.wrap(" /") + command + " " + StringHelper.wrap(closest));
             return true;
         }

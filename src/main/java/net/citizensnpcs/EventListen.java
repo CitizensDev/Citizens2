@@ -192,7 +192,7 @@ public class EventListen implements Listener {
             return;
         int owned = 0;
         for (NPC npc : npcRegistry) {
-            if (npc.getTrait(Owner.class).isOwnedBy(event.getCreator()))
+            if (!event.getNPC().equals(npc) && npc.getTrait(Owner.class).isOwnedBy(event.getCreator()))
                 owned++;
         }
         int wouldOwn = owned + 1;

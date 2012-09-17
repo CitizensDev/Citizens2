@@ -46,10 +46,6 @@ public class Messaging {
         log(getFormatted(msg));
     }
 
-    public static void logTr(Messages key) {
-        log(Level.INFO, Translator.tr(key));
-    }
-
     public static void logTr(Messages key, Object... msg) {
         log(Level.INFO, Translator.tr(key, msg));
     }
@@ -66,6 +62,10 @@ public class Messaging {
         sendF(sender, ChatColor.RED.toString() + SPACE.join(msg));
     }
 
+    public static void sendErrorTr(CommandSender sender, Messages key, Object... msg) {
+        sendMessageTo(sender, ChatColor.RED + Translator.tr(key, msg));
+    }
+
     public static void sendF(CommandSender sender, Object... msg) {
         sendMessageTo(sender, getFormatted(msg));
     }
@@ -73,10 +73,6 @@ public class Messaging {
     private static void sendMessageTo(CommandSender sender, String msg) {
         msg = StringHelper.parseColors(msg);
         sender.sendMessage(msg);
-    }
-
-    public static void sendTr(CommandSender sender, Messages key) {
-        sendMessageTo(sender, Translator.tr(key));
     }
 
     public static void sendTr(CommandSender sender, Messages key, Object... msg) {
@@ -106,7 +102,7 @@ public class Messaging {
         log(Level.SEVERE, getFormatted(messages));
     }
 
-    public static void severeTr(Messages key) {
-        log(Level.SEVERE, Translator.tr(key));
+    public static void severeTr(Messages key, Object... messages) {
+        log(Level.SEVERE, Translator.tr(key, messages));
     }
 }
