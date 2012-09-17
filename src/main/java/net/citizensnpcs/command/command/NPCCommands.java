@@ -223,6 +223,7 @@ public class NPCCommands {
         npc.spawn(player.getLocation());
 
         PlayerCreateNPCEvent event = new PlayerCreateNPCEvent(player, npc);
+        Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
             String reason = "Couldn't create NPC.";
