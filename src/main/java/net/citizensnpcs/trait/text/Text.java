@@ -103,8 +103,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     @Override
     public void onAttach() {
-        if (text.isEmpty())
-            populateDefaultText();
     }
 
     @EventHandler

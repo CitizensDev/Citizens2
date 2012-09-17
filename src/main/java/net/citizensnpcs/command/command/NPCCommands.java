@@ -158,7 +158,7 @@ public class NPCCommands {
             copy.getBukkitEntity().teleport(player);
             copy.getTrait(CurrentLocation.class).setLocation(player.getLocation());
         }
-
+        selector.select(sender, npc);
         Messaging.sendF(sender, ChatColor.GREEN + "%s has been copied.", StringHelper.wrap(npc.getName()));
     }
 

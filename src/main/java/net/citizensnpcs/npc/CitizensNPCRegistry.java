@@ -1,7 +1,10 @@
 package net.citizensnpcs.npc;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.citizensnpcs.NPCDataStore;
@@ -42,116 +45,124 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 public class CitizensNPCRegistry implements NPCRegistry {
-    private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
-    private final NPCDataStore saves;
-    private final Map<EntityType, Class<? extends CitizensNPC>> types = new EnumMap<EntityType, Class<? extends CitizensNPC>>(
-            EntityType.class);
+	private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
+	private final NPCDataStore saves;
+	private final Map<EntityType, Class<? extends CitizensNPC>> types = new EnumMap<EntityType, Class<? extends CitizensNPC>>(
+			EntityType.class);
 
-    public CitizensNPCRegistry(NPCDataStore saves) {
-        this.saves = saves;
+	public CitizensNPCRegistry(NPCDataStore saves) {
+		this.saves = saves;
 
-        types.put(EntityType.BLAZE, CitizensBlazeNPC.class);
-        types.put(EntityType.CAVE_SPIDER, CitizensCaveSpiderNPC.class);
-        types.put(EntityType.CHICKEN, CitizensChickenNPC.class);
-        types.put(EntityType.COW, CitizensCowNPC.class);
-        types.put(EntityType.CREEPER, CitizensCreeperNPC.class);
-        types.put(EntityType.ENDER_DRAGON, CitizensEnderDragonNPC.class);
-        types.put(EntityType.ENDERMAN, CitizensEndermanNPC.class);
-        types.put(EntityType.GHAST, CitizensGhastNPC.class);
-        types.put(EntityType.GIANT, CitizensGiantNPC.class);
-        types.put(EntityType.IRON_GOLEM, CitizensIronGolemNPC.class);
-        types.put(EntityType.MAGMA_CUBE, CitizensMagmaCubeNPC.class);
-        types.put(EntityType.MUSHROOM_COW, CitizensMushroomCowNPC.class);
-        types.put(EntityType.OCELOT, CitizensOcelotNPC.class);
-        types.put(EntityType.PIG, CitizensPigNPC.class);
-        types.put(EntityType.PIG_ZOMBIE, CitizensPigZombieNPC.class);
-        types.put(EntityType.PLAYER, CitizensHumanNPC.class);
-        types.put(EntityType.SHEEP, CitizensSheepNPC.class);
-        types.put(EntityType.SILVERFISH, CitizensSilverfishNPC.class);
-        types.put(EntityType.SKELETON, CitizensSkeletonNPC.class);
-        types.put(EntityType.SLIME, CitizensSlimeNPC.class);
-        types.put(EntityType.SNOWMAN, CitizensSnowmanNPC.class);
-        types.put(EntityType.SPIDER, CitizensSpiderNPC.class);
-        types.put(EntityType.SQUID, CitizensSquidNPC.class);
-        types.put(EntityType.VILLAGER, CitizensVillagerNPC.class);
-        types.put(EntityType.WOLF, CitizensWolfNPC.class);
-        types.put(EntityType.ZOMBIE, CitizensZombieNPC.class);
-    }
+		types.put(EntityType.BLAZE, CitizensBlazeNPC.class);
+		types.put(EntityType.CAVE_SPIDER, CitizensCaveSpiderNPC.class);
+		types.put(EntityType.CHICKEN, CitizensChickenNPC.class);
+		types.put(EntityType.COW, CitizensCowNPC.class);
+		types.put(EntityType.CREEPER, CitizensCreeperNPC.class);
+		types.put(EntityType.ENDER_DRAGON, CitizensEnderDragonNPC.class);
+		types.put(EntityType.ENDERMAN, CitizensEndermanNPC.class);
+		types.put(EntityType.GHAST, CitizensGhastNPC.class);
+		types.put(EntityType.GIANT, CitizensGiantNPC.class);
+		types.put(EntityType.IRON_GOLEM, CitizensIronGolemNPC.class);
+		types.put(EntityType.MAGMA_CUBE, CitizensMagmaCubeNPC.class);
+		types.put(EntityType.MUSHROOM_COW, CitizensMushroomCowNPC.class);
+		types.put(EntityType.OCELOT, CitizensOcelotNPC.class);
+		types.put(EntityType.PIG, CitizensPigNPC.class);
+		types.put(EntityType.PIG_ZOMBIE, CitizensPigZombieNPC.class);
+		types.put(EntityType.PLAYER, CitizensHumanNPC.class);
+		types.put(EntityType.SHEEP, CitizensSheepNPC.class);
+		types.put(EntityType.SILVERFISH, CitizensSilverfishNPC.class);
+		types.put(EntityType.SKELETON, CitizensSkeletonNPC.class);
+		types.put(EntityType.SLIME, CitizensSlimeNPC.class);
+		types.put(EntityType.SNOWMAN, CitizensSnowmanNPC.class);
+		types.put(EntityType.SPIDER, CitizensSpiderNPC.class);
+		types.put(EntityType.SQUID, CitizensSquidNPC.class);
+		types.put(EntityType.VILLAGER, CitizensVillagerNPC.class);
+		types.put(EntityType.WOLF, CitizensWolfNPC.class);
+		types.put(EntityType.ZOMBIE, CitizensZombieNPC.class);
+	}
 
-    public NPC createNPC(EntityType type, int id, String name) {
-        CitizensNPC npc = getByType(type, id, name);
-        if (npc == null)
-            throw new IllegalStateException("Could not create NPC.");
-        npcs.put(npc.getId(), npc);
-        return npc;
-    }
+	public NPC createNPC(EntityType type, int id, String name) {
+		CitizensNPC npc = getByType(type, id, name);
+		if (npc == null)
+			throw new IllegalStateException("Could not create NPC.");
+		npcs.put(npc.getId(), npc);
+		return npc;
+	}
 
-    @Override
-    public NPC createNPC(EntityType type, String name) {
-        return createNPC(type, generateUniqueId(), name);
-    }
+	@Override
+	public NPC createNPC(EntityType type, String name) {
+		return createNPC(type, generateUniqueId(), name);
+	}
 
-    @Override
-    public void deregister(NPC npc) {
-        npcs.remove(npc.getId());
-        saves.remove(npc);
-        npc.despawn();
-    }
+	@Override
+	public void deregister(NPC npc) {
+		npcs.remove(npc.getId());
+		saves.remove(npc);
+		npc.despawn();
+	}
 
-    @Override
-    public void deregisterAll() {
-        Iterator<NPC> itr = iterator();
-        while (itr.hasNext()) {
-            NPC npc = itr.next();
-            itr.remove();
-            npc.despawn();
-            saves.remove(npc);
-        }
-    }
+	@Override
+	public void deregisterAll() {
+		List<NPC> npcs = getNPCs();
+		for (NPC npc:npcs){
+			npc.destroy();
+		}
+	}
 
-    private int generateUniqueId() {
-        int count = 0;
-        while (getById(count++) != null)
-            ; // TODO: doesn't respect existing save data that might not have
-              // been loaded. This causes DBs with NPCs that weren't loaded to
-              // have conflicting primary keys.
-        return count - 1;
-    }
+	private int generateUniqueId() {
+		int count = 0;
+		while (getById(count++) != null)
+			; // TODO: doesn't respect existing save data that might not have
+		// been loaded. This causes DBs with NPCs that weren't loaded to
+		// have conflicting primary keys.
+		return count - 1;
+	}
 
-    @Override
-    public NPC getById(int id) {
-        if (id < 0)
-            throw new IllegalArgumentException("invalid id");
-        return npcs.get(id);
-    }
+	@Override
+	public NPC getById(int id) {
+		if (id < 0)
+			throw new IllegalArgumentException("invalid id");
+		return npcs.get(id);
+	}
 
-    private CitizensNPC getByType(EntityType type, int id, String name) {
-        Class<? extends CitizensNPC> npcClass = types.get(type);
-        if (npcClass == null)
-            throw new IllegalArgumentException("Invalid EntityType: " + type);
-        try {
-            return npcClass.getConstructor(int.class, String.class).newInstance(id, name);
-        } catch (Exception ex) {
-            Messaging.log(ex);
-            return null;
-        }
-    }
+	private CitizensNPC getByType(EntityType type, int id, String name) {
+		Class<? extends CitizensNPC> npcClass = types.get(type);
+		if (npcClass == null)
+			throw new IllegalArgumentException("Invalid EntityType: " + type);
+		try {
+			return npcClass.getConstructor(int.class, String.class).newInstance(id, name);
+		} catch (Exception ex) {
+			Messaging.log(ex);
+			return null;
+		}
+	}
 
-    @Override
-    public NPC getNPC(Entity entity) {
-        if (entity == null)
-            return null;
-        net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
-        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
-    }
+	@Override
+	public NPC getNPC(Entity entity) {
+		if (entity == null)
+			return null;
+		net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
+		return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
+	}
 
-    @Override
-    public boolean isNPC(Entity entity) {
-        return getNPC(entity) != null;
-    }
+	@Override
+	public boolean isNPC(Entity entity) {
+		return getNPC(entity) != null;
+	}
 
-    @Override
-    public Iterator<NPC> iterator() {
-        return npcs.iterator();
-    }
+	@Override
+	public Iterator<NPC> iterator() {
+		return npcs.iterator();
+	}
+
+	@Override
+	public List<NPC> getNPCs() {
+		List<NPC> out = new ArrayList<NPC>();
+		Iterator<NPC> itr = iterator();
+		while (itr.hasNext()) {
+			NPC npc = itr.next();
+			out.add(npc);
+		}
+		return out;
+	}
 }
