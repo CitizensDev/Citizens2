@@ -50,7 +50,7 @@ public class Controllable extends Trait implements Toggleable {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        enabled = key.getBoolean("");
+        enabled = key.getBoolean("enabled");
     }
 
     public boolean mount(Player toMount) {
