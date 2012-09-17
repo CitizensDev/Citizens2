@@ -8,6 +8,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.minecraft.server.ControllerLook;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityMonster;
 import net.minecraft.server.EntityTypes;
 import net.minecraft.server.Navigation;
 import net.minecraft.server.NetworkManager;
@@ -36,7 +37,7 @@ public class NMS {
     private static Field THREAD_STOPPER;
 
     public static void attack(EntityLiving handle, EntityLiving target) {
-        handle.k(target);
+        ((EntityMonster) handle).k(target);
     }
 
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
