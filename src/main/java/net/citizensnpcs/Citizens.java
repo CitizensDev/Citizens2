@@ -220,6 +220,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             setupEconomy();
 
         registerCommands();
+        enableSubPlugins();
         Messaging.logF("v%s enabled.", getDescription().getVersion());
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
@@ -229,7 +230,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             public void run() {
                 saves.loadInto(npcRegistry);
                 startMetrics();
-                enableSubPlugins();
                 scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
                 Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             }
