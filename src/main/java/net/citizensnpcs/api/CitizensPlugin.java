@@ -3,6 +3,7 @@ package net.citizensnpcs.api;
 import java.io.File;
 
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.npc.NPCSelector;
 import net.citizensnpcs.api.trait.TraitFactory;
 
 import org.bukkit.plugin.Plugin;
@@ -14,6 +15,11 @@ public interface CitizensPlugin extends Plugin {
      * @return The NPC registry
      */
     public NPCRegistry getNPCRegistry();
+
+    /**
+     * @return The {@link NPCSelector} currently in use
+     */
+    public NPCSelector getNPCSelector();
 
     /**
      * @return The folder for storing scripts

@@ -2,10 +2,10 @@ package net.citizensnpcs.api.util.cuboid;
 
 public class PrimitiveCuboid {
     private int hashcode = 0;
+    int[] highCoords = { 0, 0, 0 };
     int[] highIndex = new int[3];
-    int[] lowIndex = new int[3];
      int[] lowCoords = { 0, 0, 0 };
-     int[] highCoords = { 0, 0, 0 };
+     int[] lowIndex = new int[3];
 
     public PrimitiveCuboid(int x1, int y1, int z1, int x2, int y2, int z2) {
         lowCoords[0] = x1;

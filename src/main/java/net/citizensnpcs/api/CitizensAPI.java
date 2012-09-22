@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.npc.NPCSelector;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
 
@@ -18,6 +19,13 @@ public final class CitizensAPI {
     private WeakReference<CitizensPlugin> implementation;
 
     private CitizensAPI() {
+    }
+
+    /**
+     * @return The {@link NPCSelector} of the current implementation
+     */
+    public NPCSelector getNPCSelector() {
+        return getImplementation().getNPCSelector();
     }
 
     private static final CitizensAPI instance = new CitizensAPI();
