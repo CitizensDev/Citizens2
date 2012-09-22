@@ -8,6 +8,7 @@ import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.event.NPCSelectEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCSelector;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messaging;
@@ -24,15 +25,16 @@ import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.Lists;
 
-public class NPCSelector implements Listener {
+public class CitizensNPCSelector implements Listener, NPCSelector {
     private int consoleSelectedNPC = -1;
     private final Plugin plugin;
 
-    public NPCSelector(Plugin plugin) {
+    public CitizensNPCSelector(Plugin plugin) {
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
+    @Override
     public NPC getSelected(CommandSender sender) {
         if (sender instanceof Player) {
             List<MetadataValue> metadata = ((Player) sender).getMetadata("selected");
@@ -81,6 +83,7 @@ public class NPCSelector implements Listener {
         }
     }
 
+    @Override
     public void select(CommandSender sender, NPC npc) {
         // Remove existing selection if any
         List<Object> selectors = npc.data().get("selectors", Lists.newArrayList());
