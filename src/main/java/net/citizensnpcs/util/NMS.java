@@ -12,8 +12,12 @@ import net.minecraft.server.EntityTypes;
 import net.minecraft.server.Navigation;
 import net.minecraft.server.NetworkManager;
 import net.minecraft.server.PathfinderGoalSelector;
+import net.minecraft.server.World;
 
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 
 import com.google.common.collect.Maps;
 
@@ -29,10 +33,9 @@ public class NMS {
     private static Field GOAL_FIELD;
     private static Field LAND_SPEED_MODIFIER_FIELD;
     private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
+    private static Field NAVIGATION_WORLD_FIELD;
     private static Field PATHFINDING_RANGE;
-
     private static Field SPEED_FIELD;
-
     private static Field THREAD_STOPPER;
 
     public static void attack(EntityLiving handle, EntityLiving target) {
@@ -125,6 +128,17 @@ public class NMS {
         entity.getControllerJump().b();
     }
 
+    public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {
+        if (NAVIGATION_WORLD_FIELD == null || !(entity instanceof LivingEntity))
+            return;
+        EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
+        World worldHandle = ((CraftWorld) world).getHandle();
+        try {
+            NAVIGATION_WORLD_FIELD.set(handle.getNavigation(), worldHandle);
+        } catch (Exception e) {
+        }
+    }
+
     public static void updatePathfindingRange(CitizensNPC npc, float pathfindingRange) {
         if (PATHFINDING_RANGE == null)
             return;
@@ -155,6 +169,7 @@ public class NMS {
 
         LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bB");
         SPEED_FIELD = getField(EntityLiving.class, "bw");
+        NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
         PATHFINDING_RANGE = getField(Navigation.class, "e");
         GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
 
