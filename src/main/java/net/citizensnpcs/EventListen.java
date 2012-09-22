@@ -20,6 +20,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.util.NMS;
 import net.minecraft.server.EntityPlayer;
 
 import org.bukkit.Bukkit;
@@ -40,6 +41,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -88,6 +90,15 @@ public class EventListen implements Listener {
                 toRespawn.put(coord, npc.getId());
             }
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityChangedWorld(EntityTeleportEvent event) {
+        if (event.getFrom() == null || event.getTo() == null)
+            return;
+        if (event.getFrom().getWorld() == event.getTo().getWorld() || !npcRegistry.isNPC(event.getEntity()))
+            return;
+        NMS.updateNavigationWorld(event.getEntity(), event.getTo().getWorld());
     }
 
     /*
@@ -170,8 +181,8 @@ public class EventListen implements Listener {
         EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
         if (!(handle instanceof EntityHumanNPC))
             return;
-
-        ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
+        if (Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())
+            ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
         // on teleport, player NPCs are added to the server player list. this is
         // undesirable as player NPCs are not real players and confuse plugins.
     }
