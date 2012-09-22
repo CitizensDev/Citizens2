@@ -14,6 +14,7 @@ import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.npc.NPCSelector;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
@@ -36,7 +37,7 @@ import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
-import net.citizensnpcs.npc.NPCSelector;
+import net.citizensnpcs.npc.CitizensNPCSelector;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
@@ -118,6 +119,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     @Override
     public File getScriptFolder() {
         return new File(getDataFolder(), "scripts");
+    }
+
+    public NPCSelector getSelector() {
+        return selector;
     }
 
     @Override
@@ -211,7 +216,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         npcRegistry = new CitizensNPCRegistry(saves);
         traitFactory = new CitizensTraitFactory();
-        selector = new NPCSelector(this);
+        selector = new CitizensNPCSelector(this);
         CitizensAPI.setImplementation(this);
 
         getServer().getPluginManager().registerEvents(new EventListen(), this);
