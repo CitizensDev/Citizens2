@@ -33,7 +33,7 @@ public class PaymentListener implements Listener {
             event.setCancelReason(String.format("Need at least %s.", provider.format(cost)));
             return;
         }
-        provider.bankWithdraw(name, cost);
+        provider.withdrawPlayer(name, cost);
         Messaging.sendF(event.getCreator(), ChatColor.GREEN + "Withdrew %s for your NPC.",
                 StringHelper.wrap(provider.format(cost)));
     }
