@@ -33,6 +33,7 @@ public class TeleportStuckAction implements StuckAction {
         return false;
     }
 
+    public static TeleportStuckAction INSTANCE = new TeleportStuckAction();
     private static Set<Material> EMPTY_BLOCKS = EnumSet.of(Material.AIR, Material.BIRCH_WOOD_STAIRS,
             Material.BRICK_STAIRS, Material.CAKE_BLOCK, Material.COBBLESTONE_STAIRS, Material.DEAD_BUSH,
             Material.JUNGLE_WOOD_STAIRS, Material.LADDER, Material.LONG_GRASS, Material.RAILS,
@@ -41,7 +42,6 @@ public class TeleportStuckAction implements StuckAction {
             Material.VINE, Material.WALL_SIGN, Material.WATER, Material.WOOD_STAIRS, Material.WOOD_STEP,
             Material.WOODEN_DOOR, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.SIGN,
             Material.SIGN_POST);
-    public static TeleportStuckAction INSTANCE = new TeleportStuckAction();
     private static int MAX_ITERATIONS = 10;
     private static final double RANGE = 10;
 }
