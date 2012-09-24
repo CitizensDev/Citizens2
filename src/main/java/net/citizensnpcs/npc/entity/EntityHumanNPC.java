@@ -116,7 +116,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             navigation.e();
             moveOnCurrentHeading();
         } else if (!npc.getNavigator().isNavigating() && (motX != 0 || motZ != 0 || motY != 0)) {
-            e(0, 0);// is this necessary? it does gravity/controllable but
+            if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
+                motX = motY = motZ = 0;
+            } else
+                e(0, 0); // is this necessary? it does gravity/controllable but
             // sometimes players sink into the ground
         }
         if (noDamageTicks > 0)
@@ -179,6 +182,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         aG = prev;
         as = yaw; // update head yaw to match entity yaw
     }
+
+    private static final float EPSILON = 0.001F;
 
     private static final float STEP_HEIGHT = 1F;
 }
