@@ -140,6 +140,10 @@ public class CitizensNavigator implements Navigator {
         executing = null;
         localParams = defaultParams;
         stationaryTicks = 0;
+        if (npc.isSpawned()) {
+            EntityLiving entity = npc.getHandle();
+            entity.motX = entity.motY = entity.motZ = 0F;
+        }
     }
 
     private void stopNavigating(CancelReason reason) {
