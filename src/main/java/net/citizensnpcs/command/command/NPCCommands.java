@@ -668,6 +668,7 @@ public class NPCCommands {
     	// Assume Player's position
     	if (args.hasFlag('a')) { 
     		if (sender instanceof Player) {
+    			// Spawn the NPC if it isn't spawned to prevent NPEs
     			if (!npc.isSpawned())
     	            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
     			
