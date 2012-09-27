@@ -12,15 +12,15 @@ public class QuadTree {
     QuadNode root;
 
     /**
-     * Adds the {@link PrimitiveCuboid} to the target node and fixes up the
-     * children's list holder link
+     * Adds the {@link Cuboid} to the target node and fixes up the children's
+     * list holder link
      * 
      * @param node
      *            The target node
      * @param cuboid
      *            The cuboid to add
      */
-    private void addAndFixListHolders(QuadNode node, PrimitiveCuboid cuboid) {
+    private void addAndFixListHolders(QuadNode node, Cuboid cuboid) {
         node.cuboids.add(cuboid);
         // This isn't our first cuboid, so no fix needed
         if (node.cuboids.size() > 1) {
@@ -58,7 +58,7 @@ public class QuadTree {
         return descendAndSearch(node, x, z);
     }
 
-    private void beginTree(PrimitiveCuboid cuboid) {
+    private void beginTree(Cuboid cuboid) {
         int size = 128;
         int minSize = Math.abs(cuboid.lowCoords[0] - cuboid.highCoords[0]);
         int minSizeB = Math.abs(cuboid.lowCoords[2] - cuboid.highCoords[2]);
@@ -81,7 +81,7 @@ public class QuadTree {
      * @param cuboid
      * @return
      */
-    private int containerFit(QuadNode node, PrimitiveCuboid cuboid) {
+    private int containerFit(QuadNode node, Cuboid cuboid) {
         int minSizeA = Math.abs(cuboid.lowCoords[0] - cuboid.highCoords[0]);
         int minSizeB = Math.abs(cuboid.lowCoords[2] - cuboid.highCoords[2]);
         int fitSize;
@@ -100,26 +100,7 @@ public class QuadTree {
         }
     }
 
-    public void delete(PrimitiveCuboid cuboid) {
-        // No root? No-Op!
-        if (root == null) {
-            return;
-        }
-        QuadNode node;
-        // Should not create any new nodes, but only if the cuboid is, in fact,
-        // in
-        // the tree
-        node = descendAndCreate(root, cuboid);
-        // Using the same algorithm that was used during creation will give us
-        // the
-        // same list of nodes to examine
-        List<QuadNode> targets = getAllTargets(node, cuboid);
-        for (QuadNode target : targets) {
-            removeAndFixListHolders(target, cuboid);
-        }
-    }
-
-    private QuadNode descendAndCreate(QuadNode start, PrimitiveCuboid cuboid) {
+    private QuadNode descendAndCreate(QuadNode start, Cuboid cuboid) {
         QuadNode next = start;
         while (containerFit(next, cuboid) > 0) {
             int i = 0;
@@ -159,7 +140,7 @@ public class QuadTree {
         return node;
     }
 
-    private QuadNode descendNoCreate(QuadNode start, PrimitiveCuboid cuboid) {
+    private QuadNode descendNoCreate(QuadNode start, Cuboid cuboid) {
         QuadNode next = start;
         while (containerFit(next, cuboid) > 0) {
             int i = 0;
@@ -183,6 +164,14 @@ public class QuadTree {
         return next;
     }
 
+    public BookmarkedResult findOverlappingCuboids(int x, int y, int z) {
+        return relatedSearch((QuadNode) null, x, y, z);
+    }
+
+    public BookmarkedResult findOverlappingCuboidsFromBookmark(BookmarkedResult bookmark, int x, int y, int z) {
+        return relatedSearch(bookmark.bookmark, x, y, z);
+    }
+
     /**
      * Oftentimes a node will overlap with the neighbors of a node Since we
      * always search for the next node based on the lower left we know that the
@@ -194,8 +183,8 @@ public class QuadTree {
      * include a node if it's shard didn't re-shard. Keeps the tree search
      * spaces minimal.
      */
-    private List<PrimitiveCuboid> generateShards(QuadNode node, PrimitiveCuboid cuboid) {
-        List<PrimitiveCuboid> shards = new ArrayList<PrimitiveCuboid>(4);
+    private List<Cuboid> generateShards(QuadNode node, Cuboid cuboid) {
+        List<Cuboid> shards = new ArrayList<Cuboid>(4);
         int top = node.z + node.size;
         int right = node.x + node.size;
         int tmp;
@@ -209,7 +198,7 @@ public class QuadTree {
             } else {
                 tmp = cuboid.highCoords[0];
             }
-            shards.add(new PrimitiveCuboid(cuboid.lowCoords[0], 0, top + 1, tmp, 0, cuboid.highCoords[2]));
+            shards.add(new Cuboid(cuboid.lowCoords[0], 0, top + 1, tmp, 0, cuboid.highCoords[2]));
         }
         // Find a shard to the right
         if (right < cuboid.highCoords[0]) {
@@ -220,21 +209,20 @@ public class QuadTree {
             } else {
                 tmp = cuboid.highCoords[2];
             }
-            shards.add(new PrimitiveCuboid(right + 1, 0, cuboid.lowCoords[2], cuboid.highCoords[0], 0, tmp));
+            shards.add(new Cuboid(right + 1, 0, cuboid.lowCoords[2], cuboid.highCoords[0], 0, tmp));
         }
         // Check for a top right shard
         if (right < cuboid.highCoords[0] && top < cuboid.highCoords[2]) {
-            shards.add(new PrimitiveCuboid(right + 1, 0, top + 1, cuboid.highCoords[0], 0,
-                    cuboid.highCoords[2]));
+            shards.add(new Cuboid(right + 1, 0, top + 1, cuboid.highCoords[0], 0, cuboid.highCoords[2]));
         }
         // include the remainder as a shard if we generated any others
         if (shards.size() > 0) {
-            shards.add(new PrimitiveCuboid(cuboid.lowCoords[0], 0, cuboid.lowCoords[2], right, 0, top));
+            shards.add(new Cuboid(cuboid.lowCoords[0], 0, cuboid.lowCoords[2], right, 0, top));
         }
         return shards;
     }
 
-    public List<PrimitiveCuboid> getAllOverlapsWith(PrimitiveCuboid cuboid) {
+    public List<Cuboid> getAllOverlapsWith(Cuboid cuboid) {
         if (root == null)
             return Collections.emptyList();
 
@@ -251,7 +239,7 @@ public class QuadTree {
         // target their nodes as well
         List<QuadNode> targets = getAllTargetsNoCreate(node, cuboid);
         Deque<QuadNode> children = new ArrayDeque<QuadNode>();
-        Set<PrimitiveCuboid> cuboids = new HashSet<PrimitiveCuboid>(256);
+        Set<Cuboid> cuboids = new HashSet<Cuboid>(256);
         // Generous initial capacity for speed
         QuadNode childTarget;
         // Of note: adding all the cuboids to the set and then testing is faster
@@ -278,8 +266,8 @@ public class QuadTree {
                 target = target.nextListHolder;
             }
         }
-        List<PrimitiveCuboid> overlaps = new ArrayList<PrimitiveCuboid>();
-        for (PrimitiveCuboid pc : cuboids) {
+        List<Cuboid> overlaps = new ArrayList<Cuboid>();
+        for (Cuboid pc : cuboids) {
             if (cuboid.overlaps(pc)) {
                 overlaps.add(pc);
             }
@@ -288,17 +276,17 @@ public class QuadTree {
     }
 
     // Finds all the nodes that a cuboid should reside in (handles sharding)
-    private List<QuadNode> getAllTargets(QuadNode initialNode, PrimitiveCuboid cuboid) {
+    private List<QuadNode> getAllTargets(QuadNode initialNode, Cuboid cuboid) {
         List<QuadNode> targets = new ArrayList<QuadNode>();
         // Generate the initial shards
-        Deque<PrimitiveCuboid> shards = new ArrayDeque<PrimitiveCuboid>();
+        Deque<Cuboid> shards = new ArrayDeque<Cuboid>();
         shards.addAll(generateShards(initialNode, cuboid));
 
         QuadNode node;
         while (!shards.isEmpty()) {
-            PrimitiveCuboid shard = shards.pop();
+            Cuboid shard = shards.pop();
             node = descendAndCreate(root, shard);
-            List<PrimitiveCuboid> newShards = generateShards(node, shard);
+            List<Cuboid> newShards = generateShards(node, shard);
             // If no shards were made then this is is the bounding node for this
             // shard. Include it.
             if (newShards.size() == 0) {
@@ -318,17 +306,17 @@ public class QuadTree {
     }
 
     // Finds all the nodes that a cuboid should reside in (handles sharding)
-    private List<QuadNode> getAllTargetsNoCreate(QuadNode initialNode, PrimitiveCuboid cuboid) {
+    private List<QuadNode> getAllTargetsNoCreate(QuadNode initialNode, Cuboid cuboid) {
         List<QuadNode> targets = new ArrayList<QuadNode>();
         // Generate the initial shards
-        Deque<PrimitiveCuboid> shards = new ArrayDeque<PrimitiveCuboid>();
+        Deque<Cuboid> shards = new ArrayDeque<Cuboid>();
         shards.addAll(generateShards(initialNode, cuboid));
 
         QuadNode node;
         while (!shards.isEmpty()) {
-            PrimitiveCuboid shard = shards.pop();
+            Cuboid shard = shards.pop();
             node = descendNoCreate(root, shard);
-            List<PrimitiveCuboid> newShards = generateShards(node, shard);
+            List<Cuboid> newShards = generateShards(node, shard);
             // If no shards were made then this is is the bounding node for this
             // shard. Include it.
             if (newShards.size() == 0) {
@@ -347,10 +335,10 @@ public class QuadTree {
         return targets;
     }
 
-    private List<PrimitiveCuboid> getMatchingCuboids(QuadNode target, int x, int y, int z) {
-        List<PrimitiveCuboid> matches = new ArrayList<PrimitiveCuboid>();
+    private List<Cuboid> getMatchingCuboids(QuadNode target, int x, int y, int z) {
+        List<Cuboid> matches = new ArrayList<Cuboid>();
         while (target != null) {
-            for (PrimitiveCuboid potential : target.cuboids) {
+            for (Cuboid potential : target.cuboids) {
                 if (potential.includesPoint(x, y, z)) {
                     matches.add(potential);
                 }
@@ -360,7 +348,7 @@ public class QuadTree {
         return matches;
     }
 
-    public void insert(PrimitiveCuboid cuboid) {
+    public void insert(Cuboid cuboid) {
         if (root == null) {
             beginTree(cuboid);
         }
@@ -390,7 +378,7 @@ public class QuadTree {
      *            cuboid to insert
      * @return success or failure
      */
-    public boolean insertIfNoOverlaps(PrimitiveCuboid cuboid) {
+    public boolean insertIfNoOverlaps(Cuboid cuboid) {
         if (root == null) {
             insert(cuboid);
             return true;
@@ -407,7 +395,7 @@ public class QuadTree {
         // and target their nodes as well
         List<QuadNode> targets = getAllTargets(node, cuboid);
         Deque<QuadNode> children = new ArrayDeque<QuadNode>();
-        Set<PrimitiveCuboid> cuboids = new HashSet<PrimitiveCuboid>(256);
+        Set<Cuboid> cuboids = new HashSet<Cuboid>(256);
         // Generous initial capacity for speed
         QuadNode childTarget;
         // Of note: adding all the cuboids to the set and then testing is faster
@@ -434,7 +422,7 @@ public class QuadTree {
                 target = target.nextListHolder;
             }
         }
-        for (PrimitiveCuboid pc : cuboids) {
+        for (Cuboid pc : cuboids) {
             if (cuboid.overlaps(pc)) {
                 for (QuadNode target : targets) {
                     if (target.cuboids.size() == 0) {
@@ -451,13 +439,13 @@ public class QuadTree {
         return true;
     }
 
-    private boolean nodeFullyContainsCuboid(QuadNode node, PrimitiveCuboid cuboid) {
+    private boolean nodeFullyContainsCuboid(QuadNode node, Cuboid cuboid) {
         return node.x <= cuboid.lowCoords[0] && node.z <= cuboid.lowCoords[2]
                 && (node.x + node.size) >= cuboid.highCoords[0]
                 && (node.z + node.size) >= cuboid.highCoords[2];
     }
 
-    public boolean overlapsExisting(PrimitiveCuboid cuboid) {
+    public boolean overlapsExisting(Cuboid cuboid) {
         if (root == null) {
             return false;
         }
@@ -474,7 +462,7 @@ public class QuadTree {
         // target their nodes as well
         List<QuadNode> targets = getAllTargetsNoCreate(node, cuboid);
         Deque<QuadNode> children = new ArrayDeque<QuadNode>();
-        Set<PrimitiveCuboid> cuboids = new HashSet<PrimitiveCuboid>(256);
+        Set<Cuboid> cuboids = new HashSet<Cuboid>(256);
         // Generous initial capacity for speed
         QuadNode childTarget;
         // Of note: adding all the cuboids to the set and then testing is faster
@@ -501,7 +489,7 @@ public class QuadTree {
                 target = target.nextListHolder;
             }
         }
-        for (PrimitiveCuboid pc : cuboids) {
+        for (Cuboid pc : cuboids) {
             if (cuboid.overlaps(pc)) {
                 return true;
             }
@@ -531,11 +519,7 @@ public class QuadTree {
         }
     }
 
-    public BookmarkedResult relatedSearch(BookmarkedResult bookmark, int x, int y, int z) {
-        return relatedSearch(bookmark.bookmark, x, y, z);
-    }
-
-    public BookmarkedResult relatedSearch(QuadNode bookmark, int x, int y, int z) {
+    private BookmarkedResult relatedSearch(QuadNode bookmark, int x, int y, int z) {
         if (bookmark == null)
             bookmark = root;
 
@@ -543,7 +527,26 @@ public class QuadTree {
         return new BookmarkedResult(node, getMatchingCuboids(node, x, y, z));
     }
 
-    private void removeAndFixListHolders(QuadNode node, PrimitiveCuboid cuboid) {
+    public void remove(Cuboid cuboid) {
+        // No root? No-Op!
+        if (root == null) {
+            return;
+        }
+        QuadNode node;
+        // Should not create any new nodes, but only if the cuboid is, in fact,
+        // in
+        // the tree
+        node = descendAndCreate(root, cuboid);
+        // Using the same algorithm that was used during creation will give us
+        // the
+        // same list of nodes to examine
+        List<QuadNode> targets = getAllTargets(node, cuboid);
+        for (QuadNode target : targets) {
+            removeAndFixListHolders(target, cuboid);
+        }
+    }
+
+    private void removeAndFixListHolders(QuadNode node, Cuboid cuboid) {
         node.cuboids.remove(cuboid);
         // This wasn't our only cuboid, so no fix needed
         if (node.cuboids.size() > 0)
@@ -577,7 +580,7 @@ public class QuadTree {
      * 
      * @param cuboid
      */
-    private void repotTree(PrimitiveCuboid cuboid) {
+    private void repotTree(Cuboid cuboid) {
         QuadNode oldRoot;
         int i;
         do {
@@ -602,7 +605,7 @@ public class QuadTree {
         } while (!nodeFullyContainsCuboid(root, cuboid));
     }
 
-    public List<PrimitiveCuboid> search(int x, int y, int z) {
+    public List<Cuboid> search(int x, int y, int z) {
         QuadNode node = descendAndSearch(root, x, z);
         return getMatchingCuboids(node, x, y, z);
     }
