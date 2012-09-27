@@ -4,7 +4,7 @@ Citizens is an NPC plugin for the Bukkit API. It was first released on March 5, 
 provides an API itself, which developers can use to create their own NPC characters.
 
 Compatible With:
--Bukkit 1.2.5-R1.0
--CitizensAPI 2.0
--CraftBukkit 1.2.5-R1.0
--Minecraft 1.2.5
+-Bukkit 1.3.2 dev
+-CitizensAPI 2.0.2
+-CraftBukkit 1.3.2 dev
+-Minecraft 1.3.2
