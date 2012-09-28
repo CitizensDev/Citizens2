@@ -20,7 +20,7 @@ import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.Positions;
+import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.Sheared;
@@ -54,7 +54,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(WoolColor.class).withName("woolcolor"));
         registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));
         registerTrait(TraitInfo.create(Behaviour.class).withName("behaviour"));
-        registerTrait(TraitInfo.create(Positions.class).withName("positions"));
+        registerTrait(TraitInfo.create(Poses.class).withName("poses"));
 
         for (String trait : registered.keySet())
             INTERNAL_TRAITS.add(trait);

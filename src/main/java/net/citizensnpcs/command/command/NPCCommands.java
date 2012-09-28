@@ -27,12 +27,12 @@ import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.Positions;
+import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
-import net.citizensnpcs.util.Position;
+import net.citizensnpcs.util.Pose;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
@@ -455,24 +455,24 @@ public class NPCCommands {
 
 	@Command(
 			aliases = { "npc" },
-			usage = "position (--save [name]|--load [name]|--remove [name]|--list) (-a)",
-			desc = "Changes/Saves/Lists NPC's head position(s)",
+			usage = "pose (--save [name]|--load [name]|--remove [name]|--list) (-a)",
+			desc = "Changes/Saves/Lists NPC's head pose(s)",
 			flags = "a",
-			modifiers = { "position" },
+			modifiers = { "pose" },
 			min = 1,
 			max = 2,
-			permission = "npc.position")
+			permission = "npc.pose")
 	@Requirements(selected = true, ownership = true, types = { EntityType.PLAYER })
 	public void position(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
 
-		Positions trait = npc.getTrait(Positions.class);
+		Poses trait = npc.getTrait(Poses.class);
 
 		if (args.hasValueFlag("save")) {
 			if (!args.getFlag("save").isEmpty()) {
 				if (sender instanceof Player) {
-					if (trait.addPosition(args.getFlag("save"), ((Player) sender).getLocation()))
-						Messaging.sendF(sender, ChatColor.GREEN + "Position added.");
-					else throw new CommandException("The position '" + args.getFlag("load") + "' already exists.");
+					if (trait.addPose(args.getFlag("save"), ((Player) sender).getLocation()))
+						Messaging.sendF(sender, ChatColor.GREEN + "Pose added.");
+					else throw new CommandException("The pose '" + args.getFlag("load") + "' already exists.");
 				}
 				else
 					throw new CommandException("This command may be used in-game only.");	
@@ -483,10 +483,10 @@ public class NPCCommands {
 
 		else if (args.hasValueFlag("load")) {
 			if (!args.getFlag("load").isEmpty()) {
-				if (trait.getPosition(args.getFlag("load")) != null)
-					trait.assumePosition(trait.getPosition(args.getFlag("load")));
+				if (trait.getPose(args.getFlag("load")) != null)
+					trait.assumePose(trait.getPose(args.getFlag("load")));
 				else
-					throw new CommandException("The position '" + args.getFlag("load") + "' does not exist.");
+					throw new CommandException("The pose '" + args.getFlag("load") + "' does not exist.");
 			}
 			else
 				throw new CommandException("Invalid name.");
@@ -494,20 +494,20 @@ public class NPCCommands {
 
 		else if (args.hasValueFlag("remove")) {
 			if (!args.getFlag("remove").isEmpty()) {
-				if (trait.removePosition(trait.getPosition(args.getFlag("remove"))))
+				if (trait.removePose(trait.getPose(args.getFlag("remove"))))
 					Messaging.sendF(sender, ChatColor.GREEN + "Position removed.");
 				else
-					throw new CommandException("The position '" + args.getFlag("remove") + "' does not exist.");
+					throw new CommandException("The pose '" + args.getFlag("remove") + "' does not exist.");
 			}
 			else
 				throw new CommandException("Invalid name.");
 		}
 		
 		else if (!args.hasFlag('a')) {
-			Paginator paginator = new Paginator().header("Positions");
+			Paginator paginator = new Paginator().header("Pose");
 			paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
-			for (int i = 0; i < trait.getPositions().size(); i ++) {
-				String line = "<a>" + i + "<b>  " + trait.getPositions().get(i).getName() + "<c>  " + trait.getPositions().get(i).getPitch() + "/" + trait.getPositions().get(i).getYaw();
+			for (int i = 0; i < trait.getPoses().size(); i ++) {
+				String line = "<a>" + i + "<b>  " + trait.getPoses().get(i).getName() + "<c>  " + trait.getPoses().get(i).getPitch() + "/" + trait.getPoses().get(i).getYaw();
 				paginator.addLine(line);
 			}
 
@@ -516,10 +516,10 @@ public class NPCCommands {
 				throw new CommandException("The page '" + page + "' does not exist.");
 		}
 		
-		// Assume Player's position
+		// Assume Player's pose
 		if (args.hasFlag('a')) { 
 			if (sender instanceof Player) {
-				trait.assumePosition(new Position(sender.getName(), ((Player) sender).getLocation().getPitch(), ((Player) sender).getLocation().getYaw()));
+				trait.assumePose(new Pose(sender.getName(), ((Player) sender).getLocation().getPitch(), ((Player) sender).getLocation().getYaw()));
 				return;
 			}
 			else 
