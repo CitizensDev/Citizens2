@@ -31,8 +31,8 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 0.4F;
-    private static final Map<Class<? extends Entity>, Constructor<? extends Entity>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<? extends Entity>, Constructor<? extends Entity>>();
     private static Map<Class<? extends Entity>, Integer> ENTITY_CLASS_TO_INT;
+    private static final Map<Class<? extends Entity>, Constructor<? extends Entity>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<? extends Entity>, Constructor<? extends Entity>>();
     private static Map<Integer, Class<? extends Entity>> ENTITY_INT_TO_CLASS;
     private static Field GOAL_FIELD;
     private static Field LAND_SPEED_MODIFIER_FIELD;
@@ -56,6 +56,18 @@ public class NMS {
             } catch (Exception e) {
             }
         }
+    }
+
+    private static Constructor<? extends Entity> getCustomEntityConstructor(Class<? extends Entity> clazz,
+            EntityType type) throws SecurityException, NoSuchMethodException {
+        Constructor<? extends Entity> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
+        if (constructor == null) {
+            constructor = clazz.getConstructor(World.class);
+            constructor.setAccessible(true);
+            ENTITY_CLASS_TO_INT.put(clazz, (int) type.getTypeId());
+            ENTITY_CONSTRUCTOR_CACHE.put(clazz, constructor);
+        }
+        return constructor;
     }
 
     private static Field getField(Class<?> clazz, String field) {
@@ -114,6 +126,22 @@ public class NMS {
         } catch (IllegalArgumentException e) {
         } catch (IllegalAccessException e) {
         }
+    }
+
+    public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
+            Class<? extends Entity> clazz, EntityType type) {
+        World handle = ((CraftWorld) world).getHandle();
+        Entity entity = null;
+        try {
+            Constructor<? extends Entity> constructor = getCustomEntityConstructor(clazz, type);
+            entity = constructor.newInstance(handle);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        handle.addEntity(entity);
+        entity.setLocation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
+        return entity.getBukkitEntity();
     }
 
     public static void stopNetworkThreads(NetworkManager manager) {
@@ -186,33 +214,5 @@ public class NMS {
             ENTITY_CLASS_TO_INT = (Map<Class<? extends Entity>, Integer>) field.get(null);
         } catch (Exception e) {
         }
-    }
-
-    public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
-            Class<? extends Entity> clazz, EntityType type) {
-        World handle = ((CraftWorld) world).getHandle();
-        Entity entity = null;
-        try {
-            Constructor<? extends Entity> constructor = getCustomEntityConstructor(clazz, type);
-            entity = constructor.newInstance(handle);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        handle.addEntity(entity);
-        entity.setLocation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
-        return entity.getBukkitEntity();
-    }
-
-    private static Constructor<? extends Entity> getCustomEntityConstructor(Class<? extends Entity> clazz,
-            EntityType type) throws SecurityException, NoSuchMethodException {
-        Constructor<? extends Entity> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
-        if (constructor == null) {
-            constructor = clazz.getConstructor(World.class);
-            constructor.setAccessible(true);
-            ENTITY_CLASS_TO_INT.put(clazz, (int) type.getTypeId());
-            ENTITY_CONSTRUCTOR_CACHE.put(clazz, constructor);
-        }
-        return constructor;
     }
 }

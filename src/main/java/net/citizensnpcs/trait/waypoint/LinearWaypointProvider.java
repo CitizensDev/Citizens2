@@ -30,8 +30,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
@@ -44,188 +46,8 @@ public class LinearWaypointProvider implements WaypointProvider {
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
     @Override
-    public Editor createEditor(final Player player) {
-        return new Editor() {
-            boolean editing = true;
-            int editingSlot = waypoints.size() - 1;
-            Map<Waypoint, Entity> waypointEntities = Maps.newHashMap();
-            private boolean showPath;
-
-            @Override
-            public void begin() {
-                Messaging.send(player, ChatColor.AQUA + "Entered the linear waypoint editor!");
-                Messaging.send(player, "<e>Left click<a> to add a waypoint, <e>right click<a> to remove.");
-                Messaging.send(player, "<a>Type <e>toggle path<a> to toggle showing entities at waypoints.");
-            }
-
-            private void createWaypointMarker(Waypoint waypoint) {
-                Entity entity = spawnMarker(player.getWorld(), waypoint.getLocation().add(0, 1, 0));
-                if (entity == null)
-                    return;
-                waypointEntities.put(waypoint, entity);
-            }
-
-            @Override
-            public void end() {
-                if (!editing)
-                    return;
-                Messaging.send(player, ChatColor.AQUA + "Exited the linear waypoint editor.");
-                editing = false;
-                if (!showPath)
-                    return;
-                destroyWaypointMarkers();
-            }
-
-            private String formatLoc(Location location) {
-                return String.format("<e>%d<a>, <e>%d<a>, <e>%d<a>", location.getBlockX(),
-                        location.getBlockY(), location.getBlockZ());
-            }
-
-            private Location getPreviousWaypoint(int fromSlot) {
-                if (waypoints.size() <= 1)
-                    return null;
-                fromSlot--;
-                if (fromSlot < 0)
-                    fromSlot = waypoints.size() - 1;
-                return waypoints.get(fromSlot).getLocation();
-            }
-
-            @EventHandler
-            public void onNPCDespawn(NPCDespawnEvent event) {
-                if (event.getNPC().equals(npc))
-                    Editor.leave(player);
-            }
-
-            @EventHandler
-            public void onNPCRemove(NPCRemoveEvent event) {
-                if (event.getNPC().equals(npc))
-                    Editor.leave(player);
-            }
-
-            @EventHandler(ignoreCancelled = true)
-            public void onPlayerChat(AsyncPlayerChatEvent event) {
-                if (!event.getPlayer().equals(player))
-                    return;
-                if (!event.getMessage().equalsIgnoreCase("toggle path"))
-                    return;
-                event.setCancelled(true);
-                // we need to spawn entities, get back on the main thread.
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        togglePath();
-                    }
-                }, 1);
-            }
-
-            private void togglePath() {
-                showPath = !showPath;
-                if (showPath) {
-                    createWaypointMarkers();
-                    Messaging.sendF(player, "%s waypoint markers.", StringHelper.wrap("Showing"));
-                } else {
-                    destroyWaypointMarkers();
-                    Messaging.sendF(player, "%s showing waypoint markers.", StringHelper.wrap("Stopped"));
-                }
-            }
-
-            private void createWaypointMarkers() {
-                for (Waypoint waypoint : waypoints)
-                    createWaypointMarker(waypoint);
-            }
-
-            private void destroyWaypointMarkers() {
-                for (Entity entity : waypointEntities.values())
-                    entity.remove();
-                waypointEntities.clear();
-            }
-
-            @EventHandler
-            public void onPlayerInteract(PlayerInteractEvent event) {
-                if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL)
-                    return;
-                if (event.getPlayer().getWorld() != npc.getBukkitEntity().getWorld())
-                    return;
-                if (event.getAction() == Action.LEFT_CLICK_BLOCK
-                        || event.getAction() == Action.LEFT_CLICK_AIR) {
-                    if (event.getClickedBlock() == null)
-                        return;
-                    event.setCancelled(true);
-                    Location at = event.getClickedBlock().getLocation();
-                    Location prev = getPreviousWaypoint(editingSlot);
-
-                    if (prev != null) {
-                        double distance = at.distanceSquared(prev);
-                        double maxDistance = Math.pow(npc.getNavigator().getDefaultParameters().range(), 2);
-                        if (distance > maxDistance) {
-                            Messaging.sendF(player, ChatColor.RED
-                                    + "Previous waypoint is %s blocks away but the distance limit is %s.",
-                                    StringHelper.wrap(Math.sqrt(distance), ChatColor.RED),
-                                    StringHelper.wrap(Math.sqrt(maxDistance), ChatColor.RED));
-                            return;
-                        }
-                    }
-
-                    Waypoint element = new Waypoint(at);
-                    waypoints.add(Math.max(0, editingSlot), element);
-                    if (showPath)
-                        createWaypointMarker(element);
-                    editingSlot = Math.min(editingSlot + 1, waypoints.size());
-                    Messaging.send(
-                            player,
-                            String.format("<e>Added<a> a waypoint at (" + formatLoc(at)
-                                    + ") (<e>%d<a>, <e>%d<a>)", editingSlot + 1, waypoints.size()));
-                } else if (waypoints.size() > 0) {
-                    event.setCancelled(true);
-                    editingSlot = Math.min(0, Math.max(waypoints.size() - 1, editingSlot));
-                    Waypoint waypoint = waypoints.remove(editingSlot);
-                    if (showPath)
-                        removeWaypointMarker(waypoint);
-                    editingSlot = Math.max(0, editingSlot - 1);
-                    Messaging.send(player, String.format(
-                            "<e>Removed<a> a waypoint (<e>%d<a> remaining) (<e>%d<a>)", waypoints.size(),
-                            editingSlot + 1));
-                }
-                currentGoal.onProviderChanged();
-            }
-
-            @EventHandler
-            public void onPlayerItemHeldChange(PlayerItemHeldEvent event) {
-                if (!event.getPlayer().equals(player) || waypoints.size() == 0)
-                    return;
-                int previousSlot = event.getPreviousSlot(), newSlot = event.getNewSlot();
-                // handle wrap-arounds
-                if (previousSlot == 0 && newSlot == LARGEST_SLOT) {
-                    editingSlot--;
-                } else if (previousSlot == LARGEST_SLOT && newSlot == 0) {
-                    editingSlot++;
-                } else {
-                    int diff = newSlot - previousSlot;
-                    if (Math.abs(diff) != 1)
-                        return; // the player isn't scrolling
-                    editingSlot += diff > 0 ? 1 : -1;
-                }
-                if (editingSlot >= waypoints.size())
-                    editingSlot = 0;
-                if (editingSlot < 0)
-                    editingSlot = waypoints.size() - 1;
-                Messaging.send(player, "<a>Editing slot set to " + StringHelper.wrap(editingSlot) + " ("
-                        + formatLoc(waypoints.get(editingSlot).getLocation()) + ").");
-            }
-
-            private void removeWaypointMarker(Waypoint waypoint) {
-                Entity entity = waypointEntities.remove(waypoint);
-                if (entity != null)
-                    entity.remove();
-            }
-
-            private Entity spawnMarker(World world, Location at) {
-                return NMS.spawnCustomEntity(world, at, EntityEnderCrystalMarker.class,
-                        EntityType.ENDER_CRYSTAL);
-            }
-
-            private static final int LARGEST_SLOT = 8;
-        };
+    public Editor createEditor(Player player) {
+        return new LinearWaypointEditor(player);
     }
 
     @Override
@@ -274,6 +96,203 @@ public class LinearWaypointProvider implements WaypointProvider {
     @Override
     public void setPaused(boolean paused) {
         currentGoal.setPaused(paused);
+    }
+
+    private final class LinearWaypointEditor extends Editor {
+        private final Player player;
+        boolean editing = true;
+        int editingSlot = waypoints.size() - 1;
+        private boolean showPath;
+        Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
+        private static final int LARGEST_SLOT = 8;
+
+        private LinearWaypointEditor(Player player) {
+            this.player = player;
+        }
+
+        @Override
+        public void begin() {
+            Messaging.send(player, ChatColor.AQUA + "Entered the linear waypoint editor!");
+            Messaging.send(player, "<e>Left click<a> to add a waypoint, <e>right click<a> to remove.");
+            Messaging.send(player, "<a>Type <e>toggle path<a> to toggle showing entities at waypoints.");
+        }
+
+        private void createWaypointMarker(int index, Waypoint waypoint) {
+            Entity entity = spawnMarker(player.getWorld(), waypoint.getLocation().add(0, 1, 0));
+            if (entity == null)
+                return;
+            entity.setMetadata("waypointindex", new FixedMetadataValue(CitizensAPI.getPlugin(), index));
+            waypointMarkers.put(waypoint, entity);
+        }
+
+        private void createWaypointMarkers() {
+            for (int i = 0; i < waypoints.size(); i++)
+                createWaypointMarker(i, waypoints.get(i));
+        }
+
+        private void destroyWaypointMarkers() {
+            for (Entity entity : waypointMarkers.values())
+                entity.remove();
+            waypointMarkers.clear();
+        }
+
+        @Override
+        public void end() {
+            if (!editing)
+                return;
+            Messaging.send(player, ChatColor.AQUA + "Exited the linear waypoint editor.");
+            editing = false;
+            if (!showPath)
+                return;
+            destroyWaypointMarkers();
+        }
+
+        private String formatLoc(Location location) {
+            return String.format("<e>%d<a>, <e>%d<a>, <e>%d<a>", location.getBlockX(), location.getBlockY(),
+                    location.getBlockZ());
+        }
+
+        private Location getPreviousWaypoint(int fromSlot) {
+            if (waypoints.size() <= 1)
+                return null;
+            fromSlot--;
+            if (fromSlot < 0)
+                fromSlot = waypoints.size() - 1;
+            return waypoints.get(fromSlot).getLocation();
+        }
+
+        @EventHandler
+        public void onNPCDespawn(NPCDespawnEvent event) {
+            if (event.getNPC().equals(npc))
+                Editor.leave(player);
+        }
+
+        @EventHandler
+        public void onNPCRemove(NPCRemoveEvent event) {
+            if (event.getNPC().equals(npc))
+                Editor.leave(player);
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onPlayerChat(AsyncPlayerChatEvent event) {
+            if (!event.getPlayer().equals(player))
+                return;
+            if (!event.getMessage().equalsIgnoreCase("toggle path"))
+                return;
+            event.setCancelled(true);
+            // we need to spawn entities, get back on the main thread.
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    togglePath();
+                }
+            }, 1);
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+            if (!player.equals(event.getPlayer()) || !showPath)
+                return;
+            if (!event.getRightClicked().hasMetadata("waypointindex"))
+                return;
+            editingSlot = event.getRightClicked().getMetadata("waypointindex").get(0).asInt();
+            Messaging.sendF(player, ChatColor.GREEN + "Editing slot set to %s.",
+                    StringHelper.wrap(editingSlot));
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onPlayerInteract(PlayerInteractEvent event) {
+            if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL)
+                return;
+            if (event.getPlayer().getWorld() != npc.getBukkitEntity().getWorld())
+                return;
+            if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
+                if (event.getClickedBlock() == null)
+                    return;
+                event.setCancelled(true);
+                Location at = event.getClickedBlock().getLocation();
+                Location prev = getPreviousWaypoint(editingSlot);
+
+                if (prev != null) {
+                    double distance = at.distanceSquared(prev);
+                    double maxDistance = Math.pow(npc.getNavigator().getDefaultParameters().range(), 2);
+                    if (distance > maxDistance) {
+                        Messaging.sendF(player, ChatColor.RED
+                                + "Previous waypoint is %s blocks away but the distance limit is %s.",
+                                StringHelper.wrap(Math.sqrt(distance), ChatColor.RED),
+                                StringHelper.wrap(Math.sqrt(maxDistance), ChatColor.RED));
+                        return;
+                    }
+                }
+
+                Waypoint element = new Waypoint(at);
+                waypoints.add(Math.max(0, editingSlot), element);
+                if (showPath)
+                    createWaypointMarker(editingSlot, element);
+                editingSlot = Math.min(editingSlot + 1, waypoints.size());
+                Messaging.send(
+                        player,
+                        String.format("<e>Added<a> a waypoint at (" + formatLoc(at)
+                                + ") (<e>%d<a>, <e>%d<a>)", editingSlot + 1, waypoints.size()));
+            } else if (waypoints.size() > 0) {
+                event.setCancelled(true);
+                editingSlot = Math.min(0, Math.max(waypoints.size() - 1, editingSlot));
+                Waypoint waypoint = waypoints.remove(editingSlot);
+                if (showPath)
+                    removeWaypointMarker(waypoint);
+                editingSlot = Math.max(0, editingSlot - 1);
+                Messaging.send(
+                        player,
+                        String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining) (<e>%d<a>)",
+                                waypoints.size(), editingSlot + 1));
+            }
+            currentGoal.onProviderChanged();
+        }
+
+        @EventHandler
+        public void onPlayerItemHeldChange(PlayerItemHeldEvent event) {
+            if (!event.getPlayer().equals(player) || waypoints.size() == 0)
+                return;
+            int previousSlot = event.getPreviousSlot(), newSlot = event.getNewSlot();
+            // handle wrap-arounds
+            if (previousSlot == 0 && newSlot == LARGEST_SLOT) {
+                editingSlot--;
+            } else if (previousSlot == LARGEST_SLOT && newSlot == 0) {
+                editingSlot++;
+            } else {
+                int diff = newSlot - previousSlot;
+                if (Math.abs(diff) != 1)
+                    return; // the player isn't scrolling
+                editingSlot += diff > 0 ? 1 : -1;
+            }
+            if (editingSlot >= waypoints.size())
+                editingSlot = 0;
+            if (editingSlot < 0)
+                editingSlot = waypoints.size() - 1;
+            Messaging.send(player, "<a>Editing slot set to " + StringHelper.wrap(editingSlot) + " ("
+                    + formatLoc(waypoints.get(editingSlot).getLocation()) + ").");
+        }
+
+        private void removeWaypointMarker(Waypoint waypoint) {
+            Entity entity = waypointMarkers.remove(waypoint);
+            if (entity != null)
+                entity.remove();
+        }
+
+        private Entity spawnMarker(World world, Location at) {
+            return NMS.spawnCustomEntity(world, at, EntityEnderCrystalMarker.class, EntityType.ENDER_CRYSTAL);
+        }
+
+        private void togglePath() {
+            showPath = !showPath;
+            if (showPath) {
+                createWaypointMarkers();
+                Messaging.sendF(player, "%s waypoint markers.", StringHelper.wrap("Showing"));
+            } else {
+                destroyWaypointMarkers();
+                Messaging.sendF(player, "%s showing waypoint markers.", StringHelper.wrap("Stopped"));
+            }
+        }
     }
 
     private class LinearWaypointGoal implements Goal {
