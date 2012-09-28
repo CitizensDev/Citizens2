@@ -27,10 +27,12 @@ import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.Positions;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
+import net.citizensnpcs.util.Position;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityLiving;
@@ -453,32 +455,68 @@ public class NPCCommands {
                 + " is now the owner of " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "position (-a)",
-            desc = "Changes NPC's head position",
-            flags = "a",
-            modifiers = { "position" },
-            min = 1,
-            max = 2,
-            permission = "npc.position.assume")
-    @Requirements(selected = true, ownership = true)
-    public void position(CommandContext args, Player player, NPC npc) throws CommandException {
-        // Assume Player's position
-        if (args.hasFlag('a')) {
-            // Spawn the NPC if it isn't spawned to prevent NPEs
-            if (!npc.isSpawned())
-                npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
-            // Update entity with some NMS magic
-            EntityLiving handle = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
-            handle.yaw = player.getLocation().getYaw();
-            handle.pitch = player.getLocation().getPitch();
-            handle.as = handle.yaw;
-            return;
-        } else
-            Messaging.sendF(player, ChatColor.YELLOW
-                    + "Usage: '/npc position -a' to assume your head position");
-    }
+	@Command(
+			aliases = { "npc" },
+			usage = "position (-a)",
+			desc = "Changes NPC's head position",
+			flags = "a",
+			modifiers = { "position" },
+			min = 1,
+			max = 2,
+			permission = "npc.position")
+	@Requirements(selected = true, ownership = true, types = { EntityType.PLAYER })
+	public void position(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+
+		Positions trait = npc.getTrait(Positions.class);
+
+		if (args.hasValueFlag("save")) {
+			if (args.getFlag("save").matches("[a-zA-Z0-9_\\-]+")) {
+				if (sender instanceof Player) {
+					if (trait.addPosition(args.getFlag("save"), ((Player) sender).getLocation()))
+						Messaging.sendF(sender, ChatColor.RED + "Position added.");
+				}
+				else
+					Messaging.sendF(sender, ChatColor.YELLOW + "This command can only be used by a Player in-game");	
+			}
+			else
+				Messaging.sendF(sender, ChatColor.YELLOW + "Save name can only be one word. Valid characters: A-Z a-z 0-9 - _");
+		}
+
+		else if (args.hasValueFlag("load")) {
+			if (args.getFlag("load").matches("[a-zA-Z0-9_\\-]+")) {
+				if (trait.getPosition(args.getFlag("load")) != null)
+					trait.assumePosition(trait.getPosition(args.getFlag("load")));
+				else
+					throw new CommandException("The position '" + args.getFlag("load") + "' does not exist.");
+			}
+			else
+				Messaging.sendF(sender, ChatColor.YELLOW + "Invalid load name.");
+		}
+
+		else {
+			Paginator paginator = new Paginator().header("Positions");
+			paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
+			for (int i = 0; i < trait.getPositions().size(); i ++) {
+				String line = "<a>" + i + "<b>  " + trait.getPositions().get(i).name + "<c>  " + Double.valueOf(trait.getPositions().get(i).getPitch()) + "/" + Double.valueOf(trait.getPositions().get(i).getYaw());
+				paginator.addLine(line);
+			}
+
+			int page = args.getInteger(1, 1);
+			if (!paginator.sendPage(sender, page))
+				throw new CommandException("The page '" + page + "' does not exist.");
+		}
+		
+		// Assume Player's position
+		if (args.hasFlag('a')) { 
+			if (sender instanceof Player) {
+				trait.assumePosition(new Position(sender.getName(), ((Player) sender).getLocation().getPitch(), ((Player) sender).getLocation().getYaw()));
+				return;
+			}
+
+			else 
+				Messaging.sendF(sender, ChatColor.YELLOW + "This command can only be used by a Player in-game");
+		}
+	}
 
     @Command(
             aliases = { "npc" },
