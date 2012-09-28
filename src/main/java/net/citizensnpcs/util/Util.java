@@ -63,6 +63,13 @@ public class Util {
         handle.pitch = (float) pitch;
         handle.as = handle.yaw;
     }
+    
+    public static void assumePosition(Entity entity, Position position) {
+    	EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
+		handle.yaw = (float) position.getYaw();
+		handle.pitch = (float) position.getPitch();
+		handle.as = handle.yaw;
+    }
 
     public static boolean isSettingFulfilled(Player player, Setting setting) {
         String parts = setting.asString();
