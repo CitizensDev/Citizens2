@@ -182,9 +182,8 @@ public class SimpleGoalController implements GoalController {
 
         @Override
         public void selectAdditional(Goal... goals) {
-            for (Goal goal : goals) {
+            for (Goal goal : goals)
                 addGoalToExecution(goal);
-            }
         }
     }
 }
