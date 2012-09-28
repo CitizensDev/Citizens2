@@ -34,11 +34,14 @@ import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
+import net.minecraft.server.EntityLiving;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -648,5 +651,40 @@ public class NPCCommands {
 
         Messaging.sendF(sender, ChatColor.GREEN + "%s is %s vulnerable.", StringHelper.wrap(npc.getName()),
                 vulnerable ? "now" : "no longer");
+    }
+    
+    @Command(
+            aliases = { "npc" },
+            usage = "position (-a)",
+            desc = "Changes NPC's head position",
+            flags = "a",
+            modifiers = { "position" },
+            min = 1,
+            max = 2,
+            permission = "npc.position.assume")
+    @Requirements(selected = true, ownership = true, types = { EntityType.PLAYER })
+    public void position(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        
+    	// Assume Player's position
+    	if (args.hasFlag('a')) { 
+    		if (sender instanceof Player) {
+    			// Spawn the NPC if it isn't spawned to prevent NPEs
+    			if (!npc.isSpawned())
+    	            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+    			
+    			// Update entity with some NMS magic
+    			EntityLiving handle = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
+    			handle.yaw = (float) ((Player) sender).getLocation().getYaw();
+    			handle.pitch = (float) ((Player) sender).getLocation().getPitch();
+    			handle.as = handle.yaw;
+    			
+    			return;
+    		}
+    		
+    		else 
+    			Messaging.sendF(sender, ChatColor.YELLOW + "This command can only be used by a Player in-game");
+    	}
+    	
+    	Messaging.sendF(sender, ChatColor.YELLOW + "Usage: '/npc position -a' to assume Player's head position");
     }
 }
