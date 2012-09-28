@@ -31,10 +31,7 @@ public class Positions extends Trait {
 
 	@Override
 	public void save(DataKey key) {
-		for (int i = 0; i < 100; i++)
-			key.removeKey(String.valueOf(i));
 		key.removeKey("list");
-
 		for (int i = 0; i < positions.size(); i++)
 			key.setString("list." + String.valueOf(i), positions.get(i).stringValue());
 	}
@@ -61,7 +58,7 @@ public class Positions extends Trait {
 
 	public Position getPosition(String name) {
 		for (Position position : positions) 
-			if (position.name.equalsIgnoreCase(name)) return position;
+			if (position.getName().equalsIgnoreCase(name)) return position;
 
 		return null;
 	}
