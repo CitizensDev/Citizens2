@@ -35,14 +35,12 @@ import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.Position;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.EntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -457,8 +455,8 @@ public class NPCCommands {
 
 	@Command(
 			aliases = { "npc" },
-			usage = "position (-a)",
-			desc = "Changes NPC's head position",
+			usage = "position (--save [name]|--load [name]|--remove [name]|--list) (-a)",
+			desc = "Changes/Saves/Lists NPC's head position(s)",
 			flags = "a",
 			modifiers = { "position" },
 			min = 1,
@@ -470,34 +468,46 @@ public class NPCCommands {
 		Positions trait = npc.getTrait(Positions.class);
 
 		if (args.hasValueFlag("save")) {
-			if (args.getFlag("save").matches("[a-zA-Z0-9_\\-]+")) {
+			if (!args.getFlag("save").isEmpty()) {
 				if (sender instanceof Player) {
 					if (trait.addPosition(args.getFlag("save"), ((Player) sender).getLocation()))
-						Messaging.sendF(sender, ChatColor.RED + "Position added.");
+						Messaging.sendF(sender, ChatColor.GREEN + "Position added.");
+					else throw new CommandException("The position '" + args.getFlag("load") + "' already exists.");
 				}
 				else
-					Messaging.sendF(sender, ChatColor.YELLOW + "This command can only be used by a Player in-game");	
+					throw new CommandException("This command may be used in-game only.");	
 			}
 			else
-				Messaging.sendF(sender, ChatColor.YELLOW + "Save name can only be one word. Valid characters: A-Z a-z 0-9 - _");
+				throw new CommandException("Invalid name.");
 		}
 
 		else if (args.hasValueFlag("load")) {
-			if (args.getFlag("load").matches("[a-zA-Z0-9_\\-]+")) {
+			if (!args.getFlag("load").isEmpty()) {
 				if (trait.getPosition(args.getFlag("load")) != null)
 					trait.assumePosition(trait.getPosition(args.getFlag("load")));
 				else
 					throw new CommandException("The position '" + args.getFlag("load") + "' does not exist.");
 			}
 			else
-				Messaging.sendF(sender, ChatColor.YELLOW + "Invalid load name.");
+				throw new CommandException("Invalid name.");
 		}
 
-		else {
+		else if (args.hasValueFlag("remove")) {
+			if (!args.getFlag("remove").isEmpty()) {
+				if (trait.removePosition(trait.getPosition(args.getFlag("remove"))))
+					Messaging.sendF(sender, ChatColor.GREEN + "Position removed.");
+				else
+					throw new CommandException("The position '" + args.getFlag("remove") + "' does not exist.");
+			}
+			else
+				throw new CommandException("Invalid name.");
+		}
+		
+		else if (!args.hasFlag('a')) {
 			Paginator paginator = new Paginator().header("Positions");
 			paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
 			for (int i = 0; i < trait.getPositions().size(); i ++) {
-				String line = "<a>" + i + "<b>  " + trait.getPositions().get(i).name + "<c>  " + Double.valueOf(trait.getPositions().get(i).getPitch()) + "/" + Double.valueOf(trait.getPositions().get(i).getYaw());
+				String line = "<a>" + i + "<b>  " + trait.getPositions().get(i).getName() + "<c>  " + trait.getPositions().get(i).getPitch() + "/" + trait.getPositions().get(i).getYaw();
 				paginator.addLine(line);
 			}
 
@@ -512,7 +522,6 @@ public class NPCCommands {
 				trait.assumePosition(new Position(sender.getName(), ((Player) sender).getLocation().getPitch(), ((Player) sender).getLocation().getYaw()));
 				return;
 			}
-
 			else 
 				Messaging.sendF(sender, ChatColor.YELLOW + "This command can only be used by a Player in-game");
 		}

@@ -1,14 +1,16 @@
 package net.citizensnpcs.util;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /*
  * Position object which holds yaw/pitch of the head with a name to identify.
  */
 
 public class Position {
-	public final String name;
-	private final Float yaw;
-	private final Float pitch;
+	private final String name;
+	private final float yaw;
+	private final float pitch;
 
 	public Position(String name, float pitch, float yaw) {
 		this.yaw = yaw;
@@ -17,8 +19,15 @@ public class Position {
 	}
 
 	@Override
+	public int hashCode() {
+        return new HashCodeBuilder(13, 21). 
+            append(name).
+            toHashCode();
+    }
+	
+	@Override
 	public String toString() {
-	 return "Name: " + name + " Pitch: " + pitch.doubleValue() + " Yaw: " + yaw.doubleValue();	
+	 return "Name: " + name + " Pitch: " + pitch + " Yaw: " + yaw;	
 	}
 
 	public String stringValue() {
@@ -33,11 +42,21 @@ public class Position {
 		return pitch;
 	}
 
+	public String getName() {
+		return name;
+	}
+	
 	@Override
-	public boolean equals(Object otherPosition) {
-		if (otherPosition == null) return false;
-		if (otherPosition.toString() == this.name) return true;
-		else return false;
+	public boolean equals(Object object) {
+		if (object == null) return false;
+		if (object == this) return true;
+		if (object.getClass() != getClass())
+            return false;
+		
+		Position op = (Position) object;
+		return new EqualsBuilder().
+	            append(name, op.getName()).
+	            isEquals();
 	}
 
 }
