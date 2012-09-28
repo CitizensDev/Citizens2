@@ -417,7 +417,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0)
-    public void npc(CommandContext args, CommandSender sender, NPC npc) {
+    public void npc(CommandContext args, CommandSender sender, final NPC npc) {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
         Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());

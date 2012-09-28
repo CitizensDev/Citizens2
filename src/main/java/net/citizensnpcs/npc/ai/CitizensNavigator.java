@@ -149,15 +149,13 @@ public class CitizensNavigator implements Navigator {
     private void stopNavigating(CancelReason reason) {
         if (!isNavigating())
             return;
-        if (reason == CancelReason.STUCK) {
+        if (reason == CancelReason.STUCK && localParams.stuckAction() != null) {
             StuckAction action = localParams.stuckAction();
-            if (action != null) {
-                boolean shouldContinue = action.run(npc, this);
-                if (shouldContinue) {
-                    stationaryTicks = 0;
-                    executing.clearCancelReason();
-                    return;
-                }
+            boolean shouldContinue = action.run(npc, this);
+            if (shouldContinue) {
+                stationaryTicks = 0;
+                executing.clearCancelReason();
+                return;
             }
         }
         NavigationCancelEvent event = new NavigationCancelEvent(this, reason);
@@ -188,9 +186,9 @@ public class CitizensNavigator implements Navigator {
         boolean finished = executing.update();
         if (!finished)
             return;
-        if (executing.getCancelReason() != null)
+        if (executing.getCancelReason() != null) {
             stopNavigating(executing.getCancelReason());
-        else {
+        } else {
             NavigationCompleteEvent event = new NavigationCompleteEvent(this);
             PathStrategy old = executing;
             Bukkit.getPluginManager().callEvent(event);
