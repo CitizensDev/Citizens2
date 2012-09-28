@@ -35,7 +35,7 @@ permissions:
       citizens.npc.*:
         children:
           citizens.npc.age: true
-          citizens.npc.position.assume: true
+          citizens.npc.pose: true
           citizens.npc.behaviour: true
           citizens.npc.create: true
           citizens.npc.controllable: true
