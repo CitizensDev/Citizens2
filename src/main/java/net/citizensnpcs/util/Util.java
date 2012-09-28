@@ -64,10 +64,10 @@ public class Util {
         handle.as = handle.yaw;
     }
     
-    public static void assumePosition(Entity entity, Position position) {
+    public static void assumePose(Entity entity, Pose pose) {
     	EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
-		handle.yaw = (float) position.getYaw();
-		handle.pitch = (float) position.getPitch();
+		handle.yaw = (float) pose.getYaw();
+		handle.pitch = (float) pose.getPitch();
 		handle.as = handle.yaw;
     }
 
