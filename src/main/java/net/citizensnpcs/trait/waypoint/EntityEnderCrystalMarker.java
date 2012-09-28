@@ -10,11 +10,11 @@ public class EntityEnderCrystalMarker extends EntityEnderCrystal {
     }
 
     @Override
-    public void h_() {
+    public boolean damageEntity(DamageSource damagesource, int i) {
+        return false;
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, int i) {
-        return false;
+    public void h_() {
     }
 }
