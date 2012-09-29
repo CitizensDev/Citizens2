@@ -9,8 +9,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class Pose {
 	private final String name;
-	private final float yaw;
 	private final float pitch;
+	private final float yaw;
 
 	public Pose(String name, float pitch, float yaw) {
 		this.yaw = yaw;
@@ -18,34 +18,6 @@ public class Pose {
 		this.name = name;
 	}
 
-	@Override
-	public int hashCode() {
-        return new HashCodeBuilder(13, 21). 
-            append(name).
-            toHashCode();
-    }
-	
-	@Override
-	public String toString() {
-	 return "Name: " + name + " Pitch: " + pitch + " Yaw: " + yaw;	
-	}
-
-	public String stringValue() {
-		return name + ";" + pitch + ";" + yaw; 
-	}
-
-	public float getYaw() {
-		return yaw;
-	}
-
-	public float getPitch() {
-		return pitch;
-	}
-
-	public String getName() {
-		return name;
-	}
-	
 	@Override
 	public boolean equals(Object object) {
 		if (object == null) return false;
@@ -57,6 +29,34 @@ public class Pose {
 		return new EqualsBuilder().
 	            append(name, op.getName()).
 	            isEquals();
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public float getPitch() {
+		return pitch;
+	}
+
+	public float getYaw() {
+		return yaw;
+	}
+
+	@Override
+	public int hashCode() {
+        return new HashCodeBuilder(13, 21). 
+            append(name).
+            toHashCode();
+    }
+
+	public String stringValue() {
+		return name + ";" + pitch + ";" + yaw; 
+	}
+	
+	@Override
+	public String toString() {
+	 return "Name: " + name + " Pitch: " + pitch + " Yaw: " + yaw;	
 	}
 
 }

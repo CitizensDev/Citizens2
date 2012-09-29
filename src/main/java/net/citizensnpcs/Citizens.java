@@ -146,7 +146,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             try {
                 commands.execute(split, sender, sender, npc);
             } catch (ServerCommandException ex) {
-                Messaging.sendTr(sender, Messages.INGAME_COMMAND);
+                Messaging.sendTr(sender, Messages.COMMAND_MUST_BE_INGAME);
             } catch (CommandUsageException ex) {
                 Messaging.sendError(sender, ex.getMessage());
                 Messaging.sendError(sender, ex.getUsage());
