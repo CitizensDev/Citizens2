@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.util;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -58,6 +59,10 @@ public class MemoryDataKey extends DataKey {
     @Override
     public Object getRaw(String key) {
         return root.get(getKeyFor(key));
+    }
+
+    public Map<? extends String, ? extends Object> getRawTree() {
+        return root.getValues(true);
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -39,7 +40,7 @@ public class YamlStorage implements Storage {
     }
 
     @Override
-    public DataKey getKey(String root) {
+    public YamlKey getKey(String root) {
         return new YamlKey(root);
     }
 
@@ -174,7 +175,7 @@ public class YamlStorage implements Storage {
         }
 
         @Override
-        public DataKey getRelative(String relative) {
+        public YamlKey getRelative(String relative) {
             if (relative == null || relative.isEmpty())
                 return this;
             return new YamlKey(getKeyExt(relative));
@@ -199,6 +200,10 @@ public class YamlStorage implements Storage {
                 res.add(getRelative(key));
             }
             return res;
+        }
+
+        public Map<String, Object> getValuesDeep() {
+            return config.getConfigurationSection(current).getValues(true);
         }
 
         @Override
