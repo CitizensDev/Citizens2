@@ -27,6 +27,7 @@ import net.citizensnpcs.command.command.EditorCommands;
 import net.citizensnpcs.command.command.HelpCommands;
 import net.citizensnpcs.command.command.NPCCommands;
 import net.citizensnpcs.command.command.ScriptCommands;
+import net.citizensnpcs.command.command.TemplateCommands;
 import net.citizensnpcs.command.command.TraitCommands;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
@@ -254,6 +255,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         commands.register(HelpCommands.class);
         commands.register(NPCCommands.class);
         commands.register(ScriptCommands.class);
+        commands.register(TemplateCommands.class);
         commands.register(TraitCommands.class);
     }
 
