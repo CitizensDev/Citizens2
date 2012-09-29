@@ -16,7 +16,6 @@ import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -26,6 +25,11 @@ public class Util {
 
     // Static class for small (emphasis small) utility methods
     private Util() {
+    }
+
+    public static void assumePose(org.bukkit.entity.Entity entity, Pose pose) {
+        EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
+        NMS.look(handle, pose.getYaw(), pose.getPitch());
     }
 
     public static void callCollisionEvent(NPC npc, net.minecraft.server.Entity entity) {
@@ -54,21 +58,11 @@ public class Util {
 
         double yaw = (Math.acos(xDiff / distanceXZ) * 180 / Math.PI);
         double pitch = (Math.acos(yDiff / distanceY) * 180 / Math.PI) - 90;
-        if (zDiff < 0.0) {
+        if (zDiff < 0.0)
             yaw = yaw + (Math.abs(180 - yaw) * 2);
-        }
 
         EntityLiving handle = ((CraftLivingEntity) from).getHandle();
-        handle.yaw = (float) yaw - 90;
-        handle.pitch = (float) pitch;
-        handle.as = handle.yaw;
-    }
-    
-    public static void assumePose(Entity entity, Pose pose) {
-    	EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
-		handle.yaw = (float) pose.getYaw();
-		handle.pitch = (float) pose.getPitch();
-		handle.as = handle.yaw;
+        NMS.look(handle, (float) yaw - 90, (float) pitch);
     }
 
     public static boolean isSettingFulfilled(Player player, Setting setting) {
@@ -94,12 +88,6 @@ public class Util {
             }
         }
         return type;
-    }
-
-    public static boolean rayTrace(LivingEntity entity, LivingEntity entity2) {
-        EntityLiving from = ((CraftLivingEntity) entity).getHandle();
-        EntityLiving to = ((CraftLivingEntity) entity2).getHandle();
-        return from.l(to);
     }
 
     public static void sendPacketNearby(Location location, Packet packet, double radius) {

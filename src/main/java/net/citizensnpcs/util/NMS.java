@@ -31,6 +31,7 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 0.4F;
+
     private static Map<Class<? extends Entity>, Integer> ENTITY_CLASS_TO_INT;
     private static final Map<Class<? extends Entity>, Constructor<? extends Entity>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<? extends Entity>, Constructor<? extends Entity>>();
     private static Map<Integer, Class<? extends Entity>> ENTITY_INT_TO_CLASS;
@@ -41,7 +42,6 @@ public class NMS {
     private static Field PATHFINDING_RANGE;
     private static Field SPEED_FIELD;
     private static Field THREAD_STOPPER;
-
     public static void attack(EntityLiving handle, EntityLiving target) {
         handle.k(target);
     }
@@ -101,6 +101,17 @@ public class NMS {
 
     public static void look(ControllerLook controllerLook, EntityLiving handle, EntityLiving target) {
         controllerLook.a(target, 10.0F, handle.bf());
+    }
+
+    public static void look(EntityLiving handle, float yaw, float pitch) {
+        handle.yaw = handle.as = yaw;
+        handle.pitch = pitch;
+    }
+
+    public static boolean rayTrace(LivingEntity entity, LivingEntity entity2) {
+        EntityLiving from = ((CraftLivingEntity) entity).getHandle();
+        EntityLiving to = ((CraftLivingEntity) entity2).getHandle();
+        return from.l(to);
     }
 
     public static void registerEntityClass(Class<? extends Entity> clazz) {

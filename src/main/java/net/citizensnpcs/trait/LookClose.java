@@ -11,6 +11,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.command.CommandConfigurable;
 import net.citizensnpcs.command.CommandContext;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.Location;
@@ -29,7 +30,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     private boolean canSeeTarget() {
-        return realisticLooking ? Util.rayTrace(npc.getBukkitEntity(), lookingAt) : true;
+        return realisticLooking ? NMS.rayTrace(npc.getBukkitEntity(), lookingAt) : true;
     }
 
     @Override

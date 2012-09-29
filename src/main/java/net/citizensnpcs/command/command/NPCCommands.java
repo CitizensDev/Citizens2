@@ -20,6 +20,7 @@ import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
+import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.trait.Age;
@@ -42,6 +43,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -453,79 +455,67 @@ public class NPCCommands {
                 + " is now the owner of " + StringHelper.wrap(npc.getName()) + ".");
     }
 
-	@Command(
-			aliases = { "npc" },
-			usage = "pose (--save [name]|--load [name]|--remove [name]|--list) (-a)",
-			desc = "Changes/Saves/Lists NPC's head pose(s)",
-			flags = "a",
-			modifiers = { "pose" },
-			min = 1,
-			max = 2,
-			permission = "npc.pose")
-	@Requirements(selected = true, ownership = true, types = { EntityType.PLAYER })
-	public void position(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    @Command(
+            aliases = { "npc" },
+            usage = "pose (--save [name]|--load [name]|--remove [name]|--list) (-a)",
+            desc = "Changes/Saves/Lists NPC's head pose(s)",
+            flags = "a",
+            modifiers = { "pose" },
+            min = 1,
+            max = 2,
+            permission = "npc.pose")
+    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
+    public void pose(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        Poses trait = npc.getTrait(Poses.class);
+        if (args.hasValueFlag("save")) {
+            if (args.getFlag("save").isEmpty())
+                throw new CommandException("Invalid name.");
 
-		Poses trait = npc.getTrait(Poses.class);
+            if (!(sender instanceof Player))
+                throw new ServerCommandException();
 
-		if (args.hasValueFlag("save")) {
-			if (!args.getFlag("save").isEmpty()) {
-				if (sender instanceof Player) {
-					if (trait.addPose(args.getFlag("save"), ((Player) sender).getLocation()))
-						Messaging.sendF(sender, ChatColor.GREEN + "Pose added.");
-					else throw new CommandException("The pose '" + args.getFlag("load") + "' already exists.");
-				}
-				else
-					throw new CommandException("This command may be used in-game only.");	
-			}
-			else
-				throw new CommandException("Invalid name.");
-		}
+            if (trait.addPose(args.getFlag("save"), ((Player) sender).getLocation())) {
+                Messaging.sendF(sender, ChatColor.GREEN + "Pose added.");
+            } else
+                throw new CommandException("The pose '" + args.getFlag("load") + "' already exists.");
+        } else if (args.hasValueFlag("load")) {
+            if (args.getFlag("load").isEmpty())
+                throw new CommandException("Invalid name.");
 
-		else if (args.hasValueFlag("load")) {
-			if (!args.getFlag("load").isEmpty()) {
-				if (trait.getPose(args.getFlag("load")) != null)
-					trait.assumePose(trait.getPose(args.getFlag("load")));
-				else
-					throw new CommandException("The pose '" + args.getFlag("load") + "' does not exist.");
-			}
-			else
-				throw new CommandException("Invalid name.");
-		}
+            Pose pose = trait.getPose(args.getFlag("load"));
+            if (pose == null)
+                throw new CommandException("The pose '" + args.getFlag("load") + "' does not exist.");
+            trait.assumePose(pose);
+        } else if (args.hasValueFlag("remove")) {
+            if (args.getFlag("remove").isEmpty())
+                throw new CommandException("Invalid name.");
+            if (trait.removePose(trait.getPose(args.getFlag("remove"))))
+                Messaging.sendF(sender, ChatColor.GREEN + "Position removed.");
+            else
+                throw new CommandException("The pose '" + args.getFlag("remove") + "' does not exist.");
+        } else if (!args.hasFlag('a')) {
+            Paginator paginator = new Paginator().header("Pose");
+            paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
+            for (int i = 0; i < trait.getPoses().size(); i++) {
+                String line = "<a>" + i + "<b>  " + trait.getPoses().get(i).getName() + "<c>  "
+                        + trait.getPoses().get(i).getPitch() + "/" + trait.getPoses().get(i).getYaw();
+                paginator.addLine(line);
+            }
 
-		else if (args.hasValueFlag("remove")) {
-			if (!args.getFlag("remove").isEmpty()) {
-				if (trait.removePose(trait.getPose(args.getFlag("remove"))))
-					Messaging.sendF(sender, ChatColor.GREEN + "Position removed.");
-				else
-					throw new CommandException("The pose '" + args.getFlag("remove") + "' does not exist.");
-			}
-			else
-				throw new CommandException("Invalid name.");
-		}
-		
-		else if (!args.hasFlag('a')) {
-			Paginator paginator = new Paginator().header("Pose");
-			paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
-			for (int i = 0; i < trait.getPoses().size(); i ++) {
-				String line = "<a>" + i + "<b>  " + trait.getPoses().get(i).getName() + "<c>  " + trait.getPoses().get(i).getPitch() + "/" + trait.getPoses().get(i).getYaw();
-				paginator.addLine(line);
-			}
+            int page = args.getInteger(1, 1);
+            if (!paginator.sendPage(sender, page))
+                throw new CommandException("The page '" + page + "' does not exist.");
+        }
 
-			int page = args.getInteger(1, 1);
-			if (!paginator.sendPage(sender, page))
-				throw new CommandException("The page '" + page + "' does not exist.");
-		}
-		
-		// Assume Player's pose
-		if (args.hasFlag('a')) { 
-			if (sender instanceof Player) {
-				trait.assumePose(new Pose(sender.getName(), ((Player) sender).getLocation().getPitch(), ((Player) sender).getLocation().getYaw()));
-				return;
-			}
-			else 
-				Messaging.sendF(sender, ChatColor.YELLOW + "This command can only be used by a Player in-game");
-		}
-	}
+        // Assume Player's pose
+        if (!args.hasFlag('a'))
+            return;
+        if (sender instanceof Player) {
+            Location location = ((Player) sender).getLocation();
+            trait.assumePose(new Pose(sender.getName(), location.getPitch(), location.getYaw()));
+        } else
+            throw new ServerCommandException();
+    }
 
     @Command(
             aliases = { "npc" },
@@ -613,17 +603,31 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "select|sel [id]",
+            usage = "select|sel [id] (--r range)",
             desc = "Select a NPC with the given ID",
             modifiers = { "select", "sel" },
-            min = 2,
+            min = 1,
             max = 2,
             permission = "npc.select")
     @Requirements(ownership = true)
     public void select(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        NPC toSelect = npcRegistry.getById(args.getInteger(1));
+        NPC toSelect = null;
+        if (args.argsLength() == 0) {
+            if (!(sender instanceof Player))
+                throw new ServerCommandException();
+            double range = Math.abs(args.getFlagDouble("r", 10));
+            List<Entity> search = ((Player) sender).getNearbyEntities(range, range, range);
+            for (Entity possibleNPC : search) {
+                NPC test = npcRegistry.getNPC(possibleNPC);
+                if (test == null)
+                    continue;
+                toSelect = test;
+                break;
+            }
+        } else
+            toSelect = npcRegistry.getById(args.getInteger(1));
         if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn())
-            throw new CommandException("No NPC with the ID '" + args.getInteger(1) + "' is spawned.");
+            throw new CommandException("No NPC could be found.");
         if (npc != null && toSelect.getId() == npc.getId())
             throw new CommandException("You already have that NPC selected.");
         selector.select(sender, toSelect);

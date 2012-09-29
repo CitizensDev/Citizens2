@@ -99,13 +99,11 @@ public class LinearWaypointProvider implements WaypointProvider {
     }
 
     private final class LinearWaypointEditor extends Editor {
-        private final Player player;
         boolean editing = true;
         int editingSlot = waypoints.size() - 1;
+        private final Player player;
         private boolean showPath;
         Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
-        private static final int LARGEST_SLOT = 8;
-
         private LinearWaypointEditor(Player player) {
             this.player = player;
         }
@@ -190,17 +188,6 @@ public class LinearWaypointProvider implements WaypointProvider {
         }
 
         @EventHandler(ignoreCancelled = true)
-        public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-            if (!player.equals(event.getPlayer()) || !showPath)
-                return;
-            if (!event.getRightClicked().hasMetadata("waypointindex"))
-                return;
-            editingSlot = event.getRightClicked().getMetadata("waypointindex").get(0).asInt();
-            Messaging.sendF(player, ChatColor.GREEN + "Editing slot set to %s.",
-                    StringHelper.wrap(editingSlot));
-        }
-
-        @EventHandler(ignoreCancelled = true)
         public void onPlayerInteract(PlayerInteractEvent event) {
             if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL)
                 return;
@@ -249,6 +236,17 @@ public class LinearWaypointProvider implements WaypointProvider {
             currentGoal.onProviderChanged();
         }
 
+        @EventHandler(ignoreCancelled = true)
+        public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+            if (!player.equals(event.getPlayer()) || !showPath)
+                return;
+            if (!event.getRightClicked().hasMetadata("waypointindex"))
+                return;
+            editingSlot = event.getRightClicked().getMetadata("waypointindex").get(0).asInt();
+            Messaging.sendF(player, ChatColor.GREEN + "Editing slot set to %s.",
+                    StringHelper.wrap(editingSlot));
+        }
+
         @EventHandler
         public void onPlayerItemHeldChange(PlayerItemHeldEvent event) {
             if (!event.getPlayer().equals(player) || waypoints.size() == 0)
@@ -293,6 +291,8 @@ public class LinearWaypointProvider implements WaypointProvider {
                 Messaging.sendF(player, "%s showing waypoint markers.", StringHelper.wrap("Stopped"));
             }
         }
+
+        private static final int LARGEST_SLOT = 8;
     }
 
     private class LinearWaypointGoal implements Goal {
