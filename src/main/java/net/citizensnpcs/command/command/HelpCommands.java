@@ -102,4 +102,22 @@ public class HelpCommands {
         if (!paginator.sendPage(sender, page))
             throw new CommandException("The page '" + page + "' does not exist.");
     }
+
+    @Command(
+            aliases = { "template", "tpl" },
+            usage = "help (page)",
+            desc = "Template help menu",
+            modifiers = { "help" },
+            min = 1,
+            max = 2,
+            permission = "templates.help")
+    @Requirements
+    public void templatesHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
+        Paginator paginator = new Paginator().header("Templates Help");
+        for (String line : getLines(sender, npc, "script"))
+            paginator.addLine(line);
+        if (!paginator.sendPage(sender, page))
+            throw new CommandException("The page '" + page + "' does not exist.");
+    }
 }
