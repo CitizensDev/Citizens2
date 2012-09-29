@@ -1,6 +1,8 @@
 package net.citizensnpcs.npc;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -9,6 +11,7 @@ import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.api.util.YamlStorage.YamlKey;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class Template {
@@ -22,7 +25,41 @@ public class Template {
         this.name = name;
     }
 
+    @SuppressWarnings("unchecked")
     public void apply(NPC npc) {
+        MemoryDataKey memoryKey = new MemoryDataKey();
+        ((CitizensNPC) npc).save(memoryKey);
+        List<Node> queue = Lists.newArrayList(new Node("", replacements));
+        for (int i = 0; i < queue.size(); i++) {
+            Node node = queue.get(i);
+            for (Entry<String, Object> entry : node.map.entrySet()) {
+                String fullKey = node.headKey + '.' + entry.getKey();
+                if (entry.getValue() instanceof Map<?, ?>) {
+                    queue.add(new Node(fullKey, (Map<String, Object>) entry.getValue()));
+                    continue;
+                }
+                boolean overwrite = memoryKey.keyExists(fullKey) | override;
+                if (!overwrite)
+                    continue;
+                memoryKey.setRaw(fullKey, entry.getValue());
+            }
+        }
+        ((CitizensNPC) npc).load(memoryKey);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    private static class Node {
+        String headKey;
+
+        Map<String, Object> map;
+
+        private Node(String headKey, Map<String, Object> map) {
+            this.headKey = headKey;
+            this.map = map;
+        }
     }
 
     public static class TemplateBuilder {
@@ -65,6 +102,7 @@ public class Template {
     }
 
     private static YamlStorage templates = new YamlStorage(CitizensAPI.getDataFolder(), "templates.yml");
+
     public static Template byName(String name) {
         if (!templates.getKey("").keyExists(name))
             return null;
