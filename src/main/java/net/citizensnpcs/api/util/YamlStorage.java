@@ -19,6 +19,10 @@ public class YamlStorage implements Storage {
     private final FileConfiguration config;
     private final File file;
 
+    public YamlStorage(File file) {
+        this(file, null);
+    }
+
     public YamlStorage(File file, String header) {
         config = new YamlConfiguration();
         this.file = file;
@@ -28,10 +32,6 @@ public class YamlStorage implements Storage {
                 config.options().header(header);
             save();
         }
-    }
-
-    public YamlStorage(File file) {
-        this(file, null);
     }
 
     private void create() {
