@@ -2,6 +2,7 @@ package net.citizensnpcs.editor;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.entity.Player;
@@ -23,13 +24,12 @@ public class EquipmentEditor extends Editor {
 
     @Override
     public void begin() {
-        Messaging.send(player, "<b>Entered the equipment editor!");
-        Messaging.send(player, "<e>Right click <a>to equip the NPC!");
+        Messaging.sendTr(player, Messages.EQUIPMENT_EDITOR_BEGIN);
     }
 
     @Override
     public void end() {
-        Messaging.send(player, "<a>Exited the equipment editor.");
+        Messaging.sendTr(player, Messages.EQUIPMENT_EDITOR_END);
     }
 
     @EventHandler

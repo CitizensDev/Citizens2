@@ -2,6 +2,7 @@ package net.citizensnpcs.util;
 
 import java.util.Arrays;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
@@ -13,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 
 public class Messaging {
     private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
@@ -70,9 +72,13 @@ public class Messaging {
         sendMessageTo(sender, getFormatted(msg));
     }
 
-    private static void sendMessageTo(CommandSender sender, String msg) {
-        msg = StringHelper.parseColors(msg);
-        sender.sendMessage(msg);
+    private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|<n>|\\n", Pattern.MULTILINE);
+    private static final Splitter CHAT_NEWLINE_SPLITTER = Splitter.on(CHAT_NEWLINE);
+
+    private static void sendMessageTo(CommandSender sender, String rawMessage) {
+        rawMessage = StringHelper.parseColors(rawMessage);
+        for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage))
+            sender.sendMessage(message);
     }
 
     public static void sendTr(CommandSender sender, ChatColor rootColour, String key, Object... msg) {

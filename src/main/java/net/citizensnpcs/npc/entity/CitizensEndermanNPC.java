@@ -7,6 +7,7 @@ import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -28,14 +29,14 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
     @Override
     public void equip(Player equipper, ItemStack hand) {
         if (!hand.getType().isBlock()) {
-            Messaging.sendError(equipper, "Invalid block!");
+            Messaging.sendErrorTr(equipper, Messages.EQUIPMENT_EDITOR_INVALID_BLOCK);
             return;
         }
 
         MaterialData carried = getBukkitEntity().getCarriedMaterial();
         if (carried.getItemType() == Material.AIR) {
             if (hand.getType() == Material.AIR) {
-                Messaging.sendError(equipper, "Invalid block!");
+                Messaging.sendErrorTr(equipper, Messages.EQUIPMENT_EDITOR_INVALID_BLOCK);
                 return;
             }
         } else {

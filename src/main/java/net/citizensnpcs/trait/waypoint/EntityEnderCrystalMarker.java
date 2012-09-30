@@ -17,4 +17,9 @@ public class EntityEnderCrystalMarker extends EntityEnderCrystal {
     @Override
     public void h_() {
     }
+
+    @Override
+    public boolean L() {
+        return false;
+    }
 }

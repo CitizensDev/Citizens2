@@ -6,6 +6,7 @@ import java.util.List;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Pose;
 import net.citizensnpcs.util.Util;
@@ -52,7 +53,7 @@ public class Poses extends Trait {
                 String[] parts = sub.getString("").split(";");
                 poses.add(new Pose(parts[0], Float.valueOf(parts[1]), Float.valueOf(parts[2])));
             } catch (NumberFormatException e) {
-                Messaging.logF("Skipping pose %s - invalid yaw/pitch (%s).", sub.name(), e.getMessage());
+                Messaging.logTr(Messages.SKIPPING_INVALID_POSE, sub.name(), e.getMessage());
             }
     }
 
