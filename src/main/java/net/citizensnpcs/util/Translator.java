@@ -94,16 +94,13 @@ public class Translator {
     private static Translator instance;
 
     public static final String PREFIX = "messages";
+
     public static void setInstance(File resourceFile, Locale locale) {
         instance = new Translator(resourceFile, locale);
     }
 
-    public static String tr(Messages key) {
-        return tr(key.getKey());
-    }
-
-    public static String tr(Messages key, Object... msg) {
-        return tr(key.getKey(), msg);
+    public static String tr(String key) {
+        return tr(key);
     }
 
     public static String tr(String key, Object... msg) {

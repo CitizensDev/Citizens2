@@ -185,7 +185,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             npcRegistry = null;
         }
 
-        Messaging.logF("v%s disabled.", getDescription().getVersion());
+        Messaging.logTr(Messages.CITIZENS_DISABLED, getDescription().getVersion());
     }
 
     @Override
@@ -194,8 +194,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
         compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
         if (!compatible) {
-            Messaging.severeF("v%s is not compatible with Minecraft v%s. Disabling.", getDescription()
-                    .getVersion(), mcVersion);
+            Messaging.severeTr(Messages.CITIZENS_INCOMPATIBLE, getDescription().getVersion(), mcVersion);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -222,7 +221,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         registerCommands();
         enableSubPlugins();
-        Messaging.logF("v%s enabled.", getDescription().getVersion());
+        Messaging.logTr(Messages.CITIZENS_ENABLED, getDescription().getVersion());
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)
