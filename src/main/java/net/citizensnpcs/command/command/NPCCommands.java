@@ -23,6 +23,7 @@ import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.NPCSelector;
+import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
@@ -238,7 +239,7 @@ public class NPCCommands {
         }
 
         if (args.hasValueFlag("trait")) {
-            Iterable<String> parts = Splitter.on(",").trimResults().split(args.getFlag("trait"));
+            Iterable<String> parts = Splitter.on(',').trimResults().split(args.getFlag("trait"));
             StringBuilder builder = new StringBuilder();
             for (String tr : parts) {
                 Trait trait = CitizensAPI.getTraitFactory().getTrait(tr);
@@ -250,6 +251,21 @@ public class NPCCommands {
             if (builder.length() > 0)
                 builder.delete(builder.length() - 2, builder.length());
             msg += " with traits " + builder.toString();
+        }
+
+        if (args.hasValueFlag("template")) {
+            Iterable<String> parts = Splitter.on(',').trimResults().split(args.getFlag("template"));
+            StringBuilder builder = new StringBuilder();
+            for (String part : parts) {
+                Template template = Template.byName(part);
+                if (template == null)
+                    continue;
+                template.apply(npc);
+                builder.append(StringHelper.wrap(part) + ", ");
+            }
+            if (builder.length() > 0)
+                builder.delete(builder.length() - 2, builder.length());
+            msg += " with templates " + builder.toString();
         }
 
         // Set age after entity spawns

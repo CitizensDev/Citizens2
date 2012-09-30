@@ -71,7 +71,7 @@ public class NPCSelector implements Listener {
         List<MetadataValue> selected = player.getMetadata("selected");
         if (selected == null || selected.size() == 0 || selected.get(0).asInt() != npc.getId()) {
             if (Util.isSettingFulfilled(player, Setting.SELECTION_ITEM)
-                    && (npc.getTrait(Owner.class).isOwnedBy(player))) {
+                    && npc.getTrait(Owner.class).isOwnedBy(player)) {
                 player.removeMetadata("selected", plugin);
                 select(player, npc);
                 Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), npc);
@@ -83,7 +83,11 @@ public class NPCSelector implements Listener {
 
     public void select(CommandSender sender, NPC npc) {
         // Remove existing selection if any
-        List<Object> selectors = npc.data().get("selectors", Lists.newArrayList());
+        List<String> selectors = npc.data().get("selectors");
+        if (selectors == null) {
+            selectors = Lists.newArrayList();
+            npc.data().set("selectors", selectors);
+        }
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (player.hasMetadata("selected"))

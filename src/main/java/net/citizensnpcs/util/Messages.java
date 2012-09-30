@@ -23,6 +23,7 @@ public class Messages {
     public static final String COMMAND_ID_NOT_FOUND = "citizens.commands.id-not-found";
     public static final String COMMAND_INVALID_MOB_TYPE = "citizens.commands.disallowed-mobtype";
     public static final String COMMAND_INVALID_NUMBER = "citizens.commands.invalid-number";
+    public static final String COMMAND_MISSING_TRAIT = "citizens.commands.missing-required-trait";
     public static final String COMMAND_MUST_BE_INGAME = "citizens.commands.must-be-ingame";
     public static final String COMMAND_MUST_BE_OWNER = "citizens.commands.must-be-owner";
     public static final String COMMAND_MUST_HAVE_SELECTED = "citizens.commands.must-have-selected";
