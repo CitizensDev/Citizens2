@@ -17,6 +17,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.trait.Toggleable;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.Util;
@@ -70,13 +71,13 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
             @Override
             public void begin() {
-                Messaging.send(player, "<b>Entered the text editor!");
+                Messaging.sendTr(player, Messages.TEXT_EDITOR_BEGIN);
                 conversation.begin();
             }
 
             @Override
             public void end() {
-                Messaging.send(player, "<a>Exited the text editor.");
+                Messaging.sendTr(player, Messages.TEXT_EDITOR_END);
             }
         };
     }
@@ -101,7 +102,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         randomTalker = key.getBoolean("random-talker", randomTalker);
         range = key.getDouble("range", range);
     }
-
 
     @EventHandler
     public void onRightClick(NPCRightClickEvent event) {

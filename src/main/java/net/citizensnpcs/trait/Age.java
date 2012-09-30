@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
@@ -18,8 +19,8 @@ public class Age extends Trait implements Toggleable {
     }
 
     public void describe(CommandSender sender) {
-        Messaging.sendF(sender, "%s's age is %s and %s locked.", StringHelper.wrap(npc.getName()),
-                StringHelper.wrap(age), StringHelper.wrap(locked ? "is" : "isn't"));
+        Messaging.sendTr(sender, Messages.AGE_TRAIT_DESCRIPTION, StringHelper.wrap(npc.getName()),
+                StringHelper.wrap(age), StringHelper.wrap(locked));
     }
 
     private boolean isAgeable() {

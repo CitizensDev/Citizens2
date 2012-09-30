@@ -49,6 +49,25 @@ public class Messages {
     public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider-message";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
+    public static final String EQUIPMENT_EDITOR_BEGIN = "citizens.editors.equipment.begin-message";
+    public static final String EQUIPMENT_EDITOR_END = "citizens.editors.equipment.end-message";
+    public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
+    public static final String TRAIT_LOAD_FAILED = "citizens.notifications.trait-load-failed";
+    public static final String EXCEPTION_UPDATING_NPC = "citizens.notifications.exception-updating-npc";
+    public static final String EQUIPMENT_EDITOR_INVALID_BLOCK = "citizens.editors.equipment.invalid-block";
+    public static final String EQUIPMENT_EDITOR_SHEEP_COLOURED = "citizens.editors.equipment.sheep-coloured";
+    public static final String EQUIPMENT_EDITOR_ALL_ITEMS_REMOVED = "citizens.editors.equipment.all-items-removed";
+    public static final String AGE_TRAIT_DESCRIPTION = "citizens.traits.age-description";
+    public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
+    public static final String TEXT_EDITOR_END = "citizens.editors.text.end-message";
+    public static final String TEXT_EDITOR_BEGIN = "citizens.editors.text.begin-message";
+    public static final String TEXT_EDITOR_ADDED_ENTRY = "citizens.editors.text.added-entry";
+    public static final String TEXT_EDITOR_ADD_PROMPT = "citizens.editors.text.add-prompt";
+    public static final String TEXT_EDITOR_EDIT_PROMPT = "citizens.editors.text.edit-prompt";
+    public static final String TEXT_EDITOR_EDITED_TEXT = "citizens.editors.text.edited-text";
+    public static final String TEXT_EDITOR_INVALID_INDEX = "citizens.editors.text.invalid-index";
+    public static final String TEXT_EDITOR_INVALID_INPUT = "citizens.editors.text.invalid-input";
+    public static final String TEXT_EDITOR_EDIT_BEGIN_PROMPT = "citizens.editors.text.edit-begin-prompt";
 
     private static Properties getDefaultBundleProperties() {
         Properties defaults = new Properties();

@@ -13,6 +13,7 @@ import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityPlayer;
@@ -90,10 +91,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             } else {
                 trait = CitizensAPI.getTraitFactory().getTrait(traitKey.name());
                 if (trait == null) {
-                    Messaging
-                            .severeF(
-                                    "Skipped broken or missing trait '%s' while loading ID '%d'. Has the name changed?",
-                                    traitKey.name(), getId());
+                    Messaging.severeTr(Messages.SKIPPING_BROKEN_TRAIT, traitKey.name(), getId());
                     continue;
                 }
                 addTrait(trait);
@@ -101,8 +99,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             try {
                 trait.load(traitKey);
             } catch (NPCLoadException ex) {
-                Messaging.logF("The trait '%s' failed to load for NPC ID: '%d'.", traitKey.name(), getId(),
-                        ex.getMessage());
+                Messaging.logTr(Messages.TRAIT_LOAD_FAILED, traitKey.name(), getId());
             }
         }
 
@@ -174,7 +171,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             if (isSpawned())
                 navigator.update();
         } catch (Exception ex) {
-            Messaging.logF("Exception while updating %d: %s.", getId(), ex.getMessage());
+            Messaging.logTr(Messages.EXCEPTION_UPDATING_NPC, getId(), ex.getMessage());
             ex.printStackTrace();
         }
     }

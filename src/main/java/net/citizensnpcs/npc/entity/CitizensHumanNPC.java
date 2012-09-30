@@ -4,6 +4,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 import net.minecraft.server.EntityLiving;
@@ -88,7 +89,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
                         trait.set(i, null);
                     }
                 }
-                Messaging.sendF(equipper, "<e>%s<a> had all of its items removed.", getName());
+                Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_ALL_ITEMS_REMOVED, getName());
             default:
                 break;
         }

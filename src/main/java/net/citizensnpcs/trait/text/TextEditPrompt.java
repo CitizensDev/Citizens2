@@ -1,15 +1,16 @@
 package net.citizensnpcs.trait.text;
 
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
-import org.bukkit.entity.Player;
 
 public class TextEditPrompt extends StringPrompt {
-    private Text text;
+    private final Text text;
 
     public TextEditPrompt(Text text) {
         this.text = text;
@@ -19,13 +20,13 @@ public class TextEditPrompt extends StringPrompt {
     public Prompt acceptInput(ConversationContext context, String input) {
         int index = (Integer) context.getSessionData("index");
         text.edit(index, input);
-        Messaging.send((Player) context.getForWhom(), "<a>Changed entry at index <e>" + index + " <a>to <e>"
-                + input + "<a>.");
+        Messaging
+                .sendTr((CommandSender) context.getForWhom(), Messages.TEXT_EDITOR_EDITED_TEXT, index, input);
         return new StartPrompt(text);
     }
 
     @Override
     public String getPromptText(ConversationContext context) {
-        return ChatColor.GREEN + "Enter text to edit the entry.";
+        return ChatColor.GREEN + Messaging.tr(Messages.TEXT_EDITOR_EDIT_PROMPT);
     }
 }

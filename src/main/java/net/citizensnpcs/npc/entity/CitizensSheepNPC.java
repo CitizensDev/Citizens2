@@ -8,6 +8,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.WoolColor;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
@@ -15,6 +16,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntitySheep;
 import net.minecraft.server.World;
 
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,16 +41,15 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
 
             DyeColor color = DyeColor.getByData((byte) (15 - hand.getData().getData()));
             getTrait(WoolColor.class).setColor(color);
-            Messaging.send(
-                    equipper,
-                    StringHelper.wrap(getName()) + " is now "
-                            + StringHelper.wrap(color.name().toLowerCase().replace("_", " ")) + ".");
+            Messaging.sendTr(equipper, ChatColor.GREEN, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED,
+                    StringHelper.wrap(getName()),
+                    StringHelper.wrap(color.name().toLowerCase().replace("_", " ")));
 
             hand.setAmount(hand.getAmount() - 1);
         } else {
             getTrait(WoolColor.class).setColor(DyeColor.WHITE);
-            Messaging.send(equipper, StringHelper.wrap(getName()) + " is now " + StringHelper.wrap("white")
-                    + ".");
+            Messaging.sendTr(equipper, ChatColor.GREEN, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED,
+                    StringHelper.wrap(getName()), StringHelper.wrap("white"));
         }
     }
 

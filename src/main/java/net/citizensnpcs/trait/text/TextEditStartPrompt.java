@@ -1,7 +1,7 @@
 package net.citizensnpcs.trait.text;
 
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -9,7 +9,7 @@ import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 public class TextEditStartPrompt extends StringPrompt {
-    private Text text;
+    private final Text text;
 
     public TextEditStartPrompt(Text text) {
         this.text = text;
@@ -21,7 +21,7 @@ public class TextEditStartPrompt extends StringPrompt {
         try {
             int index = Integer.parseInt(input);
             if (!text.hasIndex(index)) {
-                Messaging.sendError(player, "'" + index + "' is not a valid index!");
+                Messaging.sendErrorTr(player, Messages.TEXT_EDITOR_INVALID_INDEX, index);
                 return new StartPrompt(text);
             }
             context.setSessionData("index", index);
@@ -32,14 +32,13 @@ public class TextEditStartPrompt extends StringPrompt {
                 return new PageChangePrompt(text);
             }
         }
-        Messaging.sendError(player, "Invalid input.");
+        Messaging.sendErrorTr(player, Messages.TEXT_EDITOR_INVALID_INPUT);
         return new StartPrompt(text);
     }
 
     @Override
     public String getPromptText(ConversationContext context) {
         text.sendPage(((Player) context.getForWhom()), 1);
-        return StringHelper
-                .parseColors("<a>Enter the index of the entry you wish to edit or <e>page <a>to view more pages.");
+        return Messaging.tr(Messages.TEXT_EDITOR_EDIT_BEGIN_PROMPT);
     }
 }

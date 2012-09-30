@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.text;
 
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
@@ -21,7 +22,7 @@ public class TextRemovePrompt extends StringPrompt {
         try {
             int index = Integer.parseInt(input);
             if (!text.hasIndex(index)) {
-                Messaging.sendErrorF(player, "'%d' is not a valid index!", index);
+                Messaging.sendErrorTr(player, Messages.TEXT_EDITOR_INVALID_INDEX, index);
                 return new StartPrompt(text);
             }
             text.remove(index);
@@ -33,7 +34,7 @@ public class TextRemovePrompt extends StringPrompt {
                 return new PageChangePrompt(text);
             }
         }
-        Messaging.sendError(player, "Invalid input.");
+        Messaging.sendErrorTr(player, Messages.TEXT_EDITOR_INVALID_INPUT);
         return new StartPrompt(text);
     }
 
