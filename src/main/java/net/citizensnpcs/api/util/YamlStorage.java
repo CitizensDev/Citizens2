@@ -24,9 +24,14 @@ public class YamlStorage implements Storage {
         this.file = file;
         if (!file.exists()) {
             create();
-            config.options().header(header);
+            if (header != null)
+                config.options().header(header);
             save();
         }
+    }
+
+    public YamlStorage(File file) {
+        this(file, null);
     }
 
     private void create() {
@@ -202,8 +207,11 @@ public class YamlStorage implements Storage {
             return res;
         }
 
+        @SuppressWarnings("unchecked")
         public Map<String, Object> getValuesDeep() {
-            return config.getConfigurationSection(current).getValues(true);
+            ConfigurationSection subSection = config.getConfigurationSection(current);
+            return (Map<String, Object>) (subSection == null ? Collections.emptyMap() : subSection
+                    .getValues(true));
         }
 
         @Override
