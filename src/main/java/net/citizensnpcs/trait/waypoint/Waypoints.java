@@ -26,11 +26,10 @@ public class Waypoints extends Trait {
     }
 
     private WaypointProvider create(Class<? extends WaypointProvider> clazz) {
-        if (!providers.containsKey(clazz))
-            return null;
         try {
             return clazz.newInstance();
         } catch (Exception ex) {
+            ex.printStackTrace();
             return null;
         }
     }
@@ -109,6 +108,8 @@ public class Waypoints extends Trait {
         if (provider == null)
             return false;
         providerName = name;
+        if (npc != null && npc.isSpawned())
+            provider.onSpawn(npc);
         return true;
     }
 
@@ -129,6 +130,6 @@ public class Waypoints extends Trait {
 
     static {
         providers.put("linear", LinearWaypointProvider.class);
-        providers.put("wander", WanderingWaypointProvider.class);
+        providers.put("wander", WanderWaypointProvider.class);
     }
 }
