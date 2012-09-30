@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.command.exception.CommandException;
@@ -136,6 +137,14 @@ public class CommandManager {
             if (cmdRequirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
                     && !npc.getTrait(Owner.class).isOwnedBy(sender))
                 throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_MUST_BE_OWNER));
+
+            if (npc != null) {
+                for (Class<? extends Trait> clazz : cmdRequirements.traits()) {
+                    if (!npc.hasTrait(clazz))
+                        throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_MISSING_TRAIT,
+                                clazz.getSimpleName()));
+                }
+            }
 
             if (npc != null) {
                 Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()),

@@ -14,7 +14,7 @@ import net.citizensnpcs.util.StringHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-@Requirements(ownership = true, selected = true)
+@Requirements(ownership = true, selected = true, traits = Waypoints.class)
 public class WaypointCommands {
     public WaypointCommands(Citizens plugin) {
     }
@@ -26,8 +26,7 @@ public class WaypointCommands {
             modifiers = { "provider" },
             min = 1,
             max = 2,
-            permission = "waypoints.provider",
-            traits = Waypoints.class)
+            permission = "waypoints.provider")
     public void provider(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Waypoints waypoints = npc.getTrait(Waypoints.class);
         if (args.argsLength() == 1) {
