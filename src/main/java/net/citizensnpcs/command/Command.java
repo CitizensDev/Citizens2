@@ -3,6 +3,8 @@ package net.citizensnpcs.command;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import net.citizensnpcs.api.trait.Trait;
+
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
     String[] aliases();
@@ -18,6 +20,8 @@ public @interface Command {
     String[] modifiers() default "";
 
     String permission() default "";
+
+    Class<? extends Trait>[] traits() default {};
 
     String usage() default "";
 }

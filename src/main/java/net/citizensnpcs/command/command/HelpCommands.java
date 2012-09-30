@@ -86,24 +86,6 @@ public class HelpCommands {
     }
 
     @Command(
-            aliases = { "waypoint", "waypoint", "wp" },
-            usage = "help (page)",
-            desc = "Waypoints help menu",
-            modifiers = { "help" },
-            min = 1,
-            max = 2,
-            permission = "waypoints.help")
-    @Requirements
-    public void waypointsHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
-        Paginator paginator = new Paginator().header("Waypoints Help");
-        for (String line : getLines(sender, npc, "waypoints"))
-            paginator.addLine(line);
-        if (!paginator.sendPage(sender, page))
-            throw new CommandException("The page '" + page + "' does not exist.");
-    }
-
-    @Command(
             aliases = { "script" },
             usage = "help (page)",
             desc = "Script help menu",
@@ -134,6 +116,24 @@ public class HelpCommands {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
         Paginator paginator = new Paginator().header("Templates Help");
         for (String line : getLines(sender, npc, "templates"))
+            paginator.addLine(line);
+        if (!paginator.sendPage(sender, page))
+            throw new CommandException("The page '" + page + "' does not exist.");
+    }
+
+    @Command(
+            aliases = { "waypoint", "waypoint", "wp" },
+            usage = "help (page)",
+            desc = "Waypoints help menu",
+            modifiers = { "help" },
+            min = 1,
+            max = 2,
+            permission = "waypoints.help")
+    @Requirements
+    public void waypointsHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
+        Paginator paginator = new Paginator().header("Waypoints Help");
+        for (String line : getLines(sender, npc, "waypoints"))
             paginator.addLine(line);
         if (!paginator.sendPage(sender, page))
             throw new CommandException("The page '" + page + "' does not exist.");

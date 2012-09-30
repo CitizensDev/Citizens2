@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait.waypoint;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -8,8 +7,15 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.StringHelper;
 
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.google.common.collect.Maps;
 
 public class Waypoints extends Trait {
     private WaypointProvider provider = new LinearWaypointProvider();
@@ -29,6 +35,13 @@ public class Waypoints extends Trait {
         }
     }
 
+    public void describeProviders(CommandSender sender) {
+        Messaging.sendTr(sender, ChatColor.AQUA, Messages.AVAILABLE_WAYPOINT_PROVIDERS);
+        for (String name : providers.keySet()) {
+            Messaging.send(sender, ChatColor.GREEN + "    - " + StringHelper.wrap(name));
+        }
+    }
+
     /**
      * Returns the current {@link WaypointProvider}. May be null during
      * initialisation.
@@ -39,6 +52,13 @@ public class Waypoints extends Trait {
         return provider;
     }
 
+    /**
+     * @return The current provider name
+     */
+    public String getCurrentProviderName() {
+        return providerName;
+    }
+
     public Editor getEditor(Player player) {
         return provider.createEditor(player);
     }
@@ -47,9 +67,9 @@ public class Waypoints extends Trait {
     public void load(DataKey key) throws NPCLoadException {
         provider = null;
         providerName = key.getString("provider", "linear");
-        for (Entry<Class<? extends WaypointProvider>, String> entry : providers.entrySet()) {
-            if (entry.getValue().equals(providerName)) {
-                provider = create(entry.getKey());
+        for (Entry<String, Class<? extends WaypointProvider>> entry : providers.entrySet()) {
+            if (entry.getKey().equals(providerName)) {
+                provider = create(entry.getValue());
                 break;
             }
         }
@@ -73,21 +93,26 @@ public class Waypoints extends Trait {
     }
 
     /**
-     * Sets the current {@link WaypointProvider} by using the given class. The
-     * class should have been registered using
-     * {@link Waypoints#registerWaypointProvider(Class, String)}.
+     * Sets the current {@link WaypointProvider} using the given name.
      * 
-     * @param provider
-     *            Class to set as waypoint provider
+     * @param name
+     *            The name of the waypoint provider, registered using
+     *            {@link #registerWaypointProvider(Class, String)}
+     * @return Whether the operation succeeded
      */
-    public void setWaypointProvider(Class<? extends WaypointProvider> clazz) {
+    public boolean setWaypointProvider(String name) {
+        name = name.toLowerCase();
+        Class<? extends WaypointProvider> clazz = providers.get(name);
+        if (clazz == null)
+            return false;
         provider = create(clazz);
-        if (provider != null) {
-            providerName = providers.get(clazz);
-        }
+        if (provider == null)
+            return false;
+        providerName = name;
+        return true;
     }
 
-    private static final Map<Class<? extends WaypointProvider>, String> providers = new HashMap<Class<? extends WaypointProvider>, String>();
+    private static final Map<String, Class<? extends WaypointProvider>> providers = Maps.newHashMap();
 
     /**
      * Registers a {@link WaypointProvider}, which can be subsequently used by
@@ -99,11 +124,11 @@ public class Waypoints extends Trait {
      *            The name of the waypoint provider
      */
     public static void registerWaypointProvider(Class<? extends WaypointProvider> clazz, String name) {
-        providers.put(clazz, name);
+        providers.put(name, clazz);
     }
 
     static {
-        providers.put(LinearWaypointProvider.class, "linear");
-        providers.put(WanderingWaypointProvider.class, "wander");
+        providers.put("linear", LinearWaypointProvider.class);
+        providers.put("wander", WanderingWaypointProvider.class);
     }
 }
