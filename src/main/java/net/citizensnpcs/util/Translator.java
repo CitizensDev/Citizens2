@@ -92,7 +92,6 @@ public class Translator {
     }
 
     private static Translator instance;
-
     public static final String PREFIX = "messages";
 
     public static void setInstance(File resourceFile, Locale locale) {

@@ -68,6 +68,9 @@ public class Messages {
     public static final String TEXT_EDITOR_INVALID_INDEX = "citizens.editors.text.invalid-index";
     public static final String TEXT_EDITOR_INVALID_INPUT = "citizens.editors.text.invalid-input";
     public static final String TEXT_EDITOR_EDIT_BEGIN_PROMPT = "citizens.editors.text.edit-begin-prompt";
+    public static final String LINEAR_WAYPOINT_EDITOR_BEGIN = "citizens.editors.waypoints.linear.begin-message";
+    public static final String LINEAR_WAYPOINT_EDITOR_END = "citizens.editors.waypoints.linear.end-message";
+    public static final String LINEAR_WAYPOINT_EDITOR_RANGE_EXCEEDED = "citizens.editors.waypoints.linear.range-exceeded-message";
 
     private static Properties getDefaultBundleProperties() {
         Properties defaults = new Properties();
