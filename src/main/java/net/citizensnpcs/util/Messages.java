@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import com.google.common.io.Closeables;
 
 public class Messages {
+    public static final String AVAILABLE_WAYPOINT_PROVIDERS = "citizens.waypoints.available-providers-message";
     public static final String CITIZENS_DISABLED = "citizens.notifications.disabled";
     public static final String CITIZENS_ENABLED = "citizens.notifications.enabled";
     public static final String CITIZENS_IMPLEMENTATION_DISABLED = "citizens.changed-implementation";
@@ -26,6 +27,7 @@ public class Messages {
     public static final String COMMAND_MUST_BE_OWNER = "citizens.commands.must-be-owner";
     public static final String COMMAND_MUST_HAVE_SELECTED = "citizens.commands.must-have-selected";
     public static final String COMMAND_REPORT_ERROR = "citizens.commands.console-error";
+    public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.waypoints.current-provider-message";
     public static final String DATABASE_CONNECTION_FAILED = "citizens.notifications.database-connection-failed";
     private static ResourceBundle defaultBundle;
     public static final String ERROR_INITALISING_SUB_PLUGIN = "citizens.sub-plugins.error-on-load";
@@ -44,6 +46,7 @@ public class Messages {
     public static final String OVER_NPC_LIMIT = "citizens.limits.over-npc-limit";
     public static final String SAVE_METHOD_SET_NOTIFICATION = "citizens.notifications.save-method-set";
     public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";
+    public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider-message";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
 
     private static Properties getDefaultBundleProperties() {

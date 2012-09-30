@@ -75,6 +75,10 @@ public class Messaging {
         sender.sendMessage(msg);
     }
 
+    public static void sendTr(CommandSender sender, ChatColor rootColour, String key, Object... msg) {
+        sendMessageTo(sender, rootColour + Translator.tr(key, msg));
+    }
+
     public static void sendTr(CommandSender sender, String key, Object... msg) {
         sendMessageTo(sender, Translator.tr(key, msg));
     }
