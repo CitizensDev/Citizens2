@@ -16,6 +16,7 @@ import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
@@ -104,15 +105,14 @@ public class LinearWaypointProvider implements WaypointProvider {
         private final Player player;
         private boolean showPath;
         Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
+
         private LinearWaypointEditor(Player player) {
             this.player = player;
         }
 
         @Override
         public void begin() {
-            Messaging.send(player, ChatColor.AQUA + "Entered the linear waypoint editor!");
-            Messaging.send(player, "<e>Left click<a> to add a waypoint, <e>right click<a> to remove.");
-            Messaging.send(player, "<a>Type <e>toggle path<a> to toggle showing entities at waypoints.");
+            Messaging.sendTr(player, ChatColor.AQUA, Messages.LINEAR_WAYPOINT_EDITOR_BEGIN);
         }
 
         private void createWaypointMarker(int index, Waypoint waypoint) {
@@ -138,7 +138,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void end() {
             if (!editing)
                 return;
-            Messaging.send(player, ChatColor.AQUA + "Exited the linear waypoint editor.");
+            Messaging.sendTr(player, ChatColor.AQUA, Messages.LINEAR_WAYPOINT_EDITOR_END);
             editing = false;
             if (!showPath)
                 return;
@@ -204,8 +204,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                     double distance = at.distanceSquared(prev);
                     double maxDistance = Math.pow(npc.getNavigator().getDefaultParameters().range(), 2);
                     if (distance > maxDistance) {
-                        Messaging.sendF(player, ChatColor.RED
-                                + "Previous waypoint is %s blocks away but the distance limit is %s.",
+                        Messaging.sendErrorTr(player, Messages.LINEAR_WAYPOINT_EDITOR_RANGE_EXCEEDED,
                                 StringHelper.wrap(Math.sqrt(distance), ChatColor.RED),
                                 StringHelper.wrap(Math.sqrt(maxDistance), ChatColor.RED));
                         return;
