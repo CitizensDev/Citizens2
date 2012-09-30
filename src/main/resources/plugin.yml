@@ -19,6 +19,12 @@ commands:
   npc:
     aliases: [npc2]
     description: Basic commands for all NPC-related things
+  template:
+    aliases: [tpl]
+    description: Template commands
+  waypoint:
+    aliases: [waypoints, wp]
+    description: Waypoint commands
 permissions:
   citizens.*:
     default: op

@@ -36,10 +36,8 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean despawn() {
-        if (!isSpawned()) {
-            Messaging.debug(String.format("The NPC with the ID '%d' is already despawned.", getId()));
+        if (!isSpawned())
             return false;
-        }
 
         Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
         boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
@@ -133,10 +131,8 @@ public abstract class CitizensNPC extends AbstractNPC {
     @Override
     public boolean spawn(Location loc) {
         Validate.notNull(loc, "location cannot be null");
-        if (isSpawned()) {
-            Messaging.debug("NPC (ID: " + getId() + ") is already spawned.");
+        if (isSpawned())
             return false;
-        }
 
         mcEntity = createHandle(loc);
 
