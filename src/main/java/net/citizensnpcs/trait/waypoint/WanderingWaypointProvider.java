@@ -19,7 +19,7 @@ import org.bukkit.event.EventHandler;
 public class WanderingWaypointProvider implements WaypointProvider {
     private WanderGoal currentGoal;
     private NPC npc;
-    private boolean paused;
+    private volatile boolean paused;
     private int xrange, yrange;
 
     @Override
@@ -68,7 +68,7 @@ public class WanderingWaypointProvider implements WaypointProvider {
 
     @Override
     public void setPaused(boolean paused) {
-        // TODO
+        this.paused = paused;
     }
 
     private class WanderGoal implements Goal {

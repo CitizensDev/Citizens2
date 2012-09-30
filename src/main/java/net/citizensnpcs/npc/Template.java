@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -101,7 +102,8 @@ public class Template {
         }
     }
 
-    private static YamlStorage templates = new YamlStorage(CitizensAPI.getDataFolder(), "templates.yml");
+    private static YamlStorage templates = new YamlStorage(new File(CitizensAPI.getDataFolder(),
+            "templates.yml"));
 
     public static Template byName(String name) {
         if (!templates.getKey("").keyExists(name))
