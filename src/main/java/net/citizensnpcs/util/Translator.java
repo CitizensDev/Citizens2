@@ -99,11 +99,7 @@ public class Translator {
         instance = new Translator(resourceFile, locale);
     }
 
-    public static String tr(String key) {
-        return tr(key);
-    }
-
-    public static String tr(String key, Object... msg) {
+    static String tr(String key, Object... msg) {
         return msg.length == 0 ? instance.translate(key) : instance.format(key, msg);
     }
 }

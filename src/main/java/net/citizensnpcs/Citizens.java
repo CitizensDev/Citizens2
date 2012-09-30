@@ -381,7 +381,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             }
         }
         if (!closest.isEmpty()) {
-            sender.sendMessage(ChatColor.GRAY + Translator.tr(Messages.UNKNOWN_COMMAND));
+            sender.sendMessage(ChatColor.GRAY + Messaging.tr(Messages.UNKNOWN_COMMAND));
             sender.sendMessage(StringHelper.wrap(" /") + command + " " + StringHelper.wrap(closest));
             return true;
         }
