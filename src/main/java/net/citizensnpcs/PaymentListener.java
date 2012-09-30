@@ -2,6 +2,7 @@ package net.citizensnpcs;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 import net.milkbowl.vault.economy.Economy;
@@ -28,13 +29,14 @@ public class PaymentListener implements Listener {
             return;
         double cost = Setting.NPC_COST.asDouble();
         boolean hasEnough = provider.has(name, cost);
+        String formattedCost = provider.format(cost);
         if (!hasEnough) {
             event.setCancelled(true);
-            event.setCancelReason(String.format("Need at least %s.", provider.format(cost)));
+            event.setCancelReason(Messaging.tr(Messages.MINIMUM_COST_REQUIRED, formattedCost));
             return;
         }
         provider.withdrawPlayer(name, cost);
-        Messaging.sendF(event.getCreator(), ChatColor.GREEN + "Withdrew %s for your NPC.",
-                StringHelper.wrap(provider.format(cost)));
+        String message = Messaging.tr(Messages.MONEY_WITHDRAWN, StringHelper.wrap(formattedCost));
+        Messaging.send(event.getCreator(), ChatColor.GREEN + message);
     }
 }

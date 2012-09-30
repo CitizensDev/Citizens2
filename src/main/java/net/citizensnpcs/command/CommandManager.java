@@ -26,6 +26,8 @@ import net.citizensnpcs.command.exception.RequirementMissingException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -120,11 +122,12 @@ public class CommandManager {
             if (cmdRequirements.selected()) {
                 boolean canRedefineSelected = context.hasValueFlag("id")
                         && sender.hasPermission("npc.select");
-                String error = "You must have an NPC selected to execute that command.";
+                String error = Messaging.tr(Messages.COMMAND_MUST_HAVE_SELECTED);
                 if (canRedefineSelected) {
                     npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
                     if (npc == null)
-                        error += " Couldn't find any NPC with ID " + context.getFlagInteger("id") + ".";
+                        error += ' ' + Messaging.tr(Messages.COMMAND_ID_NOT_FOUND,
+                                context.getFlagInteger("id"));
                 }
                 if (npc == null)
                     throw new RequirementMissingException(error);
@@ -132,8 +135,7 @@ public class CommandManager {
 
             if (cmdRequirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
                     && !npc.getTrait(Owner.class).isOwnedBy(sender))
-                throw new RequirementMissingException(
-                        "You must be the owner of this NPC to execute that command.");
+                throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_MUST_BE_OWNER));
 
             if (npc != null) {
                 Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()),
@@ -144,8 +146,8 @@ public class CommandManager {
 
                 EntityType type = npc.getTrait(MobType.class).getType();
                 if (!types.contains(type)) {
-                    throw new RequirementMissingException("The NPC cannot be the mob type '" + type.getName()
-                            + "' to use that command.");
+                    throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_INVALID_MOB_TYPE,
+                            type.getName()));
                 }
             }
         }

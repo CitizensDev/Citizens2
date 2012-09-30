@@ -20,6 +20,8 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.EntityPlayer;
 
@@ -209,7 +211,7 @@ public class EventListen implements Listener {
         int wouldOwn = owned + 1;
         if (wouldOwn >= limit) {
             event.setCancelled(true);
-            event.setCancelReason(String.format("Over the NPC limit of %d.", limit));
+            event.setCancelReason(Messaging.tr(Messages.OVER_NPC_LIMIT, limit));
         }
     }
 

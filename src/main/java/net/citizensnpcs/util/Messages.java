@@ -4,55 +4,73 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ListResourceBundle;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 import com.google.common.io.Closeables;
 
-public enum Messages {
-    CITIZENS_IMPLEMENTATION_DISABLED("citizens.changed-implementation",
-            "Citizens implementation changed, disabling plugin."),
-    COMMAND_INVALID_NUMBER("citizens.commands.invalid-number", "That is not a valid number."),
-    COMMAND_MUST_BE_INGAME("citizens.commands.must-be-ingame", "You must be ingame to use that command."),
-    COMMAND_REPORT_ERROR("citizens.commands.console-error", "Please report this error: [See console]"),
-    ERROR_INITALISING_SUB_PLUGIN("citizens.sub-plugins.error-on-load", "{0} initializing {1}"),
-    ERROR_LOADING_ECONOMY("citizens.economy.error-loading",
-            "Unable to use economy handling. Has Vault been enabled?"),
-    FAILED_LOAD_SAVES("citizens.saves.load-failed", "Unable to load saves, disabling..."),
-    LOAD_TASK_NOT_SCHEDULED("citizens.load-task-error", "NPC load task couldn't be scheduled - disabling..."),
-    LOADING_SUB_PLUGIN("citizens.sub-plugins.load", "Loading {0}"),
-    LOCALE_NOTIFICATION("citizens.notifications.locale", "Using locale {0}."),
-    METRICS_ERROR_NOTIFICATION("citizens.notifications.metrics-load-error", "Unable to start metrics: {0}."),
-    METRICS_NOTIFICATION("citizens.notifications.metrics-started", "Metrics started."),
-    UNKNOWN_COMMAND("citizens.commands.unknown-command", "Unknown command. Did you mean:");
-    private String defaultTranslation;
-    private String key;
-
-    Messages(String key, String defaultTranslation) {
-        this.key = key;
-        this.defaultTranslation = defaultTranslation;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
+public class Messages {
+    public static final String CITIZENS_DISABLED = "citizens.notifications.disabled";
+    public static final String CITIZENS_ENABLED = "citizens.notifications.enabled";
+    public static final String CITIZENS_IMPLEMENTATION_DISABLED = "citizens.changed-implementation";
+    public static final String CITIZENS_INCOMPATIBLE = "citizens.notifications.incompatible-version";
+    public static final String COMMAND_ID_NOT_FOUND = "citizens.commands.id-not-found";
+    public static final String COMMAND_INVALID_MOB_TYPE = "citizens.commands.disallowed-mobtype";
+    public static final String COMMAND_INVALID_NUMBER = "citizens.commands.invalid-number";
+    public static final String COMMAND_MUST_BE_INGAME = "citizens.commands.must-be-ingame";
+    public static final String COMMAND_MUST_BE_OWNER = "citizens.commands.must-be-owner";
+    public static final String COMMAND_MUST_HAVE_SELECTED = "citizens.commands.must-have-selected";
+    public static final String COMMAND_REPORT_ERROR = "citizens.commands.console-error";
+    public static final String DATABASE_CONNECTION_FAILED = "citizens.notifications.database-connection-failed";
     private static ResourceBundle defaultBundle;
+    public static final String ERROR_INITALISING_SUB_PLUGIN = "citizens.sub-plugins.error-on-load";
+    public static final String ERROR_LOADING_ECONOMY = "citizens.economy.error-loading";
+    public static final String FAILED_LOAD_SAVES = "citizens.saves.load-failed";
+    public static final String LOAD_NAME_NOT_FOUND = "citizens.notifications.npc-name-not-found";
+    public static final String LOAD_TASK_NOT_SCHEDULED = "citizens.load-task-error";
+    public static final String LOAD_UNKNOWN_NPC_TYPE = "citizens.notifications.unknown-npc-type";
+    public static final String LOADING_SUB_PLUGIN = "citizens.sub-plugins.load";
+    public static final String LOCALE_NOTIFICATION = "citizens.notifications.locale";
+    public static final String METRICS_ERROR_NOTIFICATION = "citizens.notifications.metrics-load-error";
+    public static final String METRICS_NOTIFICATION = "citizens.notifications.metrics-started";
+    public static final String MINIMUM_COST_REQUIRED = "citizens.economy.minimum-cost-required-message";
+    public static final String MONEY_WITHDRAWN = "citizens.economy.money-withdrawn";
+    public static final String NUM_LOADED_NOTIFICATION = "citizens.notifications.npcs-loaded";
+    public static final String OVER_NPC_LIMIT = "citizens.limits.over-npc-limit";
+    public static final String SAVE_METHOD_SET_NOTIFICATION = "citizens.notifications.save-method-set";
+    public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";
+    public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
+
+    private static Properties getDefaultBundleProperties() {
+        Properties defaults = new Properties();
+        InputStream in = null;
+        try {
+            in = Messages.class.getResourceAsStream("/" + Translator.PREFIX + "_en.properties");
+            defaults.load(in);
+        } catch (IOException e) {
+        } finally {
+            Closeables.closeQuietly(in);
+        }
+        return defaults;
+    }
 
     public static ResourceBundle getDefaultResourceBundle(File resourceDirectory, String fileName) {
         if (defaultBundle == null) {
             resourceDirectory.mkdirs();
 
             File bundleFile = new File(resourceDirectory, fileName);
-            if (!bundleFile.exists())
+            if (!bundleFile.exists()) {
                 try {
                     bundleFile.createNewFile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
             populateDefaults(bundleFile);
             FileInputStream stream = null;
             try {
@@ -72,20 +90,14 @@ public enum Messages {
         return new ListResourceBundle() {
             @Override
             protected Object[][] getContents() {
-                Messages[] values = values();
-                Object[][] contents = new Object[values.length][2];
-                for (int i = 0; i < values.length; i++) {
-                    Messages message = values[i];
-                    contents[i] = new Object[] { message.key, message.defaultTranslation };
-                }
-                return contents;
+                return new Object[0][0];
             }
         };
     }
 
     private static void populateDefaults(File bundleFile) {
         Properties properties = new Properties();
-        FileInputStream in = null;
+        InputStream in = null;
         try {
             in = new FileInputStream(bundleFile);
             properties.load(in);
@@ -93,13 +105,15 @@ public enum Messages {
         } finally {
             Closeables.closeQuietly(in);
         }
-        for (Messages message : values()) {
-            if (!properties.containsKey(message.key))
-                properties.put(message.key, message.defaultTranslation);
+        Properties defaults = getDefaultBundleProperties();
+        for (Entry<Object, Object> entry : defaults.entrySet()) {
+            if (!properties.containsKey(entry.getKey()))
+                properties.put(entry.getKey(), entry.getValue());
         }
         OutputStream stream = null;
         try {
-            properties.store(stream = new FileOutputStream(bundleFile), "");
+            stream = new FileOutputStream(bundleFile);
+            properties.store(stream, "");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
