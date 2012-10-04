@@ -77,7 +77,7 @@
 				<directory>${basedir}/src/main/resources</directory>
 				<includes>
 					<include>plugin.yml</include>
-					<include>*_en.properties</include>
+					<include>*.properties</include>
 				</includes>
 			</resource>
 		</resources>
