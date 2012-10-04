@@ -167,28 +167,28 @@ public class Messages {
     }
 
     public static ResourceBundle getDefaultResourceBundle(File resourceDirectory, String fileName) {
-        if (defaultBundle == null) {
-            resourceDirectory.mkdirs();
+        if (defaultBundle != null)
+            return defaultBundle;
+        resourceDirectory.mkdirs();
 
-            File bundleFile = new File(resourceDirectory, fileName);
-            if (!bundleFile.exists()) {
-                try {
-                    bundleFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            populateDefaults(bundleFile);
-            FileInputStream stream = null;
+        File bundleFile = new File(resourceDirectory, fileName);
+        if (!bundleFile.exists()) {
             try {
-                stream = new FileInputStream(bundleFile);
-                defaultBundle = new PropertyResourceBundle(stream);
-            } catch (Exception e) {
+                bundleFile.createNewFile();
+            } catch (IOException e) {
                 e.printStackTrace();
-                defaultBundle = getFallbackResourceBundle();
-            } finally {
-                Closeables.closeQuietly(stream);
             }
+        }
+        populateDefaults(bundleFile);
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream(bundleFile);
+            defaultBundle = new PropertyResourceBundle(stream);
+        } catch (Exception e) {
+            e.printStackTrace();
+            defaultBundle = getFallbackResourceBundle();
+        } finally {
+            Closeables.closeQuietly(stream);
         }
         return defaultBundle;
     }
