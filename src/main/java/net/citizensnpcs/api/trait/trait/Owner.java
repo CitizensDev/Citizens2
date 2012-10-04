@@ -75,5 +75,5 @@ public class Owner extends Trait {
         return "Owner{" + owner + "}";
     }
 
-    private static final String SERVER = "server";
+    public static final String SERVER = "server";
 }
