@@ -3,6 +3,7 @@ package net.citizensnpcs.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,6 +14,8 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
 public class Translator {
     private final Locale defaultLocale;
@@ -110,10 +113,47 @@ public class Translator {
             } else {
                 string = string.replaceFirst("/", "");
                 InputStream stream = Translator.class.getResourceAsStream('/' + string);
-                if (stream != null)
+                if (stream != null) {
+                    new Thread(new SaveResourceThread(folder, string)).start();
                     return stream;
+                }
             }
             return super.getResourceAsStream(string);
+        }
+    }
+
+    private static class SaveResourceThread implements Runnable {
+        private final String fileName;
+        private final File rootFolder;
+
+        private SaveResourceThread(File rootFolder, String fileName) {
+            this.rootFolder = rootFolder;
+            this.fileName = fileName;
+        }
+
+        @Override
+        public void run() {
+            File file = new File(rootFolder, fileName);
+            if (file.exists())
+                return;
+            final InputStream stream = Translator.class.getResourceAsStream('/' + fileName);
+            if (stream == null)
+                return;
+            InputSupplier<InputStream> in = new InputSupplier<InputStream>() {
+                @Override
+                public InputStream getInput() throws IOException {
+                    return stream;
+                }
+            };
+            try {
+                File to = File.createTempFile(fileName, null, rootFolder);
+                to.deleteOnExit();
+                Files.copy(in, to);
+                if (!file.exists())
+                    to.renameTo(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

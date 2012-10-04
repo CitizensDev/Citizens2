@@ -7,8 +7,6 @@ import java.util.List;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
-import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 
 import com.google.common.collect.Lists;
 
@@ -23,7 +21,6 @@ public class Settings {
         config.load();
         for (Setting setting : Setting.values()) {
             if (!root.keyExists(setting.path)) {
-                Messaging.logTr(Messages.WRITING_DEFAULT_SETTING, setting.path);
                 setting.setAtKey(root);
             } else
                 setting.loadFromKey(root);
