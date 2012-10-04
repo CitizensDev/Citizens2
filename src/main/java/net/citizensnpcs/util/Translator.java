@@ -28,6 +28,7 @@ public class Translator {
                     Translator.class.getClassLoader(), resourceFile));
         } catch (MissingResourceException e) {
             preferredBundle = getDefaultBundle();
+            Messaging.logTr(Messages.MISSING_TRANSLATIONS, locale);
         }
     }
 
@@ -89,6 +90,11 @@ public class Translator {
                     return file.toURI().toURL();
                 } catch (MalformedURLException ex) {
                 }
+            } else {
+                string = string.replaceFirst("/", "");
+                URL test = Translator.class.getResource('/' + string);
+                if (test != null)
+                    return test;
             }
             return super.getResource(string);
         }
@@ -101,6 +107,11 @@ public class Translator {
                     return new FileInputStream(file);
                 } catch (FileNotFoundException ex) {
                 }
+            } else {
+                string = string.replaceFirst("/", "");
+                InputStream stream = Translator.class.getResourceAsStream('/' + string);
+                if (stream != null)
+                    return stream;
             }
             return super.getResourceAsStream(string);
         }
