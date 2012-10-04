@@ -46,6 +46,7 @@ public class Messaging {
     public static void sendError(CommandSender sender, Object... msg) {
         send(sender, ChatColor.RED.toString() + SPACE.join(msg));
     }
+
     public static void sendErrorTr(CommandSender sender, String key, Object... msg) {
         sendMessageTo(sender, ChatColor.RED + Translator.tr(key, msg));
     }

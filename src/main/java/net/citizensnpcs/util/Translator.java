@@ -15,24 +15,36 @@ import java.util.ResourceBundle;
 import com.google.common.collect.Maps;
 
 public class Translator {
-    private ResourceBundle bundle;
+    private final Locale defaultLocale;
     private final Map<String, MessageFormat> messageFormatCache = Maps.newHashMap();
+    private ResourceBundle preferredBundle;
     private final File resourceFile;
 
     private Translator(File resourceFile, Locale locale) {
         this.resourceFile = resourceFile;
+        this.defaultLocale = locale;
         try {
-            bundle = ResourceBundle.getBundle(PREFIX, locale,
-                    new FileClassLoader(Translator.class.getClassLoader(), resourceFile));
+            preferredBundle = ResourceBundle.getBundle(PREFIX, defaultLocale, new FileClassLoader(
+                    Translator.class.getClassLoader(), resourceFile));
         } catch (MissingResourceException e) {
-            bundle = getDefaultBundle();
+            preferredBundle = getDefaultBundle();
         }
     }
 
-    public String format(String key, Object... msg) {
-        String unreplaced = translate(key);
+    private String format(String key, Locale locale, Object... msg) {
+        String unreplaced = translate(key, locale);
         MessageFormat formatter = getFormatter(unreplaced);
         return formatter.format(msg);
+    }
+
+    private ResourceBundle getBundle(Locale locale) {
+        try {
+            ResourceBundle bundle = ResourceBundle.getBundle(PREFIX, locale, new FileClassLoader(
+                    Translator.class.getClassLoader(), resourceFile));
+            return bundle == null ? preferredBundle : bundle;
+        } catch (MissingResourceException e) {
+            return preferredBundle;
+        }
     }
 
     private ResourceBundle getDefaultBundle() {
@@ -46,7 +58,10 @@ public class Translator {
         return formatter;
     }
 
-    public String translate(String key) {
+    private String translate(String key, Locale locale) {
+        ResourceBundle bundle = preferredBundle;
+        if (locale != defaultLocale)
+            bundle = getBundle(locale);
         try {
             return bundle.getString(key);
         } catch (MissingResourceException e) {
@@ -98,8 +113,12 @@ public class Translator {
         instance = new Translator(resourceFile, locale);
     }
 
+    static String tr(String key, Locale preferredLocale, Object... msg) {
+        return StringHelper.parseColors(msg.length == 0 ? instance.translate(key, preferredLocale) : instance
+                .format(key, preferredLocale, msg));
+    }
+
     static String tr(String key, Object... msg) {
-        return StringHelper
-                .parseColors(msg.length == 0 ? instance.translate(key) : instance.format(key, msg));
+        return tr(key, instance.defaultLocale, msg);
     }
 }
