@@ -199,10 +199,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        config = new Settings(getDataFolder());
         setupTranslator();
         registerScriptHelpers();
 
-        config = new Settings(getDataFolder());
         saves = NPCDataStore.create(getDataFolder());
         if (saves == null) {
             Messaging.severeTr(Messages.FAILED_LOAD_SAVES);
