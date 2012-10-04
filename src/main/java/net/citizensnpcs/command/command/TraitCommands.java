@@ -11,10 +11,10 @@ import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.google.common.base.Joiner;
@@ -51,9 +51,9 @@ public class TraitCommands {
             added.add(StringHelper.wrap(traitName));
         }
         if (added.size() > 0)
-            Messaging.sendF(sender, ChatColor.GREEN + "Added %s successfully.", Joiner.on(", ").join(added));
+            Messaging.sendTr(sender, Messages.TRAITS_ADDED, Joiner.on(", ").join(added));
         if (failed.size() > 0)
-            Messaging.sendF(sender, ChatColor.GRAY + "Couldn't add %s.", Joiner.on(", ").join(failed));
+            Messaging.sendTr(sender, Messages.TRAITS_FAILED_TO_ADD, Joiner.on(", ").join(failed));
     }
 
     @Command(
@@ -70,11 +70,11 @@ public class TraitCommands {
             throw new NoPermissionsException();
         Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(0));
         if (clazz == null)
-            throw new CommandException("Trait not found.");
+            throw new CommandException(Messages.TRAIT_NOT_FOUND);
         if (!clazz.isAssignableFrom(CommandConfigurable.class))
-            throw new CommandException("That trait is not configurable");
+            throw new CommandException(Messages.TRAIT_NOT_CONFIGURABLE);
         if (!npc.hasTrait(clazz))
-            throw new CommandException("The NPC doesn't have that trait.");
+            throw new CommandException(Messages.TRAIT_NOT_FOUND_ON_NPC);
         CommandConfigurable trait = (CommandConfigurable) npc.getTrait(clazz);
         trait.configure(args);
     }
@@ -107,10 +107,9 @@ public class TraitCommands {
             removed.add(StringHelper.wrap(traitName));
         }
         if (removed.size() > 0)
-            Messaging.sendF(sender, ChatColor.GREEN + "Removed %s successfully.",
-                    Joiner.on(", ").join(removed));
+            Messaging.sendTr(sender, Messages.TRAITS_REMOVED, Joiner.on(", ").join(removed));
         if (failed.size() > 0)
-            Messaging.sendF(sender, ChatColor.GRAY + "Couldn't change %s.", Joiner.on(", ").join(failed));
+            Messaging.sendTr(sender, Messages.FAILED_TO_REMOVE, Joiner.on(", ").join(failed));
     }
 
     @Command(
@@ -143,11 +142,10 @@ public class TraitCommands {
             added.add(StringHelper.wrap(traitName));
         }
         if (added.size() > 0)
-            Messaging.sendF(sender, ChatColor.GREEN + "Added %s successfully.", Joiner.on(", ").join(added));
+            Messaging.sendTr(sender, Messages.TRAITS_ADDED, Joiner.on(", ").join(added));
         if (removed.size() > 0)
-            Messaging.sendF(sender, ChatColor.GREEN + "Removed %s successfully.",
-                    Joiner.on(", ").join(removed));
+            Messaging.sendTr(sender, Messages.TRAITS_REMOVED, Joiner.on(", ").join(removed));
         if (failed.size() > 0)
-            Messaging.sendF(sender, ChatColor.GRAY + "Couldn't change %s.", Joiner.on(", ").join(failed));
+            Messaging.sendTr(sender, Messages.TRAITS_FAILED_TO_CHANGE, Joiner.on(", ").join(failed));
     }
 }

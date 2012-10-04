@@ -2,7 +2,6 @@ package net.citizensnpcs.trait.text;
 
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -26,7 +25,7 @@ public class TextRemovePrompt extends StringPrompt {
                 return new StartPrompt(text);
             }
             text.remove(index);
-            Messaging.sendF(player, "<e>Removed <a>entry at index <e>%d<a>.", index);
+            Messaging.sendTr(player, Messages.TEXT_EDITOR_REMOVED_ENTRY, index);
             return new StartPrompt(text);
         } catch (NumberFormatException ex) {
             if (input.equalsIgnoreCase("page")) {
@@ -41,7 +40,6 @@ public class TextRemovePrompt extends StringPrompt {
     @Override
     public String getPromptText(ConversationContext context) {
         text.sendPage(((Player) context.getForWhom()), 1);
-        return StringHelper
-                .parseColors("<a>Enter the index of the entry you wish to remove or <e>page <a>to view more pages.");
+        return Messaging.tr(Messages.TEXT_EDITOR_REMOVE_PROMPT);
     }
 }

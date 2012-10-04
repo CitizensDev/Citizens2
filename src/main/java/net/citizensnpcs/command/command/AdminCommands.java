@@ -7,6 +7,7 @@ import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
@@ -40,13 +41,13 @@ public class AdminCommands {
             max = 1,
             permission = "admin")
     public void reload(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        Messaging.send(sender, "<e>Reloading Citizens...");
+        Messaging.sendTr(sender, Messages.CITIZENS_RELOADING);
         try {
             plugin.reload();
-            Messaging.send(sender, "<e>Citizens reloaded.");
+            Messaging.sendTr(sender, Messages.CITIZENS_RELOADED);
         } catch (NPCLoadException ex) {
             ex.printStackTrace();
-            throw new CommandException("Error occured while reloading, see console.");
+            throw new CommandException(Messages.CITIZENS_RELOAD_ERROR);
         }
     }
 
@@ -60,8 +61,8 @@ public class AdminCommands {
             flags = "a",
             permission = "admin")
     public void save(CommandContext args, CommandSender sender, NPC npc) {
-        Messaging.send(sender, "<e>Saving Citizens...");
+        Messaging.sendTr(sender, Messages.CITIZENS_SAVING);
         plugin.storeNPCs(args);
-        Messaging.send(sender, "<e>Citizens saved.");
+        Messaging.sendTr(sender, Messages.CITIZENS_SAVED);
     }
 }

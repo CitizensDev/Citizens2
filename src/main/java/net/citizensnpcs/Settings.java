@@ -70,9 +70,11 @@ public class Settings {
                 value = list;
             }
         },
+        HIGHLIGHT_COLOUR("general.colour-scheme.message-highlight", "<e>"),
         LOCALE("general.translation.locale", "en"),
         MAX_NPC_LIMIT_CHECKS("npc.limits.max-permission-checks", 100),
         MAX_SPEED("npc.limits.max-speed", 100),
+        MESSAGE_COLOUR("general.color-scheme.message", "<a>"),
         NPC_COST("economy.npc.cost", 100D),
         QUICK_SELECT("npc.selection.quick-select", false),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("npc.player.remove-from-list", true),

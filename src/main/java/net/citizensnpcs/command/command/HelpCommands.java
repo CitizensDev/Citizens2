@@ -6,13 +6,15 @@ import java.util.Set;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.CommandManager.CommandInfo;
 import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.command.exception.CommandException;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
+import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.command.CommandSender;
 
@@ -37,14 +39,10 @@ public class HelpCommands {
     @Requirements
     public void citizensHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
-        Paginator paginator = new Paginator().header("Citizens Help");
-        for (String line : getLines(sender, npc, "citizens"))
-            paginator.addLine(line);
-        if (!paginator.sendPage(sender, page))
-            throw new CommandException("The page '" + page + "' does not exist.");
+        sendHelp(sender, "citizens", page);
     }
 
-    private List<String> getLines(CommandSender sender, NPC npc, String baseCommand) {
+    private List<String> getLines(CommandSender sender, String baseCommand) {
         // Ensures that commands with multiple modifiers are only added once
         Set<CommandInfo> processed = Sets.newHashSet();
         List<String> lines = new ArrayList<String>();
@@ -54,13 +52,9 @@ public class HelpCommands {
                     || (!sender.hasPermission("citizens.admin") && !sender.hasPermission("citizens."
                             + command.permission())))
                 continue;
-            Requirements requirements = info.getRequirements();
-            if (requirements != null && npc != null) {
-                if (requirements.ownership() && !npc.getTrait(Owner.class).isOwnedBy(sender))
-                    continue;
-            }
             lines.add("<7>/<c>" + command.aliases()[0]
-                    + (command.usage().isEmpty() ? "" : " " + command.usage()) + " <7>- <e>" + command.desc());
+                    + (command.usage().isEmpty() ? "" : " " + command.usage()) + " <7>- <e>"
+                    + Messaging.tryTranslate(command.desc()));
             if (command.modifiers().length > 1)
                 processed.add(info);
         }
@@ -78,11 +72,7 @@ public class HelpCommands {
     @Requirements
     public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
-        Paginator paginator = new Paginator().header("NPC Help");
-        for (String line : getLines(sender, npc, "npc"))
-            paginator.addLine(line);
-        if (!paginator.sendPage(sender, page))
-            throw new CommandException("The page '" + page + "' does not exist.");
+        sendHelp(sender, "NPC", page);
     }
 
     @Command(
@@ -96,11 +86,16 @@ public class HelpCommands {
     @Requirements
     public void scriptHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
-        Paginator paginator = new Paginator().header("Script Help");
-        for (String line : getLines(sender, npc, "script"))
+        sendHelp(sender, "script", page);
+    }
+
+    private void sendHelp(CommandSender sender, String name, int page) throws CommandException {
+        Paginator paginator = new Paginator().header(StringHelper.capitalize(name)
+                + Messaging.tr(Messages.COMMAND_HELP_HEADER));
+        for (String line : getLines(sender, name.toLowerCase()))
             paginator.addLine(line);
         if (!paginator.sendPage(sender, page))
-            throw new CommandException("The page '" + page + "' does not exist.");
+            throw new CommandException(Messages.COMMAND_PAGE_MISSING, page);
     }
 
     @Command(
@@ -114,11 +109,7 @@ public class HelpCommands {
     @Requirements
     public void templatesHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
-        Paginator paginator = new Paginator().header("Templates Help");
-        for (String line : getLines(sender, npc, "templates"))
-            paginator.addLine(line);
-        if (!paginator.sendPage(sender, page))
-            throw new CommandException("The page '" + page + "' does not exist.");
+        sendHelp(sender, "templates", page);
     }
 
     @Command(
@@ -132,10 +123,6 @@ public class HelpCommands {
     @Requirements
     public void waypointsHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
-        Paginator paginator = new Paginator().header("Waypoints Help");
-        for (String line : getLines(sender, npc, "waypoints"))
-            paginator.addLine(line);
-        if (!paginator.sendPage(sender, page))
-            throw new CommandException("The page '" + page + "' does not exist.");
+        sendHelp(sender, "waypoints", page);
     }
 }

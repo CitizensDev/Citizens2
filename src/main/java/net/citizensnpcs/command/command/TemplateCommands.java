@@ -15,9 +15,7 @@ import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.npc.Template.TemplateBuilder;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StringHelper;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.google.common.base.Function;
@@ -41,7 +39,7 @@ public class TemplateCommands {
     public void apply(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Template template = Template.byName(args.getString(1));
         if (template == null)
-            throw new CommandException("Template not found.");
+            throw new CommandException(Messages.TEMPLATE_MISSING);
         int appliedCount = 0;
         if (args.argsLength() == 2) {
             if (npc == null)
@@ -68,8 +66,7 @@ public class TemplateCommands {
                 appliedCount++;
             }
         }
-        Messaging.sendF(sender, ChatColor.GREEN + "Template applied to %s NPCs.",
-                StringHelper.wrap(appliedCount));
+        Messaging.sendTr(sender, Messages.TEMPLATE_APPLIED, appliedCount);
     }
 
     @Command(
@@ -84,9 +81,9 @@ public class TemplateCommands {
     public void create(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String name = args.getString(1);
         if (Template.byName(name) != null)
-            throw new CommandException("A template by that name already exists.");
+            throw new CommandException(Messages.TEMPLATE_CONFLICT);
 
         TemplateBuilder.create(name).from(npc).override(args.hasFlag('o')).buildAndSave();
-        Messaging.send(sender, ChatColor.GREEN + "Template created.");
+        Messaging.sendTr(sender, Messages.TEMPLATE_CREATED);
     }
 }

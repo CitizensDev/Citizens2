@@ -55,7 +55,7 @@ public class NMS {
                 List<?> list = (List<?>) NMS.GOAL_FIELD.get(selector);
                 list.clear();
             } catch (Exception e) {
-                Messaging.logF("Could not clear goals: %s", e.getMessage());
+                Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getMessage());
             }
         }
     }
@@ -78,7 +78,7 @@ public class NMS {
             f = clazz.getDeclaredField(field);
             f.setAccessible(true);
         } catch (Exception e) {
-            Messaging.logF("Could not fetch field %s: %s.", field, e.getMessage());
+            Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getMessage());
         }
         return f;
     }
@@ -138,7 +138,7 @@ public class NMS {
         try {
             LAND_SPEED_MODIFIER_FIELD.setFloat(handle, speed);
         } catch (Exception e) {
-            Messaging.logF("Could not update land speed modifier: %s.", e.getMessage());
+            Messaging.logTr(Messages.ERROR_UPDATING_SPEED, e.getMessage());
         }
     }
 
@@ -150,7 +150,7 @@ public class NMS {
             Constructor<? extends Entity> constructor = getCustomEntityConstructor(clazz, type);
             entity = constructor.newInstance(handle);
         } catch (Exception e) {
-            Messaging.logF("Could not spawn custom entity: %s.", e.getMessage());
+            Messaging.logTr(Messages.ERROR_SPAWNING_CUSTOM_ENTITY, e.getMessage());
             return null;
         }
         handle.addEntity(entity);
@@ -164,7 +164,7 @@ public class NMS {
         try {
             THREAD_STOPPER.set(manager, false);
         } catch (Exception e) {
-            Messaging.logF("Could not stop network threads: %s.", e.getMessage());
+            Messaging.logTr(Messages.ERROR_STOPPING_NETWORK_THREADS, e.getMessage());
         }
     }
 
@@ -183,7 +183,7 @@ public class NMS {
         try {
             NAVIGATION_WORLD_FIELD.set(handle.getNavigation(), worldHandle);
         } catch (Exception e) {
-            Messaging.logF("Could not update navigation world: %s.", e.getMessage());
+            Messaging.logTr(Messages.ERROR_UPDATING_NAVIGATION_WORLD, e.getMessage());
         }
     }
 
@@ -194,7 +194,7 @@ public class NMS {
         try {
             PATHFINDING_RANGE.set(navigation, pathfindingRange);
         } catch (Exception e) {
-            Messaging.logF("Could not update pathfinding range: %s.", e.getMessage());
+            Messaging.logTr(Messages.ERROR_UPDATING_PATHFINDING_RANGE, e.getMessage());
         }
     }
 
@@ -227,7 +227,7 @@ public class NMS {
             field = getField(EntityTypes.class, "e");
             ENTITY_CLASS_TO_INT = (Map<Class<? extends Entity>, Integer>) field.get(null);
         } catch (Exception e) {
-            Messaging.logF("Could not fetch entity id mapping fields: %s", e.getMessage());
+            Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
     }
 }

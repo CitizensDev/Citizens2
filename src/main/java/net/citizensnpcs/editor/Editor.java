@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ public abstract class Editor implements Listener {
         else if (edit.getClass() == editor.getClass())
             leave(player);
         else
-            Messaging.sendError(player, "You're already in an editor!");
+            Messaging.sendErrorTr(player, Messages.ALREADY_IN_EDITOR);
     }
 
     public static boolean hasEditor(Player player) {

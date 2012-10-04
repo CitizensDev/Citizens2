@@ -4,10 +4,8 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StringHelper;
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -36,7 +34,6 @@ public class PaymentListener implements Listener {
             return;
         }
         provider.withdrawPlayer(name, cost);
-        String message = Messaging.tr(Messages.MONEY_WITHDRAWN, StringHelper.wrap(formattedCost));
-        Messaging.send(event.getCreator(), ChatColor.GREEN + message);
+        Messaging.sendTr(event.getCreator(), Messages.MONEY_WITHDRAWN, formattedCost);
     }
 }

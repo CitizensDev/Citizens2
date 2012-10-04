@@ -11,7 +11,6 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -35,9 +34,9 @@ public class Waypoints extends Trait {
     }
 
     public void describeProviders(CommandSender sender) {
-        Messaging.sendTr(sender, ChatColor.AQUA, Messages.AVAILABLE_WAYPOINT_PROVIDERS);
+        Messaging.sendTr(sender, Messages.AVAILABLE_WAYPOINT_PROVIDERS);
         for (String name : providers.keySet()) {
-            Messaging.send(sender, ChatColor.GREEN + "    - " + StringHelper.wrap(name));
+            Messaging.send(sender, "    - " + StringHelper.wrap(name));
         }
     }
 

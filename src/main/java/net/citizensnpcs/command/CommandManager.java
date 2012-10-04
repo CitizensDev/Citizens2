@@ -155,7 +155,7 @@ public class CommandManager {
 
                 EntityType type = npc.getTrait(MobType.class).getType();
                 if (!types.contains(type)) {
-                    throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_INVALID_MOB_TYPE,
+                    throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_REQUIREMENTS_INVALID_MOB_TYPE,
                             type.getName()));
                 }
             }
