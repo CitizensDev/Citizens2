@@ -70,7 +70,7 @@ public class Settings {
                 value = list;
             }
         },
-        HIGHLIGHT_COLOUR("general.colour-scheme.message-highlight", "<e>"),
+        HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<e>"),
         LOCALE("general.translation.locale", "en"),
         MAX_NPC_LIMIT_CHECKS("npc.limits.max-permission-checks", 100),
         MAX_SPEED("npc.limits.max-speed", 100),
