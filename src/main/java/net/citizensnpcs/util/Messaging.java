@@ -1,6 +1,5 @@
 package net.citizensnpcs.util;
 
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -17,17 +16,15 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 public class Messaging {
+    private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|<n>|\\n", Pattern.MULTILINE);
+
+    private static final Splitter CHAT_NEWLINE_SPLITTER = Splitter.on(CHAT_NEWLINE);
+
     private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
 
     public static void debug(Object... msg) {
         if (Setting.DEBUG_MODE.asBoolean())
             log(msg);
-    }
-
-    private static String getFormatted(Object[] msg) {
-        String toFormat = msg[0].toString();
-        Object[] args = msg.length > 1 ? Arrays.copyOfRange(msg, 1, msg.length) : new Object[] {};
-        return String.format(toFormat, args);
     }
 
     public static void log(Level level, Object... msg) {
@@ -36,16 +33,6 @@ public class Messaging {
 
     public static void log(Object... msg) {
         log(Level.INFO, msg);
-    }
-
-    public static void log(Throwable ex) {
-        if (ex.getCause() != null)
-            ex = ex.getCause();
-        ex.printStackTrace();
-    }
-
-    public static void logF(Object... msg) {
-        log(getFormatted(msg));
     }
 
     public static void logTr(String key, Object... msg) {
@@ -59,30 +46,25 @@ public class Messaging {
     public static void sendError(CommandSender sender, Object... msg) {
         send(sender, ChatColor.RED.toString() + SPACE.join(msg));
     }
-
-    public static void sendErrorF(CommandSender sender, Object... msg) {
-        sendF(sender, ChatColor.RED.toString() + SPACE.join(msg));
-    }
-
     public static void sendErrorTr(CommandSender sender, String key, Object... msg) {
         sendMessageTo(sender, ChatColor.RED + Translator.tr(key, msg));
     }
 
-    public static void sendF(CommandSender sender, Object... msg) {
-        sendMessageTo(sender, getFormatted(msg));
-    }
-
-    private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|<n>|\\n", Pattern.MULTILINE);
-    private static final Splitter CHAT_NEWLINE_SPLITTER = Splitter.on(CHAT_NEWLINE);
-
     private static void sendMessageTo(CommandSender sender, String rawMessage) {
         rawMessage = StringHelper.parseColors(rawMessage);
-        for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage))
+        for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
+            String trimmed = message.trim();
+            String messageColour = StringHelper.parseColors(Setting.MESSAGE_COLOUR.asString());
+            if (!trimmed.isEmpty()) {
+                if (trimmed.charAt(0) != ChatColor.COLOR_CHAR)
+                    message = StringHelper.parseColors(Setting.MESSAGE_COLOUR.asString()) + message;
+                else
+                    messageColour = ChatColor.getByChar(message.substring(1, 2)).toString();
+            }
+            message = message.replace("[[", StringHelper.parseColors(Setting.HIGHLIGHT_COLOUR.asString()));
+            message = message.replace("]]", messageColour);
             sender.sendMessage(message);
-    }
-
-    public static void sendTr(CommandSender sender, ChatColor rootColour, String key, Object... msg) {
-        sendMessageTo(sender, rootColour + Translator.tr(key, msg));
+        }
     }
 
     public static void sendTr(CommandSender sender, String key, Object... msg) {
@@ -108,15 +90,22 @@ public class Messaging {
         log(Level.SEVERE, messages);
     }
 
-    public static void severeF(Object... messages) {
-        log(Level.SEVERE, getFormatted(messages));
-    }
-
     public static void severeTr(String key, Object... messages) {
         log(Level.SEVERE, Translator.tr(key, messages));
     }
 
     public static String tr(String key, Object... messages) {
         return Translator.tr(key, messages);
+    }
+
+    public static String tryTranslate(Object possible) {
+        String message = possible.toString();
+        int count = 0;
+        for (int i = 0; i < message.length(); i++) {
+            char c = message.charAt(i);
+            if (c == '.')
+                count++;
+        }
+        return count >= 2 ? tr(message) : message;
     }
 }

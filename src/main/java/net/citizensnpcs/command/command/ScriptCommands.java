@@ -11,6 +11,7 @@ import net.citizensnpcs.api.scripting.ScriptFactory;
 import net.citizensnpcs.command.Command;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.exception.CommandException;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.command.CommandSender;
@@ -33,7 +34,7 @@ public class ScriptCommands {
             throws CommandException {
         File file = new File(CitizensAPI.getScriptFolder(), args.getString(1));
         if (!file.exists())
-            throw new CommandException("The file '" + args.getString(1) + "' doesn't exist!");
+            throw new CommandException(Messages.SCRIPT_FILE_MISSING, args.getString(1));
         CitizensAPI.getScriptCompiler().compile(file).withCallback(new CompileCallback() {
             @Override
             public void onCompileTaskFinished() {
@@ -47,9 +48,9 @@ public class ScriptCommands {
                         s.invoke(m, new Object[] {});
                     }
                 }
-                Messaging.send(sender, "<a>Done.");
+                Messaging.sendTr(sender, Messages.SCRIPT_COMPILED);
             }
         }).begin();
-        sender.sendMessage("Compiling...");
+        Messaging.sendTr(sender, Messages.SCRIPT_COMPILING);
     }
 }

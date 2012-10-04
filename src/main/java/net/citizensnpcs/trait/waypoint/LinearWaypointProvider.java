@@ -112,7 +112,7 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @Override
         public void begin() {
-            Messaging.sendTr(player, ChatColor.AQUA, Messages.LINEAR_WAYPOINT_EDITOR_BEGIN);
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_BEGIN);
         }
 
         private void createWaypointMarker(int index, Waypoint waypoint) {
@@ -138,7 +138,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void end() {
             if (!editing)
                 return;
-            Messaging.sendTr(player, ChatColor.AQUA, Messages.LINEAR_WAYPOINT_EDITOR_END);
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_END);
             editing = false;
             if (!showPath)
                 return;
@@ -216,10 +216,8 @@ public class LinearWaypointProvider implements WaypointProvider {
                 if (showPath)
                     createWaypointMarker(editingSlot, element);
                 editingSlot = Math.min(editingSlot + 1, waypoints.size());
-                Messaging.send(
-                        player,
-                        String.format("<e>Added<a> a waypoint at (" + formatLoc(at)
-                                + ") (<e>%d<a>, <e>%d<a>)", editingSlot + 1, waypoints.size()));
+                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, editingSlot + 1,
+                        waypoints.size());
             } else if (waypoints.size() > 0) {
                 event.setCancelled(true);
                 editingSlot = Math.min(0, Math.max(waypoints.size() - 1, editingSlot));
@@ -227,10 +225,8 @@ public class LinearWaypointProvider implements WaypointProvider {
                 if (showPath)
                     removeWaypointMarker(waypoint);
                 editingSlot = Math.max(0, editingSlot - 1);
-                Messaging.send(
-                        player,
-                        String.format("<e>Removed<a> a waypoint (<e>%d<a> remaining) (<e>%d<a>)",
-                                waypoints.size(), editingSlot + 1));
+                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_REMOVED_WAYPOINT, waypoints.size(),
+                        editingSlot + 1);
             }
             currentGoal.onProviderChanged();
         }
@@ -242,8 +238,8 @@ public class LinearWaypointProvider implements WaypointProvider {
             if (!event.getRightClicked().hasMetadata("waypointindex"))
                 return;
             editingSlot = event.getRightClicked().getMetadata("waypointindex").get(0).asInt();
-            Messaging.sendF(player, ChatColor.GREEN + "Editing slot set to %s.",
-                    StringHelper.wrap(editingSlot));
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
+                    formatLoc(waypoints.get(editingSlot).getLocation()));
         }
 
         @EventHandler
@@ -266,8 +262,8 @@ public class LinearWaypointProvider implements WaypointProvider {
                 editingSlot = 0;
             if (editingSlot < 0)
                 editingSlot = waypoints.size() - 1;
-            Messaging.send(player, "<a>Editing slot set to " + StringHelper.wrap(editingSlot) + " ("
-                    + formatLoc(waypoints.get(editingSlot).getLocation()) + ").");
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
+                    formatLoc(waypoints.get(editingSlot).getLocation()));
         }
 
         private void removeWaypointMarker(Waypoint waypoint) {
@@ -284,10 +280,10 @@ public class LinearWaypointProvider implements WaypointProvider {
             showPath = !showPath;
             if (showPath) {
                 createWaypointMarkers();
-                Messaging.sendF(player, "%s waypoint markers.", StringHelper.wrap("Showing"));
+                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS);
             } else {
                 destroyWaypointMarkers();
-                Messaging.sendF(player, "%s showing waypoint markers.", StringHelper.wrap("Stopped"));
+                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_NOT_SHOWING_MARKERS);
             }
         }
 

@@ -35,7 +35,6 @@ import net.citizensnpcs.npc.entity.CitizensVillagerNPC;
 import net.citizensnpcs.npc.entity.CitizensWolfNPC;
 import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 import net.citizensnpcs.util.ByIdArray;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
@@ -131,8 +130,10 @@ public class CitizensNPCRegistry implements NPCRegistry {
             throw new IllegalArgumentException("Invalid EntityType: " + type);
         try {
             return npcClass.getConstructor(int.class, String.class).newInstance(id, name);
-        } catch (Exception ex) {
-            Messaging.log(ex);
+        } catch (Throwable ex) {
+            if (ex.getCause() != null)
+                ex = ex.getCause();
+            ex.printStackTrace();
             return null;
         }
     }

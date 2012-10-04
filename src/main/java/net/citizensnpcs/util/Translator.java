@@ -99,6 +99,7 @@ public class Translator {
     }
 
     static String tr(String key, Object... msg) {
-        return msg.length == 0 ? instance.translate(key) : instance.format(key, msg);
+        return StringHelper
+                .parseColors(msg.length == 0 ? instance.translate(key) : instance.format(key, msg));
     }
 }
