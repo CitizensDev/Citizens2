@@ -1,7 +1,6 @@
 package net.citizensnpcs.api;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
@@ -15,7 +14,7 @@ import org.bukkit.plugin.Plugin;
  * Contains methods used in order to utilize the Citizens API.
  */
 public final class CitizensAPI {
-    private WeakReference<CitizensPlugin> implementation;
+    private CitizensPlugin implementation;
 
     private CitizensAPI() {
     }
@@ -31,7 +30,9 @@ public final class CitizensAPI {
     }
 
     private static CitizensPlugin getImplementation() {
-        return instance.implementation != null ? instance.implementation.get() : null;
+        if (instance.implementation == null)
+            throw new IllegalStateException("no implementation set");
+        return instance.implementation;
     }
 
     /**
@@ -104,22 +105,19 @@ public final class CitizensAPI {
      *            The new implementation
      */
     public static void setImplementation(CitizensPlugin implementation) {
-        if (implementation == null) {
-            instance.implementation = null;
-            return;
-        }
-        if (hasImplementation())
+        if (implementation != null && hasImplementation())
             getImplementation().onImplementationChanged();
-        instance.implementation = new WeakReference<CitizensPlugin>(implementation);
+        instance.implementation = implementation;
     }
 
     /**
      * Shuts down any resources currently being held.
      */
     public static void shutdown() {
-        if (scriptCompiler != null) {
-            scriptCompiler.interrupt();
-            scriptCompiler = null;
-        }
+        if (scriptCompiler == null)
+            return;
+        instance.implementation = null;
+        scriptCompiler.interrupt();
+        scriptCompiler = null;
     }
 }
