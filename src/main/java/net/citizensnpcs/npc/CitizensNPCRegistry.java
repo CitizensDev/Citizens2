@@ -46,8 +46,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
     private final Map<EntityType, Class<? extends CitizensNPC>> types = new EnumMap<EntityType, Class<? extends CitizensNPC>>(
             EntityType.class);
 
-    public CitizensNPCRegistry(NPCDataStore saves) {
-        this.saves = saves;
+    public CitizensNPCRegistry(NPCDataStore store) {
+        saves = store;
 
         types.put(EntityType.BLAZE, CitizensBlazeNPC.class);
         types.put(EntityType.CAVE_SPIDER, CitizensCaveSpiderNPC.class);
@@ -143,7 +143,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         if (entity == null)
             return null;
         net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
-        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
+        return handle != null && handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
     }
 
     @Override

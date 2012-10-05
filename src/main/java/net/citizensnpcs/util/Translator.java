@@ -146,6 +146,7 @@ public class Translator {
                 }
             };
             try {
+                rootFolder.mkdirs();
                 File to = File.createTempFile(fileName, null, rootFolder);
                 to.deleteOnExit();
                 Files.copy(in, to);
