@@ -83,7 +83,7 @@ public final class CitizensAPI {
      * @return Whether a Citizens implementation is currently present
      */
     public static boolean hasImplementation() {
-        return getImplementation() != null;
+        return instance.implementation != null;
     }
 
     /**
