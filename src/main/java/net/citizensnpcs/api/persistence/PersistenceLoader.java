@@ -16,10 +16,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class PersistenceLoader {
-    static {
-        registerPersistDelegate(Location.class, LocationPersister.class);
-    }
-
     private static class PersistField {
         private final Persister delegate;
         private final Field field;
@@ -70,9 +66,13 @@ public class PersistenceLoader {
         }
     }
 
-    private static Map<Class<?>, Field[]> fieldCache = new WeakHashMap<Class<?>, Field[]>();
-    private static Map<Class<? extends Persister>, Persister> loadedDelegates = new WeakHashMap<Class<? extends Persister>, Persister>();
+    private static final Map<Class<?>, Field[]> fieldCache = new WeakHashMap<Class<?>, Field[]>();
+    private static final Map<Class<? extends Persister>, Persister> loadedDelegates = new WeakHashMap<Class<? extends Persister>, Persister>();
     private static final Map<Class<?>, Class<? extends Persister>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister>>();
+
+    static {
+        registerPersistDelegate(Location.class, LocationPersister.class);
+    }
 
     @SuppressWarnings("unchecked")
     private static void deserialise(PersistField field, DataKey root) throws Exception {
