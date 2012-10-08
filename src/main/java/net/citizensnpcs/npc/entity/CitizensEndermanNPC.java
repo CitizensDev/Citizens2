@@ -45,9 +45,10 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         }
 
         ItemStack set = hand;
-        if (set.getType() != Material.AIR) {
-            hand.setAmount(hand.getAmount() - 1);
+        if (hand.getType() != Material.AIR) {
+            set = hand.clone();
             set.setAmount(1);
+            hand.setAmount(hand.getAmount() - 1);
         }
         getTrait(Equipment.class).set(0, set);
     }
