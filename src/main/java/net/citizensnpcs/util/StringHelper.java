@@ -66,20 +66,6 @@ public class StringHelper {
             parsed = parsed.replace("<" + color.getChar() + ">", color.toString());
         }
         parsed = ChatColor.translateAlternateColorCodes('&', parsed);
-        String trimmed = parsed.trim();
-        String messageColour = parseColors(Setting.MESSAGE_COLOUR.asString());
-        if (!trimmed.isEmpty()) {
-            if (trimmed.charAt(0) == ChatColor.COLOR_CHAR) {
-                ChatColor test = ChatColor.getByChar(trimmed.substring(1, 2));
-                if (test == null) {
-                    parsed = messageColour + parsed;
-                } else
-                    messageColour = test.toString();
-            } else
-                parsed = messageColour + parsed;
-        }
-        parsed = parsed.replace("[[", parseColors(Setting.HIGHLIGHT_COLOUR.asString()));
-        parsed = parsed.replace("]]", messageColour);
         return parsed;
     }
 

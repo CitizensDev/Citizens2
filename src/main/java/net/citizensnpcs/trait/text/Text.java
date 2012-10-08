@@ -68,6 +68,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
                 .withEscapeSequence("exit").withModality(false).withFirstPrompt(new StartPrompt(this))
                 .buildConversation(player);
         return new Editor() {
+
             @Override
             public void begin() {
                 Messaging.sendTr(player, Messages.TEXT_EDITOR_BEGIN);
