@@ -35,6 +35,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 public class CommandManager {
@@ -155,8 +156,8 @@ public class CommandManager {
 
                 EntityType type = npc.getTrait(MobType.class).getType();
                 if (!types.contains(type)) {
-                    throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_REQUIREMENTS_INVALID_MOB_TYPE,
-                            type.getName()));
+                    throw new RequirementMissingException(Messaging.tr(
+                            Messages.COMMAND_REQUIREMENTS_INVALID_MOB_TYPE, type.getName()));
                 }
             }
         }
@@ -185,6 +186,19 @@ public class CommandManager {
         }
 
         return cmds.toArray(new String[cmds.size()]);
+    }
+
+    public CommandInfo getCommand(String rootCommand, String modifier) {
+        String joined = Joiner.on(' ').join(rootCommand, modifier);
+        for (Entry<String, Method> entry : commands.entrySet()) {
+            if (!entry.getKey().equalsIgnoreCase(joined))
+                continue;
+            Command commandAnnotation = entry.getValue().getAnnotation(Command.class);
+            if (commandAnnotation == null)
+                continue;
+            return new CommandInfo(commandAnnotation, requirements.get(entry.getValue()));
+        }
+        return null;
     }
 
     public List<CommandInfo> getCommands(String command) {

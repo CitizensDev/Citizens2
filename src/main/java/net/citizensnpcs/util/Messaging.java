@@ -98,6 +98,8 @@ public class Messaging {
     }
 
     public static String tryTranslate(Object possible) {
+        if (possible == null)
+            return "";
         String message = possible.toString();
         int count = 0;
         for (int i = 0; i < message.length(); i++) {

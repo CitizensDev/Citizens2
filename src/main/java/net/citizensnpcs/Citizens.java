@@ -104,6 +104,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.POSTWORLD);
     }
 
+    public CommandInfo getCommandInfo(String rootCommand, String modifier) {
+        return commands.getCommand(rootCommand, modifier);
+    }
+
     public Iterable<CommandInfo> getCommands(String base) {
         return commands.getCommands(base);
     }

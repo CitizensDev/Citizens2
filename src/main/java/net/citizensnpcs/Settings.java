@@ -68,7 +68,7 @@ public class Settings {
             }
         },
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<e>"),
-        LOCALE("general.translation.locale", "en"),
+        LOCALE("general.translation.locale", ""),
         MAX_NPC_LIMIT_CHECKS("npc.limits.max-permission-checks", 100),
         MAX_SPEED("npc.limits.max-speed", 100),
         MESSAGE_COLOUR("general.color-scheme.message", "<a>"),
