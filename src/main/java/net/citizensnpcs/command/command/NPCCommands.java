@@ -199,7 +199,7 @@ public class NPCCommands {
         }
 
         npc = npcRegistry.createNPC(type, name);
-        String msg = "You created " + StringHelper.wrap(npc.getName()) + " at your location";
+        String msg = "You created [[" + npc.getName() + "]] at your location";
 
         int age = 0;
         if (args.hasFlag('b')) {
