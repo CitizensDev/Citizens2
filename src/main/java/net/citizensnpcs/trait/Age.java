@@ -5,7 +5,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
@@ -19,8 +18,7 @@ public class Age extends Trait implements Toggleable {
     }
 
     public void describe(CommandSender sender) {
-        Messaging.sendTr(sender, Messages.AGE_TRAIT_DESCRIPTION, StringHelper.wrap(npc.getName()),
-                StringHelper.wrap(age), StringHelper.wrap(locked));
+        Messaging.sendTr(sender, Messages.AGE_TRAIT_DESCRIPTION, npc.getName(), age, locked);
     }
 
     private boolean isAgeable() {
