@@ -79,29 +79,32 @@ public class NPCCommands {
         Age trait = npc.getTrait(Age.class);
 
         boolean toggleLock = args.hasFlag('l');
-        if (toggleLock)
-            Messaging.send(sender, "<a>Age " + (trait.toggle() ? "locked" : "unlocked") + ".");
+        if (toggleLock) {
+            Messaging.sendTr(sender, trait.toggle() ? Messages.AGE_LOCKED : Messages.AGE_UNLOCKED);
+        }
+        if (args.argsLength() <= 1) {
+            if (!toggleLock)
+                trait.describe(sender);
+            return;
+        }
+        int age = 0;
+        try {
+            age = args.getInteger(1);
+            if (age < -24000 || age > 0)
+                throw new CommandException(Messages.INVALID_AGE);
+            Messaging.sendTr(sender, Messages.AGE_SET_NORMAL, npc.getName(), age);
+        } catch (NumberFormatException ex) {
+            if (args.getString(1).equalsIgnoreCase("baby")) {
+                age = -24000;
+                Messaging.sendTr(sender, Messages.AGE_SET_BABY, npc.getName());
+            } else if (args.getString(1).equalsIgnoreCase("adult")) {
+                age = 0;
+                Messaging.sendTr(sender, Messages.AGE_SET_ADULT, npc.getName());
+            } else
+                throw new CommandException(Messages.INVALID_AGE);
+        }
 
-        if (args.argsLength() > 1) {
-            int age = 0;
-            String ageStr = "an adult";
-            try {
-                age = args.getInteger(1);
-                if (age < -24000 || age > 0)
-                    throw new CommandException(Messages.INVALID_AGE);
-                ageStr = "age " + StringHelper.wrap(age);
-            } catch (NumberFormatException ex) {
-                if (args.getString(1).equalsIgnoreCase("baby")) {
-                    age = -24000;
-                    ageStr = "a baby";
-                } else if (!args.getString(1).equalsIgnoreCase("adult"))
-                    throw new CommandException(Messages.INVALID_AGE);
-            }
-
-            trait.setAge(age);
-            Messaging.sendTr(sender, Messages.AGE_SET, npc.getName(), ageStr);
-        } else if (!toggleLock)
-            trait.describe(sender);
+        trait.setAge(age);
     }
 
     @Command(
@@ -358,9 +361,8 @@ public class NPCCommands {
             max = 1,
             permission = "npc.lookclose")
     public void lookClose(CommandContext args, CommandSender sender, NPC npc) {
-        String msg = StringHelper.wrap(npc.getName()) + " will "
-                + (npc.getTrait(LookClose.class).toggle() ? "now rotate" : "no longer rotate");
-        Messaging.send(sender, msg + " when a player is nearby.");
+        Messaging.sendTr(sender, npc.getTrait(LookClose.class).toggle() ? Messages.LOOKCLOSE_SET
+                : Messages.LOOKCLOSE_STOPPED, npc.getName());
     }
 
     @Command(
@@ -399,13 +401,13 @@ public class NPCCommands {
             String[] parts = Iterables.toArray(Splitter.on(':').split(args.getJoinedStrings(1, ':')),
                     String.class);
             if (parts.length != 4 && parts.length != 3)
-                throw new CommandException("Format is x:y:z(:world) or x y z( world)");
+                throw new CommandException(Messages.MOVETO_FORMAT);
             double x = Double.parseDouble(parts[0]);
             double y = Double.parseDouble(parts[1]);
             double z = Double.parseDouble(parts[2]);
             World world = parts.length == 4 ? Bukkit.getWorld(parts[3]) : current.getWorld();
             if (world == null)
-                throw new CommandException("world not found");
+                throw new CommandException(Messages.MOVETO_WORLD_NOT_FOUND);
             to = new Location(world, x, y, z, current.getYaw(), current.getPitch());
         } else {
             to = current.clone();
@@ -422,13 +424,14 @@ public class NPCCommands {
             if (args.hasValueFlag("world")) {
                 World world = Bukkit.getWorld(args.getFlag("world"));
                 if (world == null)
-                    throw new CommandException("Given world not found.");
+                    throw new CommandException(Messages.MOVETO_WORLD_NOT_FOUND);
                 to.setWorld(world);
             }
         }
 
         npc.getBukkitEntity().teleport(to, TeleportCause.COMMAND);
-        Messaging.send(sender, StringHelper.wrap(npc.getName()) + " was teleported to " + to + ".");
+
+        Messaging.sendTr(sender, Messages.MOVETO_TELEPORTED, npc.getName(), to);
     }
 
     @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0)
@@ -463,8 +466,8 @@ public class NPCCommands {
             throw new CommandException(Messages.ALREADY_OWNER, name, npc.getName());
         ownerTrait.setOwner(name);
         boolean serverOwner = name.equalsIgnoreCase(Owner.SERVER);
-        Messaging.send(sender, (serverOwner ? "[[The server]]" : StringHelper.wrap(name))
-                + " is now the owner of " + StringHelper.wrap(npc.getName()) + ".");
+        Messaging.sendTr(sender, serverOwner ? Messages.OWNER_SET_SERVER : Messages.OWNER_SET, npc.getName(),
+                name);
     }
 
     @Command(
@@ -539,9 +542,8 @@ public class NPCCommands {
             permission = "npc.power")
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
-        String msg = StringHelper.wrap(npc.getName()) + " will "
-                + (npc.getTrait(Powered.class).toggle() ? "now" : "no longer");
-        Messaging.send(sender, msg += " be powered.");
+        Messaging.sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET
+                : Messages.POWERED_STOPPED);
     }
 
     @Command(
@@ -571,7 +573,7 @@ public class NPCCommands {
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
             if (!args.getString(1).equalsIgnoreCase("all"))
-                throw new CommandException("Incorrect syntax. /npc remove (all)");
+                throw new CommandException(Messages.REMOVE_INCORRECT_SYNTAX);
             if (!sender.hasPermission("citizens.npc.remove.all") && !sender.hasPermission("citizens.admin"))
                 throw new NoPermissionsException();
             npcRegistry.deregisterAll();

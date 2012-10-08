@@ -234,7 +234,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
                 Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             }
-        }) == -1) {
+        }, 1) == -1) {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
             getServer().getPluginManager().disablePlugin(this);
         }
@@ -325,7 +325,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             default:
                 break;
         }
-        Translator.setInstance(new File(getDataFolder(), "i18n"), locale);
+        Translator.setInstance(new File(getDataFolder(), "lang"), locale);
         Messaging.logTr(Messages.LOCALE_NOTIFICATION, locale);
     }
 
