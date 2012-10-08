@@ -17,6 +17,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.CommandManager;
@@ -73,6 +74,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         while (itr.hasNext()) {
             NPC npc = itr.next();
             npc.despawn();
+            for (Trait t : npc.getTraits())
+                t.onRemove();
             itr.remove();
         }
     }

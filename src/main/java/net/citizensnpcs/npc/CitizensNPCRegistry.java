@@ -7,6 +7,7 @@ import java.util.Map;
 import net.citizensnpcs.NPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.CitizensBlazeNPC;
 import net.citizensnpcs.npc.entity.CitizensCaveSpiderNPC;
@@ -104,6 +105,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
             NPC npc = itr.next();
             itr.remove();
             npc.despawn();
+            for (Trait t : npc.getTraits())
+                t.onRemove();
             saves.remove(npc);
         }
     }

@@ -89,7 +89,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             if (hasTrait(clazz)) {
                 trait = getTrait(clazz);
             } else {
-                trait = CitizensAPI.getTraitFactory().getTrait(traitKey.name());
+                trait = CitizensAPI.getTraitFactory().getTrait(clazz);
                 if (trait == null) {
                     Messaging.severeTr(Messages.SKIPPING_BROKEN_TRAIT, traitKey.name(), getId());
                     continue;

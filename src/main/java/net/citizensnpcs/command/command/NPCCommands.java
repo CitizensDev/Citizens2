@@ -705,7 +705,7 @@ public class NPCCommands {
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
-        Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC);
+        Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());
     }
 
     @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport a NPC to your location", modifiers = {
