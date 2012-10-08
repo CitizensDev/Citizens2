@@ -8,9 +8,15 @@ import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.util.DataKey;
 
+import org.bukkit.Location;
+
 import com.google.common.collect.Lists;
 
 public class PersistenceLoader {
+    static {
+        registerPersistDelegate(Location.class, LocationPersister.class);
+    }
+
     private static class PersistField {
         private final Persister delegate;
         private final Field field;
@@ -128,6 +134,18 @@ public class PersistenceLoader {
         return toFilter.toArray(new Field[toFilter.size()]);
     }
 
+    /**
+     * Creates an instance of the given class using the default constructor and
+     * loads it using {@link #load(Object, DataKey)}. Will return null if an
+     * exception occurs.
+     * 
+     * @see #load(Object, DataKey)
+     * @param clazz
+     *            The class to create an instance from
+     * @param root
+     *            The root key to load from
+     * @return The loaded instance
+     */
     public static <T> T load(Class<? extends T> clazz, DataKey root) {
         try {
             return load(clazz.newInstance(), root);
@@ -137,6 +155,20 @@ public class PersistenceLoader {
         }
     }
 
+    /**
+     * Analyses the class for {@link Field}s with the {@link Persist} annotation
+     * and loads data into them using the given {@link DataKey}. If a
+     * {@link DelegatePersistence} annotation is provided the referenced
+     * {@link Persister} will be used to create the instance. This annotation
+     * can be omitted if the Persister has been registered using
+     * {@link #registerPersistDelegate(Class, Class)}
+     * 
+     * @param instance
+     *            The instance to load data into
+     * @param root
+     *            The key to load data from
+     * @return The instance, with persisted fields loaded
+     */
     public static <T> T load(T instance, DataKey root) {
         Class<?> clazz = instance.getClass();
         Field[] fields = getFields(clazz);
@@ -145,11 +177,31 @@ public class PersistenceLoader {
         return instance;
     }
 
+    /**
+     * Registers a {@link Persister} redirect. Fields with the {@link Persist}
+     * annotation with a type that has been registered using this method will
+     * use the Persister by default to load and save data. The
+     * {@link DelegatePersistence} annotation will be preferred if present.
+     * 
+     * @param clazz
+     *            The class to redirect
+     * @param delegateClass
+     *            The Persister class to use when loading and saving
+     */
     public static void registerPersistDelegate(Class<?> clazz, Class<? extends Persister> delegateClass) {
         persistRedirects.put(clazz, delegateClass);
         ensureDelegateLoaded(delegateClass);
     }
 
+    /**
+     * Scans the object for fields annotated with {@link Persist} and saves them
+     * to the given {@link DataKey}.
+     * 
+     * @param instance
+     *            The instance to save
+     * @param root
+     *            The key to save into
+     */
     public static void save(Object instance, DataKey root) {
         Class<?> clazz = instance.getClass();
         Field[] fields = getFields(clazz);
@@ -160,6 +212,7 @@ public class PersistenceLoader {
     private static void serialise(PersistField field, DataKey root) {
         if (List.class.isAssignableFrom(field.getType())) {
             List<?> list = field.get();
+            root.removeKey(field.key);
             for (int i = 0; i < list.size(); i++) {
                 String key = field.key + '.' + i;
                 if (field.delegate != null)

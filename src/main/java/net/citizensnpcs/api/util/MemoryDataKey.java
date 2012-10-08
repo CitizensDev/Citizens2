@@ -15,7 +15,6 @@ import com.google.common.collect.Iterables;
 public class MemoryDataKey extends DataKey {
     private String name;
     private final String path;
-
     private final ConfigurationSection root;
 
     public MemoryDataKey() {
