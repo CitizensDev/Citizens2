@@ -55,10 +55,14 @@ public class Messaging {
             String trimmed = message.trim();
             String messageColour = StringHelper.parseColors(Setting.MESSAGE_COLOUR.asString());
             if (!trimmed.isEmpty()) {
-                if (trimmed.charAt(0) != ChatColor.COLOR_CHAR)
-                    message = StringHelper.parseColors(Setting.MESSAGE_COLOUR.asString()) + message;
-                else
-                    messageColour = ChatColor.getByChar(message.substring(1, 2)).toString();
+                if (trimmed.charAt(0) == ChatColor.COLOR_CHAR) {
+                    ChatColor test = ChatColor.getByChar(trimmed.substring(1, 2));
+                    if (test == null) {
+                        message = messageColour + message;
+                    } else
+                        messageColour = test.toString();
+                } else
+                    message = messageColour + message;
             }
             message = message.replace("[[", StringHelper.parseColors(Setting.HIGHLIGHT_COLOUR.asString()));
             message = message.replace("]]", messageColour);
