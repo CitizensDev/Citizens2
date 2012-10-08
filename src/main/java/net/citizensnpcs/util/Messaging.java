@@ -50,8 +50,23 @@ public class Messaging {
     }
 
     private static void sendMessageTo(CommandSender sender, String rawMessage) {
+        rawMessage = StringHelper.parseColors(rawMessage);
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
-            sender.sendMessage(StringHelper.parseColors(message));
+            String trimmed = message.trim();
+            String messageColour = StringHelper.parseColors(Setting.MESSAGE_COLOUR.asString());
+            if (!trimmed.isEmpty()) {
+                if (trimmed.charAt(0) == ChatColor.COLOR_CHAR) {
+                    ChatColor test = ChatColor.getByChar(trimmed.substring(1, 2));
+                    if (test == null) {
+                        message = messageColour + message;
+                    } else
+                        messageColour = test.toString();
+                } else
+                    message = messageColour + message;
+            }
+            message = message.replace("[[", StringHelper.parseColors(Setting.HIGHLIGHT_COLOUR.asString()));
+            message = message.replace("]]", messageColour);
+            sender.sendMessage(message);
         }
     }
 
