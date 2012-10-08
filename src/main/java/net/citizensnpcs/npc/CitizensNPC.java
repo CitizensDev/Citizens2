@@ -8,6 +8,7 @@ import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.AbstractNPC;
+import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
@@ -98,6 +99,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             }
             try {
                 trait.load(traitKey);
+                PersistenceLoader.load(trait, traitKey);
             } catch (NPCLoadException ex) {
                 Messaging.logTr(Messages.TRAIT_LOAD_FAILED, traitKey.name(), getId());
             }
@@ -121,7 +123,9 @@ public abstract class CitizensNPC extends AbstractNPC {
 
         // Save all existing traits
         for (Trait trait : traits.values()) {
-            trait.save(root.getRelative("traits." + trait.getName()));
+            DataKey traitKey = root.getRelative("traits." + trait.getName());
+            trait.save(traitKey);
+            PersistenceLoader.save(trait, traitKey);
         }
     }
 

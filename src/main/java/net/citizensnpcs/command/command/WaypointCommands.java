@@ -9,7 +9,6 @@ import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.command.CommandSender;
 
@@ -34,12 +33,12 @@ public class WaypointCommands {
                 waypoints.describeProviders(sender);
             } else
                 Messaging.sendTr(sender, Messages.CURRENT_WAYPOINT_PROVIDER,
-                        StringHelper.wrap(waypoints.getCurrentProviderName()));
+                        waypoints.getCurrentProviderName());
             return;
         }
         boolean success = waypoints.setWaypointProvider(args.getString(1));
         if (!success)
             throw new CommandException("Provider not found.");
-        Messaging.sendTr(sender, Messages.WAYPOINT_PROVIDER_SET, StringHelper.wrap(args.getString(1)));
+        Messaging.sendTr(sender, Messages.WAYPOINT_PROVIDER_SET, args.getString(1));
     }
 }

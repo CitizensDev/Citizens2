@@ -19,7 +19,6 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -146,7 +145,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         }
 
         private String formatLoc(Location location) {
-            return String.format("<e>%d<a>, <e>%d<a>, <e>%d<a>", location.getBlockX(), location.getBlockY(),
+            return String.format("[[%d]], [[%d]], [[%d]]", location.getBlockX(), location.getBlockY(),
                     location.getBlockZ());
         }
 
@@ -205,8 +204,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                     double maxDistance = Math.pow(npc.getNavigator().getDefaultParameters().range(), 2);
                     if (distance > maxDistance) {
                         Messaging.sendErrorTr(player, Messages.LINEAR_WAYPOINT_EDITOR_RANGE_EXCEEDED,
-                                StringHelper.wrap(Math.sqrt(distance), ChatColor.RED),
-                                StringHelper.wrap(Math.sqrt(maxDistance), ChatColor.RED));
+                                Math.sqrt(distance), Math.sqrt(maxDistance), ChatColor.RED);
                         return;
                     }
                 }
@@ -216,8 +214,8 @@ public class LinearWaypointProvider implements WaypointProvider {
                 if (showPath)
                     createWaypointMarker(editingSlot, element);
                 editingSlot = Math.min(editingSlot + 1, waypoints.size());
-                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, editingSlot + 1,
-                        waypoints.size());
+                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at),
+                        editingSlot + 1, waypoints.size());
             } else if (waypoints.size() > 0) {
                 event.setCancelled(true);
                 editingSlot = Math.min(0, Math.max(waypoints.size() - 1, editingSlot));
