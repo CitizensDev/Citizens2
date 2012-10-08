@@ -16,6 +16,7 @@ import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import com.google.common.collect.Sets;
@@ -57,9 +58,7 @@ public class HelpCommands {
                     || (!sender.hasPermission("citizens.admin") && !sender.hasPermission("citizens."
                             + command.permission())))
                 continue;
-            lines.add("<7>/<c>" + command.aliases()[0]
-                    + (command.usage().isEmpty() ? "" : " " + command.usage()) + " <7>- <e>"
-                    + Messaging.tryTranslate(command.desc()));
+            lines.add(format(command));
             if (command.modifiers().length > 1)
                 processed.add(info);
         }
@@ -113,9 +112,16 @@ public class HelpCommands {
             throw new CommandException(Messages.COMMAND_PAGE_MISSING, page);
     }
 
-    private void sendSpecificHelp(CommandSender sender, String string, String string2) {
-        // TODO Auto-generated method stub
-
+    private void sendSpecificHelp(CommandSender sender, String rootCommand, String modifier)
+            throws CommandException {
+        CommandInfo info = plugin.getCommandInfo(rootCommand, modifier);
+        if (info == null)
+            throw new CommandException(Messages.COMMAND_MISSING, rootCommand + " " + modifier);
+        Messaging.send(sender, format(info.getCommandAnnotation()));
+        String help = Messaging.tryTranslate(info.getCommandAnnotation().help());
+        if (help.isEmpty())
+            return;
+        Messaging.send(sender, ChatColor.AQUA + help);
     }
 
     @Command(
@@ -154,5 +160,12 @@ public class HelpCommands {
             sendSpecificHelp(sender, "waypoints", args.getString(1));
         }
         sendHelp(sender, "waypoints", page);
+    }
+
+    private static final String COMMAND_FORMAT = "<7>/<c>%s%s <7>- <e>%s";
+
+    private static final String format(Command command) {
+        return String.format(COMMAND_FORMAT, command.aliases()[0], (command.usage().isEmpty() ? "" : " "
+                + command.usage()), Messaging.tryTranslate(command.desc()));
     }
 }

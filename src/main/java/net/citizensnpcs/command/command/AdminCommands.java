@@ -28,7 +28,7 @@ public class AdminCommands {
                 "          "
                         + StringHelper.wrapHeader("<e>Citizens v" + plugin.getDescription().getVersion()));
         Messaging.send(player, "     <7>-- <c>Written by fullwall and aPunch");
-        Messaging.send(player, "     <7>-- <c>Source: http://github.com/CitizensDev");
+        Messaging.send(player, "     <7>-- <c>Source Code: http://github.com/CitizensDev");
         Messaging.send(player, "     <7>-- <c>Website: " + plugin.getDescription().getWebsite());
     }
 
@@ -55,6 +55,7 @@ public class AdminCommands {
             aliases = { "citizens" },
             usage = "save (-a)",
             desc = "Save NPCs",
+            help = Messages.COMMAND_SAVE_HELP,
             modifiers = { "save" },
             min = 1,
             max = 1,
