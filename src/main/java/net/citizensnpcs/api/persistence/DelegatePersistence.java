@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface DelegatePersistence {
-    Class<? extends PersistDelegate> value() default PersistDelegate.class;
+    Class<? extends Persister> value() default Persister.class;
 }
