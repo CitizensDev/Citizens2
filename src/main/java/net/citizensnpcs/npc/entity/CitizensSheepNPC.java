@@ -11,7 +11,6 @@ import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntitySheep;
 import net.minecraft.server.World;
@@ -32,8 +31,8 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
     @Override
     public void equip(Player equipper, ItemStack hand) {
         if (hand.getType() == Material.SHEARS) {
-            Messaging.send(equipper, StringHelper.wrap(getName()) + " is "
-                    + (getTrait(Sheared.class).toggle() ? "now" : "no longer") + " sheared.");
+            Messaging.sendTr(equipper, getTrait(Sheared.class).toggle() ? Messages.SHEARED_SET
+                    : Messages.SHEARED_STOPPED, getName());
         } else if (hand.getType() == Material.INK_SACK) {
             if (getBukkitEntity().getColor() == DyeColor.getByData((byte) (15 - hand.getData().getData())))
                 return;

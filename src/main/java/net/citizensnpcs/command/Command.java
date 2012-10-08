@@ -11,6 +11,8 @@ public @interface Command {
 
     String flags() default "";
 
+    String help() default "";
+
     int max() default -1;
 
     int min() default 0;

@@ -30,7 +30,7 @@ public class HelpCommands {
 
     @Command(
             aliases = { "citizens" },
-            usage = "help (page)",
+            usage = "help (page|command)",
             desc = "Citizens help menu",
             modifiers = { "help" },
             min = 1,
@@ -38,7 +38,12 @@ public class HelpCommands {
             permission = "help")
     @Requirements
     public void citizensHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
+        int page = 1;
+        try {
+            page = args.argsLength() == 2 ? args.getInteger(1) : page;
+        } catch (NumberFormatException e) {
+            sendSpecificHelp(sender, "citizens", args.getString(1));
+        }
         sendHelp(sender, "citizens", page);
     }
 
@@ -63,7 +68,7 @@ public class HelpCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "help (page)",
+            usage = "help (page|command)",
             desc = "NPC help menu",
             modifiers = { "help" },
             min = 1,
@@ -71,13 +76,18 @@ public class HelpCommands {
             permission = "npc.help")
     @Requirements
     public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
+        int page = 1;
+        try {
+            page = args.argsLength() == 2 ? args.getInteger(1) : page;
+        } catch (NumberFormatException e) {
+            sendSpecificHelp(sender, "npc", args.getString(1));
+        }
         sendHelp(sender, "NPC", page);
     }
 
     @Command(
             aliases = { "script" },
-            usage = "help (page)",
+            usage = "help (page|command)",
             desc = "Script help menu",
             modifiers = { "help" },
             min = 1,
@@ -85,7 +95,12 @@ public class HelpCommands {
             permission = "script.help")
     @Requirements
     public void scriptHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
+        int page = 1;
+        try {
+            page = args.argsLength() == 2 ? args.getInteger(1) : page;
+        } catch (NumberFormatException e) {
+            sendSpecificHelp(sender, "script", args.getString(1));
+        }
         sendHelp(sender, "script", page);
     }
 
@@ -98,9 +113,14 @@ public class HelpCommands {
             throw new CommandException(Messages.COMMAND_PAGE_MISSING, page);
     }
 
+    private void sendSpecificHelp(CommandSender sender, String string, String string2) {
+        // TODO Auto-generated method stub
+
+    }
+
     @Command(
             aliases = { "template", "tpl" },
-            usage = "help (page)",
+            usage = "help (page|command)",
             desc = "Template help menu",
             modifiers = { "help" },
             min = 1,
@@ -108,13 +128,18 @@ public class HelpCommands {
             permission = "templates.help")
     @Requirements
     public void templatesHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
+        int page = 1;
+        try {
+            page = args.argsLength() == 2 ? args.getInteger(1) : page;
+        } catch (NumberFormatException e) {
+            sendSpecificHelp(sender, "templates", args.getString(1));
+        }
         sendHelp(sender, "templates", page);
     }
 
     @Command(
             aliases = { "waypoint", "waypoint", "wp" },
-            usage = "help (page)",
+            usage = "help (page|command)",
             desc = "Waypoints help menu",
             modifiers = { "help" },
             min = 1,
@@ -122,7 +147,12 @@ public class HelpCommands {
             permission = "waypoints.help")
     @Requirements
     public void waypointsHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        int page = args.argsLength() == 2 ? args.getInteger(1) : 1;
+        int page = 1;
+        try {
+            page = args.argsLength() == 2 ? args.getInteger(1) : page;
+        } catch (NumberFormatException e) {
+            sendSpecificHelp(sender, "waypoints", args.getString(1));
+        }
         sendHelp(sender, "waypoints", page);
     }
 }

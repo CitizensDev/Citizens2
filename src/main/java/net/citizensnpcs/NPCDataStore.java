@@ -15,6 +15,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.Util;
 
 import org.bukkit.entity.EntityType;
 
@@ -34,14 +35,10 @@ public class NPCDataStore {
                 continue;
             }
             String unparsedEntityType = key.getString("traits.type", "PLAYER");
-            EntityType type = EntityType.fromName(unparsedEntityType);
+            EntityType type = Util.matchEntityType(unparsedEntityType);
             if (type == null) {
-                try {
-                    type = EntityType.valueOf(unparsedEntityType);
-                } catch (IllegalArgumentException ex) {
-                    Messaging.logTr(Messages.LOAD_UNKNOWN_NPC_TYPE, unparsedEntityType);
-                    continue;
-                }
+                Messaging.logTr(Messages.LOAD_UNKNOWN_NPC_TYPE, unparsedEntityType);
+                continue;
             }
             NPC npc = registry.createNPC(type, id, key.getString("name"));
             ((CitizensNPC) npc).load(key);

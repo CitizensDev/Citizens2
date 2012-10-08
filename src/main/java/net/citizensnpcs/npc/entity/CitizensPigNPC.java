@@ -7,9 +7,9 @@ import net.citizensnpcs.npc.CitizensMobNPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.Saddle;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityLightning;
 import net.minecraft.server.EntityPig;
@@ -33,13 +33,13 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
             if (!getBukkitEntity().hasSaddle()) {
                 getTrait(Saddle.class).toggle();
                 hand.setAmount(0);
-                Messaging.send(equipper, StringHelper.wrap(getName()) + " is now saddled.");
+                Messaging.sendTr(equipper, Messages.SADDLED_SET, getName());
             }
         } else if (getBukkitEntity().hasSaddle()) {
             equipper.getWorld().dropItemNaturally(getBukkitEntity().getLocation(),
                     new ItemStack(Material.SADDLE, 1));
             getTrait(Saddle.class).toggle();
-            Messaging.send(equipper, StringHelper.wrap(getName()) + " is no longer saddled.");
+            Messaging.sendTr(equipper, Messages.SADDLED_STOPPED, getName());
         }
     }
 

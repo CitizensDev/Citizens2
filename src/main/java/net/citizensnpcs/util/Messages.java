@@ -1,22 +1,12 @@
 package net.citizensnpcs.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ListResourceBundle;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-
-import com.google.common.io.Closeables;
-
 public class Messages {
-    public static final String AGE_SET = "citizens.commands.npc.age.set";
+    public static final String AGE_LOCKED = "citizens.commands.npc.age.locked";
+    public static final String AGE_SET_ADULT = "citizens.commands.npc.age.set-adult";
+    public static final String AGE_SET_BABY = "citizens.commands.npc.age.set-baby";
+    public static final String AGE_SET_NORMAL = "citizens.commands.npc.age.set-normal";
     public static final String AGE_TRAIT_DESCRIPTION = "citizens.traits.age-description";
+    public static final String AGE_UNLOCKED = "citizens.commands.npc.age.unlocked";
     public static final String ALREADY_IN_EDITOR = "citizens.editors.already-in-editor";
     public static final String ALREADY_OWNER = "citizens.commands.npc.owner.already-owner";
     public static final String AVAILABLE_WAYPOINT_PROVIDERS = "citizens.waypoints.available-providers-header";
@@ -46,7 +36,6 @@ public class Messages {
     public static final String CONTROLLABLE_SET = "citizens.commands.npc.controllable.set";
     public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.waypoints.current-provider";
     public static final String DATABASE_CONNECTION_FAILED = "citizens.notifications.database-connection-failed";
-    private static ResourceBundle defaultBundle;
     public static final String EQUIPMENT_EDITOR_ALL_ITEMS_REMOVED = "citizens.editors.equipment.all-items-removed";
     public static final String EQUIPMENT_EDITOR_BEGIN = "citizens.editors.equipment.begin";
     public static final String EQUIPMENT_EDITOR_END = "citizens.editors.equipment.end";
@@ -82,12 +71,17 @@ public class Messages {
     public static final String LOAD_UNKNOWN_NPC_TYPE = "citizens.notifications.unknown-npc-type";
     public static final String LOADING_SUB_PLUGIN = "citizens.sub-plugins.load";
     public static final String LOCALE_NOTIFICATION = "citizens.notifications.locale";
+    public static final String LOOKCLOSE_SET = "citizens.commands.npc.lookclose.set";
+    public static final String LOOKCLOSE_STOPPED = "citizens.commands.npc.lookclose.stopped";
     public static final String METRICS_ERROR_NOTIFICATION = "citizens.notifications.metrics-load-error";
     public static final String METRICS_NOTIFICATION = "citizens.notifications.metrics-started";
     public static final String MINIMUM_COST_REQUIRED = "citizens.economy.minimum-cost-required";
     public static final String MISSING_TRANSLATIONS = "citizens.notifications.missing-translations";
     public static final String MOBTYPE_CANNOT_BE_AGED = "citizens.commands.npc.age.cannot-be-aged";
     public static final String MONEY_WITHDRAWN = "citizens.economy.money-withdrawn";
+    public static final String MOVETO_FORMAT = "citizens.commands.npc.moveto.format";
+    public static final String MOVETO_TELEPORTED = "citizens.commands.npc.moveto.teleported";
+    public static final String MOVETO_WORLD_NOT_FOUND = "citizens.commands.npc.moveto.missing-world";
     public static final String NO_NPC_WITH_ID_FOUND = "citizens.commands.npc.spawn.missing-npc-id";
     public static final String NO_STORED_SPAWN_LOCATION = "citizens.commands.npc.spawn.no-location";
     public static final String NOT_LIVING_MOBTYPE = "citizens.commands.npc.create.not-living-mobtype";
@@ -106,16 +100,25 @@ public class Messages {
     public static final String NPC_TELEPORTED = "citizens.commands.npc.tphere.teleported";
     public static final String NUM_LOADED_NOTIFICATION = "citizens.notifications.npcs-loaded";
     public static final String OVER_NPC_LIMIT = "citizens.limits.over-npc-limit";
+    public static final String OWNER_SET = "citizens.commands.npc.owner.set";
+    public static final String OWNER_SET_SERVER = "citizens.commands.npc.owner.set-server";
     public static final String POSE_ADDED = "citizens.commands.npc.pose.added";
     public static final String POSE_ALREADY_EXISTS = "citizens.commands.npc.pose.already-exists";
     public static final String POSE_MISSING = "citizens.commands.npc.pose.missing";
     public static final String POSE_REMOVED = "citizens.commands.npc.pose.removed";
+    public static final String POWERED_SET = "citizens.commands.npc.powered.set";
+    public static final String POWERED_STOPPED = "citizens.commands.npc.powered.stopped";
     public static final String PROFESSION_SET = "citizens.commands.npc.profession.set";
+    public static final String REMOVE_INCORRECT_SYNTAX = "citizens.commands.npc.remove.incorrect-syntax";
     public static final String REMOVED_ALL_NPCS = "citizens.commands.npc.remove.removed-all";
+    public static final String SADDLED_SET = "citizens.editors.equipment.saddled-set";
+    public static final String SADDLED_STOPPED = "citizens.editors.equipment.saddled-stopped";
     public static final String SAVE_METHOD_SET_NOTIFICATION = "citizens.notifications.save-method-set";
     public static final String SCRIPT_COMPILED = "citizens.commands.script.compiled";
     public static final String SCRIPT_COMPILING = "citizens.commands.script.compiling";
     public static final String SCRIPT_FILE_MISSING = "citizens.commands.script.file-missing";
+    public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";
+    public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
     public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
     public static final String SPEED_MODIFIER_ABOVE_LIMIT = "citizens.commands.npc.speed.modifier-above-limit";
@@ -128,6 +131,7 @@ public class Messages {
     public static final String TEXT_EDITOR_ADD_PROMPT = "citizens.editors.text.add-prompt";
     public static final String TEXT_EDITOR_ADDED_ENTRY = "citizens.editors.text.added-entry";
     public static final String TEXT_EDITOR_BEGIN = "citizens.editors.text.begin";
+    public static final String TEXT_EDITOR_CLOSE_TALKER_SET = "citizens.editors.text.close-talker-set";
     public static final String TEXT_EDITOR_EDIT_BEGIN_PROMPT = "citizens.editors.text.edit-begin-prompt";
     public static final String TEXT_EDITOR_EDIT_PROMPT = "citizens.editors.text.edit-prompt";
     public static final String TEXT_EDITOR_EDITED_TEXT = "citizens.editors.text.edited-text";
@@ -137,6 +141,8 @@ public class Messages {
     public static final String TEXT_EDITOR_INVALID_INPUT = "citizens.editors.text.invalid-input";
     public static final String TEXT_EDITOR_INVALID_PAGE = "citizens.editors.text.invalid-page";
     public static final String TEXT_EDITOR_PAGE_PROMPT = "citizens.editors.text.change-page-prompt";
+    public static final String TEXT_EDITOR_RANDOM_TALKER_SET = "citizens.editors.text.random-talker-set";
+    public static final String TEXT_EDITOR_REALISTIC_LOOKING_SET = "citizens.editors.text.realistic-looking-set";
     public static final String TEXT_EDITOR_REMOVE_PROMPT = "citizens.editors.text.remove-prompt";
     public static final String TEXT_EDITOR_REMOVED_ENTRY = "citizens.editors.text.removed-entry";
     public static final String TEXT_EDITOR_START_PROMPT = "citizens.editors.text.start-prompt";
@@ -153,79 +159,4 @@ public class Messages {
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
-
-    private static Properties getDefaultBundleProperties() {
-        Properties defaults = new Properties();
-        InputStream in = null;
-        try {
-            in = Messages.class.getResourceAsStream("/" + Translator.PREFIX + "_en.properties");
-            defaults.load(in);
-        } catch (IOException e) {
-        } finally {
-            Closeables.closeQuietly(in);
-        }
-        return defaults;
-    }
-
-    public static ResourceBundle getDefaultResourceBundle(File resourceDirectory, String fileName) {
-        if (defaultBundle != null)
-            return defaultBundle;
-        resourceDirectory.mkdirs();
-
-        File bundleFile = new File(resourceDirectory, fileName);
-        if (!bundleFile.exists()) {
-            try {
-                bundleFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        populateDefaults(bundleFile);
-        FileInputStream stream = null;
-        try {
-            stream = new FileInputStream(bundleFile);
-            defaultBundle = new PropertyResourceBundle(stream);
-        } catch (Exception e) {
-            e.printStackTrace();
-            defaultBundle = getFallbackResourceBundle();
-        } finally {
-            Closeables.closeQuietly(stream);
-        }
-        return defaultBundle;
-    }
-
-    private static ResourceBundle getFallbackResourceBundle() {
-        return new ListResourceBundle() {
-            @Override
-            protected Object[][] getContents() {
-                return new Object[0][0];
-            }
-        };
-    }
-
-    private static void populateDefaults(File bundleFile) {
-        Properties properties = new Properties();
-        InputStream in = null;
-        try {
-            in = new FileInputStream(bundleFile);
-            properties.load(in);
-        } catch (IOException e) {
-        } finally {
-            Closeables.closeQuietly(in);
-        }
-        Properties defaults = getDefaultBundleProperties();
-        for (Entry<Object, Object> entry : defaults.entrySet()) {
-            if (!properties.containsKey(entry.getKey()))
-                properties.put(entry.getKey(), entry.getValue());
-        }
-        OutputStream stream = null;
-        try {
-            stream = new FileOutputStream(bundleFile);
-            properties.store(stream, "");
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            Closeables.closeQuietly(stream);
-        }
-    }
 }

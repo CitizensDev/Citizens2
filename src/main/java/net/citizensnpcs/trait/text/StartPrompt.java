@@ -25,11 +25,12 @@ public class StartPrompt extends StringPrompt {
         else if (input.equalsIgnoreCase("remove"))
             return new TextRemovePrompt(text);
         else if (input.equalsIgnoreCase("random"))
-            Messaging.send(sender, "[[Random talker]] set to [[" + text.toggleRandomTalker() + "]].");
+            Messaging.sendTr(sender, Messages.TEXT_EDITOR_RANDOM_TALKER_SET, text.toggleRandomTalker());
         else if (input.equalsIgnoreCase("realistic looking"))
-            Messaging.send(sender, "[[Realistic looking]] set to [[" + text.toggleRealisticLooking() + "]].");
+            Messaging.sendTr(sender, Messages.TEXT_EDITOR_REALISTIC_LOOKING_SET,
+                    text.toggleRealisticLooking());
         else if (input.equalsIgnoreCase("close"))
-            Messaging.send(sender, "[[Close talker]] set to [[" + text.toggle() + "]].");
+            Messaging.sendTr(sender, Messages.TEXT_EDITOR_CLOSE_TALKER_SET, text.toggle());
         else if (input.equalsIgnoreCase("help")) {
             context.setSessionData("said-text", false);
             Messaging.send(sender, getPromptText(context));

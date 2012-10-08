@@ -3,17 +3,24 @@ package net.citizensnpcs.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ListResourceBundle;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -52,7 +59,7 @@ public class Translator {
     }
 
     private ResourceBundle getDefaultBundle() {
-        return Messages.getDefaultResourceBundle(resourceFile, PREFIX + "_en.properties");
+        return getDefaultResourceBundle(resourceFile, PREFIX + "_en.properties");
     }
 
     private MessageFormat getFormatter(String unreplaced) {
@@ -158,19 +165,97 @@ public class Translator {
         }
     }
 
+    private static ResourceBundle defaultBundle;
+
     private static Translator instance;
+
     public static final String PREFIX = "messages";
+
+    private static Properties getDefaultBundleProperties() {
+        Properties defaults = new Properties();
+        InputStream in = null;
+        try {
+            in = Messages.class.getResourceAsStream("/" + PREFIX + "_en.properties");
+            defaults.load(in);
+        } catch (IOException e) {
+        } finally {
+            Closeables.closeQuietly(in);
+        }
+        return defaults;
+    }
+
+    private static ResourceBundle getDefaultResourceBundle(File resourceDirectory, String fileName) {
+        if (Translator.defaultBundle != null)
+            return Translator.defaultBundle;
+        resourceDirectory.mkdirs();
+
+        File bundleFile = new File(resourceDirectory, fileName);
+        if (!bundleFile.exists()) {
+            try {
+                bundleFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Translator.populateDefaults(bundleFile);
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream(bundleFile);
+            Translator.defaultBundle = new PropertyResourceBundle(stream);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Translator.defaultBundle = Translator.getFallbackResourceBundle();
+        } finally {
+            Closeables.closeQuietly(stream);
+        }
+        return Translator.defaultBundle;
+    }
+
+    private static ResourceBundle getFallbackResourceBundle() {
+        return new ListResourceBundle() {
+            @Override
+            protected Object[][] getContents() {
+                return new Object[0][0];
+            }
+        };
+    }
+
+    private static void populateDefaults(File bundleFile) {
+        Properties properties = new Properties();
+        InputStream in = null;
+        try {
+            in = new FileInputStream(bundleFile);
+            properties.load(in);
+        } catch (IOException e) {
+        } finally {
+            Closeables.closeQuietly(in);
+        }
+        Properties defaults = getDefaultBundleProperties();
+        for (Entry<Object, Object> entry : defaults.entrySet()) {
+            if (!properties.containsKey(entry.getKey()))
+                properties.put(entry.getKey(), entry.getValue());
+        }
+        OutputStream stream = null;
+        try {
+            stream = new FileOutputStream(bundleFile);
+            properties.store(stream, "");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Closeables.closeQuietly(stream);
+        }
+    }
 
     public static void setInstance(File resourceFile, Locale locale) {
         instance = new Translator(resourceFile, locale);
     }
 
-    static String tr(String key, Locale preferredLocale, Object... msg) {
+    public static String translate(String key, Locale preferredLocale, Object... msg) {
         return StringHelper.parseColors(msg.length == 0 ? instance.translate(key, preferredLocale) : instance
                 .format(key, preferredLocale, msg));
     }
 
-    static String tr(String key, Object... msg) {
-        return tr(key, instance.defaultLocale, msg);
+    public static String translate(String key, Object... msg) {
+        return translate(key, instance.defaultLocale, msg);
     }
 }
