@@ -1,9 +1,11 @@
 package net.citizensnpcs.api.persistence;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.util.DataKey;
@@ -11,6 +13,7 @@ import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Location;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class PersistenceLoader {
     static {
@@ -61,22 +64,46 @@ public class PersistenceLoader {
         }
 
         private static final Object NULL = new Object();
+
+        public Class<? super Collection<?>> getCollectionType() {
+            return persistAnnotation.collectionType();
+        }
     }
 
     private static Map<Class<?>, Field[]> fieldCache = new WeakHashMap<Class<?>, Field[]>();
     private static Map<Class<? extends Persister>, Persister> loadedDelegates = new WeakHashMap<Class<? extends Persister>, Persister>();
     private static final Map<Class<?>, Class<? extends Persister>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister>>();
 
-    private static void deserialise(PersistField field, DataKey root) {
+    @SuppressWarnings("unchecked")
+    private static void deserialise(PersistField field, DataKey root) throws Exception {
         Object value;
-        if (List.class.isAssignableFrom(field.getType())) {
-            List<Object> list = Lists.newArrayList();
-            for (DataKey subKey : root.getRelative(field.key).getSubKeys())
-                list.add(field.delegate == null ? subKey.getRaw("") : field.delegate.create(root));
+        Class<?> type = field.getType();
+        Class<? super Collection<?>> collectionType = field.getCollectionType();
+        if (List.class.isAssignableFrom(type)) {
+            List<Object> list = (List<Object>) (List.class.isAssignableFrom(collectionType) ? Lists
+                    .newArrayList() : collectionType.newInstance());
+            Object raw = root.getRaw(field.key);
+            if (raw instanceof List && collectionType.isAssignableFrom(raw.getClass()))
+                list = (List<Object>) raw;
+            else {
+                for (DataKey subKey : root.getRelative(field.key).getSubKeys())
+                    list.add(field.delegate == null ? subKey.getRaw("") : field.delegate.create(subKey));
+            }
             value = list;
+        } else if (Set.class.isAssignableFrom(type)) {
+            Set<Object> set = (Set<Object>) (!Set.class.isAssignableFrom(collectionType) ? Sets.newHashSet()
+                    : collectionType.newInstance());
+            Object raw = root.getRaw(field.key);
+            if (raw instanceof Set && collectionType.isAssignableFrom(raw.getClass()))
+                set = (Set<Object>) raw;
+            else {
+                for (DataKey subKey : root.getRelative(field.key).getSubKeys())
+                    set.add(field.delegate == null ? subKey.getRaw("") : field.delegate.create(subKey));
+            }
+            value = set;
         } else
             value = field.delegate == null ? root.getRaw(field.key) : field.delegate.create(root);
-        if (value == null || !field.getType().isAssignableFrom(value.getClass()))
+        if (value == null || !type.isAssignableFrom(value.getClass()))
             return;
         field.set(value);
     }
@@ -173,7 +200,11 @@ public class PersistenceLoader {
         Class<?> clazz = instance.getClass();
         Field[] fields = getFields(clazz);
         for (Field field : fields)
-            deserialise(new PersistField(field, instance), root);
+            try {
+                deserialise(new PersistField(field, instance), root);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         return instance;
     }
 
