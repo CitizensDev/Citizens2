@@ -97,8 +97,14 @@ public class Controllable extends Trait implements Toggleable {
             controller = new GroundController();
             return;
         }
+        Constructor<? extends Controller> innerConstructor = null;
         try {
-            Constructor<? extends Controller> innerConstructor = clazz.getConstructor(Controllable.class);
+            innerConstructor = clazz.getConstructor(Controllable.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
             if (innerConstructor == null) {
                 controller = clazz.newInstance();
             } else
@@ -156,9 +162,9 @@ public class Controllable extends Trait implements Toggleable {
             Vector dir = rider.getEyeLocation().getDirection();
             dir.multiply(npc.getNavigator().getDefaultParameters().speedModifier());
             EntityLiving handle = getHandle();
-            handle.motX += dir.getX();
-            handle.motY += dir.getY();
-            handle.motZ += dir.getZ();
+            handle.motX = dir.getX();
+            handle.motY = dir.getY();
+            handle.motZ = dir.getZ();
         }
     }
 
