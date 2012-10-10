@@ -104,6 +104,7 @@ public class Controllable extends Trait implements Toggleable {
             } else
                 controller = innerConstructor.newInstance(this);
         } catch (Exception e) {
+            e.printStackTrace();
             controller = new GroundController();
         }
     }
@@ -148,11 +149,12 @@ public class Controllable extends Trait implements Toggleable {
 
         @Override
         public void run(Player rider) {
-            if (paused)
+            if (paused) {
+                getHandle().motY = 0;
                 return;
+            }
             Vector dir = rider.getEyeLocation().getDirection();
-            double y = dir.getY();
-            dir.multiply(npc.getNavigator().getDefaultParameters().speedModifier()).setY(y);
+            dir.multiply(npc.getNavigator().getDefaultParameters().speedModifier());
             EntityLiving handle = getHandle();
             handle.motX += dir.getX();
             handle.motY += dir.getY();
@@ -160,7 +162,7 @@ public class Controllable extends Trait implements Toggleable {
         }
     }
 
-    private static interface Controller {
+    private interface Controller {
         void leftClick(PlayerInteractEvent event);
 
         void rightClick(PlayerInteractEvent event);
