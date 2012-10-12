@@ -624,7 +624,7 @@ public class NPCCommands {
     @Requirements(ownership = true)
     public void select(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         NPC toSelect = null;
-        if (args.argsLength() == 0) {
+        if (args.argsLength() <= 1) {
             if (!(sender instanceof Player))
                 throw new ServerCommandException();
             double range = Math.abs(args.getFlagDouble("r", 10));
