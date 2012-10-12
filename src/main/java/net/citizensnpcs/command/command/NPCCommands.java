@@ -728,11 +728,13 @@ public class NPCCommands {
             flags = "t",
             permission = "npc.vulnerable")
     public void vulnerable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean vulnerable = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
-        if (args.hasFlag('t'))
-            npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, !vulnerable);
-        else
-            npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, !vulnerable);
+        boolean vulnerable = !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+        if (args.hasFlag('t')) {
+            npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
+        } else {
+            vulnerable = !npc.data().getPersistent(NPC.DEFAULT_PROTECTED_METADATA, true);
+            npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
+        }
         String key = vulnerable ? Messages.VULNERABLE_SET : Messages.VULNERABLE_STOPPED;
         Messaging.sendTr(sender, key, npc.getName());
     }
