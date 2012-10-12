@@ -143,7 +143,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC getNPC(Entity entity) {
-        if (entity == null)
+        if (entity == null || !(entity instanceof CraftEntity))
             return null;
         net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
         return handle != null && handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
