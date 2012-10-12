@@ -80,4 +80,8 @@ public interface MetadataStore {
      *            The data to store
      */
     void setPersistent(String key, Object data);
+
+    <T> T getPersistent(String key, T def);
+
+    <T> T getPersistent(String key);
 }

@@ -24,15 +24,25 @@ public class SimpleMetadataStore implements MetadataStore {
     public <T> T get(String key) {
         Preconditions.checkNotNull(key, "key cannot be null");
         Object normal = normalMetadata.get(key);
-        if (normal != null) {
-            Object persistent = persistentMetadata.get(key);
-            if (persistent != null) {
-                normalMetadata.remove(key);
-                return (T) persistent;
-            }
+        if (normal != null)
             return (T) normal;
-        }
         return (T) persistentMetadata.get(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getPersistent(String key) {
+        Preconditions.checkNotNull(key, "key cannot be null");
+        return (T) persistentMetadata.get(key);
+    }
+
+    @Override
+    public <T> T getPersistent(String key, T def) {
+        T t = getPersistent(key);
+        if (t == null) {
+            setPersistent(key, def);
+            return def;
+        }
+        return t;
     }
 
     @Override
