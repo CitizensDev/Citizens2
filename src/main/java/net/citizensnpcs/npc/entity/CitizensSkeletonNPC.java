@@ -10,6 +10,10 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntitySkeleton;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftSkeleton;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.util.Vector;
 
@@ -82,6 +86,27 @@ public class CitizensSkeletonNPC extends CitizensMobNPC {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new SkeletonNPC(this);
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class SkeletonNPC extends CraftSkeleton implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public SkeletonNPC(EntitySkeletonNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
         }
 
         @Override

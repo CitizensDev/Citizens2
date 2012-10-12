@@ -10,7 +10,11 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityEnderDragon;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class CitizensEnderDragonNPC extends CitizensMobNPC {
@@ -22,6 +26,20 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
     @Override
     public EnderDragon getBukkitEntity() {
         return (EnderDragon) super.getBukkitEntity();
+    }
+
+    public static class EnderDragonNPC extends CraftEnderDragon implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public EnderDragonNPC(EntityEnderDragonNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
     }
 
     public static class EntityEnderDragonNPC extends EntityEnderDragon implements NPCHolder {
@@ -85,6 +103,13 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new EnderDragonNPC(this);
+            return super.getBukkitEntity();
         }
 
         @Override

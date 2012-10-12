@@ -14,8 +14,12 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityEnderman;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftEnderman;
 import org.bukkit.entity.Enderman;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -55,6 +59,20 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
     @Override
     public Enderman getBukkitEntity() {
         return (Enderman) super.getBukkitEntity();
+    }
+
+    public static class EndermanNPC extends CraftEnderman implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public EndermanNPC(EntityEndermanNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
     }
 
     public static class EntityEndermanNPC extends EntityEnderman implements NPCHolder {
@@ -135,6 +153,13 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new EndermanNPC(this);
+            return super.getBukkitEntity();
         }
 
         @Override

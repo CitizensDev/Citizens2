@@ -15,15 +15,18 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntitySheep;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftSheep;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
-
     public CitizensSheepNPC(int id, String name) {
         super(id, name, EntitySheepNPC.class);
     }
@@ -105,6 +108,27 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new SheepNPC(this);
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class SheepNPC extends CraftSheep implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public SheepNPC(EntitySheepNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
         }
 
         @Override
