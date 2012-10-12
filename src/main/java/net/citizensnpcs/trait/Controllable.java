@@ -156,7 +156,7 @@ public class Controllable extends Trait implements Toggleable {
         @Override
         public void run(Player rider) {
             if (paused) {
-                getHandle().motY = 0;
+                getHandle().motY = 0.001;
                 return;
             }
             Vector dir = rider.getEyeLocation().getDirection();
@@ -168,7 +168,7 @@ public class Controllable extends Trait implements Toggleable {
         }
     }
 
-    private interface Controller {
+    public static interface Controller {
         void leftClick(PlayerInteractEvent event);
 
         void rightClick(PlayerInteractEvent event);
