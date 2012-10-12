@@ -318,19 +318,22 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void setupTranslator() {
         Locale locale = Locale.getDefault();
-        String[] parts = Setting.LOCALE.asString().split("[\\._]");
-        switch (parts.length) {
-            case 1:
-                locale = new Locale(parts[0]);
-                break;
-            case 2:
-                locale = new Locale(parts[0], parts[1]);
-                break;
-            case 3:
-                locale = new Locale(parts[0], parts[1], parts[2]);
-                break;
-            default:
-                break;
+        String setting = Setting.LOCALE.asString();
+        if (!setting.isEmpty()) {
+            String[] parts = setting.split("[\\._]");
+            switch (parts.length) {
+                case 1:
+                    locale = new Locale(parts[0]);
+                    break;
+                case 2:
+                    locale = new Locale(parts[0], parts[1]);
+                    break;
+                case 3:
+                    locale = new Locale(parts[0], parts[1], parts[2]);
+                    break;
+                default:
+                    break;
+            }
         }
         Translator.setInstance(new File(getDataFolder(), "lang"), locale);
         Messaging.logTr(Messages.LOCALE_NOTIFICATION, locale);
