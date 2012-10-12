@@ -10,7 +10,11 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityCow;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftCow;
 import org.bukkit.entity.Cow;
+import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class CitizensCowNPC extends CitizensMobNPC {
@@ -22,6 +26,20 @@ public class CitizensCowNPC extends CitizensMobNPC {
     @Override
     public Cow getBukkitEntity() {
         return (Cow) super.getBukkitEntity();
+    }
+
+    public static class CowNPC extends CraftCow implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public CowNPC(EntityCowNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
     }
 
     public static class EntityCowNPC extends EntityCow implements NPCHolder {
@@ -75,6 +93,13 @@ public class CitizensCowNPC extends CitizensMobNPC {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new CowNPC(this);
+            return super.getBukkitEntity();
         }
 
         @Override

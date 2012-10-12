@@ -10,6 +10,10 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntitySquid;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftSquid;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Squid;
 import org.bukkit.util.Vector;
 
@@ -86,9 +90,29 @@ public class CitizensSquidNPC extends CitizensMobNPC {
         }
 
         @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new SquidNPC(this);
+            return super.getBukkitEntity();
+        }
+
+        @Override
         public NPC getNPC() {
             return npc;
         }
+    }
 
+    public static class SquidNPC extends CraftSquid implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public SquidNPC(EntitySquidNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
     }
 }

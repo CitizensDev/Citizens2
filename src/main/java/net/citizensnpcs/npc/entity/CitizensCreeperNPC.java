@@ -11,7 +11,11 @@ import net.minecraft.server.EntityCreeper;
 import net.minecraft.server.EntityLightning;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftCreeper;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class CitizensCreeperNPC extends CitizensMobNPC {
@@ -23,6 +27,20 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
     @Override
     public Creeper getBukkitEntity() {
         return (Creeper) super.getBukkitEntity();
+    }
+
+    public static class CreeperNPC extends CraftCreeper implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public CreeperNPC(EntityCreeperNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
     }
 
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHolder {
@@ -89,6 +107,13 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new CreeperNPC(this);
+            return super.getBukkitEntity();
         }
 
         @Override

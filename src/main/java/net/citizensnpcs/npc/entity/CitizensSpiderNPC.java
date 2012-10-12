@@ -10,6 +10,10 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntitySpider;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftSpider;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Spider;
 import org.bukkit.util.Vector;
 
@@ -91,6 +95,27 @@ public class CitizensSpiderNPC extends CitizensMobNPC {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new SpiderNPC(this);
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class SpiderNPC extends CraftSpider implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public SpiderNPC(EntitySpiderNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
         }
 
         @Override

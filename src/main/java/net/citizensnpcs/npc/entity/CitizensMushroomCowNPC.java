@@ -10,6 +10,10 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityMushroomCow;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftMushroomCow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.util.Vector;
 
@@ -75,6 +79,27 @@ public class CitizensMushroomCowNPC extends CitizensMobNPC {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new MushroomCowNPC(this);
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class MushroomCowNPC extends CraftMushroomCow implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public MushroomCowNPC(EntityMushroomCowNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
         }
 
         @Override

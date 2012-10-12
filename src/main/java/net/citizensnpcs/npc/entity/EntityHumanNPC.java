@@ -74,31 +74,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     @Override
     public CraftPlayer getBukkitEntity() {
-        if (npc == null)
-            return super.getBukkitEntity();
-        if (bukkitEntity != null)
-            return (CraftPlayer) bukkitEntity;
-        return (CraftPlayer) (bukkitEntity = new CraftPlayer(((CraftServer) Bukkit.getServer()), this) {
-            @Override
-            public List<MetadataValue> getMetadata(String metadataKey) {
-                return server.getEntityMetadata().getMetadata(this, metadataKey);
-            }
-
-            @Override
-            public boolean hasMetadata(String metadataKey) {
-                return server.getEntityMetadata().hasMetadata(this, metadataKey);
-            }
-
-            @Override
-            public void removeMetadata(String metadataKey, Plugin owningPlugin) {
-                server.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
-            }
-
-            @Override
-            public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
-                server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
-            }
-        });
+        if (npc != null && bukkitEntity == null)
+            bukkitEntity = new PlayerNPC(this);
+        return super.getBukkitEntity();
     }
 
     @Override
@@ -126,8 +104,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             --noDamageTicks;
         npc.update();
     }
-
-    private static final float EPSILON = 0.005F;
 
     private void initialise(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
@@ -184,6 +160,42 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         aG = prev;
         as = yaw; // update head yaw to match entity yaw
     }
+
+    public static class PlayerNPC extends CraftPlayer implements NPCHolder {
+        private final CitizensNPC npc;
+
+        private PlayerNPC(EntityHumanNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public List<MetadataValue> getMetadata(String metadataKey) {
+            return server.getEntityMetadata().getMetadata(this, metadataKey);
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+
+        @Override
+        public boolean hasMetadata(String metadataKey) {
+            return server.getEntityMetadata().hasMetadata(this, metadataKey);
+        }
+
+        @Override
+        public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+            server.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
+        }
+
+        @Override
+        public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
+            server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
+        }
+    }
+
+    private static final float EPSILON = 0.005F;
 
     private static final float STEP_HEIGHT = 1F;
 }

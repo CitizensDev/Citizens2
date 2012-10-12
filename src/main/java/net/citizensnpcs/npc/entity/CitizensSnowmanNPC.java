@@ -10,6 +10,10 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntitySnowman;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftSnowman;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Snowman;
 import org.bukkit.util.Vector;
 
@@ -78,6 +82,27 @@ public class CitizensSnowmanNPC extends CitizensMobNPC {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new SnowmanNPC(this);
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class SnowmanNPC extends CraftSnowman implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public SnowmanNPC(EntitySnowmanNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
         }
 
         @Override

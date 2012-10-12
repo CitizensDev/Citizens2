@@ -15,7 +15,11 @@ import net.minecraft.server.EntityLightning;
 import net.minecraft.server.EntityPig;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftPig;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -105,6 +109,27 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new PigNPC(this);
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class PigNPC extends CraftPig implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public PigNPC(EntityPigNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
         }
 
         @Override

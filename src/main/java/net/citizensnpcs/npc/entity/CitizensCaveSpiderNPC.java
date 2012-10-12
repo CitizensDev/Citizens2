@@ -10,7 +10,11 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityCaveSpider;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftCaveSpider;
 import org.bukkit.entity.CaveSpider;
+import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class CitizensCaveSpiderNPC extends CitizensMobNPC {
@@ -21,6 +25,20 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
     @Override
     public CaveSpider getBukkitEntity() {
         return (CaveSpider) super.getBukkitEntity();
+    }
+
+    public static class CaveSpiderNPC extends CraftCaveSpider implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public CaveSpiderNPC(EntityCaveSpiderNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
     }
 
     public static class EntityCaveSpiderNPC extends EntityCaveSpider implements NPCHolder {
@@ -90,6 +108,13 @@ public class CitizensCaveSpiderNPC extends CitizensMobNPC {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new CaveSpiderNPC(this);
+            return super.getBukkitEntity();
         }
 
         @Override

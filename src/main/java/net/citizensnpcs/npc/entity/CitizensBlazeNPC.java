@@ -10,7 +10,11 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityBlaze;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftBlaze;
 import org.bukkit.entity.Blaze;
+import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class CitizensBlazeNPC extends CitizensMobNPC {
@@ -22,6 +26,20 @@ public class CitizensBlazeNPC extends CitizensMobNPC {
     @Override
     public Blaze getBukkitEntity() {
         return (Blaze) super.getBukkitEntity();
+    }
+
+    public static class BlazeNPC extends CraftBlaze implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public BlazeNPC(EntityBlazeNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
     }
 
     public static class EntityBlazeNPC extends EntityBlaze implements NPCHolder {
@@ -83,6 +101,13 @@ public class CitizensBlazeNPC extends CitizensMobNPC {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new BlazeNPC(this);
+            return super.getBukkitEntity();
         }
 
         @Override

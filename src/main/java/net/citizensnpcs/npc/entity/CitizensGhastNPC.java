@@ -10,6 +10,10 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityGhast;
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftGhast;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Ghast;
 import org.bukkit.util.Vector;
 
@@ -83,6 +87,27 @@ public class CitizensGhastNPC extends CitizensMobNPC {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
+        }
+
+        @Override
+        public Entity getBukkitEntity() {
+            if (bukkitEntity == null && npc != null)
+                bukkitEntity = new GhastNPC(this);
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class GhastNPC extends CraftGhast implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public GhastNPC(EntityGhastNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
         }
 
         @Override
