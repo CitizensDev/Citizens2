@@ -9,6 +9,10 @@ public class Messages {
     public static final String AGE_UNLOCKED = "citizens.commands.npc.age.unlocked";
     public static final String ALREADY_IN_EDITOR = "citizens.editors.already-in-editor";
     public static final String ALREADY_OWNER = "citizens.commands.npc.owner.already-owner";
+    public static final String ANCHOR_ADDED = "citizens.commands.npc.anchor.added";
+    public static final String ANCHOR_ALREADY_EXISTS = "citizens.commands.npc.anchor.already-exists";
+    public static final String ANCHOR_MISSING = "citizens.commands.npc.anchor.missing";
+    public static final String ANCHOR_REMOVED = "citizens.commands.npc.anchor.removed";
     public static final String AVAILABLE_WAYPOINT_PROVIDERS = "citizens.waypoints.available-providers-header";
     public static final String BEHAVIOUR_HELP = "citizens.commands.npc.behaviour.help";
     public static final String BEHAVIOURS_ADDED = "citizens.commands.npc.behaviour.added";
@@ -60,6 +64,7 @@ public class Messages {
     public static final String FAILED_TO_MOUNT_NPC = "citizens.commands.npc.mount.failed";
     public static final String FAILED_TO_REMOVE = "citizens.commands.trait.failed-to-remove";
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
+    public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
     public static final String LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT = "citizens.editors.waypoints.linear.added-waypoint";
@@ -125,6 +130,7 @@ public class Messages {
     public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
     public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
+    public static final String SKIPPING_INVALID_ANCHOR = "citizens.notifications.skipping-invalid-anchor";
     public static final String SPEED_MODIFIER_ABOVE_LIMIT = "citizens.commands.npc.speed.modifier-above-limit";
     public static final String SPEED_MODIFIER_SET = "citizens.commands.npc.speed.set";
     public static final String TELEPORTED_TO_NPC = "citizens.commands.npc.tp.teleported";
