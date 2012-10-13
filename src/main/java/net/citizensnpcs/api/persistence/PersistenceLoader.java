@@ -27,8 +27,7 @@ public class PersistenceLoader {
         private PersistField(Field field, Object instance) {
             this.field = field;
             this.persistAnnotation = field.getAnnotation(Persist.class);
-            this.key = persistAnnotation.value().isEmpty() ? field.getName().toLowerCase()
-                    : persistAnnotation.value();
+            this.key = persistAnnotation.value().isEmpty() ? field.getName() : persistAnnotation.value();
             this.delegate = getDelegate(field);
             this.instance = instance;
         }
