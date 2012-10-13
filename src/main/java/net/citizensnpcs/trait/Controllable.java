@@ -100,6 +100,7 @@ public class Controllable extends Trait implements Toggleable {
         Constructor<? extends Controller> innerConstructor = null;
         try {
             innerConstructor = clazz.getConstructor(Controllable.class);
+            innerConstructor.setAccessible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,7 +136,7 @@ public class Controllable extends Trait implements Toggleable {
         return enabled;
     }
 
-    private class AirController implements Controller {
+    public class AirController implements Controller {
         boolean paused = false;
 
         @Override
@@ -178,7 +179,7 @@ public class Controllable extends Trait implements Toggleable {
         void run(Player rider);
     }
 
-    private class GroundController implements Controller {
+    public class GroundController implements Controller {
         private void jump() {
             boolean allowed = getHandle().onGround;
             if (!allowed)
