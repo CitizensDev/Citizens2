@@ -1,0 +1,67 @@
+package net.citizensnpcs.trait;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.Anchor;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+
+public class Anchors extends Trait {
+    private final List<Anchor> anchors = new ArrayList<Anchor>();
+
+    public Anchors() {
+        super("anchors");
+    }
+
+    public boolean addAnchor(String name, Location location) {
+        Anchor newAnchor = new Anchor(name, location);
+        if (anchors.contains(newAnchor))
+            return false;
+        anchors.add(newAnchor);
+        return true;
+    }
+
+    public Anchor getAnchor(String name) {
+        for (Anchor anchor : anchors)
+            if (anchor.getName().equalsIgnoreCase(name))
+                return anchor;
+        return null;
+    }
+
+    public List<Anchor> getAnchors() {
+        return anchors;
+    }
+
+    @Override
+    public void load(DataKey key) throws NPCLoadException {
+        for (DataKey sub : key.getRelative("list").getIntegerSubKeys())
+            try {
+                String[] parts = sub.getString("").split(";");
+                anchors.add(new Anchor(parts[0], new Location(Bukkit.getServer().getWorld(parts[1]), Double.valueOf(parts[2]), Double.valueOf(parts[3]), Double.valueOf(parts[4]))));
+            } catch (NumberFormatException e) {
+                Messaging.logTr(Messages.SKIPPING_INVALID_ANCHOR, sub.name(), e.getMessage());
+            }
+    }
+
+    public boolean removeAnchor(Anchor anchor) {
+        if (anchors.contains(anchor)) {
+            anchors.remove(anchor);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.removeKey("list");
+        for (int i = 0; i < anchors.size(); i++)
+            key.setString("list." + String.valueOf(i), anchors.get(i).stringValue());
+    }
+}

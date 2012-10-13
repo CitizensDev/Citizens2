@@ -25,6 +25,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
+import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
@@ -32,6 +33,7 @@ import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.VillagerProfession;
+import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
@@ -106,6 +108,71 @@ public class NPCCommands {
         }
 
         trait.setAge(age);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "anchor (--save [name]|--assume [name]|--remove [name]) (-a)",
+            desc = "Changes/Saves/Lists NPC's location anchor(s)",
+            flags = "a",
+            modifiers = { "anchor" },
+            min = 1,
+            max = 2,
+            permission = "npc.anchor")
+    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
+    public void anchor(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        Anchors trait = npc.getTrait(Anchors.class);
+        if (args.hasValueFlag("save")) {
+            if (args.getFlag("save").isEmpty())
+                throw new CommandException(Messages.INVALID_ANCHOR_NAME);
+
+            if (!(sender instanceof Player))
+                throw new ServerCommandException();
+
+            if (trait.addAnchor(args.getFlag("save"), ((Player) sender).getLocation())) {
+                Messaging.sendTr(sender, Messages.ANCHOR_ADDED);
+            } else
+                throw new CommandException(Messages.ANCHOR_ALREADY_EXISTS, args.getFlag("save"));
+        } else if (args.hasValueFlag("assume")) {
+            if (args.getFlag("assume").isEmpty())
+                throw new CommandException(Messages.INVALID_ANCHOR_NAME);
+
+            Anchor anchor = trait.getAnchor(args.getFlag("assume"));
+            if (anchor == null)
+                throw new CommandException(Messages.ANCHOR_MISSING, args.getFlag("assume"));
+            npc.getBukkitEntity().teleport(anchor.getLocation());
+        } else if (args.hasValueFlag("remove")) {
+            if (args.getFlag("remove").isEmpty())
+                throw new CommandException(Messages.INVALID_ANCHOR_NAME);
+            if (trait.removeAnchor(trait.getAnchor(args.getFlag("remove"))))
+                Messaging.sendTr(sender, Messages.ANCHOR_REMOVED);
+            else
+                throw new CommandException(Messages.ANCHOR_MISSING, args.getFlag("remove"));
+        } else if (!args.hasFlag('a')) {
+            Paginator paginator = new Paginator().header("Anchors");
+            paginator.addLine("<e>Key: <a>ID  <b>Name  <c>World  <d>Location (X,Y,Z)");
+            for (int i = 0; i < trait.getAnchors().size(); i++) {
+                String line = "<a>" + i + "<b>  " + trait.getAnchors().get(i).getName() + "<c>  "
+                        + trait.getAnchors().get(i).getLocation().getWorld().getName() + "<d>  "
+                        + trait.getAnchors().get(i).getLocation().getBlockX()+ ", "
+                        + trait.getAnchors().get(i).getLocation().getBlockY()+ ", "
+                        + trait.getAnchors().get(i).getLocation().getBlockZ();
+                paginator.addLine(line);
+            }
+
+            int page = args.getInteger(1, 1);
+            if (!paginator.sendPage(sender, page))
+                throw new CommandException(Messages.COMMAND_PAGE_MISSING);
+        }
+
+        // Assume Player's position
+        if (!args.hasFlag('a'))
+            return;
+        if (sender instanceof Player) {
+            Location location = ((Player) sender).getLocation();
+            npc.getBukkitEntity().teleport(location);
+        } else
+            throw new ServerCommandException();
     }
 
     @Command(
@@ -474,7 +541,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pose (--save [name]|--load [name]|--remove [name]|--list) (-a)",
+            usage = "pose (--save [name]|--assume [name]|--remove [name]) (-a)",
             desc = "Changes/Saves/Lists NPC's head pose(s)",
             flags = "a",
             modifiers = { "pose" },
@@ -494,14 +561,14 @@ public class NPCCommands {
             if (trait.addPose(args.getFlag("save"), ((Player) sender).getLocation())) {
                 Messaging.sendTr(sender, Messages.POSE_ADDED);
             } else
-                throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("load"));
-        } else if (args.hasValueFlag("load")) {
-            if (args.getFlag("load").isEmpty())
+                throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("assume"));
+        } else if (args.hasValueFlag("assume")) {
+            if (args.getFlag("assume").isEmpty())
                 throw new CommandException(Messages.INVALID_POSE_NAME);
 
-            Pose pose = trait.getPose(args.getFlag("load"));
+            Pose pose = trait.getPose(args.getFlag("assume"));
             if (pose == null)
-                throw new CommandException(Messages.POSE_MISSING, args.getFlag("load"));
+                throw new CommandException(Messages.POSE_MISSING, args.getFlag("assume"));
             trait.assumePose(pose);
         } else if (args.hasValueFlag("remove")) {
             if (args.getFlag("remove").isEmpty())

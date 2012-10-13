@@ -16,6 +16,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.trait.Age;
+import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
@@ -55,6 +56,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));
         registerTrait(TraitInfo.create(Behaviour.class).withName("behaviour"));
         registerTrait(TraitInfo.create(Poses.class).withName("poses"));
+        registerTrait(TraitInfo.create(Anchors.class).withName("anchors"));
 
         for (String trait : registered.keySet())
             INTERNAL_TRAITS.add(trait);
