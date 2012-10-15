@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.persistence;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +29,11 @@ public class PersistenceLoader {
             this.field = field;
             this.persistAnnotation = field.getAnnotation(Persist.class);
             this.key = persistAnnotation.value().isEmpty() ? field.getName() : persistAnnotation.value();
-            this.delegate = getDelegate(field);
+            Class<?> fallback = field.getType();
+            if (field.getGenericType() instanceof ParameterizedType) {
+                fallback = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+            }
+            this.delegate = getDelegate(field, fallback);
             this.instance = instance;
         }
 
@@ -46,8 +51,16 @@ public class PersistenceLoader {
             return (T) value;
         }
 
+        public Class<? super Collection<?>> getCollectionType() {
+            return persistAnnotation.collectionType();
+        }
+
         public Class<?> getType() {
             return field.getType();
+        }
+
+        public boolean isRequired() {
+            return persistAnnotation.required();
         }
 
         public void set(Object value) {
@@ -59,19 +72,19 @@ public class PersistenceLoader {
         }
 
         private static final Object NULL = new Object();
-
-        public Class<? super Collection<?>> getCollectionType() {
-            return persistAnnotation.collectionType();
-        }
     }
 
     private static final Map<Class<?>, Field[]> fieldCache = new WeakHashMap<Class<?>, Field[]>();
     private static final Map<Class<? extends Persister>, Persister> loadedDelegates = new WeakHashMap<Class<? extends Persister>, Persister>();
-    private static final Map<Class<?>, Class<? extends Persister>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister>>();
+    private static final Exception loadException = new Exception() {
+        @SuppressWarnings("unused")
+        public void fillInStackTrace(StackTraceElement[] elements) {
+        }
 
-    static {
-        registerPersistDelegate(Location.class, LocationPersister.class);
-    }
+        private static final long serialVersionUID = -4245839150826112365L;
+    };
+
+    private static final Map<Class<?>, Class<? extends Persister>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister>>();
 
     @SuppressWarnings("unchecked")
     private static void deserialise(PersistField field, DataKey root) throws Exception {
@@ -79,14 +92,18 @@ public class PersistenceLoader {
         Class<?> type = field.getType();
         Class<? super Collection<?>> collectionType = field.getCollectionType();
         if (List.class.isAssignableFrom(type)) {
-            List<Object> list = (List<Object>) (List.class.isAssignableFrom(collectionType) ? Lists
+            List<Object> list = (List<Object>) (!List.class.isAssignableFrom(collectionType) ? Lists
                     .newArrayList() : collectionType.newInstance());
             Object raw = root.getRaw(field.key);
             if (raw instanceof List && collectionType.isAssignableFrom(raw.getClass()))
                 list = (List<Object>) raw;
             else {
-                for (DataKey subKey : root.getRelative(field.key).getSubKeys())
-                    list.add(field.delegate == null ? subKey.getRaw("") : field.delegate.create(subKey));
+                for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
+                    Object loaded = getValueFromKey(field, subKey);
+                    if (loaded == null)
+                        continue;
+                    list.add(loaded);
+                }
             }
             value = list;
         } else if (Set.class.isAssignableFrom(type)) {
@@ -96,13 +113,19 @@ public class PersistenceLoader {
             if (raw instanceof Set && collectionType.isAssignableFrom(raw.getClass()))
                 set = (Set<Object>) raw;
             else {
-                for (DataKey subKey : root.getRelative(field.key).getSubKeys())
-                    set.add(field.delegate == null ? subKey.getRaw("") : field.delegate.create(subKey));
+                for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
+                    Object loaded = getValueFromKey(field, subKey);
+                    if (loaded == null)
+                        continue;
+                    set.add(loaded);
+                }
             }
             value = set;
         } else
-            value = field.delegate == null ? root.getRaw(field.key) : field.delegate.create(root);
-        if (value == null || !type.isAssignableFrom(value.getClass()))
+            value = getValueFromKey(field, root);
+        if (value == null && field.isRequired())
+            throw loadException;
+        if (!type.isAssignableFrom(value.getClass()))
             return;
         field.set(value);
     }
@@ -118,14 +141,18 @@ public class PersistenceLoader {
         }
     }
 
-    private static Persister getDelegate(Field field) {
+    private static Persister getDelegate(Field field, Class<?> fallback) {
         DelegatePersistence delegate = field.getAnnotation(DelegatePersistence.class);
-        if (delegate == null)
-            return null;
-        Persister test = loadedDelegates.get(delegate.value());
-        if (test == null)
-            test = loadedDelegates.get(persistRedirects.get(field.getType()));
-        return test;
+        Persister persister;
+        if (delegate == null) {
+            persister = loadedDelegates.get(persistRedirects.get(fallback));
+            if (persister == null)
+                return null;
+        } else
+            persister = loadedDelegates.get(delegate.value());
+        if (persister == null)
+            persister = loadedDelegates.get(persistRedirects.get(fallback));
+        return persister;
     }
 
     private static Field[] getFields(Class<?> clazz) {
@@ -140,6 +167,7 @@ public class PersistenceLoader {
         Iterator<Field> itr = toFilter.iterator();
         while (itr.hasNext()) {
             Field field = itr.next();
+            field.setAccessible(true);
             Persist persistAnnotation = field.getAnnotation(Persist.class);
             if (persistAnnotation == null) {
                 itr.remove();
@@ -158,6 +186,11 @@ public class PersistenceLoader {
             }
         }
         return toFilter.toArray(new Field[toFilter.size()]);
+    }
+
+    private static Object getValueFromKey(PersistField field, DataKey root) {
+        return field.delegate == null ? root.getRaw(field.key) : field.delegate.create(root
+                .getRelative(field.key));
     }
 
     /**
@@ -202,6 +235,8 @@ public class PersistenceLoader {
             try {
                 deserialise(new PersistField(field, instance), root);
             } catch (Exception e) {
+                if (e == loadException)
+                    return null;
                 e.printStackTrace();
             }
         return instance;
@@ -240,6 +275,8 @@ public class PersistenceLoader {
     }
 
     private static void serialise(PersistField field, DataKey root) {
+        if (field.get() == null)
+            return;
         if (List.class.isAssignableFrom(field.getType())) {
             List<?> list = field.get();
             root.removeKey(field.key);
@@ -256,5 +293,9 @@ public class PersistenceLoader {
             else
                 root.setRaw(field.key, field.get());
         }
+    }
+
+    static {
+        registerPersistDelegate(Location.class, LocationPersister.class);
     }
 }

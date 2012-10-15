@@ -259,5 +259,10 @@ public class YamlStorage implements Storage {
         public void setString(String key, String value) {
             config.set(getKeyExt(key), value);
         }
+
+        @Override
+        public String toString() {
+            return "YamlKey [path=" + current + "]";
+        }
     }
 }

@@ -46,6 +46,10 @@ public abstract class DataKey {
 
     public abstract Object getRaw(String key);
 
+    public DataKey getRelative(int key) {
+        return getRelative(Integer.toString(key));
+    }
+
     public abstract DataKey getRelative(String relative);
 
     public abstract String getString(String key);
