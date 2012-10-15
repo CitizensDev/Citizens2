@@ -8,9 +8,12 @@ import java.util.WeakHashMap;
 
 import net.citizensnpcs.npc.CitizensNPC;
 import net.minecraft.server.ControllerLook;
+import net.minecraft.server.DamageSource;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityMonster;
 import net.minecraft.server.EntityTypes;
+import net.minecraft.server.MobEffectList;
 import net.minecraft.server.Navigation;
 import net.minecraft.server.NetworkManager;
 import net.minecraft.server.PathfinderGoalSelector;
@@ -42,9 +45,31 @@ public class NMS {
     private static Field PATHFINDING_RANGE;
     private static Field SPEED_FIELD;
     private static Field THREAD_STOPPER;
+    private static Field DAMAGE_FIELD;
 
     public static void attack(EntityLiving handle, EntityLiving target) {
         handle.k(target);
+        int damage = getDamage(handle);
+
+        if (handle.hasEffect(MobEffectList.INCREASE_DAMAGE)) {
+            damage += 3 << handle.getEffect(MobEffectList.INCREASE_DAMAGE).getAmplifier();
+        }
+
+        if (handle.hasEffect(MobEffectList.WEAKNESS)) {
+            damage -= 2 << handle.getEffect(MobEffectList.WEAKNESS).getAmplifier();
+        }
+
+        target.damageEntity(DamageSource.mobAttack(handle), damage);
+    }
+
+    private static int getDamage(EntityLiving handle) {
+        if (DAMAGE_FIELD == null)
+            return 2;
+        try {
+            return DAMAGE_FIELD.getInt(handle);
+        } catch (Exception e) {
+        }
+        return 2;
     }
 
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
@@ -220,6 +245,7 @@ public class NMS {
         NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
         PATHFINDING_RANGE = getField(Navigation.class, "e");
         GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
+        DAMAGE_FIELD = getField(EntityMonster.class, "damage");
 
         try {
             Field field = getField(EntityTypes.class, "d");
