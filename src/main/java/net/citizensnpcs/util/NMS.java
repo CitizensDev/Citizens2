@@ -256,4 +256,9 @@ public class NMS {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
     }
+
+    public static void trySwim(EntityLiving handle) {
+        if ((handle.H() || handle.J()) && Math.random() < 0.8F)
+            handle.motY += 0.04;
+    }
 }

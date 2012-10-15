@@ -16,6 +16,7 @@ import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.NMS;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityPlayer;
 
@@ -172,8 +173,10 @@ public abstract class CitizensNPC extends AbstractNPC {
     public void update() {
         try {
             super.update();
-            if (isSpawned())
+            if (isSpawned()) {
+                NMS.trySwim(getHandle());
                 navigator.update();
+            }
         } catch (Exception ex) {
             Messaging.logTr(Messages.EXCEPTION_UPDATING_NPC, getId(), ex.getMessage());
             ex.printStackTrace();

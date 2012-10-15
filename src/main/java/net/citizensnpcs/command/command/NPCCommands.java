@@ -1,6 +1,8 @@
 package net.citizensnpcs.command.command;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import net.citizensnpcs.Citizens;
@@ -55,6 +57,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
@@ -154,8 +157,8 @@ public class NPCCommands {
             for (int i = 0; i < trait.getAnchors().size(); i++) {
                 String line = "<a>" + i + "<b>  " + trait.getAnchors().get(i).getName() + "<c>  "
                         + trait.getAnchors().get(i).getLocation().getWorld().getName() + "<d>  "
-                        + trait.getAnchors().get(i).getLocation().getBlockX()+ ", "
-                        + trait.getAnchors().get(i).getLocation().getBlockY()+ ", "
+                        + trait.getAnchors().get(i).getLocation().getBlockX() + ", "
+                        + trait.getAnchors().get(i).getLocation().getBlockY() + ", "
                         + trait.getAnchors().get(i).getLocation().getBlockZ();
                 paginator.addLine(line);
             }
@@ -682,8 +685,8 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "select|sel [id] (--r range)",
-            desc = "Select a NPC with the given ID",
+            usage = "select|sel [id|name] (--r range)",
+            desc = "Select a NPC with the given ID or name",
             modifiers = { "select", "sel" },
             min = 1,
             max = 2,
@@ -695,7 +698,17 @@ public class NPCCommands {
             if (!(sender instanceof Player))
                 throw new ServerCommandException();
             double range = Math.abs(args.getFlagDouble("r", 10));
-            List<Entity> search = ((Player) sender).getNearbyEntities(range, range, range);
+            Player player = (Player) sender;
+            final Location location = player.getLocation();
+            List<Entity> search = player.getNearbyEntities(range, range, range);
+            Collections.sort(search, new Comparator<Entity>() {
+                @Override
+                public int compare(Entity o1, Entity o2) {
+                    double d = o1.getLocation().distanceSquared(location)
+                            - o2.getLocation().distanceSquared(location);
+                    return d > 0 ? 1 : d < 0 ? -1 : 0;
+                }
+            });
             for (Entity possibleNPC : search) {
                 NPC test = npcRegistry.getNPC(possibleNPC);
                 if (test == null)
@@ -703,8 +716,25 @@ public class NPCCommands {
                 toSelect = test;
                 break;
             }
-        } else
-            toSelect = npcRegistry.getById(args.getInteger(1));
+        } else {
+            try {
+                int id = args.getInteger(1);
+                toSelect = npcRegistry.getById(id);
+            } catch (NumberFormatException ex) {
+                String name = args.getString(1);
+                List<NPC> possible = Lists.newArrayList();
+                for (NPC test : npcRegistry) {
+                    if (test.getName().equalsIgnoreCase(name))
+                        possible.add(test);
+                }
+                if (possible.size() == 1)
+                    toSelect = possible.get(0);
+                else if (possible.size() > 1) {
+                    SelectionPrompt.start(selector, (Player) sender, possible);
+                    return;
+                }
+            }
+        }
         if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn())
             throw new CommandException(Messages.NPC_NOT_FOUND);
         if (npc != null && toSelect.getId() == npc.getId())
