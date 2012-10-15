@@ -26,6 +26,8 @@ public class Waypoint {
     }
 
     public void onReach(NPC npc) {
+        if (triggers == null)
+            return;
         for (WaypointTrigger trigger : triggers)
             trigger.onWaypointReached(npc, location);
     }
