@@ -33,8 +33,9 @@ public class NMS {
         // util class
     }
 
-    private static final float DEFAULT_SPEED = 0.4F;
+    private static Field DAMAGE_FIELD;
 
+    private static final float DEFAULT_SPEED = 0.4F;
     private static Map<Class<? extends Entity>, Integer> ENTITY_CLASS_TO_INT;
     private static final Map<Class<? extends Entity>, Constructor<? extends Entity>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<? extends Entity>, Constructor<? extends Entity>>();
     private static Map<Integer, Class<? extends Entity>> ENTITY_INT_TO_CLASS;
@@ -45,10 +46,8 @@ public class NMS {
     private static Field PATHFINDING_RANGE;
     private static Field SPEED_FIELD;
     private static Field THREAD_STOPPER;
-    private static Field DAMAGE_FIELD;
 
     public static void attack(EntityLiving handle, EntityLiving target) {
-        handle.k(target);
         int damage = getDamage(handle);
 
         if (handle.hasEffect(MobEffectList.INCREASE_DAMAGE)) {
@@ -60,16 +59,6 @@ public class NMS {
         }
 
         target.damageEntity(DamageSource.mobAttack(handle), damage);
-    }
-
-    private static int getDamage(EntityLiving handle) {
-        if (DAMAGE_FIELD == null)
-            return 2;
-        try {
-            return DAMAGE_FIELD.getInt(handle);
-        } catch (Exception e) {
-        }
-        return 2;
     }
 
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
@@ -95,6 +84,16 @@ public class NMS {
             ENTITY_CONSTRUCTOR_CACHE.put(clazz, constructor);
         }
         return constructor;
+    }
+
+    private static int getDamage(EntityLiving handle) {
+        if (DAMAGE_FIELD == null)
+            return 2;
+        try {
+            return DAMAGE_FIELD.getInt(handle);
+        } catch (Exception e) {
+        }
+        return 2;
     }
 
     private static Field getField(Class<?> clazz, String field) {
@@ -193,6 +192,11 @@ public class NMS {
         }
     }
 
+    public static void trySwim(EntityLiving handle) {
+        if ((handle.H() || handle.J()) && Math.random() < 0.8F)
+            handle.motY += 0.04;
+    }
+
     public static void updateAI(EntityLiving entity) {
         entity.getNavigation().e();
         entity.getControllerMove().c();
@@ -255,10 +259,5 @@ public class NMS {
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
-    }
-
-    public static void trySwim(EntityLiving handle) {
-        if ((handle.H() || handle.J()) && Math.random() < 0.8F)
-            handle.motY += 0.04;
     }
 }

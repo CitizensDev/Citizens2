@@ -9,8 +9,8 @@ import org.bukkit.Location;
  */
 
 public class Anchor {
-	private final String name;
 	private final Location location;
+	private final String name;
 
 	public Anchor(String name, Location location) {
 		this.location = location;
@@ -30,12 +30,12 @@ public class Anchor {
 	            isEquals();
 	}
 	
-	public String getName() {
-		return name;
-	}
-
 	public Location getLocation() {
 		return location;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	@Override
