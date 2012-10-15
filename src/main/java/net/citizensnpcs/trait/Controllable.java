@@ -9,6 +9,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.command.CommandConfigurable;
 import net.citizensnpcs.command.CommandContext;
+import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityPlayer;
 
@@ -27,6 +28,7 @@ import com.google.common.collect.Maps;
 public class Controllable extends Trait implements Toggleable, CommandConfigurable {
     private Controller controller = new GroundController();
     private boolean enabled;
+    private EntityType explicitType;
 
     public Controllable() {
         super("controllable");
@@ -53,6 +55,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     @Override
     public void load(DataKey key) throws NPCLoadException {
         enabled = key.getBoolean("enabled");
+        explicitType = Util.matchEntityType(key.getString("explicittype"));
     }
 
     public boolean mount(Player toMount) {
@@ -93,7 +96,13 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     @Override
     public void onSpawn() {
+        loadController();
+    }
+
+    private void loadController() {
         EntityType type = npc.getBukkitEntity().getType();
+        if (explicitType != null)
+            type = explicitType;
         Class<? extends Controller> clazz = controllerTypes.get(type);
         if (clazz == null) {
             controller = new GroundController();
@@ -128,6 +137,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     @Override
     public void save(DataKey key) {
         key.setBoolean("enabled", enabled);
+        key.setString("explicittype", explicitType.name());
     }
 
     @Override
@@ -230,6 +240,12 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     @Override
     public void configure(CommandContext args) {
         if (args.hasFlag('f'))
-            controller = new AirController();
+            explicitType = EntityType.BLAZE;
+        else if (args.hasFlag('n'))
+            explicitType = null;
+        else if (args.hasValueFlag("explicittype"))
+            explicitType = Util.matchEntityType(args.getFlag("explicittype"));
+        if (npc.isSpawned())
+            loadController();
     }
 }
