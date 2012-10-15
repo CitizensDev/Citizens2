@@ -91,4 +91,10 @@ public abstract class Trait implements Listener, Runnable {
      */
     public void save(DataKey key) {
     }
+
+    /**
+     * Called when the trait has been newly copied to an {@link NPC}.
+     */
+    public void onCopy() {
+    }
 }
