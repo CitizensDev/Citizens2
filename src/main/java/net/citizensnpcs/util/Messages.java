@@ -126,11 +126,12 @@ public class Messages {
     public static final String SCRIPT_COMPILED = "citizens.commands.script.compiled";
     public static final String SCRIPT_COMPILING = "citizens.commands.script.compiling";
     public static final String SCRIPT_FILE_MISSING = "citizens.commands.script.file-missing";
+    public static final String SELECTION_PROMPT = "citizens.editors.selection.start-prompt";
     public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";
     public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
-    public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
     public static final String SKIPPING_INVALID_ANCHOR = "citizens.notifications.skipping-invalid-anchor";
+    public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
     public static final String SPEED_MODIFIER_ABOVE_LIMIT = "citizens.commands.npc.speed.modifier-above-limit";
     public static final String SPEED_MODIFIER_SET = "citizens.commands.npc.speed.set";
     public static final String TELEPORTED_TO_NPC = "citizens.commands.npc.tp.teleported";
@@ -169,5 +170,4 @@ public class Messages {
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
-    public static final String SELECTION_PROMPT = "citizens.editors.selection.start-prompt";
 }

@@ -26,25 +26,6 @@ public class SelectionPrompt extends NumericPrompt {
         this.selector = selector;
     }
 
-    public static void start(NPCSelector selector, Player player, List<NPC> possible) {
-        final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin())
-                .withLocalEcho(false).withEscapeSequence("exit").withModality(false)
-                .withFirstPrompt(new SelectionPrompt(selector, possible)).buildConversation(player);
-        conversation.begin();
-    }
-
-    @Override
-    public String getPromptText(ConversationContext context) {
-        String text = Messaging.tr(Messages.SELECTION_PROMPT);
-        int num = 1;
-        for (NPC npc : choices) {
-            text += "<br>    - " + npc.getId() + "(" + num + ")";
-            context.setSessionData(npc.getId(), num);
-            num++;
-        }
-        return text;
-    }
-
     @Override
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
         Object num = context.getSessionData(input);
@@ -63,5 +44,24 @@ public class SelectionPrompt extends NumericPrompt {
         selector.select(sender, toSelect);
         Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
         return null;
+    }
+
+    @Override
+    public String getPromptText(ConversationContext context) {
+        String text = Messaging.tr(Messages.SELECTION_PROMPT);
+        int num = 1;
+        for (NPC npc : choices) {
+            text += "<br>    - " + npc.getId() + "(" + num + ")";
+            context.setSessionData(npc.getId(), num);
+            num++;
+        }
+        return text;
+    }
+
+    public static void start(NPCSelector selector, Player player, List<NPC> possible) {
+        final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin())
+                .withLocalEcho(false).withEscapeSequence("exit").withModality(false)
+                .withFirstPrompt(new SelectionPrompt(selector, possible)).buildConversation(player);
+        conversation.begin();
     }
 }
