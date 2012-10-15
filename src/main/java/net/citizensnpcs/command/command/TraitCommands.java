@@ -58,10 +58,10 @@ public class TraitCommands {
 
     @Command(
             aliases = { "traitc", "trc" },
-            usage = "[trait name] [flags]",
+            usage = "[trait name] (flags)",
             desc = "Configures a trait",
             modifiers = { "*" },
-            min = 2,
+            min = 1,
             flags = "*",
             permission = "npc.trait-configure")
     public void configure(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
