@@ -7,6 +7,8 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.command.CommandConfigurable;
+import net.citizensnpcs.command.CommandContext;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityPlayer;
 
@@ -22,7 +24,7 @@ import org.bukkit.util.Vector;
 import com.google.common.collect.Maps;
 
 //TODO: reduce reliance on CitizensNPC
-public class Controllable extends Trait implements Toggleable {
+public class Controllable extends Trait implements Toggleable, CommandConfigurable {
     private Controller controller = new GroundController();
     private boolean enabled;
 
@@ -223,5 +225,11 @@ public class Controllable extends Trait implements Toggleable {
         controllerTypes.put(EntityType.BLAZE, AirController.class);
         controllerTypes.put(EntityType.ENDER_DRAGON, AirController.class);
         controllerTypes.put(EntityType.GHAST, AirController.class);
+    }
+
+    @Override
+    public void configure(CommandContext args) {
+        if (args.hasFlag('f'))
+            controller = new AirController();
     }
 }

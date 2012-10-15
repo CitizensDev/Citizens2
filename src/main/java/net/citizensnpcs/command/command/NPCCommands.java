@@ -202,14 +202,16 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "controllable|control",
+            usage = "controllable|control -f",
             desc = "Toggles whether the NPC can be ridden and controlled",
             modifiers = { "controllable", "control" },
             min = 1,
             max = 1,
+            flags = "f",
             permission = "npc.controllable")
     public void controllable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean enabled = npc.getTrait(Controllable.class).toggle();
+        Controllable trait = npc.getTrait(Controllable.class);
+        boolean enabled = trait.toggle();
         String key = enabled ? Messages.CONTROLLABLE_SET : Messages.CONTROLLABLE_REMOVED;
         Messaging.sendTr(sender, key);
     }
