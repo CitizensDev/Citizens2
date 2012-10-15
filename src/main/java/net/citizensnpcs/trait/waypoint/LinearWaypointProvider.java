@@ -14,6 +14,7 @@ import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messages;
@@ -58,12 +59,10 @@ public class LinearWaypointProvider implements WaypointProvider {
     @Override
     public void load(DataKey key) {
         for (DataKey root : key.getRelative("points").getIntegerSubKeys()) {
-            root = root.getRelative("location");
-            if (Bukkit.getWorld(root.getString("world")) == null)
+            Waypoint waypoint = PersistenceLoader.load(Waypoint.class, root);
+            if (waypoint == null)
                 continue;
-            waypoints.add(new Waypoint(new Location(Bukkit.getWorld(root.getString("world")), root
-                    .getDouble("x"), root.getDouble("y"), root.getDouble("z"), (float) root.getDouble("yaw",
-                    0), (float) root.getDouble("pitch", 0))));
+            waypoints.add(waypoint);
         }
     }
 
@@ -81,16 +80,8 @@ public class LinearWaypointProvider implements WaypointProvider {
     public void save(DataKey key) {
         key.removeKey("points");
         key = key.getRelative("points");
-        for (int i = 0; i < waypoints.size(); ++i) {
-            Location location = waypoints.get(i).getLocation();
-            DataKey root = key.getRelative(Integer.toString(i) + ".location");
-            root.setString("world", location.getWorld().getName());
-            root.setDouble("x", location.getX());
-            root.setDouble("y", location.getY());
-            root.setDouble("z", location.getZ());
-            root.setDouble("yaw", location.getYaw());
-            root.setDouble("pitch", location.getPitch());
-        }
+        for (int i = 0; i < waypoints.size(); ++i)
+            PersistenceLoader.save(waypoints.get(i), key.getRelative(i));
     }
 
     @Override
