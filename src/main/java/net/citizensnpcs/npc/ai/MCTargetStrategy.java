@@ -8,7 +8,6 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityMonster;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.Navigation;
 import net.minecraft.server.Packet18ArmAnimation;
@@ -95,13 +94,13 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         navigation.a(target, parameters.speed());
         NMS.look(handle.getControllerLook(), handle, target);
         if (aggro && canAttack()) {
-            if (handle instanceof EntityMonster) {
-                NMS.attack(handle, target);
-            } else if (handle instanceof EntityPlayer) {
+            if (handle instanceof EntityPlayer) {
                 EntityPlayer humanHandle = (EntityPlayer) handle;
                 humanHandle.attack(target);
                 Util.sendPacketNearby(handle.getBukkitEntity().getLocation(), new Packet18ArmAnimation(
                         humanHandle, 1), 64);
+            } else {
+                NMS.attack(handle, target);
             }
             attackTicks = ATTACK_DELAY_TICKS;
         }
