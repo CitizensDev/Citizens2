@@ -59,6 +59,12 @@ public abstract class Trait implements Listener, Runnable {
     }
 
     /**
+     * Called when the trait has been newly copied to an {@link NPC}.
+     */
+    public void onCopy() {
+    }
+
+    /**
      * Called just before the attached {@link NPC} is despawned.
      * {@link NPC#getBukkitEntity()} will be non-null.
      */
@@ -90,11 +96,5 @@ public abstract class Trait implements Listener, Runnable {
      *            DataKey to save to
      */
     public void save(DataKey key) {
-    }
-
-    /**
-     * Called when the trait has been newly copied to an {@link NPC}.
-     */
-    public void onCopy() {
     }
 }

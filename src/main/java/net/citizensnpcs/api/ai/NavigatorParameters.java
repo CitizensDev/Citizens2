@@ -3,12 +3,30 @@ package net.citizensnpcs.api.ai;
 import net.citizensnpcs.api.ai.event.CancelReason;
 
 public class NavigatorParameters implements Cloneable {
+    private AttackStrategy attackStrategy;
     private boolean avoidWater;
     private float baseSpeed;
     private float range;
     private float speedModifier = 1F;
     private int stationaryTicks = -1;
     private StuckAction stuckAction = TeleportStuckAction.INSTANCE;
+
+    /**
+     * @return The {@link AttackStrategy} currently in use (may be null)
+     */
+    public AttackStrategy attackStrategy() {
+        return attackStrategy;
+    }
+
+    /**
+     * Sets the {@link AttackStrategy} for use when attacking entity targets.
+     * 
+     * @param strategy
+     *            The strategy to use
+     */
+    public void attackStrategy(AttackStrategy strategy) {
+        attackStrategy = strategy;
+    }
 
     /**
      * @return Whether to avoid water while pathfinding
