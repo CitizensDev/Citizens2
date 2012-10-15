@@ -57,7 +57,7 @@ public class TraitCommands {
     }
 
     @Command(
-            aliases = { "traitc", "trc", "tc" },
+            aliases = { "traitc", "trc" },
             usage = "[trait name] [flags]",
             desc = "Configures a trait",
             modifiers = { "*" },
