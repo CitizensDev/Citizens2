@@ -31,9 +31,11 @@ import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
@@ -237,7 +239,7 @@ public class NPCCommands {
         }
 
         Messaging.sendTr(sender, Messages.NPC_COPIED, npc.getName());
-        selector.select(sender, npc);
+        selector.select(sender, copy);
     }
 
     @Command(
@@ -365,6 +367,20 @@ public class NPCCommands {
         npc.getTrait(Spawned.class).setSpawned(false);
         npc.despawn();
         Messaging.sendTr(sender, Messages.NPC_DESPAWNED, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "gravity",
+            desc = "Toggles gravity",
+            modifiers = { "gravity" },
+            min = 1,
+            max = 1,
+            permission = "npc.gravity")
+    public void gravity(CommandContext args, CommandSender sender, NPC npc) {
+        boolean enabled = npc.getTrait(Gravity.class).toggle();
+        String key = enabled ? Messages.GRAVITY_ENABLED : Messages.GRAVITY_DISABLED;
+        Messaging.sendTr(sender, key, npc.getName());
     }
 
     @Command(
@@ -741,6 +757,26 @@ public class NPCCommands {
             throw new CommandException(Messages.NPC_ALREADY_SELECTED);
         selector.select(sender, toSelect);
         Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "size [size]",
+            desc = "Sets the NPC's size",
+            modifiers = { "size" },
+            min = 1,
+            max = 2,
+            permission = "npc.size")
+    @Requirements(selected = true, ownership = true, types = { EntityType.MAGMA_CUBE, EntityType.SLIME })
+    public void slimeSize(CommandContext args, CommandSender sender, NPC npc) {
+        SlimeSize trait = npc.getTrait(SlimeSize.class);
+        if (args.argsLength() <= 1) {
+            trait.describe(sender);
+            return;
+        }
+        int size = Math.max(1, args.getInteger(1));
+        trait.setSize(size);
+        Messaging.sendTr(sender, Messages.SIZE_SET, npc.getName(), size);
     }
 
     @Command(

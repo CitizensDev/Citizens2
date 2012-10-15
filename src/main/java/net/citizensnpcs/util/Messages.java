@@ -63,6 +63,8 @@ public class Messages {
     public static final String FAILED_LOAD_SAVES = "citizens.saves.load-failed";
     public static final String FAILED_TO_MOUNT_NPC = "citizens.commands.npc.mount.failed";
     public static final String FAILED_TO_REMOVE = "citizens.commands.trait.failed-to-remove";
+    public static final String GRAVITY_DISABLED = "citizens.commands.npc.gravity.disabled";
+    public static final String GRAVITY_ENABLED = "citizens.commands.npc.gravity.enabled";
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
     public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
@@ -129,6 +131,8 @@ public class Messages {
     public static final String SELECTION_PROMPT = "citizens.editors.selection.start-prompt";
     public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";
     public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
+    public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.description";
+    public static final String SIZE_SET = "citizens.commands.npc.size.set";
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
     public static final String SKIPPING_INVALID_ANCHOR = "citizens.notifications.skipping-invalid-anchor";
     public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
