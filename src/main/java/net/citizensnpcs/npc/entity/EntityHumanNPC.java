@@ -197,6 +197,5 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private static final float EPSILON = 0.005F;
-
     private static final float STEP_HEIGHT = 1F;
 }

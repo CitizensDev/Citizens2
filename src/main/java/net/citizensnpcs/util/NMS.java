@@ -62,7 +62,7 @@ public class NMS {
     }
 
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
-        if (NMS.GOAL_FIELD == null || goalSelectors == null)
+        if (GOAL_FIELD == null || goalSelectors == null)
             return;
         for (PathfinderGoalSelector selector : goalSelectors) {
             try {
