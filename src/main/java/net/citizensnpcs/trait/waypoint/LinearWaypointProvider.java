@@ -299,7 +299,12 @@ public class LinearWaypointProvider implements WaypointProvider {
             if (selector == null || !event.getNavigator().equals(getNavigator()))
                 return;
             selector.finish();
-            if (event.getNavigator().getTargetAsLocation().equals(currentDestination.getLocation()))
+            Location finished = event.getNavigator().getTargetAsLocation();
+            if (finished == null || currentDestination == null)
+                return;
+            if (finished.getWorld() != currentDestination.getLocation().getWorld())
+                return;
+            if (finished.equals(currentDestination.getLocation()))
                 currentDestination.onReach(npc);
         }
 
