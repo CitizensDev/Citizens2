@@ -38,7 +38,9 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     public void configure(CommandContext args) {
         if (args.hasFlag('f'))
             explicitType = EntityType.BLAZE;
-        else if (args.hasFlag('n'))
+        else if (args.hasFlag('g'))
+            explicitType = EntityType.OCELOT;
+        else if (args.hasFlag('r'))
             explicitType = null;
         else if (args.hasValueFlag("explicittype"))
             explicitType = Util.matchEntityType(args.getFlag("explicittype"));
