@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.ai;
 
+import net.citizensnpcs.api.ai.AttackStrategy;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
@@ -94,7 +95,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         navigation.a(target, parameters.speed());
         NMS.look(handle.getControllerLook(), handle, target);
         if (aggro && canAttack()) {
-            if (handle instanceof EntityPlayer) {
+            AttackStrategy strategy = parameters.attackStrategy();
+            if (strategy != null && strategy.handle((LivingEntity) handle.getBukkitEntity(), getTarget())) {
+            } else if (handle instanceof EntityPlayer) {
                 EntityPlayer humanHandle = (EntityPlayer) handle;
                 humanHandle.attack(target);
                 Util.sendPacketNearby(handle.getBukkitEntity().getLocation(), new Packet18ArmAnimation(
