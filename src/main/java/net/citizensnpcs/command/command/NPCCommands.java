@@ -238,6 +238,8 @@ public class NPCCommands {
             copy.getTrait(CurrentLocation.class).setLocation(player.getLocation());
         }
 
+        for (Trait trait : copy.getTraits())
+            trait.onCopy();
         Messaging.sendTr(sender, Messages.NPC_COPIED, npc.getName());
         selector.select(sender, copy);
     }
