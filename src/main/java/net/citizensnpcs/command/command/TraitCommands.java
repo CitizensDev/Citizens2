@@ -71,7 +71,7 @@ public class TraitCommands {
         Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(0));
         if (clazz == null)
             throw new CommandException(Messages.TRAIT_NOT_FOUND);
-        if (!clazz.isAssignableFrom(CommandConfigurable.class))
+        if (!CommandConfigurable.class.isAssignableFrom(clazz))
             throw new CommandException(Messages.TRAIT_NOT_CONFIGURABLE);
         if (!npc.hasTrait(clazz))
             throw new CommandException(Messages.TRAIT_NOT_FOUND_ON_NPC);
