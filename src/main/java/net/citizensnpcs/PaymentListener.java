@@ -5,6 +5,7 @@ import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,14 +27,13 @@ public class PaymentListener implements Listener {
         if (!hasAccount || event.getCreator().hasPermission("citizens.npc.ignore-cost"))
             return;
         double cost = Setting.NPC_COST.asDouble();
-        boolean hasEnough = provider.has(name, cost);
-        String formattedCost = provider.format(cost);
-        if (!hasEnough) {
+        EconomyResponse response = provider.withdrawPlayer(name, cost);
+        if (!response.transactionSuccess()) {
             event.setCancelled(true);
-            event.setCancelReason(Messaging.tr(Messages.MINIMUM_COST_REQUIRED, formattedCost));
+            event.setCancelReason(response.errorMessage);
             return;
         }
-        provider.withdrawPlayer(name, cost);
+        String formattedCost = provider.format(cost);
         Messaging.sendTr(event.getCreator(), Messages.MONEY_WITHDRAWN, formattedCost);
     }
 }
