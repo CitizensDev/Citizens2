@@ -4,8 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
@@ -36,8 +34,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -280,14 +276,14 @@ public class LinearWaypointProvider implements WaypointProvider {
     }
 
     private class LinearWaypointGoal implements Goal {
-        private Location currentDestination;
-        private Iterator<Location> itr;
+        private Waypoint currentDestination;
+        private Iterator<Waypoint> itr;
         private boolean paused;
         private GoalSelector selector;
 
         private void ensureItr() {
             if (itr == null || !itr.hasNext())
-                itr = Iterators.transform(waypoints.iterator(), WAYPOINT_TRANSFORMER);
+                itr = waypoints.iterator();
         }
 
         private Navigator getNavigator() {
@@ -303,10 +299,12 @@ public class LinearWaypointProvider implements WaypointProvider {
             if (selector == null || !event.getNavigator().equals(getNavigator()))
                 return;
             selector.finish();
+            if (event.getNavigator().getTargetAsLocation().equals(currentDestination.getLocation()))
+                currentDestination.onReach(npc);
         }
 
         public void onProviderChanged() {
-            itr = Iterators.transform(waypoints.iterator(), WAYPOINT_TRANSFORMER);
+            itr = waypoints.iterator();
             if (currentDestination != null)
                 selector.finish();
         }
@@ -336,7 +334,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                 return false;
             }
             if (waypoints.size() == 1) {
-                // avoid pathing to the same point and wasting memory.
+                // avoid pathing to the same point repeatedly
                 Location dest = npc.getBukkitEntity().getLocation();
                 if (waypoints.get(0).getLocation().distanceSquared(dest) < 3)
                     return false;
@@ -346,16 +344,9 @@ public class LinearWaypointProvider implements WaypointProvider {
             if (shouldExecute) {
                 this.selector = selector;
                 currentDestination = itr.next();
-                getNavigator().setTarget(currentDestination);
+                getNavigator().setTarget(currentDestination.getLocation());
             }
             return shouldExecute;
         }
     }
-
-    private static final Function<Waypoint, Location> WAYPOINT_TRANSFORMER = new Function<Waypoint, Location>() {
-        @Override
-        public Location apply(@Nullable Waypoint input) {
-            return input == null ? null : input.getLocation();
-        }
-    };
 }

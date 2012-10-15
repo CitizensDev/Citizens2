@@ -34,6 +34,18 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         super("controllable");
     }
 
+    @Override
+    public void configure(CommandContext args) {
+        if (args.hasFlag('f'))
+            explicitType = EntityType.BLAZE;
+        else if (args.hasFlag('n'))
+            explicitType = null;
+        else if (args.hasValueFlag("explicittype"))
+            explicitType = Util.matchEntityType(args.getFlag("explicittype"));
+        if (npc.isSpawned())
+            loadController();
+    }
+
     private void enterOrLeaveVehicle(Player player) {
         EntityPlayer handle = ((CraftPlayer) player).getHandle();
         if (getHandle().passenger != null) {
@@ -56,6 +68,34 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     public void load(DataKey key) throws NPCLoadException {
         enabled = key.getBoolean("enabled");
         explicitType = Util.matchEntityType(key.getString("explicittype"));
+    }
+
+    private void loadController() {
+        EntityType type = npc.getBukkitEntity().getType();
+        if (explicitType != null)
+            type = explicitType;
+        Class<? extends Controller> clazz = controllerTypes.get(type);
+        if (clazz == null) {
+            controller = new GroundController();
+            return;
+        }
+        Constructor<? extends Controller> innerConstructor = null;
+        try {
+            innerConstructor = clazz.getConstructor(Controllable.class);
+            innerConstructor.setAccessible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            if (innerConstructor == null) {
+                controller = clazz.newInstance();
+            } else
+                controller = innerConstructor.newInstance(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            controller = new GroundController();
+        }
     }
 
     public boolean mount(Player toMount) {
@@ -97,34 +137,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     @Override
     public void onSpawn() {
         loadController();
-    }
-
-    private void loadController() {
-        EntityType type = npc.getBukkitEntity().getType();
-        if (explicitType != null)
-            type = explicitType;
-        Class<? extends Controller> clazz = controllerTypes.get(type);
-        if (clazz == null) {
-            controller = new GroundController();
-            return;
-        }
-        Constructor<? extends Controller> innerConstructor = null;
-        try {
-            innerConstructor = clazz.getConstructor(Controllable.class);
-            innerConstructor.setAccessible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (innerConstructor == null) {
-                controller = clazz.newInstance();
-            } else
-                controller = innerConstructor.newInstance(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-            controller = new GroundController();
-        }
     }
 
     @Override
@@ -235,17 +247,5 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         controllerTypes.put(EntityType.BLAZE, AirController.class);
         controllerTypes.put(EntityType.ENDER_DRAGON, AirController.class);
         controllerTypes.put(EntityType.GHAST, AirController.class);
-    }
-
-    @Override
-    public void configure(CommandContext args) {
-        if (args.hasFlag('f'))
-            explicitType = EntityType.BLAZE;
-        else if (args.hasFlag('n'))
-            explicitType = null;
-        else if (args.hasValueFlag("explicittype"))
-            explicitType = Util.matchEntityType(args.getFlag("explicittype"));
-        if (npc.isSpawned())
-            loadController();
     }
 }

@@ -2,6 +2,7 @@ package net.citizensnpcs.trait.waypoint;
 
 import java.util.List;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 
@@ -24,7 +25,12 @@ public class Waypoint {
         return location;
     }
 
+    public void onReach(NPC npc) {
+        for (WaypointTrigger trigger : triggers)
+            trigger.onWaypointReached(npc, location);
+    }
+
     static {
-        PersistenceLoader.registerPersistDelegate(WaypointTrigger.class, WaypointTriggerPersister.class);
+        PersistenceLoader.registerPersistDelegate(WaypointTrigger.class, WaypointTriggerRegistry.class);
     }
 }
