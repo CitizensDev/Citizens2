@@ -151,7 +151,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     @Override
     public void save(DataKey key) {
         key.setBoolean("enabled", enabled);
-        key.setString("explicittype", explicitType.name());
+        if (explicitType == null)
+            key.removeKey("explicittype");
+        else
+            key.setString("explicittype", explicitType.name());
     }
 
     @Override
