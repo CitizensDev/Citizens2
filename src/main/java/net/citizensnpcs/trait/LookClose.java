@@ -77,7 +77,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         enabled = key.getBoolean("enabled", key.getBoolean(""));
         // TODO: remove key.getBoolean("") ^ after a few updates
         range = key.getDouble("range", range);
-        realisticLooking = key.getBoolean("realistic-looking", false);
+        realisticLooking = key.getBoolean("realisticlooking", key.getBoolean("realistic-looking"));
     }
 
     @Override
@@ -91,14 +91,23 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     @Override
+    public void onDespawn() {
+        lookingAt = null;
+    }
+
+    @Override
     public void save(DataKey key) {
         if (key.keyExists("")) {
             // TODO: remove after a few updates
             key.removeKey("");
         }
+        if (key.keyExists("realistic-looking")) {
+            // TODO: remove after a few updates
+            key.removeKey("realistic-looking");
+        }
         key.setBoolean("enabled", enabled);
         key.setDouble("range", range);
-        key.setBoolean("realistic-looking", realisticLooking);
+        key.setBoolean("realisticlooking", realisticLooking);
     }
 
     @Override
