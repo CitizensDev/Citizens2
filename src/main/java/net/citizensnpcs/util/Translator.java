@@ -38,7 +38,7 @@ public class Translator {
                     Translator.class.getClassLoader(), resourceFile));
         } catch (MissingResourceException e) {
             preferredBundle = getDefaultBundle();
-            Messaging.logTr(Messages.MISSING_TRANSLATIONS, locale);
+            Messaging.log(translate(Messages.MISSING_TRANSLATIONS, locale));
         }
     }
 
