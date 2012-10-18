@@ -711,7 +711,7 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "npc.select")
-    @Requirements(ownership = true)
+    @Requirements
     public void select(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         NPC toSelect = null;
         if (args.argsLength() <= 1) {
