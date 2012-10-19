@@ -98,7 +98,22 @@ public class Messaging {
     }
 
     public static String tr(String key, Object... messages) {
-        return Translator.translate(key, messages);
+        String message = Translator.translate(key, messages);
+        String trimmed = message.trim();
+        String messageColour = StringHelper.parseColors(Setting.MESSAGE_COLOUR.asString());
+        if (!trimmed.isEmpty()) {
+            if (trimmed.charAt(0) == ChatColor.COLOR_CHAR) {
+                ChatColor test = ChatColor.getByChar(trimmed.substring(1, 2));
+                if (test == null) {
+                    message = messageColour + message;
+                } else
+                    messageColour = test.toString();
+            } else
+                message = messageColour + message;
+        }
+        message = message.replace("[[", StringHelper.parseColors(Setting.HIGHLIGHT_COLOUR.asString()));
+        message = message.replace("]]", messageColour);
+        return message;
     }
 
     public static String tryTranslate(Object possible) {
