@@ -174,4 +174,5 @@ public class Messages {
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
+    public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
 }
