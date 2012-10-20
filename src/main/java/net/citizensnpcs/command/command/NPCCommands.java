@@ -564,6 +564,20 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "pathrange [range]",
+            desc = "Sets an NPC's pathfinding range",
+            modifiers = { "pathrange", "pathfindingrange", "prange" },
+            min = 2,
+            max = 2,
+            permission = "npc.pathfindingrange")
+    public void pathfindingRange(CommandContext args, CommandSender sender, NPC npc) {
+        double range = Math.max(1, args.getDouble(1));
+        npc.getNavigator().getDefaultParameters().range((float) range);
+        Messaging.sendTr(sender, Messages.PATHFINDING_RANGE_SET, range);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "pose (--save [name]|--assume [name]|--remove [name]) (-a)",
             desc = "Changes/Saves/Lists NPC's head pose(s)",
             flags = "a",
