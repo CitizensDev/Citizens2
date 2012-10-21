@@ -175,4 +175,7 @@ public class Messages {
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
     public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
+    public static final String GAMEMODE_DESCRIBE = "citizens.commands.npc.gamemode.describe";
+    public static final String GAMEMODE_INVALID = "citizens.commands.npc.gamemode.invalid";
+    public static final String GAMEMODE_SET = "citizens.commands.npc.gamemode.set";
 }
