@@ -213,7 +213,7 @@ public class NPCCommands {
         Controllable trait = npc.getTrait(Controllable.class);
         boolean enabled = trait.toggle();
         String key = enabled ? Messages.CONTROLLABLE_SET : Messages.CONTROLLABLE_REMOVED;
-        Messaging.sendTr(sender, key);
+        Messaging.sendTr(sender, key, npc.getName());
     }
 
     @Command(
