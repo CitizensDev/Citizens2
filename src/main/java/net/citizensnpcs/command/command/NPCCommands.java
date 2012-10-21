@@ -46,6 +46,7 @@ import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -371,6 +372,40 @@ public class NPCCommands {
         npc.getTrait(Spawned.class).setSpawned(false);
         npc.despawn();
         Messaging.sendTr(sender, Messages.NPC_DESPAWNED, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "gamemode [gamemode]",
+            desc = "Changes the gamemode",
+            modifiers = { "gravity" },
+            min = 1,
+            max = 2,
+            permission = "npc.gravity")
+    @Requirements(selected = true, ownership = true, types = { EntityType.PLAYER })
+    public void gamemode(CommandContext args, CommandSender sender, NPC npc) {
+        Player player = (Player) npc.getBukkitEntity();
+        if (args.argsLength() == 1) {
+            Messaging.sendTr(sender, Messages.GAMEMODE_DESCRIBE, npc.getName(), player.getGameMode().name()
+                    .toLowerCase());
+            return;
+        }
+        GameMode mode = null;
+        try {
+            int value = args.getInteger(1);
+            mode = GameMode.getByValue(value);
+        } catch (NumberFormatException ex) {
+            try {
+                mode = GameMode.valueOf(args.getString(1));
+            } catch (IllegalArgumentException e) {
+            }
+        }
+        if (mode == null) {
+            Messaging.sendErrorTr(sender, Messages.GAMEMODE_INVALID, args.getString(1));
+            return;
+        }
+        player.setGameMode(mode);
+        Messaging.sendTr(sender, Messages.GAMEMODE_SET, mode.name().toLowerCase());
     }
 
     @Command(
