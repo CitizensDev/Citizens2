@@ -63,12 +63,16 @@ public class Messages {
     public static final String FAILED_LOAD_SAVES = "citizens.saves.load-failed";
     public static final String FAILED_TO_MOUNT_NPC = "citizens.commands.npc.mount.failed";
     public static final String FAILED_TO_REMOVE = "citizens.commands.trait.failed-to-remove";
+    public static final String GAMEMODE_DESCRIBE = "citizens.commands.npc.gamemode.describe";
+    public static final String GAMEMODE_INVALID = "citizens.commands.npc.gamemode.invalid";
+    public static final String GAMEMODE_SET = "citizens.commands.npc.gamemode.set";
     public static final String GRAVITY_DISABLED = "citizens.commands.npc.gravity.disabled";
     public static final String GRAVITY_ENABLED = "citizens.commands.npc.gravity.enabled";
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
     public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
+    public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
     public static final String LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT = "citizens.editors.waypoints.linear.added-waypoint";
     public static final String LINEAR_WAYPOINT_EDITOR_BEGIN = "citizens.editors.waypoints.linear.begin";
     public static final String LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET = "citizens.editors.waypoints.linear.edit-slot-set";
@@ -113,6 +117,7 @@ public class Messages {
     public static final String OVER_NPC_LIMIT = "citizens.limits.over-npc-limit";
     public static final String OWNER_SET = "citizens.commands.npc.owner.set";
     public static final String OWNER_SET_SERVER = "citizens.commands.npc.owner.set-server";
+    public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
     public static final String POSE_ADDED = "citizens.commands.npc.pose.added";
     public static final String POSE_ALREADY_EXISTS = "citizens.commands.npc.pose.already-exists";
     public static final String POSE_MISSING = "citizens.commands.npc.pose.missing";
@@ -174,8 +179,4 @@ public class Messages {
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
-    public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
-    public static final String GAMEMODE_DESCRIBE = "citizens.commands.npc.gamemode.describe";
-    public static final String GAMEMODE_INVALID = "citizens.commands.npc.gamemode.invalid";
-    public static final String GAMEMODE_SET = "citizens.commands.npc.gamemode.set";
 }
