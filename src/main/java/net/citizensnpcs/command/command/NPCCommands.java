@@ -249,17 +249,17 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b -u) --type (type) --trait ('trait1, trait2...') --b (behaviour))",
+            usage = "create [name] ((-b,u) --at (x:y:z:world) --type (type) --trait ('trait1, trait2...') --b (behaviours))",
             desc = "Create a new NPC",
             flags = "bu",
             modifiers = { "create" },
             min = 2,
             permission = "npc.create")
     @Requirements
-    public void create(CommandContext args, final Player player, NPC npc) throws CommandException {
+    public void create(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String name = StringHelper.parseColors(args.getJoinedStrings(1));
         if (name.length() > 16) {
-            Messaging.sendErrorTr(player, Messages.NPC_NAME_TOO_LONG);
+            Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
             name = name.substring(0, 15);
         }
         EntityType type = EntityType.PLAYER;
@@ -267,21 +267,21 @@ public class NPCCommands {
             String inputType = args.getFlag("type");
             type = Util.matchEntityType(inputType);
             if (type == null) {
-                Messaging.sendErrorTr(player, Messages.NPC_CREATE_INVALID_MOBTYPE, inputType);
+                Messaging.sendErrorTr(sender, Messages.NPC_CREATE_INVALID_MOBTYPE, inputType);
                 type = EntityType.PLAYER;
             } else if (!LivingEntity.class.isAssignableFrom(type.getEntityClass())) {
-                Messaging.sendErrorTr(player, Messages.NOT_LIVING_MOBTYPE, type);
+                Messaging.sendErrorTr(sender, Messages.NOT_LIVING_MOBTYPE, type);
                 type = EntityType.PLAYER;
             }
         }
 
         npc = npcRegistry.createNPC(type, name);
-        String msg = "You created [[" + npc.getName() + "]] at your location";
+        String msg = "You created [[" + npc.getName() + "]]";
 
         int age = 0;
         if (args.hasFlag('b')) {
             if (!Ageable.class.isAssignableFrom(type.getEntityClass()))
-                Messaging.sendErrorTr(player, Messages.MOBTYPE_CANNOT_BE_AGED, type.name().toLowerCase()
+                Messaging.sendErrorTr(sender, Messages.MOBTYPE_CANNOT_BE_AGED, type.name().toLowerCase()
                         .replace("_", "-"));
             else {
                 age = -24000;
@@ -298,21 +298,61 @@ public class NPCCommands {
 
         // Initialize necessary traits
         if (!Setting.SERVER_OWNS_NPCS.asBoolean())
-            npc.getTrait(Owner.class).setOwner(player.getName());
+            npc.getTrait(Owner.class).setOwner(sender.getName());
         npc.getTrait(MobType.class).setType(type);
 
-        if (!args.hasFlag('u'))
-            npc.spawn(player.getLocation());
-
-        PlayerCreateNPCEvent event = new PlayerCreateNPCEvent(player, npc);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            npc.destroy();
-            String reason = "Couldn't create NPC.";
-            if (!event.getCancelReason().isEmpty())
-                reason += " Reason: " + event.getCancelReason();
-            throw new CommandException(reason);
+        Location spawnLoc = null;
+        if (sender instanceof Player) {
+            spawnLoc = ((Player) sender).getLocation();
+            PlayerCreateNPCEvent event = new PlayerCreateNPCEvent((Player) sender, npc);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                npc.destroy();
+                String reason = "Couldn't create NPC.";
+                if (!event.getCancelReason().isEmpty())
+                    reason += " Reason: " + event.getCancelReason();
+                throw new CommandException(reason);
+            }
         }
+        if (args.hasValueFlag("at")) {
+            String[] parts = Iterables.toArray(Splitter.on(':').split(args.getFlag("at")), String.class);
+            String worldName = sender instanceof Player ? ((Player) sender).getLocation().getWorld()
+                    .getName() : "";
+            int x = 0, y = 0, z = 0;
+            float yaw = 0F, pitch = 0F;
+            switch (parts.length) {
+                case 6:
+                    pitch = Float.parseFloat(parts[5]);
+                case 5:
+                    yaw = Float.parseFloat(parts[4]);
+                case 4:
+                    worldName = parts[3];
+                case 3:
+                case 2:
+                case 1:
+                    if (parts.length < 3)
+                        throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+                    x = Integer.parseInt(parts[0]);
+                    y = Integer.parseInt(parts[1]);
+                    z = Integer.parseInt(parts[2]);
+                    break;
+                default:
+                    break;
+                case 0:
+                    throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+            }
+            World world = Bukkit.getWorld(worldName);
+            if (world == null)
+                throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+            spawnLoc = new Location(world, x, y, z, yaw, pitch);
+        }
+        if (spawnLoc == null) {
+            npc.destroy();
+            throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+        }
+
+        if (!args.hasFlag('u'))
+            npc.spawn(spawnLoc);
 
         if (args.hasValueFlag("trait")) {
             Iterable<String> parts = Splitter.on(',').trimResults().split(args.getFlag("trait"));
@@ -347,8 +387,8 @@ public class NPCCommands {
         // Set age after entity spawns
         if (npc.getBukkitEntity() instanceof Ageable)
             npc.getTrait(Age.class).setAge(age);
-        selector.select(player, npc);
-        Messaging.send(player, msg);
+        selector.select(sender, npc);
+        Messaging.send(sender, msg);
     }
 
     @Command(
