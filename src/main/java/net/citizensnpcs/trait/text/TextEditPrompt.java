@@ -22,7 +22,7 @@ public class TextEditPrompt extends StringPrompt {
         text.edit(index, input);
         Messaging
                 .sendTr((CommandSender) context.getForWhom(), Messages.TEXT_EDITOR_EDITED_TEXT, index, input);
-        return new StartPrompt(text);
+        return new TextStartPrompt(text);
     }
 
     @Override

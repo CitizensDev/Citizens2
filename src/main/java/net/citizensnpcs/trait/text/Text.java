@@ -65,7 +65,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     public Editor getEditor(final Player player) {
         final Conversation conversation = new ConversationFactory(plugin)
                 .addConversationAbandonedListener(this).withLocalEcho(false).withEscapeSequence("/npc text")
-                .withEscapeSequence("exit").withModality(false).withFirstPrompt(new StartPrompt(this))
+                .withEscapeSequence("exit").withModality(false).withFirstPrompt(new TextStartPrompt(this))
                 .buildConversation(player);
         return new Editor() {
 

@@ -3,7 +3,7 @@ authors: [aPunch, fullwall]
 softdepend: [Vault]
 version: 2.0.3
 main: net.citizensnpcs.Citizens
-website: http://www.citizensnpcs.net
+website: http://www.citizensnpcs.com
 commands:
   traitc:
     description: Configures traits

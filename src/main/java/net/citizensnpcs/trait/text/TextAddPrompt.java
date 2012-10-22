@@ -20,7 +20,7 @@ public class TextAddPrompt extends StringPrompt {
     public Prompt acceptInput(ConversationContext context, String input) {
         text.add(input);
         Messaging.sendTr((Player) context.getForWhom(), Messages.TEXT_EDITOR_ADDED_ENTRY, input);
-        return new StartPrompt(text);
+        return new TextStartPrompt(text);
     }
 
     @Override
