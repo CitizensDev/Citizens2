@@ -9,7 +9,7 @@ public class NavigatorParameters implements Cloneable {
     private float range;
     private float speedModifier = 1F;
     private int stationaryTicks = -1;
-    private StuckAction stuckAction = TeleportStuckAction.INSTANCE;
+    private StuckAction stuckAction;
 
     /**
      * @return The {@link AttackStrategy} currently in use (may be null)
