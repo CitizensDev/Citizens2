@@ -6,6 +6,7 @@ import net.citizensnpcs.editor.Equipable;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.ItemInWorldManager;
@@ -134,6 +135,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         super.update();
         if (isSpawned() && getBukkitEntity().getLocation().getChunk().isLoaded()) {
             mcEntity.move(0, -0.2, 0);
+            NMS.trySwim(getHandle());
             // gravity! also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
         }
