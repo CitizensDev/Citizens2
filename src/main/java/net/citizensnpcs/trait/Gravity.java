@@ -9,7 +9,7 @@ public class Gravity extends Trait implements Toggleable {
     @Persist
     private boolean enabled;
 
-    public Gravity(String name) {
+    public Gravity() {
         super("gravity");
     }
 
