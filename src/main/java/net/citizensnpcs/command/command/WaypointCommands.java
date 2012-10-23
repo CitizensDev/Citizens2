@@ -17,6 +17,21 @@ public class WaypointCommands {
     public WaypointCommands(Citizens plugin) {
     }
 
+    // TODO: refactor into a policy style system
+    @Command(
+            aliases = { "waypoints", "waypoint", "wp" },
+            usage = "disableteleporting",
+            desc = "Disables teleportation when stuck (temporary command)",
+            modifiers = { "disableteleport" },
+            min = 1,
+            max = 1,
+            permission = "waypoints.disableteleport")
+    public void disableTeleporting(CommandContext args, CommandSender sender, NPC npc)
+            throws CommandException {
+        npc.getNavigator().getDefaultParameters().stuckAction(null);
+        Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_DISABLED);
+    }
+
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "provider (provider name) (-a)",

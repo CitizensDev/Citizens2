@@ -89,9 +89,10 @@ public class CommandContext {
         }
         List<String> copied = Lists.newArrayList();
         for (String arg : args) {
-            if (arg == null || arg.trim().isEmpty())
+            arg = arg.trim();
+            if (arg == null || arg.isEmpty())
                 continue;
-            copied.add(arg);
+            copied.add(arg.trim());
         }
         this.args = copied.toArray(new String[copied.size()]);
     }

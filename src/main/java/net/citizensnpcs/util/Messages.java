@@ -178,5 +178,6 @@ public class Messages {
     public static final String VULNERABLE_SET = "citizens.commands.npc.vulnerable.set";
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
+    public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
 }

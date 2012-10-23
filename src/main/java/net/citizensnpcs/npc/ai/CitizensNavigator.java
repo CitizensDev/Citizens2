@@ -6,6 +6,7 @@ import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.StuckAction;
 import net.citizensnpcs.api.ai.TargetType;
+import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
@@ -24,7 +25,8 @@ import org.bukkit.entity.LivingEntity;
 public class CitizensNavigator implements Navigator {
     private final NavigatorParameters defaultParams = new NavigatorParameters()
             .baseSpeed(UNINITIALISED_SPEED).range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
-            .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt());
+            .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt())
+            .stuckAction(TeleportStuckAction.INSTANCE);
     private PathStrategy executing;
     private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
@@ -87,6 +89,9 @@ public class CitizensNavigator implements Navigator {
         defaultParams.speedModifier((float) root.getDouble("speedmodifier", 1F));
         if (root.keyExists("avoidwater"))
             defaultParams.avoidWater(root.getBoolean("avoidwater"));
+        if (!root.getBoolean("usedefaultstuckaction")
+                && defaultParams.stuckAction() == TeleportStuckAction.INSTANCE)
+            defaultParams.stuckAction(null);
     }
 
     public void onSpawn() {
@@ -106,6 +111,7 @@ public class CitizensNavigator implements Navigator {
         root.setInt("stationaryticks", defaultParams.stationaryTicks());
         root.setDouble("speedmodifier", defaultParams.speedModifier());
         root.setBoolean("avoidwater", defaultParams.avoidWater());
+        root.setBoolean("usedefaultstuckaction", defaultParams.stuckAction() == TeleportStuckAction.INSTANCE);
     }
 
     @Override
