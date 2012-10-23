@@ -289,8 +289,9 @@ public class NPCCommands {
             }
         }
 
-        if (args.hasValueFlag("b")) {
-            npc.getTrait(Behaviour.class).addScripts(Splitter.on(",").split(args.getFlag("behaviour")));
+        if (args.hasValueFlag("b") || args.hasValueFlag("behaviours") || args.hasValueFlag("behaviors")) {
+            String behaviours = args.getFlag("b", args.getFlag("behaviours", args.getFlag("behaviors")));
+            npc.getTrait(Behaviour.class).addScripts(Splitter.on(',').split(behaviours));
             msg += " with the specified behaviours";
         }
 
