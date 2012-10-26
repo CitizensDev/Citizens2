@@ -39,7 +39,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
                 // minecraft will not update it.
                 boolean removeFromPlayerList = Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean();
                 NMS.addOrRemoveFromPlayerList(getBukkitEntity(),
-                        removeFromPlayerList || data().get("removefromplayerlist", removeFromPlayerList));
+                        data().get("removefromplayerlist", removeFromPlayerList));
             }
         }, 5);
         handle.getBukkitEntity().setSleepingIgnored(true);
