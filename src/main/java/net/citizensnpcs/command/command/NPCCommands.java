@@ -576,7 +576,7 @@ public class NPCCommands {
             double z = Double.parseDouble(parts[2]);
             World world = parts.length == 4 ? Bukkit.getWorld(parts[3]) : current.getWorld();
             if (world == null)
-                throw new CommandException(Messages.MOVETO_WORLD_NOT_FOUND);
+                throw new CommandException(Messages.WORLD_NOT_FOUND);
             to = new Location(world, x, y, z, current.getYaw(), current.getPitch());
         } else {
             to = current.clone();
@@ -593,7 +593,7 @@ public class NPCCommands {
             if (args.hasValueFlag("world")) {
                 World world = Bukkit.getWorld(args.getFlag("world"));
                 if (world == null)
-                    throw new CommandException(Messages.MOVETO_WORLD_NOT_FOUND);
+                    throw new CommandException(Messages.WORLD_NOT_FOUND);
                 to.setWorld(world);
             }
         }

@@ -8,7 +8,6 @@ import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.editor.Editor;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -23,8 +22,8 @@ public class WanderWaypointProvider implements WaypointProvider {
     private int xrange, yrange;
 
     @Override
-    public Editor createEditor(Player player) {
-        return new Editor() {
+    public WaypointEditor createEditor(Player player) {
+        return new WaypointEditor() {
             @Override
             public void begin() {
                 // TODO Auto-generated method stub

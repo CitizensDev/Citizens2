@@ -48,6 +48,8 @@ public class NMS {
     private static Field THREAD_STOPPER;
 
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
+        if (bukkitEntity == null)
+            return;
         EntityLiving handle = ((CraftLivingEntity) bukkitEntity).getHandle();
         if (handle.world == null)
             return;
@@ -135,6 +137,10 @@ public class NMS {
             ex.printStackTrace();
             return DEFAULT_SPEED;
         }
+    }
+
+    public static boolean inWater(EntityLiving mcEntity) {
+        return mcEntity.I() || mcEntity.J();
     }
 
     public static void look(ControllerLook controllerLook, EntityLiving handle, EntityLiving target) {
@@ -275,9 +281,5 @@ public class NMS {
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
-    }
-
-    public static boolean inWater(EntityLiving mcEntity) {
-        return mcEntity.I() || mcEntity.J();
     }
 }

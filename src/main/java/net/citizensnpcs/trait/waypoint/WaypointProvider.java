@@ -2,20 +2,19 @@ package net.citizensnpcs.trait.waypoint;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.editor.Editor;
 
 import org.bukkit.entity.Player;
 
 public interface WaypointProvider {
 
     /**
-     * Creates an {@link Editor} with the given {@link Player}.
+     * Creates an {@link WaypointEditor} with the given {@link Player}.
      * 
      * @param player
      *            The player to link the editor with
      * @return The editor
      */
-    public Editor createEditor(Player player);
+    public WaypointEditor createEditor(Player player);
 
     /**
      * Returns whether this provider has paused execution of waypoints.

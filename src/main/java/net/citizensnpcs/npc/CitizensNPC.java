@@ -41,14 +41,6 @@ public abstract class CitizensNPC extends AbstractNPC {
     protected abstract EntityLiving createHandle(Location loc);
 
     @Override
-    public void removeTrait(Class<? extends Trait> clazz) {
-        Trait present = traits.get(clazz);
-        if (present != null)
-            removedTraits.add(present.getName());
-        super.removeTrait(clazz);
-    }
-
-    @Override
     public boolean despawn() {
         if (!isSpawned())
             return false;
@@ -127,6 +119,21 @@ public abstract class CitizensNPC extends AbstractNPC {
         navigator.load(root.getRelative("navigator"));
     }
 
+    @Override
+    public void removeTrait(Class<? extends Trait> clazz) {
+        Trait present = traits.get(clazz);
+        if (present != null)
+            removedTraits.add(present.getName());
+        super.removeTrait(clazz);
+    }
+
+    private void removeTraitData(DataKey root) {
+        for (String name : removedTraits) {
+            root.removeKey("traits." + name);
+        }
+        removedTraits.clear();
+    }
+
     public void save(DataKey root) {
         root.setString("name", getFullName());
 
@@ -141,13 +148,6 @@ public abstract class CitizensNPC extends AbstractNPC {
             removedTraits.remove(trait.getName());
         }
         removeTraitData(root);
-    }
-
-    private void removeTraitData(DataKey root) {
-        for (String name : removedTraits) {
-            root.removeKey("traits." + name);
-        }
-        removedTraits.clear();
     }
 
     @Override

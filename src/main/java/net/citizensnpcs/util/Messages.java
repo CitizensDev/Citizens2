@@ -37,14 +37,18 @@ public class Messages {
     public static final String COMMAND_MUST_BE_INGAME = "citizens.commands.requirements.must-be-ingame";
     public static final String COMMAND_MUST_BE_OWNER = "citizens.commands.requirements.must-be-owner";
     public static final String COMMAND_MUST_HAVE_SELECTED = "citizens.commands.requirements.must-have-selected";
+    public static final String COMMAND_NO_PERMISSION = "citizens.commands.requirements.missing-permission";
     public static final String COMMAND_PAGE_MISSING = "citizens.commands.page-missing";
     public static final String COMMAND_REPORT_ERROR = "citizens.commands.console-error";
     public static final String COMMAND_REQUIREMENTS_INVALID_MOB_TYPE = "citizens.commands.requirements.disallowed-mobtype";
     public static final String COMMAND_SAVE_HELP = "citizens.commands.citizens.save.help";
+    public static final String COMMAND_TOO_FEW_ARGUMENTS = "citizens.commands.requirements.too-few-arguments";
+    public static final String COMMAND_TOO_MANY_ARGUMENTS = "citizens.commands.requirements.too-many-arguments";
     public static final String CONTROLLABLE_REMOVED = "citizens.commands.npc.controllable.removed";
     public static final String CONTROLLABLE_SET = "citizens.commands.npc.controllable.set";
     public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.waypoints.current-provider";
     public static final String DATABASE_CONNECTION_FAILED = "citizens.notifications.database-connection-failed";
+    public static final String DELAY_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.delay.prompt";
     public static final String EQUIPMENT_EDITOR_ALL_ITEMS_REMOVED = "citizens.editors.equipment.all-items-removed";
     public static final String EQUIPMENT_EDITOR_BEGIN = "citizens.editors.equipment.begin";
     public static final String EQUIPMENT_EDITOR_END = "citizens.editors.equipment.end";
@@ -74,6 +78,7 @@ public class Messages {
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
+    public static final String INVALID_TRIGGER_TELEPORT_FORMAT = "citizens.editors.waypoints.triggers.teleport.invalid-format";
     public static final String LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT = "citizens.editors.waypoints.linear.added-waypoint";
     public static final String LINEAR_WAYPOINT_EDITOR_BEGIN = "citizens.editors.waypoints.linear.begin";
     public static final String LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET = "citizens.editors.waypoints.linear.edit-slot-set";
@@ -97,7 +102,6 @@ public class Messages {
     public static final String MONEY_WITHDRAWN = "citizens.economy.money-withdrawn";
     public static final String MOVETO_FORMAT = "citizens.commands.npc.moveto.format";
     public static final String MOVETO_TELEPORTED = "citizens.commands.npc.moveto.teleported";
-    public static final String MOVETO_WORLD_NOT_FOUND = "citizens.commands.npc.moveto.missing-world";
     public static final String NO_NPC_WITH_ID_FOUND = "citizens.commands.npc.spawn.missing-npc-id";
     public static final String NO_STORED_SPAWN_LOCATION = "citizens.commands.npc.spawn.no-location";
     public static final String NOT_LIVING_MOBTYPE = "citizens.commands.npc.create.not-living-mobtype";
@@ -182,5 +186,16 @@ public class Messages {
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
+    public static final String WAYPOINT_TRIGGER_ADD_PROMPT = "citizens.editors.waypoints.triggers.add.prompt";
+    public static final String WAYPOINT_TRIGGER_ADDED_SUCCESSFULLY = "citizens.editors.waypoints.triggers.add.added";
+    public static final String WAYPOINT_TRIGGER_EDITOR_INACTIVE = "citizens.editors.waypoints.triggers.main.missing-waypoint";
+    public static final String WAYPOINT_TRIGGER_EDITOR_INVALID_TRIGGER = "citizens.editors.waypoints.triggers.add.invalid-trigger";
+    public static final String WAYPOINT_TRIGGER_EDITOR_PROMPT = "citizens.editors.waypoints.triggers.main.prompt";
+    public static final String WAYPOINT_TRIGGER_REMOVE_INDEX_OUT_OF_RANGE = "citizens.editors.waypoints.triggers.remove.index-out-of-range";
+    public static final String WAYPOINT_TRIGGER_REMOVE_INVALID_NUMBER = "citizens.editors.waypoints.triggers.remove.not-a-number";
+    public static final String WAYPOINT_TRIGGER_REMOVE_PROMPT = "citizens.editors.waypoints.triggers.remove.prompt";
+    public static final String WAYPOINT_TRIGGER_REMOVE_REMOVED = "citizens.editors.waypoints.triggers.remove.removed";
+    public static final String WAYPOINT_TRIGGER_TELEPORT_PROMPT = "citizens.editors.waypoints.triggers.teleport.prompt";
+    public static final String WORLD_NOT_FOUND = "citizens.commands.errors.missing-world";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
 }
