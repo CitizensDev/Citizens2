@@ -664,7 +664,7 @@ public class NPCCommands {
             permission = "npc.playerlist")
     @Requirements(types = EntityType.PLAYER)
     public void playerlist(CommandContext args, CommandSender sender, NPC npc) {
-        boolean remove = !npc.data().getPersistent("removefromplayerlist",
+        boolean remove = !npc.data().get("removefromplayerlist",
                 Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
         if (args.hasFlag('a'))
             remove = false;
@@ -984,10 +984,9 @@ public class NPCCommands {
         if (args.hasFlag('t')) {
             npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
         } else {
-            vulnerable = !npc.data().getPersistent(NPC.DEFAULT_PROTECTED_METADATA, true);
             npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
         }
-        String key = vulnerable ? Messages.VULNERABLE_SET : Messages.VULNERABLE_STOPPED;
+        String key = vulnerable ? Messages.VULNERABLE_STOPPED : Messages.VULNERABLE_SET;
         Messaging.sendTr(sender, key, npc.getName());
     }
 }

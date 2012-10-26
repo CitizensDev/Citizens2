@@ -185,8 +185,7 @@ public class EventListen implements Listener {
         EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
         if (!(handle instanceof EntityHumanNPC))
             return;
-        if (Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())
-            ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
+        ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
         // on teleport, player NPCs are added to the server player list. this is
         // undesirable as player NPCs are not real players and confuse plugins.
     }
