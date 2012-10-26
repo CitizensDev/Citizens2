@@ -15,6 +15,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.trait.waypoint.triggers.TriggerEditPrompt;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
@@ -43,7 +44,7 @@ public class LinearWaypointProvider implements WaypointProvider {
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
     @Override
-    public Editor createEditor(Player player) {
+    public WaypointEditor createEditor(Player player) {
         return new LinearWaypointEditor(player);
     }
 
@@ -85,7 +86,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         currentGoal.setPaused(paused);
     }
 
-    private final class LinearWaypointEditor extends Editor {
+    private final class LinearWaypointEditor extends WaypointEditor {
         boolean editing = true;
         int editingSlot = waypoints.size() - 1;
         private final Player player;
@@ -136,6 +137,14 @@ public class LinearWaypointProvider implements WaypointProvider {
                     location.getBlockZ());
         }
 
+        @Override
+        public Waypoint getCurrentWaypoint() {
+            if (waypoints.size() == 0 || !editing)
+                return null;
+            normaliseEditingSlot();
+            return waypoints.get(editingSlot);
+        }
+
         private Location getPreviousWaypoint(int fromSlot) {
             if (waypoints.size() <= 1)
                 return null;
@@ -143,6 +152,10 @@ public class LinearWaypointProvider implements WaypointProvider {
             if (fromSlot < 0)
                 fromSlot = waypoints.size() - 1;
             return waypoints.get(fromSlot).getLocation();
+        }
+
+        private void normaliseEditingSlot() {
+            editingSlot = Math.max(0, Math.min(waypoints.size() - 1, editingSlot));
         }
 
         @EventHandler
@@ -161,6 +174,20 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void onPlayerChat(AsyncPlayerChatEvent event) {
             if (!event.getPlayer().equals(player))
                 return;
+            if (event.getMessage().equalsIgnoreCase("triggers")) {
+                event.setCancelled(true);
+                if (!player.hasPermission("citizens.waypoints.triggers")) {
+                    Messaging.sendErrorTr(player, Messages.COMMAND_NO_PERMISSION);
+                    return;
+                }
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                    @Override
+                    public void run() {
+                        TriggerEditPrompt.start(player, LinearWaypointEditor.this);
+                    }
+                }, 1);
+                return;
+            }
             if (!event.getMessage().equalsIgnoreCase("toggle path"))
                 return;
             event.setCancelled(true);
@@ -197,7 +224,8 @@ public class LinearWaypointProvider implements WaypointProvider {
                 }
 
                 Waypoint element = new Waypoint(at);
-                waypoints.add(Math.max(0, editingSlot), element);
+                normaliseEditingSlot();
+                waypoints.add(editingSlot, element);
                 if (showPath)
                     createWaypointMarker(editingSlot, element);
                 editingSlot = Math.min(editingSlot + 1, waypoints.size());
@@ -205,7 +233,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                         editingSlot + 1, waypoints.size());
             } else if (waypoints.size() > 0) {
                 event.setCancelled(true);
-                editingSlot = Math.min(0, Math.max(waypoints.size() - 1, editingSlot));
+                normaliseEditingSlot();
                 Waypoint waypoint = waypoints.remove(editingSlot);
                 if (showPath)
                     removeWaypointMarker(waypoint);
@@ -298,14 +326,15 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void onNavigationComplete(NavigationCompleteEvent event) {
             if (selector == null || !event.getNavigator().equals(getNavigator()))
                 return;
+            Waypoint from = currentDestination;
             selector.finish();
             Location finished = event.getNavigator().getTargetAsLocation();
-            if (finished == null || currentDestination == null)
+            if (finished == null || from == null)
                 return;
-            if (finished.getWorld() != currentDestination.getLocation().getWorld())
+            if (finished.getWorld() != from.getLocation().getWorld())
                 return;
-            if (finished.equals(currentDestination.getLocation()))
-                currentDestination.onReach(npc);
+            if (finished.equals(from.getLocation()))
+                from.onReach(npc);
         }
 
         public void onProviderChanged() {

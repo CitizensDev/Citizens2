@@ -1,15 +1,29 @@
-package net.citizensnpcs.trait.waypoint;
+package net.citizensnpcs.trait.waypoint.triggers;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.trait.waypoint.WaypointProvider;
+import net.citizensnpcs.trait.waypoint.Waypoints;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-public class DelayWaypointTrigger implements WaypointTrigger {
+public class DelayTrigger implements WaypointTrigger {
     @Persist
     private int delay = 0;
+
+    public DelayTrigger() {
+    }
+
+    public DelayTrigger(int delay) {
+        this.delay = delay;
+    }
+
+    @Override
+    public String description() {
+        return String.format("Delay for %d ticks", delay);
+    }
 
     @Override
     public void onWaypointReached(NPC npc, Location waypoint) {
@@ -25,9 +39,5 @@ public class DelayWaypointTrigger implements WaypointTrigger {
                 provider.setPaused(false);
             }
         }, delay);
-    }
-
-    public void setDelay(int newDelay) {
-        delay = newDelay;
     }
 }

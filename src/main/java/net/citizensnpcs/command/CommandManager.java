@@ -103,10 +103,10 @@ public class CommandManager {
         CommandContext context = new CommandContext(args);
 
         if (context.argsLength() < cmd.min())
-            throw new CommandUsageException("Too few arguments.", getUsage(args, cmd));
+            throw new CommandUsageException(Messages.COMMAND_TOO_FEW_ARGUMENTS, getUsage(args, cmd));
 
         if (cmd.max() != -1 && context.argsLength() > cmd.max())
-            throw new CommandUsageException("Too many arguments.", getUsage(args, cmd));
+            throw new CommandUsageException(Messages.COMMAND_TOO_MANY_ARGUMENTS, getUsage(args, cmd));
 
         if (!cmd.flags().contains("*")) {
             for (char flag : context.getFlags())
