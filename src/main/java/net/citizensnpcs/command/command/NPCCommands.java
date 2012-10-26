@@ -671,8 +671,9 @@ public class NPCCommands {
         else if (args.hasFlag('r'))
             remove = true;
         npc.data().setPersistent("removefromplayerlist", remove);
-        NMS.addOrRemoveFromPlayerList(npc.getBukkitEntity(), remove);
-        Messaging.sendTr(sender, remove ? Messages.ADDED_TO_PLAYERLIST : Messages.REMOVED_FROM_PLAYERLIST,
+        if (npc.isSpawned())
+            NMS.addOrRemoveFromPlayerList(npc.getBukkitEntity(), remove);
+        Messaging.sendTr(sender, remove ? Messages.REMOVED_FROM_PLAYERLIST : Messages.ADDED_TO_PLAYERLIST,
                 npc.getName());
     }
 
