@@ -204,8 +204,13 @@ public class NMS {
     }
 
     public static void trySwim(EntityLiving handle) {
-        if ((handle.H() || handle.J()) && Math.random() < 0.8F)
-            handle.motY += 0.04;
+        trySwim(handle, 0.04F);
+    }
+
+    public static void trySwim(EntityLiving handle, float power) {
+        if ((handle.I() || handle.J()) && Math.random() < 0.8F) {
+            handle.motY += power;
+        }
     }
 
     public static void updateAI(EntityLiving entity) {
