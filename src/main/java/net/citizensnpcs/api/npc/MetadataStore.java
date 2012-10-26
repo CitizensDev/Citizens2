@@ -27,10 +27,6 @@ public interface MetadataStore {
      */
     <T> T get(String string, T def);
 
-    <T> T getPersistent(String key);
-
-    <T> T getPersistent(String key, T def);
-
     /**
      * Returns whether the metadata exists.
      * 

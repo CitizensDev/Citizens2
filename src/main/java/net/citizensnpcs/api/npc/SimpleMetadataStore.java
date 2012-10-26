@@ -9,8 +9,17 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 public class SimpleMetadataStore implements MetadataStore {
-    private final Map<String, Object> normalMetadata = Maps.newHashMap();
-    private final Map<String, Object> persistentMetadata = Maps.newHashMap();
+    private static class MetadataObject {
+        public MetadataObject(Object raw, boolean persistent) {
+            value = raw;
+            this.persistent = persistent;
+        }
+
+        Object value;
+        boolean persistent;
+    }
+
+    private final Map<String, MetadataObject> metadata = Maps.newHashMap();
 
     private void checkPrimitive(Object data) {
         Preconditions.checkNotNull(data, "data cannot be null");
@@ -23,10 +32,8 @@ public class SimpleMetadataStore implements MetadataStore {
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
         Preconditions.checkNotNull(key, "key cannot be null");
-        Object normal = normalMetadata.get(key);
-        if (normal != null)
-            return (T) normal;
-        return (T) persistentMetadata.get(key);
+        MetadataObject normal = metadata.get(key);
+        return normal == null ? null : (T) normal.value;
     }
 
     @Override
@@ -39,47 +46,34 @@ public class SimpleMetadataStore implements MetadataStore {
         return t;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getPersistent(String key) {
-        Preconditions.checkNotNull(key, "key cannot be null");
-        return (T) persistentMetadata.get(key);
-    }
-
-    @Override
-    public <T> T getPersistent(String key, T def) {
-        T t = getPersistent(key);
-        if (t == null) {
-            setPersistent(key, def);
-            return def;
-        }
-        return t;
-    }
-
     @Override
     public boolean has(String key) {
         Preconditions.checkNotNull(key, "key cannot be null");
-        return normalMetadata.containsKey(key) || persistentMetadata.containsKey(key);
+        return metadata.containsKey(key);
     }
 
     @Override
     public void loadFrom(DataKey key) {
-        persistentMetadata.clear();
+        for (Entry<String, MetadataObject> entry : metadata.entrySet()) {
+            if (entry.getValue().persistent)
+                metadata.remove(key);
+        }
         for (DataKey subKey : key.getSubKeys()) {
-            persistentMetadata.put(subKey.name(), subKey.getRaw(""));
+            metadata.put(subKey.name(), new MetadataObject(subKey.getRaw(""), true));
         }
     }
 
     @Override
     public void remove(String key) {
-        normalMetadata.remove(key);
-        persistentMetadata.remove(key);
+        metadata.remove(key);
     }
 
     @Override
     public void saveTo(DataKey key) {
         Preconditions.checkNotNull(key, "key cannot be null");
-        for (Entry<String, Object> entry : persistentMetadata.entrySet()) {
-            key.setRaw(entry.getKey(), entry.getValue());
+        for (Entry<String, MetadataObject> entry : metadata.entrySet()) {
+            if (entry.getValue().persistent)
+                key.setRaw(entry.getKey(), entry.getValue().value);
         }
     }
 
@@ -87,13 +81,13 @@ public class SimpleMetadataStore implements MetadataStore {
     public void set(String key, Object data) {
         Preconditions.checkNotNull(data, "data cannot be null");
         Preconditions.checkNotNull(key, "key cannot be null");
-        normalMetadata.put(key, data);
+        metadata.put(key, new MetadataObject(data, false));
     }
 
     @Override
     public void setPersistent(String key, Object data) {
         Preconditions.checkNotNull(key, "key cannot be null");
         checkPrimitive(data);
-        persistentMetadata.put(key, data);
+        metadata.put(key, new MetadataObject(data, true));
     }
 }
