@@ -47,10 +47,11 @@ public class TriggerEditPrompt extends StringPrompt {
         return "";
     }
 
-    public static void start(Player player, WaypointEditor editor) {
+    public static Conversation start(Player player, WaypointEditor editor) {
         final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin())
                 .withLocalEcho(false).withEscapeSequence("exit").withModality(false)
                 .withFirstPrompt(new TriggerEditPrompt(editor)).buildConversation(player);
         conversation.begin();
+        return conversation;
     }
 }

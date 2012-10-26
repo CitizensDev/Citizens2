@@ -24,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -89,6 +90,7 @@ public class LinearWaypointProvider implements WaypointProvider {
     private final class LinearWaypointEditor extends WaypointEditor {
         boolean editing = true;
         int editingSlot = waypoints.size() - 1;
+        Conversation conversation;
         private final Player player;
         private boolean showPath;
         Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
@@ -125,6 +127,8 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void end() {
             if (!editing)
                 return;
+            if (conversation != null)
+                conversation.abandon();
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_END);
             editing = false;
             if (!showPath)
@@ -183,7 +187,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
-                        TriggerEditPrompt.start(player, LinearWaypointEditor.this);
+                        conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
                     }
                 }, 1);
                 return;
