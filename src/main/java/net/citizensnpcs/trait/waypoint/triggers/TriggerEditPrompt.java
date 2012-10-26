@@ -34,14 +34,12 @@ public class TriggerEditPrompt extends StringPrompt {
     @Override
     public String getPromptText(ConversationContext context) {
         context.setSessionData("previous", this);
-        context.setSessionData("exit", false);
-        if (editor.getCurrentWaypoint() == null)
-            return Messaging.tr(Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
-
         String base = Messaging.tr(Messages.WAYPOINT_TRIGGER_EDITOR_PROMPT);
-        Waypoint waypoint = editor.getCurrentWaypoint();
-        for (WaypointTrigger trigger : waypoint.getTriggers()) {
-            base += "\n    - " + trigger.description();
+        if (editor.getCurrentWaypoint() != null) {
+            Waypoint waypoint = editor.getCurrentWaypoint();
+            for (WaypointTrigger trigger : waypoint.getTriggers()) {
+                base += "\n    - " + trigger.description();
+            }
         }
         Messaging.send((CommandSender) context.getForWhom(), base);
         return "";
