@@ -28,19 +28,19 @@ public class SelectionPrompt extends NumericPrompt {
 
     @Override
     protected Prompt acceptValidatedInput(ConversationContext context, Number input) {
-        Object num = context.getSessionData(input);
-        if (num == null) {
-            for (NPC npc : choices) {
-                if (input.intValue() == npc.getId()) {
-                    num = input.intValue();
-                    break;
-                }
+        boolean found = false;
+        for (NPC npc : choices) {
+            if (input.intValue() == npc.getId()) {
+                found = true;
+                break;
             }
-            if (num == null)
-                return this;
         }
-        NPC toSelect = CitizensAPI.getNPCRegistry().getById((Integer) num);
         CommandSender sender = (CommandSender) context.getForWhom();
+        if (!found) {
+            Messaging.sendErrorTr(sender, Messages.SELECTION_PROMPT_INVALID_CHOICE, input);
+            return this;
+        }
+        NPC toSelect = CitizensAPI.getNPCRegistry().getById(input.intValue());
         selector.select(sender, toSelect);
         Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
         return null;
@@ -49,12 +49,8 @@ public class SelectionPrompt extends NumericPrompt {
     @Override
     public String getPromptText(ConversationContext context) {
         String text = Messaging.tr(Messages.SELECTION_PROMPT);
-        int num = 1;
-        for (NPC npc : choices) {
-            text += "<br>    - " + npc.getId() + "(" + num + ")";
-            context.setSessionData(npc.getId(), num);
-            num++;
-        }
+        for (NPC npc : choices)
+            text += "\n    - " + npc.getId();
         return text;
     }
 

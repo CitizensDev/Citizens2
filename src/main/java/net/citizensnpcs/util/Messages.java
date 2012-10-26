@@ -182,4 +182,5 @@ public class Messages {
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
     public static final String ADDED_TO_PLAYERLIST = "citizens.commands.npc.playerlist.added";
     public static final String REMOVED_FROM_PLAYERLIST = "citizens.commands.npc.playerlist.removed";
+    public static final String SELECTION_PROMPT_INVALID_CHOICE = "citizens.conversations.selection.invalid-choice";
 }
