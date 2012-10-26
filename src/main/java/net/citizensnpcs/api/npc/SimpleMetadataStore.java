@@ -9,16 +9,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 public class SimpleMetadataStore implements MetadataStore {
-    private static class MetadataObject {
-        public MetadataObject(Object raw, boolean persistent) {
-            value = raw;
-            this.persistent = persistent;
-        }
-
-        Object value;
-        boolean persistent;
-    }
-
     private final Map<String, MetadataObject> metadata = Maps.newHashMap();
 
     private void checkPrimitive(Object data) {
@@ -89,5 +79,15 @@ public class SimpleMetadataStore implements MetadataStore {
         Preconditions.checkNotNull(key, "key cannot be null");
         checkPrimitive(data);
         metadata.put(key, new MetadataObject(data, true));
+    }
+
+    private static class MetadataObject {
+        boolean persistent;
+
+        Object value;
+        public MetadataObject(Object raw, boolean persistent) {
+            value = raw;
+            this.persistent = persistent;
+        }
     }
 }
