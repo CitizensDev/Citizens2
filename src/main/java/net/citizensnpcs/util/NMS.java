@@ -208,7 +208,7 @@ public class NMS {
     }
 
     public static void trySwim(EntityLiving handle, float power) {
-        if ((handle.I() || handle.J()) && Math.random() < 0.8F) {
+        if (inWater(handle) && Math.random() < 0.8F) {
             handle.motY += power;
         }
     }
@@ -275,5 +275,9 @@ public class NMS {
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
+    }
+
+    public static boolean inWater(EntityLiving mcEntity) {
+        return mcEntity.I() || mcEntity.J();
     }
 }
