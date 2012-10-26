@@ -1,7 +1,6 @@
 package net.citizensnpcs.npc;
 
 import net.citizensnpcs.EventListen;
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
@@ -18,7 +17,6 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityPlayer;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -137,7 +135,6 @@ public abstract class CitizensNPC extends AbstractNPC {
             return false;
 
         mcEntity = createHandle(loc);
-
         boolean couldSpawn = mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
         if (!couldSpawn) {
             // we need to wait for a chunk load before trying to spawn
@@ -145,8 +142,6 @@ public abstract class CitizensNPC extends AbstractNPC {
             EventListen.add(loc, getId());
             return true;
         }
-        if (mcEntity instanceof EntityPlayer && Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())
-            mcEntity.world.players.remove(mcEntity);
 
         NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, loc);
         Bukkit.getPluginManager().callEvent(spawnEvent);

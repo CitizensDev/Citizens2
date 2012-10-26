@@ -40,6 +40,7 @@ import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.Pose;
 import net.citizensnpcs.util.StringHelper;
@@ -650,6 +651,29 @@ public class NPCCommands {
         double range = Math.max(1, args.getDouble(1));
         npc.getNavigator().getDefaultParameters().range((float) range);
         Messaging.sendTr(sender, Messages.PATHFINDING_RANGE_SET, range);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "playerlist (-a,r)",
+            desc = "Sets whether the NPC is put in the playerlist",
+            modifiers = { "playerlist" },
+            min = 1,
+            max = 1,
+            flags = "ar",
+            permission = "npc.playerlist")
+    @Requirements(types = EntityType.PLAYER)
+    public void playerlist(CommandContext args, CommandSender sender, NPC npc) {
+        boolean remove = !npc.data().getPersistent("removefromplayerlist",
+                Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
+        if (args.hasFlag('a'))
+            remove = false;
+        else if (args.hasFlag('r'))
+            remove = true;
+        npc.data().setPersistent("removefromplayerlist", remove);
+        NMS.addOrRemoveFromPlayerList(npc.getBukkitEntity(), remove);
+        Messaging.sendTr(sender, remove ? Messages.ADDED_TO_PLAYERLIST : Messages.REMOVED_FROM_PLAYERLIST,
+                npc.getName());
     }
 
     @Command(
