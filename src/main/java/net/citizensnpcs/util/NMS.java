@@ -51,10 +51,11 @@ public class NMS {
         EntityLiving handle = ((CraftLivingEntity) bukkitEntity).getHandle();
         if (handle.world == null)
             return;
-        if (remove)
+        if (remove) {
             handle.world.players.remove(handle);
-        else
+        } else {
             handle.world.players.add(handle);
+        }
     }
 
     public static void attack(EntityLiving handle, EntityLiving target) {
