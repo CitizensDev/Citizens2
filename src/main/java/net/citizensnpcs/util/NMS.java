@@ -48,6 +48,16 @@ public class NMS {
     private static Field SPEED_FIELD;
     private static Field THREAD_STOPPER;
 
+    public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
+        EntityLiving handle = ((CraftLivingEntity) bukkitEntity).getHandle();
+        if (handle.world == null || !(handle instanceof EntityPlayer))
+            return;
+        if (remove)
+            handle.world.players.remove(handle);
+        else
+            handle.world.players.add(handle);
+    }
+
     public static void attack(EntityLiving handle, EntityLiving target) {
         int damage = getDamage(handle);
 
@@ -260,15 +270,5 @@ public class NMS {
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
-    }
-
-    public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
-        EntityLiving handle = ((CraftLivingEntity) bukkitEntity).getHandle();
-        if (handle.world == null || !(handle instanceof EntityPlayer))
-            return;
-        if (remove)
-            handle.world.players.remove(handle);
-        else
-            handle.world.players.add(handle);
     }
 }

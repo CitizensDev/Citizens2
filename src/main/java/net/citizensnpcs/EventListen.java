@@ -272,9 +272,9 @@ public class EventListen implements Listener {
     }
 
     private static class ChunkCoord {
+        private final String name;
         private final int x;
         private final int z;
-        private final String name;
 
         private ChunkCoord(Chunk chunk) {
             this(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
@@ -284,15 +284,6 @@ public class EventListen implements Listener {
             this.x = x;
             this.z = z;
             this.name = worldName;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = prime + ((name == null) ? 0 : name.hashCode());
-            result = prime * result + x;
-            result = prime * result + z;
-            return result;
         }
 
         @Override
@@ -315,6 +306,15 @@ public class EventListen implements Listener {
                 return false;
             }
             return true;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = prime + ((name == null) ? 0 : name.hashCode());
+            result = prime * result + x;
+            result = prime * result + z;
+            return result;
         }
     }
 
