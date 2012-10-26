@@ -139,9 +139,9 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         super.update();
         if (isSpawned() && getBukkitEntity().getLocation().getChunk().isLoaded()) {
             mcEntity.move(0, -0.2, 0);
-            NMS.trySwim(getHandle());
             // gravity! also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
+            NMS.trySwim(mcEntity, 0.16F);
         }
     }
 }
