@@ -1,5 +1,7 @@
 package net.citizensnpcs.npc;
 
+import java.util.List;
+
 import net.citizensnpcs.EventListen;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
@@ -25,15 +27,26 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import com.google.common.collect.Lists;
+
 public abstract class CitizensNPC extends AbstractNPC {
     protected EntityLiving mcEntity;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
+    private final List<String> removedTraits = Lists.newArrayList();
 
     protected CitizensNPC(int id, String name) {
         super(id, name);
     }
 
     protected abstract EntityLiving createHandle(Location loc);
+
+    @Override
+    public void removeTrait(Class<? extends Trait> clazz) {
+        Trait present = traits.get(clazz);
+        if (present != null)
+            removedTraits.add(present.getName());
+        super.removeTrait(clazz);
+    }
 
     @Override
     public boolean despawn() {
@@ -125,7 +138,12 @@ public abstract class CitizensNPC extends AbstractNPC {
             DataKey traitKey = root.getRelative("traits." + trait.getName());
             trait.save(traitKey);
             PersistenceLoader.save(trait, traitKey);
+            removedTraits.remove(trait.getName());
         }
+        for (String name : removedTraits) {
+            root.removeKey("traits." + name);
+        }
+        removedTraits.clear();
     }
 
     @Override
