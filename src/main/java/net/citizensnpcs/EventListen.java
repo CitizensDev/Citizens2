@@ -73,6 +73,8 @@ public class EventListen implements Listener {
         for (int i = 0; i < ids.size(); i++) {
             int id = ids.get(i);
             NPC npc = npcRegistry.getById(id);
+            if (npc == null)
+                continue;
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         }
         toRespawn.removeAll(coord);
@@ -86,8 +88,8 @@ public class EventListen implements Listener {
                 continue;
             Location loc = npc.getBukkitEntity().getLocation();
             Chunk chunk = loc.getChunk();
-            if (event.getWorld().equals(loc.getWorld()) && event.getChunk().getX() == chunk.getX()
-                    && event.getChunk().getZ() == chunk.getZ()) {
+            boolean sameChunkCoordinates = coord.z == chunk.getZ() && coord.x == chunk.getX();
+            if (event.getWorld().equals(loc.getWorld()) && sameChunkCoordinates) {
                 npc.despawn();
                 toRespawn.put(coord, npc.getId());
             }
@@ -272,14 +274,25 @@ public class EventListen implements Listener {
     private static class ChunkCoord {
         private final int x;
         private final int z;
+        private final String name;
 
         private ChunkCoord(Chunk chunk) {
-            this(chunk.getX(), chunk.getZ());
+            this(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
         }
 
-        private ChunkCoord(int x, int z) {
+        private ChunkCoord(String worldName, int x, int z) {
             this.x = x;
             this.z = z;
+            this.name = worldName;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = prime + ((name == null) ? 0 : name.hashCode());
+            result = prime * result + x;
+            result = prime * result + z;
+            return result;
         }
 
         @Override
@@ -291,13 +304,17 @@ public class EventListen implements Listener {
                 return false;
             }
             ChunkCoord other = (ChunkCoord) obj;
-            return x == other.x && z == other.z;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            return prime * (prime + x) + z;
+            if (name == null) {
+                if (other.name != null) {
+                    return false;
+                }
+            } else if (!name.equals(other.name)) {
+                return false;
+            }
+            if (x != other.x || z != other.z) {
+                return false;
+            }
+            return true;
         }
     }
 

@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.entity;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.editor.Equipable;
@@ -36,6 +37,9 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
                 handle.as = loc.getYaw() % 360;
                 // set the head yaw in another tick - if done immediately,
                 // minecraft will not update it.
+                boolean removeFromPlayerList = Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean();
+                NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList
+                        || data().getPersistent("removefromplayerlist", removeFromPlayerList));
             }
         }, 5);
         handle.getBukkitEntity().setSleepingIgnored(true);
