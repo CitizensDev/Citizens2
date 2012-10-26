@@ -12,7 +12,6 @@ import net.minecraft.server.DamageSource;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityMonster;
-import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.EntityTypes;
 import net.minecraft.server.MobEffectList;
 import net.minecraft.server.Navigation;
@@ -50,7 +49,7 @@ public class NMS {
 
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
         EntityLiving handle = ((CraftLivingEntity) bukkitEntity).getHandle();
-        if (handle.world == null || !(handle instanceof EntityPlayer))
+        if (handle.world == null)
             return;
         if (remove)
             handle.world.players.remove(handle);
