@@ -140,6 +140,10 @@ public abstract class CitizensNPC extends AbstractNPC {
             PersistenceLoader.save(trait, traitKey);
             removedTraits.remove(trait.getName());
         }
+        removeTraitData(root);
+    }
+
+    private void removeTraitData(DataKey root) {
         for (String name : removedTraits) {
             root.removeKey("traits." + name);
         }
