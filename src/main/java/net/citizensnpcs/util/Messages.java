@@ -1,6 +1,7 @@
 package net.citizensnpcs.util;
 
 public class Messages {
+    public static final String ADDED_TO_PLAYERLIST = "citizens.commands.npc.playerlist.added";
     public static final String AGE_LOCKED = "citizens.commands.npc.age.locked";
     public static final String AGE_SET_ADULT = "citizens.commands.npc.age.set-adult";
     public static final String AGE_SET_BABY = "citizens.commands.npc.age.set-baby";
@@ -127,6 +128,7 @@ public class Messages {
     public static final String PROFESSION_SET = "citizens.commands.npc.profession.set";
     public static final String REMOVE_INCORRECT_SYNTAX = "citizens.commands.npc.remove.incorrect-syntax";
     public static final String REMOVED_ALL_NPCS = "citizens.commands.npc.remove.removed-all";
+    public static final String REMOVED_FROM_PLAYERLIST = "citizens.commands.npc.playerlist.removed";
     public static final String SADDLED_SET = "citizens.editors.equipment.saddled-set";
     public static final String SADDLED_STOPPED = "citizens.editors.equipment.saddled-stopped";
     public static final String SAVE_METHOD_SET_NOTIFICATION = "citizens.notifications.save-method-set";
@@ -134,6 +136,7 @@ public class Messages {
     public static final String SCRIPT_COMPILING = "citizens.commands.script.compiling";
     public static final String SCRIPT_FILE_MISSING = "citizens.commands.script.file-missing";
     public static final String SELECTION_PROMPT = "citizens.editors.selection.start-prompt";
+    public static final String SELECTION_PROMPT_INVALID_CHOICE = "citizens.conversations.selection.invalid-choice";
     public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";
     public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
     public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.description";
@@ -180,7 +183,4 @@ public class Messages {
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
-    public static final String ADDED_TO_PLAYERLIST = "citizens.commands.npc.playerlist.added";
-    public static final String REMOVED_FROM_PLAYERLIST = "citizens.commands.npc.playerlist.removed";
-    public static final String SELECTION_PROMPT_INVALID_CHOICE = "citizens.conversations.selection.invalid-choice";
 }
