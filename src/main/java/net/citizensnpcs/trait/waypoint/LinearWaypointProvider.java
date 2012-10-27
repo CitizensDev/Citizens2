@@ -88,9 +88,9 @@ public class LinearWaypointProvider implements WaypointProvider {
     }
 
     private final class LinearWaypointEditor extends WaypointEditor {
+        Conversation conversation;
         boolean editing = true;
         int editingSlot = waypoints.size() - 1;
-        Conversation conversation;
         private final Player player;
         private boolean showPath;
         Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
