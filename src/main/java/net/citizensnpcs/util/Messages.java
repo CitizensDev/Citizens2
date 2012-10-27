@@ -18,6 +18,7 @@ public class Messages {
     public static final String BEHAVIOUR_HELP = "citizens.commands.npc.behaviour.help";
     public static final String BEHAVIOURS_ADDED = "citizens.commands.npc.behaviour.added";
     public static final String BEHAVIOURS_REMOVED = "citizens.commands.npc.behaviour.removed";
+    public static final String CHAT_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.chat.prompt";
     public static final String CITIZENS_DISABLED = "citizens.notifications.disabled";
     public static final String CITIZENS_ENABLED = "citizens.notifications.enabled";
     public static final String CITIZENS_IMPLEMENTATION_DISABLED = "citizens.changed-implementation";
@@ -188,6 +189,8 @@ public class Messages {
     public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
     public static final String WAYPOINT_TRIGGER_ADD_PROMPT = "citizens.editors.waypoints.triggers.add.prompt";
     public static final String WAYPOINT_TRIGGER_ADDED_SUCCESSFULLY = "citizens.editors.waypoints.triggers.add.added";
+    public static final String WAYPOINT_TRIGGER_CHAT_INVALID_RADIUS = "citizens.editors.waypoints.triggers.chat.invalid-radius";
+    public static final String WAYPOINT_TRIGGER_CHAT_NO_RADIUS = "citizens.editors.waypoints.triggers.chat.missing-radius";
     public static final String WAYPOINT_TRIGGER_EDITOR_INACTIVE = "citizens.editors.waypoints.triggers.main.missing-waypoint";
     public static final String WAYPOINT_TRIGGER_EDITOR_INVALID_TRIGGER = "citizens.editors.waypoints.triggers.add.invalid-trigger";
     public static final String WAYPOINT_TRIGGER_EDITOR_PROMPT = "citizens.editors.waypoints.triggers.main.prompt";
