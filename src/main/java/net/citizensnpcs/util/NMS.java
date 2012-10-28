@@ -144,7 +144,7 @@ public class NMS {
     public static boolean rayTrace(LivingEntity entity, LivingEntity entity2) {
         EntityLiving from = ((CraftLivingEntity) entity).getHandle();
         EntityLiving to = ((CraftLivingEntity) entity2).getHandle();
-        return from.l(to);
+        return from.m(to);
     }
 
     public static void registerEntityClass(Class<? extends Entity> clazz) {
