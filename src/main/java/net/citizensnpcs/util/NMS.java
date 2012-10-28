@@ -33,8 +33,6 @@ public class NMS {
         // util class
     }
 
-    private static Field DAMAGE_FIELD;
-
     private static final float DEFAULT_SPEED = 0.4F;
     private static Map<Class<? extends Entity>, Integer> ENTITY_CLASS_TO_INT;
     private static final Map<Class<? extends Entity>, Constructor<? extends Entity>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<? extends Entity>, Constructor<? extends Entity>>();
@@ -61,7 +59,7 @@ public class NMS {
     }
 
     public static void attack(EntityLiving handle, EntityLiving target) {
-        int damage = getDamage(handle);
+        int damage = handle instanceof EntityMonster ? ((EntityMonster) handle).c((Entity) target) : 2;
 
         if (handle.hasEffect(MobEffectList.INCREASE_DAMAGE)) {
             damage += 3 << handle.getEffect(MobEffectList.INCREASE_DAMAGE).getAmplifier();
@@ -99,16 +97,6 @@ public class NMS {
         return constructor;
     }
 
-    private static int getDamage(EntityLiving handle) {
-        if (DAMAGE_FIELD == null)
-            return 2;
-        try {
-            return DAMAGE_FIELD.getInt(handle);
-        } catch (Exception e) {
-        }
-        return 2;
-    }
-
     private static Field getField(Class<?> clazz, String field) {
         Field f = null;
         try {
@@ -144,11 +132,11 @@ public class NMS {
     }
 
     public static void look(ControllerLook controllerLook, EntityLiving handle, EntityLiving target) {
-        controllerLook.a(target, 10.0F, handle.bf());
+        controllerLook.a(target, 10.0F, handle.bm());
     }
 
     public static void look(EntityLiving handle, float yaw, float pitch) {
-        handle.yaw = handle.as = yaw;
+        handle.yaw = handle.ay = yaw;
         handle.pitch = pitch;
     }
 
@@ -266,12 +254,11 @@ public class NMS {
         MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
         MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
 
-        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bB");
-        SPEED_FIELD = getField(EntityLiving.class, "bw");
+        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bQ");
+        SPEED_FIELD = getField(EntityLiving.class, "bI");
         NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
         PATHFINDING_RANGE = getField(Navigation.class, "e");
         GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
-        DAMAGE_FIELD = getField(EntityMonster.class, "damage");
 
         try {
             Field field = getField(EntityTypes.class, "d");

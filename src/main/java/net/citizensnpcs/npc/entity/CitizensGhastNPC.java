@@ -44,18 +44,18 @@ public class CitizensGhastNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bb() {
+        public void bh() {
             if (npc == null)
-                super.bb();
+                super.bh();
             // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override
-        public void be() {
+        public void bk() {
             if (npc != null)
                 npc.update();
             else
-                super.be();
+                super.bk();
         }
 
         @Override

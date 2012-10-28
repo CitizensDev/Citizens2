@@ -40,16 +40,16 @@ public class CitizensGiantNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bb() {
+        public void bh() {
             if (npc == null)
-                super.bb();
+                super.bh();
             // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override
-        public void be() {
+        public void bk() {
             if (npc == null)
-                super.be();
+                super.bk();
             else
                 npc.update();
         }

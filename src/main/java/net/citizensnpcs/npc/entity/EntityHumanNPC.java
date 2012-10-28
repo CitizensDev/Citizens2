@@ -85,8 +85,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public void h_() {
-        super.h_();
+    public void j_() {
+        super.j_();
         if (npc == null)
             return;
         Navigation navigation = getNavigation();
@@ -114,7 +114,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                 public boolean a() {
                     return false;
                 }
-            }, server.E().getPrivate());
+            }, server.F().getPrivate());
             netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
             netMgr.a(netServerHandler);
         } catch (IOException e) {
@@ -138,28 +138,28 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         e(npc.getNavigator().getDefaultParameters().speed());
 
         // taken from EntityLiving update method
-        if (bu) {
+        if (bG) {
             /* boolean inLiquid = H() || J();
              if (inLiquid) {
                  motY += 0.04;
              } else (handled elsewhere)*/
-            if (onGround && bE == 0) {
+            if (onGround && bW == 0) {
                 // this.aZ(); - this doesn't jump high enough
                 motY = 0.6;
-                bE = 10;
+                bW = 10;
             }
         } else
-            bE = 0;
+            bW = 0;
 
-        br *= 0.98F;
-        bs *= 0.98F;
-        bt *= 0.9F;
+        bD *= 0.98F;
+        bE *= 0.98F;
+        bF *= 0.9F;
 
-        float prev = aG;
-        aG *= bs() * npc.getNavigator().getDefaultParameters().speed();
-        e(br, bs); // movement method
-        aG = prev;
-        as = yaw; // update head yaw to match entity yaw
+        float prev = aM;
+        aM *= bs() * npc.getNavigator().getDefaultParameters().speed();
+        e(bD, bE); // movement method
+        aM = prev;
+        ay = yaw; // update head yaw to match entity yaw
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder {

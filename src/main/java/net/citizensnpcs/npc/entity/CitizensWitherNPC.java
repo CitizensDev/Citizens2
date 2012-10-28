@@ -7,48 +7,53 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.EntityMagmaCube;
+import net.minecraft.server.EntityWither;
 import net.minecraft.server.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftMagmaCube;
+import org.bukkit.craftbukkit.entity.CraftWither;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.MagmaCube;
+import org.bukkit.entity.Wither;
 import org.bukkit.util.Vector;
 
-public class CitizensMagmaCubeNPC extends CitizensMobNPC {
-
-    public CitizensMagmaCubeNPC(int id, String name) {
-        super(id, name, EntityMagmaCubeNPC.class);
+public class CitizensWitherNPC extends CitizensMobNPC {
+    public CitizensWitherNPC(int id, String name) {
+        super(id, name, EntityWitherNPC.class);
     }
 
     @Override
-    public MagmaCube getBukkitEntity() {
-        return (MagmaCube) super.getBukkitEntity();
+    public Wither getBukkitEntity() {
+        return (Wither) super.getBukkitEntity();
     }
 
-    public static class EntityMagmaCubeNPC extends EntityMagmaCube implements NPCHolder {
+    public static class WitherNPC extends CraftWither implements NPCHolder {
         private final CitizensNPC npc;
 
-        public EntityMagmaCubeNPC(World world) {
-            this(world, null);
-        }
-
-        public EntityMagmaCubeNPC(World world, NPC npc) {
-            super(world);
-            this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                setSize(3);
-                NMS.clearGoals(goalSelector, targetSelector);
-            }
+        public WitherNPC(EntityWitherNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
         }
 
         @Override
-        public void bh() {
-            if (npc == null)
-                super.bh();
-            // check despawn method, we only want to despawn on chunk unload.
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class EntityWitherNPC extends EntityWither implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public EntityWitherNPC(World world) {
+            this(world, null);
+        }
+
+        public EntityWitherNPC(World world, NPC npc) {
+            super(world);
+            this.npc = (CitizensNPC) npc;
+            if (npc != null) {
+                NMS.clearGoals(goalSelector, targetSelector);
+            }
         }
 
         @Override
@@ -56,16 +61,6 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
             super.bi();
             if (npc != null)
                 npc.update();
-        }
-
-        @Override
-        public void bk() {
-            if (npc == null)
-                super.bk();
-            else {
-                NMS.updateAI(this);
-                npc.update();
-            }
         }
 
         @Override
@@ -102,7 +97,7 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
         @Override
         public Entity getBukkitEntity() {
             if (bukkitEntity == null && npc != null)
-                bukkitEntity = new MagmaCubeNPC(this);
+                bukkitEntity = new WitherNPC(this);
             return super.getBukkitEntity();
         }
 
@@ -110,19 +105,11 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
         public NPC getNPC() {
             return npc;
         }
-    }
-
-    public static class MagmaCubeNPC extends CraftMagmaCube implements NPCHolder {
-        private final CitizensNPC npc;
-
-        public MagmaCubeNPC(EntityMagmaCubeNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
 
         @Override
-        public NPC getNPC() {
-            return npc;
+        public void c() {
+            if (npc == null)
+                super.c();
         }
     }
 }

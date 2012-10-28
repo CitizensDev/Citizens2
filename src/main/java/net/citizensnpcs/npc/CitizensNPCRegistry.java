@@ -9,6 +9,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.npc.entity.CitizensBatNPC;
 import net.citizensnpcs.npc.entity.CitizensBlazeNPC;
 import net.citizensnpcs.npc.entity.CitizensCaveSpiderNPC;
 import net.citizensnpcs.npc.entity.CitizensChickenNPC;
@@ -33,6 +34,8 @@ import net.citizensnpcs.npc.entity.CitizensSnowmanNPC;
 import net.citizensnpcs.npc.entity.CitizensSpiderNPC;
 import net.citizensnpcs.npc.entity.CitizensSquidNPC;
 import net.citizensnpcs.npc.entity.CitizensVillagerNPC;
+import net.citizensnpcs.npc.entity.CitizensWitchNPC;
+import net.citizensnpcs.npc.entity.CitizensWitherNPC;
 import net.citizensnpcs.npc.entity.CitizensWolfNPC;
 import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 import net.citizensnpcs.util.ByIdArray;
@@ -50,6 +53,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     public CitizensNPCRegistry(NPCDataStore store) {
         saves = store;
 
+        types.put(EntityType.BAT, CitizensBatNPC.class);
         types.put(EntityType.BLAZE, CitizensBlazeNPC.class);
         types.put(EntityType.CAVE_SPIDER, CitizensCaveSpiderNPC.class);
         types.put(EntityType.CHICKEN, CitizensChickenNPC.class);
@@ -75,6 +79,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
         types.put(EntityType.SQUID, CitizensSquidNPC.class);
         types.put(EntityType.VILLAGER, CitizensVillagerNPC.class);
         types.put(EntityType.WOLF, CitizensWolfNPC.class);
+        types.put(EntityType.WITCH, CitizensWitchNPC.class);
+        types.put(EntityType.WITHER, CitizensWitherNPC.class);
         types.put(EntityType.ZOMBIE, CitizensZombieNPC.class);
     }
 

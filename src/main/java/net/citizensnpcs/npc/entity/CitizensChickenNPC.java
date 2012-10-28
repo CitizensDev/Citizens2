@@ -18,7 +18,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class CitizensChickenNPC extends CitizensMobNPC {
-
     public CitizensChickenNPC(int id, String name) {
         super(id, name, EntityChickenNPC.class);
     }
@@ -58,8 +57,8 @@ public class CitizensChickenNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bc() {
-            super.bc();
+        public void bi() {
+            super.bi();
             if (npc != null)
                 npc.update();
         }

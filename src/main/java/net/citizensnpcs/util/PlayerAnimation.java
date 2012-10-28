@@ -32,7 +32,8 @@ public enum PlayerAnimation {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
             player.getBukkitEntity().setSneaking(true);
-            sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher()), player, radius);
+            sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher(), true), player,
+                    radius);
         }
     },
     STOP_SLEEPING {
@@ -46,7 +47,8 @@ public enum PlayerAnimation {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
             player.getBukkitEntity().setSneaking(false);
-            sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher()), player, radius);
+            sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher(), true), player,
+                    radius);
         }
     },
     SWING_ARM {
