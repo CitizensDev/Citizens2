@@ -39,14 +39,8 @@ public class CitizensSpiderNPC extends CitizensMobNPC {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
-        }
-
-        @Override
-        public void bh() {
-            if (npc == null)
-                super.bh();
-            // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override

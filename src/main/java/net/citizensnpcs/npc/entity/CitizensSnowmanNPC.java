@@ -31,19 +31,17 @@ public class CitizensSnowmanNPC extends CitizensMobNPC {
     public static class EntitySnowmanNPC extends EntitySnowman implements NPCHolder {
         private final CitizensNPC npc;
 
+        public EntitySnowmanNPC(World world) {
+            this(world, null);
+        }
+
         public EntitySnowmanNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
-        }
-
-        @Override
-        public void bh() {
-            if (npc == null)
-                super.bh();
-            // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override

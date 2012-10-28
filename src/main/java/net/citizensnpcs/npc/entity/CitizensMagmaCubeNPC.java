@@ -41,15 +41,10 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
             if (npc != null) {
                 setSize(3);
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
         }
 
-        @Override
-        public void bh() {
-            if (npc == null)
-                super.bh();
-            // check despawn method, we only want to despawn on chunk unload.
-        }
 
         @Override
         public void bi() {

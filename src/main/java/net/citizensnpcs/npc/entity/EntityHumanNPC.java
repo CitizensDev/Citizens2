@@ -84,27 +84,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return npc;
     }
 
-    @Override
-    public void j_() {
-        super.j_();
-        if (npc == null)
-            return;
-        Navigation navigation = getNavigation();
-        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
-            motX = motY = motZ = 0;
-
-        if (!navigation.f()) {
-            navigation.e();
-            moveOnCurrentHeading();
-        } else if (motX != 0 || motZ != 0 || motY != 0)
-            e(0, 0); // is this necessary? it does gravity/controllable but
-                     // sometimes players sink into the ground
-
-        if (noDamageTicks > 0)
-            --noDamageTicks;
-        npc.update();
-    }
-
     private void initialise(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
         NetworkManager netMgr = null;
@@ -129,6 +108,27 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         } catch (IOException ex) {
             // swallow
         }
+    }
+
+    @Override
+    public void j_() {
+        super.j_();
+        if (npc == null)
+            return;
+        Navigation navigation = getNavigation();
+        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
+            motX = motY = motZ = 0;
+
+        if (!navigation.f()) {
+            navigation.e();
+            moveOnCurrentHeading();
+        } else if (motX != 0 || motZ != 0 || motY != 0)
+            e(0, 0); // is this necessary? it does gravity/controllable but
+                     // sometimes players sink into the ground
+
+        if (noDamageTicks > 0)
+            --noDamageTicks;
+        npc.update();
     }
 
     private void moveOnCurrentHeading() {

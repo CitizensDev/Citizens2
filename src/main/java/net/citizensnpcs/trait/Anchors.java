@@ -6,9 +6,9 @@ import java.util.List;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
-import net.citizensnpcs.util.Anchor;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -44,7 +44,8 @@ public class Anchors extends Trait {
         for (DataKey sub : key.getRelative("list").getIntegerSubKeys())
             try {
                 String[] parts = sub.getString("").split(";");
-                anchors.add(new Anchor(parts[0], new Location(Bukkit.getServer().getWorld(parts[1]), Double.valueOf(parts[2]), Double.valueOf(parts[3]), Double.valueOf(parts[4]))));
+                anchors.add(new Anchor(parts[0], new Location(Bukkit.getServer().getWorld(parts[1]), Double
+                        .valueOf(parts[2]), Double.valueOf(parts[3]), Double.valueOf(parts[4]))));
             } catch (NumberFormatException e) {
                 Messaging.logTr(Messages.SKIPPING_INVALID_ANCHOR, sub.name(), e.getMessage());
             }
