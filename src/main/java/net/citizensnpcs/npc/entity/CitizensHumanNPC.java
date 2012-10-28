@@ -53,6 +53,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         Material type = hand == null ? Material.AIR : hand.getType();
         // First, determine the slot to edit
         switch (type) {
+            case SKULL_ITEM:
             case PUMPKIN:
             case JACK_O_LANTERN:
             case LEATHER_HELMET:
