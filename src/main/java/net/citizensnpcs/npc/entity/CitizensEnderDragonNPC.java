@@ -45,19 +45,17 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
     public static class EntityEnderDragonNPC extends EntityEnderDragon implements NPCHolder {
         private final CitizensNPC npc;
 
+        public EntityEnderDragonNPC(World world) {
+            this(world, null);
+        }
+
         public EntityEnderDragonNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
-        }
-
-        @Override
-        public void bh() {
-            if (npc == null)
-                super.bh();
-            // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override
@@ -67,20 +65,20 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
         }
 
         @Override
+        public void c() {
+            if (npc != null)
+                npc.update();
+            else
+                super.c();
+        }
+
+        @Override
         public void collide(net.minecraft.server.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
             if (npc != null)
                 Util.callCollisionEvent(npc, entity);
-        }
-
-        @Override
-        public void c() {
-            if (npc != null)
-                npc.update();
-            else
-                super.c();
         }
 
         @Override

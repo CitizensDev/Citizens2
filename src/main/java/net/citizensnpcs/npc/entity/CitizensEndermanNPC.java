@@ -87,14 +87,8 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
-        }
-
-        @Override
-        public void bh() {
-            if (npc == null)
-                super.bh();
-            // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override
@@ -115,15 +109,6 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
-        public void collide(net.minecraft.server.Entity entity) {
-            // this method is called by both the entities involved - cancelling
-            // it will not stop the NPC from moving.
-            super.collide(entity);
-            if (npc != null)
-                Util.callCollisionEvent(npc, entity);
-        }
-
-        @Override
         public void c() {
             if (npc == null)
                 super.c();
@@ -131,6 +116,15 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
                 NMS.updateAI(this);
                 npc.update();
             }
+        }
+
+        @Override
+        public void collide(net.minecraft.server.Entity entity) {
+            // this method is called by both the entities involved - cancelling
+            // it will not stop the NPC from moving.
+            super.collide(entity);
+            if (npc != null)
+                Util.callCollisionEvent(npc, entity);
         }
 
         @Override

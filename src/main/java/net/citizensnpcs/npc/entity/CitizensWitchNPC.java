@@ -27,20 +27,6 @@ public class CitizensWitchNPC extends CitizensMobNPC {
         return (Witch) super.getBukkitEntity();
     }
 
-    public static class WitchNPC extends CraftWitch implements NPCHolder {
-        private final CitizensNPC npc;
-
-        public WitchNPC(EntityWitchNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-    }
-
     public static class EntityWitchNPC extends EntityWitch implements NPCHolder {
         private final CitizensNPC npc;
 
@@ -53,6 +39,7 @@ public class CitizensWitchNPC extends CitizensMobNPC {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
         }
 
@@ -99,6 +86,20 @@ public class CitizensWitchNPC extends CitizensMobNPC {
             if (bukkitEntity == null && npc != null)
                 bukkitEntity = new WitchNPC(this);
             return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class WitchNPC extends CraftWitch implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public WitchNPC(EntityWitchNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
         }
 
         @Override

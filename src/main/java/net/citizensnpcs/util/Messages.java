@@ -60,6 +60,7 @@ public class Messages {
     public static final String ERROR_GETTING_ID_MAPPING = "citizens.nms-errors.getting-id-mapping";
     public static final String ERROR_INITALISING_SUB_PLUGIN = "citizens.sub-plugins.error-on-load";
     public static final String ERROR_LOADING_ECONOMY = "citizens.economy.error-loading";
+    public static final String ERROR_SETTING_ENTITY_PERSISTENT = "citizens.nms-errors.error-setting-persistent";
     public static final String ERROR_SPAWNING_CUSTOM_ENTITY = "citizens.nms-errors.spawning-custom-entity";
     public static final String ERROR_STOPPING_NETWORK_THREADS = "citizens.nms-errors.stopping-network-threads";
     public static final String ERROR_UPDATING_NAVIGATION_WORLD = "citizens.nms-errors.updating-navigation-world";

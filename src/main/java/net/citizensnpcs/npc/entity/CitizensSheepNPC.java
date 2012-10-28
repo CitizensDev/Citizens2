@@ -69,6 +69,7 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
         }
 

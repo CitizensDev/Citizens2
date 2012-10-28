@@ -27,20 +27,6 @@ public class CitizensWitherNPC extends CitizensMobNPC {
         return (Wither) super.getBukkitEntity();
     }
 
-    public static class WitherNPC extends CraftWither implements NPCHolder {
-        private final CitizensNPC npc;
-
-        public WitherNPC(EntityWitherNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-    }
-
     public static class EntityWitherNPC extends EntityWither implements NPCHolder {
         private final CitizensNPC npc;
 
@@ -53,6 +39,7 @@ public class CitizensWitherNPC extends CitizensMobNPC {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
         }
 
@@ -61,6 +48,12 @@ public class CitizensWitherNPC extends CitizensMobNPC {
             super.bi();
             if (npc != null)
                 npc.update();
+        }
+
+        @Override
+        public void c() {
+            if (npc == null)
+                super.c();
         }
 
         @Override
@@ -105,11 +98,19 @@ public class CitizensWitherNPC extends CitizensMobNPC {
         public NPC getNPC() {
             return npc;
         }
+    }
+
+    public static class WitherNPC extends CraftWither implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public WitherNPC(EntityWitherNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
 
         @Override
-        public void c() {
-            if (npc == null)
-                super.c();
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

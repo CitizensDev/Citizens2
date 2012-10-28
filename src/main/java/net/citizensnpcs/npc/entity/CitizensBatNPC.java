@@ -53,6 +53,7 @@ public class CitizensBatNPC extends CitizensMobNPC {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
         }
 
@@ -61,12 +62,6 @@ public class CitizensBatNPC extends CitizensMobNPC {
             super.bi();
             if (npc != null)
                 npc.update();
-        }
-
-        @Override
-        public void j_() {
-            if (npc == null)
-                super.j_();
         }
 
         @Override
@@ -110,6 +105,12 @@ public class CitizensBatNPC extends CitizensMobNPC {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public void j_() {
+            if (npc == null)
+                super.j_();
         }
     }
 }

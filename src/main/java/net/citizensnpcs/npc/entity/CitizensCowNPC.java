@@ -54,6 +54,7 @@ public class CitizensCowNPC extends CitizensMobNPC {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
         }
 

@@ -55,6 +55,7 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+                NMS.setPersistent(this);
             }
         }
 
@@ -62,13 +63,6 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
         public void a(EntityLightning entitylightning) {
             if (npc == null)
                 super.a(entitylightning);
-        }
-
-        @Override
-        public void bh() {
-            if (npc == null)
-                super.bh();
-            // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override
