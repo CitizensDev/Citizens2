@@ -65,15 +65,15 @@ public class CitizensCreeperNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bb() {
+        public void bh() {
             if (npc == null)
-                super.bb();
+                super.bh();
             // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override
-        public void bc() {
-            super.bc();
+        public void bi() {
+            super.bi();
             if (npc != null)
                 npc.update();
         }

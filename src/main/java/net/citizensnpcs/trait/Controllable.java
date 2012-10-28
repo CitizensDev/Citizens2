@@ -249,8 +249,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             .newEnumMap(EntityType.class);
 
     static {
+        controllerTypes.put(EntityType.BAT, AirController.class);
         controllerTypes.put(EntityType.BLAZE, AirController.class);
         controllerTypes.put(EntityType.ENDER_DRAGON, AirController.class);
         controllerTypes.put(EntityType.GHAST, AirController.class);
+        controllerTypes.put(EntityType.WITHER, AirController.class);
     }
 }

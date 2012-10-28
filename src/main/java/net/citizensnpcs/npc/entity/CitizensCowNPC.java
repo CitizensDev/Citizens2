@@ -58,8 +58,8 @@ public class CitizensCowNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bc() {
-            super.bc();
+        public void bi() {
+            super.bi();
             if (npc != null)
                 npc.update();
         }

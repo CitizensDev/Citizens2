@@ -91,23 +91,23 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
-        public void bb() {
+        public void bh() {
             if (npc == null)
-                super.bb();
+                super.bh();
             // check despawn method, we only want to despawn on chunk unload.
         }
 
         @Override
-        public void bc() {
-            super.bc();
+        public void bi() {
+            super.bi();
             if (npc != null)
                 npc.update();
         }
 
         @Override
-        public void be() {
+        public void bk() {
             if (npc == null)
-                super.be();
+                super.bk();
             else {
                 NMS.updateAI(this);
                 npc.update();
@@ -124,9 +124,9 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
-        public void d() {
+        public void c() {
             if (npc == null)
-                super.d();
+                super.c();
             else {
                 NMS.updateAI(this);
                 npc.update();
