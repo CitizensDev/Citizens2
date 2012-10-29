@@ -2,6 +2,8 @@ package net.citizensnpcs.npc;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.citizensnpcs.EventListen;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
@@ -27,6 +29,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public abstract class CitizensNPC extends AbstractNPC {
@@ -83,10 +88,19 @@ public abstract class CitizensNPC extends AbstractNPC {
         return getHandle() != null;
     }
 
-    public void load(DataKey root) {
+    public void load(final DataKey root) {
         metadata.loadFrom(root.getRelative("metadata"));
         // Load traits
-        for (DataKey traitKey : root.getRelative("traits").getSubKeys()) {
+
+        String traitNames = root.getString("traitnames");
+        Iterable<DataKey> keys = traitNames.isEmpty() ? root.getRelative("traits").getSubKeys() : Iterables
+                .transform(Splitter.on(',').split(traitNames), new Function<String, DataKey>() {
+                    @Override
+                    public DataKey apply(@Nullable String input) {
+                        return root.getRelative("traits." + input);
+                    }
+                });
+        for (DataKey traitKey : keys) {
             if (traitKey.keyExists("enabled") && !traitKey.getBoolean("enabled"))
                 continue;
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
@@ -141,11 +155,16 @@ public abstract class CitizensNPC extends AbstractNPC {
         navigator.save(root.getRelative("navigator"));
 
         // Save all existing traits
+        StringBuilder traitNames = new StringBuilder();
         for (Trait trait : traits.values()) {
             DataKey traitKey = root.getRelative("traits." + trait.getName());
             trait.save(traitKey);
             PersistenceLoader.save(trait, traitKey);
             removedTraits.remove(trait.getName());
+            traitNames.append(trait.getName() + ",");
+        }
+        if (traitNames.length() > 0) {
+            root.setString("traitnames", traitNames.substring(0, traitNames.length() - 1));
         }
         removeTraitData(root);
     }
