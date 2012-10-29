@@ -1,24 +1,19 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 public class Sheared extends Trait implements Toggleable {
+    @Persist("")
     private boolean sheared;
 
     public Sheared() {
         super("sheared");
-    }
-
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        sheared = key.getBoolean("");
     }
 
     @EventHandler
@@ -30,11 +25,6 @@ public class Sheared extends Trait implements Toggleable {
     @Override
     public void onSpawn() {
         ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
-    }
-
-    @Override
-    public void save(DataKey key) {
-        key.setBoolean("", sheared);
     }
 
     @Override

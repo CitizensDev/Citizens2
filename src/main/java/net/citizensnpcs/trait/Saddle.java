@@ -1,9 +1,8 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Pig;
 import org.bukkit.event.EventHandler;
@@ -11,15 +10,11 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 public class Saddle extends Trait implements Toggleable {
     private boolean pig;
+    @Persist("")
     private boolean saddle;
 
     public Saddle() {
         super("saddle");
-    }
-
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        saddle = key.getBoolean("");
     }
 
     @EventHandler
@@ -35,11 +30,6 @@ public class Saddle extends Trait implements Toggleable {
             pig = true;
         } else
             pig = false;
-    }
-
-    @Override
-    public void save(DataKey key) {
-        key.setBoolean("", saddle);
     }
 
     @Override

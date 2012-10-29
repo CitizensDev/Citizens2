@@ -26,6 +26,7 @@ import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.Sheared;
+import net.citizensnpcs.trait.SkeletonType;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WoolColor;
@@ -41,26 +42,27 @@ public class CitizensTraitFactory implements TraitFactory {
 
     public CitizensTraitFactory() {
         registerTrait(TraitInfo.create(Age.class).withName("age"));
-        registerTrait(TraitInfo.create(CurrentLocation.class).withName("location"));
+        registerTrait(TraitInfo.create(Anchors.class).withName("anchors"));
+        registerTrait(TraitInfo.create(Behaviour.class).withName("behaviour"));
+        registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));
         registerTrait(TraitInfo.create(Equipment.class).withName("equipment"));
-        registerTrait(TraitInfo.create(Inventory.class).withName("inventory"));
-        registerTrait(TraitInfo.create(LookClose.class).withName("lookclose"));
         registerTrait(TraitInfo.create(Gravity.class).withName("gravity"));
-        registerTrait(TraitInfo.create(SlimeSize.class).withName("slimesize"));
-        registerTrait(TraitInfo.create(MobType.class).withName("type"));
+        registerTrait(TraitInfo.create(Inventory.class).withName("inventory"));
+        registerTrait(TraitInfo.create(CurrentLocation.class).withName("location"));
+        registerTrait(TraitInfo.create(LookClose.class).withName("lookclose"));
         registerTrait(TraitInfo.create(Owner.class).withName("owner"));
+        registerTrait(TraitInfo.create(Poses.class).withName("poses"));
         registerTrait(TraitInfo.create(Powered.class).withName("powered"));
+        registerTrait(TraitInfo.create(VillagerProfession.class).withName("profession"));
         registerTrait(TraitInfo.create(Saddle.class).withName("saddle"));
         registerTrait(TraitInfo.create(Sheared.class).withName("sheared"));
+        registerTrait(TraitInfo.create(SkeletonType.class).withName("skeletontype"));
+        registerTrait(TraitInfo.create(SlimeSize.class).withName("slimesize"));
         registerTrait(TraitInfo.create(Spawned.class).withName("spawned"));
         registerTrait(TraitInfo.create(Text.class).withName("text"));
-        registerTrait(TraitInfo.create(VillagerProfession.class).withName("profession"));
+        registerTrait(TraitInfo.create(MobType.class).withName("type"));
         registerTrait(TraitInfo.create(Waypoints.class).withName("waypoints"));
         registerTrait(TraitInfo.create(WoolColor.class).withName("woolcolor"));
-        registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));
-        registerTrait(TraitInfo.create(Behaviour.class).withName("behaviour"));
-        registerTrait(TraitInfo.create(Poses.class).withName("poses"));
-        registerTrait(TraitInfo.create(Anchors.class).withName("anchors"));
 
         for (String trait : registered.keySet())
             INTERNAL_TRAITS.add(trait);

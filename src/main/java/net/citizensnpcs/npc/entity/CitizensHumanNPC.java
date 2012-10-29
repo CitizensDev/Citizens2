@@ -34,7 +34,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                handle.ay = loc.getYaw() % 360;
+                NMS.setHeadYaw(handle, loc.getYaw() % 360);
                 // set the head yaw in another tick - if done immediately,
                 // minecraft will not update it.
                 boolean removeFromPlayerList = Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean();
@@ -96,6 +96,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
                     }
                 }
                 Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_ALL_ITEMS_REMOVED, getName());
+                break;
             default:
                 break;
         }
