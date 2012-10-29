@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.util;
 
+import java.util.Map;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -92,4 +94,6 @@ public abstract class DataKey {
             }
         }
     };
+
+    public abstract Map<String, Object> getValuesDeep();
 }

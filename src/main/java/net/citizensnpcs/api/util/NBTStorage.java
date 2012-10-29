@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
@@ -22,6 +26,7 @@ import net.citizensnpcs.api.jnbt.Tag;
 import org.bukkit.Bukkit;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -115,11 +120,15 @@ public class NBTStorage implements Storage {
         }
 
         private String createRelativeKey(String from) {
-            if (from.isEmpty())
-                return current;
-            if (from.charAt(0) == '.')
-                return current.isEmpty() ? from.substring(1, from.length()) : current + from;
-            return current.isEmpty() ? from : current + "." + from;
+            return createRelativeKey(current, from);
+        }
+
+        private String createRelativeKey(String parent, String sub) {
+            if (sub.isEmpty())
+                return parent;
+            if (sub.charAt(0) == '.')
+                return parent.isEmpty() ? sub.substring(1, sub.length()) : parent + sub;
+            return parent.isEmpty() ? sub : parent + "." + sub;
         }
 
         private Map<String, Tag> findLastParent(String key) {
@@ -203,14 +212,35 @@ public class NBTStorage implements Storage {
 
         @Override
         public Iterable<DataKey> getSubKeys() {
-            List<DataKey> subKeys = Lists.newArrayList();
             Tag tag = findLastTag(current, false);
             if (!(tag instanceof CompoundTag))
-                return subKeys;
+                return Collections.emptyList();
+            List<DataKey> subKeys = Lists.newArrayList();
             for (String name : ((CompoundTag) tag).getValue().keySet()) {
                 subKeys.add(new NBTKey(createRelativeKey(name)));
             }
             return subKeys;
+        }
+
+        @Override
+        public Map<String, Object> getValuesDeep() {
+            Tag tag = findLastTag(current, false);
+            if (!(tag instanceof CompoundTag))
+                return Collections.emptyMap();
+            Queue<Node> node = new ArrayDeque<Node>(ImmutableList.of(new Node(tag)));
+            Map<String, Object> values = Maps.newHashMap();
+            while (!node.isEmpty()) {
+                Node root = node.poll();
+                for (Entry<String, Tag> entry : root.values.entrySet()) {
+                    String key = createRelativeKey(root.parent, entry.getKey());
+                    if (entry.getValue() instanceof CompoundTag) {
+                        node.add(new Node(key, entry.getValue()));
+                        continue;
+                    }
+                    values.put(key, entry.getValue().getValue());
+                }
+            }
+            return values;
         }
 
         @Override
@@ -271,6 +301,20 @@ public class NBTStorage implements Storage {
         @Override
         public void setString(String key, String value) {
             putTag(key, new StringTag(getNameFor(key), value));
+        }
+    }
+
+    private static class Node {
+        final String parent;
+
+        final Map<String, Tag> values;
+
+        public Node(String parent, Tag tag) {
+            this.parent = parent;
+            values = ((CompoundTag) tag).getValue();
+        }
+        public Node(Tag tag) {
+            this("", tag);
         }
     }
 }

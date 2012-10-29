@@ -544,6 +544,11 @@ public class DatabaseStorage implements Storage {
             traverseCache.put(path, t);
             return t;
         }
+
+        @Override
+        public Map<String, Object> getValuesDeep() {
+            throw new UnsupportedOperationException(); // TODO
+        }
     }
 
     public class Table {

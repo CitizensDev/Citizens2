@@ -108,7 +108,6 @@ public class Equipment extends Trait {
         if (npc.getBukkitEntity() instanceof Enderman) {
             if (slot != 0)
                 throw new UnsupportedOperationException("Slot can only be 0 for enderman");
-
             ((Enderman) npc.getBukkitEntity()).setCarriedMaterial(item.getData());
         } else if (npc.getBukkitEntity() instanceof Player) {
             Player player = (Player) npc.getBukkitEntity();
@@ -138,7 +137,7 @@ public class Equipment extends Trait {
 
     @Override
     public String toString() {
-        return "{hand =" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2]
+        return "{hand=" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2]
                 + ",leggings=" + equipment[3] + ",boots=" + equipment[4] + "}";
     }
 }

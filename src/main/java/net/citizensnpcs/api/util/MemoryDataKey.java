@@ -141,4 +141,12 @@ public class MemoryDataKey extends DataKey {
     public void setString(String key, String value) {
         set(key, value);
     }
+
+    @Override
+    public Map<String, Object> getValuesDeep() {
+        ConfigurationSection section = root.getConfigurationSection(path);
+        if (section == null)
+            return Collections.emptyMap();
+        return section.getValues(true);
+    }
 }

@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
 /**
  * Represents an event where an NPC was clicked by a player.
  */
-public class NPCClickEvent extends NPCEvent implements Cancellable {
+public abstract class NPCClickEvent extends NPCEvent implements Cancellable {
     private boolean cancelled = false;
 
     private final Player clicker;
