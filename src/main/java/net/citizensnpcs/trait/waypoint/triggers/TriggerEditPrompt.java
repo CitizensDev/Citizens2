@@ -24,16 +24,23 @@ public class TriggerEditPrompt extends StringPrompt {
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
         input = input.toLowerCase().trim();
-        if (input.contains("add"))
+        if (input.contains("add")) {
+            context.setSessionData("said", false);
             return new TriggerAddPrompt(editor);
-        if (input.contains("remove"))
+        }
+        if (input.contains("remove")) {
+            context.setSessionData("said", false);
             return new TriggerRemovePrompt(editor);
+        }
         return this;
     }
 
     @Override
     public String getPromptText(ConversationContext context) {
         context.setSessionData("previous", this);
+        if (context.getSessionData("said") == Boolean.TRUE)
+            return "";
+        context.setSessionData("said", true);
         String base = Messaging.tr(Messages.WAYPOINT_TRIGGER_EDITOR_PROMPT);
         if (editor.getCurrentWaypoint() != null) {
             Waypoint waypoint = editor.getCurrentWaypoint();

@@ -20,8 +20,10 @@ public class TriggerRemovePrompt extends StringPrompt {
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase("back"))
+        if (input.equalsIgnoreCase("back")) {
+            context.setSessionData("said", false);
             return (Prompt) context.getSessionData("previous");
+        }
         if (editor.getCurrentWaypoint() == null) {
             Messaging.sendErrorTr((CommandSender) context.getForWhom(),
                     Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
@@ -54,6 +56,9 @@ public class TriggerRemovePrompt extends StringPrompt {
                     Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
             return "";
         }
+        if (context.getSessionData("said") == Boolean.TRUE)
+            return "";
+        context.setSessionData("said", true);
         String root = Messaging.tr(Messages.WAYPOINT_TRIGGER_REMOVE_PROMPT);
         int i = 1;
         for (WaypointTrigger trigger : editor.getCurrentWaypoint().getTriggers()) {
