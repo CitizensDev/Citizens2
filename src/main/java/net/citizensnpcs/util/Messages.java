@@ -125,6 +125,7 @@ public class Messages {
     public static final String OWNER_SET = "citizens.commands.npc.owner.set";
     public static final String OWNER_SET_SERVER = "citizens.commands.npc.owner.set-server";
     public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
+    public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";
     public static final String POSE_ADDED = "citizens.commands.npc.pose.added";
     public static final String POSE_ALREADY_EXISTS = "citizens.commands.npc.pose.already-exists";
     public static final String POSE_MISSING = "citizens.commands.npc.pose.missing";
@@ -147,6 +148,7 @@ public class Messages {
     public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
     public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.description";
     public static final String SIZE_SET = "citizens.commands.npc.size.set";
+    public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
     public static final String SKIPPING_INVALID_ANCHOR = "citizens.notifications.skipping-invalid-anchor";
     public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
@@ -202,6 +204,4 @@ public class Messages {
     public static final String WAYPOINT_TRIGGER_TELEPORT_PROMPT = "citizens.editors.waypoints.triggers.teleport.prompt";
     public static final String WORLD_NOT_FOUND = "citizens.commands.errors.missing-world";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
-    public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";
-    public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";
 }

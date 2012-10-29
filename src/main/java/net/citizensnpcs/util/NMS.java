@@ -156,6 +156,10 @@ public class NMS {
         throw new IllegalArgumentException("unable to find valid entity superclass");
     }
 
+    public static void setHeadYaw(EntityLiving handle, float yaw) {
+        handle.ay = yaw;
+    }
+
     public static void setLandSpeedModifier(EntityLiving handle, float speed) {
         if (LAND_SPEED_MODIFIER_FIELD == null)
             return;
@@ -274,9 +278,5 @@ public class NMS {
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
-    }
-
-    public static void setHeadYaw(EntityLiving handle, float yaw) {
-        handle.ay = yaw;
     }
 }

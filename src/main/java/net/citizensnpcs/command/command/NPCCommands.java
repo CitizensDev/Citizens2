@@ -822,21 +822,6 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skeletontype [type]",
-            desc = "Sets the NPC's skeleton type",
-            modifiers = { "skeletontype", "sktype" },
-            min = 2,
-            max = 2,
-            permission = "npc.skeletontype")
-    @Requirements(selected = true, ownership = true, types = EntityType.SKELETON)
-    public void skeletonType(CommandContext args, CommandSender sender, NPC npc) {
-        int type = args.getInteger(1);
-        npc.getTrait(SkeletonType.class).setType(type);
-        Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
-    }
-
-    @Command(
-            aliases = { "npc" },
             usage = "select|sel [id|name] (--r range)",
             desc = "Select a NPC with the given ID or name",
             modifiers = { "select", "sel" },
@@ -893,6 +878,21 @@ public class NPCCommands {
             throw new CommandException(Messages.NPC_ALREADY_SELECTED);
         selector.select(sender, toSelect);
         Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "skeletontype [type]",
+            desc = "Sets the NPC's skeleton type",
+            modifiers = { "skeletontype", "sktype" },
+            min = 2,
+            max = 2,
+            permission = "npc.skeletontype")
+    @Requirements(selected = true, ownership = true, types = EntityType.SKELETON)
+    public void skeletonType(CommandContext args, CommandSender sender, NPC npc) {
+        int type = args.getInteger(1);
+        npc.getTrait(SkeletonType.class).setType(type);
+        Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
     }
 
     @Command(
