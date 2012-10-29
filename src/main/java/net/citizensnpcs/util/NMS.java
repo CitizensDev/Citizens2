@@ -256,6 +256,7 @@ public class NMS {
         MOVEMENT_SPEEDS.put(EntityType.SHEEP, 0.25F);
         MOVEMENT_SPEEDS.put(EntityType.SNOWMAN, 0.25F);
         MOVEMENT_SPEEDS.put(EntityType.PIG, 0.27F);
+        MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
         MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
 
         LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bQ");

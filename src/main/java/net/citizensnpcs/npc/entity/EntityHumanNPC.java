@@ -11,6 +11,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.network.EmptyNetHandler;
 import net.citizensnpcs.npc.network.EmptyNetworkManager;
 import net.citizensnpcs.npc.network.EmptySocket;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.EnumGamemode;
@@ -100,7 +101,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // swallow
         }
 
-        W = STEP_HEIGHT; // fix moving up slabs and steps
         getNavigation().e(true);
 
         try {
@@ -115,6 +115,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         super.j_();
         if (npc == null)
             return;
+
         Navigation navigation = getNavigation();
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
@@ -156,10 +157,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         bF *= 0.9F;
 
         float prev = aM;
-        aM *= bs() * npc.getNavigator().getDefaultParameters().speed();
+        aM *= by() * npc.getNavigator().getDefaultParameters().speed();
         e(bD, bE); // movement method
         aM = prev;
-        ay = yaw; // update head yaw to match entity yaw
+        NMS.setHeadYaw(this, yaw);
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder {
@@ -197,5 +198,4 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private static final float EPSILON = 0.005F;
-    private static final float STEP_HEIGHT = 1F;
 }

@@ -19,12 +19,15 @@ public class TriggerAddPrompt extends StringPrompt {
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
         input = input.toLowerCase().trim();
-        if (input.equalsIgnoreCase("back"))
+        if (input.equalsIgnoreCase("back")) {
+            context.setSessionData("said", false);
             return (Prompt) context.getSessionData("previous");
+        }
         Prompt prompt = WaypointTriggerRegistry.getTriggerPromptFrom(input);
         if (prompt == null) {
             Messaging.sendErrorTr((CommandSender) context.getForWhom(),
                     Messages.WAYPOINT_TRIGGER_EDITOR_INVALID_TRIGGER, input);
+            context.setSessionData("said", false);
             return this;
         }
         return prompt;
@@ -44,6 +47,9 @@ public class TriggerAddPrompt extends StringPrompt {
                 Messaging.sendErrorTr((CommandSender) context.getForWhom(),
                         Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
         }
+        if (context.getSessionData("said") == Boolean.TRUE)
+            return "";
+        context.setSessionData("said", true);
         context.setSessionData(WaypointTriggerPrompt.RETURN_PROMPT_KEY, this);
         return Messaging.tr(Messages.WAYPOINT_TRIGGER_ADD_PROMPT,
                 WaypointTriggerRegistry.describeValidTriggerNames());
