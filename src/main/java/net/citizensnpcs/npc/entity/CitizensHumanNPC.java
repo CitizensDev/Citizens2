@@ -140,11 +140,9 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
     public void update() {
         super.update();
         if (isSpawned() && getBukkitEntity().getLocation().getChunk().isLoaded()) {
-            if (NMS.inWater(mcEntity)) {
-                mcEntity.motY += 0.08F;
-            } else if (!getNavigator().isNavigating())
+            if (!getNavigator().isNavigating() && !NMS.inWater(mcEntity))
                 mcEntity.move(0, -0.2, 0);
-            // gravity! also works around an entity.onGround not updating issue
+            // gravity. also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
         }
     }
