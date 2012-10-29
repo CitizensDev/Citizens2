@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.command.CommandConfigurable;
@@ -27,6 +28,7 @@ import com.google.common.collect.Maps;
 //TODO: reduce reliance on CitizensNPC
 public class Controllable extends Trait implements Toggleable, CommandConfigurable {
     private Controller controller = new GroundController();
+    @Persist
     private boolean enabled;
     private EntityType explicitType;
 
@@ -68,7 +70,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        enabled = key.getBoolean("enabled");
         explicitType = Util.matchEntityType(key.getString("explicittype"));
     }
 
@@ -150,7 +151,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     @Override
     public void save(DataKey key) {
-        key.setBoolean("enabled", enabled);
         if (explicitType == null)
             key.removeKey("explicittype");
         else

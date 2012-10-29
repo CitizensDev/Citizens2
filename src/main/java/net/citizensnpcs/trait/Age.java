@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.Messages;
@@ -10,7 +11,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 
 public class Age extends Trait implements Toggleable {
+    @Persist
     private int age = 0;
+    @Persist
     private boolean locked = true;
 
     public Age() {
@@ -29,8 +32,6 @@ public class Age extends Trait implements Toggleable {
     public void load(DataKey key) throws NPCLoadException {
         if (npc.isSpawned() && !(npc.getBukkitEntity() instanceof Ageable))
             throw new NPCLoadException("NPC must be ageable");
-        age = key.getInt("age");
-        locked = key.getBoolean("locked");
     }
 
     @Override
@@ -46,12 +47,6 @@ public class Age extends Trait implements Toggleable {
     public void run() {
         if (!locked && isAgeable())
             age = ((Ageable) npc.getBukkitEntity()).getAge();
-    }
-
-    @Override
-    public void save(DataKey key) {
-        key.setInt("age", age);
-        key.setBoolean("locked", locked);
     }
 
     public void setAge(int age) {

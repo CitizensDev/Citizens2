@@ -35,6 +35,7 @@ import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.SkeletonType;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.util.Anchor;
@@ -318,35 +319,36 @@ public class NPCCommands {
         }
         if (args.hasValueFlag("at")) {
             String[] parts = Iterables.toArray(Splitter.on(':').split(args.getFlag("at")), String.class);
-            String worldName = sender instanceof Player ? ((Player) sender).getLocation().getWorld()
-                    .getName() : "";
-            int x = 0, y = 0, z = 0;
-            float yaw = 0F, pitch = 0F;
-            switch (parts.length) {
-                case 6:
-                    pitch = Float.parseFloat(parts[5]);
-                case 5:
-                    yaw = Float.parseFloat(parts[4]);
-                case 4:
-                    worldName = parts[3];
-                case 3:
-                case 2:
-                case 1:
-                    if (parts.length < 3)
+            if (parts.length > 0) {
+                String worldName = sender instanceof Player ? ((Player) sender).getLocation().getWorld()
+                        .getName() : "";
+                int x = 0, y = 0, z = 0;
+                float yaw = 0F, pitch = 0F;
+                switch (parts.length) {
+                    case 6:
+                        pitch = Float.parseFloat(parts[5]);
+                    case 5:
+                        yaw = Float.parseFloat(parts[4]);
+                    case 4:
+                        worldName = parts[3];
+                    case 3:
+                        x = Integer.parseInt(parts[0]);
+                        y = Integer.parseInt(parts[1]);
+                        z = Integer.parseInt(parts[2]);
+                        break;
+                    default:
                         throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-                    x = Integer.parseInt(parts[0]);
-                    y = Integer.parseInt(parts[1]);
-                    z = Integer.parseInt(parts[2]);
-                    break;
-                default:
-                    break;
-                case 0:
+                }
+                World world = Bukkit.getWorld(worldName);
+                if (world == null)
                     throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+                spawnLoc = new Location(world, x, y, z, yaw, pitch);
+            } else {
+                Player search = Bukkit.getPlayerExact(args.getFlag("at"));
+                if (search == null)
+                    throw new CommandException(Messages.PLAYER_NOT_FOUND_FOR_SPAWN);
+                spawnLoc = search.getLocation();
             }
-            World world = Bukkit.getWorld(worldName);
-            if (world == null)
-                throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-            spawnLoc = new Location(world, x, y, z, yaw, pitch);
         }
         if (spawnLoc == null) {
             npc.destroy();
@@ -816,6 +818,21 @@ public class NPCCommands {
         }
         npc.setName(newName);
         Messaging.sendTr(sender, Messages.NPC_RENAMED, oldName, newName);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "skeletontype [type]",
+            desc = "Sets the NPC's skeleton type",
+            modifiers = { "skeletontype", "sktype" },
+            min = 2,
+            max = 2,
+            permission = "npc.skeletontype")
+    @Requirements(selected = true, ownership = true, types = EntityType.SKELETON)
+    public void skeletonType(CommandContext args, CommandSender sender, NPC npc) {
+        int type = args.getInteger(1);
+        npc.getTrait(SkeletonType.class).setType(type);
+        Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
     }
 
     @Command(

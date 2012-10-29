@@ -141,12 +141,6 @@ public class NMS {
         handle.pitch = pitch;
     }
 
-    public static boolean rayTrace(LivingEntity entity, LivingEntity entity2) {
-        EntityLiving from = ((CraftLivingEntity) entity).getHandle();
-        EntityLiving to = ((CraftLivingEntity) entity2).getHandle();
-        return from.m(to);
-    }
-
     public static void registerEntityClass(Class<? extends Entity> clazz) {
         if (ENTITY_CLASS_TO_INT.containsKey(clazz))
             return;
@@ -262,7 +256,6 @@ public class NMS {
         MOVEMENT_SPEEDS.put(EntityType.SHEEP, 0.25F);
         MOVEMENT_SPEEDS.put(EntityType.SNOWMAN, 0.25F);
         MOVEMENT_SPEEDS.put(EntityType.PIG, 0.27F);
-        MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
         MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
 
         LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bQ");
@@ -280,5 +273,9 @@ public class NMS {
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
+    }
+
+    public static void setHeadYaw(EntityLiving handle, float yaw) {
+        handle.ay = yaw;
     }
 }
