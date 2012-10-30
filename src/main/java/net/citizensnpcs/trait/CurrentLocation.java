@@ -6,7 +6,7 @@ import net.citizensnpcs.api.trait.Trait;
 import org.bukkit.Location;
 
 public class CurrentLocation extends Trait {
-    @Persist(required = true)
+    @Persist(value = "", required = true)
     private Location loc;
 
     public CurrentLocation() {
