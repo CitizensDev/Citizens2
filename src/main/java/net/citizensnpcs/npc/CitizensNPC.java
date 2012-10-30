@@ -93,8 +93,8 @@ public abstract class CitizensNPC extends AbstractNPC {
         Spawned spawned = getTrait(Spawned.class);
         CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
         try {
-            spawned.load(root.getRelative("spawned"));
-            spawnLocation.load(root.getRelative("location"));
+            spawned.load(root.getRelative("traits.spawned"));
+            spawnLocation.load(root.getRelative("traits.location"));
             if (spawned.shouldSpawn() && spawnLocation.getLocation() != null)
                 spawn(spawnLocation.getLocation());
         } catch (NPCLoadException e) {
