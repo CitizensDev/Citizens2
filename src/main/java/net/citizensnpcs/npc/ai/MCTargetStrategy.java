@@ -7,11 +7,10 @@ import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.Util;
+import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.Navigation;
-import net.minecraft.server.Packet18ArmAnimation;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
@@ -37,7 +36,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private boolean canAttack() {
         return attackTicks == 0
                 && (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
-                && distanceSquared() <= ATTACK_DISTANCE && handle.l(target);
+                && distanceSquared() <= ATTACK_DISTANCE && hasLineOfSight();
     }
 
     @Override
@@ -67,6 +66,10 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     @Override
     public TargetType getTargetType() {
         return TargetType.ENTITY;
+    }
+
+    private boolean hasLineOfSight() {
+        return ((LivingEntity) handle.getBukkitEntity()).hasLineOfSight(target.getBukkitEntity());
     }
 
     @Override
@@ -100,8 +103,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             } else if (handle instanceof EntityPlayer) {
                 EntityPlayer humanHandle = (EntityPlayer) handle;
                 humanHandle.attack(target);
-                Util.sendPacketNearby(handle.getBukkitEntity().getLocation(), new Packet18ArmAnimation(
-                        humanHandle, 1), 64);
+                PlayerAnimation.HURT.play(humanHandle.getBukkitEntity());
             } else {
                 NMS.attack(handle, target);
             }
