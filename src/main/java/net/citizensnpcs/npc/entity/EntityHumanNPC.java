@@ -141,8 +141,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                  motY += 0.04;
              } else //(handled elsewhere)*/
             if (onGround && bW == 0) {
-                // bf(); // jump
-                motY = 0.5F;
+                // bf(); // jump commented out as 0.47 works better for stairs
+                motY = 0.47F;
                 bW = 10;
             }
         } else
@@ -151,13 +151,17 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         bD *= 0.98F;
         bE *= 0.98F;
         bF *= 0.9F;
-        float speed = npc.getNavigator().getDefaultParameters().speed();
-        e(speed);
+
         float prev = aM;
-        aM *= by() * speed;
+        aM *= by();
         e(bD, bE); // movement method
         aM = prev;
         NMS.setHeadYaw(this, yaw);
+    }
+
+    @Override
+    public float by() {
+        return super.by() * npc.getNavigator().getDefaultParameters().speed();
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder {
