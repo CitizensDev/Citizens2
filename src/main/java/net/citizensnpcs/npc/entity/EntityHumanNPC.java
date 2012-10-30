@@ -140,8 +140,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
              if (inLiquid) {
                  motY += 0.04;
              } else //(handled elsewhere)*/
-            if (onGround && Math.abs(bW) < EPSILON) {
-                bf(); // jump
+            if (onGround && bW == 0) {
+                // bf(); // jump
+                motY = 0.5F;
                 bW = 10;
             }
         } else
