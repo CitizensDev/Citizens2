@@ -64,6 +64,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private boolean compatible;
     private Settings config;
     private ClassLoader contextClassLoader;
+    private Metrics metrics;
     private CitizensNPCRegistry npcRegistry;
     private NPCDataStore saves;
     private NPCSelector selector;
@@ -183,6 +184,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
         Editor.leaveAll();
         CitizensAPI.shutdown();
+        metrics.stopTask();
 
         tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
@@ -340,28 +342,23 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void startMetrics() {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Metrics metrics = new Metrics(Citizens.this);
-                    if (metrics.isOptOut())
-                        return;
-                    metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
-                        @Override
-                        public int getValue() {
-                            return Iterables.size(npcRegistry);
-                        }
-                    });
-
-                    traitFactory.addPlotters(metrics.createGraph("traits"));
-                    metrics.start();
-                    Messaging.logTr(Messages.METRICS_NOTIFICATION);
-                } catch (IOException e) {
-                    Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
+        try {
+            metrics = new Metrics(Citizens.this);
+            if (metrics.isOptOut())
+                return;
+            metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
+                @Override
+                public int getValue() {
+                    return Iterables.size(npcRegistry);
                 }
-            }
-        }.start();
+            });
+
+            traitFactory.addPlotters(metrics.createGraph("traits"));
+            metrics.start();
+            Messaging.logTr(Messages.METRICS_NOTIFICATION);
+        } catch (IOException e) {
+            Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
+        }
     }
 
     public void storeNPCs() {

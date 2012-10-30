@@ -4,9 +4,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.minecraft.server.ControllerLook;
 import net.minecraft.server.DamageSource;
 import net.minecraft.server.EnchantmentManager;
@@ -22,12 +24,18 @@ import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.material.Stairs;
+import org.bukkit.material.Step;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 
 @SuppressWarnings("unchecked")
 public class NMS {
@@ -45,7 +53,11 @@ public class NMS {
     private static Field NAVIGATION_WORLD_FIELD;
     private static Field PATHFINDING_RANGE;
     private static Field PERSISTENT_FIELD;
+    private static Set<Integer> SLAB_MATERIALS = Sets.newHashSet();
     private static Field SPEED_FIELD;
+
+    private static Set<Integer> STAIR_MATERIALS = Sets.newHashSet();
+
     private static Field THREAD_STOPPER;
 
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
@@ -97,6 +109,28 @@ public class NMS {
             target.setOnFire(fireAspectLevel * 4);
     }
 
+    public static void blockSpecificJump(EntityHumanNPC entity) {
+        int x = MathHelper.floor(entity.locX), y = MathHelper.floor(entity.boundingBox.b - 1), z = MathHelper
+                .floor(entity.locZ);
+        int below = entity.world.getTypeId(x, y, z);
+        BlockFace dir = Util.getFacingDirection(entity.yaw);
+        int[] typeIds = { below };
+        if (dir != BlockFace.SELF) {
+            typeIds = Ints.concat(
+                    typeIds,
+                    new int[] {
+                            entity.world.getTypeId(x + dir.getModX(), y + dir.getModY(), z + dir.getModZ()),
+                            entity.world.getTypeId(x + dir.getModX(), y + dir.getModY() + 1,
+                                    z + dir.getModZ()) });
+        }
+        if (containsAny(STAIR_MATERIALS, typeIds)) {
+            entity.motY = 0.47F;
+        } else if (containsAny(SLAB_MATERIALS, typeIds)) {
+            entity.motY = 0.52F;
+        } else
+            entity.motY = 0.5F;
+    }
+
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
         if (GOAL_FIELD == null || goalSelectors == null)
             return;
@@ -108,6 +142,13 @@ public class NMS {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getMessage());
             }
         }
+    }
+
+    private static boolean containsAny(Set<Integer> set, int[] tests) {
+        for (int test : tests)
+            if (set.contains(test))
+                return true;
+        return false;
     }
 
     private static Constructor<? extends Entity> getCustomEntityConstructor(Class<? extends Entity> clazz,
@@ -270,7 +311,6 @@ public class NMS {
             Messaging.logTr(Messages.ERROR_UPDATING_PATHFINDING_RANGE, e.getMessage());
         }
     }
-
     static {
         // true field above false and three synchronised lists
         THREAD_STOPPER = getField(NetworkManager.class, "m");
@@ -302,6 +342,15 @@ public class NMS {
             ENTITY_CLASS_TO_INT = (Map<Class<? extends Entity>, Integer>) field.get(null);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
+        }
+    }
+
+    static {
+        for (Material material : Material.values()) {
+            if (Step.class.isAssignableFrom(material.getData()))
+                SLAB_MATERIALS.add(material.getId());
+            else if (Stairs.class.isAssignableFrom(material.getData()))
+                STAIR_MATERIALS.add(material.getId());
         }
     }
 }
