@@ -32,5 +32,5 @@ public @interface Persist {
      * The save key to use when saving. If not present, the field name will be
      * used instead.
      */
-    String value() default "";
+    String value() default "UNINITIALISED";
 }

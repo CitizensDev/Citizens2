@@ -28,7 +28,8 @@ public class PersistenceLoader {
         private PersistField(Field field, Object instance) {
             this.field = field;
             this.persistAnnotation = field.getAnnotation(Persist.class);
-            this.key = persistAnnotation.value().isEmpty() ? field.getName() : persistAnnotation.value();
+            this.key = persistAnnotation.value().equals("UNINITIALISED") ? field.getName()
+                    : persistAnnotation.value();
             Class<?> fallback = field.getType();
             if (field.getGenericType() instanceof ParameterizedType) {
                 fallback = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
@@ -281,11 +282,11 @@ public class PersistenceLoader {
             List<?> list = field.get();
             root.removeKey(field.key);
             for (int i = 0; i < list.size(); i++) {
-                String key = field.key + '.' + i;
+                String key = createRelativeKey(field.key, i);
                 if (field.delegate != null)
                     field.delegate.save(list.get(i), root.getRelative(key));
                 else
-                    root.setRaw(field.key + '.' + i, list.get(i));
+                    root.setRaw(key, list.get(i));
             }
         } else {
             if (field.delegate != null)
@@ -295,7 +296,20 @@ public class PersistenceLoader {
         }
     }
 
+    private static String createRelativeKey(String key, int ext) {
+        return createRelativeKey(key, Integer.toString(ext));
+    }
+
     static {
         registerPersistDelegate(Location.class, LocationPersister.class);
     }
+
+    private static String createRelativeKey(String parent, String ext) {
+        if (ext.isEmpty())
+            return parent;
+        if (ext.charAt(0) == '.')
+            return parent.isEmpty() ? ext.substring(1, ext.length()) : parent + ext;
+        return parent.isEmpty() ? ext : parent + '.' + ext;
+    }
+
 }
