@@ -103,7 +103,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             } else if (handle instanceof EntityPlayer) {
                 EntityPlayer humanHandle = (EntityPlayer) handle;
                 humanHandle.attack(target);
-                PlayerAnimation.HURT.play(humanHandle.getBukkitEntity());
+                PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
             } else {
                 NMS.attack(handle, target);
             }

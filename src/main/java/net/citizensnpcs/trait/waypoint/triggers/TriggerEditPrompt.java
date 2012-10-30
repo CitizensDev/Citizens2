@@ -56,7 +56,7 @@ public class TriggerEditPrompt extends StringPrompt {
         final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin())
                 .withLocalEcho(false).withEscapeSequence("exit").withEscapeSequence("/npc path")
                 .withModality(false).withFirstPrompt(new TriggerEditPrompt(editor)).buildConversation(player);
-        conversation.begin();
+        player.beginConversation(conversation);
         return conversation;
     }
 }

@@ -48,7 +48,7 @@ public enum PlayerAnimation {
                     radius);
         }
     },
-    SWING_ARM {
+    ARM_SWING {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
             Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 1);
