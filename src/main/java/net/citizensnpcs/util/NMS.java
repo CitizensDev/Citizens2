@@ -9,10 +9,12 @@ import java.util.WeakHashMap;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.minecraft.server.ControllerLook;
 import net.minecraft.server.DamageSource;
+import net.minecraft.server.EnchantmentManager;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityMonster;
 import net.minecraft.server.EntityTypes;
+import net.minecraft.server.MathHelper;
 import net.minecraft.server.MobEffectList;
 import net.minecraft.server.Navigation;
 import net.minecraft.server.NetworkManager;
@@ -70,7 +72,29 @@ public class NMS {
             damage -= 2 << handle.getEffect(MobEffectList.WEAKNESS).getAmplifier();
         }
 
-        target.damageEntity(DamageSource.mobAttack(handle), damage);
+        int knockbackLevel = 0;
+
+        if (target instanceof EntityLiving) {
+            damage += EnchantmentManager.a(handle, target);
+            knockbackLevel += EnchantmentManager.getKnockbackEnchantmentLevel(handle, target);
+        }
+
+        boolean success = target.damageEntity(DamageSource.mobAttack(handle), damage);
+
+        if (!success)
+            return;
+        if (knockbackLevel > 0) {
+            target.g(-MathHelper.sin((float) (handle.yaw * Math.PI / 180.0F)) * knockbackLevel * 0.5F, 0.1D,
+
+            MathHelper.cos((float) (handle.yaw * Math.PI / 180.0F)) * knockbackLevel * 0.5F);
+            handle.motX *= 0.6D;
+            handle.motZ *= 0.6D;
+        }
+
+        int fireAspectLevel = EnchantmentManager.getFireAspectEnchantmentLevel(handle, target);
+
+        if (fireAspectLevel > 0)
+            target.setOnFire(fireAspectLevel * 4);
     }
 
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {

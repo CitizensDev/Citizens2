@@ -6,9 +6,6 @@ import net.minecraft.server.Packet17EntityLocationAction;
 import net.minecraft.server.Packet18ArmAnimation;
 import net.minecraft.server.Packet40EntityMetadata;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -60,7 +57,11 @@ public enum PlayerAnimation {
     };
 
     public void play(Player player) {
-        playAnimation(((CraftPlayer) player).getHandle(), 64);
+        play(player, 64);
+    }
+
+    public void play(Player player, int radius) {
+        playAnimation(((CraftPlayer) player).getHandle(), radius);
     }
 
     protected void playAnimation(EntityPlayer player, int radius) {
@@ -68,15 +69,6 @@ public enum PlayerAnimation {
     }
 
     protected void sendPacketNearby(Packet packet, EntityPlayer player, int radius) {
-        radius *= radius;
-        World world = player.world.getWorld();
-        Location location = player.getBukkitEntity().getLocation();
-        for (Player dest : Bukkit.getServer().getOnlinePlayers()) {
-            if (dest == null || world != dest.getWorld())
-                continue;
-            if (location.distanceSquared(dest.getLocation()) > radius)
-                continue;
-            ((CraftPlayer) dest).getHandle().netServerHandler.sendPacket(packet);
-        }
+        Util.sendPacketNearby(player.getBukkitEntity().getLocation(), packet, radius);
     }
 }

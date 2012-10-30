@@ -116,6 +116,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (npc == null)
             return;
 
+        az().a();
         Navigation navigation = getNavigation();
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
