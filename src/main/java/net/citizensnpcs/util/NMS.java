@@ -241,6 +241,7 @@ public class NMS {
     }
 
     public static void updateAI(EntityLiving entity) {
+        entity.az().a();
         entity.getNavigation().e();
         entity.getControllerMove().c();
         entity.getControllerLook().a();

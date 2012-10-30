@@ -116,7 +116,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (npc == null)
             return;
 
-        az().a();
+        NMS.updateAI(this);
         Navigation navigation = getNavigation();
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
@@ -134,10 +134,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private void moveOnCurrentHeading() {
-        getControllerMove().c();
-        getControllerLook().a();
-        getControllerJump().b();
-
         // taken from EntityLiving update method
         if (bG) {
             /* boolean inLiquid = H() || J();

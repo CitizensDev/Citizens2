@@ -82,7 +82,11 @@ public class Util {
         if (type != null)
             return type;
         for (EntityType check : EntityType.values()) {
-            if (check.name().matches(toMatch) || check.name().replace('_', '-').equalsIgnoreCase(toMatch)) {
+            String name = check.name();
+            if (name.matches(toMatch) || name.equalsIgnoreCase(toMatch)
+                    || name.replace("_", "").equalsIgnoreCase(toMatch)
+                    || name.replace('_', '-').equalsIgnoreCase(toMatch)
+                    || name.replace('_', ' ').equalsIgnoreCase(toMatch) || name.startsWith(toMatch)) {
                 type = check;
                 break;
             }
