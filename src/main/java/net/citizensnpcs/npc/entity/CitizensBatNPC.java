@@ -112,7 +112,8 @@ public class CitizensBatNPC extends CitizensMobNPC {
         @Override
         public void j_() {
             super.j_();
-            npc.update();
+            if (npc != null)
+                npc.update();
         }
     }
 }

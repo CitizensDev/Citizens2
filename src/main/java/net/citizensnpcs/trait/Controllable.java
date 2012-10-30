@@ -16,6 +16,7 @@ import net.minecraft.server.EntityPlayer;
 
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -102,9 +103,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     public boolean mount(Player toMount) {
-        if (npc.getBukkitEntity().getPassenger() != null)
+        Entity passenger = npc.getBukkitEntity().getPassenger();
+        if (passenger != null && passenger != toMount)
             return false;
-        ((CraftPlayer) toMount).getHandle().setPassengerOf(getHandle());
+        enterOrLeaveVehicle(toMount);
         return true;
     }
 
