@@ -116,12 +116,12 @@ public class NMS {
         BlockFace dir = Util.getFacingDirection(entity.yaw);
         int[] typeIds = { below };
         if (dir != BlockFace.SELF) {
+            int modX = x + dir.getModX(), modY = y + dir.getModY(), modZ = y + dir.getModZ();
             typeIds = Ints.concat(
                     typeIds,
-                    new int[] {
-                            entity.world.getTypeId(x + dir.getModX(), y + dir.getModY(), z + dir.getModZ()),
-                            entity.world.getTypeId(x + dir.getModX(), y + dir.getModY() + 1,
-                                    z + dir.getModZ()) });
+                    new int[] { entity.world.getTypeId(modX, modY, modZ),
+                            entity.world.getTypeId(modX, modY + 1, modZ),
+                            entity.world.getTypeId(modX, modY + 2, modZ) });
         }
         if (containsAny(STAIR_MATERIALS, typeIds)) {
             entity.motY = 0.47F;
@@ -311,6 +311,7 @@ public class NMS {
             Messaging.logTr(Messages.ERROR_UPDATING_PATHFINDING_RANGE, e.getMessage());
         }
     }
+
     static {
         // true field above false and three synchronised lists
         THREAD_STOPPER = getField(NetworkManager.class, "m");
