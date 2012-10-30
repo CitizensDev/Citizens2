@@ -87,6 +87,18 @@ public class PersistenceLoader {
 
     private static final Map<Class<?>, Class<? extends Persister>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister>>();
 
+    private static String createRelativeKey(String key, int ext) {
+        return createRelativeKey(key, Integer.toString(ext));
+    }
+
+    private static String createRelativeKey(String parent, String ext) {
+        if (ext.isEmpty())
+            return parent;
+        if (ext.charAt(0) == '.')
+            return parent.isEmpty() ? ext.substring(1, ext.length()) : parent + ext;
+        return parent.isEmpty() ? ext : parent + '.' + ext;
+    }
+
     @SuppressWarnings("unchecked")
     private static void deserialise(PersistField field, DataKey root) throws Exception {
         Object value;
@@ -296,20 +308,8 @@ public class PersistenceLoader {
         }
     }
 
-    private static String createRelativeKey(String key, int ext) {
-        return createRelativeKey(key, Integer.toString(ext));
-    }
-
     static {
         registerPersistDelegate(Location.class, LocationPersister.class);
-    }
-
-    private static String createRelativeKey(String parent, String ext) {
-        if (ext.isEmpty())
-            return parent;
-        if (ext.charAt(0) == '.')
-            return parent.isEmpty() ? ext.substring(1, ext.length()) : parent + ext;
-        return parent.isEmpty() ? ext : parent + '.' + ext;
     }
 
 }

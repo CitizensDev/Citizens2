@@ -90,6 +90,14 @@ public class MemoryDataKey extends DataKey {
     }
 
     @Override
+    public Map<String, Object> getValuesDeep() {
+        ConfigurationSection section = root.getConfigurationSection(path);
+        if (section == null)
+            return Collections.emptyMap();
+        return section.getValues(true);
+    }
+
+    @Override
     public boolean keyExists(String key) {
         return root.isSet(getKeyFor(key));
     }
@@ -140,13 +148,5 @@ public class MemoryDataKey extends DataKey {
     @Override
     public void setString(String key, String value) {
         set(key, value);
-    }
-
-    @Override
-    public Map<String, Object> getValuesDeep() {
-        ConfigurationSection section = root.getConfigurationSection(path);
-        if (section == null)
-            return Collections.emptyMap();
-        return section.getValues(true);
     }
 }

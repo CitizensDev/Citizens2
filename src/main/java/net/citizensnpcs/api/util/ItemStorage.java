@@ -31,6 +31,11 @@ public class ItemStorage {
         return res;
     }
 
+    private static void migrateForSave(DataKey key) {
+        key.removeKey("data");
+        key.removeKey("id");
+    }
+
     public static void saveItem(DataKey key, ItemStack item) {
         migrateForSave(key);
         key.setString("type", item.getType().name());
@@ -43,10 +48,5 @@ public class ItemStorage {
         key = key.getRelative("enchantments");
         for (Enchantment enchantment : item.getEnchantments().keySet())
             key.setInt(Integer.toString(enchantment.getId()), item.getEnchantmentLevel(enchantment));
-    }
-
-    private static void migrateForSave(DataKey key) {
-        key.removeKey("data");
-        key.removeKey("id");
     }
 }

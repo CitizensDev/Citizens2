@@ -65,6 +65,8 @@ public abstract class DataKey {
 
     public abstract Iterable<DataKey> getSubKeys();
 
+    public abstract Map<String, Object> getValuesDeep();
+
     public abstract boolean keyExists(String key);
 
     public abstract String name();
@@ -94,6 +96,4 @@ public abstract class DataKey {
             }
         }
     };
-
-    public abstract Map<String, Object> getValuesDeep();
 }

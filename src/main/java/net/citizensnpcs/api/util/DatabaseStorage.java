@@ -404,6 +404,11 @@ public class DatabaseStorage implements Storage {
         }
 
         @Override
+        public Map<String, Object> getValuesDeep() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
         public boolean keyExists(String key) {
             return traverse(createRelativeKey(key), false) != INVALID_TRAVERSAL;
         }
@@ -543,11 +548,6 @@ public class DatabaseStorage implements Storage {
             Traversed t = new Traversed(table, pk, setColumn);
             traverseCache.put(path, t);
             return t;
-        }
-
-        @Override
-        public Map<String, Object> getValuesDeep() {
-            throw new UnsupportedOperationException(); // TODO
         }
     }
 
