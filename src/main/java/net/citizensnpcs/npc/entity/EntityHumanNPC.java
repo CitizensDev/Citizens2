@@ -43,6 +43,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
+    public void bf() {
+        super.bf();
+    }
+
+    @Override
+    public float by() {
+        return super.by() * npc.getNavigator().getDefaultParameters().speed();
+    }
+
+    @Override
     public void collide(net.minecraft.server.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
@@ -141,8 +151,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                  motY += 0.04;
              } else //(handled elsewhere)*/
             if (onGround && bW == 0) {
-                // bf(); // jump commented out as 0.47 works better for stairs
-                motY = 0.47F;
+                // bf(); // jump commented to provide block-specific handling
+                NMS.blockSpecificJump(this);
                 bW = 10;
             }
         } else
@@ -157,11 +167,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         e(bD, bE); // movement method
         aM = prev;
         NMS.setHeadYaw(this, yaw);
-    }
-
-    @Override
-    public float by() {
-        return super.by() * npc.getNavigator().getDefaultParameters().speed();
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder {

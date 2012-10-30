@@ -89,6 +89,17 @@ public abstract class CitizensNPC extends AbstractNPC {
     }
 
     public void load(final DataKey root) {
+        // Spawn the NPC
+        Spawned spawned = getTrait(Spawned.class);
+        CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
+        try {
+            spawned.load(root.getRelative("spawned"));
+            spawnLocation.load(root.getRelative("location"));
+            if (spawned.shouldSpawn() && spawnLocation.getLocation() != null)
+                spawn(spawnLocation.getLocation());
+        } catch (NPCLoadException e) {
+        }
+
         metadata.loadFrom(root.getRelative("metadata"));
         // Load traits
 
@@ -121,13 +132,6 @@ public abstract class CitizensNPC extends AbstractNPC {
             } catch (NPCLoadException ex) {
                 Messaging.logTr(Messages.TRAIT_LOAD_FAILED, traitKey.name(), getId());
             }
-        }
-
-        // Spawn the NPC
-        if (getTrait(Spawned.class).shouldSpawn()) {
-            Location spawnLoc = getTrait(CurrentLocation.class).getLocation();
-            if (spawnLoc != null)
-                spawn(spawnLoc);
         }
 
         navigator.load(root.getRelative("navigator"));
