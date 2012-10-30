@@ -193,10 +193,13 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @EventHandler(ignoreCancelled = true)
         public void onPlayerInteract(PlayerInteractEvent event) {
-            if (event.getPlayer() == null || !event.getPlayer().equals(player)
-                    || event.getAction() == Action.PHYSICAL)
+            if (npc == null) {
+                end();
                 return;
-            if (!npc.isSpawned() || event.getPlayer().getWorld() != npc.getBukkitEntity().getWorld())
+            }
+            if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL)
+                return;
+            if (event.getPlayer().getWorld() != npc.getBukkitEntity().getWorld())
                 return;
             if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
                 if (event.getClickedBlock() == null)
