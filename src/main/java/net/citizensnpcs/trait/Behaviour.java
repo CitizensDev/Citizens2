@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
@@ -10,14 +11,15 @@ import net.citizensnpcs.api.ai.GoalController.GoalEntry;
 import net.citizensnpcs.api.ai.SimpleGoalEntry;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.scripting.CompileCallback;
+import net.citizensnpcs.api.scripting.Script;
 import net.citizensnpcs.api.scripting.ScriptFactory;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -32,13 +34,11 @@ public class Behaviour extends Trait {
     };
     private final File rootFolder = new File(CitizensAPI.getScriptFolder(), "behaviours");
     private final List<File> scripts = Lists.newArrayList();
-    {
-        if (!rootFolder.exists())
-            rootFolder.mkdirs();
-    }
 
     public Behaviour() {
         super("behaviour");
+        if (!rootFolder.exists())
+            rootFolder.mkdirs();
     }
 
     public void addScripts(Iterable<String> scripts) {
@@ -53,7 +53,7 @@ public class Behaviour extends Trait {
         if (!key.keyExists("scripts"))
             return;
         String scripts = key.getString("scripts");
-        addScripts(Splitter.on(",").split(scripts));
+        addScripts(Splitter.on(',').split(scripts));
     }
 
     @Override
@@ -100,7 +100,13 @@ public class Behaviour extends Trait {
 
     @Override
     public void save(DataKey key) {
-        key.setString("scripts", Joiner.on(",").join(scripts));
+        key.removeKey("scripts");
+        StringBuilder fileNames = new StringBuilder();
+        for (File file : scripts) {
+            fileNames.append(file.getName() + ',');
+        }
+        if (fileNames.length() > 0)
+            key.setString("scripts", fileNames.substring(0, fileNames.length() - 1));
     }
 
     public class BehaviourCallback implements CompileCallback {
@@ -123,13 +129,20 @@ public class Behaviour extends Trait {
         }
 
         @Override
-        public void onScriptCompiled(File file, ScriptFactory script) {
-            synchronized (goals) {
-                fileInUse = file;
-                script.newInstance().invoke("addGoals", this, npc);
-                scripts.add(file);
-                fileInUse = null;
-            }
+        public void onScriptCompiled(final File file, final ScriptFactory script) {
+            final Script instance = script.newInstance();
+            Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    synchronized (Behaviour.this) {
+                        fileInUse = file;
+                        instance.invoke("addGoals", this, npc);
+                        scripts.add(file);
+                        fileInUse = null;
+                    }
+                    return null;
+                }
+            });
         }
     }
 
