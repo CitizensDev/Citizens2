@@ -269,10 +269,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                     return; // the player isn't scrolling
                 editingSlot += diff > 0 ? 1 : -1;
             }
-            if (editingSlot >= waypoints.size())
-                editingSlot = 0;
-            if (editingSlot < 0)
-                editingSlot = waypoints.size() - 1;
+            normaliseEditingSlot();
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
                     formatLoc(waypoints.get(editingSlot).getLocation()));
         }

@@ -31,6 +31,10 @@ public class DelayTrigger implements WaypointTrigger {
             scheduleTask(npc.getTrait(Waypoints.class).getCurrentProvider());
     }
 
+    public int getDelay() {
+        return delay;
+    }
+
     private void scheduleTask(final WaypointProvider provider) {
         provider.setPaused(true);
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
