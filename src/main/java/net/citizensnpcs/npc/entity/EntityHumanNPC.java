@@ -116,6 +116,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         } catch (IOException ex) {
             // swallow
         }
+        for (int i = 0; i < previousEquipment.length; i++)
+            previousEquipment[i] = getEquipment(i);
     }
 
     @Override
