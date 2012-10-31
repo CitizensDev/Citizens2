@@ -3,6 +3,7 @@ package net.citizensnpcs.api.persistence;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +100,7 @@ public class PersistenceLoader {
         return parent.isEmpty() ? ext : parent + '.' + ext;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private static void deserialise(PersistField field, DataKey root) throws Exception {
         Object value;
         Class<?> type = field.getType();
@@ -110,37 +111,56 @@ public class PersistenceLoader {
             Object raw = root.getRaw(field.key);
             if (raw instanceof List && collectionType.isAssignableFrom(raw.getClass()))
                 list = (List<Object>) raw;
-            else {
-                for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
-                    Object loaded = getValueFromKey(field, subKey);
-                    if (loaded == null)
-                        continue;
-                    list.add(loaded);
-                }
-            }
+            else
+                deserialiseCollection(list, root, field);
             value = list;
         } else if (Set.class.isAssignableFrom(type)) {
-            Set<Object> set = (Set<Object>) (!Set.class.isAssignableFrom(collectionType) ? Sets.newHashSet()
-                    : collectionType.newInstance());
+            Set<Object> set;
+            if (Set.class.isAssignableFrom(collectionType)) {
+                set = (Set<Object>) collectionType.newInstance();
+            } else {
+                set = field.getType().isEnum() ? EnumSet.noneOf((Class<? extends Enum>) field.getType())
+                        : Sets.newHashSet();
+            }
             Object raw = root.getRaw(field.key);
             if (raw instanceof Set && collectionType.isAssignableFrom(raw.getClass()))
                 set = (Set<Object>) raw;
-            else {
-                for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
-                    Object loaded = getValueFromKey(field, subKey);
-                    if (loaded == null)
-                        continue;
-                    set.add(loaded);
-                }
-            }
+            else
+                deserialiseCollection(set, root, field);
             value = set;
         } else
-            value = getValueFromKey(field, root);
+            value = deserialiseValue(field, root);
         if (value == null && field.isRequired())
             throw loadException;
         if (!type.isAssignableFrom(value.getClass()))
             return;
         field.set(value);
+    }
+
+    private static void deserialiseCollection(Collection<Object> collection, DataKey root, PersistField field) {
+        for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
+            Object loaded = deserialiseValue(field, subKey);
+            if (loaded == null)
+                continue;
+            collection.add(loaded);
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static Object deserialiseValue(PersistField field, DataKey root) {
+        if (field.delegate == null && field.field.getType().isEnum()) {
+            Class<? extends Enum> clazz = (Class<? extends Enum>) field.getType();
+            Object obj = root.getRaw(field.key);
+            if (obj instanceof String) {
+                try {
+                    return Enum.valueOf(clazz, obj.toString());
+                } catch (IllegalArgumentException e) {
+                    // fallback to default
+                }
+            }
+        }
+        return field.delegate == null ? root.getRaw(field.key) : field.delegate.create(root
+                .getRelative(field.key));
     }
 
     private static void ensureDelegateLoaded(Class<? extends Persister> delegateClass) {
@@ -199,11 +219,6 @@ public class PersistenceLoader {
             }
         }
         return toFilter.toArray(new Field[toFilter.size()]);
-    }
-
-    private static Object getValueFromKey(PersistField field, DataKey root) {
-        return field.delegate == null ? root.getRaw(field.key) : field.delegate.create(root
-                .getRelative(field.key));
     }
 
     /**
@@ -290,22 +305,27 @@ public class PersistenceLoader {
     private static void serialise(PersistField field, DataKey root) {
         if (field.get() == null)
             return;
-        if (List.class.isAssignableFrom(field.getType())) {
-            List<?> list = field.get();
+        if (Collection.class.isAssignableFrom(field.getType())) {
+            Collection<?> collection = field.get();
             root.removeKey(field.key);
-            for (int i = 0; i < list.size(); i++) {
+            int i = 0;
+            for (Object object : collection) {
                 String key = createRelativeKey(field.key, i);
-                if (field.delegate != null)
-                    field.delegate.save(list.get(i), root.getRelative(key));
-                else
-                    root.setRaw(key, list.get(i));
+                serialiseValue(field, root.getRelative(key), object);
+                i++;
             }
         } else {
-            if (field.delegate != null)
-                field.delegate.save(field.get(), root.getRelative(field.key));
-            else
-                root.setRaw(field.key, field.get());
+            serialiseValue(field, root, field.get());
         }
+    }
+
+    private static void serialiseValue(PersistField field, DataKey root, Object value) {
+        if (field.delegate != null) {
+            field.delegate.save(value, root);
+        } else if (field.getType().isEnum()) {
+            root.setRaw("", ((Enum<?>) value).name());
+        } else
+            root.setRaw("", value);
     }
 
     static {

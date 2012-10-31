@@ -85,6 +85,7 @@ public class SimpleMetadataStore implements MetadataStore {
         boolean persistent;
 
         Object value;
+
         public MetadataObject(Object raw, boolean persistent) {
             value = raw;
             this.persistent = persistent;

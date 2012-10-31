@@ -21,7 +21,7 @@ public class LocationPersister implements Persister {
     @Override
     public void save(Object instance, DataKey root) {
         Location location = (Location) instance;
-        root.setString("world", location.getWorld().getName());
+        // root.setString("world", location.getWorld().getName());
         root.setDouble("x", location.getX());
         root.setDouble("y", location.getY());
         root.setDouble("z", location.getZ());
