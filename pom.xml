@@ -14,6 +14,7 @@
 		<craftbukkit.version>LATEST</craftbukkit.version>
 		<citizensapi.version>2.0.4-SNAPSHOT</citizensapi.version>
 		<vault.version>1.2.18-SNAPSHOT</vault.version>
+		<powermock.version>1.4.12</powermock.version>
 		<build.number>Unknown</build.number>
 	</properties>
 
@@ -26,20 +27,20 @@
 			<id>everything</id>
 			<url>http://repo.citizensnpcs.com</url>
 		</repository>
-        <repository>
-            <id>vault-repo</id>
-            <url>http://ci.herocraftonline.com/plugin/repository/everything</url>
-        </repository>
+		<repository>
+			<id>vault-repo</id>
+			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
-        <dependency>
-            <groupId>net.milkbowl.vault</groupId>
-            <artifactId>Vault</artifactId>
-            <version>${vault.version}</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
+		<dependency>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>Vault</artifactId>
+			<version>${vault.version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit</artifactId>
@@ -53,6 +54,18 @@
 			<version>${citizensapi.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

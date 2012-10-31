@@ -33,7 +33,6 @@ import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private final CitizensNPC npc;
-
     private net.minecraft.server.ItemStack[] previousEquipment = { null, null, null, null, null };
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
@@ -44,11 +43,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         this.npc = (CitizensNPC) npc;
         if (npc != null)
             initialise(minecraftServer);
-    }
-
-    @Override
-    public void bf() {
-        super.bf();
     }
 
     @Override
@@ -131,11 +125,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             return;
 
         updateEquipment();
-        Navigation navigation = getNavigation();
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
 
         NMS.updateSenses(this);
+        Navigation navigation = getNavigation();
         if (!navigation.f()) {
             navigation.e();
             moveOnCurrentHeading();
