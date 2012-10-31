@@ -282,7 +282,7 @@ public class NMS {
     }
 
     public static void updateAI(EntityLiving entity) {
-        entity.az().a();
+        updateSenses(entity);
         entity.getNavigation().e();
         entity.getControllerMove().c();
         entity.getControllerLook().a();
@@ -353,5 +353,9 @@ public class NMS {
             else if (Stairs.class.isAssignableFrom(material.getData()))
                 STAIR_MATERIALS.add(material.getId());
         }
+    }
+
+    public static void updateSenses(EntityLiving entity) {
+        entity.az().a();
     }
 }
