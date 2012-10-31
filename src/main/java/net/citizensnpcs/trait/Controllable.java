@@ -7,6 +7,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.command.CommandConfigurable;
 import net.citizensnpcs.command.CommandContext;
@@ -58,7 +59,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                 player.leaveVehicle();
             return;
         }
-        handle.setPassengerOf(getHandle());
+        if (npc.getTrait(Owner.class).isOwnedBy(handle.getBukkitEntity()))
+            handle.setPassengerOf(getHandle());
     }
 
     private EntityLiving getHandle() {
