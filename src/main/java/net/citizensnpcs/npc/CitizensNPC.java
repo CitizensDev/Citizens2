@@ -193,6 +193,7 @@ public abstract class CitizensNPC extends AbstractNPC {
             return false;
         }
 
+        NMS.setHeadYaw(mcEntity, loc.getYaw());
         getBukkitEntity().setMetadata(NPC_METADATA_MARKER,
                 new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 

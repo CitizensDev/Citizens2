@@ -68,7 +68,7 @@ public class NMS {
             return;
         if (remove) {
             handle.world.players.remove(handle);
-        } else {
+        } else if (!handle.world.players.contains(handle)) {
             handle.world.players.add(handle);
         }
     }

@@ -25,14 +25,14 @@ public class DelayTrigger implements WaypointTrigger {
         return String.format("Delay for %d ticks", delay);
     }
 
+    public int getDelay() {
+        return delay;
+    }
+
     @Override
     public void onWaypointReached(NPC npc, Location waypoint) {
         if (delay > 0)
             scheduleTask(npc.getTrait(Waypoints.class).getCurrentProvider());
-    }
-
-    public int getDelay() {
-        return delay;
     }
 
     private void scheduleTask(final WaypointProvider provider) {
