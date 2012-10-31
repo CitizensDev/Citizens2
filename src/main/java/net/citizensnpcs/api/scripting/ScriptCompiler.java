@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -93,10 +90,8 @@ public class ScriptCompiler extends Thread {
      *            The global provider
      */
     public void registerGlobalContextProvider(ContextProvider provider) {
-        synchronized (globalContextProviders) {
-            if (!globalContextProviders.contains(provider)) {
-                globalContextProviders.add(provider);
-            }
+        if (!globalContextProviders.contains(provider)) {
+            globalContextProviders.add(provider);
         }
     }
 
@@ -117,13 +112,11 @@ public class ScriptCompiler extends Thread {
                     CompiledScript src = compiler.compile(reader);
                     ScriptFactory compiled = new SimpleScriptFactory(src, task.contextProviders);
                     for (CompileCallback callback : task.callbacks) {
-                        synchronized (callback) {
-                            callback.onScriptCompiled(engine.file, compiled);
-                        }
+                        callback.onScriptCompiled(engine.file, compiled);
                     }
                 } catch (IOException e) {
-                    System.err
-                            .println("[Citizens]: IO fail while reading " + engine.file + " for scripting.");
+                    System.err.println("[Citizens]: IO error while reading " + engine.file
+                            + " for scripting.");
                     e.printStackTrace();
                 } catch (ScriptException e) {
                     System.err.println("[Citizens]: Compile error while parsing script at "
@@ -138,9 +131,7 @@ public class ScriptCompiler extends Thread {
                 }
             }
             for (CompileCallback callback : task.callbacks) {
-                synchronized (callback) {
-                    callback.onCompileTaskFinished();
-                }
+                callback.onCompileTaskFinished();
             }
         }
     }
@@ -190,17 +181,6 @@ public class ScriptCompiler extends Thread {
         FileEngine(File file, ScriptEngine engine) {
             this.file = file;
             this.engine = engine;
-        }
-    }
-
-    private static Method addURL;
-
-    static {
-        try {
-            addURL = URLClassLoader.class.getDeclaredMethod("addURL", new Class<?>[] { URL.class });
-            addURL.setAccessible(true);
-        } catch (Exception e) {
-            addURL = null;
         }
     }
 }
