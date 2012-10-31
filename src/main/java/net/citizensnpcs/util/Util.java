@@ -88,20 +88,20 @@ public class Util {
         return BlockFace.SELF;
     }
 
-    private static boolean isFacingNorth(double degrees, double leeway) {
-        return (45 - leeway <= degrees) && (degrees < 135 + leeway);
-    }
-
-    private static boolean isFacingWest(double degrees, double leeway) {
-        return ((0 <= degrees) && (degrees < 45 + leeway)) || ((315 - leeway <= degrees) && (degrees <= 360));
-    }
-
     private static boolean isFacingEast(double degrees, double leeway) {
         return (135 - leeway <= degrees) && (degrees < 225 + leeway);
     }
 
+    private static boolean isFacingNorth(double degrees, double leeway) {
+        return (45 - leeway <= degrees) && (degrees < 135 + leeway);
+    }
+
     private static boolean isFacingSouth(double degrees, double leeway) {
         return (225 - leeway <= degrees) && (degrees < 315 + leeway);
+    }
+
+    private static boolean isFacingWest(double degrees, double leeway) {
+        return ((0 <= degrees) && (degrees < 45 + leeway)) || ((315 - leeway <= degrees) && (degrees <= 360));
     }
 
     public static boolean isSettingFulfilled(Player player, Setting setting) {
@@ -120,7 +120,12 @@ public class Util {
         EntityType type = EntityType.fromName(toMatch);
         if (type != null)
             return type;
-        for (EntityType check : EntityType.values()) {
+        return matchEnum(EntityType.values(), toMatch);
+    }
+
+    public static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
+        T type = null;
+        for (T check : values) {
             String name = check.name();
             if (name.matches(toMatch) || name.equalsIgnoreCase(toMatch)
                     || name.replace("_", "").equalsIgnoreCase(toMatch)

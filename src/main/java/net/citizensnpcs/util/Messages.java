@@ -14,6 +14,7 @@ public class Messages {
     public static final String ANCHOR_ALREADY_EXISTS = "citizens.commands.npc.anchor.already-exists";
     public static final String ANCHOR_MISSING = "citizens.commands.npc.anchor.missing";
     public static final String ANCHOR_REMOVED = "citizens.commands.npc.anchor.removed";
+    public static final String ANIMATION_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.animation.prompt";
     public static final String AVAILABLE_WAYPOINT_PROVIDERS = "citizens.waypoints.available-providers-header";
     public static final String BEHAVIOUR_HELP = "citizens.commands.npc.behaviour.help";
     public static final String BEHAVIOURS_ADDED = "citizens.commands.npc.behaviour.added";
@@ -77,6 +78,7 @@ public class Messages {
     public static final String GRAVITY_ENABLED = "citizens.commands.npc.gravity.enabled";
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
     public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
+    public static final String INVALID_ANIMATION = "citizens.editors.waypoints.triggers.animation.invalid-animation";
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
