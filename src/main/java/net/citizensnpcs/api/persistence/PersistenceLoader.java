@@ -132,7 +132,7 @@ public class PersistenceLoader {
             value = deserialiseValue(field, root);
         if (value == null && field.isRequired())
             throw loadException;
-        if (!type.isAssignableFrom(value.getClass()))
+        if (value != null || !type.isAssignableFrom(value.getClass()))
             return;
         field.set(value);
     }
@@ -331,5 +331,4 @@ public class PersistenceLoader {
     static {
         registerPersistDelegate(Location.class, LocationPersister.class);
     }
-
 }
