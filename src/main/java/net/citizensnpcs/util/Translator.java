@@ -19,6 +19,9 @@ import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
+
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
@@ -246,16 +249,39 @@ public class Translator {
         }
     }
 
-    public static void setInstance(File resourceFile, Locale locale) {
-        instance = new Translator(resourceFile, locale);
-    }
-
     public static String translate(String key, Locale preferredLocale, Object... msg) {
+        if (instance == null)
+            createInstance();
         return StringHelper.parseColors(msg.length == 0 ? instance.translate(key, preferredLocale) : instance
                 .format(key, preferredLocale, msg));
     }
 
     public static String translate(String key, Object... msg) {
+        if (instance == null)
+            createInstance();
         return translate(key, instance.defaultLocale, msg);
+    }
+
+    private static void createInstance() {
+        Locale locale = Locale.getDefault();
+        String setting = Setting.LOCALE.asString();
+        if (!setting.isEmpty()) {
+            String[] parts = setting.split("[\\._]");
+            switch (parts.length) {
+                case 1:
+                    locale = new Locale(parts[0]);
+                    break;
+                case 2:
+                    locale = new Locale(parts[0], parts[1]);
+                    break;
+                case 3:
+                    locale = new Locale(parts[0], parts[1], parts[2]);
+                    break;
+                default:
+                    break;
+            }
+        }
+        instance = new Translator(new File(CitizensAPI.getDataFolder(), "lang"), locale);
+        Messaging.logTr(Messages.LOCALE_NOTIFICATION, locale);
     }
 }

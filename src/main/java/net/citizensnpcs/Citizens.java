@@ -3,7 +3,6 @@ package net.citizensnpcs;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Locale;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -43,7 +42,6 @@ import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
-import net.citizensnpcs.util.Translator;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -209,7 +207,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return;
         }
         config = new Settings(getDataFolder());
-        setupTranslator();
         registerScriptHelpers();
 
         saves = NPCDataStore.create(getDataFolder());
@@ -316,29 +313,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         // to search for class imports. Since the context classloader only has
         // CraftBukkit classes, we replace it with a PluginClassLoader, which
         // allows all plugin classes to be imported.
-    }
-
-    private void setupTranslator() {
-        Locale locale = Locale.getDefault();
-        String setting = Setting.LOCALE.asString();
-        if (!setting.isEmpty()) {
-            String[] parts = setting.split("[\\._]");
-            switch (parts.length) {
-                case 1:
-                    locale = new Locale(parts[0]);
-                    break;
-                case 2:
-                    locale = new Locale(parts[0], parts[1]);
-                    break;
-                case 3:
-                    locale = new Locale(parts[0], parts[1], parts[2]);
-                    break;
-                default:
-                    break;
-            }
-        }
-        Translator.setInstance(new File(getDataFolder(), "lang"), locale);
-        Messaging.logTr(Messages.LOCALE_NOTIFICATION, locale);
     }
 
     private void startMetrics() {
