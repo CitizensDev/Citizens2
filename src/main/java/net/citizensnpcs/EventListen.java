@@ -240,7 +240,8 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
         for (ChunkCoord chunk : toRespawn.keySet()) {
-            if (!event.getWorld().isChunkLoaded(chunk.x, chunk.z))
+            if (!chunk.worldName.equals(event.getWorld().getName())
+                    || !event.getWorld().isChunkLoaded(chunk.x, chunk.z))
                 continue;
             List<Integer> ids = toRespawn.get(chunk);
             for (int i = 0; i < ids.size(); i++) {
@@ -271,7 +272,7 @@ public class EventListen implements Listener {
     }
 
     private static class ChunkCoord {
-        private final String name;
+        private final String worldName;
         private final int x;
         private final int z;
 
@@ -282,7 +283,7 @@ public class EventListen implements Listener {
         private ChunkCoord(String worldName, int x, int z) {
             this.x = x;
             this.z = z;
-            this.name = worldName;
+            this.worldName = worldName;
         }
 
         @Override
@@ -294,11 +295,11 @@ public class EventListen implements Listener {
                 return false;
             }
             ChunkCoord other = (ChunkCoord) obj;
-            if (name == null) {
-                if (other.name != null) {
+            if (worldName == null) {
+                if (other.worldName != null) {
                     return false;
                 }
-            } else if (!name.equals(other.name)) {
+            } else if (!worldName.equals(other.worldName)) {
                 return false;
             }
             if (x != other.x || z != other.z) {
@@ -310,7 +311,7 @@ public class EventListen implements Listener {
         @Override
         public int hashCode() {
             final int prime = 31;
-            int result = prime + ((name == null) ? 0 : name.hashCode());
+            int result = prime + ((worldName == null) ? 0 : worldName.hashCode());
             result = prime * result + x;
             result = prime * result + z;
             return result;
