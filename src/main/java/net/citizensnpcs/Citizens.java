@@ -206,6 +206,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        CitizensAPI.setImplementation(this);
         config = new Settings(getDataFolder());
         registerScriptHelpers();
 
@@ -219,7 +220,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         npcRegistry = new CitizensNPCRegistry(saves);
         traitFactory = new CitizensTraitFactory();
         selector = new NPCSelector(this);
-        CitizensAPI.setImplementation(this);
 
         getServer().getPluginManager().registerEvents(new EventListen(), this);
 
