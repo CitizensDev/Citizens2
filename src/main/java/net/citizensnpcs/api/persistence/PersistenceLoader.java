@@ -130,9 +130,9 @@ public class PersistenceLoader {
             value = set;
         } else
             value = deserialiseValue(field, root);
-        if (value == null && field.isRequired())
+        if (value == null && (field.isRequired() || type.isPrimitive()))
             throw loadException;
-        if (value != null || !type.isAssignableFrom(value.getClass()))
+        if (value != null && !type.isAssignableFrom(value.getClass()))
             return;
         field.set(value);
     }
@@ -234,12 +234,19 @@ public class PersistenceLoader {
      * @return The loaded instance
      */
     public static <T> T load(Class<? extends T> clazz, DataKey root) {
+        T instance = null;
         try {
-            return load(clazz.newInstance(), root);
-        } catch (Exception e) {
+            instance = clazz.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
             return null;
         }
+        if (instance == null)
+            return null;
+        return load(instance, root);
     }
 
     /**
