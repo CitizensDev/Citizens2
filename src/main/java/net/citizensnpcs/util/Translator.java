@@ -174,6 +174,29 @@ public class Translator {
 
     public static final String PREFIX = "messages";
 
+    private static void createInstance() {
+        Locale locale = Locale.getDefault();
+        String setting = Setting.LOCALE.asString();
+        if (!setting.isEmpty()) {
+            String[] parts = setting.split("[\\._]");
+            switch (parts.length) {
+                case 1:
+                    locale = new Locale(parts[0]);
+                    break;
+                case 2:
+                    locale = new Locale(parts[0], parts[1]);
+                    break;
+                case 3:
+                    locale = new Locale(parts[0], parts[1], parts[2]);
+                    break;
+                default:
+                    break;
+            }
+        }
+        instance = new Translator(new File(CitizensAPI.getDataFolder(), "lang"), locale);
+        Messaging.logTr(Messages.LOCALE_NOTIFICATION, locale);
+    }
+
     private static Properties getDefaultBundleProperties() {
         Properties defaults = new Properties();
         InputStream in = null;
@@ -260,28 +283,5 @@ public class Translator {
         if (instance == null)
             createInstance();
         return translate(key, instance.defaultLocale, msg);
-    }
-
-    private static void createInstance() {
-        Locale locale = Locale.getDefault();
-        String setting = Setting.LOCALE.asString();
-        if (!setting.isEmpty()) {
-            String[] parts = setting.split("[\\._]");
-            switch (parts.length) {
-                case 1:
-                    locale = new Locale(parts[0]);
-                    break;
-                case 2:
-                    locale = new Locale(parts[0], parts[1]);
-                    break;
-                case 3:
-                    locale = new Locale(parts[0], parts[1], parts[2]);
-                    break;
-                default:
-                    break;
-            }
-        }
-        instance = new Translator(new File(CitizensAPI.getDataFolder(), "lang"), locale);
-        Messaging.logTr(Messages.LOCALE_NOTIFICATION, locale);
     }
 }

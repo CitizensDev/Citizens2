@@ -102,7 +102,6 @@ public class LinearWaypointProvider implements WaypointProvider {
         @Override
         public void begin() {
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_BEGIN);
-            conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
         }
 
         private void createWaypointMarker(int index, Waypoint waypoint) {
@@ -179,6 +178,14 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void onPlayerChat(AsyncPlayerChatEvent event) {
             if (!event.getPlayer().equals(player))
                 return;
+            if (event.getMessage().equalsIgnoreCase("triggers")) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                    @Override
+                    public void run() {
+                        conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
+                    }
+                });
+            }
             if (!event.getMessage().equalsIgnoreCase("toggle path"))
                 return;
             event.setCancelled(true);
@@ -188,7 +195,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                     // we need to spawn entities, get back on the main thread.
                     togglePath();
                 }
-            }, 1);
+            });
         }
 
         @EventHandler(ignoreCancelled = true)

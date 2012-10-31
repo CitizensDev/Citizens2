@@ -10,6 +10,13 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public enum PlayerAnimation {
+    ARM_SWING {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 1);
+            sendPacketNearby(packet, player, radius);
+        }
+    },
     HURT {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
@@ -46,13 +53,6 @@ public enum PlayerAnimation {
             player.getBukkitEntity().setSneaking(false);
             sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher(), true), player,
                     radius);
-        }
-    },
-    ARM_SWING {
-        @Override
-        protected void playAnimation(EntityPlayer player, int radius) {
-            Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 1);
-            sendPacketNearby(packet, player, radius);
         }
     };
 
