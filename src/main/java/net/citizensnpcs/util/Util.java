@@ -138,6 +138,10 @@ public class Util {
         return type;
     }
 
+    public static void sendPacketNearby(Location location, Packet packet) {
+        sendPacketNearby(location, packet, 64);
+    }
+
     public static void sendPacketNearby(Location location, Packet packet, double radius) {
         radius *= radius;
         final World world = location.getWorld();

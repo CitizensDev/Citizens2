@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.entity;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.List;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
@@ -20,6 +21,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Navigation;
 import net.minecraft.server.NetHandler;
 import net.minecraft.server.NetworkManager;
+import net.minecraft.server.Packet5EntityEquipment;
 import net.minecraft.server.World;
 
 import org.bukkit.Bukkit;
@@ -31,6 +33,8 @@ import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private final CitizensNPC npc;
+
+    private net.minecraft.server.ItemStack[] previousEquipment = { null, null, null, null, null };
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
             ItemInWorldManager itemInWorldManager, NPC npc) {
@@ -125,7 +129,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         super.j_();
         if (npc == null)
             return;
-
+        updateEquipment();
         NMS.updateAI(this);
         Navigation navigation = getNavigation();
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
@@ -167,6 +171,23 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         e(bD, bE); // movement method
         aM = prev;
         NMS.setHeadYaw(this, yaw);
+    }
+
+    private void updateEquipment() {
+        int changes = 0;
+        for (int i = 0; i < previousEquipment.length; i++) {
+            net.minecraft.server.ItemStack previous = previousEquipment[i];
+            net.minecraft.server.ItemStack current = getEquipment(i);
+            if (current == null)
+                continue;
+            if (!net.minecraft.server.ItemStack.equals(previous, current)) {
+                Util.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i,
+                        current));
+                ++changes;
+            }
+        }
+        if (changes > 0)
+            previousEquipment = Arrays.copyOf(getEquipment(), previousEquipment.length);
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder {
