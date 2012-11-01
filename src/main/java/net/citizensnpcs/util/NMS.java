@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.minecraft.server.ControllerLook;
 import net.minecraft.server.DamageSource;
 import net.minecraft.server.EnchantmentManager;
@@ -25,7 +24,6 @@ import net.minecraft.server.World;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.EntityType;
@@ -35,7 +33,6 @@ import org.bukkit.material.Step;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.primitives.Ints;
 
 @SuppressWarnings("unchecked")
 public class NMS {
@@ -109,28 +106,6 @@ public class NMS {
             target.setOnFire(fireAspectLevel * 4);
     }
 
-    public static void blockSpecificJump(EntityHumanNPC entity) {
-        int x = MathHelper.floor(entity.locX), y = MathHelper.floor(entity.boundingBox.b - 1), z = MathHelper
-                .floor(entity.locZ);
-        int below = entity.world.getTypeId(x, y, z);
-        BlockFace dir = Util.getFacingDirection(entity.yaw);
-        int[] typeIds = { below };
-        if (dir != BlockFace.SELF) {
-            int modX = x + dir.getModX(), modY = y + dir.getModY(), modZ = y + dir.getModZ();
-            typeIds = Ints.concat(
-                    typeIds,
-                    new int[] { entity.world.getTypeId(modX, modY, modZ),
-                            entity.world.getTypeId(modX, modY + 1, modZ),
-                            entity.world.getTypeId(modX, modY + 2, modZ) });
-        }
-        if (containsAny(STAIR_MATERIALS, typeIds)) {
-            entity.motY = 0.47F;
-        } else if (containsAny(SLAB_MATERIALS, typeIds)) {
-            entity.motY = 0.52F;
-        } else
-            entity.motY = 0.5F;
-    }
-
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
         if (GOAL_FIELD == null || goalSelectors == null)
             return;
@@ -142,13 +117,6 @@ public class NMS {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getMessage());
             }
         }
-    }
-
-    private static boolean containsAny(Set<Integer> set, int[] tests) {
-        for (int test : tests)
-            if (set.contains(test))
-                return true;
-        return false;
     }
 
     private static Constructor<? extends Entity> getCustomEntityConstructor(Class<? extends Entity> clazz,
