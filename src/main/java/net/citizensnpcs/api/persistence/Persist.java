@@ -19,7 +19,7 @@ public @interface Persist {
      * The specialised collection type to use when a super class is specified.
      * Eg. WeakHashMap.class when the field type is Map.
      */
-    Class<? super Collection<?>> collectionType() default Collection.class;
+    Class<?> collectionType() default Collection.class;
 
     /**
      * Whether a value must be present at load time. If a value for the field

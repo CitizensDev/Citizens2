@@ -16,6 +16,7 @@ import org.bukkit.Location;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Primitives;
 
 public class PersistenceLoader {
     private static class PersistField {
@@ -53,7 +54,7 @@ public class PersistenceLoader {
             return (T) value;
         }
 
-        public Class<? super Collection<?>> getCollectionType() {
+        public Class<?> getCollectionType() {
             return persistAnnotation.collectionType();
         }
 
@@ -104,7 +105,9 @@ public class PersistenceLoader {
     private static void deserialise(PersistField field, DataKey root) throws Exception {
         Object value;
         Class<?> type = field.getType();
-        Class<? super Collection<?>> collectionType = field.getCollectionType();
+        Class<?> collectionType = field.getCollectionType();
+        if (!Collection.class.isAssignableFrom(collectionType))
+            throw new IllegalStateException("Collection class must be assignable from Collection");
         if (List.class.isAssignableFrom(type)) {
             List<Object> list = (List<Object>) (!List.class.isAssignableFrom(collectionType) ? Lists
                     .newArrayList() : collectionType.newInstance());
@@ -129,9 +132,11 @@ public class PersistenceLoader {
                 deserialiseCollection(set, root, field);
             value = set;
         } else
-            value = deserialiseValue(field, root);
+            value = deserialiseValue(field, root.getRelative(field.key));
         if (value == null && (field.isRequired() || type.isPrimitive()))
             throw loadException;
+        if (type.isPrimitive())
+            type = Primitives.wrap(type);
         if (value != null && !type.isAssignableFrom(value.getClass()))
             return;
         field.set(value);
@@ -150,7 +155,7 @@ public class PersistenceLoader {
     private static Object deserialiseValue(PersistField field, DataKey root) {
         if (field.delegate == null && field.field.getType().isEnum()) {
             Class<? extends Enum> clazz = (Class<? extends Enum>) field.getType();
-            Object obj = root.getRaw(field.key);
+            Object obj = root.getRaw("");
             if (obj instanceof String) {
                 try {
                     return Enum.valueOf(clazz, obj.toString());
@@ -159,8 +164,7 @@ public class PersistenceLoader {
                 }
             }
         }
-        return field.delegate == null ? root.getRaw(field.key) : field.delegate.create(root
-                .getRelative(field.key));
+        return field.delegate == null ? root.getRaw("") : field.delegate.create(root);
     }
 
     private static void ensureDelegateLoaded(Class<? extends Persister> delegateClass) {
@@ -273,6 +277,7 @@ public class PersistenceLoader {
                 if (e == loadException)
                     return null;
                 e.printStackTrace();
+                return null;
             }
         return instance;
     }
@@ -322,7 +327,7 @@ public class PersistenceLoader {
                 i++;
             }
         } else {
-            serialiseValue(field, root, field.get());
+            serialiseValue(field, root.getRelative(field.key), field.get());
         }
     }
 
