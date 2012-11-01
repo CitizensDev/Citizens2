@@ -2,7 +2,6 @@ package net.citizensnpcs.npc.entity;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.List;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
@@ -33,7 +32,7 @@ import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private final CitizensNPC npc;
-    private net.minecraft.server.ItemStack[] previousEquipment = { null, null, null, null, null };
+    private final net.minecraft.server.ItemStack[] previousEquipment = { null, null, null, null, null };
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
             ItemInWorldManager itemInWorldManager, NPC npc) {
@@ -116,8 +115,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         } catch (IOException ex) {
             // swallow
         }
-        for (int i = 0; i < previousEquipment.length; i++)
-            previousEquipment[i] = getEquipment(i);
     }
 
     @Override
@@ -172,18 +169,15 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private void updateEquipment() {
-        int changes = 0;
         for (int i = 0; i < previousEquipment.length; i++) {
             net.minecraft.server.ItemStack previous = previousEquipment[i];
             net.minecraft.server.ItemStack current = getEquipment(i);
-            if (!net.minecraft.server.ItemStack.equals(previous, current)) {
+            if (previous != current) {
                 Util.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i,
                         current));
-                ++changes;
+                previousEquipment[i] = current;
             }
         }
-        if (changes > 0)
-            previousEquipment = Arrays.copyOf(getEquipment(), previousEquipment.length);
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder {
