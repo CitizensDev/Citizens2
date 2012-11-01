@@ -185,6 +185,16 @@ public class LinearWaypointProvider implements WaypointProvider {
                         conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
                     }
                 });
+                return;
+            }
+            if (event.getMessage().equalsIgnoreCase("clear")) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                    @Override
+                    public void run() {
+                        clearWaypoints();
+                    }
+                });
+                return;
             }
             if (!event.getMessage().equalsIgnoreCase("toggle path"))
                 return;
@@ -196,6 +206,12 @@ public class LinearWaypointProvider implements WaypointProvider {
                     togglePath();
                 }
             });
+        }
+
+        private void clearWaypoints() {
+            editingSlot = 0;
+            waypoints.clear();
+            destroyWaypointMarkers();
         }
 
         @EventHandler(ignoreCancelled = true)
