@@ -212,6 +212,7 @@ public class LinearWaypointProvider implements WaypointProvider {
             editingSlot = 0;
             waypoints.clear();
             destroyWaypointMarkers();
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED);
         }
 
         @EventHandler(ignoreCancelled = true)
