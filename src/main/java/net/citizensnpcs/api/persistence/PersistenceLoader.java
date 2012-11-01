@@ -107,7 +107,7 @@ public class PersistenceLoader {
         Class<?> type = field.getType();
         Class<?> collectionType = field.getCollectionType();
         if (!Collection.class.isAssignableFrom(collectionType))
-            throw new IllegalStateException("Collection class must be assignable from Collection");
+            throw loadException;
         if (List.class.isAssignableFrom(type)) {
             List<Object> list = (List<Object>) (!List.class.isAssignableFrom(collectionType) ? Lists
                     .newArrayList() : collectionType.newInstance());
@@ -133,10 +133,13 @@ public class PersistenceLoader {
             value = set;
         } else
             value = deserialiseValue(field, root.getRelative(field.key));
-        if (value == null && (field.isRequired() || type.isPrimitive()))
+        if (value == null && field.isRequired())
             throw loadException;
-        if (type.isPrimitive())
+        if (type.isPrimitive()) {
+            if (value == null)
+                return;
             type = Primitives.wrap(type);
+        }
         if (value != null && !type.isAssignableFrom(value.getClass()))
             return;
         field.set(value);
@@ -274,9 +277,8 @@ public class PersistenceLoader {
             try {
                 deserialise(new PersistField(field, instance), root);
             } catch (Exception e) {
-                if (e == loadException)
-                    return null;
-                e.printStackTrace();
+                if (e != loadException)
+                    e.printStackTrace();
                 return null;
             }
         return instance;

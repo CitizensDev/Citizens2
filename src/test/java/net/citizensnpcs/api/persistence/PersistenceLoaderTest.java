@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,18 +25,18 @@ public class PersistenceLoaderTest {
     }
 
     @Test
-    public void testCanAccessPrivateMembers() {
-        root.setInt("test", 5);
-        assertTrue(PersistenceLoader.load(PrivateTest.class, root).test == 5);
+    public void canAccessPrivateMembers() {
+        root.setInt("integer", 5);
+        assertTrue(PersistenceLoader.load(SaveLoadTest.class, root).integer == 5);
     }
 
     @Test
-    public void testIllegalCollectionClass() {
+    public void illegalCollectionClass() {
         assertNull(PersistenceLoader.load(IllegalCollectionClassTest.class, root));
     }
 
     @Test
-    public void testList() {
+    public void loadsList() {
         for (int i = 0; i < 6; i++) {
             root.setInt("list." + i, i);
         }
@@ -46,12 +47,46 @@ public class PersistenceLoaderTest {
     }
 
     @Test
-    public void testRequired() {
-        assertTrue(PersistenceLoader.load(PrivateTest.class, root) == null);
+    public void processesRequiredCorrectly() {
+        assertTrue(PersistenceLoader.load(RequiredTest.class, root) == null);
     }
 
     @Test
-    public void testSpecificCollectionClass() {
+    public void saveLoadCycle() throws Exception {
+        SaveLoadTest test = new SaveLoadTest();
+        PersistenceLoader.save(test, root);
+        PersistenceLoader.load(test, root);
+        SaveLoadTest newInstance = new SaveLoadTest();
+        for (Field field : test.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            assertEquals(field.get(test), field.get(newInstance));
+        }
+    }
+
+    public static class SaveLoadTest implements Cloneable {
+        @Persist
+        public int integer = 2;
+
+        @Persist
+        public Integer integerWrapped = 2;
+
+        @Persist
+        public double d = 0.5;
+
+        @Persist
+        public float f = 0.6F;
+
+        @Persist("namedtest")
+        public int named = 4;
+    }
+
+    public static class RequiredTest {
+        @Persist(required = true)
+        private int requiredInteger;
+    }
+
+    @Test
+    public void usesSpecificCollectionClass() {
         root.setInt("list.0", 5);
         root.setInt("set.0", 5);
         SpecificCollectionClassTest instance = PersistenceLoader
@@ -68,16 +103,6 @@ public class PersistenceLoaderTest {
     public static class IllegalCollectionClassTest {
         @Persist(collectionType = Integer.class)
         private List<Integer> list;
-    }
-
-    public static class PrivateTest {
-        @Persist
-        private int test;
-    }
-
-    public static class RequiredTest {
-        @Persist(required = true)
-        private int test;
     }
 
     public static class SpecificCollectionClassTest {
