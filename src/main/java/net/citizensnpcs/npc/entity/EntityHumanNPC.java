@@ -109,6 +109,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
 
         getNavigation().e(true);
+        X = 0.5F; // stepHeight - must not stay as the default 0 (breaks steps).
+                  // Check the EntityPlayer constructor for the new name.
 
         try {
             socket.close();
@@ -150,8 +152,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                  motY += 0.04;
              } else //(handled elsewhere)*/
             if (onGround && bW == 0) {
-                // bf(); // jump commented to provide block-specific handling
-                NMS.blockSpecificJump(this);
+                bf();
                 bW = 10;
             }
         } else
