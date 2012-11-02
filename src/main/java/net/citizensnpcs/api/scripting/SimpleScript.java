@@ -7,6 +7,8 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
+import com.google.common.base.Throwables;
+
 public class SimpleScript implements Script {
     private final Bindings bindings;
     private final ScriptEngine engine;
@@ -58,18 +60,11 @@ public class SimpleScript implements Script {
                 return ret;
             }
         } catch (ScriptException e) {
-            unwrap(e).printStackTrace();
+            Throwables.getRootCause(e).printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private Throwable unwrap(Throwable e) {
-        Throwable cause = e;
-        while (cause.getCause() != null)
-            cause = cause.getCause();
-        return cause;
     }
 
     @Override
@@ -85,7 +80,7 @@ public class SimpleScript implements Script {
                 return ret;
             }
         } catch (ScriptException e) {
-            e.printStackTrace();
+            Throwables.getRootCause(e).printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }

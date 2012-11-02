@@ -3,6 +3,8 @@ package net.citizensnpcs.api.scripting;
 import javax.script.CompiledScript;
 import javax.script.ScriptException;
 
+import com.google.common.base.Throwables;
+
 public class SimpleScriptFactory implements ScriptFactory {
     private final ContextProvider[] providers;
     private final CompiledScript src;
@@ -21,7 +23,7 @@ public class SimpleScriptFactory implements ScriptFactory {
         try {
             return new SimpleScript(src, providers);
         } catch (ScriptException e) {
-            e.printStackTrace();
+            Throwables.getRootCause(e).printStackTrace();
             return null;
         }
     }

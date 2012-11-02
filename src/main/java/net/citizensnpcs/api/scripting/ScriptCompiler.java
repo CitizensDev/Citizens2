@@ -17,6 +17,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -121,7 +122,7 @@ public class ScriptCompiler extends Thread {
                 } catch (ScriptException e) {
                     System.err.println("[Citizens]: Compile error while parsing script at "
                             + engine.file.getName() + ".");
-                    e.printStackTrace();
+                    Throwables.getRootCause(e).printStackTrace();
                 } catch (Throwable t) {
                     System.err.println("[Citizens]: Unexpected error while parsing script at "
                             + engine.file.getName() + ".");
