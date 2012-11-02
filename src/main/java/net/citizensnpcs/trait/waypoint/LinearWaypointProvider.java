@@ -322,8 +322,18 @@ public class LinearWaypointProvider implements WaypointProvider {
         private GoalSelector selector;
 
         private void ensureItr() {
-            if (itr == null || !itr.hasNext())
+            if (itr == null)
                 itr = waypoints.iterator();
+            else if (!itr.hasNext())
+                itr = getNewIterator();
+        }
+
+        private Iterator<Waypoint> getNewIterator() {
+            LinearWaypointsCompleteEvent event = new LinearWaypointsCompleteEvent(
+                    LinearWaypointProvider.this, waypoints.iterator());
+            Bukkit.getPluginManager().callEvent(event);
+            Iterator<Waypoint> next = event.getNextWaypoints();
+            return next;
         }
 
         private Navigator getNavigator() {
@@ -375,24 +385,20 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @Override
         public boolean shouldExecute(GoalSelector selector) {
-            if (paused || currentDestination != null || !npc.isSpawned() || getNavigator().isNavigating()
-                    || waypoints.size() == 0) {
+            if (paused || currentDestination != null || !npc.isSpawned() || getNavigator().isNavigating()) {
                 return false;
-            }
-            if (waypoints.size() == 1) {
-                // avoid pathing to the same point repeatedly
-                Location dest = npc.getBukkitEntity().getLocation();
-                if (waypoints.get(0).getLocation().distanceSquared(dest) < 3)
-                    return false;
             }
             ensureItr();
             boolean shouldExecute = itr.hasNext();
-            if (shouldExecute) {
-                this.selector = selector;
-                currentDestination = itr.next();
-                getNavigator().setTarget(currentDestination.getLocation());
-            }
-            return shouldExecute;
+            if (!shouldExecute)
+                return false;
+            this.selector = selector;
+            Waypoint next = itr.next();
+            if (npc.getBukkitEntity().getLocation().distanceSquared(next.getLocation()) < 3)
+                return false;
+            currentDestination = next;
+            getNavigator().setTarget(currentDestination.getLocation());
+            return true;
         }
     }
 }
