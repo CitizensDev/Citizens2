@@ -58,11 +58,18 @@ public class SimpleScript implements Script {
                 return ret;
             }
         } catch (ScriptException e) {
-            e.printStackTrace();
+            unwrap(e).printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private Throwable unwrap(Throwable e) {
+        Throwable cause = e;
+        while (cause.getCause() != null)
+            cause = cause.getCause();
+        return cause;
     }
 
     @Override
