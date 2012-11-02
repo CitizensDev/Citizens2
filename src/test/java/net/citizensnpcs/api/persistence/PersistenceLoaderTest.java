@@ -1,8 +1,9 @@
 package net.citizensnpcs.api.persistence;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
@@ -27,12 +28,12 @@ public class PersistenceLoaderTest {
     @Test
     public void canAccessPrivateMembers() {
         root.setInt("integer", 5);
-        assertTrue(PersistenceLoader.load(SaveLoadTest.class, root).integer == 5);
+        assertThat(PersistenceLoader.load(SaveLoadTest.class, root).integer, is(5));
     }
 
     @Test
     public void illegalCollectionClass() {
-        assertNull(PersistenceLoader.load(IllegalCollectionClassTest.class, root));
+        assertThat(PersistenceLoader.load(IllegalCollectionClassTest.class, root), is(nullValue()));
     }
 
     @Test
@@ -42,13 +43,13 @@ public class PersistenceLoaderTest {
         }
         CollectionTest test = PersistenceLoader.load(CollectionTest.class, root);
         for (int i = 0; i < 6; i++) {
-            assertEquals(test.list.get(i).intValue(), i);
+            assertThat(test.list.get(i).intValue(), is(i));
         }
     }
 
     @Test
     public void processesRequiredCorrectly() {
-        assertTrue(PersistenceLoader.load(RequiredTest.class, root) == null);
+        assertThat(PersistenceLoader.load(RequiredTest.class, root), is(nullValue()));
     }
 
     @Test
@@ -59,7 +60,7 @@ public class PersistenceLoaderTest {
         SaveLoadTest newInstance = new SaveLoadTest();
         for (Field field : test.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            assertEquals(field.get(test), field.get(newInstance));
+            assertThat(field.get(test), is(field.get(newInstance)));
         }
     }
 

@@ -28,119 +28,46 @@ public class EventRegistrar implements ContextProvider {
 
     @Override
     public void provide(Script script) {
-        script.setAttribute("events", new Events(plugin, script));
+        script.setAttribute("events", new Events(plugin));
     }
 
     public static class Events {
-        private final Map<FunctionReference, Listener> anonymousListeners = Maps.newHashMap();
+        private final Map<EventHandler, Listener> anonymousListeners = Maps.newHashMap();
         private final Plugin plugin;
-        private final Script script;
 
-        public Events(Plugin plugin, Script script) {
+        public Events(Plugin plugin) {
             this.plugin = plugin;
-            this.script = script;
         }
 
-        public void deregister(Object instance, String functionName) {
-            if (instance == null) {
-                deregister(functionName);
-                return;
-            }
-            Listener listener = script.convertToInterface(functionName, Listener.class);
-            if (listener == null)
-                listener = anonymousListeners.remove(new FunctionReference(functionName, instance));
-            deregisterListener(listener);
+        public void deregister(EventHandler handler) {
+            if (handler != null)
+                HandlerList.unregisterAll(anonymousListeners.remove(handler));
         }
 
-        public void deregister(String functionName) {
-            deregisterListener(anonymousListeners.remove(new FunctionReference(functionName, null)));
+        public void on(Class<? extends Event> eventClass, EventHandler handler) {
+            registerEvent(handler, eventClass);
         }
 
-        private void deregisterListener(Listener listener) {
-            if (listener != null)
-                HandlerList.unregisterAll(listener);
-        }
-
-        public void register(Object instance, String functionName, Class<? extends Event> eventClass) {
-            registerEvent(instance, functionName, eventClass);
-        }
-
-        public void register(String functionName, Class<? extends Event> eventClass) {
-            registerEvent(null, functionName, eventClass);
-        }
-
-        private void registerEvent(final Object object, final String functionName,
-                final Class<? extends Event> eventClass) {
+        private void registerEvent(final EventHandler handler, final Class<? extends Event> eventClass) {
             if (!plugin.isEnabled())
                 throw new IllegalStateException("Plugin is no longer valid.");
-            if (functionName == null || eventClass == null)
-                throw new IllegalArgumentException("Arguments should not be null");
-            Listener listener = object != null ? script.convertToInterface(object, Listener.class) : null;
-            if (listener == null) {
-                anonymousListeners.put(new FunctionReference(functionName, object),
-                        (listener = new Listener() {
-                        }));
-            }
+            Listener bukkitListener = new Listener() {
+            };
+            anonymousListeners.put(handler, bukkitListener);
+
             PluginManager manager = plugin.getServer().getPluginManager();
-            manager.registerEvent(eventClass, listener, EventPriority.NORMAL, new EventExecutor() {
+            manager.registerEvent(eventClass, bukkitListener, EventPriority.NORMAL, new EventExecutor() {
                 @Override
-                public void execute(Listener listener, Event event) throws EventException {
+                public void execute(Listener bukkitListener, Event event) throws EventException {
                     try {
                         if (!eventClass.isAssignableFrom(event.getClass()))
                             return;
-                        if (object != null) {
-                            script.invoke(object, functionName, event);
-                        } else {
-                            script.invoke(functionName, event);
-                        }
+                        handler.handle(event);
                     } catch (Throwable t) {
                         throw new EventException(t);
                     }
                 }
             }, plugin);
-        }
-    }
-
-    private static class FunctionReference {
-        private final String functionName;
-        private final Object instance;
-
-        public FunctionReference(String name, Object instance) {
-            this.functionName = name;
-            this.instance = instance;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
-                return false;
-            }
-            FunctionReference other = (FunctionReference) obj;
-            if (functionName == null) {
-                if (other.functionName != null) {
-                    return false;
-                }
-            } else if (!functionName.equals(other.functionName)) {
-                return false;
-            }
-            if (instance == null) {
-                if (other.instance != null) {
-                    return false;
-                }
-            } else if (!instance.equals(other.instance)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = prime + ((functionName == null) ? 0 : functionName.hashCode());
-            return prime * result + ((instance == null) ? 0 : instance.hashCode());
         }
     }
 }
