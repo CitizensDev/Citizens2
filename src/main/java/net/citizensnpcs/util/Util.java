@@ -166,4 +166,12 @@ public class Util {
             }
         }
     }
+
+    public static boolean isLoaded(Location location) {
+        if (location.getWorld() == null)
+            return false;
+        int chunkX = location.getBlockX() >> 4;
+        int chunkZ = location.getBlockZ() >> 4;
+        return location.getWorld().isChunkLoaded(chunkX, chunkZ);
+    }
 }

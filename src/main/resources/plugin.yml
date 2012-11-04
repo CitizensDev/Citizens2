@@ -41,36 +41,44 @@ permissions:
       citizens.npc.*:
         children:
           citizens.npc.age: true
-          citizens.npc.pose: true
+          citizens.npc.anchor: true
           citizens.npc.behaviour: true
-          citizens.npc.create: true
           citizens.npc.controllable: true
           citizens.npc.copy: true
+          citizens.npc.create: true
           citizens.npc.despawn: true
           citizens.npc.edit.*:
             children:
                 citizens.npc.edit.equip: true
                 citizens.npc.edit.path: true
+                citizens.npc.edit.text: true
+          citizens.npc.gravity: true
           citizens.npc.help: true
+          citizens.npc.ignore-cost: true
           citizens.npc.list: true
           citizens.npc.lookclose: true
           citizens.npc.moveto: true
           citizens.npc.owner: true
           citizens.npc.path: true
+          citizens.npc.pathfindingrange: true
+          citizens.npc.pose: true
           citizens.npc.power: true
           citizens.npc.profession: true
-          citizens.npc.remove: true
-          citizens.npc.remove.all: true
+          citizens.npc.remove.*:
+            children:
+                citizens.npc.remove: true
+                citizens.npc.remove.all: true
           citizens.npc.rename: true
           citizens.npc.select: true
+          citizens.npc.size: true
+          citizens.npc.skeletontype: true
           citizens.npc.spawn: true
           citizens.npc.speed: true
           citizens.npc.talk: true
-          citizens.npc.text: true
+          citizens.npc.tp: true
+          citizens.npc.tphere: true
           citizens.npc.trait.*:
             children:
                 citizens.npc.trait: true
                 citizens.npc.trait-configure: true
-                citizens.npc.trait-configure.*: true
-          citizens.npc.tp: true
-          citizens.npc.tphere: true
+          citizens.npc.vulnerable: true
