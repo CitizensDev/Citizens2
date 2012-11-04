@@ -9,6 +9,7 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
+import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.WorldServer;
@@ -31,18 +32,15 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
                 StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws), this);
         handle.getBukkitEntity().teleport(loc);
+        NMS.setHeadYaw(handle, loc.getYaw() % 360);
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                handle.yaw = loc.getYaw();
-                NMS.setHeadYaw(handle, loc.getYaw() % 360);
-                // set the yaw in another tick - if done immediately,
-                // minecraft will not update it.
                 boolean removeFromPlayerList = Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean();
                 NMS.addOrRemoveFromPlayerList(getBukkitEntity(),
                         data().get("removefromplayerlist", removeFromPlayerList));
             }
-        }, 5);
+        }, 1);
         handle.getBukkitEntity().setSleepingIgnored(true);
         return handle;
     }
@@ -140,7 +138,7 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
     @Override
     public void update() {
         super.update();
-        if (isSpawned() && getBukkitEntity().getLocation().getChunk().isLoaded()) {
+        if (isSpawned() && Util.isLoaded(getBukkitEntity().getLocation())) {
             if (!getNavigator().isNavigating() && !NMS.inWater(mcEntity))
                 mcEntity.move(0, -0.2, 0);
             // gravity. also works around an entity.onGround not updating issue

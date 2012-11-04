@@ -459,10 +459,10 @@ public class Metrics {
         }
     }
 
-    public void stopTask() {
+    public void stop() {
         synchronized (optOutLock) {
             if (taskId > 0) {
-                this.plugin.getServer().getScheduler().cancelTask(taskId);
+                plugin.getServer().getScheduler().cancelTask(taskId);
                 taskId = -1;
             }
         }

@@ -27,7 +27,7 @@ public class NPCDataStore {
     }
 
     public void loadInto(CitizensNPCRegistry registry) {
-        int created = 0, spawned = 0;
+        int created = 0;
         for (DataKey key : root.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
             if (!key.keyExists("name")) {
@@ -44,10 +44,8 @@ public class NPCDataStore {
             ((CitizensNPC) npc).load(key);
 
             created++;
-            if (npc.isSpawned())
-                spawned++;
         }
-        Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, created, spawned);
+        Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, created);
     }
 
     public void remove(NPC npc) {
