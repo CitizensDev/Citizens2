@@ -72,9 +72,14 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Iterator<NPC> itr = npcRegistry.iterator();
         while (itr.hasNext()) {
             NPC npc = itr.next();
-            npc.despawn();
-            for (Trait t : npc.getTraits())
-                t.onRemove();
+            try {
+                npc.despawn();
+                for (Trait t : npc.getTraits())
+                    t.onRemove();
+            } catch (Exception e) {
+                e.printStackTrace();
+                // ensure that all entities are despawned
+            }
             itr.remove();
         }
     }

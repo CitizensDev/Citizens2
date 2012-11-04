@@ -17,8 +17,9 @@ public class TextStartPrompt extends StringPrompt {
     }
 
     @Override
-    public Prompt acceptInput(ConversationContext context, String input) {
-        input = ChatColor.stripColor(input.trim().split(" ")[0]);
+    public Prompt acceptInput(ConversationContext context, String original) {
+        String[] parts = ChatColor.stripColor(original.trim()).split(" ");
+        String input = parts[0];
         CommandSender sender = (CommandSender) context.getForWhom();
         if (input.equalsIgnoreCase("add"))
             return new TextAddPrompt(text);
@@ -31,9 +32,24 @@ public class TextStartPrompt extends StringPrompt {
         else if (input.equalsIgnoreCase("realistic looking"))
             Messaging.sendTr(sender, Messages.TEXT_EDITOR_REALISTIC_LOOKING_SET,
                     text.toggleRealisticLooking());
-        else if (input.equalsIgnoreCase("close"))
+        else if (input.equalsIgnoreCase("close") || input.equalsIgnoreCase("talk-close"))
             Messaging.sendTr(sender, Messages.TEXT_EDITOR_CLOSE_TALKER_SET, text.toggle());
-        else if (input.equalsIgnoreCase("help")) {
+        else if (input.equalsIgnoreCase("range")) {
+            try {
+                double range = Math.max(0, Double.parseDouble(parts[1]));
+                text.setRange(range);
+                Messaging.sendTr(sender, Messages.TEXT_EDITOR_RANGE_SET, range);
+            } catch (NumberFormatException e) {
+                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_RANGE);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_RANGE);
+            }
+        } else if (input.equalsIgnoreCase("item")) {
+            if (parts.length > 1) {
+                text.setItemInHandPattern(parts[1]);
+                Messaging.sendTr(sender, Messages.TEXT_EDITOR_SET_ITEM, parts[1]);
+            }
+        } else if (input.equalsIgnoreCase("help")) {
             context.setSessionData("said-text", false);
             Messaging.send(sender, getPromptText(context));
         } else

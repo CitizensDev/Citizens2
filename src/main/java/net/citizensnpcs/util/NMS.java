@@ -280,6 +280,10 @@ public class NMS {
         }
     }
 
+    public static void updateSenses(EntityLiving entity) {
+        entity.az().a();
+    }
+
     static {
         // true field above false and three synchronised lists
         THREAD_STOPPER = getField(NetworkManager.class, "m");
@@ -321,9 +325,5 @@ public class NMS {
             else if (Stairs.class.isAssignableFrom(material.getData()))
                 STAIR_MATERIALS.add(material.getId());
         }
-    }
-
-    public static void updateSenses(EntityLiving entity) {
-        entity.az().a();
     }
 }

@@ -1,6 +1,5 @@
 package net.citizensnpcs.util;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -104,16 +103,12 @@ public class Util {
         return ((0 <= degrees) && (degrees < 45 + leeway)) || ((315 - leeway <= degrees) && (degrees <= 360));
     }
 
-    public static boolean isSettingFulfilled(Player player, Setting setting) {
-        String parts = setting.asString();
-        if (parts.contains("*"))
-            return true;
-        for (String part : Splitter.on(',').split(parts)) {
-            if (Material.matchMaterial(part) == player.getItemInHand().getType()) {
-                return true;
-            }
-        }
-        return false;
+    public static boolean isLoaded(Location location) {
+        if (location.getWorld() == null)
+            return false;
+        int chunkX = location.getBlockX() >> 4;
+        int chunkZ = location.getBlockZ() >> 4;
+        return location.getWorld().isChunkLoaded(chunkX, chunkZ);
     }
 
     public static EntityType matchEntityType(String toMatch) {
@@ -136,6 +131,18 @@ public class Util {
             }
         }
         return type;
+    }
+
+    public static boolean matchesItemInHand(Player player, String setting) {
+        String parts = setting;
+        if (parts.contains("*"))
+            return true;
+        for (String part : Splitter.on(',').split(parts)) {
+            if (Material.matchMaterial(part) == player.getItemInHand().getType()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void sendPacketNearby(Location location, Packet packet) {
@@ -165,13 +172,5 @@ public class Util {
                 ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
             }
         }
-    }
-
-    public static boolean isLoaded(Location location) {
-        if (location.getWorld() == null)
-            return false;
-        int chunkX = location.getBlockX() >> 4;
-        int chunkZ = location.getBlockZ() >> 4;
-        return location.getWorld().isChunkLoaded(chunkX, chunkZ);
     }
 }
