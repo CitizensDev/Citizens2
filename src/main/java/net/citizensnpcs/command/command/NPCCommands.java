@@ -605,11 +605,13 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.MOVETO_TELEPORTED, npc.getName(), to);
     }
 
-    @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0)
+    @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "npc.info")
     public void npc(CommandContext args, CommandSender sender, final NPC npc) {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
         Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
+        if (npc.isSpawned())
+            Messaging.send(sender, "    <a>Spawned at: <e>" + npc.getBukkitEntity().getLocation());
         Messaging.send(sender, "    <a>Traits<e>");
         for (Trait trait : npc.getTraits()) {
             if (CitizensAPI.getTraitFactory().isInternalTrait(trait))

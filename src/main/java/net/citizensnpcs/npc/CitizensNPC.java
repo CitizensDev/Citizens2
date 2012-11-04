@@ -184,7 +184,7 @@ public abstract class CitizensNPC extends AbstractNPC {
         if (!couldSpawn) {
             // we need to wait for a chunk load before trying to spawn
             mcEntity = null;
-            EventListen.add(loc, getId());
+            EventListen.addForRespawn(loc, getId());
             return true;
         }
 

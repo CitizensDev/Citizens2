@@ -56,10 +56,10 @@ public class Util {
         double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
         double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
 
-        double yaw = (Math.acos(xDiff / distanceXZ) * 180 / Math.PI);
-        double pitch = (Math.acos(yDiff / distanceY) * 180 / Math.PI) - 90;
+        double yaw = Math.toDegrees(Math.acos(xDiff / distanceXZ));
+        double pitch = Math.toDegrees(Math.acos(yDiff / distanceY)) - 90;
         if (zDiff < 0.0)
-            yaw = yaw + (Math.abs(180 - yaw) * 2);
+            yaw += Math.abs(180 - yaw) * 2;
 
         EntityLiving handle = ((CraftLivingEntity) from).getHandle();
         NMS.look(handle, (float) yaw - 90, (float) pitch);

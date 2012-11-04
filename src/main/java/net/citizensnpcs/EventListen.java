@@ -87,8 +87,7 @@ public class EventListen implements Listener {
             if (!npc.isSpawned())
                 continue;
             Location loc = npc.getBukkitEntity().getLocation();
-            Chunk chunk = loc.getChunk();
-            boolean sameChunkCoordinates = coord.z == chunk.getZ() && coord.x == chunk.getX();
+            boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
             if (event.getWorld().equals(loc.getWorld()) && sameChunkCoordinates) {
                 npc.despawn();
                 toRespawn.put(coord, npc.getId());
@@ -264,7 +263,11 @@ public class EventListen implements Listener {
     }
 
     private void storeForRespawn(NPC npc) {
-        toRespawn.put(toCoord(npc.getBukkitEntity().getLocation().getChunk()), npc.getId());
+        toRespawn.put(toCoord(npc.getBukkitEntity().getLocation()), npc.getId());
+    }
+
+    private ChunkCoord toCoord(Location loc) {
+        return new ChunkCoord(loc.getWorld().getName(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
     }
 
     private ChunkCoord toCoord(Chunk chunk) {
@@ -320,9 +323,9 @@ public class EventListen implements Listener {
 
     private static EventListen instance;
 
-    public static void add(Location loc, int id) {
+    public static void addForRespawn(Location loc, int id) {
         if (instance == null)
             return;
-        instance.toRespawn.put(instance.toCoord(loc.getChunk()), id);
+        instance.toRespawn.put(instance.toCoord(loc), id);
     }
 }
