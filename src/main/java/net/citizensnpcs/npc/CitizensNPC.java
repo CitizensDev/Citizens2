@@ -20,6 +20,7 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 import net.minecraft.server.EntityLiving;
 
 import org.apache.commons.lang.Validate;
@@ -178,7 +179,8 @@ public abstract class CitizensNPC extends AbstractNPC {
             return false;
 
         mcEntity = createHandle(loc);
-        boolean couldSpawn = mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
+        boolean couldSpawn = !Util.isLoaded(loc) ? false : mcEntity.world.addEntity(mcEntity,
+                SpawnReason.CUSTOM);
         if (!couldSpawn) {
             // we need to wait for a chunk load before trying to spawn
             mcEntity = null;
