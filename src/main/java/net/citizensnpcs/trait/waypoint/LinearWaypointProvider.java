@@ -104,6 +104,13 @@ public class LinearWaypointProvider implements WaypointProvider {
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_BEGIN);
         }
 
+        private void clearWaypoints() {
+            editingSlot = 0;
+            waypoints.clear();
+            destroyWaypointMarkers();
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED);
+        }
+
         private void createWaypointMarker(int index, Waypoint waypoint) {
             Entity entity = spawnMarker(player.getWorld(), waypoint.getLocation().add(0, 1, 0));
             if (entity == null)
@@ -206,13 +213,6 @@ public class LinearWaypointProvider implements WaypointProvider {
                     togglePath();
                 }
             });
-        }
-
-        private void clearWaypoints() {
-            editingSlot = 0;
-            waypoints.clear();
-            destroyWaypointMarkers();
-            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED);
         }
 
         @EventHandler(ignoreCancelled = true)
@@ -328,16 +328,16 @@ public class LinearWaypointProvider implements WaypointProvider {
                 itr = getNewIterator();
         }
 
+        private Navigator getNavigator() {
+            return npc.getNavigator();
+        }
+
         private Iterator<Waypoint> getNewIterator() {
             LinearWaypointsCompleteEvent event = new LinearWaypointsCompleteEvent(
                     LinearWaypointProvider.this, waypoints.iterator());
             Bukkit.getPluginManager().callEvent(event);
             Iterator<Waypoint> next = event.getNextWaypoints();
             return next;
-        }
-
-        private Navigator getNavigator() {
-            return npc.getNavigator();
         }
 
         public boolean isPaused() {

@@ -15,26 +15,26 @@ public class LinearWaypointsCompleteEvent extends CitizensEvent {
         this.provider = provider;
     }
 
-    public WaypointProvider getWaypointProvider() {
-        return provider;
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
     }
 
     public Iterator<Waypoint> getNextWaypoints() {
         return next;
     }
 
+    public WaypointProvider getWaypointProvider() {
+        return provider;
+    }
+
     public void setNextWaypoints(Iterator<Waypoint> waypoints) {
         this.next = waypoints;
     }
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+    private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
-    private static final HandlerList handlers = new HandlerList();
 }

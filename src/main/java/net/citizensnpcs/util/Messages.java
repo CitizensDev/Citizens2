@@ -174,11 +174,14 @@ public class Messages {
     public static final String TEXT_EDITOR_INVALID_INDEX = "citizens.editors.text.invalid-index";
     public static final String TEXT_EDITOR_INVALID_INPUT = "citizens.editors.text.invalid-input";
     public static final String TEXT_EDITOR_INVALID_PAGE = "citizens.editors.text.invalid-page";
+    public static final String TEXT_EDITOR_INVALID_RANGE = "citizens.editors.text.invalid-range";
     public static final String TEXT_EDITOR_PAGE_PROMPT = "citizens.editors.text.change-page-prompt";
     public static final String TEXT_EDITOR_RANDOM_TALKER_SET = "citizens.editors.text.random-talker-set";
+    public static final String TEXT_EDITOR_RANGE_SET = "citizens.editors.text.range-set";
     public static final String TEXT_EDITOR_REALISTIC_LOOKING_SET = "citizens.editors.text.realistic-looking-set";
     public static final String TEXT_EDITOR_REMOVE_PROMPT = "citizens.editors.text.remove-prompt";
     public static final String TEXT_EDITOR_REMOVED_ENTRY = "citizens.editors.text.removed-entry";
+    public static final String TEXT_EDITOR_SET_ITEM = "citizens.editors.text.talk-item-set";
     public static final String TEXT_EDITOR_START_PROMPT = "citizens.editors.text.start-prompt";
     public static final String TRAIT_LOAD_FAILED = "citizens.notifications.trait-load-failed";
     public static final String TRAIT_NOT_CONFIGURABLE = "citizens.commands.traitc.not-configurable";
