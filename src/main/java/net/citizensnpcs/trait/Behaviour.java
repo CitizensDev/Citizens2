@@ -136,7 +136,7 @@ public class Behaviour extends Trait {
                 public Object call() throws Exception {
                     synchronized (Behaviour.this) {
                         fileInUse = file;
-                        instance.invoke("addGoals", this, npc);
+                        instance.invoke("addGoals", BehaviourCallback.this, npc);
                         scripts.add(file);
                         fileInUse = null;
                     }
