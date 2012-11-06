@@ -72,12 +72,17 @@ public class EventListen implements Listener {
         List<Integer> ids = toRespawn.get(coord);
         for (int i = 0; i < ids.size(); i++) {
             int id = ids.get(i);
-            NPC npc = npcRegistry.getById(id);
-            if (npc == null)
-                continue;
-            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+            spawn(id);
+            Messaging.debug("Spawned", id, "due to chunk load at [" + coord.x + "," + coord.z + "]");
         }
         toRespawn.removeAll(coord);
+    }
+
+    private void spawn(int id) {
+        NPC npc = npcRegistry.getById(id);
+        if (npc == null)
+            return;
+        npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -91,6 +96,8 @@ public class EventListen implements Listener {
             if (event.getWorld().equals(loc.getWorld()) && sameChunkCoordinates) {
                 npc.despawn();
                 toRespawn.put(coord, npc.getId());
+                Messaging.debug("Despawned", npc.getId(), "due to chunk unload at [" + coord.x + ","
+                        + coord.z + "]");
             }
         }
     }
@@ -244,9 +251,9 @@ public class EventListen implements Listener {
                 continue;
             List<Integer> ids = toRespawn.get(chunk);
             for (int i = 0; i < ids.size(); i++) {
-                int id = ids.get(i);
-                NPC npc = npcRegistry.getById(id);
-                npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+                spawn(ids.get(i));
+                Messaging
+                        .debug("Spawned", ids.get(0), "due to world " + event.getWorld().getName() + " load");
             }
             toRespawn.removeAll(chunk);
         }
@@ -259,6 +266,7 @@ public class EventListen implements Listener {
                 continue;
             storeForRespawn(npc);
             npc.despawn();
+            Messaging.debug("Despawned", npc.getId() + "due to world unload at", event.getWorld().getName());
         }
     }
 

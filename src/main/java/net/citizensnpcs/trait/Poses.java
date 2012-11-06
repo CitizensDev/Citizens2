@@ -1,20 +1,24 @@
 package net.citizensnpcs.trait;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.Pose;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+
+import com.google.common.collect.Maps;
 
 public class Poses extends Trait {
-    private final List<Pose> poses = new ArrayList<Pose>();
+    private final Map<String, Pose> poses = Maps.newHashMap();
 
     public Poses() {
         super("poses");
@@ -22,28 +26,21 @@ public class Poses extends Trait {
 
     public boolean addPose(String name, Location location) {
         Pose newPose = new Pose(name, location.getPitch(), location.getYaw());
-        if (poses.contains(newPose))
+        if (poses.containsValue(newPose) || poses.containsKey(name))
             return false;
-        poses.add(newPose);
+        poses.put(name.toLowerCase(), newPose);
         return true;
     }
 
-    public void assumePose(Pose pose) {
+    public void assumePose(Location location) {
+        assumePose(location.getYaw(), location.getPitch());
+    }
+
+    private void assumePose(float yaw, float pitch) {
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
 
-        Util.assumePose(npc.getBukkitEntity(), pose);
-    }
-
-    public Pose getPose(String name) {
-        for (Pose pose : poses)
-            if (pose.getName().equalsIgnoreCase(name))
-                return pose;
-        return null;
-    }
-
-    public List<Pose> getPoses() {
-        return poses;
+        Util.assumePose(npc.getBukkitEntity(), yaw, pitch);
     }
 
     @Override
@@ -51,18 +48,14 @@ public class Poses extends Trait {
         for (DataKey sub : key.getRelative("list").getIntegerSubKeys())
             try {
                 String[] parts = sub.getString("").split(";");
-                poses.add(new Pose(parts[0], Float.valueOf(parts[1]), Float.valueOf(parts[2])));
+                poses.put(parts[0], new Pose(parts[0], Float.valueOf(parts[1]), Float.valueOf(parts[2])));
             } catch (NumberFormatException e) {
                 Messaging.logTr(Messages.SKIPPING_INVALID_POSE, sub.name(), e.getMessage());
             }
     }
 
-    public boolean removePose(Pose pose) {
-        if (poses.contains(pose)) {
-            poses.remove(pose);
-            return true;
-        }
-        return false;
+    public boolean removePose(String pose) {
+        return poses.remove(pose.toLowerCase()) != null;
     }
 
     @Override
@@ -70,5 +63,29 @@ public class Poses extends Trait {
         key.removeKey("list");
         for (int i = 0; i < poses.size(); i++)
             key.setString("list." + String.valueOf(i), poses.get(i).stringValue());
+    }
+
+    public void assumePose(String flag) {
+        Pose pose = poses.get(flag.toLowerCase());
+        assumePose(pose.getYaw(), pose.getPitch());
+    }
+
+    public boolean hasPose(String pose) {
+        return poses.containsKey(pose.toLowerCase());
+    }
+
+    public void describe(CommandSender sender, int page) throws CommandException {
+        Paginator paginator = new Paginator().header("Pose");
+        paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
+        int i = 0;
+        for (Pose pose : poses.values()) {
+            String line = "<a>" + i + "<b>  " + pose.getName() + "<c>  " + pose.getPitch() + "/"
+                    + pose.getYaw();
+            paginator.addLine(line);
+            i++;
+        }
+
+        if (!paginator.sendPage(sender, page))
+            throw new CommandException(Messages.COMMAND_PAGE_MISSING);
     }
 }

@@ -43,7 +43,6 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Paginator;
-import net.citizensnpcs.util.Pose;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
@@ -705,32 +704,22 @@ public class NPCCommands {
             } else
                 throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("assume"));
         } else if (args.hasValueFlag("assume")) {
-            if (args.getFlag("assume").isEmpty())
+            String pose = args.getFlag("assume");
+            if (pose.isEmpty())
                 throw new CommandException(Messages.INVALID_POSE_NAME);
 
-            Pose pose = trait.getPose(args.getFlag("assume"));
-            if (pose == null)
-                throw new CommandException(Messages.POSE_MISSING, args.getFlag("assume"));
+            if (!trait.hasPose(pose))
+                throw new CommandException(Messages.POSE_MISSING, pose);
             trait.assumePose(pose);
         } else if (args.hasValueFlag("remove")) {
             if (args.getFlag("remove").isEmpty())
                 throw new CommandException(Messages.INVALID_POSE_NAME);
-            if (trait.removePose(trait.getPose(args.getFlag("remove"))))
+            if (trait.removePose(args.getFlag("remove"))) {
                 Messaging.sendTr(sender, Messages.POSE_REMOVED);
-            else
+            } else
                 throw new CommandException(Messages.POSE_MISSING, args.getFlag("remove"));
         } else if (!args.hasFlag('a')) {
-            Paginator paginator = new Paginator().header("Pose");
-            paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
-            for (int i = 0; i < trait.getPoses().size(); i++) {
-                String line = "<a>" + i + "<b>  " + trait.getPoses().get(i).getName() + "<c>  "
-                        + trait.getPoses().get(i).getPitch() + "/" + trait.getPoses().get(i).getYaw();
-                paginator.addLine(line);
-            }
-
-            int page = args.getInteger(1, 1);
-            if (!paginator.sendPage(sender, page))
-                throw new CommandException(Messages.COMMAND_PAGE_MISSING);
+            trait.describe(sender, args.getInteger(1, 1));
         }
 
         // Assume Player's pose
@@ -738,7 +727,7 @@ public class NPCCommands {
             return;
         if (sender instanceof Player) {
             Location location = ((Player) sender).getLocation();
-            trait.assumePose(new Pose(sender.getName(), location.getPitch(), location.getYaw()));
+            trait.assumePose(location);
         } else
             throw new ServerCommandException();
     }
