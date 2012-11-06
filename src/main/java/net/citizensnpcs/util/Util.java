@@ -27,9 +27,9 @@ public class Util {
     private Util() {
     }
 
-    public static void assumePose(org.bukkit.entity.Entity entity, Pose pose) {
+    public static void assumePose(org.bukkit.entity.Entity entity, float  yaw, float pitch) {
         EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
-        NMS.look(handle, pose.getYaw(), pose.getPitch());
+        NMS.look(handle, yaw,pitch);
     }
 
     public static void callCollisionEvent(NPC npc, net.minecraft.server.Entity entity) {

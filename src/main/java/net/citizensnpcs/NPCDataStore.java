@@ -45,7 +45,7 @@ public class NPCDataStore {
 
             created++;
         }
-        Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, created);
+        Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, created, "?");
     }
 
     public void remove(NPC npc) {

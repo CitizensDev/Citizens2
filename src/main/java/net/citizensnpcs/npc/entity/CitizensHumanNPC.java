@@ -32,7 +32,6 @@ public class CitizensHumanNPC extends CitizensNPC implements Equipable {
         final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
                 StringHelper.parseColors(getFullName()), new ItemInWorldManager(ws), this);
         handle.getBukkitEntity().teleport(loc);
-        NMS.setHeadYaw(handle, loc.getYaw() % 360);
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
