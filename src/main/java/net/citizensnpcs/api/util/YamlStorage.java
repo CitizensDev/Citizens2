@@ -127,7 +127,10 @@ public class YamlStorage implements Storage {
                 Object value = config.get(path);
                 if (value instanceof Number)
                     return ((Number) value).doubleValue();
-                return Double.parseDouble(value.toString());
+                String raw = value.toString();
+                if (raw.isEmpty())
+                    return def;
+                return Double.parseDouble(raw);
             }
             return def;
         }
@@ -144,7 +147,10 @@ public class YamlStorage implements Storage {
                 Object value = config.get(path);
                 if (value instanceof Number)
                     return ((Number) value).intValue();
-                return Integer.parseInt(value.toString());
+                String raw = value.toString();
+                if (raw.isEmpty())
+                    return def;
+                return Integer.parseInt(raw);
             }
             return def;
         }
@@ -169,7 +175,10 @@ public class YamlStorage implements Storage {
                 Object value = config.get(path);
                 if (value instanceof Number)
                     return ((Number) value).longValue();
-                return Long.parseLong(value.toString());
+                String raw = value.toString();
+                if (raw.isEmpty())
+                    return def;
+                return Long.parseLong(raw);
             }
             return def;
         }
