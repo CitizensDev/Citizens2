@@ -38,7 +38,8 @@ public class ItemStorage {
 
     public static void saveItem(DataKey key, ItemStack item) {
         migrateForSave(key);
-        key.setString("type", item.getType().name());
+        String type = item.getType() == null ? Material.AIR.name() : item.getType().name();
+        key.setString("type", type);
         key.setInt("amount", item.getAmount());
         key.setInt("durability", item.getDurability());
         if (item.getData() != null) {
