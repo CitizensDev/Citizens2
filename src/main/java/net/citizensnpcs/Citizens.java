@@ -187,7 +187,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
         Editor.leaveAll();
         CitizensAPI.shutdown();
-        metrics.stop();
+        if (metrics != null)
+            metrics.stop();
 
         tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
