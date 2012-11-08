@@ -53,5 +53,6 @@ public class WaypointTriggerRegistry implements Persister {
         addTrigger("chat", ChatTrigger.class, ChatTriggerPrompt.class);
         addTrigger("delay", DelayTrigger.class, DelayTriggerPrompt.class);
         addTrigger("teleport", TeleportTrigger.class, TeleportTriggerPrompt.class);
+        addTrigger("pose", PoseTrigger.class, PoseTriggerPrompt.class);
     }
 }
