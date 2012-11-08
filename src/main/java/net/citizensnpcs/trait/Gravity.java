@@ -21,6 +21,10 @@ public class Gravity extends Trait implements Toggleable {
         velocity.setY(Math.max(velocity.getY(), 0));
         npc.getBukkitEntity().setVelocity(velocity);
     }
+    
+    public void gravitate(boolean gravitate) {
+    	enabled = gravitate;
+    }
 
     @Override
     public boolean toggle() {
