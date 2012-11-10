@@ -36,10 +36,10 @@ public class ItemStorage {
         key.removeKey("id");
     }
 
-    public static void saveItem(DataKey key, ItemStack item) {
-        migrateForSave(key);
+    public static void saveItem(DataKey key, ItemStack item) {  
         if (item == null)
             return;
+        migrateForSave(key);
         String type = item.getType() == null ? Material.AIR.name() : item.getType().name();
         key.setString("type", type);
         key.setInt("amount", item.getAmount());
