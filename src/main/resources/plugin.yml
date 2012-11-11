@@ -6,12 +6,13 @@ main: net.citizensnpcs.Citizens
 website: http://www.citizensnpcs.com
 commands:
   traitc:
-    description: Configures traits
     aliases: [trc, tc]
+    description: Configures traits
   trait:
-    description: Trait commands
     aliases: [tr]
+    description: Trait commands
   script:
+    aliases: [sc]
     description: Scripting commands
   citizens:
     aliases: [citizens2]
@@ -33,6 +34,7 @@ permissions:
         children:
             citizens.admin: true
             citizens.admin.avoid-limits: true
+            citizens.admin.remove.all: true
       citizens.help: true
       citizens.script.*:
         children:
@@ -64,10 +66,7 @@ permissions:
           citizens.npc.pose: true
           citizens.npc.power: true
           citizens.npc.profession: true
-          citizens.npc.remove.*:
-            children:
-                citizens.npc.remove: true
-                citizens.npc.remove.all: true
+          citizens.npc.remove: true
           citizens.npc.rename: true
           citizens.npc.select: true
           citizens.npc.size: true
@@ -75,6 +74,9 @@ permissions:
           citizens.npc.spawn: true
           citizens.npc.speed: true
           citizens.npc.talk: true
+          citizens.npc.text:
+            children:
+              citizens.npc.edit.text: true
           citizens.npc.tp: true
           citizens.npc.tphere: true
           citizens.npc.trait.*:
