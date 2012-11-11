@@ -774,7 +774,7 @@ public class NPCCommands {
         if (args.argsLength() == 2) {
             if (!args.getString(1).equalsIgnoreCase("all"))
                 throw new CommandException(Messages.REMOVE_INCORRECT_SYNTAX);
-            if (!sender.hasPermission("citizens.npc.remove.all") && !sender.hasPermission("citizens.admin"))
+            if (!sender.hasPermission("citizens.admin.remove.all") && !sender.hasPermission("citizens.admin"))
                 throw new NoPermissionsException();
             npcRegistry.deregisterAll();
             Messaging.sendTr(sender, Messages.REMOVED_ALL_NPCS);
