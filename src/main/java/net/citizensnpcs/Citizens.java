@@ -204,6 +204,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onEnable() {
+        CitizensAPI.setImplementation(this);
         // Disable if the server is not using the compatible Minecraft version
         String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
         compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
@@ -212,7 +213,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        CitizensAPI.setImplementation(this);
         config = new Settings(getDataFolder());
         registerScriptHelpers();
 
