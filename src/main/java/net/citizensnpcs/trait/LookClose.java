@@ -40,10 +40,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     public void lookClose(boolean lookClose) {
-		enabled = lookClose;
-	}
+        enabled = lookClose;
+    }
 
-	private void findNewTarget() {
+    private void findNewTarget() {
         List<Entity> nearby = npc.getBukkitEntity().getNearbyEntities(range, range, range);
         final Location npcLocation = npc.getBukkitEntity().getLocation();
         Collections.sort(nearby, new Comparator<Entity>() {

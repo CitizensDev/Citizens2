@@ -53,9 +53,9 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
         }
 
         @Override
-        public boolean c(EntityHuman entityhuman) {
+        public boolean a(EntityHuman entityhuman) {
             if (npc == null)
-                return super.c(entityhuman);
+                return super.a(entityhuman);
             return false; // block trades
         }
 

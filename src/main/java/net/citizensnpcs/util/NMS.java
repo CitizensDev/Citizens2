@@ -100,7 +100,7 @@ public class NMS {
             handle.motZ *= 0.6D;
         }
 
-        int fireAspectLevel = EnchantmentManager.getFireAspectEnchantmentLevel(handle, target);
+        int fireAspectLevel = EnchantmentManager.getFireAspectEnchantmentLevel(handle);
 
         if (fireAspectLevel > 0)
             target.setOnFire(fireAspectLevel * 4);
@@ -166,7 +166,7 @@ public class NMS {
     }
 
     public static void look(ControllerLook controllerLook, EntityLiving handle, EntityLiving target) {
-        controllerLook.a(target, 10.0F, handle.bm());
+        controllerLook.a(target, 10.0F, handle.bp());
     }
 
     public static void look(EntityLiving handle, float yaw, float pitch) {
@@ -281,7 +281,7 @@ public class NMS {
     }
 
     public static void updateSenses(EntityLiving entity) {
-        entity.az().a();
+        entity.aA().a();
     }
 
     static {

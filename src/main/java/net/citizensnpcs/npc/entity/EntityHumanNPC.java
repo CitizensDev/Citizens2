@@ -45,8 +45,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public float by() {
-        return super.by() * npc.getNavigator().getDefaultParameters().speed();
+    public float bB() {
+        return super.bB() * npc.getNavigator().getDefaultParameters().speed();
     }
 
     @Override
@@ -146,7 +146,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private void moveOnCurrentHeading() {
         NMS.updateAI(this);
         // taken from EntityLiving update method
-        if (bG) {
+        if (bE) {
             /* boolean inLiquid = H() || J();
              if (inLiquid) {
                  motY += 0.04;
@@ -159,12 +159,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             bW = 0;
 
         bD *= 0.98F;
-        bE *= 0.98F;
+        bH *= 0.98F;
         bF *= 0.9F;
 
         float prev = aM;
-        aM *= by();
-        e(bD, bE); // movement method
+        aM *= bB();
+        e(bD, bC); // movement method
         aM = prev;
         NMS.setHeadYaw(this, yaw);
     }
