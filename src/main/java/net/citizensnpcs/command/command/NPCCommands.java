@@ -582,11 +582,11 @@ public class NPCCommands {
         } else {
             to = current.clone();
             if (args.hasValueFlag("x"))
-                to.setX(args.getFlagInteger("x"));
+                to.setX(args.getFlagDouble("x"));
             if (args.hasValueFlag("y"))
-                to.setY(args.getFlagInteger("y"));
+                to.setY(args.getFlagDouble("y"));
             if (args.hasValueFlag("z"))
-                to.setZ(args.getFlagInteger("z"));
+                to.setZ(args.getFlagDouble("z"));
             if (args.hasValueFlag("yaw"))
                 to.setYaw((float) args.getFlagDouble("yaw"));
             if (args.hasValueFlag("pitch"))
