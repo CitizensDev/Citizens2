@@ -118,7 +118,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public Iterable<CommandInfo> getCommands(String base) {
         return commands.getCommands(base);
     }
-
+    
     @Override
     public NPCRegistry getNPCRegistry() {
         return npcRegistry;
@@ -256,6 +256,15 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void onImplementationChanged() {
         Messaging.severeTr(Messages.CITIZENS_IMPLEMENTATION_DISABLED);
         Bukkit.getPluginManager().disablePlugin(this);
+    }
+    
+    public void registerCommandClass(Class<?> clazz) {
+        try {
+        commands.register(clazz);
+        } catch (Throwable ex) {
+            Messaging.logTr(Messages.CITIZENS_INVALID_COMMAND_CLASS);
+            ex.printStackTrace();
+        }
     }
 
     private void registerCommands() {
