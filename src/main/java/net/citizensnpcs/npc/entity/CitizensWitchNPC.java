@@ -44,8 +44,8 @@ public class CitizensWitchNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bi() {
-            super.bi();
+        public void bl() {
+            super.bl();
             if (npc != null)
                 npc.update();
         }

@@ -45,9 +45,9 @@ public class CitizensGiantNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bk() {
+        public void bn() {
             if (npc == null)
-                super.bk();
+                super.bn();
             else
                 npc.update();
         }

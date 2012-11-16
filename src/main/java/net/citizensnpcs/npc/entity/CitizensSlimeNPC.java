@@ -46,16 +46,16 @@ public class CitizensSlimeNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bi() {
-            super.bi();
+        public void bl() {
+            super.bl();
             if (npc != null)
                 npc.update();
         }
 
         @Override
-        public void bk() {
+        public void bn() {
             if (npc == null)
-                super.bk();
+                super.bn();
             else {
                 npc.update();
                 NMS.updateAI(this);

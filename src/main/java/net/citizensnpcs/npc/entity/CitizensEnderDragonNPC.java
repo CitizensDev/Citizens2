@@ -59,9 +59,9 @@ public class CitizensEnderDragonNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bk() {
+        public void bn() {
             if (npc == null)
-                super.bk();
+                super.bn();
         }
 
         @Override
