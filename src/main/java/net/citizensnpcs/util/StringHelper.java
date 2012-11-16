@@ -1,5 +1,7 @@
 package net.citizensnpcs.util;
 
+import java.util.regex.Pattern;
+
 import net.citizensnpcs.Settings.Setting;
 
 import org.bukkit.ChatColor;
@@ -60,13 +62,8 @@ public class StringHelper {
         return p[n];
     }
 
-    public static String parseColors(Object string) {
-        String parsed = string.toString();
-        for (ChatColor color : ChatColor.values()) {
-            parsed = parsed.replace("<" + color.getChar() + ">", color.toString());
-        }
-        parsed = ChatColor.translateAlternateColorCodes('&', parsed);
-        return parsed;
+    public static String parseColors(String parsed) {
+        return COLOR_MATCHER.matcher(parsed).replaceAll(ChatColor.COLOR_CHAR + "$1");
     }
 
     public static String wrap(Object string) {
@@ -84,5 +81,14 @@ public class StringHelper {
     public static String wrapHeader(Object string) {
         String highlight = Setting.HIGHLIGHT_COLOUR.asString();
         return highlight + "=====[ " + string.toString() + highlight + " ]=====";
+    }
+
+    private static Pattern COLOR_MATCHER;
+    static {
+        String colors = "";
+        for (ChatColor color : ChatColor.values())
+            colors += color.getChar();
+        COLOR_MATCHER = Pattern.compile("[&<]([COLORS])[>]?".replace("COLORS", colors),
+                Pattern.CASE_INSENSITIVE);
     }
 }

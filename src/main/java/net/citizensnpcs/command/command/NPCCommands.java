@@ -972,9 +972,10 @@ public class NPCCommands {
             "tphere", "tph", "move" }, min = 1, max = 1, permission = "npc.tphere")
     public void tphere(CommandContext args, Player player, NPC npc) {
         // Spawn the NPC if it isn't spawned to prevent NPEs
-        if (!npc.isSpawned())
-            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
-        npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
+        if (!npc.isSpawned()) {
+            npc.spawn(player.getLocation());
+        } else
+            npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
         Messaging.sendTr(player, Messages.NPC_TELEPORTED, npc.getName());
     }
 
