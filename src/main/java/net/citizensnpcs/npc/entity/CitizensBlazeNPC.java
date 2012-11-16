@@ -59,11 +59,11 @@ public class CitizensBlazeNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bk() {
+        public void bn() {
             if (npc != null)
                 npc.update();
             else
-                super.bk();
+                super.bn();
         }
 
         @Override

@@ -301,8 +301,8 @@ public class NMS {
         MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
         MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
 
-        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bQ");
-        SPEED_FIELD = getField(EntityLiving.class, "bI");
+        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bO");
+        SPEED_FIELD = getField(EntityLiving.class, "bG");
         NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
         PATHFINDING_RANGE = getField(Navigation.class, "e");
         GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");

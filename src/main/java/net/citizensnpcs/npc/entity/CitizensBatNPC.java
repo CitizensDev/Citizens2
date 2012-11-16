@@ -59,9 +59,9 @@ public class CitizensBatNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bi() {
+        public void bl() {
             if (npc == null)
-                super.bi();
+                super.bl();
             else {
                 NMS.updateAI(this);
                 npc.update();

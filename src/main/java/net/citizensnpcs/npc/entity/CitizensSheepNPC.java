@@ -74,8 +74,8 @@ public class CitizensSheepNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
-        public void bi() {
-            super.bi();
+        public void bl() {
+            super.bl();
             if (npc != null)
                 npc.update();
         }

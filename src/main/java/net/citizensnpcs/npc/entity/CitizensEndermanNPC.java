@@ -92,16 +92,16 @@ public class CitizensEndermanNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
-        public void bi() {
-            super.bi();
+        public void bl() {
+            super.bl();
             if (npc != null)
                 npc.update();
         }
 
         @Override
-        public void bk() {
+        public void bn() {
             if (npc == null)
-                super.bk();
+                super.bn();
             else {
                 NMS.updateAI(this);
                 npc.update();
