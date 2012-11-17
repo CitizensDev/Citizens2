@@ -58,6 +58,19 @@ public class CommandManager {
 
     private final Set<Method> serverCommands = new HashSet<Method>();
 
+    // Attempt to execute a command.
+    public void execute(org.bukkit.command.Command command, String[] args, CommandSender sender,
+            Object... methodArgs) throws CommandException {
+        // must put command into split.
+        String[] newArgs = new String[args.length + 1];
+        System.arraycopy(args, 0, newArgs, 1, args.length);
+        newArgs[0] = command.getName().toLowerCase();
+
+        Object[] newMethodArgs = new Object[methodArgs.length + 1];
+        System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
+        executeMethod(null, newArgs, sender, newMethodArgs);
+    }
+
     /*
      * Attempt to execute a command. This version takes a separate command name
      * (for the root command) and then a list of following arguments.
@@ -71,13 +84,6 @@ public class CommandManager {
         System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
 
         executeMethod(null, newArgs, sender, newMethodArgs);
-    }
-
-    // Attempt to execute a command.
-    public void execute(String[] args, CommandSender sender, Object... methodArgs) throws CommandException {
-        Object[] newMethodArgs = new Object[methodArgs.length + 1];
-        System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
-        executeMethod(null, args, sender, newMethodArgs);
     }
 
     // Attempt to execute a command.
@@ -118,48 +124,7 @@ public class CommandManager {
 
         Requirements cmdRequirements = requirements.get(method);
         if (cmdRequirements != null) {
-            NPC npc = (NPC) methodArgs[2];
-
-            // Requirements
-            if (cmdRequirements.selected()) {
-                boolean canRedefineSelected = context.hasValueFlag("id")
-                        && sender.hasPermission("npc.select");
-                String error = Messaging.tr(Messages.COMMAND_MUST_HAVE_SELECTED);
-                if (canRedefineSelected) {
-                    npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
-                    if (npc == null)
-                        error += ' ' + Messaging.tr(Messages.COMMAND_ID_NOT_FOUND,
-                                context.getFlagInteger("id"));
-                }
-                if (npc == null)
-                    throw new RequirementMissingException(error);
-            }
-
-            if (cmdRequirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
-                    && !npc.getTrait(Owner.class).isOwnedBy(sender))
-                throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_MUST_BE_OWNER));
-
-            if (npc != null) {
-                for (Class<? extends Trait> clazz : cmdRequirements.traits()) {
-                    if (!npc.hasTrait(clazz))
-                        throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_MISSING_TRAIT,
-                                clazz.getSimpleName()));
-                }
-            }
-
-            if (npc != null) {
-                Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()),
-                        EntityType.class);
-                if (types.contains(EntityType.UNKNOWN))
-                    types = EnumSet.allOf(EntityType.class);
-                types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));
-
-                EntityType type = npc.getTrait(MobType.class).getType();
-                if (!types.contains(type)) {
-                    throw new RequirementMissingException(Messaging.tr(
-                            Messages.COMMAND_REQUIREMENTS_INVALID_MOB_TYPE, type.getName()));
-                }
-            }
+            processRequirements(sender, methodArgs, context, cmdRequirements);
         }
 
         Object instance = instances.get(method);
@@ -232,9 +197,9 @@ public class CommandManager {
      * Checks to see whether there is a command named such at the root level.
      * This will check aliases as well.
      */
-    public boolean hasCommand(String command, String modifier) {
-        return commands.containsKey(command.toLowerCase() + " " + modifier.toLowerCase())
-                || commands.containsKey(command.toLowerCase() + " *");
+    public boolean hasCommand(org.bukkit.command.Command cmd, String modifier) {
+        return commands.containsKey(cmd.getName().toLowerCase() + " " + modifier.toLowerCase())
+                || commands.containsKey(cmd.getName().toLowerCase() + " *");
     }
 
     // Returns whether a player has permission.
@@ -250,6 +215,52 @@ public class CommandManager {
             return true;
 
         return false;
+    }
+
+    private void processRequirements(CommandSender sender, Object[] methodArgs, CommandContext context,
+            Requirements cmdRequirements) throws RequirementMissingException {
+        NPC npc = (NPC) methodArgs[2];
+
+        // Requirements
+        if (cmdRequirements.selected()) {
+            boolean canRedefineSelected = context.hasValueFlag("id")
+                    && sender.hasPermission("npc.select");
+            String error = Messaging.tr(Messages.COMMAND_MUST_HAVE_SELECTED);
+            if (canRedefineSelected) {
+                npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
+                if (npc == null)
+                    error += ' ' + Messaging.tr(Messages.COMMAND_ID_NOT_FOUND,
+                            context.getFlagInteger("id"));
+            }
+            if (npc == null)
+                throw new RequirementMissingException(error);
+        }
+
+        if (cmdRequirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
+                && !npc.getTrait(Owner.class).isOwnedBy(sender))
+            throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_MUST_BE_OWNER));
+
+        if (npc != null) {
+            for (Class<? extends Trait> clazz : cmdRequirements.traits()) {
+                if (!npc.hasTrait(clazz))
+                    throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_MISSING_TRAIT,
+                            clazz.getSimpleName()));
+            }
+        }
+
+        if (npc != null) {
+            Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()),
+                    EntityType.class);
+            if (types.contains(EntityType.UNKNOWN))
+                types = EnumSet.allOf(EntityType.class);
+            types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));
+
+            EntityType type = npc.getTrait(MobType.class).getType();
+            if (!types.contains(type)) {
+                throw new RequirementMissingException(Messaging.tr(
+                        Messages.COMMAND_REQUIREMENTS_INVALID_MOB_TYPE, type.getName()));
+            }
+        }
     }
 
     /*

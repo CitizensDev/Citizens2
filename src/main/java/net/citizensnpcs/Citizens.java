@@ -118,7 +118,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public Iterable<CommandInfo> getCommands(String base) {
         return commands.getCommands(base);
     }
-    
+
     @Override
     public NPCRegistry getNPCRegistry() {
         return npcRegistry;
@@ -139,17 +139,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String cmdName, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String cmdName, String[] args) {
         try {
-            // must put command into split.
-            String[] split = new String[args.length + 1];
-            System.arraycopy(args, 0, split, 1, args.length);
-            split[0] = cmd.getName().toLowerCase();
-
             String modifier = args.length > 0 ? args[0] : "";
-
-            if (!commands.hasCommand(split[0], modifier) && !modifier.isEmpty()) {
-                return suggestClosestModifier(sender, split[0], modifier);
+            if (!commands.hasCommand(command, modifier) && !modifier.isEmpty()) {
+                return suggestClosestModifier(sender, command.getName().toLowerCase(), modifier);
             }
 
             NPC npc = selector.getSelected(sender);
@@ -157,7 +151,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             // flexibility (ie. adding more context in the future without
             // changing everything)
             try {
-                commands.execute(split, sender, sender, npc);
+                commands.execute(command, args, sender, sender, npc);
             } catch (ServerCommandException ex) {
                 Messaging.sendTr(sender, Messages.COMMAND_MUST_BE_INGAME);
             } catch (CommandUsageException ex) {
@@ -257,10 +251,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Messaging.severeTr(Messages.CITIZENS_IMPLEMENTATION_DISABLED);
         Bukkit.getPluginManager().disablePlugin(this);
     }
-    
+
     public void registerCommandClass(Class<?> clazz) {
         try {
-        commands.register(clazz);
+            commands.register(clazz);
         } catch (Throwable ex) {
             Messaging.logTr(Messages.CITIZENS_INVALID_COMMAND_CLASS);
             ex.printStackTrace();

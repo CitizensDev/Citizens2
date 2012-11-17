@@ -46,17 +46,17 @@ public class CitizensVillagerNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void bl() {
-            super.bl();
-            if (npc != null)
-                npc.update();
-        }
-
-        @Override
         public boolean a(EntityHuman entityhuman) {
             if (npc == null)
                 return super.a(entityhuman);
             return false; // block trades
+        }
+
+        @Override
+        public void bl() {
+            super.bl();
+            if (npc != null)
+                npc.update();
         }
 
         @Override

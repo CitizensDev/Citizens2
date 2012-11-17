@@ -11,9 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -27,9 +25,9 @@ public class Util {
     private Util() {
     }
 
-    public static void assumePose(org.bukkit.entity.Entity entity, float  yaw, float pitch) {
+    public static void assumePose(org.bukkit.entity.Entity entity, float yaw, float pitch) {
         EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
-        NMS.look(handle, yaw,pitch);
+        NMS.look(handle, yaw, pitch);
     }
 
     public static void callCollisionEvent(NPC npc, net.minecraft.server.Entity entity) {
@@ -63,44 +61,6 @@ public class Util {
 
         EntityLiving handle = ((CraftLivingEntity) from).getHandle();
         NMS.look(handle, (float) yaw - 90, (float) pitch);
-    }
-
-    public static BlockFace getFacingDirection(float degrees) {
-        return getFacingDirection(degrees, 10);
-    }
-
-    public static BlockFace getFacingDirection(float degrees, double leeway) {
-        while (degrees < 0D) {
-            degrees += 360D;
-        }
-        while (degrees > 360D) {
-            degrees -= 360D;
-        }
-        if (isFacingWest(degrees, leeway))
-            return BlockFace.WEST;
-        if (isFacingNorth(degrees, leeway))
-            return BlockFace.NORTH;
-        if (isFacingEast(degrees, leeway))
-            return BlockFace.EAST;
-        if (isFacingSouth(degrees, leeway))
-            return BlockFace.SOUTH;
-        return BlockFace.SELF;
-    }
-
-    private static boolean isFacingEast(double degrees, double leeway) {
-        return (135 - leeway <= degrees) && (degrees < 225 + leeway);
-    }
-
-    private static boolean isFacingNorth(double degrees, double leeway) {
-        return (45 - leeway <= degrees) && (degrees < 135 + leeway);
-    }
-
-    private static boolean isFacingSouth(double degrees, double leeway) {
-        return (225 - leeway <= degrees) && (degrees < 315 + leeway);
-    }
-
-    private static boolean isFacingWest(double degrees, double leeway) {
-        return ((0 <= degrees) && (degrees < 45 + leeway)) || ((315 - leeway <= degrees) && (degrees <= 360));
     }
 
     public static boolean isLoaded(Location location) {
@@ -159,7 +119,7 @@ public class Util {
             if (location.distanceSquared(ply.getLocation()) > radius) {
                 continue;
             }
-            ((CraftPlayer) ply).getHandle().netServerHandler.sendPacket(packet);
+            NMS.sendPacket(ply, packet);
         }
     }
 
@@ -169,7 +129,7 @@ public class Util {
             if (player == null || !player.isOnline())
                 continue;
             for (Packet packet : packets) {
-                ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
+                NMS.sendPacket(player, packet);
             }
         }
     }
