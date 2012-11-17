@@ -20,11 +20,6 @@ import org.junit.Test;
 public class PersistenceLoaderTest {
     private DataKey root;
 
-    @Before
-    public void setUp() {
-        root = new MemoryDataKey();
-    }
-
     @Test
     public void canAccessPrivateMembers() {
         root.setInt("integer", 5);
@@ -64,26 +59,9 @@ public class PersistenceLoaderTest {
         }
     }
 
-    public static class SaveLoadTest implements Cloneable {
-        @Persist
-        public int integer = 2;
-
-        @Persist
-        public Integer integerWrapped = 2;
-
-        @Persist
-        public double d = 0.5;
-
-        @Persist
-        public float f = 0.6F;
-
-        @Persist("namedtest")
-        public int named = 4;
-    }
-
-    public static class RequiredTest {
-        @Persist(required = true)
-        private int requiredInteger;
+    @Before
+    public void setUp() {
+        root = new MemoryDataKey();
     }
 
     @Test
@@ -104,6 +82,28 @@ public class PersistenceLoaderTest {
     public static class IllegalCollectionClassTest {
         @Persist(collectionType = Integer.class)
         private List<Integer> list;
+    }
+
+    public static class RequiredTest {
+        @Persist(required = true)
+        private int requiredInteger;
+    }
+
+    public static class SaveLoadTest implements Cloneable {
+        @Persist
+        public double d = 0.5;
+
+        @Persist
+        public float f = 0.6F;
+
+        @Persist
+        public int integer = 2;
+
+        @Persist
+        public Integer integerWrapped = 2;
+
+        @Persist("namedtest")
+        public int named = 4;
     }
 
     public static class SpecificCollectionClassTest {

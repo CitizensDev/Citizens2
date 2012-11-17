@@ -33,7 +33,8 @@ public class SimpleGoalController implements GoalController {
     }
 
     private void addGoalToExecution(Goal goal) {
-        Bukkit.getPluginManager().registerEvents(goal, CitizensAPI.getPlugin());
+        if (CitizensAPI.hasImplementation())
+            Bukkit.getPluginManager().registerEvents(goal, CitizensAPI.getPlugin());
         executingGoals.add(goal);
     }
 
@@ -124,7 +125,7 @@ public class SimpleGoalController implements GoalController {
     }
 
     private void trySelectGoal() {
-        int searchPriority = Math.min(executingPriority, 1);
+        int searchPriority = Math.max(executingPriority, 1);
         for (int i = possibleGoals.size() - 1; i >= 0; --i) {
             SimpleGoalEntry entry = possibleGoals.get(i);
             if (searchPriority > entry.priority)
@@ -137,18 +138,18 @@ public class SimpleGoalController implements GoalController {
             }
             for (int j = i - 1; j >= 0; --j) {
                 SimpleGoalEntry next = possibleGoals.get(j);
-                if (next.priority != entry.priority) {
-                    j++; // we want the previous entry where entry.priority ==
-                         // next.priority
+                boolean unequalPriorities = next.priority != entry.priority;
+                if (unequalPriorities || j == 0) {
+                    if (unequalPriorities)
+                        j++; // we want the previous entry where entry.priority
+                             // == next.priority
                     int ran = (int) Math.floor(Math.random() * (i - j + 1) + j);
                     if (ran >= possibleGoals.size() || ran < 0) {
-                        System.err.println("[Citizens]: bug1 - inform fullwall");
                         setupExecution(entry);
                         break;
                     }
                     SimpleGoalEntry selected = possibleGoals.get(ran);
                     if (selected.priority != entry.priority) {
-                        System.err.println("[Citizens]: bug2 - inform fullwall");
                         setupExecution(entry);
                         break;
                     }
