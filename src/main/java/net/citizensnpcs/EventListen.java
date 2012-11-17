@@ -11,6 +11,7 @@ import net.citizensnpcs.api.event.NPCCombustEvent;
 import net.citizensnpcs.api.event.NPCDamageByBlockEvent;
 import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
+import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
@@ -163,6 +164,7 @@ public class EventListen implements Listener {
         if (!npcRegistry.isNPC(event.getEntity()))
             return;
         NPC npc = npcRegistry.getNPC(event.getEntity());
+        Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn();
     }
 
@@ -174,12 +176,12 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (npcRegistry.isNPC(event.getTarget())) {
-            NPC npc = npcRegistry.getNPC(event.getTarget());
+        if (!npcRegistry.isNPC(event.getTarget()))
+            return;
+        NPC npc = npcRegistry.getNPC(event.getTarget());
 
-            event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
-            Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
-        }
+        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+        Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
 
     /*

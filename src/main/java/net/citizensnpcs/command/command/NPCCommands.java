@@ -615,7 +615,8 @@ public class NPCCommands {
         for (Trait trait : npc.getTraits()) {
             if (CitizensAPI.getTraitFactory().isInternalTrait(trait))
                 continue;
-            Messaging.send(sender, "     <e>- <a>" + trait.getName() + "<e>");
+            String message = "     <e>- <a>" + trait.getName();
+            Messaging.send(sender, message);
         }
     }
 
@@ -961,10 +962,8 @@ public class NPCCommands {
             max = 1,
             permission = "npc.tp")
     public void tp(CommandContext args, Player player, NPC npc) {
-        // Spawn the NPC if it isn't spawned to prevent NPEs
-        if (!npc.isSpawned())
-            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
-        player.teleport(npc.getBukkitEntity(), TeleportCause.COMMAND);
+        Location to = npc.getTrait(CurrentLocation.class).getLocation();
+        player.teleport(to, TeleportCause.COMMAND);
         Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());
     }
 
