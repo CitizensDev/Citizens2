@@ -13,6 +13,10 @@ public class Gravity extends Trait implements Toggleable {
         super("gravity");
     }
 
+    public void gravitate(boolean gravitate) {
+    	enabled = gravitate;
+    }
+    
     @Override
     public void run() {
         if (!npc.isSpawned() || !enabled)
@@ -20,10 +24,6 @@ public class Gravity extends Trait implements Toggleable {
         Vector velocity = npc.getBukkitEntity().getVelocity();
         velocity.setY(Math.max(velocity.getY(), 0));
         npc.getBukkitEntity().setVelocity(velocity);
-    }
-    
-    public void gravitate(boolean gravitate) {
-    	enabled = gravitate;
     }
 
     @Override

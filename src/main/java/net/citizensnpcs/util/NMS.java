@@ -19,6 +19,7 @@ import net.minecraft.server.MathHelper;
 import net.minecraft.server.MobEffectList;
 import net.minecraft.server.Navigation;
 import net.minecraft.server.NetworkManager;
+import net.minecraft.server.Packet;
 import net.minecraft.server.PathfinderGoalSelector;
 import net.minecraft.server.World;
 
@@ -26,8 +27,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.material.Stairs;
 import org.bukkit.material.Step;
 
@@ -187,6 +190,10 @@ public class NMS {
             return;
         }
         throw new IllegalArgumentException("unable to find valid entity superclass");
+    }
+
+    public static void sendPacket(Player player, Packet packet) {
+        ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
     }
 
     public static void setHeadYaw(EntityLiving handle, float yaw) {

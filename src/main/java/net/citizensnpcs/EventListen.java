@@ -79,13 +79,6 @@ public class EventListen implements Listener {
         toRespawn.removeAll(coord);
     }
 
-    private void spawn(int id) {
-        NPC npc = npcRegistry.getById(id);
-        if (npc == null)
-            return;
-        npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
-    }
-
     @EventHandler(ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
@@ -184,10 +177,6 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
 
-    /*
-     * Player events
-     */
-
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
@@ -197,6 +186,10 @@ public class EventListen implements Listener {
         // on teleport, player NPCs are added to the server player list. this is
         // undesirable as player NPCs are not real players and confuse plugins.
     }
+
+    /*
+     * Player events
+     */
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
@@ -272,16 +265,23 @@ public class EventListen implements Listener {
         }
     }
 
+    private void spawn(int id) {
+        NPC npc = npcRegistry.getById(id);
+        if (npc == null)
+            return;
+        npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+    }
+
     private void storeForRespawn(NPC npc) {
         toRespawn.put(toCoord(npc.getBukkitEntity().getLocation()), npc.getId());
     }
 
-    private ChunkCoord toCoord(Location loc) {
-        return new ChunkCoord(loc.getWorld().getName(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
-    }
-
     private ChunkCoord toCoord(Chunk chunk) {
         return new ChunkCoord(chunk);
+    }
+
+    private ChunkCoord toCoord(Location loc) {
+        return new ChunkCoord(loc.getWorld().getName(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
     }
 
     private static class ChunkCoord {

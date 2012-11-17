@@ -32,15 +32,39 @@ public class Poses extends Trait {
         return true;
     }
 
-    public void assumePose(Location location) {
-        assumePose(location.getYaw(), location.getPitch());
-    }
-
     private void assumePose(float yaw, float pitch) {
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
 
         Util.assumePose(npc.getBukkitEntity(), yaw, pitch);
+    }
+
+    public void assumePose(Location location) {
+        assumePose(location.getYaw(), location.getPitch());
+    }
+
+    public void assumePose(String flag) {
+        Pose pose = poses.get(flag.toLowerCase());
+        assumePose(pose.getYaw(), pose.getPitch());
+    }
+
+    public void describe(CommandSender sender, int page) throws CommandException {
+        Paginator paginator = new Paginator().header("Pose");
+        paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
+        int i = 0;
+        for (Pose pose : poses.values()) {
+            String line = "<a>" + i + "<b>  " + pose.getName() + "<c>  " + pose.getPitch() + "/"
+                    + pose.getYaw();
+            paginator.addLine(line);
+            i++;
+        }
+
+        if (!paginator.sendPage(sender, page))
+            throw new CommandException(Messages.COMMAND_PAGE_MISSING);
+    }
+
+    public boolean hasPose(String pose) {
+        return poses.containsKey(pose.toLowerCase());
     }
 
     @Override
@@ -63,29 +87,5 @@ public class Poses extends Trait {
         key.removeKey("list");
         for (int i = 0; i < poses.size(); i++)
             key.setString("list." + String.valueOf(i), poses.get(i).stringValue());
-    }
-
-    public void assumePose(String flag) {
-        Pose pose = poses.get(flag.toLowerCase());
-        assumePose(pose.getYaw(), pose.getPitch());
-    }
-
-    public boolean hasPose(String pose) {
-        return poses.containsKey(pose.toLowerCase());
-    }
-
-    public void describe(CommandSender sender, int page) throws CommandException {
-        Paginator paginator = new Paginator().header("Pose");
-        paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
-        int i = 0;
-        for (Pose pose : poses.values()) {
-            String line = "<a>" + i + "<b>  " + pose.getName() + "<c>  " + pose.getPitch() + "/"
-                    + pose.getYaw();
-            paginator.addLine(line);
-            i++;
-        }
-
-        if (!paginator.sendPage(sender, page))
-            throw new CommandException(Messages.COMMAND_PAGE_MISSING);
     }
 }

@@ -39,10 +39,6 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         realisticLooking = args.hasFlag('r');
     }
 
-    public void lookClose(boolean lookClose) {
-        enabled = lookClose;
-    }
-
     private void findNewTarget() {
         List<Entity> nearby = npc.getBukkitEntity().getNearbyEntities(range, range, range);
         final Location npcLocation = npc.getBukkitEntity().getLocation();
@@ -81,6 +77,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         // TODO: remove key.getBoolean("") ^ after a few updates
         range = key.getDouble("range", range);
         realisticLooking = key.getBoolean("realisticlooking", key.getBoolean("realistic-looking"));
+    }
+
+    public void lookClose(boolean lookClose) {
+        enabled = lookClose;
     }
 
     @Override

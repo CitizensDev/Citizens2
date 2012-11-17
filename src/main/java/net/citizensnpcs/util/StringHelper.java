@@ -7,6 +7,8 @@ import net.citizensnpcs.Settings.Setting;
 import org.bukkit.ChatColor;
 
 public class StringHelper {
+    private static Pattern COLOR_MATCHER;
+
     public static String capitalize(Object string) {
         String capitalize = string.toString();
         return capitalize.replaceFirst(String.valueOf(capitalize.charAt(0)),
@@ -82,8 +84,6 @@ public class StringHelper {
         String highlight = Setting.HIGHLIGHT_COLOUR.asString();
         return highlight + "=====[ " + string.toString() + highlight + " ]=====";
     }
-
-    private static Pattern COLOR_MATCHER;
     static {
         String colors = "";
         for (ChatColor color : ChatColor.values())
