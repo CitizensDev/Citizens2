@@ -329,6 +329,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
                 @Override
                 public int getValue() {
+                    if (npcRegistry == null)
+                        return 0;
                     return Iterables.size(npcRegistry);
                 }
             });
