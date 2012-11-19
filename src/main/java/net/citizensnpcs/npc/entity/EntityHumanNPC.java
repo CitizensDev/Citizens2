@@ -151,20 +151,20 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
              if (inLiquid) {
                  motY += 0.04;
              } else //(handled elsewhere)*/
-            if (onGround && bW == 0) {
-                bf();
-                bW = 10;
+            if (onGround && bU == 0) {
+                bi();
+                bU = 10;
             }
         } else
-            bW = 0;
+            bU = 0;
 
-        bD *= 0.98F;
-        bH *= 0.98F;
-        bF *= 0.9F;
+        bB *= 0.98F;
+        bC *= 0.98F;
+        bD *= 0.9F;
 
         float prev = aM;
         aM *= bB();
-        e(bD, bC); // movement method
+        e(bB, bC); // movement method
         aM = prev;
         NMS.setHeadYaw(this, yaw);
     }

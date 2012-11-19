@@ -82,10 +82,13 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
+        boolean forceLoad = Setting.KEEP_CHUNKS_LOADED.asBoolean();
         for (NPC npc : npcRegistry) {
             if (!npc.isSpawned())
                 continue;
             Location loc = npc.getBukkitEntity().getLocation();
+            if (forceLoad && loc.getChunk().isLoaded())
+                continue; // location#getChunk() forces chunk to load
             boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
             if (event.getWorld().equals(loc.getWorld()) && sameChunkCoordinates) {
                 npc.despawn();
