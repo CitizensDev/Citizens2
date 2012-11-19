@@ -62,7 +62,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private boolean compatible;
     private Settings config;
     private ClassLoader contextClassLoader;
-    private Metrics metrics;
     private CitizensNPCRegistry npcRegistry;
     private NPCDataStore saves;
     private NPCSelector selector;
@@ -181,8 +180,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
         Editor.leaveAll();
         CitizensAPI.shutdown();
-        if (metrics != null)
-            metrics.stop();
 
         tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
@@ -326,7 +323,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void startMetrics() {
         try {
-            metrics = new Metrics(Citizens.this);
+            Metrics metrics = new Metrics(Citizens.this);
             if (metrics.isOptOut())
                 return;
             metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
@@ -379,8 +376,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void tearDownScripting() {
+        if (contextClassLoader == null)
+            return;
         if (Thread.currentThread().getContextClassLoader() == getClassLoader())
             Thread.currentThread().setContextClassLoader(contextClassLoader);
+        contextClassLoader = null;
     }
 
     private static final String COMPATIBLE_MC_VERSION = "1.4";

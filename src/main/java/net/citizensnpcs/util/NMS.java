@@ -261,7 +261,7 @@ public class NMS {
         entity.getNavigation().e();
         entity.getControllerMove().c();
         entity.getControllerLook().a();
-        entity.getControllerJump().b();
+        entity.getControllerJump().b(); 
     }
 
     public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {

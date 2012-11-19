@@ -459,15 +459,6 @@ public class Metrics {
         }
     }
 
-    public void stop() {
-        synchronized (optOutLock) {
-            if (taskId > 0) {
-                plugin.getServer().getScheduler().cancelTask(taskId);
-                taskId = -1;
-            }
-        }
-    }
-
     /**
      * Represents a custom graph on the website
      */
