@@ -8,8 +8,9 @@ public class AStarMachine {
     }
 
     private void f(AStarGoal goal, AStarNode node, AStarNode neighbour) {
-        float g = node.g + goal.g(neighbour);
-        float h = goal.h(node, neighbour);
+        float g = node.g + goal.g(node, neighbour); // estimate the cost from
+                                                    // the start
+        float h = goal.h(neighbour);
 
         neighbour.f = g + h;
         neighbour.g = g;
