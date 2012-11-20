@@ -32,6 +32,18 @@ public enum PlayerAnimation {
             sendPacketNearby(packet, player, radius);
         }
     },
+    SIT {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            player.mount(player);
+        }
+    },
+    STOP_SITTING {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            player.mount(null);
+        }
+    },
     SNEAK {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {

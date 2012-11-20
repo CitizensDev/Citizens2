@@ -26,7 +26,7 @@ import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.Sheared;
-import net.citizensnpcs.trait.SkeletonType;
+import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WoolColor;
@@ -56,7 +56,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(VillagerProfession.class).withName("profession"));
         registerTrait(TraitInfo.create(Saddle.class).withName("saddle"));
         registerTrait(TraitInfo.create(Sheared.class).withName("sheared"));
-        registerTrait(TraitInfo.create(SkeletonType.class).withName("skeletontype"));
+        registerTrait(TraitInfo.create(NPCSkeletonType.class).withName("skeletontype"));
         registerTrait(TraitInfo.create(SlimeSize.class).withName("slimesize"));
         registerTrait(TraitInfo.create(Spawned.class).withName("spawned"));
         registerTrait(TraitInfo.create(Text.class).withName("text"));

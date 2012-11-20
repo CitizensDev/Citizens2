@@ -33,9 +33,9 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
-import net.citizensnpcs.trait.SkeletonType;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.util.Anchor;
@@ -56,6 +56,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -881,9 +882,12 @@ public class NPCCommands {
             max = 2,
             permission = "npc.skeletontype")
     @Requirements(selected = true, ownership = true, types = EntityType.SKELETON)
-    public void skeletonType(CommandContext args, CommandSender sender, NPC npc) {
-        int type = args.getInteger(1);
-        npc.getTrait(SkeletonType.class).setType(type);
+    public void skeletonType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        SkeletonType type = (type = SkeletonType.getType(args.getInteger(1))) == null ? SkeletonType
+                .valueOf(args.getString(1)) : type;
+        if (type == null)
+            throw new CommandException(Messages.INVALID_SKELETON_TYPE);
+        npc.getTrait(NPCSkeletonType.class).setType(type);
         Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
     }
 
