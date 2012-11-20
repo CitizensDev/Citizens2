@@ -9,7 +9,7 @@ public class AStarMachine {
 
     private void f(AStarGoal goal, AStarNode node, AStarNode neighbour) {
         float g = node.g + goal.g(node, neighbour); // estimate the cost from
-                                                    // the start
+                                                    // the start additively
         float h = goal.h(neighbour);
 
         neighbour.f = g + h;
@@ -22,19 +22,25 @@ public class AStarMachine {
         storage.open(start);
         start.f = goal.getInitialCost(start);
         AStarNode node;
+        int iterations = 0;
         while (true) {
             node = storage.removeBestNode();
-            if (node == null)
+            if (node == null) {
+                System.err.println("Expanded " + iterations);
                 return null;
-            if (goal.isFinished(node))
+            }
+            if (goal.isFinished(node)) {
+                System.err.println("Expanded " + iterations);
                 return node.buildPlan();
+            }
             storage.close(node);
             for (AStarNode neighbour : node.getNeighbours()) {
                 f(goal, node, neighbour);
                 if (!storage.shouldExamine(neighbour))
                     continue;
                 storage.open(neighbour);
-                neighbour.parent = start;
+                neighbour.parent = node;
+                iterations++;
             }
         }
     }
