@@ -55,9 +55,7 @@ public class NMS {
     private static Field PERSISTENT_FIELD;
     private static Set<Integer> SLAB_MATERIALS = Sets.newHashSet();
     private static Field SPEED_FIELD;
-
     private static Set<Integer> STAIR_MATERIALS = Sets.newHashSet();
-
     private static Field THREAD_STOPPER;
 
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
@@ -261,7 +259,7 @@ public class NMS {
         entity.getNavigation().e();
         entity.getControllerMove().c();
         entity.getControllerLook().a();
-        entity.getControllerJump().b(); 
+        entity.getControllerJump().b();
     }
 
     public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {
