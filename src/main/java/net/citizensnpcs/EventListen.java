@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.EntityTargetNPCEvent;
 import net.citizensnpcs.api.event.NPCCombustByBlockEvent;
 import net.citizensnpcs.api.event.NPCCombustByEntityEvent;
@@ -82,16 +83,13 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
-        boolean forceLoad = Setting.KEEP_CHUNKS_LOADED.asBoolean();
         for (NPC npc : npcRegistry) {
             if (!npc.isSpawned())
                 continue;
             Location loc = npc.getBukkitEntity().getLocation();
-            if (forceLoad && loc.getChunk().isLoaded())
-                continue; // location#getChunk() forces chunk to load
             boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
-            if (event.getWorld().equals(loc.getWorld()) && sameChunkCoordinates) {
-                npc.despawn();
+            if (sameChunkCoordinates && event.getWorld().equals(loc.getWorld())) {
+                npc.despawn(DespawnReason.CHUNK_UNLOAD);
                 toRespawn.put(coord, npc.getId());
                 Messaging.debug("Despawned", npc.getId(), "due to chunk unload at [" + coord.x + ","
                         + coord.z + "]");
@@ -161,7 +159,7 @@ public class EventListen implements Listener {
             return;
         NPC npc = npcRegistry.getNPC(event.getEntity());
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
-        npc.despawn();
+        npc.despawn(DespawnReason.DEATH);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -272,7 +270,12 @@ public class EventListen implements Listener {
         NPC npc = npcRegistry.getById(id);
         if (npc == null)
             return;
-        npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+        Location spawn = npc.getTrait(CurrentLocation.class).getLocation();
+        if (spawn == null) {
+            Messaging.debug("Couldn't find a spawn location for despawned NPC ID: " + id);
+            return;
+        }
+        npc.spawn(spawn);
     }
 
     private void storeForRespawn(NPC npc) {

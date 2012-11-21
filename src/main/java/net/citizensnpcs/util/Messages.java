@@ -82,6 +82,7 @@ public class Messages {
     public static final String INVALID_ANIMATION = "citizens.editors.waypoints.triggers.animation.invalid-animation";
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
+    public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
     public static final String INVALID_TRIGGER_TELEPORT_FORMAT = "citizens.editors.waypoints.triggers.teleport.invalid-format";
     public static final String LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT = "citizens.editors.waypoints.linear.added-waypoint";
@@ -211,5 +212,4 @@ public class Messages {
     public static final String WAYPOINT_TRIGGER_TELEPORT_PROMPT = "citizens.editors.waypoints.triggers.teleport.prompt";
     public static final String WORLD_NOT_FOUND = "citizens.commands.errors.missing-world";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
-    public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
 }
