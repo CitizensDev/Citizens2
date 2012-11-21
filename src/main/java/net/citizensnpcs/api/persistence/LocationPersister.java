@@ -12,10 +12,10 @@ public class LocationPersister implements Persister {
         if (!root.keyExists("world"))
             return null;
         World world = Bukkit.getWorld(root.getString("world"));
-        if (world == null)
-            return null;
-        return new Location(world, root.getDouble("x"), root.getDouble("y"), root.getDouble("z"),
-                (float) root.getDouble("yaw"), (float) root.getDouble("pitch"));
+        double x = root.getDouble("x"), y = root.getDouble("y"), z = root.getDouble("z");
+        float yaw = (float) root.getDouble("yaw"), pitch = (float) root.getDouble("pitch");
+        return world == null ? new LazilyLoadedLocation(root.getString("world"), x, y, z, yaw, pitch)
+                : new Location(world, x, y, z, yaw, pitch);
     }
 
     @Override
@@ -28,5 +28,21 @@ public class LocationPersister implements Persister {
         root.setDouble("z", location.getZ());
         root.setDouble("yaw", location.getYaw());
         root.setDouble("pitch", location.getPitch());
+    }
+
+    public static class LazilyLoadedLocation extends Location {
+        private final String worldName;
+
+        public LazilyLoadedLocation(String world, double x, double y, double z, float yaw, float pitch) {
+            super(null, x, y, z, yaw, pitch);
+            this.worldName = world;
+        }
+
+        @Override
+        public World getWorld() {
+            if (super.getWorld() == null)
+                super.setWorld(Bukkit.getWorld(worldName));
+            return super.getWorld();
+        }
     }
 }
