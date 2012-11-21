@@ -9,6 +9,8 @@ public abstract class AStarNode implements Comparable<AStarNode> {
     float f, g, h;
     AStarNode parent;
 
+    List<AStarNode> parents;
+
     public abstract Plan buildPlan();
 
     @Override
@@ -18,15 +20,9 @@ public abstract class AStarNode implements Comparable<AStarNode> {
 
     public abstract Iterable<AStarNode> getNeighbours();
 
-    protected float getPathCost() {
-        return f;
-    }
-
     protected AStarNode getParent() {
         return parent;
     }
-
-    List<AStarNode> parents;
 
     @SuppressWarnings("unchecked")
     protected <T extends AStarNode> Iterable<T> getParents() {
@@ -40,5 +36,9 @@ public abstract class AStarNode implements Comparable<AStarNode> {
         }
         Collections.reverse(parents);
         return (Iterable<T>) parents;
+    }
+
+    protected float getPathCost() {
+        return f;
     }
 }

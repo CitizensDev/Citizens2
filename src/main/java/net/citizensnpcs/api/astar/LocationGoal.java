@@ -36,6 +36,55 @@ public class LocationGoal implements AStarGoal {
         return ((LocationNode) node).at(goal);
     }
 
+    public static interface BlockSource {
+        int getBlockTypeIdAt(int x, int y, int z);
+    }
+
+    public static class LocationNode extends AStarNode {
+        private final BlockSource blockSource;
+        private final Vector location;
+
+        public LocationNode(Vector location, BlockSource source) {
+            this.location = location;
+            this.blockSource = source;
+        }
+
+        public boolean at(Vector goal) {
+            return distance(goal) < 1;
+        }
+
+        @Override
+        public Plan buildPlan() {
+            Iterable<LocationNode> parents = getParents();
+            for (LocationNode parent : parents) {
+                System.err.println(parent.location);
+            }
+            return null;
+        }
+
+        public float distance(LocationNode to) {
+            return distance(to.location);
+        }
+
+        public float distance(Vector goal) {
+            return (float) location.distanceSquared(goal);
+        }
+
+        @Override
+        public Iterable<AStarNode> getNeighbours() {
+            List<AStarNode> nodes = Lists.newArrayList();
+            Set<Vector> mods = Sets.newHashSet();
+            for (BlockFace face : BlockFace.values()) {
+                Vector mod = location.clone().add(new Vector(face.getModX(), face.getModY(), face.getModZ()));
+                if (mods.contains(mod) || mod.equals(location))
+                    continue;
+                mods.add(mod);
+                nodes.add(new LocationNode(mod, blockSource));
+            }
+            return nodes;
+        }
+    }
+
     public static class LocationPlan implements Plan {
 
         @Override
@@ -55,54 +104,5 @@ public class LocationGoal implements AStarGoal {
             // TODO Auto-generated method stub
 
         }
-    }
-
-    public static class LocationNode extends AStarNode {
-        private final Vector location;
-        private final BlockSource blockSource;
-
-        public LocationNode(Vector location, BlockSource source) {
-            this.location = location;
-            this.blockSource = source;
-        }
-
-        public float distance(LocationNode to) {
-            return distance(to.location);
-        }
-
-        public float distance(Vector goal) {
-            return (float) location.distanceSquared(goal);
-        }
-
-        public boolean at(Vector goal) {
-            return distance(goal) < 1;
-        }
-
-        @Override
-        public Plan buildPlan() {
-            Iterable<LocationNode> parents = getParents();
-            for (LocationNode parent : parents) {
-                System.err.println(parent.location);
-            }
-            return null;
-        }
-
-        @Override
-        public Iterable<AStarNode> getNeighbours() {
-            List<AStarNode> nodes = Lists.newArrayList();
-            Set<Vector> mods = Sets.newHashSet();
-            for (BlockFace face : BlockFace.values()) {
-                Vector mod = location.clone().add(new Vector(face.getModX(), face.getModY(), face.getModZ()));
-                if (mods.contains(mod) || mod.equals(location))
-                    continue;
-                mods.add(mod);
-                nodes.add(new LocationNode(mod, blockSource));
-            }
-            return nodes;
-        }
-    }
-
-    public static interface BlockSource {
-        int getBlockTypeIdAt(int x, int y, int z);
     }
 }

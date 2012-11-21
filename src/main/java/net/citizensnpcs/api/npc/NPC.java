@@ -2,6 +2,8 @@ package net.citizensnpcs.api.npc;
 
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.Navigator;
+import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.trait.Trait;
 
 import org.bukkit.Location;
@@ -39,6 +41,15 @@ public interface NPC {
      * @return Whether this NPC was able to despawn
      */
     public boolean despawn();
+
+    /**
+     * Despawns this NPC.
+     * 
+     * @param reason
+     *            The reason for despawning, for use in {@link NPCDespawnEvent}
+     * @return Whether this NPC was able to despawn
+     */
+    boolean despawn(DespawnReason reason);
 
     /**
      * Permanently removes this NPC and all data about it from the registry it's
