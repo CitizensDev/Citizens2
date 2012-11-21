@@ -68,6 +68,7 @@ public class Settings {
             }
         },
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<e>"),
+        KEEP_CHUNKS_LOADED("npc.chunks.always-keep-loaded", false),
         LOCALE("general.translation.locale", ""),
         MAX_NPC_LIMIT_CHECKS("npc.limits.max-permission-checks", 100),
         MAX_SPEED("npc.limits.max-speed", 100),
@@ -84,8 +85,7 @@ public class Settings {
         SUBPLUGIN_FOLDER("subplugins.folder", "plugins"),
         TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 60),
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 30),
-        TALK_ITEM("npc.text.talk-item", "340"),
-        KEEP_CHUNKS_LOADED("npc.chunks.always-keep-loaded", false);
+        TALK_ITEM("npc.text.talk-item", "340");
 
         protected String path;
         protected Object value;

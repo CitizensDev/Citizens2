@@ -5,8 +5,10 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.citizensnpcs.EventListen;
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -48,10 +50,23 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean despawn() {
+        return despawn(DespawnReason.PLUGIN);
+    }
+
+    @Override
+    public boolean despawn(DespawnReason reason) {
         if (!isSpawned())
             return false;
 
-        Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this));
+        NPCDespawnEvent event = new NPCDespawnEvent(this, reason);
+        if (reason == DespawnReason.CHUNK_UNLOAD)
+            event.setCancelled(Setting.KEEP_CHUNKS_LOADED.asBoolean());
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            getBukkitEntity().getLocation().getChunk();
+            // ensure that we are in a loaded chunk.
+            return false;
+        }
         boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
         if (!keepSelected)
             data().remove("selectors");
