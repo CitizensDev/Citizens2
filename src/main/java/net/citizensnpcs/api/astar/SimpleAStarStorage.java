@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 
 public class SimpleAStarStorage implements AStarStorage {
@@ -12,13 +13,8 @@ public class SimpleAStarStorage implements AStarStorage {
     private final Queue<AStarNode> queue = new PriorityQueue<AStarNode>();
 
     @Override
-    public void beginNewGoal() {
-        queue.clear();
-        closed.clear();
-    }
-
-    @Override
     public void close(AStarNode node) {
+        open.remove(node);
         closed.put(node, node.f);
     }
 
@@ -26,6 +22,7 @@ public class SimpleAStarStorage implements AStarStorage {
     public void open(AStarNode node) {
         queue.offer(node);
         open.put(node, node.f);
+        closed.remove(node);
     }
 
     @Override
@@ -46,5 +43,11 @@ public class SimpleAStarStorage implements AStarStorage {
             closedF = null;
         }
         return closedF == null && openF == null;
+    }
+
+    public static class Factory implements Supplier<AStarStorage> {
+        public AStarStorage get() {
+            return new SimpleAStarStorage();
+        }
     }
 }

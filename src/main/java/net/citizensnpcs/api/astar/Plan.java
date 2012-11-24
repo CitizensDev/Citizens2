@@ -1,7 +1,6 @@
 package net.citizensnpcs.api.astar;
 
-
-public interface Plan extends Comparable<Plan> {
+public interface Plan {
     boolean isComplete();
 
     void update();

@@ -1,10 +1,12 @@
 package net.citizensnpcs.api.astar;
 
-public class AStarMachine {
-    private final AStarStorage storage;
+import com.google.common.base.Supplier;
 
-    private AStarMachine(AStarStorage storage) {
-        this.storage = storage;
+public class AStarMachine {
+    private Supplier<AStarStorage> storageSupplier;
+
+    private AStarMachine(Supplier<AStarStorage> storage) {
+        this.storageSupplier = storage;
     }
 
     private void f(AStarGoal goal, AStarNode node, AStarNode neighbour) {
@@ -17,22 +19,30 @@ public class AStarMachine {
         neighbour.h = h;
     }
 
-    public Plan run(AStarGoal goal, AStarNode start) {
-        storage.beginNewGoal();
+    private AStarStorage getInitialisedStorage(AStarGoal goal, AStarNode start) {
+        AStarStorage storage = storageSupplier.get();
         storage.open(start);
         start.f = goal.getInitialCost(start);
+        return storage;
+    }
+
+    public AStarState getStateFor(AStarGoal goal, AStarNode start) {
+        return new AStarState(goal, start, getInitialisedStorage(goal, start));
+    }
+
+    public Plan run(AStarState state, int maxIterations) {
+        return run(state.storage, state.goal, state.start, maxIterations);
+    }
+
+    private Plan run(AStarStorage storage, AStarGoal goal, AStarNode start, int maxIterations) {
         AStarNode node;
         int iterations = 0;
         while (true) {
             node = storage.removeBestNode();
-            if (node == null) {
-                System.err.println("Expanded " + iterations);
+            if (node == null)
                 return null;
-            }
-            if (goal.isFinished(node)) {
-                System.err.println("Expanded " + iterations);
+            if (goal.isFinished(node))
                 return node.buildPlan();
-            }
             storage.close(node);
             for (AStarNode neighbour : node.getNeighbours()) {
                 f(goal, node, neighbour);
@@ -40,16 +50,37 @@ public class AStarMachine {
                     continue;
                 storage.open(neighbour);
                 neighbour.parent = node;
-                iterations++;
             }
+            if (maxIterations >= 0 && iterations++ >= maxIterations)
+                return null;
+        }
+    }
+
+    public Plan runFully(AStarGoal goal, AStarNode start) {
+        return run(getInitialisedStorage(goal, start), goal, start, -1);
+    }
+
+    public void setStorageSupplier(Supplier<AStarStorage> newSupplier) {
+        storageSupplier = newSupplier;
+    }
+
+    public static class AStarState {
+        private final AStarGoal goal;
+        private final AStarNode start;
+        private final AStarStorage storage;
+
+        private AStarState(AStarGoal goal, AStarNode start, AStarStorage storage) {
+            this.goal = goal;
+            this.start = start;
+            this.storage = storage;
         }
     }
 
     public static AStarMachine createWithDefaultStorage() {
-        return createWithStorage(new SimpleAStarStorage());
+        return createWithStorage(new SimpleAStarStorage.Factory());
     }
 
-    public static AStarMachine createWithStorage(AStarStorage storage) {
-        return new AStarMachine(storage);
+    public static AStarMachine createWithStorage(Supplier<AStarStorage> storageSupplier) {
+        return new AStarMachine(storageSupplier);
     }
 }
