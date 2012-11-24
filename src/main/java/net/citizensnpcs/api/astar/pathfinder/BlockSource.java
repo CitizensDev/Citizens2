@@ -8,6 +8,8 @@ public interface BlockSource {
 
     int getBlockTypeIdAt(Vector pos);
 
+    int getLightLevel(Vector pos);
+
     Material getMaterialAt(int x, int y, int z);
 
     Material getMaterialAt(Vector pos);

@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
 import org.bukkit.World;
+import org.bukkit.util.Vector;
 
 public abstract class CachingChunkBlockSource<T> extends AbstractBlockSource {
     private final Object[][] chunks;
@@ -26,23 +27,39 @@ public abstract class CachingChunkBlockSource<T> extends AbstractBlockSource {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public int getBlockTypeIdAt(int x, int y, int z) {
-        int dX = x >> 4 - chunkX;
-        int dZ = z >> 4 - chunkZ;
-        if (dX >= 0 && dX < chunks.length) {
-            Object[] inner = chunks[dX];
-            if (dZ >= 0 && dZ < inner.length) {
-                Object chunk = inner[dZ];
-                if (chunk != null)
-                    return getId((T) chunk, x & 15, y, z & 15);
-            }
-        }
+        T chunk = getSpecific(x, z);
+        if (chunk != null)
+            return getId(chunk, x & 15, y, z & 15);
         return world.getBlockTypeIdAt(x, y, z);
     }
 
     protected abstract T getChunkObject(int x, int z);
 
     protected abstract int getId(T chunk, int x, int y, int z);
+
+    protected abstract int getLightLevel(T chunk, int x, int y, int z);
+
+    @Override
+    public int getLightLevel(Vector pos) {
+        T chunk = getSpecific(pos.getBlockX(), pos.getBlockZ());
+        if (chunk != null)
+            return getLightLevel(chunk, pos.getBlockX() & 15, pos.getBlockY(), pos.getBlockZ() & 15);
+        return world.getBlockAt(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()).getLightLevel();
+    }
+
+    @SuppressWarnings("unchecked")
+    private T getSpecific(int x, int z) {
+        int dX = x >> 4 - chunkX;
+        int dZ = z >> 4 - chunkZ;
+        if (dX >= 0 && dX < chunks.length) {
+            Object[] inner = chunks[dX];
+            if (dZ >= 0 && dZ < inner.length) {
+                Object chunk = inner[dZ];
+                return (T) chunk;
+            }
+        }
+        return null;
+    }
 }

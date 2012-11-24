@@ -17,4 +17,9 @@ public class ChunkBlockSource extends CachingChunkBlockSource<Chunk> {
     protected int getId(Chunk chunk, int x, int y, int z) {
         return chunk.getBlock(x, y, z).getTypeId();
     }
+
+    @Override
+    protected int getLightLevel(Chunk chunk, int x, int y, int z) {
+        return chunk.getBlock(x, y, z).getLightLevel();
+    }
 }
