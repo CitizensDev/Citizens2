@@ -131,8 +131,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
         NMS.updateSenses(this);
         Navigation navigation = getNavigation();
-        if (!navigation.f()) {
-            navigation.e();
+        if (npc.getNavigator().isNavigating()) {
+            if (!navigation.f())
+                navigation.e();
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0)
             e(0, 0); // is this necessary? it does controllable but sometimes

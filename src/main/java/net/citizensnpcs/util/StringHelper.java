@@ -84,6 +84,7 @@ public class StringHelper {
         String highlight = Setting.HIGHLIGHT_COLOUR.asString();
         return highlight + "=====[ " + string.toString() + highlight + " ]=====";
     }
+
     static {
         String colors = "";
         for (ChatColor color : ChatColor.values())

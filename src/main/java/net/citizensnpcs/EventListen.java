@@ -62,7 +62,7 @@ public class EventListen implements Listener {
     private final ListMultimap<ChunkCoord, Integer> toRespawn = ArrayListMultimap.create();
 
     public EventListen() {
-        instance = this;
+        instance = this; // TODO: remove singleton
     }
 
     /*

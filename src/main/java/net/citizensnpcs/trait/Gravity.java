@@ -14,9 +14,9 @@ public class Gravity extends Trait implements Toggleable {
     }
 
     public void gravitate(boolean gravitate) {
-    	enabled = gravitate;
+        enabled = gravitate;
     }
-    
+
     @Override
     public void run() {
         if (!npc.isSpawned() || !enabled)

@@ -118,7 +118,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         enabled = !enabled;
         return enabled;
     }
-    
+
     @Override
     public String toString() {
         return "LookClose{" + enabled + "}";
