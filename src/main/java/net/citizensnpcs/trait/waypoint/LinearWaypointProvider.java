@@ -107,6 +107,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         private void clearWaypoints() {
             editingSlot = 0;
             waypoints.clear();
+            onWaypointsModified();
             destroyWaypointMarkers();
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED);
         }
@@ -185,7 +186,8 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void onPlayerChat(AsyncPlayerChatEvent event) {
             if (!event.getPlayer().equals(player))
                 return;
-            if (event.getMessage().equalsIgnoreCase("triggers")) {
+            String message = event.getMessage();
+            if (message.equalsIgnoreCase("triggers")) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
@@ -193,8 +195,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                     }
                 });
                 return;
-            }
-            if (event.getMessage().equalsIgnoreCase("clear")) {
+            } else if (message.equalsIgnoreCase("clear")) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
@@ -202,17 +203,17 @@ public class LinearWaypointProvider implements WaypointProvider {
                     }
                 });
                 return;
-            }
-            if (!event.getMessage().equalsIgnoreCase("toggle path"))
+            } else if (message.equalsIgnoreCase("toggle path")) {
+                event.setCancelled(true);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                    @Override
+                    public void run() {
+                        // we need to spawn entities on the main thread.
+                        togglePath();
+                    }
+                });
                 return;
-            event.setCancelled(true);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    // we need to spawn entities, get back on the main thread.
-                    togglePath();
-                }
-            });
+            }
         }
 
         @EventHandler(ignoreCancelled = true)
@@ -256,7 +257,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_REMOVED_WAYPOINT, waypoints.size(),
                         editingSlot + 1);
             }
-            currentGoal.onProviderChanged();
+            onWaypointsModified();
         }
 
         @EventHandler(ignoreCancelled = true)
@@ -289,6 +290,11 @@ public class LinearWaypointProvider implements WaypointProvider {
             normaliseEditingSlot();
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
                     formatLoc(waypoints.get(editingSlot).getLocation()));
+        }
+
+        private void onWaypointsModified() {
+            if (currentGoal != null)
+                currentGoal.onProviderChanged();
         }
 
         private void removeWaypointMarker(Waypoint waypoint) {
@@ -380,7 +386,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void setPaused(boolean pause) {
             if (pause && currentDestination != null)
                 selector.finish();
-            this.paused = pause;
+            paused = pause;
         }
 
         @Override

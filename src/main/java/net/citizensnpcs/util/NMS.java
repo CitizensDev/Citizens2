@@ -33,6 +33,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Stairs;
 import org.bukkit.material.Step;
+import org.bukkit.util.Vector;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -118,6 +119,15 @@ public class NMS {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getMessage());
             }
         }
+    }
+
+    public static double distance(EntityLiving handle, Vector vector) {
+        return Math.sqrt(distanceSquared(handle, vector));
+    }
+
+    public static double distanceSquared(EntityLiving handle, Vector vector) {
+        return Math.pow(handle.locX - vector.getX(), 2) + Math.pow(handle.locY - vector.getY(), 2)
+                + Math.pow(handle.locZ - vector.getZ(), 2);
     }
 
     private static Constructor<? extends Entity> getCustomEntityConstructor(Class<? extends Entity> clazz,

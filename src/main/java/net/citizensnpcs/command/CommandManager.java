@@ -223,14 +223,12 @@ public class CommandManager {
 
         // Requirements
         if (cmdRequirements.selected()) {
-            boolean canRedefineSelected = context.hasValueFlag("id")
-                    && sender.hasPermission("npc.select");
+            boolean canRedefineSelected = context.hasValueFlag("id") && sender.hasPermission("npc.select");
             String error = Messaging.tr(Messages.COMMAND_MUST_HAVE_SELECTED);
             if (canRedefineSelected) {
                 npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
                 if (npc == null)
-                    error += ' ' + Messaging.tr(Messages.COMMAND_ID_NOT_FOUND,
-                            context.getFlagInteger("id"));
+                    error += ' ' + Messaging.tr(Messages.COMMAND_ID_NOT_FOUND, context.getFlagInteger("id"));
             }
             if (npc == null)
                 throw new RequirementMissingException(error);
@@ -249,8 +247,7 @@ public class CommandManager {
         }
 
         if (npc != null) {
-            Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()),
-                    EntityType.class);
+            Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()), EntityType.class);
             if (types.contains(EntityType.UNKNOWN))
                 types = EnumSet.allOf(EntityType.class);
             types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));

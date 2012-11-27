@@ -9,13 +9,13 @@ import net.minecraft.server.Navigation;
 
 import org.bukkit.Location;
 
-public class MCNavigationStrategy implements PathStrategy {
-    private CancelReason cancelReason;
+public class MCNavigationStrategy extends AbstractPathStrategy {
     private final Navigation navigation;
     private final NavigatorParameters parameters;
     private final Location target;
 
     MCNavigationStrategy(final CitizensNPC npc, Location dest, NavigatorParameters params) {
+        super(TargetType.LOCATION);
         this.target = dest;
         this.parameters = params;
         if (npc.getHandle() instanceof EntityPlayer) {
@@ -28,17 +28,7 @@ public class MCNavigationStrategy implements PathStrategy {
         navigation.a(parameters.avoidWater());
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), parameters.speed());
         if (navigation.f())
-            cancelReason = CancelReason.STUCK;
-    }
-
-    @Override
-    public void clearCancelReason() {
-        cancelReason = null;
-    }
-
-    @Override
-    public CancelReason getCancelReason() {
-        return cancelReason;
+            setCancelReason(CancelReason.STUCK);
     }
 
     @Override
@@ -58,7 +48,7 @@ public class MCNavigationStrategy implements PathStrategy {
 
     @Override
     public boolean update() {
-        if (cancelReason != null)
+        if (getCancelReason() != null)
             return true;
         navigation.a(parameters.avoidWater());
         navigation.a(parameters.speed());

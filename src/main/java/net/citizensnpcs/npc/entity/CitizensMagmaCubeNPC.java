@@ -45,7 +45,6 @@ public class CitizensMagmaCubeNPC extends CitizensMobNPC {
             }
         }
 
-
         @Override
         public void bl() {
             super.bl();

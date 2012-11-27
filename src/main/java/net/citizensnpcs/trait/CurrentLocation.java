@@ -14,7 +14,7 @@ public class CurrentLocation extends Trait {
     }
 
     public Location getLocation() {
-        if (loc.getWorld() == null)
+        if (loc != null && loc.getWorld() == null)
             return null;
         return loc;
     }

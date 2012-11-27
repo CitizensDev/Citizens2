@@ -12,6 +12,7 @@ import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
+import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -26,7 +27,7 @@ public class CitizensNavigator implements Navigator {
     private final NavigatorParameters defaultParams = new NavigatorParameters()
             .baseSpeed(UNINITIALISED_SPEED).range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt())
-            .stuckAction(TeleportStuckAction.INSTANCE);
+            .stuckAction(TeleportStuckAction.INSTANCE).examiner(new MinecraftBlockExaminer());
     private PathStrategy executing;
     private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
@@ -136,7 +137,11 @@ public class CitizensNavigator implements Navigator {
             return;
         }
         localParams = defaultParams.clone();
-        PathStrategy newStrategy = new MCNavigationStrategy(npc, target, localParams);
+        PathStrategy newStrategy;
+        if (Setting.USE_NEW_PATHFINDER.asBoolean())
+            newStrategy = new AStarNavigationStrategy(npc, target, localParams);
+        else
+            newStrategy = new MCNavigationStrategy(npc, target, localParams);
         switchStrategyTo(newStrategy);
     }
 
