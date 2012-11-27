@@ -36,7 +36,7 @@ public class ItemStorage {
         key.removeKey("id");
     }
 
-    public static void saveItem(DataKey key, ItemStack item) {  
+    public static void saveItem(DataKey key, ItemStack item) {
         if (item == null)
             return;
         migrateForSave(key);

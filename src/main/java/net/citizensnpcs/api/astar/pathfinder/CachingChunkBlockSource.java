@@ -1,13 +1,19 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 public abstract class CachingChunkBlockSource<T> extends AbstractBlockSource {
+    private int cacheMisses;
     private final Object[][] chunks;
     private final int chunkX;
     private final int chunkZ;
     protected final World world;
+
+    protected CachingChunkBlockSource(Location location, float radius) {
+        this(location.getWorld(), location.getBlockX(), location.getBlockZ(), radius);
+    }
 
     protected CachingChunkBlockSource(World world, int x, int z, float radius) {
         this(world, (int) (x - radius), (int) (z - radius), (int) (x + radius), (int) (z + radius));
@@ -32,6 +38,8 @@ public abstract class CachingChunkBlockSource<T> extends AbstractBlockSource {
         T chunk = getSpecific(x, z);
         if (chunk != null)
             return getId(chunk, x & 15, y, z & 15);
+        if (++cacheMisses % 100 == 0)
+            System.err.println("[Citizens]: " + cacheMisses + " cache misses.");
         return world.getBlockTypeIdAt(x, y, z);
     }
 
@@ -51,13 +59,12 @@ public abstract class CachingChunkBlockSource<T> extends AbstractBlockSource {
 
     @SuppressWarnings("unchecked")
     private T getSpecific(int x, int z) {
-        int dX = x >> 4 - chunkX;
-        int dZ = z >> 4 - chunkZ;
-        if (dX >= 0 && dX < chunks.length) {
-            Object[] inner = chunks[dX];
-            if (dZ >= 0 && dZ < inner.length) {
-                Object chunk = inner[dZ];
-                return (T) chunk;
+        int xx = (x >> 4) - chunkX;
+        int zz = (z >> 4) - chunkZ;
+        if (xx >= 0 && xx < chunks.length) {
+            Object[] inner = chunks[xx];
+            if (zz >= 0 && zz < inner.length) {
+                return (T) inner[zz];
             }
         }
         return null;

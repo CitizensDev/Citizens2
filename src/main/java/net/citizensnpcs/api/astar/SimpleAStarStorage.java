@@ -45,7 +45,13 @@ public class SimpleAStarStorage implements AStarStorage {
         return closedF == null && openF == null;
     }
 
+    @Override
+    public String toString() {
+        return "SimpleAStarStorage [closed=" + closed + ", open=" + open + "]";
+    }
+
     public static class Factory implements Supplier<AStarStorage> {
+        @Override
         public AStarStorage get() {
             return new SimpleAStarStorage();
         }

@@ -1,41 +1,39 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
-
 import net.citizensnpcs.api.astar.AStarGoal;
 import net.citizensnpcs.api.astar.AStarNode;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-
-public class AStarLocationGoal implements AStarGoal {
+public class VectorGoal implements AStarGoal {
     private final Vector goal;
 
-    public AStarLocationGoal(Location dest) {
+    public VectorGoal(Location dest) {
         this(dest.toVector());
     }
 
-    public AStarLocationGoal(Vector goal) {
+    public VectorGoal(Vector goal) {
         this.goal = goal;
     }
 
     @Override
     public float g(AStarNode from, AStarNode to) {
-        return ((LocationNode) from).distance((LocationNode) to);
+        return ((VectorNode) from).distance((VectorNode) to);
     }
 
     @Override
     public float getInitialCost(AStarNode node) {
-        return ((LocationNode) node).heuristicDistance(goal);
+        return ((VectorNode) node).heuristicDistance(goal);
     }
 
     @Override
     public float h(AStarNode from) {
-        return ((LocationNode) from).heuristicDistance(goal);
+        return ((VectorNode) from).heuristicDistance(goal);
     }
 
     @Override
     public boolean isFinished(AStarNode node) {
-        return ((LocationNode) node).at(goal);
+        return ((VectorNode) node).at(goal);
     }
 }

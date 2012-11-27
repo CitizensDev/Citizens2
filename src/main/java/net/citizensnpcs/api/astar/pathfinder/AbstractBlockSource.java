@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
-
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 

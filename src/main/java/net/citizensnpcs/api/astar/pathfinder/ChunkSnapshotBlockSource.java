@@ -1,9 +1,14 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
 import org.bukkit.ChunkSnapshot;
+import org.bukkit.Location;
 import org.bukkit.World;
 
 public class ChunkSnapshotBlockSource extends CachingChunkBlockSource<ChunkSnapshot> {
+    public ChunkSnapshotBlockSource(Location location, float radius) {
+        super(location, radius);
+    }
+
     public ChunkSnapshotBlockSource(World world, int x, int z, float radius) {
         super(world, x, z, radius);
     }

@@ -6,7 +6,7 @@ import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
-public class MinecraftLandCost implements BlockExaminer {
+public class MinecraftBlockExaminer implements BlockExaminer {
     private boolean canStandIn(Material mat) {
         return PASSABLE.contains(mat);
     }
@@ -25,45 +25,50 @@ public class MinecraftLandCost implements BlockExaminer {
     }
 
     @Override
-    public float getCost(BlockSource source, Vector pos) {
+    public float getCost(BlockSource source, PathPoint point) {
+        Vector pos = point.getVector();
         Material above = source.getMaterialAt(pos.clone().add(UP));
         Material below = source.getMaterialAt(pos.clone().add(DOWN));
         Material in = source.getMaterialAt(pos);
         if (above == Material.WEB || in == Material.WEB)
-            return 5F;
+            return 1F;
         if (below == Material.SOUL_SAND || below == Material.ICE)
-            return 5F;
+            return 1F;
         if (isLiquid(above, below, in))
-            return 2F;
-        if (isDoor(above, below))
-            return 2F;
+            return 0.5F;
+        if (isDoor(above, below)) {
+            point.addCallback(new OpenDoorCallback());
+        }
         return 0.5F - COSTS[source.getLightLevel(pos)];
     }
 
     private boolean isDoor(Material... below) {
         return contains(below, Material.WOOD_DOOR);
     }
+
     private boolean isLiquid(Material... materials) {
         return contains(materials, Material.WATER, Material.STATIONARY_WATER, Material.LAVA,
                 Material.STATIONARY_LAVA);
     }
 
     @Override
-    public boolean isPassable(BlockSource source, Vector pos) {
-        Material above = source.getMaterialAt(pos.clone().add(UP));
-        Material below = source.getMaterialAt(pos.clone().add(DOWN));
-        Material in = source.getMaterialAt(pos);
-        if (!below.isBlock() || !canStandOn(below))
-            return false;
-        if (!canStandIn(above) || !canStandIn(in))
-            return false;
+    public boolean isPassable(BlockSource source, PathPoint point) {
+        /*   Vector pos = point.getVector();
+             Material above = source.getMaterialAt(pos.clone().add(UP));
+             Material below = source.getMaterialAt(pos.clone().add(DOWN));
+             Material in = source.getMaterialAt(pos);
+             if (!below.isBlock() || !canStandOn(below))
+                 return false;
+             if (!canStandIn(above) || !canStandIn(in))
+                 return false;
+        */
+        // TODO: figure out how to have this work but still search for blocks
+        // when it doesn't work - perhaps move logic to costing.
         return true;
     }
 
-    private static final float[] COSTS = new float[15];
-
+    private static final float[] COSTS = new float[16];
     private static final Vector DOWN = new Vector(0, -1, 0);
-
     private static final Set<Material> PASSABLE = EnumSet.of(Material.AIR, Material.DEAD_BUSH,
             Material.DETECTOR_RAIL, Material.DIODE, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON,
             Material.FENCE_GATE, Material.ITEM_FRAME, Material.LADDER, Material.LEVER, Material.LONG_GRASS,

@@ -1,14 +1,23 @@
 package net.citizensnpcs.api.ai;
 
+import java.util.List;
+
 import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
+
+import com.google.common.collect.Lists;
 
 public class NavigatorParameters implements Cloneable {
     private AttackStrategy attackStrategy;
     private boolean avoidWater;
     private float baseSpeed;
+    private double distanceMargin = 2.25F;
+    private final List<BlockExaminer> examiners = Lists.newArrayList();
     private float range;
     private float speedModifier = 1F;
+
     private int stationaryTicks = -1;
+
     private StuckAction stuckAction;
 
     /**
@@ -67,6 +76,14 @@ public class NavigatorParameters implements Cloneable {
         return this;
     }
 
+    /**
+     * Clears all current {@link BlockExaminer}s.
+     */
+    public NavigatorParameters clearExaminers() {
+        examiners.clear();
+        return this;
+    }
+
     @Override
     public NavigatorParameters clone() {
         try {
@@ -74,6 +91,49 @@ public class NavigatorParameters implements Cloneable {
         } catch (CloneNotSupportedException e) {
             return null;
         }
+    }
+
+    /**
+     * Returns the distance margin that the {@link Navigator} will be able to
+     * stop from the target. The margin will be measured against the block
+     * distance squared.
+     * 
+     * @return The distance margin
+     */
+    public double distanceMargin() {
+        return distanceMargin;
+    }
+
+    /**
+     * Sets the distance margin.
+     * 
+     * @see #distanceMargin()
+     * @param newMargin
+     *            The new distance margin
+     */
+    public NavigatorParameters distanceMargin(double newMargin) {
+        distanceMargin = newMargin;
+        return this;
+    }
+
+    /**
+     * Adds the given {@link BlockExaminer}.
+     * 
+     * @param examiner
+     *            The BlockExaminer to add
+     */
+    public NavigatorParameters examiner(BlockExaminer examiner) {
+        examiners.add(examiner);
+        return this;
+    }
+
+    /**
+     * Gets a copy of all current {@link BlockExaminer}s.
+     * 
+     * @return An array of all current examiners
+     */
+    public BlockExaminer[] examiners() {
+        return examiners.toArray(new BlockExaminer[examiners.size()]);
     }
 
     /**

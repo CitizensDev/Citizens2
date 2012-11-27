@@ -2,6 +2,7 @@ package net.citizensnpcs.api.npc;
 
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.Navigator;
+import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.trait.Trait;
@@ -12,7 +13,7 @@ import org.bukkit.entity.LivingEntity;
 /**
  * Represents an NPC with optional {@link Trait}s.
  */
-public interface NPC {
+public interface NPC extends Agent {
 
     /**
      * Adds a trait to this NPC.

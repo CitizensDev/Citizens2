@@ -313,6 +313,7 @@ public class NBTStorage implements Storage {
             this.parent = parent;
             values = ((CompoundTag) tag).getValue();
         }
+
         public Node(Tag tag) {
             this("", tag);
         }
