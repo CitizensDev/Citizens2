@@ -91,7 +91,6 @@
 					<execution>
 						<phase>package</phase>
 						<configuration>
-							<minimizeJar>true</minimizeJar>
 							<relocations>
 								<relocation>
 									<pattern>org.uncommons.maths</pattern>
