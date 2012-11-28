@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
  */
 public abstract class Trait implements Listener, Runnable {
     private final String name;
+    private boolean runImplemented = true;
     protected NPC npc = null;
 
     protected Trait(String name) {
@@ -85,8 +86,14 @@ public abstract class Trait implements Listener, Runnable {
     public void onSpawn() {
     }
 
+    public boolean isRunImplemented() {
+        run();
+        return runImplemented;
+    }
+
     @Override
     public void run() {
+        runImplemented = false;
     }
 
     /**

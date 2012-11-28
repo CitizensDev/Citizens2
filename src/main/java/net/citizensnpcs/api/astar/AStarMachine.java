@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.astar;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 
 public class AStarMachine {
@@ -35,6 +36,9 @@ public class AStarMachine {
     }
 
     private Plan run(AStarStorage storage, AStarGoal goal, AStarNode start, int maxIterations) {
+        Preconditions.checkNotNull(goal);
+        Preconditions.checkNotNull(start);
+        Preconditions.checkNotNull(storage);
         AStarNode node;
         int iterations = 0;
         while (true) {
@@ -81,6 +85,11 @@ public class AStarMachine {
             this.goal = goal;
             this.start = start;
             this.storage = storage;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <T extends AStarNode> T getBestNode() {
+            return (T) storage.getBestNode();
         }
     }
 

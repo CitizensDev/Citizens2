@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.ai;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
@@ -23,9 +24,33 @@ public class SimpleGoalControllerTest {
         assertThat(two.counter, not(0));
     }
 
+    @Test
+    public void finishAndRemove() {
+        controller.addGoal(new FinishAndRemove(), 1);
+        controller.run();
+        controller.run();
+        assertThat(controller.iterator().hasNext(), is(false));
+    }
+
     @Before
     public void setUp() {
         controller = new SimpleGoalController();
+    }
+
+    public static class FinishAndRemove implements Goal {
+        @Override
+        public void reset() {
+        }
+
+        @Override
+        public void run(GoalSelector selector) {
+            selector.finishAndRemove();
+        }
+
+        @Override
+        public boolean shouldExecute(GoalSelector selector) {
+            return true;
+        }
     }
 
     public static class ImmediateFinish implements Goal {

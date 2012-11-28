@@ -56,4 +56,9 @@ public class SimpleAStarStorage implements AStarStorage {
             return new SimpleAStarStorage();
         }
     }
+
+    @Override
+    public AStarNode getBestNode() {
+        return queue.peek();
+    }
 }

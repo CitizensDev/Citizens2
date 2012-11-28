@@ -7,5 +7,7 @@ public interface AStarStorage {
 
     AStarNode removeBestNode();
 
+    AStarNode getBestNode();
+
     boolean shouldExamine(AStarNode neighbour);
 }

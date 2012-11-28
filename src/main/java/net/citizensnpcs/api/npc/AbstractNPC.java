@@ -44,16 +44,18 @@ public abstract class AbstractNPC implements NPC {
         if (trait.getNPC() == null)
             trait.linkToNPC(this);
 
-        runnables.add(trait);
-        // if an existing trait is being replaced, we need to remove the
-        // currently registered runnable to avoid conflicts
-        if (traits.containsKey(trait.getClass()))
-            runnables.remove(traits.get(trait.getClass()));
-
         Bukkit.getPluginManager().registerEvents(trait, CitizensAPI.getPlugin());
         traits.put(trait.getClass(), trait);
         if (isSpawned())
             trait.onSpawn();
+
+        if (trait.isRunImplemented()) {
+            runnables.add(trait);
+            // if an existing trait is being replaced, we need to remove the
+            // currently registered runnable to avoid conflicts
+            if (traits.containsKey(trait.getClass()))
+                runnables.remove(traits.get(trait.getClass()));
+        }
     }
 
     @Override
