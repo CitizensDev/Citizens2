@@ -85,7 +85,10 @@ public class Poses extends Trait {
     @Override
     public void save(DataKey key) {
         key.removeKey("list");
-        for (int i = 0; i < poses.size(); i++)
-            key.setString("list." + String.valueOf(i), poses.get(i).stringValue());
+        int i = 0;
+        for (Pose pose : poses.values()) {
+            key.setString("list." + i, pose.stringValue());
+            i++;
+        }
     }
 }
