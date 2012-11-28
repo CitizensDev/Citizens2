@@ -14,12 +14,17 @@ import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.metadata.Metadatable;
 import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.Lists;
@@ -35,15 +40,22 @@ public class NPCSelector implements Listener {
 
     public NPC getSelected(CommandSender sender) {
         if (sender instanceof Player) {
-            List<MetadataValue> metadata = ((Player) sender).getMetadata("selected");
-            if (metadata.size() == 0)
-                return null;
-            return CitizensAPI.getNPCRegistry().getById(metadata.get(0).asInt());
-        } else {
+            return getSelectedFromMetadatable((Player) sender);
+        } else if (sender instanceof BlockCommandSender) {
+            return getSelectedFromMetadatable(((BlockCommandSender) sender).getBlock());
+        } else if (sender instanceof ConsoleCommandSender) {
             if (consoleSelectedNPC == -1)
                 return null;
             return CitizensAPI.getNPCRegistry().getById(consoleSelectedNPC);
         }
+        return null;
+    }
+
+    private NPC getSelectedFromMetadatable(Metadatable sender) {
+        List<MetadataValue> metadata = sender.getMetadata("selected");
+        if (metadata.size() == 0)
+            return null;
+        return CitizensAPI.getNPCRegistry().getById(metadata.get(0).asInt());
     }
 
     @EventHandler
@@ -55,13 +67,25 @@ public class NPCSelector implements Listener {
         for (String value : selectors) {
             if (value.equals("console")) {
                 consoleSelectedNPC = -1;
+            } else if (value.startsWith("@")) {
+                String[] parts = value.substring(1, value.length()).split(":");
+                World world = Bukkit.getWorld(parts[0]);
+                if (world != null) {
+                    Block block = world.getBlockAt(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]),
+                            Integer.parseInt(parts[3]));
+                    removeMetadata(block);
+                }
             } else {
                 Player search = Bukkit.getPlayerExact(value);
-                if (search != null)
-                    search.removeMetadata("selected", plugin);
+                removeMetadata(search);
             }
         }
         npc.data().remove("selectors");
+    }
+
+    private void removeMetadata(Metadatable metadatable) {
+        if (metadatable != null)
+            metadatable.removeMetadata("selected", plugin);
     }
 
     @EventHandler
@@ -90,19 +114,32 @@ public class NPCSelector implements Listener {
         }
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (player.hasMetadata("selected"))
-                player.removeMetadata("selected", plugin);
-
-            player.setMetadata("selected", new FixedMetadataValue(plugin, npc.getId()));
-            selectors.add(player.getName());
+            setMetadata(npc, player);
+            selectors.add(sender.getName());
 
             // Remove editor if the player has one
             Editor.leave(player);
-        } else {
+        } else if (sender instanceof BlockCommandSender) {
+            Block block = ((BlockCommandSender) sender).getBlock();
+            setMetadata(npc, block);
+            selectors.add(toName(block));
+        } else if (sender instanceof ConsoleCommandSender) {
             consoleSelectedNPC = npc.getId();
             selectors.add("console");
         }
 
         Bukkit.getPluginManager().callEvent(new NPCSelectEvent(npc, sender));
+    }
+
+    private String toName(Block block) {
+        return '@' + block.getWorld().getName() + ":" + Integer.toString(block.getX()) + ":"
+                + Integer.toString(block.getY()) + ":" + Integer.toString(block.getZ());
+    }
+
+    private void setMetadata(NPC npc, Metadatable metadatable) {
+        if (metadatable.hasMetadata("selected"))
+            metadatable.removeMetadata("selected", plugin);
+
+        metadatable.setMetadata("selected", new FixedMetadataValue(plugin, npc.getId()));
     }
 }

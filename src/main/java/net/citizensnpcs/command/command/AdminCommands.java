@@ -22,14 +22,14 @@ public class AdminCommands {
     }
 
     @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "admin")
-    public void citizens(CommandContext args, CommandSender player, NPC npc) {
+    public void citizens(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(
-                player,
+                sender,
                 "          "
                         + StringHelper.wrapHeader("<e>Citizens v" + plugin.getDescription().getVersion()));
-        Messaging.send(player, "     <7>-- <c>Written by fullwall and aPunch");
-        Messaging.send(player, "     <7>-- <c>Source Code: http://github.com/CitizensDev");
-        Messaging.send(player, "     <7>-- <c>Website: " + plugin.getDescription().getWebsite());
+        Messaging.send(sender, "     <7>-- <c>Written by fullwall and aPunch");
+        Messaging.send(sender, "     <7>-- <c>Source Code: http://github.com/CitizensDev");
+        Messaging.send(sender, "     <7>-- <c>Website: " + plugin.getDescription().getWebsite());
     }
 
     @Command(

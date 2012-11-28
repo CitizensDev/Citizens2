@@ -3,7 +3,6 @@ package net.citizensnpcs.command;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -36,6 +36,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class CommandManager {
@@ -58,7 +59,29 @@ public class CommandManager {
 
     private final Set<Method> serverCommands = new HashSet<Method>();
 
-    // Attempt to execute a command.
+    /**
+     * 
+     * Attempt to execute a command using the root {@link Command} given. A list
+     * of method arguments may be used when calling the command handler method.
+     * 
+     * A command handler method should follow the form
+     * <code>command(CommandContext args, CommandSender sender)</code> where
+     * {@link CommandSender} can be replaced with {@link Player} to only accept
+     * players. The method parameters must include the method args given, if
+     * any.
+     * 
+     * @param command
+     *            The command to execute
+     * @param args
+     *            The arguments of the command
+     * @param sender
+     *            The sender of the command
+     * @param methodArgs
+     *            The method arguments to be used when calling the command
+     *            handler
+     * @throws CommandException
+     *             Any exceptions caused from execution of the command
+     */
     public void execute(org.bukkit.command.Command command, String[] args, CommandSender sender,
             Object... methodArgs) throws CommandException {
         // must put command into split.
@@ -68,21 +91,6 @@ public class CommandManager {
 
         Object[] newMethodArgs = new Object[methodArgs.length + 1];
         System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
-        executeMethod(null, newArgs, sender, newMethodArgs);
-    }
-
-    /*
-     * Attempt to execute a command. This version takes a separate command name
-     * (for the root command) and then a list of following arguments.
-     */
-    public void execute(String cmd, String[] args, CommandSender sender, Object... methodArgs)
-            throws CommandException {
-        String[] newArgs = new String[args.length + 1];
-        System.arraycopy(args, 0, newArgs, 1, args.length);
-        newArgs[0] = cmd;
-        Object[] newMethodArgs = new Object[methodArgs.length + 1];
-        System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
-
         executeMethod(null, newArgs, sender, newMethodArgs);
     }
 
@@ -102,11 +110,11 @@ public class CommandManager {
         if (!serverCommands.contains(method) && methodArgs[1] instanceof ConsoleCommandSender)
             throw new ServerCommandException();
 
-        if (!hasPermission(method, sender) && methodArgs[1] instanceof Player)
+        if (!hasPermission(method, sender))
             throw new NoPermissionsException();
 
         Command cmd = method.getAnnotation(Command.class);
-        CommandContext context = new CommandContext(args);
+        CommandContext context = new CommandContext(sender, args);
 
         if (context.argsLength() < cmd.min())
             throw new CommandUsageException(Messages.COMMAND_TOO_FEW_ARGUMENTS, getUsage(args, cmd));
@@ -142,17 +150,44 @@ public class CommandManager {
         }
     }
 
-    public String[] getAllCommandModifiers(String command) {
-        Set<String> cmds = new HashSet<String>();
+    /**
+     * Searches for the closest modifier using Levenshtein distance to the given
+     * top level command and modifier.
+     * 
+     * @param command
+     *            The top level command
+     * @param modifier
+     *            The modifier to use as the base
+     * @return The closest modifier, or empty
+     */
+    public String getClosestCommandModifier(String command, String modifier) {
+        int minDist = Integer.MAX_VALUE;
+        command = command.toLowerCase();
+        String closest = "";
         for (String cmd : commands.keySet()) {
             String[] split = cmd.split(" ");
-            if (split[0].equalsIgnoreCase(command) && split.length > 1)
-                cmds.add(split[1]);
+            if (split.length <= 1 || !split[0].equals(command))
+                continue;
+            int distance = StringHelper.getLevenshteinDistance(modifier, split[1]);
+            if (minDist > distance) {
+                minDist = distance;
+                closest = split[1];
+            }
         }
 
-        return cmds.toArray(new String[cmds.size()]);
+        return closest;
     }
 
+    /**
+     * Gets the {@link CommandInfo} for the given top level command and
+     * modifier, or null if not found.
+     * 
+     * @param rootCommand
+     *            The top level command
+     * @param modifier
+     *            The modifier (may be empty)
+     * @return The command info for the command
+     */
     public CommandInfo getCommand(String rootCommand, String modifier) {
         String joined = Joiner.on(' ').join(rootCommand, modifier);
         for (Entry<String, Method> entry : commands.entrySet()) {
@@ -166,10 +201,21 @@ public class CommandManager {
         return null;
     }
 
+    /**
+     * Gets all modified and root commands from the given root level command.
+     * For example, if <code>/npc look</code> and <code>/npc jump</code> were
+     * defined, calling <code>getCommands("npc")</code> would return
+     * {@link CommandInfo}s for both commands.
+     * 
+     * @param command
+     *            The root level command
+     * @return The list of {@link CommandInfo}s
+     */
     public List<CommandInfo> getCommands(String command) {
-        List<CommandInfo> cmds = new ArrayList<CommandInfo>();
+        List<CommandInfo> cmds = Lists.newArrayList();
+        command = command.toLowerCase();
         for (Entry<String, Method> entry : commands.entrySet()) {
-            if (!entry.getKey().split(" ")[0].equalsIgnoreCase(command))
+            if (!entry.getKey().startsWith(command))
                 continue;
             Command commandAnnotation = entry.getValue().getAnnotation(Command.class);
             if (commandAnnotation == null)
@@ -181,28 +227,29 @@ public class CommandManager {
 
     // Get the usage string for a command.
     private String getUsage(String[] args, Command cmd) {
-        StringBuilder command = new StringBuilder();
-
-        command.append("/");
-
+        StringBuilder command = new StringBuilder("/");
         command.append(args[0] + " ");
-
         // removed arbitrary positioning of flags.
         command.append(cmd.usage());
-
         return command.toString();
     }
 
-    /*
-     * Checks to see whether there is a command named such at the root level.
-     * This will check aliases as well.
+    /**
+     * Checks to see whether there is a command handler for the given command at
+     * the root level. This will check aliases as well.
+     * 
+     * @param cmd
+     *            The command to check
+     * @param modifier
+     *            The modifier to check (may be empty)
+     * @return Whether the command is handled
      */
     public boolean hasCommand(org.bukkit.command.Command cmd, String modifier) {
         return commands.containsKey(cmd.getName().toLowerCase() + " " + modifier.toLowerCase())
                 || commands.containsKey(cmd.getName().toLowerCase() + " *");
     }
 
-    // Returns whether a player has permission.
+    // Returns whether a CommandSenders has permission.
     private boolean hasPermission(CommandSender sender, String perm) {
         return sender.hasPermission("citizens." + perm);
     }
@@ -260,11 +307,16 @@ public class CommandManager {
         }
     }
 
-    /*
-     * Register an class that contains commands (denoted by Command. If no
-     * dependency injector is specified, then the methods of the class will be
-     * registered to be called statically. Otherwise, new instances will be
-     * created of the command classes and methods will not be called statically.
+    /**
+     * Register a class that contains commands (methods annotated with
+     * {@link Command}). If no dependency {@link Injector} is specified, then
+     * only static methods of the class will be registered. Otherwise, new
+     * instances the command class will be created and instance methods will be
+     * called.
+     * 
+     * @see #setInjector(Injector)
+     * @param clazz
+     *            The class to scan
      */
     public void register(Class<?> clazz) {
         registerMethods(clazz, null);

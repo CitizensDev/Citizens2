@@ -23,6 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Location;
+import org.bukkit.command.BlockCommandSender;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -30,12 +35,21 @@ public class CommandContext {
     protected String[] args;
     protected final Set<Character> flags = new HashSet<Character>();
     protected final Map<String, String> valueFlags = Maps.newHashMap();
+    private final CommandSender sender;
+    private Location location = null;
 
-    public CommandContext(String args) {
-        this(args.split(" "));
+    public Location getSenderLocation() {
+        if (location != null)
+            return location;
+        if (sender instanceof Player)
+            location = ((Player) sender).getLocation();
+        else if (sender instanceof BlockCommandSender)
+            location = ((BlockCommandSender) sender).getBlock().getLocation();
+        return location;
     }
 
-    public CommandContext(String[] args) {
+    public CommandContext(CommandSender sender, String[] args) {
+        this.sender = sender;
         int i = 1;
         for (; i < args.length; i++) {
             // initial pass for quotes
