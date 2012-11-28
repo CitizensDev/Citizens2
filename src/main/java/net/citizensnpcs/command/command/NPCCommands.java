@@ -50,7 +50,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -134,10 +136,10 @@ public class NPCCommands {
             if (args.getFlag("save").isEmpty())
                 throw new CommandException(Messages.INVALID_ANCHOR_NAME);
 
-            if (!(sender instanceof Player))
+            if (args.getSenderLocation() == null)
                 throw new ServerCommandException();
 
-            if (trait.addAnchor(args.getFlag("save"), ((Player) sender).getLocation())) {
+            if (trait.addAnchor(args.getFlag("save"), args.getSenderLocation())) {
                 Messaging.sendTr(sender, Messages.ANCHOR_ADDED);
             } else
                 throw new CommandException(Messages.ANCHOR_ALREADY_EXISTS, args.getFlag("save"));
@@ -176,11 +178,9 @@ public class NPCCommands {
         // Assume Player's position
         if (!args.hasFlag('a'))
             return;
-        if (sender instanceof Player) {
-            Location location = ((Player) sender).getLocation();
-            npc.getBukkitEntity().teleport(location);
-        } else
+        if (sender instanceof ConsoleCommandSender)
             throw new ServerCommandException();
+        npc.getBukkitEntity().teleport(args.getSenderLocation());
     }
 
     @Command(
@@ -237,10 +237,10 @@ public class NPCCommands {
         from.save(key);
         copy.load(key);
 
-        if (copy.isSpawned() && sender instanceof Player) {
-            Player player = (Player) sender;
-            copy.getBukkitEntity().teleport(player);
-            copy.getTrait(CurrentLocation.class).setLocation(player.getLocation());
+        if (copy.isSpawned() && args.getSenderLocation() != null) {
+            Location location = args.getSenderLocation();
+            copy.getBukkitEntity().teleport(location);
+            copy.getTrait(CurrentLocation.class).setLocation(location);
         }
 
         for (Trait trait : copy.getTraits())
@@ -306,7 +306,7 @@ public class NPCCommands {
 
         Location spawnLoc = null;
         if (sender instanceof Player) {
-            spawnLoc = ((Player) sender).getLocation();
+            spawnLoc = args.getSenderLocation();
             PlayerCreateNPCEvent event = new PlayerCreateNPCEvent((Player) sender, npc);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
@@ -316,11 +316,14 @@ public class NPCCommands {
                     reason += " Reason: " + event.getCancelReason();
                 throw new CommandException(reason);
             }
+        } else if (sender instanceof BlockCommandSender) {
+            spawnLoc = args.getSenderLocation();
         }
+
         if (args.hasValueFlag("at")) {
             String[] parts = Iterables.toArray(Splitter.on(':').split(args.getFlag("at")), String.class);
             if (parts.length > 0) {
-                String worldName = sender instanceof Player ? ((Player) sender).getLocation().getWorld()
+                String worldName = args.getSenderLocation() != null ? args.getSenderLocation().getWorld()
                         .getName() : "";
                 int x = 0, y = 0, z = 0;
                 float yaw = 0F, pitch = 0F;
@@ -698,10 +701,10 @@ public class NPCCommands {
             if (args.getFlag("save").isEmpty())
                 throw new CommandException(Messages.INVALID_POSE_NAME);
 
-            if (!(sender instanceof Player))
+            if (args.getSenderLocation() == null)
                 throw new ServerCommandException();
 
-            if (trait.addPose(args.getFlag("save"), ((Player) sender).getLocation())) {
+            if (trait.addPose(args.getFlag("save"), args.getSenderLocation())) {
                 Messaging.sendTr(sender, Messages.POSE_ADDED);
             } else
                 throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("assume"));
@@ -727,11 +730,10 @@ public class NPCCommands {
         // Assume Player's pose
         if (!args.hasFlag('a'))
             return;
-        if (sender instanceof Player) {
-            Location location = ((Player) sender).getLocation();
-            trait.assumePose(location);
-        } else
+        if (args.getSenderLocation() == null)
             throw new ServerCommandException();
+        Location location = args.getSenderLocation();
+        trait.assumePose(location);
     }
 
     @Command(
@@ -828,8 +830,8 @@ public class NPCCommands {
             if (!(sender instanceof Player))
                 throw new ServerCommandException();
             double range = Math.abs(args.getFlagDouble("r", 10));
-            Player player = (Player) sender;
-            final Location location = player.getLocation();
+            Entity player = (Player) sender;
+            final Location location = args.getSenderLocation();
             List<Entity> search = player.getNearbyEntities(range, range, range);
             Collections.sort(search, new Comparator<Entity>() {
                 @Override
@@ -929,10 +931,10 @@ public class NPCCommands {
 
         Location location = respawn.getTrait(CurrentLocation.class).getLocation();
         if (location == null) {
-            if (!(sender instanceof Player))
+            if (args.getSenderLocation() == null)
                 throw new CommandException(Messages.NO_STORED_SPAWN_LOCATION);
 
-            location = ((Player) sender).getLocation();
+            location = args.getSenderLocation();
         }
         if (respawn.spawn(location)) {
             selector.select(sender, respawn);
@@ -973,13 +975,15 @@ public class NPCCommands {
 
     @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport a NPC to your location", modifiers = {
             "tphere", "tph", "move" }, min = 1, max = 1, permission = "npc.tphere")
-    public void tphere(CommandContext args, Player player, NPC npc) {
+    public void tphere(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (args.getSenderLocation() == null)
+            throw new ServerCommandException();
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned()) {
-            npc.spawn(player.getLocation());
+            npc.spawn(args.getSenderLocation());
         } else
-            npc.getBukkitEntity().teleport(player, TeleportCause.COMMAND);
-        Messaging.sendTr(player, Messages.NPC_TELEPORTED, npc.getName());
+            npc.getBukkitEntity().teleport(args.getSenderLocation(), TeleportCause.COMMAND);
+        Messaging.sendTr(sender, Messages.NPC_TELEPORTED, npc.getName());
     }
 
     @Command(

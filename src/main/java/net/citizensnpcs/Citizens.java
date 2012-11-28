@@ -360,15 +360,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {
-        int minDist = Integer.MAX_VALUE;
-        String closest = "";
-        for (String string : commands.getAllCommandModifiers(command)) {
-            int distance = StringHelper.getLevenshteinDistance(modifier, string);
-            if (minDist > distance) {
-                minDist = distance;
-                closest = string;
-            }
-        }
+        String closest = commands.getClosestCommandModifier(command, modifier);
         if (!closest.isEmpty()) {
             sender.sendMessage(ChatColor.GRAY + Messaging.tr(Messages.UNKNOWN_COMMAND));
             sender.sendMessage(StringHelper.wrap(" /") + command + " " + StringHelper.wrap(closest));
