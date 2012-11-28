@@ -6,7 +6,7 @@ import net.citizensnpcs.api.trait.Trait;
 import org.bukkit.entity.Skeleton;
 
 public class NPCSkeletonType extends Trait {
-    private boolean skeleton;
+    private Skeleton skeleton;
     @Persist
     private org.bukkit.entity.Skeleton.SkeletonType type = org.bukkit.entity.Skeleton.SkeletonType.NORMAL;
 
@@ -16,13 +16,13 @@ public class NPCSkeletonType extends Trait {
 
     @Override
     public void onSpawn() {
-        skeleton = npc.getBukkitEntity() instanceof Skeleton;
+        skeleton = npc.getBukkitEntity() instanceof Skeleton ? (Skeleton) npc.getBukkitEntity() : null;
     }
 
     @Override
     public void run() {
-        if (skeleton)
-            ((Skeleton) npc.getBukkitEntity()).setSkeletonType(type);
+        if (skeleton != null)
+            skeleton.setSkeletonType(type);
     }
 
     public void setType(org.bukkit.entity.Skeleton.SkeletonType type) {

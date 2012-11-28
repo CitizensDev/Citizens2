@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.uncommons.maths.random.XORShiftRNG;
 
 public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
     private final Map<String, Date> cooldowns = new HashMap<String, Date>();
@@ -122,7 +123,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || !talkClose)
+        if (!talkClose || !npc.isSpawned())
             return;
         List<Entity> nearby = npc.getBukkitEntity().getNearbyEntities(range, range, range);
         for (Entity search : nearby) {
@@ -140,7 +141,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
                 return;
             // Add a cooldown if the text was successfully sent
             Date wait = new Date();
-            int secondsDelta = new Random().nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt())
+            int secondsDelta = RANDOM.nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt())
                     + Setting.TALK_CLOSE_MINIMUM_COOLDOWN.asInt();
             if (secondsDelta <= 0)
                 return;
@@ -149,6 +150,8 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
             cooldowns.put(player.getName(), wait);
         }
     }
+
+    private static final Random RANDOM = new XORShiftRNG();
 
     @Override
     public void save(DataKey key) {

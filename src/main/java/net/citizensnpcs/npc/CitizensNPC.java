@@ -44,6 +44,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     protected CitizensNPC(int id, String name) {
         super(id, name);
+        runnables.add(navigator);
     }
 
     protected abstract EntityLiving createHandle(Location loc);
@@ -101,7 +102,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean isSpawned() {
-        return getHandle() != null;
+        return mcEntity != null;
     }
 
     public void load(final DataKey root) {
@@ -229,10 +230,8 @@ public abstract class CitizensNPC extends AbstractNPC {
     public void update() {
         try {
             super.update();
-            if (isSpawned()) {
+            if (isSpawned())
                 NMS.trySwim(getHandle());
-                navigator.update();
-            }
         } catch (Exception ex) {
             Messaging.logTr(Messages.EXCEPTION_UPDATING_NPC, getId(), ex.getMessage());
             ex.printStackTrace();

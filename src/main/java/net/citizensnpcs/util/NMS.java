@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -34,6 +35,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.Stairs;
 import org.bukkit.material.Step;
 import org.bukkit.util.Vector;
+import org.uncommons.maths.random.XORShiftRNG;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -259,10 +261,12 @@ public class NMS {
     }
 
     public static void trySwim(EntityLiving handle, float power) {
-        if (inWater(handle) && Math.random() < 0.8F) {
+        if (RANDOM.nextFloat() < 0.8F && inWater(handle)) {
             handle.motY += power;
         }
     }
+
+    private static final Random RANDOM = new XORShiftRNG();
 
     public static void updateAI(EntityLiving entity) {
         updateSenses(entity);

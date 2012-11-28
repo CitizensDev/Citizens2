@@ -130,8 +130,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             motX = motY = motZ = 0;
 
         NMS.updateSenses(this);
-        Navigation navigation = getNavigation();
         if (npc.getNavigator().isNavigating()) {
+            Navigation navigation = getNavigation();
             if (!navigation.f())
                 navigation.e();
             moveOnCurrentHeading();

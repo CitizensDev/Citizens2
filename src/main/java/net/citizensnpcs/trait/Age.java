@@ -1,9 +1,7 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 
@@ -15,6 +13,7 @@ public class Age extends Trait implements Toggleable {
     private int age = 0;
     @Persist
     private boolean locked = true;
+    private Ageable ageable;
 
     public Age() {
         super("age");
@@ -25,41 +24,37 @@ public class Age extends Trait implements Toggleable {
     }
 
     private boolean isAgeable() {
-        return npc.getBukkitEntity() instanceof Ageable;
-    }
-
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        if (npc.isSpawned() && !(npc.getBukkitEntity() instanceof Ageable))
-            throw new NPCLoadException("NPC must be ageable");
+        return ageable != null;
     }
 
     @Override
     public void onSpawn() {
-        if (isAgeable()) {
+        if (npc.getBukkitEntity() instanceof Ageable) {
             Ageable entity = (Ageable) npc.getBukkitEntity();
             entity.setAge(age);
             entity.setAgeLock(locked);
-        }
+            ageable = entity;
+        } else
+            ageable = null;
     }
 
     @Override
     public void run() {
         if (!locked && isAgeable())
-            age = ((Ageable) npc.getBukkitEntity()).getAge();
+            age = ageable.getAge();
     }
 
     public void setAge(int age) {
         this.age = age;
         if (isAgeable())
-            ((Ageable) npc.getBukkitEntity()).setAge(age);
+            ageable.setAge(age);
     }
 
     @Override
     public boolean toggle() {
         locked = !locked;
         if (isAgeable())
-            ((Ageable) npc.getBukkitEntity()).setAgeLock(locked);
+            ageable.setAgeLock(locked);
         return locked;
     }
 
