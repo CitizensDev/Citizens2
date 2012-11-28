@@ -23,7 +23,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
-public class CitizensNavigator implements Navigator {
+public class CitizensNavigator implements Navigator, Runnable {
     private final NavigatorParameters defaultParams = new NavigatorParameters()
             .baseSpeed(UNINITIALISED_SPEED).range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt())
@@ -184,7 +184,8 @@ public class CitizensNavigator implements Navigator {
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
     }
 
-    public void update() {
+    @Override
+    public void run() {
         if (!isNavigating())
             return;
         if (!npc.isSpawned()) {
