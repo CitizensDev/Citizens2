@@ -20,7 +20,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.npc.entity.EntityHumanNPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
@@ -128,10 +128,9 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (!npcRegistry.isNPC(event.getEntity()))
-            return;
-
         NPC npc = npcRegistry.getNPC(event.getEntity());
+        if (npc == null)
+            return;
         event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
         if (event instanceof EntityDamageByEntityEvent) {
             NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc,
@@ -155,9 +154,9 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
-        if (!npcRegistry.isNPC(event.getEntity()))
-            return;
         NPC npc = npcRegistry.getNPC(event.getEntity());
+        if (npc == null)
+            return;
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);
     }
@@ -170,10 +169,9 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (!npcRegistry.isNPC(event.getTarget()))
-            return;
         NPC npc = npcRegistry.getNPC(event.getTarget());
-
+        if (npc == null)
+            return;
         event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
@@ -181,7 +179,7 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
-        if (!(handle instanceof EntityHumanNPC))
+        if (!(handle instanceof NPCHolder))
             return;
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
         // on teleport, player NPCs are added to the server player list. this is
