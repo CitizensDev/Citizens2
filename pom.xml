@@ -12,10 +12,11 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<craftbukkit.version>LATEST</craftbukkit.version>
-		<citizensapi.version>2.0.4-SNAPSHOT</citizensapi.version>
-		<vault.version>1.2.18-SNAPSHOT</vault.version>
+		<citizensapi.version>[2.0.4-SNAPSHOT,)</citizensapi.version>
+		<vault.version>1.2.19-SNAPSHOT</vault.version>
 		<powermock.version>1.4.12</powermock.version>
 		<build.number>Unknown</build.number>
+		<BUILD_NUMBER>Unknown</BUILD_NUMBER>
 	</properties>
 
 	<repositories>
@@ -35,13 +36,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>net.milkbowl.vault</groupId>
-			<artifactId>Vault</artifactId>
-			<version>${vault.version}</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit</artifactId>
 			<version>${craftbukkit.version}</version>
@@ -54,6 +48,13 @@
 			<version>${citizensapi.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>Vault</artifactId>
+			<version>${vault.version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
