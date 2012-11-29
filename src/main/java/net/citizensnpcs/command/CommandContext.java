@@ -34,19 +34,9 @@ import com.google.common.collect.Maps;
 public class CommandContext {
     protected String[] args;
     protected final Set<Character> flags = new HashSet<Character>();
-    protected final Map<String, String> valueFlags = Maps.newHashMap();
-    private final CommandSender sender;
     private Location location = null;
-
-    public Location getSenderLocation() {
-        if (location != null)
-            return location;
-        if (sender instanceof Player)
-            location = ((Player) sender).getLocation();
-        else if (sender instanceof BlockCommandSender)
-            location = ((BlockCommandSender) sender).getBlock().getLocation();
-        return location;
-    }
+    private final CommandSender sender;
+    protected final Map<String, String> valueFlags = Maps.newHashMap();
 
     public CommandContext(CommandSender sender, String[] args) {
         this.sender = sender;
@@ -200,6 +190,16 @@ public class CommandContext {
         String[] slice = new String[args.length - index + padding];
         System.arraycopy(args, index, slice, padding, args.length - index);
         return slice;
+    }
+
+    public Location getSenderLocation() {
+        if (location != null)
+            return location;
+        if (sender instanceof Player)
+            location = ((Player) sender).getLocation();
+        else if (sender instanceof BlockCommandSender)
+            location = ((BlockCommandSender) sender).getBlock().getLocation();
+        return location;
     }
 
     public String[] getSlice(int index) {

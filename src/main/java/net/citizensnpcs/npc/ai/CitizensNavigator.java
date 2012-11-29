@@ -106,6 +106,31 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
     }
 
+    @Override
+    public void run() {
+        if (!isNavigating())
+            return;
+        if (!npc.isSpawned()) {
+            stopNavigating(CancelReason.NPC_DESPAWNED);
+            return;
+        }
+        if (updateStationaryStatus())
+            return;
+        updatePathfindingRange();
+        boolean finished = executing.update();
+        if (!finished)
+            return;
+        if (executing.getCancelReason() != null) {
+            stopNavigating(executing.getCancelReason());
+        } else {
+            NavigationCompleteEvent event = new NavigationCompleteEvent(this);
+            PathStrategy old = executing;
+            Bukkit.getPluginManager().callEvent(event);
+            if (old == executing)
+                stopNavigating();
+        }
+    }
+
     public void save(DataKey root) {
         root.setDouble("speed", defaultParams.baseSpeed());
         root.setDouble("pathfindingrange", defaultParams.range());
@@ -182,31 +207,6 @@ public class CitizensNavigator implements Navigator, Runnable {
         executing = newStrategy;
         stationaryTicks = 0;
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
-    }
-
-    @Override
-    public void run() {
-        if (!isNavigating())
-            return;
-        if (!npc.isSpawned()) {
-            stopNavigating(CancelReason.NPC_DESPAWNED);
-            return;
-        }
-        if (updateStationaryStatus())
-            return;
-        updatePathfindingRange();
-        boolean finished = executing.update();
-        if (!finished)
-            return;
-        if (executing.getCancelReason() != null) {
-            stopNavigating(executing.getCancelReason());
-        } else {
-            NavigationCompleteEvent event = new NavigationCompleteEvent(this);
-            PathStrategy old = executing;
-            Bukkit.getPluginManager().callEvent(event);
-            if (old == executing)
-                stopNavigating();
-        }
     }
 
     private void updatePathfindingRange() {

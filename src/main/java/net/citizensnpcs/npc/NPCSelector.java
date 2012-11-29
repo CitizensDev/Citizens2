@@ -83,11 +83,6 @@ public class NPCSelector implements Listener {
         npc.data().remove("selectors");
     }
 
-    private void removeMetadata(Metadatable metadatable) {
-        if (metadatable != null)
-            metadatable.removeMetadata("selected", plugin);
-    }
-
     @EventHandler
     public void onNPCRightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
@@ -103,6 +98,11 @@ public class NPCSelector implements Listener {
                     return;
             }
         }
+    }
+
+    private void removeMetadata(Metadatable metadatable) {
+        if (metadatable != null)
+            metadatable.removeMetadata("selected", plugin);
     }
 
     public void select(CommandSender sender, NPC npc) {
@@ -131,15 +131,15 @@ public class NPCSelector implements Listener {
         Bukkit.getPluginManager().callEvent(new NPCSelectEvent(npc, sender));
     }
 
-    private String toName(Block block) {
-        return '@' + block.getWorld().getName() + ":" + Integer.toString(block.getX()) + ":"
-                + Integer.toString(block.getY()) + ":" + Integer.toString(block.getZ());
-    }
-
     private void setMetadata(NPC npc, Metadatable metadatable) {
         if (metadatable.hasMetadata("selected"))
             metadatable.removeMetadata("selected", plugin);
 
         metadatable.setMetadata("selected", new FixedMetadataValue(plugin, npc.getId()));
+    }
+
+    private String toName(Block block) {
+        return '@' + block.getWorld().getName() + ":" + Integer.toString(block.getX()) + ":"
+                + Integer.toString(block.getY()) + ":" + Integer.toString(block.getZ());
     }
 }

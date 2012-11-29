@@ -11,9 +11,9 @@ import org.bukkit.entity.Ageable;
 public class Age extends Trait implements Toggleable {
     @Persist
     private int age = 0;
+    private Ageable ageable;
     @Persist
     private boolean locked = true;
-    private Ageable ageable;
 
     public Age() {
         super("age");
