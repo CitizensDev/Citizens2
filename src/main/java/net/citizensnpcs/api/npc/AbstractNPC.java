@@ -6,6 +6,7 @@ import java.util.Map;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.SimpleGoalController;
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.trait.Trait;
 
@@ -44,18 +45,25 @@ public abstract class AbstractNPC implements NPC {
         if (trait.getNPC() == null)
             trait.linkToNPC(this);
 
+        // if an existing trait is being replaced, we need to remove the
+        // currently registered runnable to avoid conflicts
+        Trait replaced = traits.get(trait.getClass());
+
         Bukkit.getPluginManager().registerEvents(trait, CitizensAPI.getPlugin());
         traits.put(trait.getClass(), trait);
         if (isSpawned())
             trait.onSpawn();
 
         if (trait.isRunImplemented()) {
+            if (replaced != null)
+                runnables.remove(replaced);
             runnables.add(trait);
-            // if an existing trait is being replaced, we need to remove the
-            // currently registered runnable to avoid conflicts
-            if (traits.containsKey(trait.getClass()))
-                runnables.remove(traits.get(trait.getClass()));
         }
+    }
+
+    @Override
+    public boolean despawn() {
+        return despawn(DespawnReason.PLUGIN);
     }
 
     @Override
@@ -109,7 +117,9 @@ public abstract class AbstractNPC implements NPC {
         return trait != null ? clazz.cast(trait) : null;
     }
 
-    protected abstract Trait getTraitFor(Class<? extends Trait> clazz);
+    protected Trait getTraitFor(Class<? extends Trait> clazz) {
+        return CitizensAPI.getTraitFactory().getTrait(clazz);
+    }
 
     @Override
     public Iterable<Trait> getTraits() {
@@ -122,12 +132,13 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public void removeTrait(Class<? extends Trait> trait) {
-        Trait t = traits.remove(trait);
-        if (t != null) {
-            runnables.remove(t);
-            HandlerList.unregisterAll(t);
-            t.onRemove();
+    public void removeTrait(Class<? extends Trait> traitClass) {
+        Trait trait = traits.remove(traitClass);
+        if (trait != null) {
+            if (trait.isRunImplemented())
+                runnables.remove(trait);
+            HandlerList.unregisterAll(trait);
+            trait.onRemove();
         }
     }
 
