@@ -165,7 +165,7 @@ public class QuadTree {
     }
 
     public BookmarkedResult findOverlappingCuboids(int x, int y, int z) {
-        return relatedSearch((QuadNode) null, x, y, z);
+        return relatedSearch(null, x, y, z);
     }
 
     public BookmarkedResult findOverlappingCuboidsFromBookmark(BookmarkedResult bookmark, int x, int y, int z) {

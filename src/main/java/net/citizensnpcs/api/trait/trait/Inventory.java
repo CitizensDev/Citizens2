@@ -7,6 +7,8 @@ import net.citizensnpcs.api.util.ItemStorage;
 
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+
 /**
  * Represents an NPC's inventory.
  */
@@ -63,6 +65,6 @@ public class Inventory extends Trait {
 
     @Override
     public String toString() {
-        return "Inventory{" + contents + "}";
+        return "Inventory{" + Arrays.toString(contents) + "}";
     }
 }

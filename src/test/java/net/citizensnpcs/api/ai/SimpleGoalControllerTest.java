@@ -11,6 +11,14 @@ public class SimpleGoalControllerTest {
     GoalController controller;
 
     @Test
+    public void finishAndRemove() {
+        controller.addGoal(new FinishAndRemove(), 1);
+        controller.run();
+        controller.run();
+        assertThat(controller.iterator().hasNext(), is(false));
+    }
+
+    @Test
     public void random() {
         ImmediateFinish one = new ImmediateFinish();
         ImmediateFinish two = new ImmediateFinish();
@@ -22,14 +30,6 @@ public class SimpleGoalControllerTest {
         }
         assertThat(one.counter, not(0));
         assertThat(two.counter, not(0));
-    }
-
-    @Test
-    public void finishAndRemove() {
-        controller.addGoal(new FinishAndRemove(), 1);
-        controller.run();
-        controller.run();
-        assertThat(controller.iterator().hasNext(), is(false));
     }
 
     @Before

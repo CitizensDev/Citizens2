@@ -11,8 +11,8 @@ import org.bukkit.event.Listener;
  */
 public abstract class Trait implements Listener, Runnable {
     private final String name;
-    private boolean runImplemented = true;
     protected NPC npc = null;
+    private boolean runImplemented = true;
 
     protected Trait(String name) {
         this.name = name;
@@ -32,6 +32,11 @@ public abstract class Trait implements Listener, Runnable {
      */
     public final NPC getNPC() {
         return npc;
+    }
+
+    public boolean isRunImplemented() {
+        run();
+        return runImplemented;
     }
 
     public void linkToNPC(NPC npc) {
@@ -84,11 +89,6 @@ public abstract class Trait implements Listener, Runnable {
      * NPC is already spawned.
      */
     public void onSpawn() {
-    }
-
-    public boolean isRunImplemented() {
-        run();
-        return runImplemented;
     }
 
     @Override

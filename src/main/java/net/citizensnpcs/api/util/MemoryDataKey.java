@@ -60,7 +60,7 @@ public class MemoryDataKey extends DataKey {
         return root.get(getKeyFor(key));
     }
 
-    public Map<? extends String, ? extends Object> getRawTree() {
+    public Map<? extends String, ?> getRawTree() {
         return root.getValues(true);
     }
 

@@ -100,7 +100,7 @@ public class DatabaseStorage implements Storage {
         if (t != null)
             return t;
         String pk = name + "_id";
-        String directType = "", primaryType = " NOT NULL PRIMARY KEY";
+        String directType, primaryType = " NOT NULL PRIMARY KEY";
         switch (type) {
             case Types.INTEGER:
                 directType = "INTEGER";
@@ -577,7 +577,7 @@ public class DatabaseStorage implements Storage {
             for (int i = 0; i < size; ++i) {
                 nullBuilder.append("NULL,");
             }
-            String nulls = nullBuilder.substring(0, nullBuilder.length() - 1).toString();
+            String nulls = nullBuilder.substring(0, nullBuilder.length() - 1);
 
             Connection conn = getConnection();
             PreparedStatement stmt = null;

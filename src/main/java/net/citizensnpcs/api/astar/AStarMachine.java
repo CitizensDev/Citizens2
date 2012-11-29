@@ -27,10 +27,44 @@ public class AStarMachine {
         return storage;
     }
 
+    /**
+     * Creates an {@link AStarState} that can be reused across multiple
+     * invocations of {{@link #run(AStarState, int)}.
+     * 
+     * @see #run(AStarState, int)
+     * @param goal
+     *            The {@link AStarGoal} state
+     * @param start
+     *            The starting {@link AStarNode}
+     * @return The created state
+     */
     public AStarState getStateFor(AStarGoal goal, AStarNode start) {
         return new AStarState(goal, start, getInitialisedStorage(goal, start));
     }
 
+    /**
+     * Runs the {@link AStarState} until a plan is found.
+     * 
+     * @see #run(AStarState)
+     * @param state
+     *            The state to use
+     * @return The generated {@link Plan}, or <code>null</code>
+     */
+    public Plan run(AStarState state) {
+        return run(state, -1);
+    }
+
+    /**
+     * Runs the machine using the given {@link AStarState}'s
+     * {@link AStarStorage}. Can be used to provide a continuation style usage
+     * of the A* algorithm.
+     * 
+     * @param state
+     *            The state to use
+     * @param maxIterations
+     *            The maximum number of iterations
+     * @return The generated {@link Plan}, or <code>null</code> if not found
+     */
     public Plan run(AStarState state, int maxIterations) {
         return run(state.storage, state.goal, state.start, maxIterations);
     }
@@ -64,14 +98,40 @@ public class AStarMachine {
         }
     }
 
+    /**
+     * Runs the machine until a plan is either found or cannot be generated.
+     * 
+     * @see #runFully(AStarGoal, AStarNode, int)
+     */
     public Plan runFully(AStarGoal goal, AStarNode start) {
         return runFully(goal, start, -1);
     }
 
+    /**
+     * Runs the machine fully until the iteration limit has been exceeded. This
+     * will use the supplied goal and start to generate neighbours until the
+     * goal state has been reached using the A* algorithm.
+     * 
+     * @param goal
+     *            The {@link AStarGoal} state
+     * @param start
+     *            The starting {@link AStarNode}
+     * @param iterations
+     *            The number of iterations to run the machine for
+     * @return The generated {@link Plan}, or <code>null</code> if it was not
+     *         found
+     */
     public Plan runFully(AStarGoal goal, AStarNode start, int iterations) {
         return run(getInitialisedStorage(goal, start), goal, start, iterations);
     }
 
+    /**
+     * Sets the {@link Supplier} to use to generate instances of
+     * {@link AStarStorage} for use while searching.
+     * 
+     * @param newSupplier
+     *            The new supplier to use
+     */
     public void setStorageSupplier(Supplier<AStarStorage> newSupplier) {
         storageSupplier = newSupplier;
     }
@@ -93,10 +153,24 @@ public class AStarMachine {
         }
     }
 
+    /**
+     * Creates an AStarMachine using {@link SimpleAStarStorage} as the storage
+     * backend.
+     * 
+     * @return The created instance
+     */
     public static AStarMachine createWithDefaultStorage() {
-        return createWithStorage(new SimpleAStarStorage.Factory());
+        return createWithStorage(SimpleAStarStorage.FACTORY);
     }
 
+    /**
+     * Creates an AStarMachine that uses the given {@link Supplier
+     * <AStarStorage>} to create {@link AStarStorage} instances.
+     * 
+     * @param storageSupplier
+     *            The storage supplier
+     * @return The created instance
+     */
     public static AStarMachine createWithStorage(Supplier<AStarStorage> storageSupplier) {
         return new AStarMachine(storageSupplier);
     }

@@ -73,7 +73,7 @@ public class ScriptCompiler extends Thread {
             if (res != null)
                 toCompile.add(res);
         }
-        return new CompileTaskBuilder(toCompile.toArray(new FileEngine[0]));
+        return new CompileTaskBuilder(toCompile.toArray(new FileEngine[toCompile.size()]));
     }
 
     /**
@@ -145,9 +145,9 @@ public class ScriptCompiler extends Thread {
         public CompileTask(CompileTaskBuilder builder) {
             List<ContextProvider> copy = Lists.newArrayList(builder.contextProviders);
             copy.addAll(globalContextProviders);
-            this.contextProviders = copy.toArray(new ContextProvider[0]);
+            this.contextProviders = copy.toArray(new ContextProvider[copy.size()]);
             this.files = builder.files;
-            this.callbacks = builder.callbacks.toArray(new CompileCallback[0]);
+            this.callbacks = builder.callbacks.toArray(new CompileCallback[builder.callbacks.size()]);
         }
     }
 
@@ -176,8 +176,8 @@ public class ScriptCompiler extends Thread {
     }
 
     private static class FileEngine { // File + ScriptEngine POJO
-        ScriptEngine engine;
-        File file;
+        final ScriptEngine engine;
+        final File file;
 
         FileEngine(File file, ScriptEngine engine) {
             this.file = file;

@@ -221,14 +221,14 @@ public abstract class AbstractQueryRunner {
         Object[] params = new Object[properties.length];
         for (int i = 0; i < properties.length; i++) {
             PropertyDescriptor property = properties[i];
-            Object value = null;
+            Object value;
             Method method = property.getReadMethod();
             if (method == null) {
                 throw new RuntimeException("No read method for bean property " + bean.getClass() + " "
                         + property.getName());
             }
             try {
-                value = method.invoke(bean, new Object[0]);
+                value = method.invoke(bean);
             } catch (InvocationTargetException e) {
                 throw new RuntimeException("Couldn't invoke method: " + method, e);
             } catch (IllegalArgumentException e) {

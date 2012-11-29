@@ -46,7 +46,7 @@ public class SimpleMetadataStore implements MetadataStore {
     public void loadFrom(DataKey key) {
         for (Entry<String, MetadataObject> entry : metadata.entrySet()) {
             if (entry.getValue().persistent)
-                metadata.remove(key);
+                metadata.remove(entry.getKey());
         }
         for (DataKey subKey : key.getSubKeys()) {
             metadata.put(subKey.name(), new MetadataObject(subKey.getRaw(""), true));
@@ -82,9 +82,9 @@ public class SimpleMetadataStore implements MetadataStore {
     }
 
     private static class MetadataObject {
-        boolean persistent;
+        final boolean persistent;
 
-        Object value;
+        final Object value;
 
         public MetadataObject(Object raw, boolean persistent) {
             value = raw;

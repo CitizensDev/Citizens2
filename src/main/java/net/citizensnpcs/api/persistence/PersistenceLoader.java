@@ -241,7 +241,7 @@ public class PersistenceLoader {
      * @return The loaded instance
      */
     public static <T> T load(Class<? extends T> clazz, DataKey root) {
-        T instance = null;
+        T instance;
         try {
             instance = clazz.newInstance();
         } catch (InstantiationException e) {

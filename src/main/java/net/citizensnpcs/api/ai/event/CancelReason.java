@@ -6,5 +6,5 @@ public enum CancelReason {
     REPLACE,
     STUCK,
     TARGET_DIED,
-    TARGET_MOVED_WORLD;
+    TARGET_MOVED_WORLD
 }

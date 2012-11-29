@@ -18,20 +18,20 @@ public class Owner extends Trait {
     }
 
     /**
-     * Gets the owner of an NPC.
+     * Gets the owner.
      * 
-     * @return Name of the owner of an NPC
+     * @return The owner's name
      */
     public String getOwner() {
         return owner;
     }
 
     /**
-     * Gets if the given player is the owner of an NPC.
+     * Gets if the given {@link CommandSender} is the owner of an NPC.
      * 
-     * @param player
-     *            Player to check
-     * @return Whether the given player is the owner of an NPC
+     * @param sender
+     *            Sender to check
+     * @return Whether the sender is the owner of an NPC
      */
     public boolean isOwnedBy(CommandSender sender) {
         if (sender instanceof Player) {

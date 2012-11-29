@@ -19,6 +19,11 @@ public class SimpleAStarStorage implements AStarStorage {
     }
 
     @Override
+    public AStarNode getBestNode() {
+        return queue.peek();
+    }
+
+    @Override
     public void open(AStarNode node) {
         queue.offer(node);
         open.put(node, node.f);
@@ -50,15 +55,10 @@ public class SimpleAStarStorage implements AStarStorage {
         return "SimpleAStarStorage [closed=" + closed + ", open=" + open + "]";
     }
 
-    public static class Factory implements Supplier<AStarStorage> {
+    public static final Supplier<AStarStorage> FACTORY = new Supplier<AStarStorage>() {
         @Override
         public AStarStorage get() {
             return new SimpleAStarStorage();
         }
-    }
-
-    @Override
-    public AStarNode getBestNode() {
-        return queue.peek();
-    }
+    };
 }

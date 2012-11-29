@@ -4,9 +4,9 @@ public interface AStarGoal {
     /**
      * Returns the cost of moving between the two supplied {@link AStarNode}s.
      * 
-     * @param to
+     * @param from
      *            The node to start from
-     * @param neighbour
+     * @param to
      *            The end node
      * @return The cost
      */

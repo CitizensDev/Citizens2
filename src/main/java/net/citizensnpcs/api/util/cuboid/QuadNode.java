@@ -6,7 +6,7 @@ import java.util.List;
 public class QuadNode {
     // We only hold the cuboids that fit completely inside of us.
     // Cuboids are always held in their minimal bounding node
-    List<Cuboid> cuboids = new ArrayList<Cuboid>();
+    final List<Cuboid> cuboids = new ArrayList<Cuboid>();
 
     // We only hold our list of cuboids, but to prevent duplicating lists and
     // having to climb to the root to find all of the cuboids that we need to
@@ -24,10 +24,10 @@ public class QuadNode {
      * ------------
      * +0 0 | 1
      */
-    QuadNode[] quads = new QuadNode[4];
+    final QuadNode[] quads = new QuadNode[4];
 
     // Length of a side, always a power of two
-    int size;
+    final int size;
 
     // Indexed by least x and least z
     int x; // Traditional X in 2d
@@ -60,11 +60,7 @@ public class QuadNode {
             return false;
         }
         QuadNode n = (QuadNode) o;
-
-        if (x != n.x || z != n.z || size != n.size) {
-            return false;
-        }
-        return true;
+        return x == n.x && z == n.z && size == n.size;
     }
 
     @Override

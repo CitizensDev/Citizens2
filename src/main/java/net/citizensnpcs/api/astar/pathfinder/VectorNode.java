@@ -88,12 +88,12 @@ public class VectorNode extends AStarNode implements PathPoint {
         return location;
     }
 
-    public float heuristicDistance(Vector goal) {
-        return (float) location.distanceSquared(goal) + getBlockCost();
-    }
-
     public float heuristicDistance() {
         return getBlockCost();
+    }
+
+    public float heuristicDistance(Vector goal) {
+        return (float) location.distanceSquared(goal) + getBlockCost();
     }
 
     private boolean isPassable(PathPoint mod) {

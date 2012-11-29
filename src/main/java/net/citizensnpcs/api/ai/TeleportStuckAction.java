@@ -41,9 +41,9 @@ public class TeleportStuckAction implements StuckAction {
     }
 
     public static TeleportStuckAction INSTANCE = new TeleportStuckAction();
-    private static int MAX_ITERATIONS = 10;
+    private static final int MAX_ITERATIONS = 10;
     private static final double RANGE = 10;
-    private static Set<Material> TELEPORTABLE_BLOCKS = EnumSet.of(Material.AIR, Material.BIRCH_WOOD_STAIRS,
+    private static final Set<Material> TELEPORTABLE_BLOCKS = EnumSet.of(Material.AIR, Material.BIRCH_WOOD_STAIRS,
             Material.BRICK_STAIRS, Material.CAKE_BLOCK, Material.COBBLESTONE_STAIRS, Material.DEAD_BUSH,
             Material.JUNGLE_WOOD_STAIRS, Material.LADDER, Material.LONG_GRASS, Material.RAILS,
             Material.POWERED_RAIL, Material.REDSTONE_WIRE, Material.REDSTONE_TORCH_ON,

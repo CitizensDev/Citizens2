@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.trait;
 
+
 /**
  * Builds a trait.
  */
@@ -25,12 +26,18 @@ public final class TraitInfo {
     }
 
     /**
-     * Constructs a factory with the given trait class.
+     * Constructs a factory with the given trait class. The trait class must
+     * have a no-arguments constructor.
      * 
-     * @param character
+     * @param trait
      *            Class of the trait
      */
     public static TraitInfo create(Class<? extends Trait> trait) {
+        try {
+            trait.getConstructor(new Class<?>[] {});
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Trait class must have a no-arguments constructor");
+        }
         return new TraitInfo(trait);
     }
 }

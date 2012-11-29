@@ -85,8 +85,6 @@ public class Cuboid {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("x1=").append(lowCoords[0]).append(" y1=").append(lowCoords[1])
-                .append(" z1=").append(lowCoords[2]).append(" x2=").append(highCoords[0]).append(" y2=")
-                .append(highCoords[1]).append(" z2=").append(highCoords[2]).toString();
+        return "x1=" + lowCoords[0] + " y1=" + lowCoords[1] + " z1=" + lowCoords[2] + " x2=" + highCoords[0] + " y2=" + highCoords[1] + " z2=" + highCoords[2];
     }
 }
