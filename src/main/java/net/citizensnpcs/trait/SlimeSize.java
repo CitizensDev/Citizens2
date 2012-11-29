@@ -13,7 +13,7 @@ public class SlimeSize extends Trait {
     private int size = 3;
     private boolean slime;
 
-    protected SlimeSize(String name) {
+    public SlimeSize() {
         super("slimesize");
     }
 

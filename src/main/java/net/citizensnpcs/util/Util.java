@@ -1,5 +1,7 @@
 package net.citizensnpcs.util;
 
+import java.util.Random;
+
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -131,6 +133,22 @@ public class Util {
             for (Packet packet : packets) {
                 NMS.sendPacket(player, packet);
             }
+        }
+    }
+
+    public static Random getFastRandom() {
+        try {
+            return (Random) RNG_CLASS.newInstance();
+        } catch (Exception e) {
+            return new Random();
+        }
+    }
+
+    private static Class<?> RNG_CLASS = null;
+    static {
+        try {
+            RNG_CLASS = Class.forName("org.uncommons.maths.random.XORShiftRNG");
+        } catch (ClassNotFoundException e) {
         }
     }
 }

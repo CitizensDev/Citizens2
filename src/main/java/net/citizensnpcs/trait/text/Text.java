@@ -31,7 +31,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import org.uncommons.maths.random.XORShiftRNG;
 
 public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
     private final Map<String, Date> cooldowns = new HashMap<String, Date>();
@@ -151,8 +150,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         }
     }
 
-    private static final Random RANDOM = new XORShiftRNG();
-
     @Override
     public void save(DataKey key) {
         key.setBoolean("talk-close", talkClose);
@@ -228,4 +225,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         builder.append("}");
         return builder.toString();
     }
+
+    private static Random RANDOM = Util.getFastRandom();
 }

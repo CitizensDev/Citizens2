@@ -35,7 +35,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.Stairs;
 import org.bukkit.material.Step;
 import org.bukkit.util.Vector;
-import org.uncommons.maths.random.XORShiftRNG;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -56,9 +55,11 @@ public class NMS {
     private static Field NAVIGATION_WORLD_FIELD;
     private static Field PATHFINDING_RANGE;
     private static Field PERSISTENT_FIELD;
+    private static final Random RANDOM = Util.getFastRandom();
     private static Set<Integer> SLAB_MATERIALS = Sets.newHashSet();
     private static Field SPEED_FIELD;
     private static Set<Integer> STAIR_MATERIALS = Sets.newHashSet();
+
     private static Field THREAD_STOPPER;
 
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
@@ -265,8 +266,6 @@ public class NMS {
             handle.motY += power;
         }
     }
-
-    private static final Random RANDOM = new XORShiftRNG();
 
     public static void updateAI(EntityLiving entity) {
         updateSenses(entity);
