@@ -50,11 +50,6 @@ public abstract class CitizensNPC extends AbstractNPC {
     protected abstract EntityLiving createHandle(Location loc);
 
     @Override
-    public boolean despawn() {
-        return despawn(DespawnReason.PLUGIN);
-    }
-
-    @Override
     public boolean despawn(DespawnReason reason) {
         if (!isSpawned())
             return false;
@@ -93,11 +88,6 @@ public abstract class CitizensNPC extends AbstractNPC {
     @Override
     public Navigator getNavigator() {
         return navigator;
-    }
-
-    @Override
-    public Trait getTraitFor(Class<? extends Trait> clazz) {
-        return CitizensAPI.getTraitFactory().getTrait(clazz);
     }
 
     @Override
