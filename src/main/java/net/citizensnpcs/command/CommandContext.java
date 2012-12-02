@@ -101,6 +101,10 @@ public class CommandContext {
         this.args = copied.toArray(new String[copied.size()]);
     }
 
+    public CommandContext(String[] args) {
+        this(null, args);
+    }
+
     public int argsLength() {
         return args.length - 1;
     }
@@ -193,7 +197,7 @@ public class CommandContext {
     }
 
     public Location getSenderLocation() {
-        if (location != null)
+        if (location != null || sender == null)
             return location;
         if (sender instanceof Player)
             location = ((Player) sender).getLocation();
