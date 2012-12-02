@@ -20,8 +20,6 @@ public class Messages {
     public static final String BEHAVIOURS_ADDED = "citizens.commands.npc.behaviour.added";
     public static final String BEHAVIOURS_REMOVED = "citizens.commands.npc.behaviour.removed";
     public static final String CHAT_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.chat.prompt";
-    public static final String CITIZENS_DISABLED = "citizens.notifications.disabled";
-    public static final String CITIZENS_ENABLED = "citizens.notifications.enabled";
     public static final String CITIZENS_IMPLEMENTATION_DISABLED = "citizens.changed-implementation";
     public static final String CITIZENS_INCOMPATIBLE = "citizens.notifications.incompatible-version";
     public static final String CITIZENS_INVALID_COMMAND_CLASS = "citizens.commands.invalid.class";
@@ -102,7 +100,6 @@ public class Messages {
     public static final String LOOKCLOSE_SET = "citizens.commands.npc.lookclose.set";
     public static final String LOOKCLOSE_STOPPED = "citizens.commands.npc.lookclose.stopped";
     public static final String METRICS_ERROR_NOTIFICATION = "citizens.notifications.metrics-load-error";
-    public static final String METRICS_NOTIFICATION = "citizens.notifications.metrics-started";
     public static final String MINIMUM_COST_REQUIRED = "citizens.economy.minimum-cost-required";
     public static final String MISSING_TRANSLATIONS = "citizens.notifications.missing-translations";
     public static final String MOBTYPE_CANNOT_BE_AGED = "citizens.commands.npc.age.cannot-be-aged";

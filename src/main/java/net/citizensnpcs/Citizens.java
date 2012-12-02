@@ -189,8 +189,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             despawnNPCs();
             npcRegistry = null;
         }
-
-        Messaging.logTr(Messages.CITIZENS_DISABLED, getDescription().getVersion());
     }
 
     @Override
@@ -225,7 +223,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         registerCommands();
         enableSubPlugins();
-        Messaging.logTr(Messages.CITIZENS_ENABLED, getDescription().getVersion());
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)
@@ -337,7 +334,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
             traitFactory.addPlotters(metrics.createGraph("traits"));
             metrics.start();
-            Messaging.logTr(Messages.METRICS_NOTIFICATION);
         } catch (IOException e) {
             Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
         }

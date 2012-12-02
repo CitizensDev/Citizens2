@@ -1,5 +1,6 @@
 package net.citizensnpcs.util;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.citizensnpcs.Settings.Setting;
@@ -65,8 +66,13 @@ public class StringHelper {
     }
 
     public static String parseColors(String parsed) {
-        return COLOR_MATCHER.matcher(parsed).replaceAll(ChatColor.COLOR_CHAR + "$1");
+        Matcher matcher = COLOR_MATCHER.matcher(parsed);
+        String replace = matcher.group(1) != null ? GROUP_1 : GROUP_2;
+        return matcher.replaceAll(replace);
     }
+
+    private static String GROUP_1 = ChatColor.COLOR_CHAR + "$1";
+    private static String GROUP_2 = ChatColor.COLOR_CHAR + "$2";
 
     public static String wrap(Object string) {
         return wrap(string, parseColors(Setting.MESSAGE_COLOUR.asString()));
@@ -89,7 +95,7 @@ public class StringHelper {
         String colors = "";
         for (ChatColor color : ChatColor.values())
             colors += color.getChar();
-        COLOR_MATCHER = Pattern.compile("[&<]([COLORS])[>]?".replace("COLORS", colors),
+        COLOR_MATCHER = Pattern.compile("&([COLORS])|<([COLORS])>".replace("COLORS", colors),
                 Pattern.CASE_INSENSITIVE);
     }
 }
