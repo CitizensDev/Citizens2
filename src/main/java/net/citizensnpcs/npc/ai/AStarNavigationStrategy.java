@@ -26,7 +26,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         this.params = params;
         this.dest = dest;
         this.npc = npc;
-        Location location = npc.getBukkitEntity().getLocation();
+        Location location = npc.getBukkitEntity().getEyeLocation();
         plan = (Path) ASTAR.runFully(new VectorGoal(dest), new VectorNode(location, new ChunkBlockSource(
                 location, params.range()), params.examiners()), 10000);
         if (plan == null || plan.isComplete())
@@ -49,7 +49,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
     public boolean update() {
         if (getCancelReason() != null)
             return true;
-        if (plan.isComplete())
+        if (plan == null || plan.isComplete())
             return true;
         if (NMS.distanceSquared(npc.getHandle(), vector) <= params.distanceMargin()) {
             plan.update(npc);
