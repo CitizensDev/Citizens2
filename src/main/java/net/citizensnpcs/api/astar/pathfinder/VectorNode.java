@@ -35,7 +35,7 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     boolean at(Vector goal) {
-        return heuristicDistance(goal) < 1;
+        return location.distanceSquared(goal) <= 4;
     }
 
     @Override
@@ -88,18 +88,16 @@ public class VectorNode extends AStarNode implements PathPoint {
         return location;
     }
 
-    public float heuristicDistance() {
-        return getBlockCost();
-    }
-
     public float heuristicDistance(Vector goal) {
         return (float) location.distanceSquared(goal) + getBlockCost();
     }
 
     private boolean isPassable(PathPoint mod) {
-        for (BlockExaminer examiner : examiners)
-            if (!examiner.isPassable(blockSource, mod))
+        for (BlockExaminer examiner : examiners) {
+            boolean passable = examiner.isPassable(blockSource, mod);
+            if (!passable)
                 return false;
+        }
         return true;
     }
 }

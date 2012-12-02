@@ -5,7 +5,6 @@ import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 public abstract class CachingChunkBlockSource<T> extends AbstractBlockSource {
-    private int cacheMisses;
     private final Object[][] chunks;
     private final int chunkX;
     private final int chunkZ;
@@ -38,8 +37,6 @@ public abstract class CachingChunkBlockSource<T> extends AbstractBlockSource {
         T chunk = getSpecific(x, z);
         if (chunk != null)
             return getId(chunk, x & 15, y, z & 15);
-        if (++cacheMisses % 100 == 0)
-            System.err.println("[Citizens]: " + cacheMisses + " cache misses.");
         return world.getBlockTypeIdAt(x, y, z);
     }
 

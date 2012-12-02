@@ -92,7 +92,6 @@ public class AStarMachine {
                 neighbour.parent = node;
             }
             if (maxIterations >= 0 && iterations++ >= maxIterations) {
-                System.err.println("Hit max iterations " + storage);
                 return null;
             }
         }
