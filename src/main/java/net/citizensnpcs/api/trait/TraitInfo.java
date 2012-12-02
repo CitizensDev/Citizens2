@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.trait;
 
-
 /**
  * Builds a trait.
  */
@@ -21,7 +20,7 @@ public final class TraitInfo {
     }
 
     public TraitInfo withName(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
         return this;
     }
 
@@ -31,6 +30,9 @@ public final class TraitInfo {
      * 
      * @param trait
      *            Class of the trait
+     * @return The created {@link TraitInfo}
+     * @throws IllegalArgumentException
+     *             If the trait class does not have a no-arguments constructor
      */
     public static TraitInfo create(Class<? extends Trait> trait) {
         try {
