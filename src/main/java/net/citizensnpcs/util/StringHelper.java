@@ -67,6 +67,8 @@ public class StringHelper {
 
     public static String parseColors(String parsed) {
         Matcher matcher = COLOR_MATCHER.matcher(parsed);
+        if (!matcher.matches())
+            return parsed;
         String replace = matcher.group(1) != null ? GROUP_1 : GROUP_2;
         return matcher.replaceAll(replace);
     }
