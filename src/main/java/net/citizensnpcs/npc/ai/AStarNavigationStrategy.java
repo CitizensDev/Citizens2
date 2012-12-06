@@ -28,7 +28,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         this.npc = npc;
         Location location = npc.getBukkitEntity().getEyeLocation();
         plan = (Path) ASTAR.runFully(new VectorGoal(dest), new VectorNode(location, new ChunkBlockSource(
-                location, params.range()), params.examiners()), 10000);
+                location, params.range()), params.examiners()), (int) (params.range() * 10));
         if (plan == null || plan.isComplete())
             setCancelReason(CancelReason.STUCK);
         else

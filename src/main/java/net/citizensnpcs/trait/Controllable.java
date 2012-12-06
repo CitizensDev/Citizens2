@@ -12,11 +12,11 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.command.CommandConfigurable;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.v1_4_5.EntityLiving;
+import net.minecraft.server.v1_4_5.EntityPlayer;
 
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;

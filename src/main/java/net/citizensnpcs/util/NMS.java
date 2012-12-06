@@ -9,26 +9,26 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.npc.CitizensNPC;
-import net.minecraft.server.ControllerLook;
-import net.minecraft.server.DamageSource;
-import net.minecraft.server.EnchantmentManager;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityMonster;
-import net.minecraft.server.EntityTypes;
-import net.minecraft.server.MathHelper;
-import net.minecraft.server.MobEffectList;
-import net.minecraft.server.Navigation;
-import net.minecraft.server.NetworkManager;
-import net.minecraft.server.Packet;
-import net.minecraft.server.PathfinderGoalSelector;
-import net.minecraft.server.World;
+import net.minecraft.server.v1_4_5.ControllerLook;
+import net.minecraft.server.v1_4_5.DamageSource;
+import net.minecraft.server.v1_4_5.EnchantmentManager;
+import net.minecraft.server.v1_4_5.Entity;
+import net.minecraft.server.v1_4_5.EntityLiving;
+import net.minecraft.server.v1_4_5.EntityMonster;
+import net.minecraft.server.v1_4_5.EntityTypes;
+import net.minecraft.server.v1_4_5.MathHelper;
+import net.minecraft.server.v1_4_5.MobEffectList;
+import net.minecraft.server.v1_4_5.Navigation;
+import net.minecraft.server.v1_4_5.NetworkManager;
+import net.minecraft.server.v1_4_5.Packet;
+import net.minecraft.server.v1_4_5.PathfinderGoalSelector;
+import net.minecraft.server.v1_4_5.World;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -54,7 +54,6 @@ public class NMS {
     private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
     private static Field NAVIGATION_WORLD_FIELD;
     private static Field PATHFINDING_RANGE;
-    private static Field PERSISTENT_FIELD;
     private static final Random RANDOM = Util.getFastRandom();
     private static Set<Integer> SLAB_MATERIALS = Sets.newHashSet();
     private static Field SPEED_FIELD;
@@ -221,16 +220,6 @@ public class NMS {
         }
     }
 
-    public static void setPersistent(EntityLiving entity) {
-        if (PERSISTENT_FIELD == null)
-            return;
-        try {
-            PERSISTENT_FIELD.set(entity, true);
-        } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_SETTING_ENTITY_PERSISTENT, e.getMessage());
-        }
-    }
-
     public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
             Class<? extends Entity> clazz, EntityType type) {
         World handle = ((CraftWorld) world).getHandle();
@@ -324,7 +313,6 @@ public class NMS {
         NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
         PATHFINDING_RANGE = getField(Navigation.class, "e");
         GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
-        PERSISTENT_FIELD = getField(EntityLiving.class, "persistent");
 
         try {
             Field field = getField(EntityTypes.class, "d");

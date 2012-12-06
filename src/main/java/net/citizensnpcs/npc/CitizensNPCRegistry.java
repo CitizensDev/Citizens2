@@ -40,7 +40,7 @@ import net.citizensnpcs.npc.entity.CitizensWolfNPC;
 import net.citizensnpcs.npc.entity.CitizensZombieNPC;
 import net.citizensnpcs.util.ByIdArray;
 
-import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -153,7 +153,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
             return null;
         if (entity instanceof NPCHolder)
             return ((NPCHolder) entity).getNPC();
-        net.minecraft.server.Entity handle = ((CraftEntity) entity).getHandle();
+        net.minecraft.server.v1_4_5.Entity handle = ((CraftEntity) entity).getHandle();
         return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
     }
 

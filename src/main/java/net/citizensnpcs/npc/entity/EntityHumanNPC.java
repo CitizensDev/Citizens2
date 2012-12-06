@@ -13,26 +13,26 @@ import net.citizensnpcs.npc.network.EmptyNetworkManager;
 import net.citizensnpcs.npc.network.EmptySocket;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.EnumGamemode;
-import net.minecraft.server.ItemInWorldManager;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.Navigation;
-import net.minecraft.server.NetHandler;
-import net.minecraft.server.NetworkManager;
-import net.minecraft.server.Packet5EntityEquipment;
-import net.minecraft.server.World;
+import net.minecraft.server.v1_4_5.EntityPlayer;
+import net.minecraft.server.v1_4_5.EnumGamemode;
+import net.minecraft.server.v1_4_5.ItemInWorldManager;
+import net.minecraft.server.v1_4_5.MinecraftServer;
+import net.minecraft.server.v1_4_5.Navigation;
+import net.minecraft.server.v1_4_5.NetHandler;
+import net.minecraft.server.v1_4_5.NetworkManager;
+import net.minecraft.server.v1_4_5.Packet5EntityEquipment;
+import net.minecraft.server.v1_4_5.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_5.CraftServer;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private final CitizensNPC npc;
-    private final net.minecraft.server.ItemStack[] previousEquipment = { null, null, null, null, null };
+    private final net.minecraft.server.v1_4_5.ItemStack[] previousEquipment = { null, null, null, null, null };
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
             ItemInWorldManager itemInWorldManager, NPC npc) {
@@ -50,7 +50,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public void collide(net.minecraft.server.Entity entity) {
+    public void collide(net.minecraft.server.v1_4_5.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
@@ -172,8 +172,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     private void updateEquipment() {
         for (int i = 0; i < previousEquipment.length; i++) {
-            net.minecraft.server.ItemStack previous = previousEquipment[i];
-            net.minecraft.server.ItemStack current = getEquipment(i);
+            net.minecraft.server.v1_4_5.ItemStack previous = previousEquipment[i];
+            net.minecraft.server.v1_4_5.ItemStack current = getEquipment(i);
             if (previous != current) {
                 Util.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i,
                         current));

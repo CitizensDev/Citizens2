@@ -11,14 +11,14 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.EntityLightning;
-import net.minecraft.server.EntityPig;
-import net.minecraft.server.World;
+import net.minecraft.server.v1_4_5.EntityLightning;
+import net.minecraft.server.v1_4_5.EntityPig;
+import net.minecraft.server.v1_4_5.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftPig;
+import org.bukkit.craftbukkit.v1_4_5.CraftServer;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftPig;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
@@ -64,7 +64,7 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-                NMS.setPersistent(this);
+
             }
         }
 
@@ -82,7 +82,7 @@ public class CitizensPigNPC extends CitizensMobNPC implements Equipable {
         }
 
         @Override
-        public void collide(net.minecraft.server.Entity entity) {
+        public void collide(net.minecraft.server.v1_4_5.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);

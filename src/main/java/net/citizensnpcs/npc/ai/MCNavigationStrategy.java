@@ -4,8 +4,8 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.Navigation;
+import net.minecraft.server.v1_4_5.EntityPlayer;
+import net.minecraft.server.v1_4_5.Navigation;
 
 import org.bukkit.Location;
 

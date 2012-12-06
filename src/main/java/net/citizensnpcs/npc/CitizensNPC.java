@@ -23,7 +23,7 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.EntityLiving;
+import net.minecraft.server.v1_4_5.EntityLiving;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -212,6 +212,7 @@ public abstract class CitizensNPC extends AbstractNPC {
         // Modify NPC using traits after the entity has been created
         for (Trait trait : traits.values())
             trait.onSpawn();
+        getBukkitEntity().setRemoveWhenFarAway(false);
         return true;
     }
 

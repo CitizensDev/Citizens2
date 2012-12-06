@@ -7,12 +7,12 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.EntityCow;
-import net.minecraft.server.World;
+import net.minecraft.server.v1_4_5.EntityCow;
+import net.minecraft.server.v1_4_5.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftCow;
+import org.bukkit.craftbukkit.v1_4_5.CraftServer;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftCow;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
@@ -54,7 +54,7 @@ public class CitizensCowNPC extends CitizensMobNPC {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-                NMS.setPersistent(this);
+
             }
         }
 
@@ -66,7 +66,7 @@ public class CitizensCowNPC extends CitizensMobNPC {
         }
 
         @Override
-        public void collide(net.minecraft.server.Entity entity) {
+        public void collide(net.minecraft.server.v1_4_5.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
