@@ -5,15 +5,15 @@ import java.util.Random;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.Packet;
+import net.minecraft.server.v1_4_5.EntityLiving;
+import net.minecraft.server.v1_4_5.Packet;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ public class Util {
         NMS.look(handle, yaw, pitch);
     }
 
-    public static void callCollisionEvent(NPC npc, net.minecraft.server.Entity entity) {
+    public static void callCollisionEvent(NPC npc, net.minecraft.server.v1_4_5.Entity entity) {
         if (NPCCollisionEvent.getHandlerList().getRegisteredListeners().length > 0)
             Bukkit.getPluginManager().callEvent(new NPCCollisionEvent(npc, entity.getBukkitEntity()));
     }

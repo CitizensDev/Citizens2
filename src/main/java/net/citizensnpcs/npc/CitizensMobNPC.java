@@ -5,13 +5,13 @@ import java.util.Map;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.Block;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.World;
+import net.minecraft.server.v1_4_5.Block;
+import net.minecraft.server.v1_4_5.EntityLiving;
+import net.minecraft.server.v1_4_5.World;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
 
 import com.google.common.collect.Maps;
 
