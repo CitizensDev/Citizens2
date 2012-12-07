@@ -27,6 +27,7 @@ import net.minecraft.server.v1_4_5.World;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
 import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
