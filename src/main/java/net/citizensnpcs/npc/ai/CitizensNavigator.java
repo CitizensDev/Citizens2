@@ -17,7 +17,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_4_5.EntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -34,7 +33,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     private NavigatorParameters localParams = defaultParams;
     private final CitizensNPC npc;
     private int stationaryTicks;
-    private boolean updatedAvoidWater = false;
 
     public CitizensNavigator(CitizensNPC npc) {
         this.npc = npc;
@@ -100,11 +98,6 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (defaultParams.baseSpeed() == UNINITIALISED_SPEED)
             defaultParams.baseSpeed(NMS.getSpeedFor(npc));
         updatePathfindingRange();
-        if (!updatedAvoidWater) {
-            boolean defaultAvoidWater = npc.getHandle().getNavigation().a();
-            defaultParams.avoidWater(defaultAvoidWater);
-            updatedAvoidWater = true;
-        }
     }
 
     @Override

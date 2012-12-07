@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.npc.CitizensNPC;
 import net.minecraft.server.v1_4_5.ControllerLook;
 import net.minecraft.server.v1_4_5.DamageSource;
 import net.minecraft.server.v1_4_5.EnchantmentManager;
@@ -25,10 +24,12 @@ import net.minecraft.server.v1_4_5.Packet;
 import net.minecraft.server.v1_4_5.PathfinderGoalSelector;
 import net.minecraft.server.v1_4_5.World;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_5.CraftServer;
 import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
@@ -36,7 +37,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Stairs;
 import org.bukkit.material.Step;
-import org.bukkit.util.Vector;
+import org.bukkit.plugin.PluginLoadOrder;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -48,9 +49,9 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 0.4F;
-    private static Map<Class<? extends Entity>, Integer> ENTITY_CLASS_TO_INT;
-    private static final Map<Class<? extends Entity>, Constructor<? extends Entity>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<? extends Entity>, Constructor<? extends Entity>>();
-    private static Map<Integer, Class<? extends Entity>> ENTITY_INT_TO_CLASS;
+    private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
+    private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
+    private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
     private static Field GOAL_FIELD;
     private static Field LAND_SPEED_MODIFIER_FIELD;
     private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
@@ -125,18 +126,9 @@ public class NMS {
         }
     }
 
-    public static double distance(EntityLiving handle, Vector vector) {
-        return Math.sqrt(distanceSquared(handle, vector));
-    }
-
-    public static double distanceSquared(EntityLiving handle, Vector vector) {
-        return Math.pow(handle.locX - vector.getX(), 2) + Math.pow(handle.locY - vector.getY(), 2)
-                + Math.pow(handle.locZ - vector.getZ(), 2);
-    }
-
-    private static Constructor<? extends Entity> getCustomEntityConstructor(Class<? extends Entity> clazz,
-            EntityType type) throws SecurityException, NoSuchMethodException {
-        Constructor<? extends Entity> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
+    private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type)
+            throws SecurityException, NoSuchMethodException {
+        Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
             constructor.setAccessible(true);
@@ -167,7 +159,7 @@ public class NMS {
             return DEFAULT_SPEED;
         }
         try {
-            float speed = SPEED_FIELD.getFloat(((CraftEntity)npc.getBukkitEntity()).getHandle());
+            float speed = SPEED_FIELD.getFloat(((CraftEntity) npc.getBukkitEntity()).getHandle());
             MOVEMENT_SPEEDS.put(entityType, speed);
             return speed;
         } catch (IllegalAccessException ex) {
@@ -176,8 +168,12 @@ public class NMS {
         }
     }
 
-    public static boolean inWater(EntityLiving mcEntity) {
+    public static boolean inWater(Entity mcEntity) {
         return mcEntity.I() || mcEntity.J();
+    }
+
+    public static void loadPlugins() {
+        ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.POSTWORLD);
     }
 
     public static void look(ControllerLook controllerLook, EntityLiving handle, EntityLiving target) {
@@ -189,7 +185,7 @@ public class NMS {
         handle.pitch = pitch;
     }
 
-    public static void registerEntityClass(Class<? extends Entity> clazz) {
+    public static void registerEntityClass(Class<?> clazz) {
         if (ENTITY_CLASS_TO_INT.containsKey(clazz))
             return;
         Class<?> search = clazz;
@@ -206,6 +202,10 @@ public class NMS {
 
     public static void sendPacket(Player player, Packet packet) {
         ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
+    }
+
+    public static void setDestination(LivingEntity bukkitEntity, double x, double y, double z, float speed) {
+        ((CraftLivingEntity) bukkitEntity).getHandle().getControllerMove().a(x, y, z, speed);
     }
 
     public static void setHeadYaw(EntityLiving handle, float yaw) {
@@ -227,8 +227,8 @@ public class NMS {
         World handle = ((CraftWorld) world).getHandle();
         Entity entity = null;
         try {
-            Constructor<? extends Entity> constructor = getCustomEntityConstructor(clazz, type);
-            entity = constructor.newInstance(handle);
+            Constructor<?> constructor = getCustomEntityConstructor(clazz, type);
+            entity = (Entity) constructor.newInstance(handle);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_SPAWNING_CUSTOM_ENTITY, e.getMessage());
             return null;
@@ -248,14 +248,14 @@ public class NMS {
         }
     }
 
-    public static void trySwim(EntityLiving handle) {
-        trySwim(handle, 0.04F);
-    }
-
-    public static void trySwim(EntityLiving handle, float power) {
+    public static void trySwim(Entity handle, float power) {
         if (RANDOM.nextFloat() < 0.8F && inWater(handle)) {
             handle.motY += power;
         }
+    }
+
+    public static void trySwim(org.bukkit.entity.Entity handle) {
+        trySwim(((CraftEntity) handle).getHandle(), 0.04F);
     }
 
     public static void updateAI(EntityLiving entity) {
@@ -278,10 +278,10 @@ public class NMS {
         }
     }
 
-    public static void updatePathfindingRange(CitizensNPC npc, float pathfindingRange) {
+    public static void updatePathfindingRange(NPC npc, float pathfindingRange) {
         if (PATHFINDING_RANGE == null)
             return;
-        Navigation navigation = npc.getHandle().getNavigation();
+        Navigation navigation = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle().getNavigation();
         try {
             PATHFINDING_RANGE.set(navigation, pathfindingRange);
         } catch (Exception e) {
@@ -318,9 +318,9 @@ public class NMS {
 
         try {
             Field field = getField(EntityTypes.class, "d");
-            ENTITY_INT_TO_CLASS = (Map<Integer, Class<? extends Entity>>) field.get(null);
+            ENTITY_INT_TO_CLASS = (Map<Integer, Class<?>>) field.get(null);
             field = getField(EntityTypes.class, "e");
-            ENTITY_CLASS_TO_INT = (Map<Class<? extends Entity>, Integer>) field.get(null);
+            ENTITY_CLASS_TO_INT = (Map<Class<?>, Integer>) field.get(null);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }

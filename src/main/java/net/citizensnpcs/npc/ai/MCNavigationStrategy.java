@@ -3,28 +3,31 @@ package net.citizensnpcs.npc.ai;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.npc.CitizensNPC;
-import net.minecraft.server.v1_4_5.EntityPlayer;
+import net.citizensnpcs.api.npc.NPC;
+import net.minecraft.server.v1_4_5.EntityHuman;
+import net.minecraft.server.v1_4_5.EntityLiving;
 import net.minecraft.server.v1_4_5.Navigation;
 
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
 
 public class MCNavigationStrategy extends AbstractPathStrategy {
     private final Navigation navigation;
     private final NavigatorParameters parameters;
     private final Location target;
 
-    MCNavigationStrategy(final CitizensNPC npc, Location dest, NavigatorParameters params) {
+    MCNavigationStrategy(final NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
         this.target = dest;
         this.parameters = params;
-        if (npc.getHandle() instanceof EntityPlayer) {
-            npc.getHandle().onGround = true;
+        EntityLiving handle = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
+        if (handle instanceof EntityHuman) {
+            handle.onGround = true;
             // not sure of a better way around this - if onGround is false, then
             // navigation won't execute, and calling entity.move doesn't
             // entirely fix the problem.
         }
-        navigation = npc.getHandle().getNavigation();
+        navigation = handle.getNavigation();
         navigation.a(parameters.avoidWater());
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), parameters.speed());
         if (navigation.f())

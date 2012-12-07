@@ -5,7 +5,7 @@ import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.server.v1_4_5.EntityLiving;
@@ -24,8 +24,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final Navigation navigation;
     private final NavigatorParameters parameters;
 
-    public MCTargetStrategy(CitizensNPC handle, LivingEntity target, boolean aggro, NavigatorParameters params) {
-        this.handle = handle.getHandle();
+    public MCTargetStrategy(NPC handle, LivingEntity target, boolean aggro, NavigatorParameters params) {
+        this.handle = ((CraftLivingEntity) handle.getBukkitEntity()).getHandle();
         this.target = ((CraftLivingEntity) target).getHandle();
         this.navigation = this.handle.getNavigation();
         this.aggro = aggro;

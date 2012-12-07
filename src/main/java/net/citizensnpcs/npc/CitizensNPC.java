@@ -75,9 +75,9 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public LivingEntity getBukkitEntity() {
-        if (getHandle() == null)
+        if (mcEntity == null)
             return null;
-        return (LivingEntity) getHandle().getBukkitEntity();
+        return (LivingEntity) mcEntity.getBukkitEntity();
     }
 
     public EntityLiving getHandle() {
@@ -221,7 +221,7 @@ public abstract class CitizensNPC extends AbstractNPC {
         try {
             super.update();
             if (isSpawned()) {
-                NMS.trySwim(getHandle());
+                NMS.trySwim(getBukkitEntity());
                 navigator.run();
             }
         } catch (Exception ex) {

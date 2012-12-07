@@ -51,13 +51,13 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             return true;
         if (plan == null || plan.isComplete())
             return true;
-        if (NMS.distanceSquared(npc.getHandle(), vector) <= params.distanceMargin()) {
+        if (npc.getBukkitEntity().getVelocity().distanceSquared(vector) <= params.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete())
                 return true;
             vector = plan.getCurrentVector();
         }
-        npc.getHandle().getControllerMove().a(vector.getX(), vector.getY(), vector.getZ(), params.speed());
+        NMS.setDestination(npc.getBukkitEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
         return false;
     }
 
