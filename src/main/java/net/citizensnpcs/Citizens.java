@@ -31,28 +31,22 @@ import net.citizensnpcs.command.command.ScriptCommands;
 import net.citizensnpcs.command.command.TemplateCommands;
 import net.citizensnpcs.command.command.TraitCommands;
 import net.citizensnpcs.command.command.WaypointCommands;
-import net.citizensnpcs.command.exception.CommandException;
-import net.citizensnpcs.command.exception.CommandUsageException;
-import net.citizensnpcs.command.exception.ServerCommandException;
-import net.citizensnpcs.command.exception.UnhandledCommandException;
-import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
+import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_4_5.CraftServer;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -108,7 +102,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 ex.printStackTrace();
             }
         }
-        ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.POSTWORLD);
+        NMS.loadPlugins();
     }
 
     public CommandInfo getCommandInfo(String rootCommand, String modifier) {
@@ -140,40 +134,17 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String cmdName, String[] args) {
-        try {
-            String modifier = args.length > 0 ? args[0] : "";
-            if (!commands.hasCommand(command, modifier) && !modifier.isEmpty()) {
-                return suggestClosestModifier(sender, command.getName().toLowerCase(), modifier);
-            }
-
-            NPC npc = selector.getSelected(sender);
-            // TODO: change the args supplied to a context style system for
-            // flexibility (ie. adding more context in the future without
-            // changing everything)
-            try {
-                commands.execute(command, args, sender, sender, npc);
-            } catch (ServerCommandException ex) {
-                Messaging.sendTr(sender, Messages.COMMAND_MUST_BE_INGAME);
-            } catch (CommandUsageException ex) {
-                Messaging.sendError(sender, ex.getMessage());
-                Messaging.sendError(sender, ex.getUsage());
-            } catch (WrappedCommandException ex) {
-                throw ex.getCause();
-            } catch (UnhandledCommandException ex) {
-                return false;
-            } catch (CommandException ex) {
-                Messaging.sendError(sender, ex.getMessage());
-            }
-        } catch (NumberFormatException ex) {
-            Messaging.sendErrorTr(sender, Messages.COMMAND_INVALID_NUMBER);
-        } catch (Throwable ex) {
-            ex.printStackTrace();
-            if (sender instanceof Player) {
-                Messaging.sendErrorTr(sender, Messages.COMMAND_REPORT_ERROR);
-                Messaging.sendError(sender, ex.getClass().getName() + ": " + ex.getMessage());
-            }
+        String modifier = args.length > 0 ? args[0] : "";
+        if (!commands.hasCommand(command, modifier) && !modifier.isEmpty()) {
+            return suggestClosestModifier(sender, command.getName(), modifier);
         }
-        return true;
+
+        NPC npc = selector.getSelected(sender);
+        // TODO: change the args supplied to a context style system for
+        // flexibility (ie. adding more context in the future without
+        // changing everything)
+
+        return commands.executeSafe(command, args, sender, sender, npc);
     }
 
     @Override
@@ -196,7 +167,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void onEnable() {
         CitizensAPI.setImplementation(this);
         // Disable if the server is not using the compatible Minecraft version
-        String mcVersion = ((CraftServer) getServer()).getServer().getVersion();
+        String mcVersion = Util.getMinecraftVersion();
         compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
         if (!compatible) {
             Messaging.severeTr(Messages.CITIZENS_INCOMPATIBLE, getDescription().getVersion(), mcVersion);

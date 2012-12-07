@@ -75,6 +75,16 @@ public class Util {
         }
     }
 
+    public static String getMinecraftVersion() {
+        String raw = Bukkit.getVersion();
+        int start = raw.indexOf("MC:");
+        if (start == -1)
+            return raw;
+        start += 4;
+        int end = raw.indexOf(')', start);
+        return raw.substring(start, end);
+    }
+
     public static boolean isLoaded(Location location) {
         if (location.getWorld() == null)
             return false;
@@ -145,6 +155,7 @@ public class Util {
             }
         }
     }
+
     static {
         try {
             RNG_CLASS = Class.forName("org.uncommons.maths.random.XORShiftRNG");

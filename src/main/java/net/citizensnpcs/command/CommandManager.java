@@ -21,6 +21,7 @@ import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.command.CommandSender;
@@ -86,11 +87,11 @@ public class CommandManager {
 
         Object[] newMethodArgs = new Object[methodArgs.length + 1];
         System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
-        executeMethod(null, newArgs, sender, newMethodArgs);
+        executeMethod(newArgs, sender, newMethodArgs);
     }
 
     // Attempt to execute a command.
-    private void executeMethod(Method parent, String[] args, CommandSender sender, Object[] methodArgs)
+    private void executeMethod(String[] args, CommandSender sender, Object[] methodArgs)
             throws CommandException {
         String cmdName = args[0];
         String modifier = args.length > 1 ? args[1] : "";
@@ -99,7 +100,7 @@ public class CommandManager {
         if (method == null)
             method = commands.get(cmdName.toLowerCase() + " *");
 
-        if (method == null && parent == null)
+        if (method == null)
             throw new UnhandledCommandException();
 
         if (!serverCommands.contains(method) && sender instanceof ConsoleCommandSender)
@@ -140,9 +141,45 @@ public class CommandManager {
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof CommandException)
                 throw (CommandException) e.getCause();
-
             throw new WrappedCommandException(e.getCause());
         }
+    }
+
+    /**
+     * A safe version of <code>execute</code> which catches and logs all errors
+     * that occur. Returns whether the command handler should print usage or
+     * not.
+     * 
+     * @see #execute(Command, String[], CommandSender, Object...)
+     * @return Whether further usage should be printed
+     */
+    public boolean executeSafe(org.bukkit.command.Command command, String[] args, CommandSender sender,
+            Object... methodArgs) {
+        try {
+            try {
+                execute(command, args, sender, methodArgs);
+            } catch (ServerCommandException ex) {
+                Messaging.sendTr(sender, Messages.COMMAND_MUST_BE_INGAME);
+            } catch (CommandUsageException ex) {
+                Messaging.sendError(sender, ex.getMessage());
+                Messaging.sendError(sender, ex.getUsage());
+            } catch (UnhandledCommandException ex) {
+                return false;
+            } catch (WrappedCommandException ex) {
+                throw ex.getCause();
+            } catch (CommandException ex) {
+                Messaging.sendError(sender, ex.getMessage());
+            } catch (NumberFormatException ex) {
+                Messaging.sendErrorTr(sender, Messages.COMMAND_INVALID_NUMBER);
+            }
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+            if (sender instanceof Player) {
+                Messaging.sendErrorTr(sender, Messages.COMMAND_REPORT_ERROR);
+                Messaging.sendError(sender, ex.getClass().getName() + ": " + ex.getMessage());
+            }
+        }
+        return true;
     }
 
     /**
