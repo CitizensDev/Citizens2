@@ -222,7 +222,7 @@ public class NMS {
     }
 
     public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
-            Class<?> clazz, EntityType type) {
+            Class<? extends Entity> clazz, EntityType type) {
         World handle = ((CraftWorld) world).getHandle();
         Entity entity = null;
         try {
