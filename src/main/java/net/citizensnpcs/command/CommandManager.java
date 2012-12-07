@@ -107,7 +107,7 @@ public class CommandManager {
         if (method == null && parent == null)
             throw new UnhandledCommandException();
 
-        if (!serverCommands.contains(method) && methodArgs[1] instanceof ConsoleCommandSender)
+        if (!serverCommands.contains(method) && sender instanceof ConsoleCommandSender)
             throw new ServerCommandException();
 
         if (!hasPermission(method, sender))
@@ -266,7 +266,7 @@ public class CommandManager {
 
     private void processRequirements(CommandSender sender, Object[] methodArgs, CommandContext context,
             Requirements cmdRequirements) throws RequirementMissingException {
-        NPC npc = (NPC) methodArgs[2];
+        NPC npc = (methodArgs.length >= 3 && methodArgs[2] instanceof NPC) ? (NPC) methodArgs[2] : null;
 
         // Requirements
         if (cmdRequirements.selected()) {
