@@ -3,7 +3,7 @@ package net.citizensnpcs.trait;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
+import org.bukkit.util.Vector;
 
 public class Gravity extends Trait implements Toggleable {
     @Persist
@@ -21,8 +21,9 @@ public class Gravity extends Trait implements Toggleable {
     public void run() {
         if (!npc.isSpawned() || !enabled)
             return;
-        net.minecraft.server.v1_4_5.Entity entity = ((CraftEntity) npc.getBukkitEntity()).getHandle();
-        entity.motY = Math.max(0, entity.motY);
+        Vector vector = npc.getBukkitEntity().getVelocity();
+        vector.setY(0);
+        npc.getBukkitEntity().setVelocity(vector);
     }
 
     @Override

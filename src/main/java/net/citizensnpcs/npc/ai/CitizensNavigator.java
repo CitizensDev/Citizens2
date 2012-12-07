@@ -22,6 +22,7 @@ import net.minecraft.server.v1_4_5.EntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.Vector;
 
 public class CitizensNavigator implements Navigator, Runnable {
     private final NavigatorParameters defaultParams = new NavigatorParameters()
@@ -97,7 +98,7 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     public void onSpawn() {
         if (defaultParams.baseSpeed() == UNINITIALISED_SPEED)
-            defaultParams.baseSpeed(NMS.getSpeedFor(npc.getHandle()));
+            defaultParams.baseSpeed(NMS.getSpeedFor(npc));
         updatePathfindingRange();
         if (!updatedAvoidWater) {
             boolean defaultAvoidWater = npc.getHandle().getNavigation().a();
@@ -177,8 +178,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         localParams = defaultParams;
         stationaryTicks = 0;
         if (npc.isSpawned()) {
-            EntityLiving entity = npc.getHandle();
-            entity.motX = entity.motY = entity.motZ = 0F;
+            Vector velocity = npc.getBukkitEntity().getVelocity();
+            velocity.setX(0).setY(0).setZ(0);
+            npc.getBukkitEntity().setVelocity(velocity);
         }
     }
 
@@ -216,17 +218,17 @@ public class CitizensNavigator implements Navigator, Runnable {
     private boolean updateStationaryStatus() {
         if (localParams.stationaryTicks() < 0)
             return false;
-        EntityLiving handle = npc.getHandle();
-        if (lastX == (int) handle.locX && lastY == (int) handle.locY && lastZ == (int) handle.locZ) {
+        Location handle = npc.getBukkitEntity().getLocation();
+        if (lastX == handle.getBlockX() && lastY == handle.getBlockY() && lastZ == handle.getBlockZ()) {
             if (++stationaryTicks >= localParams.stationaryTicks()) {
                 stopNavigating(CancelReason.STUCK);
                 return true;
             }
         } else
             stationaryTicks = 0;
-        lastX = (int) handle.locX;
-        lastY = (int) handle.locY;
-        lastZ = (int) handle.locZ;
+        lastX = handle.getBlockX();
+        lastY = handle.getBlockY();
+        lastZ = handle.getBlockZ();
         return false;
     }
 

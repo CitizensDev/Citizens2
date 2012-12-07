@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.minecraft.server.v1_4_5.ControllerLook;
 import net.minecraft.server.v1_4_5.DamageSource;
@@ -155,8 +156,8 @@ public class NMS {
         return f;
     }
 
-    public static float getSpeedFor(EntityLiving from) {
-        EntityType entityType = from.getBukkitEntity().getType();
+    public static float getSpeedFor(NPC npc) {
+        EntityType entityType = npc.getBukkitEntity().getType();
         Float cached = MOVEMENT_SPEEDS.get(entityType);
         if (cached != null)
             return cached;
@@ -165,7 +166,7 @@ public class NMS {
             return DEFAULT_SPEED;
         }
         try {
-            float speed = SPEED_FIELD.getFloat(from);
+            float speed = SPEED_FIELD.getFloat(((CraftEntity)npc.getBukkitEntity()).getHandle());
             MOVEMENT_SPEEDS.put(entityType, speed);
             return speed;
         } catch (IllegalAccessException ex) {
@@ -221,7 +222,7 @@ public class NMS {
     }
 
     public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
-            Class<? extends Entity> clazz, EntityType type) {
+            Class<?> clazz, EntityType type) {
         World handle = ((CraftWorld) world).getHandle();
         Entity entity = null;
         try {

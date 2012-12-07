@@ -1,12 +1,12 @@
 package net.citizensnpcs.command;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,32 +14,29 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.trait.MobType;
-import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.CommandUsageException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
-import net.citizensnpcs.command.exception.RequirementMissingException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.command.exception.UnhandledCommandException;
 import net.citizensnpcs.command.exception.WrappedCommandException;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 
 public class CommandManager {
+
+    private final Map<Class<? extends Annotation>, CommandAnnotationProcessor> annotationProcessors = Maps
+            .newHashMap();
 
     /*
      * Mapping of commands (including aliases) with a description. Root commands
@@ -51,11 +48,9 @@ public class CommandManager {
 
     // Stores the injector used to getInstance.
     private Injector injector;
-
     // Used to store the instances associated with a method.
     private final Map<Method, Object> instances = new HashMap<Method, Object>();
-
-    private final Map<Method, Requirements> requirements = new HashMap<Method, Requirements>();
+    private final ListMultimap<Method, Annotation> registeredAnnotations = ArrayListMultimap.create();
 
     private final Set<Method> serverCommands = new HashSet<Method>();
 
@@ -130,9 +125,9 @@ public class CommandManager {
 
         methodArgs[0] = context;
 
-        Requirements cmdRequirements = requirements.get(method);
-        if (cmdRequirements != null) {
-            processRequirements(sender, methodArgs, context, cmdRequirements);
+        for (Annotation annotation : registeredAnnotations.get(method)) {
+            CommandAnnotationProcessor processor = annotationProcessors.get(annotation.getClass());
+            processor.process(sender, context, annotation, methodArgs);
         }
 
         Object instance = instances.get(method);
@@ -196,7 +191,7 @@ public class CommandManager {
             Command commandAnnotation = entry.getValue().getAnnotation(Command.class);
             if (commandAnnotation == null)
                 continue;
-            return new CommandInfo(commandAnnotation, requirements.get(entry.getValue()));
+            return new CommandInfo(commandAnnotation);
         }
         return null;
     }
@@ -220,7 +215,7 @@ public class CommandManager {
             Command commandAnnotation = entry.getValue().getAnnotation(Command.class);
             if (commandAnnotation == null)
                 continue;
-            cmds.add(new CommandInfo(commandAnnotation, requirements.get(entry.getValue())));
+            cmds.add(new CommandInfo(commandAnnotation));
         }
         return cmds;
     }
@@ -264,49 +259,6 @@ public class CommandManager {
         return false;
     }
 
-    private void processRequirements(CommandSender sender, Object[] methodArgs, CommandContext context,
-            Requirements cmdRequirements) throws RequirementMissingException {
-        NPC npc = (methodArgs.length >= 3 && methodArgs[2] instanceof NPC) ? (NPC) methodArgs[2] : null;
-
-        // Requirements
-        if (cmdRequirements.selected()) {
-            boolean canRedefineSelected = context.hasValueFlag("id") && sender.hasPermission("npc.select");
-            String error = Messaging.tr(Messages.COMMAND_MUST_HAVE_SELECTED);
-            if (canRedefineSelected) {
-                npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
-                if (npc == null)
-                    error += ' ' + Messaging.tr(Messages.COMMAND_ID_NOT_FOUND, context.getFlagInteger("id"));
-            }
-            if (npc == null)
-                throw new RequirementMissingException(error);
-        }
-
-        if (cmdRequirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
-                && !npc.getTrait(Owner.class).isOwnedBy(sender))
-            throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_MUST_BE_OWNER));
-
-        if (npc != null) {
-            for (Class<? extends Trait> clazz : cmdRequirements.traits()) {
-                if (!npc.hasTrait(clazz))
-                    throw new RequirementMissingException(Messaging.tr(Messages.COMMAND_MISSING_TRAIT,
-                            clazz.getSimpleName()));
-            }
-        }
-
-        if (npc != null) {
-            Set<EntityType> types = Sets.newEnumSet(Arrays.asList(cmdRequirements.types()), EntityType.class);
-            if (types.contains(EntityType.UNKNOWN))
-                types = EnumSet.allOf(EntityType.class);
-            types.removeAll(Sets.newHashSet(cmdRequirements.excludedTypes()));
-
-            EntityType type = npc.getTrait(MobType.class).getType();
-            if (!types.contains(type)) {
-                throw new RequirementMissingException(Messaging.tr(
-                        Messages.COMMAND_REQUIREMENTS_INVALID_MOB_TYPE, type.getName()));
-            }
-        }
-    }
-
     /**
      * Register a class that contains commands (methods annotated with
      * {@link Command}). If no dependency {@link Injector} is specified, then
@@ -320,6 +272,10 @@ public class CommandManager {
      */
     public void register(Class<?> clazz) {
         registerMethods(clazz, null);
+    }
+
+    public void registerAnnotationProcessor(CommandAnnotationProcessor processor) {
+        annotationProcessors.put(processor.getAnnotationClass(), processor);
     }
 
     /*
@@ -347,18 +303,31 @@ public class CommandManager {
                 }
             }
 
-            Requirements cmdRequirements = null;
-            if (method.getDeclaringClass().isAnnotationPresent(Requirements.class))
-                cmdRequirements = method.getDeclaringClass().getAnnotation(Requirements.class);
+            List<Annotation> annotations = Lists.newArrayList();
+            for (Annotation annotation : method.getDeclaringClass().getAnnotations()) {
+                Class<? extends Annotation> annotationClass = annotation.getClass();
+                if (annotationProcessors.containsKey(annotationClass))
+                    annotations.add(annotation);
+            }
+            for (Annotation annotation : method.getAnnotations()) {
+                Class<? extends Annotation> annotationClass = annotation.getClass();
+                if (!annotationProcessors.containsKey(annotationClass))
+                    continue;
+                Iterator<Annotation> itr = annotations.iterator();
+                while (itr.hasNext()) {
+                    Annotation previous = itr.next();
+                    if (previous.getClass() == annotationClass) {
+                        itr.remove();
+                    }
+                }
+                annotations.add(annotation);
+            }
 
-            if (method.isAnnotationPresent(Requirements.class))
-                cmdRequirements = method.getAnnotation(Requirements.class);
+            if (annotations.size() > 0)
+                registeredAnnotations.putAll(method, annotations);
 
-            if (requirements != null)
-                requirements.put(method, cmdRequirements);
-
-            Class<?> senderClass = method.getParameterTypes()[1];
-            if (senderClass == CommandSender.class)
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            if (parameterTypes.length <= 1 || parameterTypes[1] == CommandSender.class)
                 serverCommands.add(method);
 
             // We want to be able invoke with an instance
@@ -378,11 +347,9 @@ public class CommandManager {
 
     public static class CommandInfo {
         private final Command commandAnnotation;
-        private final Requirements requirements;
 
-        public CommandInfo(Command commandAnnotation, Requirements requirements) {
+        public CommandInfo(Command commandAnnotation) {
             this.commandAnnotation = commandAnnotation;
-            this.requirements = requirements;
         }
 
         @Override
@@ -406,10 +373,6 @@ public class CommandManager {
 
         public Command getCommandAnnotation() {
             return commandAnnotation;
-        }
-
-        public Requirements getRequirements() {
-            return requirements;
         }
 
         @Override
