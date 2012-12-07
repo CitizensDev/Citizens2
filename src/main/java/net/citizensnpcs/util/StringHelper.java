@@ -10,6 +10,8 @@ import org.bukkit.ChatColor;
 public class StringHelper {
     private static Pattern COLOR_MATCHER;
 
+    private static String GROUP = ChatColor.COLOR_CHAR + "$1";
+
     public static String capitalize(Object string) {
         String capitalize = string.toString();
         return capitalize.replaceFirst(String.valueOf(capitalize.charAt(0)),
@@ -69,8 +71,6 @@ public class StringHelper {
         Matcher matcher = COLOR_MATCHER.matcher(ChatColor.translateAlternateColorCodes('&', parsed));
         return matcher.replaceAll(GROUP);
     }
-
-    private static String GROUP = ChatColor.COLOR_CHAR + "$1";
 
     public static String wrap(Object string) {
         return wrap(string, parseColors(Setting.MESSAGE_COLOUR.asString()));

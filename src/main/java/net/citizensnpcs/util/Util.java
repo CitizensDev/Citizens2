@@ -27,6 +27,8 @@ public class Util {
     private Util() {
     }
 
+    private static Class<?> RNG_CLASS = null;
+
     public static void assumePose(org.bukkit.entity.Entity entity, float yaw, float pitch) {
         EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
         NMS.look(handle, yaw, pitch);
@@ -63,6 +65,14 @@ public class Util {
 
         EntityLiving handle = ((CraftLivingEntity) from).getHandle();
         NMS.look(handle, (float) yaw - 90, (float) pitch);
+    }
+
+    public static Random getFastRandom() {
+        try {
+            return (Random) RNG_CLASS.newInstance();
+        } catch (Exception e) {
+            return new Random();
+        }
     }
 
     public static boolean isLoaded(Location location) {
@@ -135,16 +145,6 @@ public class Util {
             }
         }
     }
-
-    public static Random getFastRandom() {
-        try {
-            return (Random) RNG_CLASS.newInstance();
-        } catch (Exception e) {
-            return new Random();
-        }
-    }
-
-    private static Class<?> RNG_CLASS = null;
     static {
         try {
             RNG_CLASS = Class.forName("org.uncommons.maths.random.XORShiftRNG");
