@@ -35,7 +35,7 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     boolean at(Vector goal) {
-        return location.distanceSquared(goal) <= 4;
+        return location.distanceSquared(goal) <= 9;
     }
 
     @Override

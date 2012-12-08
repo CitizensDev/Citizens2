@@ -11,7 +11,7 @@ public class NavigatorParameters implements Cloneable {
     private AttackStrategy attackStrategy;
     private boolean avoidWater;
     private float baseSpeed;
-    private double distanceMargin = 2.25F;
+    private double distanceMargin = 3F;
     private final List<BlockExaminer> examiners = Lists.newArrayList();
     private float range;
     private float speedModifier = 1F;

@@ -59,10 +59,12 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         Material above = source.getMaterialAt(pos.clone().add(UP));
         Material below = source.getMaterialAt(pos.clone().add(DOWN));
         Material in = source.getMaterialAt(pos);
-        if (!below.isBlock() || !canStandOn(below))
+        if (!below.isBlock() || !canStandOn(below)) {
             return false;
-        if (!canStandIn(above) || !canStandIn(in))
+        }
+        if (!canStandIn(above) || !canStandIn(in)) {
             return false;
+        }
         return true;
     }
 
@@ -78,8 +80,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             Material.SUGAR_CANE_BLOCK, Material.TRIPWIRE, Material.VINE, Material.WALL_SIGN, Material.WHEAT,
             Material.WATER, Material.WEB, Material.WOOD_BUTTON, Material.WOODEN_DOOR,
             Material.STATIONARY_WATER);
-    private static final Set<Material> UNWALKABLE = Sets.union(PASSABLE,
-            EnumSet.of(Material.AIR, Material.LAVA, Material.STATIONARY_LAVA, Material.CACTUS));
+    private static final Set<Material> UNWALKABLE = Sets.union(
+            EnumSet.of(Material.AIR, Material.LAVA, Material.STATIONARY_LAVA, Material.CACTUS), PASSABLE);
     private static final Vector UP = new Vector(0, 1, 0);
     static {
         // from Minecraft WorldProvider code

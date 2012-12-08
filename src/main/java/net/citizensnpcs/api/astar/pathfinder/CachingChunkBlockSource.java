@@ -32,6 +32,8 @@ public abstract class CachingChunkBlockSource<T> extends AbstractBlockSource {
         }
     }
 
+    int t;
+
     @Override
     public int getBlockTypeIdAt(int x, int y, int z) {
         T chunk = getSpecific(x, z);
