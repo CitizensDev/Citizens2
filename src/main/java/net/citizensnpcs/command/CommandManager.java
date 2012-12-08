@@ -311,6 +311,20 @@ public class CommandManager {
         registerMethods(clazz, null);
     }
 
+    /**
+     * Registers an {@link CommandAnnotationProcessor} that can process
+     * annotations before a command is executed.
+     * 
+     * Methods with the {@link Command} annotation will have the rest of their
+     * annotations scanned and stored if there is a matching
+     * {@link CommandAnnotationProcessor}. Annotations that do not have a
+     * processor are discarded. The scanning method uses annotations from the
+     * declaring class as a base before narrowing using the method's
+     * annotations.
+     * 
+     * @param processor
+     *            The annotation processor
+     */
     public void registerAnnotationProcessor(CommandAnnotationProcessor processor) {
         annotationProcessors.put(processor.getAnnotationClass(), processor);
     }
@@ -320,7 +334,7 @@ public class CommandManager {
      * instances as necessary.
      */
     private void registerMethods(Class<?> clazz, Method parent) {
-        Object obj = injector.getInstance(clazz);
+        Object obj = injector != null ? injector.getInstance(clazz) : null;
         registerMethods(clazz, parent, obj);
     }
 
@@ -347,7 +361,7 @@ public class CommandManager {
                     annotations.add(annotation);
             }
             for (Annotation annotation : method.getAnnotations()) {
-                Class<? extends Annotation> annotationClass = annotation.getClass();
+                Class<? extends Annotation> annotationClass = annotation.annotationType();
                 if (!annotationProcessors.containsKey(annotationClass))
                     continue;
                 Iterator<Annotation> itr = annotations.iterator();
