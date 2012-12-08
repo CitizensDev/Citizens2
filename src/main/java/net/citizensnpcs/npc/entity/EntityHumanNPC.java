@@ -24,6 +24,7 @@ import net.minecraft.server.v1_4_5.Packet5EntityEquipment;
 import net.minecraft.server.v1_4_5.World;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_4_5.CraftServer;
 import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
@@ -31,7 +32,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
+    private final Location loadedLocation = new Location(null, 0, 0, 0);
     private final CitizensNPC npc;
+
     private final net.minecraft.server.v1_4_5.ItemStack[] previousEquipment = { null, null, null, null, null };
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
@@ -124,6 +127,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         super.j_();
         if (npc == null)
             return;
+
+        if (getBukkitEntity() != null && Util.isLoaded(getBukkitEntity().getLocation(loadedLocation))) {
+            if (!npc.getNavigator().isNavigating() && !NMS.inWater(this))
+                move(0, -0.2, 0);
+            // gravity. also works around an entity.onGround not updating issue
+            // (onGround is normally updated by the client)
+        }
 
         updateEquipment();
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)

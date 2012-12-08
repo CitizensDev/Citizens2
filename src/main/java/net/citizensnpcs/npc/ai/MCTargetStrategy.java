@@ -22,7 +22,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private CancelReason cancelReason;
     private final EntityLiving handle, target;
     private final Navigation navigation;
+    private final Location npcLocation = new Location(null, 0, 0, 0);
+
     private final NavigatorParameters parameters;
+
+    private final Location targetLocation = new Location(null, 0, 0, 0);
 
     public MCTargetStrategy(NPC handle, LivingEntity target, boolean aggro, NavigatorParameters params) {
         this.handle = ((CraftLivingEntity) handle.getBukkitEntity()).getHandle();
@@ -38,14 +42,14 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
                 && (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
                 && distanceSquared() <= ATTACK_DISTANCE && hasLineOfSight();
     }
-
     @Override
     public void clearCancelReason() {
         cancelReason = null;
     }
 
     private double distanceSquared() {
-        return handle.getBukkitEntity().getLocation().distanceSquared(target.getBukkitEntity().getLocation());
+        return handle.getBukkitEntity().getLocation(npcLocation)
+                .distanceSquared(target.getBukkitEntity().getLocation(targetLocation));
     }
 
     @Override

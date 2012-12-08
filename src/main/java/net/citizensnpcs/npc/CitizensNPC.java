@@ -25,28 +25,29 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_4_5.EntityLiving;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-public abstract class CitizensNPC extends AbstractNPC {
-    protected EntityLiving mcEntity;
+public class CitizensNPC extends AbstractNPC {
+    private EntityController entityController;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private final List<String> removedTraits = Lists.newArrayList();
 
-    protected CitizensNPC(int id, String name) {
+    public CitizensNPC(int id, String name, EntityController entityController) {
         super(id, name);
+        Preconditions.checkNotNull(entityController);
+        this.entityController = entityController;
     }
-
-    protected abstract EntityLiving createHandle(Location loc);
 
     @Override
     public boolean despawn(DespawnReason reason) {
@@ -67,21 +68,19 @@ public abstract class CitizensNPC extends AbstractNPC {
             data().remove("selectors");
         for (Trait trait : traits.values())
             trait.onDespawn();
-        getBukkitEntity().remove();
-        mcEntity = null;
+        entityController.remove();
 
         return true;
     }
 
     @Override
     public LivingEntity getBukkitEntity() {
-        if (mcEntity == null)
-            return null;
-        return (LivingEntity) mcEntity.getBukkitEntity();
+        return entityController.getBukkitEntity();
     }
 
+    @Deprecated
     public EntityLiving getHandle() {
-        return mcEntity;
+        return ((CraftLivingEntity) getBukkitEntity()).getHandle();
     }
 
     @Override
@@ -91,7 +90,7 @@ public abstract class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean isSpawned() {
-        return mcEntity != null;
+        return getBukkitEntity() != null;
     }
 
     public void load(final DataKey root) {
@@ -177,35 +176,49 @@ public abstract class CitizensNPC extends AbstractNPC {
         removeTraitData(root);
     }
 
+    public void setEntityController(EntityController newController) {
+        Preconditions.checkNotNull(newController);
+        boolean wasSpawned = isSpawned();
+        Location prev = null;
+        if (wasSpawned) {
+            prev = getBukkitEntity().getLocation();
+            despawn();
+        }
+        entityController = newController;
+        if (wasSpawned)
+            spawn(prev);
+    }
+
     @Override
-    public boolean spawn(Location loc) {
-        Validate.notNull(loc, "location cannot be null");
+    public boolean spawn(Location at) {
+        Preconditions.checkNotNull(at, "location cannot be null");
         if (isSpawned())
             return false;
 
-        mcEntity = createHandle(loc);
-        boolean couldSpawn = !Util.isLoaded(loc) ? false : mcEntity.world.addEntity(mcEntity,
+        entityController.spawn(at, this);
+        EntityLiving mcEntity = getHandle();
+        boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity,
                 SpawnReason.CUSTOM);
         if (!couldSpawn) {
             // we need to wait for a chunk load before trying to spawn
             mcEntity = null;
-            EventListen.addForRespawn(loc, getId());
+            EventListen.addForRespawn(at, getId());
             return true;
         }
 
-        NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, loc);
+        NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at);
         Bukkit.getPluginManager().callEvent(spawnEvent);
         if (spawnEvent.isCancelled()) {
             mcEntity = null;
             return false;
         }
 
-        NMS.setHeadYaw(mcEntity, loc.getYaw());
+        NMS.setHeadYaw(mcEntity, at.getYaw());
         getBukkitEntity().setMetadata(NPC_METADATA_MARKER,
                 new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         // Set the spawned state
-        getTrait(CurrentLocation.class).setLocation(loc);
+        getTrait(CurrentLocation.class).setLocation(at);
         getTrait(Spawned.class).setSpawned(true);
 
         navigator.onSpawn();
