@@ -14,8 +14,8 @@ public class StringHelper {
 
     public static String capitalize(Object string) {
         String capitalize = string.toString();
-        return capitalize.replaceFirst(String.valueOf(capitalize.charAt(0)),
-                String.valueOf(Character.toUpperCase(capitalize.charAt(0))));
+        return capitalize.length() == 0 ? "" : Character.toUpperCase(capitalize.charAt(0))
+                + capitalize.substring(1, capitalize.length());
     }
 
     public static int getLevenshteinDistance(String s, String t) {

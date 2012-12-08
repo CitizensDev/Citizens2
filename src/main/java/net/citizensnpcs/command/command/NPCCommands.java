@@ -24,6 +24,7 @@ import net.citizensnpcs.command.exception.CommandException;
 import net.citizensnpcs.command.exception.NoPermissionsException;
 import net.citizensnpcs.command.exception.ServerCommandException;
 import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
@@ -814,7 +815,12 @@ public class NPCCommands {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
             newName = newName.substring(0, 15);
         }
+        Location prev = npc.isSpawned() ? npc.getBukkitEntity().getLocation() : null;
+        npc.despawn();
         npc.setName(newName);
+        if (prev != null)
+            npc.spawn(prev);
+
         Messaging.sendTr(sender, Messages.NPC_RENAMED, oldName, newName);
     }
 
@@ -987,6 +993,22 @@ public class NPCCommands {
         } else
             npc.getBukkitEntity().teleport(args.getSenderLocation(), TeleportCause.COMMAND);
         Messaging.sendTr(sender, Messages.NPC_TELEPORTED, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "type",
+            desc = "Sets an NPC's entity type",
+            modifiers = { "type" },
+            min = 2,
+            max = 2,
+            permission = "npc.type")
+    public void type(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        EntityType type = Util.matchEntityType(args.getString(1));
+        if (type == null)
+            throw new CommandException(Messages.INVALID_ENTITY_TYPE, args.getString(1));
+        ((CitizensNPC) npc).setEntityController(EntityControllers.createForType(type));
+        Messaging.sendTr(sender, Messages.ENTITY_TYPE_SET, npc.getName(), args.getString(1));
     }
 
     @Command(

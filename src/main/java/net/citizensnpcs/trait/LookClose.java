@@ -21,7 +21,9 @@ import org.bukkit.entity.Player;
 public class LookClose extends Trait implements Toggleable, CommandConfigurable {
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
+    private final Location npcLocation = new Location(null, 0, 0, 0);
     private double range = Setting.DEFAULT_LOOK_CLOSE_RANGE.asDouble();
+
     private boolean realisticLooking = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
 
     public LookClose() {
@@ -41,7 +43,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     private void findNewTarget() {
         List<Entity> nearby = npc.getBukkitEntity().getNearbyEntities(range, range, range);
-        final Location npcLocation = npc.getBukkitEntity().getLocation();
+        npc.getBukkitEntity().getLocation(npcLocation);
         Collections.sort(nearby, new Comparator<Entity>() {
             @Override
             public int compare(Entity o1, Entity o2) {

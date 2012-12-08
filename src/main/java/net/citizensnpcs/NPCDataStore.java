@@ -94,7 +94,6 @@ public class NPCDataStore {
             saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
         if (!saves.load())
             return null;
-        Messaging.logTr(Messages.SAVE_METHOD_SET_NOTIFICATION, saves.toString());
         return new NPCDataStore(saves);
     }
 }

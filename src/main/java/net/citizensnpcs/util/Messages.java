@@ -50,6 +50,7 @@ public class Messages {
     public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.waypoints.current-provider";
     public static final String DATABASE_CONNECTION_FAILED = "citizens.notifications.database-connection-failed";
     public static final String DELAY_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.delay.prompt";
+    public static final String ENTITY_TYPE_SET = "citizens.commands.npc.type.set";
     public static final String EQUIPMENT_EDITOR_ALL_ITEMS_REMOVED = "citizens.editors.equipment.all-items-removed";
     public static final String EQUIPMENT_EDITOR_BEGIN = "citizens.editors.equipment.begin";
     public static final String EQUIPMENT_EDITOR_END = "citizens.editors.equipment.end";
@@ -78,6 +79,7 @@ public class Messages {
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
     public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
     public static final String INVALID_ANIMATION = "citizens.editors.waypoints.triggers.animation.invalid-animation";
+    public static final String INVALID_ENTITY_TYPE = "citizens.commands.npc.type.invalid";
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
     public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
@@ -140,7 +142,6 @@ public class Messages {
     public static final String REMOVED_FROM_PLAYERLIST = "citizens.commands.npc.playerlist.removed";
     public static final String SADDLED_SET = "citizens.editors.equipment.saddled-set";
     public static final String SADDLED_STOPPED = "citizens.editors.equipment.saddled-stopped";
-    public static final String SAVE_METHOD_SET_NOTIFICATION = "citizens.notifications.save-method-set";
     public static final String SCRIPT_COMPILED = "citizens.commands.script.compiled";
     public static final String SCRIPT_COMPILING = "citizens.commands.script.compiling";
     public static final String SCRIPT_FILE_MISSING = "citizens.commands.script.file-missing";

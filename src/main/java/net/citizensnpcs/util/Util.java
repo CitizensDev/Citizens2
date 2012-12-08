@@ -27,6 +27,10 @@ public class Util {
     private Util() {
     }
 
+    private static final Location atLocation = new Location(null, 0, 0, 0);
+
+    private static final Location fromLocation = new Location(null, 0, 0, 0);
+
     private static Class<?> RNG_CLASS = null;
 
     public static void assumePose(org.bukkit.entity.Entity entity, float yaw, float pitch) {
@@ -49,11 +53,16 @@ public class Util {
     public static void faceEntity(Entity from, Entity at) {
         if (from.getWorld() != at.getWorld())
             return;
-        Location loc = from.getLocation();
-
-        double xDiff = at.getLocation().getX() - loc.getX();
-        double yDiff = at.getLocation().getY() - loc.getY();
-        double zDiff = at.getLocation().getZ() - loc.getZ();
+        double xDiff, yDiff, zDiff;
+        synchronized (fromLocation) {
+            from.getLocation(fromLocation);
+            synchronized (atLocation) {
+                at.getLocation(atLocation);
+                xDiff = atLocation.getX() - fromLocation.getX();
+                yDiff = atLocation.getY() - fromLocation.getY();
+                zDiff = atLocation.getZ() - fromLocation.getZ();
+            }
+        }
 
         double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
         double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);

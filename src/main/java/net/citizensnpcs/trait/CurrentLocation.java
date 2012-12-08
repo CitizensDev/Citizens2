@@ -7,31 +7,29 @@ import org.bukkit.Location;
 
 public class CurrentLocation extends Trait {
     @Persist(value = "", required = true)
-    private Location loc;
+    private Location location = new Location(null, 0, 0, 0);
 
     public CurrentLocation() {
         super("location");
     }
 
     public Location getLocation() {
-        if (loc != null && loc.getWorld() == null)
-            return null;
-        return loc;
+        return location.getWorld() == null ? null : location;
     }
 
     @Override
     public void run() {
         if (!npc.isSpawned())
             return;
-        loc = npc.getBukkitEntity().getLocation();
+        location = npc.getBukkitEntity().getLocation(location);
     }
 
     public void setLocation(Location loc) {
-        this.loc = loc;
+        this.location = loc;
     }
 
     @Override
     public String toString() {
-        return "CurrentLocation{" + loc + "}";
+        return "CurrentLocation{" + location + "}";
     }
 }
