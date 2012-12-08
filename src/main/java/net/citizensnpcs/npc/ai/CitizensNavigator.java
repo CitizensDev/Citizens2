@@ -15,7 +15,6 @@ import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.util.NMS;
 
 import org.bukkit.Bukkit;
@@ -31,12 +30,11 @@ public class CitizensNavigator implements Navigator, Runnable {
     private PathStrategy executing;
     private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
-    private final CitizensNPC npc;
-    private final Location stationaryLocation = new Location(null, 0, 0, 0);
+    private final NPC npc;
 
     private int stationaryTicks;
 
-    public CitizensNavigator(CitizensNPC npc) {
+    public CitizensNavigator(NPC npc) {
         this.npc = npc;
     }
 
@@ -213,19 +211,21 @@ public class CitizensNavigator implements Navigator, Runnable {
     private boolean updateStationaryStatus() {
         if (localParams.stationaryTicks() < 0)
             return false;
-        npc.getBukkitEntity().getLocation(stationaryLocation);
-        if (lastX == stationaryLocation.getBlockX() && lastY == stationaryLocation.getBlockY()
-                && lastZ == stationaryLocation.getBlockZ()) {
+        Location current = npc.getBukkitEntity().getLocation(STATIONARY_LOCATION);
+        if (lastX == current.getBlockX() && lastY == current.getBlockY() && lastZ == current.getBlockZ()) {
             if (++stationaryTicks >= localParams.stationaryTicks()) {
                 stopNavigating(CancelReason.STUCK);
                 return true;
             }
         } else
             stationaryTicks = 0;
-        lastX = stationaryLocation.getBlockX();
-        lastY = stationaryLocation.getBlockY();
-        lastZ = stationaryLocation.getBlockZ();
+        lastX = current.getBlockX();
+        lastY = current.getBlockY();
+        lastZ = current.getBlockZ();
         return false;
     }
+
+    private static final Location STATIONARY_LOCATION = new Location(null, 0, 0, 0);
+
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;
 }

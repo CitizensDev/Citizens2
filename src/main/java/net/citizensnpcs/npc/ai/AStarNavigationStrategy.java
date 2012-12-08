@@ -8,36 +8,38 @@ import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
 import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
-import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public class AStarNavigationStrategy extends AbstractPathStrategy {
-    private final Location dest;
-    private final CitizensNPC npc;
+    private final Location destination;
+    private final NPC npc;
     private final NavigatorParameters params;
     private Path plan;
     private Vector vector;
 
-    AStarNavigationStrategy(CitizensNPC npc, Location dest, NavigatorParameters params) {
+    AStarNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
         this.params = params;
-        this.dest = dest;
+        this.destination = dest;
         this.npc = npc;
         Location location = npc.getBukkitEntity().getEyeLocation();
         plan = (Path) ASTAR.runFully(new VectorGoal(dest), new VectorNode(location, new ChunkBlockSource(
                 location, params.range()), params.examiners()), (int) (params.range() * 10));
-        if (plan == null || plan.isComplete())
+        if (plan == null || plan.isComplete()) {
             setCancelReason(CancelReason.STUCK);
-        else
+        } else {
             vector = plan.getCurrentVector();
+        }
     }
 
     @Override
     public Location getTargetAsLocation() {
-        return dest;
+        return destination;
     }
 
     @Override
@@ -47,19 +49,24 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public boolean update() {
-        if (getCancelReason() != null)
+        if (getCancelReason() != null || plan == null || plan.isComplete())
             return true;
-        if (plan == null || plan.isComplete())
-            return true;
-        if (npc.getBukkitEntity().getVelocity().distanceSquared(vector) <= params.distanceMargin()) {
+        if (npc.getBukkitEntity().getLocation(NPC_LOCATION).toVector().distanceSquared(vector) <= params
+                .distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete())
                 return true;
             vector = plan.getCurrentVector();
+            npc.getBukkitEntity()
+                    .getWorld()
+                    .playEffect(vector.toLocation(npc.getBukkitEntity().getWorld()), Effect.STEP_SOUND,
+                            org.bukkit.Material.STONE.getId());
         }
         NMS.setDestination(npc.getBukkitEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
         return false;
     }
 
     private static final AStarMachine ASTAR = AStarMachine.createWithDefaultStorage();
+
+    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }

@@ -22,14 +22,13 @@ import org.bukkit.util.Vector;
 import com.google.common.base.Splitter;
 
 public class Util {
-
     // Static class for small (emphasis small) utility methods
     private Util() {
     }
 
-    private static final Location atLocation = new Location(null, 0, 0, 0);
+    private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
 
-    private static final Location fromLocation = new Location(null, 0, 0, 0);
+    private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
 
     private static Class<?> RNG_CLASS = null;
 
@@ -42,7 +41,6 @@ public class Util {
         if (NPCCollisionEvent.getHandlerList().getRegisteredListeners().length > 0)
             Bukkit.getPluginManager().callEvent(new NPCCollisionEvent(npc, entity.getBukkitEntity()));
     }
-
     public static NPCPushEvent callPushEvent(NPC npc, Vector vector) {
         NPCPushEvent event = new NPCPushEvent(npc, vector);
         event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
@@ -54,15 +52,11 @@ public class Util {
         if (from.getWorld() != at.getWorld())
             return;
         double xDiff, yDiff, zDiff;
-        synchronized (fromLocation) {
-            from.getLocation(fromLocation);
-            synchronized (atLocation) {
-                at.getLocation(atLocation);
-                xDiff = atLocation.getX() - fromLocation.getX();
-                yDiff = atLocation.getY() - fromLocation.getY();
-                zDiff = atLocation.getZ() - fromLocation.getZ();
-            }
-        }
+        Location atLocation = at.getLocation(AT_LOCATION);
+        Location fromLocation = from.getLocation(FROM_LOCATION);
+        xDiff = atLocation.getX() - fromLocation.getX();
+        yDiff = atLocation.getY() - fromLocation.getY();
+        zDiff = atLocation.getZ() - fromLocation.getZ();
 
         double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
         double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
