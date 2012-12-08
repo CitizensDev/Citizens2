@@ -32,9 +32,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
-    private final Location loadedLocation = new Location(null, 0, 0, 0);
     private final CitizensNPC npc;
-
     private final net.minecraft.server.v1_4_5.ItemStack[] previousEquipment = { null, null, null, null, null };
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
@@ -128,7 +126,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (npc == null)
             return;
 
-        if (getBukkitEntity() != null && Util.isLoaded(getBukkitEntity().getLocation(loadedLocation))) {
+        if (getBukkitEntity() != null && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
             if (!npc.getNavigator().isNavigating() && !NMS.inWater(this))
                 move(0, -0.2, 0);
             // gravity. also works around an entity.onGround not updating issue
@@ -227,4 +225,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private static final float EPSILON = 0.005F;
+
+    private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }
