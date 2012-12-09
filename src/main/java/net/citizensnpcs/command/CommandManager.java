@@ -127,7 +127,7 @@ public class CommandManager {
         methodArgs[0] = context;
 
         for (Annotation annotation : registeredAnnotations.get(method)) {
-            CommandAnnotationProcessor processor = annotationProcessors.get(annotation.getClass());
+            CommandAnnotationProcessor processor = annotationProcessors.get(annotation.annotationType());
             processor.process(sender, context, annotation, methodArgs);
         }
 
@@ -356,7 +356,7 @@ public class CommandManager {
 
             List<Annotation> annotations = Lists.newArrayList();
             for (Annotation annotation : method.getDeclaringClass().getAnnotations()) {
-                Class<? extends Annotation> annotationClass = annotation.getClass();
+                Class<? extends Annotation> annotationClass = annotation.annotationType();
                 if (annotationProcessors.containsKey(annotationClass))
                     annotations.add(annotation);
             }
@@ -367,7 +367,7 @@ public class CommandManager {
                 Iterator<Annotation> itr = annotations.iterator();
                 while (itr.hasNext()) {
                     Annotation previous = itr.next();
-                    if (previous.getClass() == annotationClass) {
+                    if (previous.annotationType() == annotationClass) {
                         itr.remove();
                     }
                 }
