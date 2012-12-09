@@ -73,7 +73,7 @@
 		<url>https://github.com/CitizensDev/CitizensAPI/tree/master/</url>
 	</scm>
 	<build>
-		<defaultGoal>clean install</defaultGoal>
+		<defaultGoal>clean install javadoc:javadoc</defaultGoal>
 		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 
 		<plugins>
