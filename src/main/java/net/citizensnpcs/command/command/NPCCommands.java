@@ -329,27 +329,27 @@ public class NPCCommands {
             if (parts.length > 0) {
                 String worldName = args.getSenderLocation() != null ? args.getSenderLocation().getWorld()
                         .getName() : "";
-                int x = 0, y = 0, z = 0;
-                float yaw = 0F, pitch = 0F;
-                switch (parts.length) {
-                    case 6:
-                        pitch = Float.parseFloat(parts[5]);
-                    case 5:
-                        yaw = Float.parseFloat(parts[4]);
-                    case 4:
-                        worldName = parts[3];
-                    case 3:
-                        x = Integer.parseInt(parts[0]);
-                        y = Integer.parseInt(parts[1]);
-                        z = Integer.parseInt(parts[2]);
-                        break;
-                    default:
-                        throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-                }
-                World world = Bukkit.getWorld(worldName);
-                if (world == null)
-                    throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-                spawnLoc = new Location(world, x, y, z, yaw, pitch);
+                        int x = 0, y = 0, z = 0;
+                        float yaw = 0F, pitch = 0F;
+                        switch (parts.length) {
+                        case 6:
+                            pitch = Float.parseFloat(parts[5]);
+                        case 5:
+                            yaw = Float.parseFloat(parts[4]);
+                        case 4:
+                            worldName = parts[3];
+                        case 3:
+                            x = Integer.parseInt(parts[0]);
+                            y = Integer.parseInt(parts[1]);
+                            z = Integer.parseInt(parts[2]);
+                            break;
+                        default:
+                            throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+                        }
+                        World world = Bukkit.getWorld(worldName);
+                        if (world == null)
+                            throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+                        spawnLoc = new Location(world, x, y, z, yaw, pitch);
             } else {
                 Player search = Bukkit.getPlayerExact(args.getFlag("at"));
                 if (search == null)
@@ -618,7 +618,11 @@ public class NPCCommands {
         Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
         Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
         if (npc.isSpawned())
-            Messaging.send(sender, "    <a>Spawned at: <e>" + npc.getBukkitEntity().getLocation());
+            Messaging.send(sender, "    <a>Spawned at: <e>" + 
+                    "X: " + npc.getBukkitEntity().getLocation().getBlockX() +
+                    " Y: " + npc.getBukkitEntity().getLocation().getBlockY() +
+                    " Z: " + npc.getBukkitEntity().getLocation().getBlockZ() +
+                    " in world " + npc.getBukkitEntity().getLocation().getWorld().getName());
         Messaging.send(sender, "    <a>Traits<e>");
         for (Trait trait : npc.getTraits()) {
             if (CitizensAPI.getTraitFactory().isInternalTrait(trait))
@@ -776,7 +780,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, usage = "remove|rem (all)", desc = "Remove a NPC", modifiers = { "remove",
-            "rem" }, min = 1, max = 2)
+    "rem" }, min = 1, max = 2)
     @Requirements
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
@@ -896,10 +900,10 @@ public class NPCCommands {
     public void skeletonType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         SkeletonType type = (type = SkeletonType.getType(args.getInteger(1))) == null ? SkeletonType
                 .valueOf(args.getString(1)) : type;
-        if (type == null)
-            throw new CommandException(Messages.INVALID_SKELETON_TYPE);
-        npc.getTrait(NPCSkeletonType.class).setType(type);
-        Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
+                if (type == null)
+                    throw new CommandException(Messages.INVALID_SKELETON_TYPE);
+                npc.getTrait(NPCSkeletonType.class).setType(type);
+                Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
     }
 
     @Command(
