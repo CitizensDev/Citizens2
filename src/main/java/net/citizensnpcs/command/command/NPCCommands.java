@@ -39,6 +39,7 @@ import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
+import net.citizensnpcs.trait.ZombieModifier;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
@@ -329,27 +330,27 @@ public class NPCCommands {
             if (parts.length > 0) {
                 String worldName = args.getSenderLocation() != null ? args.getSenderLocation().getWorld()
                         .getName() : "";
-                        int x = 0, y = 0, z = 0;
-                        float yaw = 0F, pitch = 0F;
-                        switch (parts.length) {
-                        case 6:
-                            pitch = Float.parseFloat(parts[5]);
-                        case 5:
-                            yaw = Float.parseFloat(parts[4]);
-                        case 4:
-                            worldName = parts[3];
-                        case 3:
-                            x = Integer.parseInt(parts[0]);
-                            y = Integer.parseInt(parts[1]);
-                            z = Integer.parseInt(parts[2]);
-                            break;
-                        default:
-                            throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-                        }
-                        World world = Bukkit.getWorld(worldName);
-                        if (world == null)
-                            throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-                        spawnLoc = new Location(world, x, y, z, yaw, pitch);
+                int x = 0, y = 0, z = 0;
+                float yaw = 0F, pitch = 0F;
+                switch (parts.length) {
+                    case 6:
+                        pitch = Float.parseFloat(parts[5]);
+                    case 5:
+                        yaw = Float.parseFloat(parts[4]);
+                    case 4:
+                        worldName = parts[3];
+                    case 3:
+                        x = Integer.parseInt(parts[0]);
+                        y = Integer.parseInt(parts[1]);
+                        z = Integer.parseInt(parts[2]);
+                        break;
+                    default:
+                        throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+                }
+                World world = Bukkit.getWorld(worldName);
+                if (world == null)
+                    throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+                spawnLoc = new Location(world, x, y, z, yaw, pitch);
             } else {
                 Player search = Bukkit.getPlayerExact(args.getFlag("at"));
                 if (search == null)
@@ -613,16 +614,16 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "npc.info")
-    public void npc(CommandContext args, CommandSender sender, final NPC npc) {
+    public void npc(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
         Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
-        if (npc.isSpawned())
-            Messaging.send(sender, "    <a>Spawned at: <e>" + 
-                    "X: " + npc.getBukkitEntity().getLocation().getBlockX() +
-                    " Y: " + npc.getBukkitEntity().getLocation().getBlockY() +
-                    " Z: " + npc.getBukkitEntity().getLocation().getBlockZ() +
-                    " in world " + npc.getBukkitEntity().getLocation().getWorld().getName());
+        if (npc.isSpawned()) {
+            Location loc = npc.getBukkitEntity().getLocation();
+            String format = "    <a>Spawned at: <e> %d, %d, %d in world %s";
+            Messaging.send(sender, String.format(format, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(),
+                    loc.getWorld().getName()));
+        }
         Messaging.send(sender, "    <a>Traits<e>");
         for (Trait trait : npc.getTraits()) {
             if (CitizensAPI.getTraitFactory().isInternalTrait(trait))
@@ -780,7 +781,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, usage = "remove|rem (all)", desc = "Remove a NPC", modifiers = { "remove",
-    "rem" }, min = 1, max = 2)
+            "rem" }, min = 1, max = 2)
     @Requirements
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
@@ -900,10 +901,10 @@ public class NPCCommands {
     public void skeletonType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         SkeletonType type = (type = SkeletonType.getType(args.getInteger(1))) == null ? SkeletonType
                 .valueOf(args.getString(1)) : type;
-                if (type == null)
-                    throw new CommandException(Messages.INVALID_SKELETON_TYPE);
-                npc.getTrait(NPCSkeletonType.class).setType(type);
-                Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
+        if (type == null)
+            throw new CommandException(Messages.INVALID_SKELETON_TYPE);
+        npc.getTrait(NPCSkeletonType.class).setType(type);
+        Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
     }
 
     @Command(
@@ -1033,5 +1034,29 @@ public class NPCCommands {
         }
         String key = vulnerable ? Messages.VULNERABLE_STOPPED : Messages.VULNERABLE_SET;
         Messaging.sendTr(sender, key, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "zombiemod (-b, -v)",
+            desc = "Sets the modifiers of a zombie",
+            modifiers = { "zombiemod" },
+            flags = "bv",
+            min = 1,
+            max = 1,
+            permission = "npc.zombiemodifier")
+    @Requirements(selected = true, ownership = true, types = EntityType.ZOMBIE)
+    public void zombieModifier(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        ZombieModifier trait = npc.getTrait(ZombieModifier.class);
+        if (args.hasFlag('b')) {
+            boolean isBaby = trait.toggleBaby();
+            Messaging.sendTr(sender, isBaby ? Messages.ZOMBIE_BABY_SET : Messages.ZOMBIE_BABY_UNSET,
+                    npc.getName());
+        }
+        if (args.hasFlag('v')) {
+            boolean isVillager = trait.toggleVillager();
+            Messaging.sendTr(sender, isVillager ? Messages.ZOMBIE_VILLAGER_SET
+                    : Messages.ZOMBIE_VILLAGER_UNSET, npc.getName());
+        }
     }
 }

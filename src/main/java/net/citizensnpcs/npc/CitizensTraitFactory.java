@@ -30,6 +30,7 @@ import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WoolColor;
+import net.citizensnpcs.trait.ZombieModifier;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
@@ -63,6 +64,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(MobType.class).withName("type"));
         registerTrait(TraitInfo.create(Waypoints.class).withName("waypoints"));
         registerTrait(TraitInfo.create(WoolColor.class).withName("woolcolor"));
+        registerTrait(TraitInfo.create(ZombieModifier.class).withName("zombiemodifier"));
 
         for (String trait : registered.keySet())
             INTERNAL_TRAITS.add(trait);
