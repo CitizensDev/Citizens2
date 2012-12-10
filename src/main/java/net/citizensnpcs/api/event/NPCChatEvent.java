@@ -6,14 +6,14 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 /**
- * Represents an event where an NPC was clicked by a player.
+ * Represents an event where an NPC chats.
  */
-public abstract class NPCChatEvent extends NPCEvent implements Cancellable {
+public class NPCChatEvent extends NPCEvent implements Cancellable {
     private boolean cancelled = false;
 
     String message;
     
-    protected NPCChatEvent(NPC npc, String message) {
+    public NPCChatEvent(NPC npc, String message) {
         super(npc);
         this.message = message;
     }
@@ -25,6 +25,13 @@ public abstract class NPCChatEvent extends NPCEvent implements Cancellable {
      */
     public String getMessage() {
         return message;
+    }
+    
+    /**
+     * Sets the message that the NPC is saying.
+     */
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override
