@@ -620,7 +620,7 @@ public class NPCCommands {
         Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
         if (npc.isSpawned()) {
             Location loc = npc.getBukkitEntity().getLocation();
-            String format = "    <a>Spawned at: <e> %d, %d, %d in world %s";
+            String format = "    <a>Spawned at <e>%d, %d, %d <a>in world<e> %s";
             Messaging.send(sender, String.format(format, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(),
                     loc.getWorld().getName()));
         }

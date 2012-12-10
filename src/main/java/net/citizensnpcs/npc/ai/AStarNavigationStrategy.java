@@ -28,8 +28,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         this.destination = dest;
         this.npc = npc;
         Location location = npc.getBukkitEntity().getEyeLocation();
-        plan = (Path) ASTAR.runFully(new VectorGoal(dest), new VectorNode(location, new ChunkBlockSource(
-                location, params.range()), params.examiners()), (int) (params.range() * 10));
+        plan = ASTAR.runFully(new VectorGoal(dest), new VectorNode(location, new ChunkBlockSource(location,
+                params.range()), params.examiners()), (int) (params.range() * 10));
         if (plan == null || plan.isComplete()) {
             setCancelReason(CancelReason.STUCK);
         } else {
@@ -62,11 +62,11 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                     .playEffect(vector.toLocation(npc.getBukkitEntity().getWorld()), Effect.STEP_SOUND,
                             org.bukkit.Material.STONE.getId());
         }
-        NMS.setDestination(npc.getBukkitEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
+        NMS.setDestination(npc.getBukkitEntity(), vector.getBlockX(), vector.getBlockY() + 2,
+                vector.getBlockZ(), params.speed());
         return false;
     }
 
     private static final AStarMachine ASTAR = AStarMachine.createWithDefaultStorage();
-
     private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }

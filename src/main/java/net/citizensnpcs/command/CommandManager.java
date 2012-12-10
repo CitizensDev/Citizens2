@@ -35,7 +35,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class CommandManager {
-
     private final Map<Class<? extends Annotation>, CommandAnnotationProcessor> annotationProcessors = Maps
             .newHashMap();
 

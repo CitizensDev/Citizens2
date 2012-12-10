@@ -227,6 +227,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void registerCommands() {
         commands.setInjector(new Injector(this));
+        commands.registerAnnotationProcessor(new RequirementsProcessor());
 
         // Register command classes
         commands.register(AdminCommands.class);
@@ -237,7 +238,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         commands.register(TemplateCommands.class);
         commands.register(TraitCommands.class);
         commands.register(WaypointCommands.class);
-        commands.registerAnnotationProcessor(new RequirementsProcessor());
     }
 
     private void registerScriptHelpers() {
