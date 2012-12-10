@@ -62,8 +62,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                     .playEffect(vector.toLocation(npc.getBukkitEntity().getWorld()), Effect.STEP_SOUND,
                             org.bukkit.Material.STONE.getId());
         }
-        NMS.setDestination(npc.getBukkitEntity(), vector.getBlockX(), vector.getBlockY() + 2,
-                vector.getBlockZ(), params.speed());
+        NMS.setDestination(npc.getBukkitEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
         return false;
     }
 
