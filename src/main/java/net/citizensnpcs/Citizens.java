@@ -152,7 +152,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Editor.leaveAll();
         CitizensAPI.shutdown();
 
-        tearDownScripting();
         // Don't bother with this part if MC versions are not compatible
         if (compatible) {
             saves.storeAll(npcRegistry);
@@ -242,7 +241,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void registerScriptHelpers() {
-        setupScripting();
         ScriptCompiler compiler = CitizensAPI.getScriptCompiler();
         compiler.registerGlobalContextProvider(new EventRegistrar(this));
         compiler.registerGlobalContextProvider(new ObjectProvider("plugin", this));
