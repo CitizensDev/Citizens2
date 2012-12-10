@@ -210,4 +210,8 @@ public class Messages {
     public static final String WAYPOINT_TRIGGER_TELEPORT_PROMPT = "citizens.editors.waypoints.triggers.teleport.prompt";
     public static final String WORLD_NOT_FOUND = "citizens.commands.errors.missing-world";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
+    public static final String ZOMBIE_BABY_SET = "citizens.commands.npc.zombiemod.baby-set";
+    public static final String ZOMBIE_BABY_UNSET = "citizens.commands.npc.zombiemod.baby-unset";
+    public static final String ZOMBIE_VILLAGER_SET = "citizens.commands.npc.zombiemod.villager-set";
+    public static final String ZOMBIE_VILLAGER_UNSET = "citizens.commands.npc.zombiemod.villager-unset";
 }
