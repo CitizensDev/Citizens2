@@ -29,8 +29,7 @@ import com.google.common.io.Closeables;
  * to compile.
  */
 public class ScriptCompiler extends Thread {
-    private final ScriptEngineManager engineManager = new ScriptEngineManager(
-            ScriptCompiler.class.getClassLoader());
+    private final ScriptEngineManager engineManager = new ScriptEngineManager();
     private final Map<String, ScriptEngine> engines = Maps.newHashMap();
     private final Function<File, FileEngine> fileEngineConverter = new Function<File, FileEngine>() {
         @Override
