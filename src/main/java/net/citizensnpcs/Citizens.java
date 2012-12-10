@@ -137,7 +137,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (!commands.hasCommand(command, modifier) && !modifier.isEmpty()) {
             return suggestClosestModifier(sender, command.getName(), modifier);
         }
-
+        if (!isEnabled())
+            return false;
+            
         NPC npc = selector.getSelected(sender);
         // TODO: change the args supplied to a context style system for
         // flexibility (ie. adding more context in the future without
