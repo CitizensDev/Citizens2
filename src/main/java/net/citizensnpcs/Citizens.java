@@ -56,7 +56,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
-    private ClassLoader contextClassLoader;
     private CitizensNPCRegistry npcRegistry;
     private NPCDataStore saves;
     private NPCSelector selector;
@@ -281,16 +280,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
     }
 
-    private void setupScripting() {
-        contextClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(getClassLoader());
-        // Workaround to fix scripts not loading plugin classes properly.
-        // The built in Sun Rhino Javascript engine uses the context classloader
-        // to search for class imports. Since the context classloader only has
-        // CraftBukkit classes, we replace it with a PluginClassLoader, which
-        // allows all plugin classes to be imported.
-    }
-
     private void startMetrics() {
         try {
             Metrics metrics = new Metrics(Citizens.this);
@@ -336,14 +325,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return true;
         }
         return false;
-    }
-
-    private void tearDownScripting() {
-        if (contextClassLoader == null)
-            return;
-        if (Thread.currentThread().getContextClassLoader() == getClassLoader())
-            Thread.currentThread().setContextClassLoader(contextClassLoader);
-        contextClassLoader = null;
     }
 
     private static final String COMPATIBLE_MC_VERSION = "1.4";

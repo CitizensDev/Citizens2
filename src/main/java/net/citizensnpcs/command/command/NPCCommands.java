@@ -1038,9 +1038,9 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "zombiemod (-b, -v)",
-            desc = "Sets the modifiers of a zombie",
-            modifiers = { "zombiemod" },
+            usage = "zombiemod (-b(aby), -v(illager))",
+            desc = "Sets a zombie NPC to be a baby or villager",
+            modifiers = { "zombie", "zombiemod" },
             flags = "bv",
             min = 1,
             max = 1,
