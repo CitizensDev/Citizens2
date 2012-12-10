@@ -22,7 +22,8 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     public VectorNode(Vector location, BlockSource source, BlockExaminer... examiners) {
-        this.location = location;
+        this.location = location.setX(location.getBlockX()).setY(location.getBlockY())
+                .setZ(location.getBlockZ());
         this.blockSource = source;
         this.examiners = examiners == null ? new BlockExaminer[] {} : examiners;
     }

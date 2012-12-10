@@ -68,7 +68,6 @@ public class Path implements Plan {
 
     private static class PathEntry {
         final Iterable<PathCallback> callbacks;
-
         final Vector vector;
 
         private PathEntry(Vector vector, List<PathCallback> callbacks) {
