@@ -9,8 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class HumanEquipper implements Equipper {
-
+public class GenericEquipper implements Equipper {
     @Override
     public void equip(Player equipper, NPC toEquip) {
         ItemStack hand = equipper.getItemInHand();
