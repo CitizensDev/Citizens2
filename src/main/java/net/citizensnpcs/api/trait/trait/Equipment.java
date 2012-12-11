@@ -6,7 +6,10 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 
 import org.bukkit.entity.Enderman;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -30,7 +33,7 @@ public class Equipment extends Trait {
     public ItemStack get(int slot) {
         if (npc.getBukkitEntity() instanceof Enderman && slot != 0)
             throw new IllegalArgumentException("Slot must be 0 for enderman");
-        else if (npc.getBukkitEntity() instanceof Player && (slot < 0 || slot > 4))
+        else if (slot < 0 || slot > 4)
             throw new IllegalArgumentException("Slot must be between 0 and 4");
 
         return equipment[slot];
@@ -43,6 +46,12 @@ public class Equipment extends Trait {
      */
     public ItemStack[] getEquipment() {
         return equipment;
+    }
+
+    private EntityEquipment getEquipmentFromEntity(LivingEntity entity) {
+        if (entity instanceof Player)
+            return new PlayerEquipmentWrapper((Player) entity);
+        return entity.getEquipment();
     }
 
     @Override
@@ -66,14 +75,17 @@ public class Equipment extends Trait {
             Enderman enderman = (Enderman) npc.getBukkitEntity();
             if (equipment[0] != null)
                 enderman.setCarriedMaterial(equipment[0].getData());
-        } else if (npc.getBukkitEntity() instanceof Player) {
-            Player player = (Player) npc.getBukkitEntity();
+        } else {
+            LivingEntity entity = npc.getBukkitEntity();
+            EntityEquipment equip = getEquipmentFromEntity(entity);
             if (equipment[0] != null)
-                player.setItemInHand(equipment[0]);
-            ItemStack[] armor = { equipment[4], equipment[3], equipment[2], equipment[1] };
-            // bukkit ordering is boots, leggings, chestplate, helmet
-            player.getInventory().setArmorContents(armor);
-            player.updateInventory();
+                equip.setItemInHand(equipment[0]);
+            equip.setHelmet(equipment[1]);
+            equip.setChestplate(equipment[2]);
+            equip.setLeggings(equipment[3]);
+            equip.setBoots(equipment[4]);
+            if (entity instanceof Player)
+                ((Player) entity).updateInventory();
         }
     }
 
@@ -109,28 +121,29 @@ public class Equipment extends Trait {
             if (slot != 0)
                 throw new UnsupportedOperationException("Slot can only be 0 for enderman");
             ((Enderman) npc.getBukkitEntity()).setCarriedMaterial(item.getData());
-        } else if (npc.getBukkitEntity() instanceof Player) {
-            Player player = (Player) npc.getBukkitEntity();
+        } else {
+            EntityEquipment equip = getEquipmentFromEntity(npc.getBukkitEntity());
             switch (slot) {
                 case 0:
-                    player.setItemInHand(item);
+                    equip.setItemInHand(item);
                     break;
                 case 1:
-                    player.getInventory().setHelmet(item);
+                    equip.setHelmet(item);
                     break;
                 case 2:
-                    player.getInventory().setChestplate(item);
+                    equip.setChestplate(item);
                     break;
                 case 3:
-                    player.getInventory().setLeggings(item);
+                    equip.setLeggings(item);
                     break;
                 case 4:
-                    player.getInventory().setBoots(item);
+                    equip.setBoots(item);
                     break;
                 default:
                     throw new IllegalArgumentException("Slot must be between 0 and 4");
             }
-            player.updateInventory();
+            if (npc.getBukkitEntity() instanceof Player)
+                ((Player) npc.getBukkitEntity()).updateInventory();
         }
         equipment[slot] = item;
     }
@@ -139,5 +152,133 @@ public class Equipment extends Trait {
     public String toString() {
         return "{hand=" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2]
                 + ",leggings=" + equipment[3] + ",boots=" + equipment[4] + "}";
+    }
+
+    private static class PlayerEquipmentWrapper implements EntityEquipment {
+        private final Player player;
+
+        private PlayerEquipmentWrapper(Player player) {
+            this.player = player;
+        }
+
+        @Override
+        public void clear() {
+            player.getInventory().clear();
+        }
+
+        @Override
+        public ItemStack[] getArmorContents() {
+            return player.getInventory().getArmorContents();
+        }
+
+        @Override
+        public ItemStack getBoots() {
+            return player.getInventory().getBoots();
+        }
+
+        @Override
+        public float getBootsDropChance() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ItemStack getChestplate() {
+            return player.getInventory().getChestplate();
+        }
+
+        @Override
+        public float getChestPlateDropChance() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ItemStack getHelmet() {
+            return player.getInventory().getHelmet();
+        }
+
+        @Override
+        public float getHelmetDropChance() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Entity getHolder() {
+            return player;
+        }
+
+        @Override
+        public ItemStack getItemInHand() {
+            return player.getItemInHand();
+        }
+
+        @Override
+        public float getItemInHandDropChance() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ItemStack getLeggings() {
+            return player.getInventory().getLeggings();
+        }
+
+        @Override
+        public float getLeggingsDropChance() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setArmorContents(ItemStack[] items) {
+            player.getInventory().setArmorContents(items);
+        }
+
+        @Override
+        public void setBoots(ItemStack boots) {
+            player.getInventory().setBoots(boots);
+        }
+
+        @Override
+        public void setBootsDropChance(float chance) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setChestplate(ItemStack chestplate) {
+            player.getInventory().setChestplate(chestplate);
+        }
+
+        @Override
+        public void setChestPlateDropChance(float chance) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setHelmet(ItemStack helmet) {
+            player.getInventory().setHelmet(helmet);
+        }
+
+        @Override
+        public void setHelmetDropChance(float chance) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setItemInHand(ItemStack stack) {
+            player.setItemInHand(stack);
+        }
+
+        @Override
+        public void setItemInHandDropChance(float chance) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setLeggings(ItemStack leggings) {
+            player.getInventory().setLeggings(leggings);
+        }
+
+        @Override
+        public void setLeggingsDropChance(float chance) {
+            throw new UnsupportedOperationException();
+        }
     }
 }

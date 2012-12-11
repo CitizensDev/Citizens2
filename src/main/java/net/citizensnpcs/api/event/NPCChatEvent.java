@@ -18,6 +18,11 @@ public class NPCChatEvent extends NPCEvent implements Cancellable {
         this.message = message;
     }
 
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+    
     /**
      * Gets the message that the NPC is saying.
      * 
@@ -25,18 +30,6 @@ public class NPCChatEvent extends NPCEvent implements Cancellable {
      */
     public String getMessage() {
         return message;
-    }
-    
-    /**
-     * Sets the message that the NPC is saying.
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
     }
 
     @Override
@@ -47,6 +40,13 @@ public class NPCChatEvent extends NPCEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    /**
+     * Sets the message that the NPC is saying.
+     */
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     private static final HandlerList handlers = new HandlerList();

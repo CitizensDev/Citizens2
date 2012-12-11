@@ -62,13 +62,13 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public boolean despawn() {
-        return despawn(DespawnReason.PLUGIN);
+    public MetadataStore data() {
+        return this.metadata;
     }
 
     @Override
-    public MetadataStore data() {
-        return this.metadata;
+    public boolean despawn() {
+        return despawn(DespawnReason.PLUGIN);
     }
 
     @Override
