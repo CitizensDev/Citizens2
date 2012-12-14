@@ -2,6 +2,7 @@ package net.citizensnpcs;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 import net.citizensnpcs.Settings.Setting;
@@ -51,6 +52,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Iterables;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CommandManager commands = new CommandManager();
@@ -67,14 +70,31 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             NPC npc = itr.next();
             try {
                 npc.despawn();
-                for (Trait t : npc.getTraits())
-                    t.onRemove();
-            } catch (Exception e) {
+                for (Trait trait : npc.getTraits())
+                    trait.onRemove();
+            } catch (Throwable e) {
                 e.printStackTrace();
                 // ensure that all entities are despawned
             }
             itr.remove();
         }
+    }
+
+    public void test() {
+        getDataFolder().mkdirs();
+        final InputStream dllResource = getResource("path/to/dll");
+        try {
+            Files.copy(new InputSupplier<InputStream>() {
+                @Override
+                public InputStream getInput() throws IOException {
+                    return dllResource;
+                }
+            }, new File(getDataFolder(), "name.dll"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // code here
+        new File(getDataFolder(), "name.dll").delete();
     }
 
     private void enableSubPlugins() {
@@ -137,13 +157,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (!commands.hasCommand(command, modifier) && !modifier.isEmpty()) {
             return suggestClosestModifier(sender, command.getName(), modifier);
         }
-            
+
         NPC npc = selector == null ? null : selector.getSelected(sender);
         // TODO: change the args supplied to a context style system for
         // flexibility (ie. adding more context in the future without
         // changing everything)
 
-        Object[] methodArgs = {sender, npc};
+        Object[] methodArgs = { sender, npc };
         return commands.executeSafe(command, args, sender, methodArgs);
     }
 

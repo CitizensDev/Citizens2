@@ -2,8 +2,8 @@ package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -80,7 +80,7 @@ public class CaveSpiderController extends MobEntityController {
             // it will not stop the NPC from moving.
             super.collide(entity);
             if (npc != null)
-                Util.callCollisionEvent(npc, entity);
+                Util.callCollisionEvent(npc, entity.getBukkitEntity());
         }
 
         @Override

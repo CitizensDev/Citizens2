@@ -81,6 +81,6 @@ public enum PlayerAnimation {
     }
 
     protected void sendPacketNearby(Packet packet, EntityPlayer player, int radius) {
-        Util.sendPacketNearby(player.getBukkitEntity().getLocation(), packet, radius);
+        NMS.sendPacketNearby(player.getBukkitEntity().getLocation(), packet, radius);
     }
 }

@@ -16,10 +16,12 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_4_5.EntityPlayer;
 import net.minecraft.server.v1_4_5.EnumGamemode;
 import net.minecraft.server.v1_4_5.ItemInWorldManager;
+import net.minecraft.server.v1_4_5.MathHelper;
 import net.minecraft.server.v1_4_5.MinecraftServer;
 import net.minecraft.server.v1_4_5.Navigation;
 import net.minecraft.server.v1_4_5.NetHandler;
 import net.minecraft.server.v1_4_5.NetworkManager;
+import net.minecraft.server.v1_4_5.Packet32EntityLook;
 import net.minecraft.server.v1_4_5.Packet5EntityEquipment;
 import net.minecraft.server.v1_4_5.World;
 
@@ -56,7 +58,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         // it will not stop the NPC from moving.
         super.collide(entity);
         if (npc != null)
-            Util.callCollisionEvent(npc, entity);
+            Util.callCollisionEvent(npc, entity.getBukkitEntity());
     }
 
     @Override
@@ -127,13 +129,17 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             return;
 
         if (getBukkitEntity() != null && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            if (!npc.getNavigator().isNavigating() && !NMS.inWater(this))
+            if (!npc.getNavigator().isNavigating() && !NMS.inWater(getBukkitEntity()))
                 move(0, -0.2, 0);
             // gravity. also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
         }
 
         updateEquipment();
+        NMS.sendPacketNearby(
+                getBukkitEntity().getLocation(),
+                new Packet32EntityLook(id, (byte) MathHelper.d(yaw * 256.0F / 360.0F), (byte) MathHelper
+                        .d(pitch * 256.0F / 360.0F)));
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
 
@@ -183,7 +189,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             net.minecraft.server.v1_4_5.ItemStack previous = previousEquipment[i];
             net.minecraft.server.v1_4_5.ItemStack current = getEquipment(i);
             if (previous != current) {
-                Util.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i,
+                NMS.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i,
                         current));
                 previousEquipment[i] = current;
             }

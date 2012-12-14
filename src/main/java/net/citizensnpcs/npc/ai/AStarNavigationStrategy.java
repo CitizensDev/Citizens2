@@ -9,10 +9,14 @@ import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
+import net.minecraft.server.v1_4_5.EntityLiving;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 public class AStarNavigationStrategy extends AbstractPathStrategy {
@@ -57,15 +61,24 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             if (plan.isComplete())
                 return true;
             vector = plan.getCurrentVector();
-            npc.getBukkitEntity()
-                    .getWorld()
-                    .playEffect(vector.toLocation(npc.getBukkitEntity().getWorld()), Effect.STEP_SOUND,
-                            org.bukkit.Material.STONE.getId());
+            World world = npc.getBukkitEntity().getWorld();
+            world.playEffect(vector.toLocation(world), Effect.STEP_SOUND, Material.STONE.getId());
         }
+        EntityLiving handle = NMS.getHandle(npc.getBukkitEntity());
+        double dX = vector.getBlockX() - handle.locX;
+        double dZ = vector.getBlockZ() - handle.locZ;
+        double dY = vector.getY() - Math.floor(handle.boundingBox.b + 0.5D);
+        double dXdZ = dX * dX + dZ * dZ;
+        double distance = dXdZ + dY * dY;
+
+        if (distance >= 0.00001 && (dY > 0 && dXdZ <= 2.75))
+            NMS.setShouldJump(npc.getBukkitEntity());
+        else
+            Messaging.log(distance >= 0.0001, dY > 0, dXdZ < 1, dXdZ);
         NMS.setDestination(npc.getBukkitEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
         return false;
     }
 
-    private static final AStarMachine ASTAR = AStarMachine.createWithDefaultStorage();
+    private static final AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithDefaultStorage();
     private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }
