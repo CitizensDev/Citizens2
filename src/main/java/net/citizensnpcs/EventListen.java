@@ -32,6 +32,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_4_5.CraftServer;
 import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -105,7 +106,7 @@ public class EventListen implements Listener {
             return;
         if (event.getFrom().getWorld() == event.getTo().getWorld() || !npcRegistry.isNPC(event.getEntity()))
             return;
-        NMS.updateNavigationWorld(event.getEntity(), event.getTo().getWorld());
+        NMS.updateNavigationWorld((LivingEntity) event.getEntity(), event.getTo().getWorld());
     }
 
     /*

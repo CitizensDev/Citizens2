@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.minecraft.server.v1_4_5.ControllerJump;
 import net.minecraft.server.v1_4_5.ControllerLook;
 import net.minecraft.server.v1_4_5.DamageSource;
 import net.minecraft.server.v1_4_5.EnchantmentManager;
@@ -24,6 +25,7 @@ import net.minecraft.server.v1_4_5.Packet;
 import net.minecraft.server.v1_4_5.PathfinderGoalSelector;
 import net.minecraft.server.v1_4_5.World;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -48,6 +50,35 @@ public class NMS {
         // util class
     }
 
+    public static void sendToOnline(Packet... packets) {
+        Validate.notNull(packets, "packets cannot be null");
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player == null || !player.isOnline())
+                continue;
+            for (Packet packet : packets) {
+                sendPacket(player, packet);
+            }
+        }
+    }
+
+    public static void sendPacketNearby(Location location, Packet packet, double radius) {
+        radius *= radius;
+        final org.bukkit.World world = location.getWorld();
+        for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
+            if (ply == null || world != ply.getWorld()) {
+                continue;
+            }
+            if (location.distanceSquared(ply.getLocation()) > radius) {
+                continue;
+            }
+            sendPacket(ply, packet);
+        }
+    }
+
+    public static void sendPacketNearby(Location location, Packet packet) {
+        NMS.sendPacketNearby(location, packet, 64);
+    }
+
     private static final float DEFAULT_SPEED = 0.4F;
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
@@ -67,7 +98,7 @@ public class NMS {
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
         if (bukkitEntity == null)
             return;
-        EntityLiving handle = ((CraftLivingEntity) bukkitEntity).getHandle();
+        EntityLiving handle = getHandle(bukkitEntity);
         if (handle.world == null)
             return;
         if (remove) {
@@ -149,6 +180,10 @@ public class NMS {
         return f;
     }
 
+    public static EntityLiving getHandle(LivingEntity entity) {
+        return ((CraftLivingEntity) entity).getHandle();
+    }
+
     public static float getSpeedFor(NPC npc) {
         EntityType entityType = npc.getBukkitEntity().getType();
         Float cached = MOVEMENT_SPEEDS.get(entityType);
@@ -168,7 +203,8 @@ public class NMS {
         }
     }
 
-    public static boolean inWater(Entity mcEntity) {
+    public static boolean inWater(LivingEntity entity) {
+        EntityLiving mcEntity = getHandle(entity);
         return mcEntity.I() || mcEntity.J();
     }
 
@@ -180,7 +216,8 @@ public class NMS {
         controllerLook.a(target, 10.0F, handle.bp());
     }
 
-    public static void look(EntityLiving handle, float yaw, float pitch) {
+    public static void look(LivingEntity bukkitEntity, float yaw, float pitch) {
+        EntityLiving handle = getHandle(bukkitEntity);
         handle.yaw = handle.ay = yaw;
         handle.pitch = pitch;
     }
@@ -222,6 +259,11 @@ public class NMS {
         }
     }
 
+    public static void setShouldJump(LivingEntity entity) {
+        ControllerJump controller = getHandle(entity).getControllerJump();
+        controller.a();
+    }
+
     public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
             Class<? extends Entity> clazz, EntityType type) {
         World handle = ((CraftWorld) world).getHandle();
@@ -248,14 +290,15 @@ public class NMS {
         }
     }
 
-    public static void trySwim(Entity handle, float power) {
-        if (RANDOM.nextFloat() < 0.8F && inWater(handle)) {
-            handle.motY += power;
-        }
+    public static void trySwim(LivingEntity handle) {
+        trySwim(handle, 0.04F);
     }
 
-    public static void trySwim(org.bukkit.entity.Entity handle) {
-        trySwim(((CraftEntity) handle).getHandle(), 0.04F);
+    public static void trySwim(LivingEntity entity, float power) {
+        Entity handle = getHandle(entity);
+        if (RANDOM.nextFloat() < 0.8F && inWater(entity)) {
+            handle.motY += power;
+        }
     }
 
     public static void updateAI(EntityLiving entity) {
@@ -266,8 +309,8 @@ public class NMS {
         entity.getControllerJump().b();
     }
 
-    public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {
-        if (NAVIGATION_WORLD_FIELD == null || !(entity instanceof LivingEntity))
+    public static void updateNavigationWorld(LivingEntity entity, org.bukkit.World world) {
+        if (NAVIGATION_WORLD_FIELD == null)
             return;
         EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
         World worldHandle = ((CraftWorld) world).getHandle();

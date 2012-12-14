@@ -5,17 +5,13 @@ import java.util.Random;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.v1_4_5.EntityLiving;
-import net.minecraft.server.v1_4_5.Packet;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -32,15 +28,15 @@ public class Util {
 
     private static Class<?> RNG_CLASS = null;
 
-    public static void assumePose(org.bukkit.entity.Entity entity, float yaw, float pitch) {
-        EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
-        NMS.look(handle, yaw, pitch);
+    public static void assumePose(LivingEntity entity, float yaw, float pitch) {
+        NMS.look(entity, yaw, pitch);
     }
 
-    public static void callCollisionEvent(NPC npc, net.minecraft.server.v1_4_5.Entity entity) {
+    public static void callCollisionEvent(NPC npc, Entity entity) {
         if (NPCCollisionEvent.getHandlerList().getRegisteredListeners().length > 0)
-            Bukkit.getPluginManager().callEvent(new NPCCollisionEvent(npc, entity.getBukkitEntity()));
+            Bukkit.getPluginManager().callEvent(new NPCCollisionEvent(npc, entity));
     }
+
     public static NPCPushEvent callPushEvent(NPC npc, Vector vector) {
         NPCPushEvent event = new NPCPushEvent(npc, vector);
         event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
@@ -48,7 +44,7 @@ public class Util {
         return event;
     }
 
-    public static void faceEntity(Entity from, Entity at) {
+    public static void faceEntity(LivingEntity from, LivingEntity at) {
         if (from.getWorld() != at.getWorld())
             return;
         double xDiff, yDiff, zDiff;
@@ -66,8 +62,7 @@ public class Util {
         if (zDiff < 0.0)
             yaw += Math.abs(180 - yaw) * 2;
 
-        EntityLiving handle = ((CraftLivingEntity) from).getHandle();
-        NMS.look(handle, (float) yaw - 90, (float) pitch);
+        NMS.look(from, (float) yaw - 90, (float) pitch);
     }
 
     public static Random getFastRandom() {
@@ -128,35 +123,6 @@ public class Util {
             }
         }
         return false;
-    }
-
-    public static void sendPacketNearby(Location location, Packet packet) {
-        sendPacketNearby(location, packet, 64);
-    }
-
-    public static void sendPacketNearby(Location location, Packet packet, double radius) {
-        radius *= radius;
-        final World world = location.getWorld();
-        for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
-            if (ply == null || world != ply.getWorld()) {
-                continue;
-            }
-            if (location.distanceSquared(ply.getLocation()) > radius) {
-                continue;
-            }
-            NMS.sendPacket(ply, packet);
-        }
-    }
-
-    public static void sendToOnline(Packet... packets) {
-        Validate.notNull(packets, "packets cannot be null");
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player == null || !player.isOnline())
-                continue;
-            for (Packet packet : packets) {
-                NMS.sendPacket(player, packet);
-            }
-        }
     }
 
     static {

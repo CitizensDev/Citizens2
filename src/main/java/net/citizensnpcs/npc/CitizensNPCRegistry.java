@@ -8,10 +8,11 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.ByIdArray;
+import net.citizensnpcs.util.NMS;
 
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 
 public class CitizensNPCRegistry implements NPCRegistry {
     private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
@@ -80,7 +81,9 @@ public class CitizensNPCRegistry implements NPCRegistry {
             return null;
         if (entity instanceof NPCHolder)
             return ((NPCHolder) entity).getNPC();
-        net.minecraft.server.v1_4_5.Entity handle = ((CraftEntity) entity).getHandle();
+        if (!(entity instanceof LivingEntity))
+            return null;
+        Object handle = NMS.getHandle((LivingEntity) entity);
         return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
     }
 

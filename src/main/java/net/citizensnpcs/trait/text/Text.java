@@ -35,7 +35,7 @@ import org.bukkit.plugin.Plugin;
 public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
     private final Map<String, Date> cooldowns = new HashMap<String, Date>();
     private int currentIndex;
-    private String itemInHandPattern = Setting.TALK_ITEM.asString();
+    private String itemInHandPattern = "default";
     private final Plugin plugin;
     private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
@@ -108,7 +108,9 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     public void onRightClick(NPCRightClickEvent event) {
         if (!event.getNPC().equals(npc))
             return;
-        if (Util.matchesItemInHand(event.getClicker(), itemInHandPattern) && !shouldTalkClose())
+        String localPattern = itemInHandPattern.equals("default") ? Setting.TALK_ITEM.asString()
+                : itemInHandPattern;
+        if (Util.matchesItemInHand(event.getClicker(), localPattern) && !shouldTalkClose())
             sendText(event.getClicker());
     }
 
