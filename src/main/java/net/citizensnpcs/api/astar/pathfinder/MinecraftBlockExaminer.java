@@ -38,7 +38,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             return 1F;
         if (isLiquid(above, below, in))
             return 0.5F;
-        if (isDoor(above, below)) {
+        if (isDoor(above, in)) {
             point.addCallback(new OpenDoorCallback());
         }
         return 0.5F - COSTS[source.getLightLevel(pos)];

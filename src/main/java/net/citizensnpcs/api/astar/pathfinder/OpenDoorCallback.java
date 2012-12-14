@@ -15,6 +15,7 @@ public class OpenDoorCallback implements PathCallback {
         MaterialData data = state.getData();
         if (!(data instanceof Door))
             return;
+        System.err.println("created open door callback");
         Door door = (Door) data;
         door.setOpen(true);
         state.update(true);

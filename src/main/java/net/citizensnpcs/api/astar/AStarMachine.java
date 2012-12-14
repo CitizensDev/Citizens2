@@ -3,15 +3,14 @@ package net.citizensnpcs.api.astar;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
-public class AStarMachine {
+public class AStarMachine<N extends AStarNode, P extends Plan> {
     private Supplier<AStarStorage> storageSupplier;
 
     private AStarMachine(Supplier<AStarStorage> storage) {
         this.storageSupplier = storage;
     }
 
-    private void f(AStarGoal goal, AStarNode node, AStarNode neighbour) {
+    private void f(AStarGoal<N> goal, N node, N neighbour) {
         float g = node.g + goal.g(node, neighbour); // estimate the cost from
                                                     // the start additively
         float h = goal.h(neighbour);
@@ -21,7 +20,7 @@ public class AStarMachine {
         neighbour.h = h;
     }
 
-    private AStarStorage getInitialisedStorage(AStarGoal goal, AStarNode start) {
+    private AStarStorage getInitialisedStorage(AStarGoal<N> goal, N start) {
         AStarStorage storage = storageSupplier.get();
         storage.open(start);
         start.f = goal.getInitialCost(start);
@@ -39,7 +38,7 @@ public class AStarMachine {
      *            The starting {@link AStarNode}
      * @return The created state
      */
-    public AStarState getStateFor(AStarGoal<?> goal, AStarNode start) {
+    public AStarState getStateFor(AStarGoal<N> goal, N start) {
         return new AStarState(goal, start, getInitialisedStorage(goal, start));
     }
 
@@ -51,7 +50,7 @@ public class AStarMachine {
      *            The state to use
      * @return The generated {@link Plan}, or <code>null</code>
      */
-    public <T extends Plan> T run(AStarState state) {
+    public P run(AStarState state) {
         return run(state, -1);
     }
 
@@ -66,27 +65,28 @@ public class AStarMachine {
      *            The maximum number of iterations
      * @return The generated {@link Plan}, or <code>null</code> if not found
      */
-    public <T extends Plan> T run(AStarState state, int maxIterations) {
+    public P run(AStarState state, int maxIterations) {
         return run(state.storage, state.goal, state.start, maxIterations);
     }
 
-    private <T extends Plan> T run(AStarStorage storage, AStarGoal goal, AStarNode start, int maxIterations) {
+    @SuppressWarnings("unchecked")
+    private P run(AStarStorage storage, AStarGoal<N> goal, N start, int maxIterations) {
         Preconditions.checkNotNull(goal);
         Preconditions.checkNotNull(start);
         Preconditions.checkNotNull(storage);
-        AStarNode node;
+        N node;
         int iterations = 0;
         while (true) {
-            node = storage.removeBestNode();
+            node = (N) storage.removeBestNode();
             if (node == null) {
                 return null;
             }
             if (goal.isFinished(node)) {
-                return (T) node.buildPlan();
+                return (P) node.buildPlan();
             }
             storage.close(node);
             for (AStarNode neighbour : node.getNeighbours()) {
-                f(goal, node, neighbour);
+                f(goal, node, (N) neighbour);
                 if (!storage.shouldExamine(neighbour))
                     continue;
                 storage.open(neighbour);
@@ -103,7 +103,7 @@ public class AStarMachine {
      * 
      * @see #runFully(AStarGoal, AStarNode, int)
      */
-    public <T extends Plan> T runFully(AStarGoal<?> goal, AStarNode start) {
+    public P runFully(AStarGoal<N> goal, N start) {
         return runFully(goal, start, -1);
     }
 
@@ -121,7 +121,7 @@ public class AStarMachine {
      * @return The generated {@link Plan}, or <code>null</code> if it was not
      *         found
      */
-    public <T extends Plan> T runFully(AStarGoal<?> goal, AStarNode start, int iterations) {
+    public P runFully(AStarGoal<N> goal, N start, int iterations) {
         return run(getInitialisedStorage(goal, start), goal, start, iterations);
     }
 
@@ -136,19 +136,20 @@ public class AStarMachine {
         storageSupplier = newSupplier;
     }
 
-    public static class AStarState {
-        private final AStarGoal<?> goal;
-        private final AStarNode start;
+    public class AStarState {
+        private final AStarGoal<N> goal;
+        private final N start;
         private final AStarStorage storage;
 
-        private AStarState(AStarGoal<?> goal, AStarNode start, AStarStorage storage) {
+        private AStarState(AStarGoal<N> goal, N start, AStarStorage storage) {
             this.goal = goal;
             this.start = start;
             this.storage = storage;
         }
 
-        public <T extends AStarNode> T getBestNode() {
-            return (T) storage.getBestNode();
+        @SuppressWarnings("unchecked")
+        public N getBestNode() {
+            return (N) storage.getBestNode();
         }
     }
 
@@ -158,7 +159,7 @@ public class AStarMachine {
      * 
      * @return The created instance
      */
-    public static AStarMachine createWithDefaultStorage() {
+    public static <N extends AStarNode, P extends Plan> AStarMachine<N, P> createWithDefaultStorage() {
         return createWithStorage(SimpleAStarStorage.FACTORY);
     }
 
@@ -170,7 +171,8 @@ public class AStarMachine {
      *            The storage supplier
      * @return The created instance
      */
-    public static AStarMachine createWithStorage(Supplier<AStarStorage> storageSupplier) {
-        return new AStarMachine(storageSupplier);
+    public static <N extends AStarNode, P extends Plan> AStarMachine<N, P> createWithStorage(
+            Supplier<AStarStorage> storageSupplier) {
+        return new AStarMachine<N, P>(storageSupplier);
     }
 }
