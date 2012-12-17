@@ -11,16 +11,16 @@ import org.bukkit.conversations.Prompt;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 
-public class WaypointTriggerRegistry implements Persister {
+public class WaypointTriggerRegistry implements Persister<WaypointTrigger> {
     @Override
-    public Object create(DataKey root) {
+    public WaypointTrigger create(DataKey root) {
         String type = root.getString("type");
         Class<? extends WaypointTrigger> clazz = triggers.get(type);
         return clazz == null ? null : PersistenceLoader.load(clazz, root);
     }
 
     @Override
-    public void save(Object instance, DataKey root) {
+    public void save(WaypointTrigger instance, DataKey root) {
         PersistenceLoader.save(instance, root);
     }
 

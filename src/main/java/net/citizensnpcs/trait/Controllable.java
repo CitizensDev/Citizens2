@@ -29,7 +29,7 @@ import com.google.common.collect.Maps;
 
 //TODO: reduce reliance on CitizensNPC
 public class Controllable extends Trait implements Toggleable, CommandConfigurable {
-    private Controller controller = new GroundController();
+    private MovementController controller = new GroundController();
     @Persist
     private boolean enabled;
     private EntityType explicitType;
@@ -80,12 +80,12 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         EntityType type = npc.getBukkitEntity().getType();
         if (explicitType != null)
             type = explicitType;
-        Class<? extends Controller> clazz = controllerTypes.get(type);
+        Class<? extends MovementController> clazz = controllerTypes.get(type);
         if (clazz == null) {
             controller = new GroundController();
             return;
         }
-        Constructor<? extends Controller> innerConstructor = null;
+        Constructor<? extends MovementController> innerConstructor = null;
         try {
             innerConstructor = clazz.getConstructor(Controllable.class);
             innerConstructor.setAccessible(true);
@@ -169,7 +169,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return enabled;
     }
 
-    public class AirController implements Controller {
+    public class AirController implements MovementController {
         boolean paused = false;
 
         @Override
@@ -202,7 +202,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         }
     }
 
-    public static interface Controller {
+    public static interface MovementController {
         void leftClick(PlayerInteractEvent event);
 
         void rightClick(PlayerInteractEvent event);
@@ -212,7 +212,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         void run(Player rider);
     }
 
-    public class GroundController implements Controller {
+    public class GroundController implements MovementController {
         private void jump() {
             boolean allowed = getHandle().onGround;
             if (!allowed)
@@ -249,7 +249,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         private static final float JUMP_VELOCITY = 0.6F;
     }
 
-    private static final Map<EntityType, Class<? extends Controller>> controllerTypes = Maps
+    private static final Map<EntityType, Class<? extends MovementController>> controllerTypes = Maps
             .newEnumMap(EntityType.class);
 
     static {

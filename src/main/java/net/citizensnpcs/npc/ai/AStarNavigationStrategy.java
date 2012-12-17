@@ -9,7 +9,6 @@ import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_4_5.EntityLiving;
 
@@ -67,14 +66,13 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         EntityLiving handle = NMS.getHandle(npc.getBukkitEntity());
         double dX = vector.getBlockX() - handle.locX;
         double dZ = vector.getBlockZ() - handle.locZ;
-        double dY = vector.getY() - Math.floor(handle.boundingBox.b + 0.5D);
-        double dXdZ = dX * dX + dZ * dZ;
-        double distance = dXdZ + dY * dY;
+        double dY = vector.getY() - handle.locY;
+        double xzDistance = dX * dX + dZ * dZ;
+        double distance = xzDistance + dY * dY;
 
-        if (distance >= 0.00001 && (dY > 0 && dXdZ <= 2.75))
+        if (distance >= 0.00001 && (dY > 0 && xzDistance <= 2.75)) {
             NMS.setShouldJump(npc.getBukkitEntity());
-        else
-            Messaging.log(distance >= 0.0001, dY > 0, dXdZ < 1, dXdZ);
+        }
         NMS.setDestination(npc.getBukkitEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
         return false;
     }

@@ -30,7 +30,7 @@ public class TemplateCommands {
 
     @Command(
             aliases = { "template", "tpl" },
-            usage = "apply [name] (id id2...)",
+            usage = "apply [template name] (id id2...)",
             desc = "Applies a template to the selected NPC",
             modifiers = { "apply" },
             min = 2,
@@ -71,7 +71,7 @@ public class TemplateCommands {
 
     @Command(
             aliases = { "template", "tpl" },
-            usage = "create [name] (-o)",
+            usage = "create [template name] (-o)",
             desc = "Creates a template from the selected NPC",
             modifiers = { "create" },
             min = 2,
