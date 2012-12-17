@@ -11,7 +11,6 @@ import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
-import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
@@ -135,7 +134,7 @@ public class CitizensNPC extends AbstractNPC {
         try {
             trait.load(traitKey);
             PersistenceLoader.load(trait, traitKey);
-        } catch (NPCLoadException ex) {
+        } catch (Throwable ex) {
             Messaging.logTr(Messages.TRAIT_LOAD_FAILED, traitKey.name(), getId());
         }
     }

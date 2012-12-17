@@ -34,7 +34,7 @@ public class WaypointCommands {
 
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
-            usage = "provider (provider name) (-a)",
+            usage = "provider [provider name] (-a)",
             desc = "Sets the current waypoint provider",
             modifiers = { "provider" },
             min = 1,

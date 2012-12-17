@@ -190,7 +190,7 @@ public class NPCCommands {
             usage = "behaviour [scripts] (-r)",
             desc = "Sets the behaviour of a NPC",
             help = Messages.BEHAVIOUR_HELP,
-            modifiers = { "behaviour", "ai" },
+            modifiers = { "behaviour", "behavior", "ai" },
             flags = "r",
             min = 2,
             permission = "npc.behaviour")
@@ -1002,7 +1002,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "type",
+            usage = "type [type]",
             desc = "Sets an NPC's entity type",
             modifiers = { "type" },
             min = 2,
