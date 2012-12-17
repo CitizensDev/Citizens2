@@ -6,9 +6,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-public class LocationPersister implements Persister {
+public class LocationPersister implements Persister<Location> {
     @Override
-    public Object create(DataKey root) {
+    public Location create(DataKey root) {
         if (!root.keyExists("world"))
             return null;
         World world = Bukkit.getWorld(root.getString("world"));
@@ -19,8 +19,7 @@ public class LocationPersister implements Persister {
     }
 
     @Override
-    public void save(Object instance, DataKey root) {
-        Location location = (Location) instance;
+    public void save(Location location, DataKey root) {
         if (location.getWorld() != null)
             root.setString("world", location.getWorld().getName());
         root.setDouble("x", location.getX());

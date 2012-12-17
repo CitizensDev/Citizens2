@@ -2,7 +2,7 @@ package net.citizensnpcs.api.persistence;
 
 import net.citizensnpcs.api.util.DataKey;
 
-public interface Persister {
+public interface Persister<T> {
     /**
      * Creates an object instance from the given {@link DataKey}. Should not
      * return null unless no data is present.
@@ -11,7 +11,7 @@ public interface Persister {
      *            The root key to load from
      * @return The created instance, or null if no data was present
      */
-    Object create(DataKey root);
+    T create(DataKey root);
 
     /**
      * Saves the object instance to the given {@link DataKey}.
@@ -21,5 +21,5 @@ public interface Persister {
      * @param root
      *            The key to save into
      */
-    void save(Object instance, DataKey root);
+    void save(T instance, DataKey root);
 }

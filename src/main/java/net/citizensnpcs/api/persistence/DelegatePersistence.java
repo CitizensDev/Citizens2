@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface DelegatePersistence {
-    Class<? extends Persister> value();
+    Class<? extends Persister<?>> value();
 }

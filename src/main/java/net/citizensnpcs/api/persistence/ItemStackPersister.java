@@ -1,17 +1,18 @@
 package net.citizensnpcs.api.persistence;
 
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.ItemStorage;
 
-public class ItemStackPersister implements Persister {
+import org.bukkit.inventory.ItemStack;
+
+public class ItemStackPersister implements Persister<ItemStack> {
     @Override
-    public Object create(DataKey root) {
-        // TODO Auto-generated method stub
-        return null;
+    public ItemStack create(DataKey root) {
+        return ItemStorage.loadItemStack(root);
     }
 
     @Override
-    public void save(Object instance, DataKey root) {
-        // TODO Auto-generated method stub
-
+    public void save(ItemStack instance, DataKey root) {
+        ItemStorage.saveItem(root, instance);
     }
 }

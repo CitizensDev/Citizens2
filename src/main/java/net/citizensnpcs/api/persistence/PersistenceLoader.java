@@ -20,7 +20,7 @@ import com.google.common.primitives.Primitives;
 
 public class PersistenceLoader {
     private static class PersistField {
-        private final Persister delegate;
+        private final Persister<?> delegate;
         private final Field field;
         private final Object instance;
         private final String key;
@@ -78,7 +78,7 @@ public class PersistenceLoader {
     }
 
     private static final Map<Class<?>, Field[]> fieldCache = new WeakHashMap<Class<?>, Field[]>();
-    private static final Map<Class<? extends Persister>, Persister> loadedDelegates = new WeakHashMap<Class<? extends Persister>, Persister>();
+    private static final Map<Class<? extends Persister<?>>, Persister<?>> loadedDelegates = new WeakHashMap<Class<? extends Persister<?>>, Persister<?>>();
     private static final Exception loadException = new Exception() {
         @SuppressWarnings("unused")
         public void fillInStackTrace(StackTraceElement[] elements) {
@@ -87,7 +87,7 @@ public class PersistenceLoader {
         private static final long serialVersionUID = -4245839150826112365L;
     };
 
-    private static final Map<Class<?>, Class<? extends Persister>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister>>();
+    private static final Map<Class<?>, Class<? extends Persister<?>>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister<?>>>();
 
     private static String createRelativeKey(String key, int ext) {
         return createRelativeKey(key, Integer.toString(ext));
@@ -170,7 +170,7 @@ public class PersistenceLoader {
         return field.delegate == null ? root.getRaw("") : field.delegate.create(root);
     }
 
-    private static void ensureDelegateLoaded(Class<? extends Persister> delegateClass) {
+    private static void ensureDelegateLoaded(Class<? extends Persister<?>> delegateClass) {
         if (loadedDelegates.containsKey(delegateClass))
             return;
         try {
@@ -181,9 +181,9 @@ public class PersistenceLoader {
         }
     }
 
-    private static Persister getDelegate(Field field, Class<?> fallback) {
+    private static Persister<?> getDelegate(Field field, Class<?> fallback) {
         DelegatePersistence delegate = field.getAnnotation(DelegatePersistence.class);
-        Persister persister;
+        Persister<?> persister;
         if (delegate == null) {
             persister = loadedDelegates.get(persistRedirects.get(fallback));
             if (persister == null)
@@ -216,9 +216,9 @@ public class PersistenceLoader {
             DelegatePersistence delegate = field.getAnnotation(DelegatePersistence.class);
             if (delegate == null)
                 continue;
-            Class<? extends Persister> delegateClass = delegate.value();
+            Class<? extends Persister<?>> delegateClass = delegate.value();
             ensureDelegateLoaded(delegateClass);
-            Persister in = loadedDelegates.get(delegateClass);
+            Persister<?> in = loadedDelegates.get(delegateClass);
             if (in == null) {
                 // class couldn't be loaded earlier, we can't deserialise.
                 itr.remove();
@@ -295,7 +295,7 @@ public class PersistenceLoader {
      * @param delegateClass
      *            The Persister class to use when loading and saving
      */
-    public static void registerPersistDelegate(Class<?> clazz, Class<? extends Persister> delegateClass) {
+    public static void registerPersistDelegate(Class<?> clazz, Class<? extends Persister<?>> delegateClass) {
         persistRedirects.put(clazz, delegateClass);
         ensureDelegateLoaded(delegateClass);
     }
@@ -333,9 +333,10 @@ public class PersistenceLoader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static void serialiseValue(PersistField field, DataKey root, Object value) {
         if (field.delegate != null) {
-            field.delegate.save(value, root);
+            ((Persister<Object>) field.delegate).save(value, root);
         } else if (field.getType().isEnum()) {
             root.setRaw("", ((Enum<?>) value).name());
         } else
