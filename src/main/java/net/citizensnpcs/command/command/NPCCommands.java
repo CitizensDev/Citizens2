@@ -269,6 +269,9 @@ public class NPCCommands {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
             name = name.substring(0, 15);
         }
+        if (name.length() <= 0)
+            throw new CommandException();
+
         EntityType type = EntityType.PLAYER;
         if (args.hasValueFlag("type")) {
             String inputType = args.getFlag("type");
