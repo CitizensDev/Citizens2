@@ -42,6 +42,7 @@ public class ItemStorage {
                 meta.setPage(i, sub.getString(""));
             }
             meta.setTitle(root.getString("book.title"));
+            meta.setAuthor(root.getString("book.author"));
             res.setItemMeta(meta);
         }
         if (root.keyExists("armor")) {
