@@ -23,15 +23,17 @@ import com.google.common.collect.Lists;
 public class ItemStorage {
     private static void deserialiseMeta(DataKey root, ItemStack res) {
         if (root.keyExists("lore")) {
-            ensureMeta(res);
+            ItemMeta meta = ensureMeta(res);
             List<String> lore = Lists.newArrayList();
             for (DataKey key : root.getRelative("lore").getIntegerSubKeys())
                 lore.add(key.getString(""));
-            res.getItemMeta().setLore(lore);
+            meta.setLore(lore);
+            res.setItemMeta(meta);
         }
         if (root.keyExists("displayname")) {
-            ensureMeta(res);
-            res.getItemMeta().setDisplayName(root.getString("displayname"));
+            ItemMeta meta = ensureMeta(res);
+            meta.setDisplayName(root.getString("displayname"));
+            res.setItemMeta(meta);
         }
         if (root.keyExists("book")) {
             BookMeta meta = ensureMeta(res);
@@ -40,19 +42,22 @@ public class ItemStorage {
                 meta.setPage(i, sub.getString(""));
             }
             meta.setTitle(root.getString("book.title"));
-            meta.setAuthor(root.getString("book.author"));
+            res.setItemMeta(meta);
         }
         if (root.keyExists("armor")) {
             LeatherArmorMeta meta = ensureMeta(res);
             meta.setColor(Color.fromRGB(root.getInt("armor.color")));
+            res.setItemMeta(meta);
         }
         if (root.keyExists("map")) {
             MapMeta meta = ensureMeta(res);
             meta.setScaling(root.getBoolean("map.scaling"));
+            res.setItemMeta(meta);
         }
         if (root.keyExists("skull")) {
             SkullMeta meta = ensureMeta(res);
             meta.setOwner(root.getString("skull.owner"));
+            res.setItemMeta(meta);
         }
         if (root.keyExists("potion")) {
             PotionMeta meta = ensureMeta(res);
@@ -63,6 +68,7 @@ public class ItemStorage {
                 boolean ambient = sub.getBoolean("ambient");
                 meta.addCustomEffect(new PotionEffect(type, duration, amplifier, ambient), true);
             }
+            res.setItemMeta(meta);
         }
     }
 
