@@ -36,6 +36,7 @@ public class EndermanEquipper implements Equipper {
         if (set.getType() != Material.AIR) {
             set.setAmount(1);
             hand.setAmount(hand.getAmount() - 1);
+            equipper.setItemInHand(hand);
         }
         npc.getTrait(Equipment.class).set(0, set);
     }

@@ -34,5 +34,6 @@ public class SheepEquipper implements Equipper {
             toEquip.getTrait(WoolColor.class).setColor(DyeColor.WHITE);
             Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED, toEquip.getName(), "white");
         }
+        equipper.setItemInHand(hand);
     }
 }

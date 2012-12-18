@@ -14,7 +14,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Maps;
 
@@ -52,9 +51,7 @@ public class EquipmentEditor extends Editor {
         Equipper equipper = EQUIPPERS.get(npc.getBukkitEntity().getType());
         if (equipper == null)
             equipper = new GenericEquipper();
-        ItemStack hand = event.getPlayer().getItemInHand();
         equipper.equip(event.getPlayer(), npc);
-        event.getPlayer().setItemInHand(hand.getAmount() > 0 ? hand : null);
     }
 
     private static final Map<EntityType, Equipper> EQUIPPERS = Maps.newEnumMap(EntityType.class);
