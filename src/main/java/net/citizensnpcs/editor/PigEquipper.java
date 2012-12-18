@@ -26,5 +26,6 @@ public class PigEquipper implements Equipper {
             toEquip.getTrait(Saddle.class).toggle();
             Messaging.sendTr(equipper, Messages.SADDLED_STOPPED, toEquip.getName());
         }
+        equipper.setItemInHand(hand);
     }
 }

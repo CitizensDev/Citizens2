@@ -78,6 +78,7 @@ public class GenericEquipper implements Equipper {
             clone.setAmount(1);
             trait.set(slot, clone);
             hand.setAmount(hand.getAmount() - 1);
+            equipper.setItemInHand(hand);
         }
     }
 }
