@@ -14,6 +14,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
+import com.google.common.base.Preconditions;
+
 public class CitizensNPCRegistry implements NPCRegistry {
     private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
     private final NPCDataStore saves;
@@ -23,6 +25,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
     }
 
     public NPC createNPC(EntityType type, int id, String name) {
+        Preconditions.checkNotNull(name, "name cannot be null");
+        Preconditions.checkNotNull(type, "type cannot be null");
         CitizensNPC npc = getByType(type, id, name);
         if (npc == null)
             throw new IllegalStateException("Could not create NPC.");
