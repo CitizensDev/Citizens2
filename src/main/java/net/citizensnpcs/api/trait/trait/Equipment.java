@@ -187,7 +187,7 @@ public class Equipment extends Trait {
         }
 
         @Override
-        public float getChestPlateDropChance() {
+        public float getChestplateDropChance() {
             throw new UnsupportedOperationException();
         }
 
@@ -247,7 +247,7 @@ public class Equipment extends Trait {
         }
 
         @Override
-        public void setChestPlateDropChance(float chance) {
+        public void setChestplateDropChance(float chance) {
             throw new UnsupportedOperationException();
         }
 
