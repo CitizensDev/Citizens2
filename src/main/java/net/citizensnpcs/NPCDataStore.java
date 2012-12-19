@@ -3,6 +3,8 @@ package net.citizensnpcs;
 import java.io.File;
 import java.sql.SQLException;
 
+import net.citizensnpcs.Metrics.Graph;
+import net.citizensnpcs.Metrics.Plotter;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -95,5 +97,26 @@ public class NPCDataStore {
         if (!saves.load())
             return null;
         return new NPCDataStore(saves);
+    }
+
+    public void addPlotters(Graph graph) {
+        graph.addPlotter(new Plotter("Database") {
+            @Override
+            public int getValue() {
+                return root instanceof DatabaseStorage ? 1 : 0;
+            }
+        });
+        graph.addPlotter(new Plotter("YAML") {
+            @Override
+            public int getValue() {
+                return root instanceof YamlStorage ? 1 : 0;
+            }
+        });
+        graph.addPlotter(new Plotter("NBT") {
+            @Override
+            public int getValue() {
+                return root instanceof NBTStorage ? 1 : 0;
+            }
+        });
     }
 }
