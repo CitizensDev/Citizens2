@@ -314,6 +314,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             });
 
             traitFactory.addPlotters(metrics.createGraph("traits"));
+            saves.addPlotters(metrics.createGraph("Storage type"));
             metrics.start();
         } catch (IOException e) {
             Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
