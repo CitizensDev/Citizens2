@@ -9,31 +9,31 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.v1_4_5.ControllerJump;
-import net.minecraft.server.v1_4_5.ControllerLook;
-import net.minecraft.server.v1_4_5.DamageSource;
-import net.minecraft.server.v1_4_5.EnchantmentManager;
-import net.minecraft.server.v1_4_5.Entity;
-import net.minecraft.server.v1_4_5.EntityLiving;
-import net.minecraft.server.v1_4_5.EntityMonster;
-import net.minecraft.server.v1_4_5.EntityTypes;
-import net.minecraft.server.v1_4_5.MathHelper;
-import net.minecraft.server.v1_4_5.MobEffectList;
-import net.minecraft.server.v1_4_5.Navigation;
-import net.minecraft.server.v1_4_5.NetworkManager;
-import net.minecraft.server.v1_4_5.Packet;
-import net.minecraft.server.v1_4_5.PathfinderGoalSelector;
-import net.minecraft.server.v1_4_5.World;
+import net.minecraft.server.v1_4_6.ControllerJump;
+import net.minecraft.server.v1_4_6.ControllerLook;
+import net.minecraft.server.v1_4_6.DamageSource;
+import net.minecraft.server.v1_4_6.EnchantmentManager;
+import net.minecraft.server.v1_4_6.Entity;
+import net.minecraft.server.v1_4_6.EntityLiving;
+import net.minecraft.server.v1_4_6.EntityMonster;
+import net.minecraft.server.v1_4_6.EntityTypes;
+import net.minecraft.server.v1_4_6.MathHelper;
+import net.minecraft.server.v1_4_6.MobEffectList;
+import net.minecraft.server.v1_4_6.Navigation;
+import net.minecraft.server.v1_4_6.NetworkManager;
+import net.minecraft.server.v1_4_6.Packet;
+import net.minecraft.server.v1_4_6.PathfinderGoalSelector;
+import net.minecraft.server.v1_4_6.World;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_4_5.CraftServer;
-import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_6.CraftServer;
+import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -238,7 +238,7 @@ public class NMS {
     }
 
     public static void sendPacket(Player player, Packet packet) {
-        ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 
     public static void setDestination(LivingEntity bukkitEntity, double x, double y, double z, float speed) {

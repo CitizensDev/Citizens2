@@ -6,12 +6,12 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
-import net.minecraft.server.v1_4_5.ItemInWorldManager;
-import net.minecraft.server.v1_4_5.WorldServer;
+import net.minecraft.server.v1_4_6.PlayerInteractManager;
+import net.minecraft.server.v1_4_6.WorldServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -20,7 +20,7 @@ public class HumanController extends AbstractEntityController {
     protected LivingEntity createEntity(final Location at, final NPC npc) {
         WorldServer ws = ((CraftWorld) at.getWorld()).getHandle();
         final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
-                StringHelper.parseColors(npc.getFullName()), new ItemInWorldManager(ws), npc);
+                StringHelper.parseColors(npc.getFullName()), new PlayerInteractManager(ws), npc);
         handle.getBukkitEntity().teleport(at);
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override

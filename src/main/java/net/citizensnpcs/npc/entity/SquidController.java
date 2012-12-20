@@ -7,12 +7,12 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_4_5.EntitySquid;
-import net.minecraft.server.v1_4_5.World;
+import net.minecraft.server.v1_4_6.EntitySquid;
+import net.minecraft.server.v1_4_6.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_4_5.CraftServer;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftSquid;
+import org.bukkit.craftbukkit.v1_4_6.CraftServer;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftSquid;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Squid;
 import org.bukkit.util.Vector;
@@ -52,7 +52,7 @@ public class SquidController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_4_5.Entity entity) {
+        public void collide(net.minecraft.server.v1_4_6.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
