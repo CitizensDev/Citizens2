@@ -13,34 +13,34 @@ import net.citizensnpcs.npc.network.EmptyNetworkManager;
 import net.citizensnpcs.npc.network.EmptySocket;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_4_5.EntityPlayer;
-import net.minecraft.server.v1_4_5.EnumGamemode;
-import net.minecraft.server.v1_4_5.ItemInWorldManager;
-import net.minecraft.server.v1_4_5.MathHelper;
-import net.minecraft.server.v1_4_5.MinecraftServer;
-import net.minecraft.server.v1_4_5.Navigation;
-import net.minecraft.server.v1_4_5.NetHandler;
-import net.minecraft.server.v1_4_5.NetworkManager;
-import net.minecraft.server.v1_4_5.Packet32EntityLook;
-import net.minecraft.server.v1_4_5.Packet5EntityEquipment;
-import net.minecraft.server.v1_4_5.World;
+import net.minecraft.server.v1_4_6.EntityPlayer;
+import net.minecraft.server.v1_4_6.EnumGamemode;
+import net.minecraft.server.v1_4_6.PlayerInteractManager;
+import net.minecraft.server.v1_4_6.MathHelper;
+import net.minecraft.server.v1_4_6.MinecraftServer;
+import net.minecraft.server.v1_4_6.Navigation;
+import net.minecraft.server.v1_4_6.Connection;
+import net.minecraft.server.v1_4_6.NetworkManager;
+import net.minecraft.server.v1_4_6.Packet32EntityLook;
+import net.minecraft.server.v1_4_6.Packet5EntityEquipment;
+import net.minecraft.server.v1_4_6.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_5.CraftServer;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_6.CraftServer;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private final CitizensNPC npc;
-    private final net.minecraft.server.v1_4_5.ItemStack[] previousEquipment = { null, null, null, null, null };
+    private final net.minecraft.server.v1_4_6.ItemStack[] previousEquipment = { null, null, null, null, null };
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
-            ItemInWorldManager itemInWorldManager, NPC npc) {
-        super(minecraftServer, world, string, itemInWorldManager);
-        itemInWorldManager.setGameMode(EnumGamemode.SURVIVAL);
+            PlayerInteractManager playerInteractManager, NPC npc) {
+        super(minecraftServer, world, string, playerInteractManager);
+        playerInteractManager.setGameMode(EnumGamemode.SURVIVAL);
 
         this.npc = (CitizensNPC) npc;
         if (npc != null)
@@ -53,7 +53,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public void collide(net.minecraft.server.v1_4_5.Entity entity) {
+    public void collide(net.minecraft.server.v1_4_6.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
@@ -97,16 +97,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     private void initialise(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
-        NetworkManager netMgr = null;
+        NetworkManager conn = null;
         try {
-            netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
+            conn = new EmptyNetworkManager(socket, "npc mgr", new Connection() {
                 @Override
                 public boolean a() {
                     return false;
                 }
             }, server.F().getPrivate());
-            netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
-            netMgr.a(netServerHandler);
+            playerConnection = new EmptyNetHandler(minecraftServer, conn, this);
+            conn.a(playerConnection);
         } catch (IOException e) {
             // swallow
         }
@@ -161,33 +161,33 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private void moveOnCurrentHeading() {
         NMS.updateAI(this);
         // taken from EntityLiving update method
-        if (bE) {
+        if (bF) {
             /* boolean inLiquid = H() || J();
              if (inLiquid) {
                  motY += 0.04;
              } else //(handled elsewhere)*/
-            if (onGround && bU == 0) {
+            if (onGround && bV == 0) {
                 bi();
-                bU = 10;
+                bV = 10;
             }
         } else
-            bU = 0;
+            bV = 0;
 
-        bB *= 0.98F;
         bC *= 0.98F;
-        bD *= 0.9F;
+        bD *= 0.98F;
+        bE *= 0.9F;
 
-        float prev = aM;
-        aM *= bB();
-        e(bB, bC); // movement method
-        aM = prev;
+        float prev = aN;
+        aN *= bB();
+        e(bC, bD); // movement method
+        aN = prev;
         NMS.setHeadYaw(this, yaw);
     }
 
     private void updateEquipment() {
         for (int i = 0; i < previousEquipment.length; i++) {
-            net.minecraft.server.v1_4_5.ItemStack previous = previousEquipment[i];
-            net.minecraft.server.v1_4_5.ItemStack current = getEquipment(i);
+            net.minecraft.server.v1_4_6.ItemStack previous = previousEquipment[i];
+            net.minecraft.server.v1_4_6.ItemStack current = getEquipment(i);
             if (previous != current) {
                 NMS.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i,
                         current));
