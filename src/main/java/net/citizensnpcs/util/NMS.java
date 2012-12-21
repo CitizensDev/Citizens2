@@ -218,7 +218,7 @@ public class NMS {
 
     public static void look(LivingEntity bukkitEntity, float yaw, float pitch) {
         EntityLiving handle = getHandle(bukkitEntity);
-        handle.yaw = handle.ay = yaw;
+        handle.yaw = handle.az = yaw;
         handle.pitch = pitch;
     }
 
@@ -246,7 +246,7 @@ public class NMS {
     }
 
     public static void setHeadYaw(EntityLiving handle, float yaw) {
-        handle.ay = yaw;
+        handle.az = yaw;
     }
 
     public static void setLandSpeedModifier(EntityLiving handle, float speed) {
@@ -353,8 +353,8 @@ public class NMS {
         MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
         MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
 
-        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bO");
-        SPEED_FIELD = getField(EntityLiving.class, "bG");
+        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bP");
+        SPEED_FIELD = getField(EntityLiving.class, "bH");
         NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
         PATHFINDING_RANGE = getField(Navigation.class, "e");
         GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
