@@ -77,7 +77,7 @@ public class CitizensNPC extends AbstractNPC {
         return entityController.getBukkitEntity();
     }
 
-    @Deprecated
+	@Deprecated
     public EntityLiving getHandle() {
         return ((CraftLivingEntity) getBukkitEntity()).getHandle();
     }
