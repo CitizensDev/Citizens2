@@ -1,6 +1,6 @@
 package net.citizensnpcs.npc.ai.speech;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -9,7 +9,7 @@ import net.citizensnpcs.api.ai.speech.VocalChord;
 
 public class CitizensSpeechFactory implements SpeechFactory {
 
-	Map<String, Class<? extends VocalChord>> registered = Collections.emptyMap();
+	Map<String, Class<? extends VocalChord>> registered = new HashMap<String, Class <? extends VocalChord>>();
 	
 	@Override
 	public void register(Class<? extends VocalChord> clazz, String name) {

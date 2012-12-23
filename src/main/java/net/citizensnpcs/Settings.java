@@ -46,7 +46,6 @@ public class Settings {
     	CHAT_FORMAT("npc.chat.format.no-targets", "[<npc>]: <text>"),
         CHAT_FORMAT_TO_TARGET("npc.chat.format.to-target", "[<npc>] -> You: <text>"),
         CHAT_FORMAT_TO_BYSTANDERS("npc.chat.prefix.to-bystanders", "[<npc>] -> [<target>]: <text>"),
-        CHAT_FORMAT_WITH_TARGETS_TO_TARGET("npc.chat.format.with-target-to-target", "[<npc>] -> [<targets>]: <text>"),
         CHAT_FORMAT_WITH_TARGETS_TO_BYSTANDERS("npc.chat.format.with-target-to-bystanders", "[<npc>] -> [<target>]: <text>"),
         CHAT_RANGE("npc.chat.options.range", 5),
         CHAT_BYSTANDERS_HEAR_TARGETED_CHAT("npc.chat.options.bystanders-hear-targeted-chat", true),

@@ -1,6 +1,8 @@
 package net.citizensnpcs.npc.ai.speech;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -9,79 +11,102 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.Talkable;
 import net.citizensnpcs.api.ai.speech.TalkableEntity;
-import net.citizensnpcs.api.ai.speech.Tongue;
+import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.VocalChord;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.Messaging;
 
 public class Chat implements VocalChord {
 
-	/*
-    	CHAT_FORMAT("npc.chat.format.no-targets", "[<npc>]: <text>"),
-        CHAT_FORMAT_TO_TARGET("npc.chat.format.to-target", "[<npc>] -> You: <text>"),
-        CHAT_FORMAT_TO_BYSTANDERS("npc.chat.prefix.to-bystanders", "[<npc>] -> [<target>]: <text>"),
-        CHAT_FORMAT_WITH_TARGETS_TO_BYSTANDERS("npc.chat.format.with-target-to-bystanders", "[<npc>] -> [<targets>]: <text>"),
-        CHAT_RANGE("npc.chat.options.range", 5),
-        CHAT_BYSTANDERS_HEAR_TARGETED_CHAT("npc.chat.options.bystanders-hear-targeted-chat", true),
-        CHAT_MAX_NUMBER_OF_TARGETS("npc.chat.options.max-number-of-targets-to-show", 2),
-        CHAT_MULTIPLE_TARGETS_FORMAT("npc.chat.options.multiple-targets-format", "<target>,|<target>|& <target>|& others"),
-	 */
-
 	public final String VOCAL_CHORD_NAME = "chat";
-	
-	@Override
-	public void talk(Tongue tongue) {
 
-		NPC npc = CitizensAPI.getNPCRegistry().getNPC(tongue.getTalker().getEntity());
+	@Override
+	public void talk(SpeechContext context) {
+
+		NPC npc = CitizensAPI.getNPCRegistry().getNPC(context.getTalker().getEntity());
 
 		// If no recipients, chat to the world with CHAT_FORMAT and CHAT_RANGE settings
-		if (!tongue.isTargeted()) {
-			String text = Setting.CHAT_FORMAT.asString().replace("<npc>", npc.getName()).replace("<text>", tongue.getContents());
-			talkToBystanders(npc, text, tongue);
+		if (!context.hasRecipients()) {
+			String text = Setting.CHAT_FORMAT.asString().replace("<npc>", npc.getName()).replace("<text>", context.getMessage());
+			talkToBystanders(npc, text, context);
 			return;
 		}
 
 		// Assumed recipients at this point
-		else if (tongue.getRecipients().size() <= 1) { // One recipient
-			String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<npc>", npc.getName()).replace("<text>", tongue.getContents());
-			tongue.getRecipients().get(0).talkTo(tongue, text, this);
+		else if (context.size() <= 1) { // One recipient
+			String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<npc>", npc.getName()).replace("<text>", context.getMessage());
+			String targetName = "";
+			// For each recipient
+			for (Talkable entity : context) {
+				entity.talkTo(context, text, this);
+				targetName = entity.getName();
+			}
+			// Check if bystanders hear targeted chat
 			if (!Setting.CHAT_BYSTANDERS_HEAR_TARGETED_CHAT.asBoolean()) return;
-			String bystanderText = Setting.CHAT_FORMAT_TO_BYSTANDERS.asString().replace("<npc>", npc.getName()).replace("<target>", tongue.getRecipients().get(0).getName()).replace("<text>", tongue.getContents());
-			talkToBystanders(npc, bystanderText, tongue);
+			// Format message with config setting and send to bystanders
+			String bystanderText = Setting.CHAT_FORMAT_TO_BYSTANDERS.asString().replace("<npc>", npc.getName()).replace("<target>", targetName).replace("<text>", context.getMessage());
+			talkToBystanders(npc, bystanderText, context);
 			return;
 		}
-		
-		else { // Multiple recipients
-			// Set up text
-			String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<npc>", npc.getName()).replace("<text>", tongue.getContents());
-			tongue.getRecipients().get(0).talkTo(tongue, text, this);
-			if (!Setting.CHAT_BYSTANDERS_HEAR_TARGETED_CHAT.asBoolean()) return;
-			String bystanders = null;
-			bystanders = bystanders + "";
-			String bystanderText = Setting.CHAT_FORMAT_WITH_TARGETS_TO_BYSTANDERS.asString().replace("<npc>", npc.getName()).replace("<targets>", tongue.getRecipients().get(0).getName()).replace("<text>", tongue.getContents());
-			talkToBystanders(npc, bystanderText, tongue);
 
-			// TODO: Finish multiple recipients
-		
+		else { // Multiple recipients
+			String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<npc>", npc.getName()).replace("<text>", context.getMessage());
+			List<String> targetNames = Collections.emptyList();
+			// Talk to each recipient
+			for (Talkable entity : context) {
+				entity.talkTo(context, text, this);
+				targetNames.add(entity.getName());
+			}
+
+			if (!Setting.CHAT_BYSTANDERS_HEAR_TARGETED_CHAT.asBoolean()) return;
+			String targets = "";
+			int max = Setting.CHAT_MAX_NUMBER_OF_TARGETS.asInt();
+			String[] format = Setting.CHAT_FORMAT_WITH_TARGETS_TO_BYSTANDERS.asString().split("\\|");
+			if (format.length != 4) Messaging.log(Level.WARNING, "npc.chat.format.with-target-to-bystanders invalid!");
+			if (max == 1) {
+				targets = format[0].replace("<npc>", targetNames.get(0)) + format[3];
+			}
+			else if (max == 2 || targetNames.size() == 2) {
+				if (targetNames.size() == 2) 
+					targets = format[0].replace("<npc>", targetNames.get(0)) + format[2].replace("<npc>", targetNames.get(1));
+				else 
+					targets = format[0].replace("<npc>", targetNames.get(0)) + format[1].replace("<npc>", targetNames.get(1)) + format[3];
+			}
+			else if (max >= 3) {
+				targets = format[0].replace("<npc>", targetNames.get(0));
+
+				int x = 1;
+				for (x = 1; x < max - 1; x++) {
+					if (targetNames.size() - 1 == x) break;
+					targets = targets + format[1].replace("<npc>", targetNames.get(x));
+				}
+				if (targetNames.size() == max)
+					targets = targets + format[2].replace("<npc>", targetNames.get(x));
+				else targets = targets + format[3];
+			}
+			
+				String bystanderText = Setting.CHAT_FORMAT_WITH_TARGETS_TO_BYSTANDERS.asString().replace("<npc>", npc.getName()).replace("<targets>", targets).replace("<text>", context.getMessage());
+				talkToBystanders(npc, bystanderText, context);
+			
 		}
 	}
 
-	private void talkToBystanders(NPC npc, String text, Tongue tongue) {
+	private void talkToBystanders(NPC npc, String text, SpeechContext context) {
 		// Get list of nearby entities
 		List<Entity> bystanderEntities = npc.getBukkitEntity().getNearbyEntities(Setting.CHAT_RANGE.asDouble(), Setting.CHAT_RANGE.asDouble(), Setting.CHAT_RANGE.asDouble());
 		for (Entity bystander : bystanderEntities) 
 			// Continue if a LivingEntity, which is compatible with TalkableEntity
 			if (bystander instanceof LivingEntity) {
-				// Exclude Targets
-				if (tongue.isTargeted()) {
-					for (Talkable target : tongue.getRecipients())
+				// Exclude targeted recipients
+				if (context.hasRecipients()) {
+					for (Talkable target : context)
 						if (target.getEntity() == bystander) continue;
 				} else
-				// Found a nearby LivingEntity, make it Talkable and talkNear it
-				new TalkableEntity((LivingEntity) bystander).talkNear(tongue, text, this);
+					// Found a nearby LivingEntity, make it Talkable and talkNear it
+					new TalkableEntity((LivingEntity) bystander).talkNear(context, text, this);
 			}
 	}
-	
-	
+
 	@Override
 	public String getName() {
 		return VOCAL_CHORD_NAME;
