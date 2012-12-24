@@ -8,6 +8,8 @@ import java.util.List;
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.speech.SpeechContext;
+import net.citizensnpcs.api.ai.speech.TalkableEntity;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -15,6 +17,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
+import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.command.Command;
@@ -959,6 +962,47 @@ public class NPCCommands {
         }
     }
 
+    @Command(
+            aliases = { "npc" },
+            usage = "speak message to speak --type vocalChordType ",
+            desc = "Uses the NPCs SpeechController to talk",
+            modifiers = { "speak" },
+            min = 1,
+            max = 3,
+            permission = "npc.speak")
+    public void speak(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+
+    	String type = npc.getTrait(Speech.class).getDefaultVocalChord();
+    	
+    	if (args.length() < 1) {
+    		Messaging.send(sender, "Default Vocal Chord for " + npc.getName() + ": " + npc.getTrait(Speech.class).getDefaultVocalChord());
+    		return;
+    	}
+    	Messaging.send(sender, "TEST: " + args.getJoinedStrings(1));
+    	SpeechContext context = new SpeechContext(args.getJoinedStrings(1));
+    	
+    	if (args.hasValueFlag("target")) {
+    		if (args.getFlag("target").matches("\\d+")) {
+    			NPC target = CitizensAPI.getNPCRegistry().getById(Integer.valueOf(args.getFlag("target"))); 
+    			if ( target != null)
+    				context.addRecipient(new TalkableEntity(target));
+    		} else {
+    			Player player = Bukkit.getPlayer(args.getFlag("target"));
+    			if (player != null)
+    				context.addRecipient(new TalkableEntity(player));
+    		}
+    	}
+    	
+    	if (args.hasValueFlag("type")) {
+    		if (CitizensAPI.getSpeechFactory().isRegistered(args.getFlag("type")))
+    				type = args.getFlag("type");
+    	}
+    	
+    	if (context.hasRecipients())
+    		Util.faceEntity(npc.getBukkitEntity(), context.iterator().next().getEntity());
+    	npc.getDefaultSpeechController().speak(new SpeechContext(args.getJoinedStrings(1)), type);
+    }
+    
     @Command(
             aliases = { "npc" },
             usage = "speed [speed]",

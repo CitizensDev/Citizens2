@@ -193,7 +193,8 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
             index = currentIndex++;
         }
         
-        npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), new TalkableEntity(player)));
+        npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
+        Messaging.log("Talking...");
         // Messaging.sendWithNPC(player, Setting.CHAT_PREFIX.asString() + text.get(index), npc);
         return true;
     }
