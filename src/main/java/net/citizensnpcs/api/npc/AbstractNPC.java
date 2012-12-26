@@ -11,6 +11,7 @@ import net.citizensnpcs.api.ai.speech.SpeechController;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.trait.Speech;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -93,6 +94,10 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public SpeechController getDefaultSpeechController() {
+    	// TODO: Remove in future versions.
+    	// This is here to add the Speech trait to any existing NPCs
+    	// that were created pre-SpeechController, if invoked.
+    	if (!hasTrait(Speech.class)) addTrait(Speech.class);
         return speechController;
     }
     
