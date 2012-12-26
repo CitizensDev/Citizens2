@@ -8,6 +8,7 @@ import java.util.Iterator;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
+import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.event.CitizensDisableEvent;
 import net.citizensnpcs.api.event.CitizensEnableEvent;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
@@ -36,6 +37,8 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
+import net.citizensnpcs.npc.ai.speech.Chat;
+import net.citizensnpcs.npc.ai.speech.CitizensSpeechFactory;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
@@ -63,6 +66,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private NPCDataStore saves;
     private NPCSelector selector;
     private CitizensTraitFactory traitFactory;
+    private CitizensSpeechFactory speechFactory;
 
     private void despawnNPCs() {
         Iterator<NPC> itr = npcRegistry.iterator();
@@ -150,6 +154,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public TraitFactory getTraitFactory() {
         return traitFactory;
     }
+    
+    @Override
+	public SpeechFactory getSpeechFactory() {
+		return speechFactory;
+	}
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String cmdName, String[] args) {
@@ -206,7 +215,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         npcRegistry = new CitizensNPCRegistry(saves);
         traitFactory = new CitizensTraitFactory();
         selector = new NPCSelector(this);
-
+        speechFactory = new CitizensSpeechFactory();
+        speechFactory.register(Chat.class, "chat");
+        
         getServer().getPluginManager().registerEvents(new EventListen(), this);
 
         if (Setting.NPC_COST.asDouble() > 0)
@@ -348,4 +359,5 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private static final String COMPATIBLE_MC_VERSION = "1.4.6";
+
 }

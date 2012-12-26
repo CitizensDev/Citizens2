@@ -8,6 +8,7 @@ import java.util.List;
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -15,6 +16,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
+import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.command.Command;
@@ -959,6 +961,45 @@ public class NPCCommands {
         }
     }
 
+    @Command(
+            aliases = { "npc" },
+            usage = "speak message to speak --target npcid|player_name --type vocal_type",
+            desc = "Uses the NPCs SpeechController to talk",
+            modifiers = { "speak" },
+            min = 2,
+            permission = "npc.speak")
+    public void speak(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+
+    	String type = npc.getTrait(Speech.class).getDefaultVocalChord();
+    	String message = StringHelper.parseColors(args.getJoinedStrings(1));
+        
+    	if (message.length() <= 0) {
+    		Messaging.send(sender, "Default Vocal Chord for " + npc.getName() + ": " + npc.getTrait(Speech.class).getDefaultVocalChord());
+    		return;
+    	}
+    	
+    	SpeechContext context = new SpeechContext(message);
+    	
+    	if (args.hasValueFlag("target")) {
+    		if (args.getFlag("target").matches("\\d+")) {
+    			NPC target = CitizensAPI.getNPCRegistry().getById(Integer.valueOf(args.getFlag("target"))); 
+    			if ( target != null)
+    				context.addRecipient(target.getBukkitEntity());
+    		} else {
+    			Player player = Bukkit.getPlayer(args.getFlag("target"));
+    			if (player != null)
+    				context.addRecipient(player);
+    		}
+    	}
+    	
+    	if (args.hasValueFlag("type")) {
+    		if (CitizensAPI.getSpeechFactory().isRegistered(args.getFlag("type")))
+    				type = args.getFlag("type");
+    	}
+    	
+    	npc.getDefaultSpeechController().speak(context, type);
+    }
+    
     @Command(
             aliases = { "npc" },
             usage = "speed [speed]",
