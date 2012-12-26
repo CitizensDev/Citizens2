@@ -243,4 +243,5 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final String NPC_METADATA_MARKER = "NPC";
+
 }

@@ -15,6 +15,7 @@ import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
+import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.Behaviour;
@@ -60,6 +61,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(NPCSkeletonType.class).withName("skeletontype"));
         registerTrait(TraitInfo.create(SlimeSize.class).withName("slimesize"));
         registerTrait(TraitInfo.create(Spawned.class).withName("spawned"));
+        registerTrait(TraitInfo.create(Speech.class).withName("speech"));
         registerTrait(TraitInfo.create(Text.class).withName("text"));
         registerTrait(TraitInfo.create(MobType.class).withName("type"));
         registerTrait(TraitInfo.create(Waypoints.class).withName("waypoints"));
