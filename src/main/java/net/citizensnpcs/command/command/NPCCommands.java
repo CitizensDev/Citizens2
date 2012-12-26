@@ -9,7 +9,6 @@ import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
-import net.citizensnpcs.api.ai.speech.TalkableEntity;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -30,6 +29,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
+import net.citizensnpcs.npc.ai.speech.TalkableEntity;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.Behaviour;
@@ -967,28 +967,29 @@ public class NPCCommands {
             usage = "speak message to speak --target npcid|player_name --type vocal_type",
             desc = "Uses the NPCs SpeechController to talk",
             modifiers = { "speak" },
-            min = 1,
-            max = 3,
+            min = 2,
             permission = "npc.speak")
     public void speak(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
 
     	String type = npc.getTrait(Speech.class).getDefaultVocalChord();
-    	
-    	if (args.length() < 1) {
+    	String message = StringHelper.parseColors(args.getJoinedStrings(1));
+        
+    	if (message.length() <= 0) {
     		Messaging.send(sender, "Default Vocal Chord for " + npc.getName() + ": " + npc.getTrait(Speech.class).getDefaultVocalChord());
     		return;
     	}
-    	SpeechContext context = new SpeechContext(args.getJoinedStrings(1));
+    	
+    	SpeechContext context = new SpeechContext(message);
     	
     	if (args.hasValueFlag("target")) {
     		if (args.getFlag("target").matches("\\d+")) {
     			NPC target = CitizensAPI.getNPCRegistry().getById(Integer.valueOf(args.getFlag("target"))); 
     			if ( target != null)
-    				context.addRecipient(new TalkableEntity(target));
+    				context.addRecipient(target.getBukkitEntity());
     		} else {
     			Player player = Bukkit.getPlayer(args.getFlag("target"));
     			if (player != null)
-    				context.addRecipient(new TalkableEntity(player));
+    				context.addRecipient(player);
     		}
     	}
     	
@@ -997,9 +998,7 @@ public class NPCCommands {
     				type = args.getFlag("type");
     	}
     	
-    	if (context.hasRecipients())
-    		Util.faceEntity(npc.getBukkitEntity(), context.iterator().next().getEntity());
-    	npc.getDefaultSpeechController().speak(new SpeechContext(args.getJoinedStrings(1)), type);
+    	npc.getDefaultSpeechController().speak(context, type);
     }
     
     @Command(

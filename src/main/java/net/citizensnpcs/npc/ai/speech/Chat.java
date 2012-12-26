@@ -10,7 +10,6 @@ import org.bukkit.entity.LivingEntity;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.Talkable;
-import net.citizensnpcs.api.ai.speech.TalkableEntity;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.VocalChord;
 import net.citizensnpcs.api.npc.NPC;
@@ -108,6 +107,7 @@ public class Chat implements VocalChord {
 				if (context.hasRecipients()) {
 					for (Talkable target : context)
 						if (target.getEntity() == bystander) continue;
+						else new TalkableEntity((LivingEntity) bystander).talkNear(context, text, this);
 				} else
 					// Found a nearby LivingEntity, make it Talkable and talkNear it
 					new TalkableEntity((LivingEntity) bystander).talkNear(context, text, this);

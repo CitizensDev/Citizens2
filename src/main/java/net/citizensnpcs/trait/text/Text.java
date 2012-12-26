@@ -12,12 +12,12 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.Talkable;
-import net.citizensnpcs.api.ai.speech.TalkableEntity;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.npc.ai.speech.TalkableEntity;
 import net.citizensnpcs.trait.Toggleable;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
@@ -194,7 +194,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         }
         
         npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
-        Messaging.log("Talking...");
         // Messaging.sendWithNPC(player, Setting.CHAT_PREFIX.asString() + text.get(index), npc);
         return true;
     }

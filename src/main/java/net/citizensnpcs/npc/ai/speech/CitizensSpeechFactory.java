@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.entity.LivingEntity;
+
 import com.google.common.base.Preconditions;
 
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
+import net.citizensnpcs.api.ai.speech.Talkable;
 import net.citizensnpcs.api.ai.speech.VocalChord;
 
 public class CitizensSpeechFactory implements SpeechFactory {
@@ -64,5 +67,13 @@ public class CitizensSpeechFactory implements SpeechFactory {
             throw new IllegalArgumentException("vocalchord name already registered");
 		registered.put(name.toLowerCase(), clazz);
 	}
+
+	@Override
+	public Talkable newTalkableEntity(LivingEntity entity) {
+		if (entity == null) return null;
+		return new TalkableEntity(entity);
+	}
+	
+	
 
 }
