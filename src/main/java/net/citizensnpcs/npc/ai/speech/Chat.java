@@ -21,10 +21,18 @@ public class Chat implements VocalChord {
 	public final String VOCAL_CHORD_NAME = "chat";
 
 	@Override
+	public String getName() {
+		return VOCAL_CHORD_NAME;
+	}
+
+	@Override
 	public void talk(SpeechContext context) {
-
+		
+		// Check valid talker
+		if (context.getTalker() == null) return;
 		NPC npc = CitizensAPI.getNPCRegistry().getNPC(context.getTalker().getEntity());
-
+		if (npc == null) return;
+		
 		// If no recipients, chat to the world with CHAT_FORMAT and CHAT_RANGE settings
 		if (!context.hasRecipients()) {
 			String text = Setting.CHAT_FORMAT.asString().replace("<npc>", npc.getName()).replace("<text>", context.getMessage());
@@ -87,7 +95,6 @@ public class Chat implements VocalChord {
 			
 				String bystanderText = Setting.CHAT_FORMAT_WITH_TARGETS_TO_BYSTANDERS.asString().replace("<npc>", npc.getName()).replace("<targets>", targets).replace("<text>", context.getMessage());
 				talkToBystanders(npc, bystanderText, context);
-			
 		}
 	}
 
@@ -105,11 +112,6 @@ public class Chat implements VocalChord {
 					// Found a nearby LivingEntity, make it Talkable and talkNear it
 					new TalkableEntity((LivingEntity) bystander).talkNear(context, text, this);
 			}
-	}
-
-	@Override
-	public String getName() {
-		return VOCAL_CHORD_NAME;
 	}
 
 }

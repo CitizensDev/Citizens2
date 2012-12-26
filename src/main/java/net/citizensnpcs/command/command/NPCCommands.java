@@ -964,7 +964,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "speak message to speak --type vocalChordType ",
+            usage = "speak message to speak --target npcid|player_name --type vocal_type",
             desc = "Uses the NPCs SpeechController to talk",
             modifiers = { "speak" },
             min = 1,
@@ -978,7 +978,6 @@ public class NPCCommands {
     		Messaging.send(sender, "Default Vocal Chord for " + npc.getName() + ": " + npc.getTrait(Speech.class).getDefaultVocalChord());
     		return;
     	}
-    	Messaging.send(sender, "TEST: " + args.getJoinedStrings(1));
     	SpeechContext context = new SpeechContext(args.getJoinedStrings(1));
     	
     	if (args.hasValueFlag("target")) {
