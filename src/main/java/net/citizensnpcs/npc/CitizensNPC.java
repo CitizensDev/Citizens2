@@ -22,11 +22,11 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_4_5.EntityLiving;
+import net.minecraft.server.v1_4_6.EntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -77,7 +77,7 @@ public class CitizensNPC extends AbstractNPC {
         return entityController.getBukkitEntity();
     }
 
-	@Deprecated
+    @Deprecated
     public EntityLiving getHandle() {
         return ((CraftLivingEntity) getBukkitEntity()).getHandle();
     }
@@ -243,4 +243,5 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final String NPC_METADATA_MARKER = "NPC";
+
 }
