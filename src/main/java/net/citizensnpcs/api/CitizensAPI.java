@@ -2,6 +2,7 @@ package net.citizensnpcs.api;
 
 import java.io.File;
 
+import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
@@ -79,6 +80,16 @@ public final class CitizensAPI {
         return getImplementation().getTraitFactory();
     }
 
+   /**
+    * Gets the current implementation's {@link SpeechFactory}.
+    * 
+    * @see CitizensPlugin
+    * @return Citizens speech factory
+    */
+   public static SpeechFactory getSpeechFactory() {
+       return getImplementation().getSpeechFactory();
+   }
+    
     /**
      * @return Whether a Citizens implementation is currently present
      */

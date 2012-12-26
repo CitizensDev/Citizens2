@@ -2,6 +2,7 @@ package net.citizensnpcs.api;
 
 import java.io.File;
 
+import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.TraitFactory;
 
@@ -26,6 +27,13 @@ public interface CitizensPlugin extends Plugin {
      * @return Citizens trait factory
      */
     public TraitFactory getTraitFactory();
+    
+    /**
+     * Gets the SpeechFactory.
+     * 
+     * @return Citizens speech factory
+     */
+    public SpeechFactory getSpeechFactory();
 
     /**
      * Called when the current Citizens implementation is changed

@@ -6,7 +6,7 @@ import net.citizensnpcs.api.npc.NPC;
  * Represents an event thrown by an NPC.
  */
 public abstract class NPCEvent extends CitizensEvent {
-    private final NPC npc;
+    final NPC npc;
 
     protected NPCEvent(NPC npc) {
         super();

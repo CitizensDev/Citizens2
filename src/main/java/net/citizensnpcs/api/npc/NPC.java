@@ -2,6 +2,7 @@ package net.citizensnpcs.api.npc;
 
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.Navigator;
+import net.citizensnpcs.api.ai.speech.SpeechController;
 import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
@@ -72,6 +73,13 @@ public interface NPC extends Agent {
      */
     public GoalController getDefaultGoalController();
 
+    /**
+     * Gets the default {@link SpeechController} of this NPC.
+     * 
+     * @return Default speech controller
+     */
+    public SpeechController getDefaultSpeechController();
+    
     /**
      * Gets the full name of this NPC.
      * 

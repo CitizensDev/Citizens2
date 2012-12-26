@@ -6,6 +6,8 @@ import java.util.Map;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.SimpleGoalController;
+import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
+import net.citizensnpcs.api.ai.speech.SpeechController;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.trait.Trait;
@@ -19,6 +21,7 @@ import com.google.common.collect.Maps;
 
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
+    private final SpeechController speechController = new SimpleSpeechController(this);
     private final int id;
     protected final MetadataStore metadata = new SimpleMetadataStore();
     private String name;
@@ -88,6 +91,11 @@ public abstract class AbstractNPC implements NPC {
         return goalController;
     }
 
+    @Override
+    public SpeechController getDefaultSpeechController() {
+        return speechController;
+    }
+    
     @Override
     public String getFullName() {
         return name;
