@@ -206,6 +206,16 @@ public class CommandContext {
         return location;
     }
 
+    public Location getSenderTargetBlockLocation() {
+        if (location != null || sender == null)
+            return location;
+        if (sender instanceof Player)
+            location = ((Player) sender).getTargetBlock(null, 50).getLocation();
+        else if (sender instanceof BlockCommandSender)
+            location = ((BlockCommandSender) sender).getBlock().getLocation();
+        return location;
+    }
+    
     public String[] getSlice(int index) {
         String[] slice = new String[args.length - index];
         System.arraycopy(args, index, slice, 0, args.length - index);
