@@ -75,10 +75,12 @@ public class EventListen implements Listener {
         List<Integer> ids = toRespawn.get(coord);
         for (int i = 0; i < ids.size(); i++) {
             int id = ids.get(i);
-            spawn(id);
+            boolean success = spawn(id);
+            if (!success)
+                continue;
+            ids.remove(i);
             Messaging.debug("Spawned", id, "due to chunk load at [" + coord.x + "," + coord.z + "]");
         }
-        toRespawn.removeAll(coord);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -92,7 +94,10 @@ public class EventListen implements Listener {
             boolean sameChunkCoordinates = coord.z == location.getBlockZ() >> 4
                     && coord.x == location.getBlockX() >> 4;
             if (sameChunkCoordinates && event.getWorld().equals(location.getWorld())) {
-                npc.despawn(DespawnReason.CHUNK_UNLOAD);
+                if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
+                    event.setCancelled(true);
+                    continue;
+                }
                 toRespawn.put(coord, npc.getId());
                 Messaging.debug("Despawned", npc.getId(), "due to chunk unload at [" + coord.x + ","
                         + coord.z + "]");
@@ -267,16 +272,16 @@ public class EventListen implements Listener {
         }
     }
 
-    private void spawn(int id) {
+    private boolean spawn(int id) {
         NPC npc = npcRegistry.getById(id);
         if (npc == null)
-            return;
+            return false;
         Location spawn = npc.getTrait(CurrentLocation.class).getLocation();
         if (spawn == null) {
             Messaging.debug("Couldn't find a spawn location for despawned NPC ID: " + id);
-            return;
+            return false;
         }
-        npc.spawn(spawn);
+        return npc.spawn(spawn);
     }
 
     private void storeForRespawn(NPC npc) {
