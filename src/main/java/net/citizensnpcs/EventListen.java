@@ -91,16 +91,15 @@ public class EventListen implements Listener {
             if (!npc.isSpawned())
                 continue;
             location = npc.getBukkitEntity().getLocation(location);
-            boolean sameChunkCoordinates = coord.z == location.getBlockZ() >> 4
-                    && coord.x == location.getBlockX() >> 4;
+            boolean sameChunkCoordinates = coord.z == location.getBlockZ() >> 4 && coord.x == location.getBlockX() >> 4;
             if (sameChunkCoordinates && event.getWorld().equals(location.getWorld())) {
-                if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
-                    event.setCancelled(true);
-                    continue;
+                npc.despawn(DespawnReason.CHUNK_UNLOAD);
+                if (event.getChunk().isLoaded()) {
+                    toRespawn.removeAll(coord);
+                    return;
                 }
                 toRespawn.put(coord, npc.getId());
-                Messaging.debug("Despawned", npc.getId(), "due to chunk unload at [" + coord.x + ","
-                        + coord.z + "]");
+                Messaging.debug("Despawned", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
             }
         }
     }
@@ -124,11 +123,9 @@ public class EventListen implements Listener {
             return;
         event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
         if (event instanceof EntityCombustByEntityEvent) {
-            Bukkit.getPluginManager().callEvent(
-                    new NPCCombustByEntityEvent((EntityCombustByEntityEvent) event, npc));
+            Bukkit.getPluginManager().callEvent(new NPCCombustByEntityEvent((EntityCombustByEntityEvent) event, npc));
         } else if (event instanceof EntityCombustByBlockEvent) {
-            Bukkit.getPluginManager().callEvent(
-                    new NPCCombustByBlockEvent((EntityCombustByBlockEvent) event, npc));
+            Bukkit.getPluginManager().callEvent(new NPCCombustByBlockEvent((EntityCombustByBlockEvent) event, npc));
         } else {
             Bukkit.getPluginManager().callEvent(new NPCCombustEvent(event, npc));
         }
@@ -141,8 +138,7 @@ public class EventListen implements Listener {
             return;
         event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
         if (event instanceof EntityDamageByEntityEvent) {
-            NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc,
-                    (EntityDamageByEntityEvent) event);
+            NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, (EntityDamageByEntityEvent) event);
             Bukkit.getPluginManager().callEvent(damageEvent);
 
             if (!damageEvent.isCancelled() || !(damageEvent.getDamager() instanceof Player))
@@ -153,8 +149,7 @@ public class EventListen implements Listener {
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
             Bukkit.getPluginManager().callEvent(leftClickEvent);
         } else if (event instanceof EntityDamageByBlockEvent) {
-            Bukkit.getPluginManager().callEvent(
-                    new NPCDamageByBlockEvent(npc, (EntityDamageByBlockEvent) event));
+            Bukkit.getPluginManager().callEvent(new NPCDamageByBlockEvent(npc, (EntityDamageByBlockEvent) event));
         } else {
             Bukkit.getPluginManager().callEvent(new NPCDamageEvent(npc, event));
         }
@@ -254,8 +249,7 @@ public class EventListen implements Listener {
             List<Integer> ids = toRespawn.get(chunk);
             for (int i = 0; i < ids.size(); i++) {
                 spawn(ids.get(i));
-                Messaging
-                        .debug("Spawned", ids.get(0), "due to world " + event.getWorld().getName() + " load");
+                Messaging.debug("Spawned", ids.get(0), "due to world " + event.getWorld().getName() + " load");
             }
             toRespawn.removeAll(chunk);
         }
