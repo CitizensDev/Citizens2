@@ -207,7 +207,7 @@ public class CommandContext {
     }
 
     public Location getSenderTargetBlockLocation() {
-        if (location != null || sender == null)
+        if (sender == null)
             return location;
         if (sender instanceof Player)
             location = ((Player) sender).getTargetBlock(null, 50).getLocation();

@@ -131,7 +131,7 @@ public class NPCCommands {
 			flags = "ac",
 			modifiers = { "anchor" },
 			min = 1,
-			max = 2,
+			max = 3,
 			permission = "npc.anchor")
 	@Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
 	public void anchor(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
