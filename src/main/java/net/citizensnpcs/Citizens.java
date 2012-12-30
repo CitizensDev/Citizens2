@@ -2,7 +2,6 @@ package net.citizensnpcs;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 
 import net.citizensnpcs.Settings.Setting;
@@ -55,8 +54,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Iterables;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CommandManager commands = new CommandManager();
@@ -84,23 +81,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
     }
 
-    public void test() {
-        getDataFolder().mkdirs();
-        final InputStream dllResource = getResource("path/to/dll");
-        try {
-            Files.copy(new InputSupplier<InputStream>() {
-                @Override
-                public InputStream getInput() throws IOException {
-                    return dllResource;
-                }
-            }, new File(getDataFolder(), "name.dll"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // code here
-        new File(getDataFolder(), "name.dll").delete();
-    }
-
     private void enableSubPlugins() {
         File root = new File(getDataFolder(), Setting.SUBPLUGIN_FOLDER.asString());
         if (!root.exists() || !root.isDirectory())
@@ -120,8 +100,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 Messaging.logTr(Messages.LOADING_SUB_PLUGIN, plugin.getDescription().getFullName());
                 plugin.onLoad();
             } catch (Throwable ex) {
-                Messaging.severeTr(Messages.ERROR_INITALISING_SUB_PLUGIN, ex.getMessage(), plugin
-                        .getDescription().getFullName());
+                Messaging.severeTr(Messages.ERROR_INITALISING_SUB_PLUGIN, ex.getMessage(), plugin.getDescription()
+                        .getFullName());
                 ex.printStackTrace();
             }
         }
@@ -154,11 +134,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public TraitFactory getTraitFactory() {
         return traitFactory;
     }
-    
+
     @Override
-	public SpeechFactory getSpeechFactory() {
-		return speechFactory;
-	}
+    public SpeechFactory getSpeechFactory() {
+        return speechFactory;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String cmdName, String[] args) {
@@ -217,7 +197,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         selector = new NPCSelector(this);
         speechFactory = new CitizensSpeechFactory();
         speechFactory.register(Chat.class, "chat");
-        
+
         getServer().getPluginManager().registerEvents(new EventListen(), this);
 
         if (Setting.NPC_COST.asDouble() > 0)
@@ -299,8 +279,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void setupEconomy() {
         try {
-            RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(
-                    Economy.class);
+            RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(Economy.class);
             if (provider != null && provider.getProvider() != null) {
                 Economy economy = provider.getProvider();
                 Bukkit.getPluginManager().registerEvents(new PaymentListener(economy), this);
@@ -321,6 +300,18 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     if (npcRegistry == null)
                         return 0;
                     return Iterables.size(npcRegistry);
+                }
+            });
+            metrics.addCustomData(new Metrics.Plotter("Total goals") {
+                @Override
+                public int getValue() {
+                    if (npcRegistry == null)
+                        return 0;
+                    int goalCount = 0;
+                    for (NPC npc : npcRegistry) {
+                        goalCount += Iterables.size(npc.getDefaultGoalController());
+                    }
+                    return goalCount;
                 }
             });
 
