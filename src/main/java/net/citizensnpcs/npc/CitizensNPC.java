@@ -58,8 +58,7 @@ public class CitizensNPC extends AbstractNPC {
             event.setCancelled(Setting.KEEP_CHUNKS_LOADED.asBoolean());
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            getBukkitEntity().getLocation().getChunk();
-            // ensure that we are in a loaded chunk.
+            getBukkitEntity().getLocation().getChunk().load();
             return false;
         }
         boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
@@ -97,8 +96,8 @@ public class CitizensNPC extends AbstractNPC {
         // Load traits
 
         String traitNames = root.getString("traitnames");
-        Iterable<DataKey> keys = traitNames.isEmpty() ? root.getRelative("traits").getSubKeys() : Iterables
-                .transform(Splitter.on(',').split(traitNames), new Function<String, DataKey>() {
+        Iterable<DataKey> keys = traitNames.isEmpty() ? root.getRelative("traits").getSubKeys() : Iterables.transform(
+                Splitter.on(',').split(traitNames), new Function<String, DataKey>() {
                     @Override
                     public DataKey apply(@Nullable String input) {
                         return root.getRelative("traits." + input);
@@ -196,8 +195,7 @@ public class CitizensNPC extends AbstractNPC {
 
         entityController.spawn(at, this);
         EntityLiving mcEntity = getHandle();
-        boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity,
-                SpawnReason.CUSTOM);
+        boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
         if (!couldSpawn) {
             // we need to wait for a chunk load before trying to spawn
             mcEntity = null;
@@ -213,8 +211,7 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         NMS.setHeadYaw(mcEntity, at.getYaw());
-        getBukkitEntity().setMetadata(NPC_METADATA_MARKER,
-                new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+        getBukkitEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         // Set the spawned state
         getTrait(CurrentLocation.class).setLocation(at);

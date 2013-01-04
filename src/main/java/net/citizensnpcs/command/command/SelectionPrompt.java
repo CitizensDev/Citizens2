@@ -55,8 +55,8 @@ public class SelectionPrompt extends NumericPrompt {
     }
 
     public static void start(NPCSelector selector, Player player, List<NPC> possible) {
-        final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin())
-                .withLocalEcho(false).withEscapeSequence("exit").withModality(false)
+        final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin()).withLocalEcho(false)
+                .withEscapeSequence("exit").withModality(false)
                 .withFirstPrompt(new SelectionPrompt(selector, possible)).buildConversation(player);
         conversation.begin();
     }

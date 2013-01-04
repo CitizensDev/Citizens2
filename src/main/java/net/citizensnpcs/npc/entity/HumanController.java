@@ -19,8 +19,8 @@ public class HumanController extends AbstractEntityController {
     @Override
     protected LivingEntity createEntity(final Location at, final NPC npc) {
         WorldServer ws = ((CraftWorld) at.getWorld()).getHandle();
-        final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws,
-                StringHelper.parseColors(npc.getFullName()), new PlayerInteractManager(ws), npc);
+        final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, StringHelper.parseColors(npc
+                .getFullName()), new PlayerInteractManager(ws), npc);
         handle.getBukkitEntity().teleport(at);
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override

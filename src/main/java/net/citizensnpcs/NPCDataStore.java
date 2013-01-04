@@ -28,6 +28,27 @@ public class NPCDataStore {
         root = saves;
     }
 
+    public void addPlotters(Graph graph) {
+        graph.addPlotter(new Plotter("Database") {
+            @Override
+            public int getValue() {
+                return root instanceof DatabaseStorage ? 1 : 0;
+            }
+        });
+        graph.addPlotter(new Plotter("YAML") {
+            @Override
+            public int getValue() {
+                return root instanceof YamlStorage ? 1 : 0;
+            }
+        });
+        graph.addPlotter(new Plotter("NBT") {
+            @Override
+            public int getValue() {
+                return root instanceof NBTStorage ? 1 : 0;
+            }
+        });
+    }
+
     public void loadInto(CitizensNPCRegistry registry) {
         int created = 0;
         for (DataKey key : root.getKey("npc").getIntegerSubKeys()) {
@@ -81,42 +102,19 @@ public class NPCDataStore {
         String type = Setting.STORAGE_TYPE.asString();
         if (type.equalsIgnoreCase("db") || type.equalsIgnoreCase("database")) {
             try {
-                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(),
-                        Setting.DATABASE_URL.asString(), Setting.DATABASE_USERNAME.asString(),
-                        Setting.DATABASE_PASSWORD.asString());
+                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
+                        Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
             } catch (SQLException e) {
                 e.printStackTrace();
                 Messaging.logTr(Messages.DATABASE_CONNECTION_FAILED);
             }
         } else if (type.equalsIgnoreCase("nbt")) {
-            saves = new NBTStorage(folder + File.separator + Setting.STORAGE_FILE.asString(),
-                    "Citizens NPC Storage");
+            saves = new NBTStorage(folder + File.separator + Setting.STORAGE_FILE.asString(), "Citizens NPC Storage");
         }
         if (saves == null)
             saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
         if (!saves.load())
             return null;
         return new NPCDataStore(saves);
-    }
-
-    public void addPlotters(Graph graph) {
-        graph.addPlotter(new Plotter("Database") {
-            @Override
-            public int getValue() {
-                return root instanceof DatabaseStorage ? 1 : 0;
-            }
-        });
-        graph.addPlotter(new Plotter("YAML") {
-            @Override
-            public int getValue() {
-                return root instanceof YamlStorage ? 1 : 0;
-            }
-        });
-        graph.addPlotter(new Plotter("NBT") {
-            @Override
-            public int getValue() {
-                return root instanceof NBTStorage ? 1 : 0;
-            }
-        });
     }
 }

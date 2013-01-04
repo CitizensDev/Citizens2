@@ -23,8 +23,7 @@ public class AnimationTriggerPrompt extends StringPrompt implements WaypointTrig
         if (input.equalsIgnoreCase("back"))
             return (Prompt) context.getSessionData("previous");
         if (input.equalsIgnoreCase("finish")) {
-            context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY,
-                    new AnimationTrigger(animations));
+            context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY, new AnimationTrigger(animations));
             return (Prompt) context.getSessionData(WaypointTriggerPrompt.RETURN_PROMPT_KEY);
         }
         PlayerAnimation animation = Util.matchEnum(PlayerAnimation.values(), input);
@@ -36,8 +35,7 @@ public class AnimationTriggerPrompt extends StringPrompt implements WaypointTrig
 
     @Override
     public String getPromptText(ConversationContext context) {
-        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.ANIMATION_TRIGGER_PROMPT,
-                getValidAnimations());
+        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.ANIMATION_TRIGGER_PROMPT, getValidAnimations());
         return "";
     }
 

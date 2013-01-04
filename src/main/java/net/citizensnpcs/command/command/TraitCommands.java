@@ -24,13 +24,8 @@ import com.google.common.collect.Lists;
 @Requirements(selected = true, ownership = true)
 public class TraitCommands {
 
-    @Command(
-            aliases = { "trait", "tr" },
-            usage = "add [trait name]...",
-            desc = "Adds traits to the NPC",
-            modifiers = { "add", "a" },
-            min = 1,
-            permission = "npc.trait")
+    @Command(aliases = { "trait", "tr" }, usage = "add [trait name]...", desc = "Adds traits to the NPC", modifiers = {
+            "add", "a" }, min = 1, permission = "npc.trait")
     public void add(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         List<String> added = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();

@@ -25,16 +25,15 @@ public class TriggerRemovePrompt extends StringPrompt {
             return (Prompt) context.getSessionData("previous");
         }
         if (editor.getCurrentWaypoint() == null) {
-            Messaging.sendErrorTr((CommandSender) context.getForWhom(),
-                    Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
+            Messaging.sendErrorTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
             return this;
         }
         int index = 0;
         try {
             index = Math.max(0, Integer.parseInt(input) - 1);
         } catch (NumberFormatException e) {
-            Messaging.sendErrorTr((CommandSender) context.getForWhom(),
-                    Messages.WAYPOINT_TRIGGER_REMOVE_INVALID_NUMBER);
+            Messaging
+                    .sendErrorTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_REMOVE_INVALID_NUMBER);
             return this;
         }
         List<WaypointTrigger> triggers = editor.getCurrentWaypoint().getTriggers();
@@ -43,8 +42,7 @@ public class TriggerRemovePrompt extends StringPrompt {
                     Messages.WAYPOINT_TRIGGER_REMOVE_INDEX_OUT_OF_RANGE, triggers.size());
         } else {
             triggers.remove(index);
-            Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_REMOVE_REMOVED,
-                    index + 1);
+            Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_REMOVE_REMOVED, index + 1);
         }
         return this;
     }
@@ -52,8 +50,7 @@ public class TriggerRemovePrompt extends StringPrompt {
     @Override
     public String getPromptText(ConversationContext context) {
         if (editor.getCurrentWaypoint() == null) {
-            Messaging.sendErrorTr((CommandSender) context.getForWhom(),
-                    Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
+            Messaging.sendErrorTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
             return "";
         }
         if (context.getSessionData("said") == Boolean.TRUE)
@@ -64,8 +61,7 @@ public class TriggerRemovePrompt extends StringPrompt {
         for (WaypointTrigger trigger : editor.getCurrentWaypoint().getTriggers()) {
             root += String.format("<br>     %d. " + trigger.description(), i++);
         }
-        Messaging
-                .sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_REMOVE_PROMPT + root);
+        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_REMOVE_PROMPT + root);
         return "";
     }
 }

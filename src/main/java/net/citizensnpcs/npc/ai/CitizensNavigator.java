@@ -23,10 +23,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
 public class CitizensNavigator implements Navigator, Runnable {
-    private final NavigatorParameters defaultParams = new NavigatorParameters()
-            .baseSpeed(UNINITIALISED_SPEED).range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
-            .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt())
-            .stuckAction(TeleportStuckAction.INSTANCE).examiner(new MinecraftBlockExaminer());
+    private final NavigatorParameters defaultParams = new NavigatorParameters().baseSpeed(UNINITIALISED_SPEED)
+            .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
+            .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt()).stuckAction(TeleportStuckAction.INSTANCE)
+            .examiner(new MinecraftBlockExaminer());
     private PathStrategy executing;
     private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
@@ -82,15 +82,12 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     public void load(DataKey root) {
         defaultParams.baseSpeed((float) root.getDouble("speed", UNINITIALISED_SPEED));
-        defaultParams.range((float) root.getDouble("pathfindingrange",
-                Setting.DEFAULT_PATHFINDING_RANGE.asFloat()));
-        defaultParams
-                .stationaryTicks(root.getInt("stationaryticks", Setting.DEFAULT_STATIONARY_TICKS.asInt()));
+        defaultParams.range((float) root.getDouble("pathfindingrange", Setting.DEFAULT_PATHFINDING_RANGE.asFloat()));
+        defaultParams.stationaryTicks(root.getInt("stationaryticks", Setting.DEFAULT_STATIONARY_TICKS.asInt()));
         defaultParams.speedModifier((float) root.getDouble("speedmodifier", 1F));
         if (root.keyExists("avoidwater"))
             defaultParams.avoidWater(root.getBoolean("avoidwater"));
-        if (!root.getBoolean("usedefaultstuckaction")
-                && defaultParams.stuckAction() == TeleportStuckAction.INSTANCE)
+        if (!root.getBoolean("usedefaultstuckaction") && defaultParams.stuckAction() == TeleportStuckAction.INSTANCE)
             defaultParams.stuckAction(null);
     }
 

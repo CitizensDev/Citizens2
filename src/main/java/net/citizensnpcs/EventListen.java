@@ -69,21 +69,13 @@ public class EventListen implements Listener {
     /*
      * Chunk events
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
-        List<Integer> ids = toRespawn.get(coord);
-        for (int i = 0; i < ids.size(); i++) {
-            int id = ids.get(i);
-            boolean success = spawn(id);
-            if (!success)
-                continue;
-            ids.remove(i);
-            Messaging.debug("Spawned", id, "due to chunk load at [" + coord.x + "," + coord.z + "]");
-        }
+        respawnAllFromCoord(coord);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
         Location location = new Location(null, 0, 0, 0);
@@ -93,13 +85,15 @@ public class EventListen implements Listener {
             location = npc.getBukkitEntity().getLocation(location);
             boolean sameChunkCoordinates = coord.z == location.getBlockZ() >> 4 && coord.x == location.getBlockX() >> 4;
             if (sameChunkCoordinates && event.getWorld().equals(location.getWorld())) {
-                npc.despawn(DespawnReason.CHUNK_UNLOAD);
-                if (event.getChunk().isLoaded()) {
-                    toRespawn.removeAll(coord);
+                if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
+                    event.setCancelled(true);
+                    Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
+                    respawnAllFromCoord(coord);
                     return;
                 }
                 toRespawn.put(coord, npc.getId());
-                Messaging.debug("Despawned", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+                Messaging.debug("Despawned id ", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z
+                        + "]");
             }
         }
     }
@@ -189,10 +183,6 @@ public class EventListen implements Listener {
         // undesirable as player NPCs are not real players and confuse plugins.
     }
 
-    /*
-     * Player events
-     */
-
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
         if (event.getCreator().hasPermission("citizens.admin.avoid-limits"))
@@ -219,6 +209,10 @@ public class EventListen implements Listener {
         }
     }
 
+    /*
+     * Player events
+     */
+
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = npcRegistry.getNPC(event.getRightClicked());
@@ -232,7 +226,7 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(rightClickEvent);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Editor.leave(event.getPlayer());
     }
@@ -255,14 +249,31 @@ public class EventListen implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
         for (NPC npc : npcRegistry) {
             if (!npc.isSpawned() || !npc.getBukkitEntity().getWorld().equals(event.getWorld()))
                 continue;
             storeForRespawn(npc);
-            npc.despawn();
+            npc.despawn(DespawnReason.WORLD_UNLOAD);
+            if (event.isCancelled())
+                return;
             Messaging.debug("Despawned", npc.getId() + "due to world unload at", event.getWorld().getName());
+        }
+    }
+
+    private void respawnAllFromCoord(ChunkCoord coord) {
+        List<Integer> ids = toRespawn.get(coord);
+        for (int i = 0; i < ids.size(); i++) {
+            int id = ids.get(i);
+            boolean success = spawn(id);
+            if (!success) {
+                Messaging.debug("Couldn't respawn id " + id + " during chunk event at [" + coord.x + "," + coord.z
+                        + "]");
+                continue;
+            }
+            ids.remove(i);
+            Messaging.debug("Spawned id ", id, "due to chunk event at [" + coord.x + "," + coord.z + "]");
         }
     }
 

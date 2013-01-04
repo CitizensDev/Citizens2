@@ -11,8 +11,7 @@ import net.minecraft.server.v1_4_6.Packet;
 
 public class EmptyNetworkManager extends NetworkManager {
 
-    public EmptyNetworkManager(Socket socket, String string, Connection conn, PrivateKey key)
-            throws IOException {
+    public EmptyNetworkManager(Socket socket, String string, Connection conn, PrivateKey key) throws IOException {
         super(socket, string, conn, key);
 
         NMS.stopNetworkThreads(this);

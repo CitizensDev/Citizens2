@@ -33,8 +33,8 @@ public enum PlayerAnimation {
     SLEEP {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            Packet17EntityLocationAction packet = new Packet17EntityLocationAction(player, 0,
-                    (int) player.locX, (int) player.locY, (int) player.locZ);
+            Packet17EntityLocationAction packet = new Packet17EntityLocationAction(player, 0, (int) player.locX,
+                    (int) player.locY, (int) player.locZ);
             sendPacketNearby(packet, player, radius);
         }
     },
@@ -42,8 +42,7 @@ public enum PlayerAnimation {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
             player.getBukkitEntity().setSneaking(true);
-            sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher(), true), player,
-                    radius);
+            sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher(), true), player, radius);
         }
     },
     STOP_SITTING {
@@ -63,8 +62,7 @@ public enum PlayerAnimation {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
             player.getBukkitEntity().setSneaking(false);
-            sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher(), true), player,
-                    radius);
+            sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher(), true), player, radius);
         }
     };
 

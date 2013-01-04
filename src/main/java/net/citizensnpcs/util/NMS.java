@@ -50,38 +50,12 @@ public class NMS {
         // util class
     }
 
-    public static void sendToOnline(Packet... packets) {
-        Validate.notNull(packets, "packets cannot be null");
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player == null || !player.isOnline())
-                continue;
-            for (Packet packet : packets) {
-                sendPacket(player, packet);
-            }
-        }
-    }
-
-    public static void sendPacketNearby(Location location, Packet packet, double radius) {
-        radius *= radius;
-        final org.bukkit.World world = location.getWorld();
-        for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
-            if (ply == null || world != ply.getWorld()) {
-                continue;
-            }
-            if (location.distanceSquared(ply.getLocation()) > radius) {
-                continue;
-            }
-            sendPacket(ply, packet);
-        }
-    }
-
-    public static void sendPacketNearby(Location location, Packet packet) {
-        NMS.sendPacketNearby(location, packet, 64);
-    }
-
     private static final float DEFAULT_SPEED = 0.4F;
+
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
+
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
+
     private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
     private static Field GOAL_FIELD;
     private static Field LAND_SPEED_MODIFIER_FIELD;
@@ -92,9 +66,7 @@ public class NMS {
     private static Set<Integer> SLAB_MATERIALS = Sets.newHashSet();
     private static Field SPEED_FIELD;
     private static Set<Integer> STAIR_MATERIALS = Sets.newHashSet();
-
     private static Field THREAD_STOPPER;
-
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
         if (bukkitEntity == null)
             return;
@@ -107,7 +79,6 @@ public class NMS {
             handle.world.players.add(handle);
         }
     }
-
     public static void attack(EntityLiving handle, EntityLiving target) {
         int damage = handle instanceof EntityMonster ? ((EntityMonster) handle).c((Entity) target) : 2;
 
@@ -157,8 +128,8 @@ public class NMS {
         }
     }
 
-    private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type)
-            throws SecurityException, NoSuchMethodException {
+    private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
+            NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -239,6 +210,35 @@ public class NMS {
 
     public static void sendPacket(Player player, Packet packet) {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    public static void sendPacketNearby(Location location, Packet packet) {
+        NMS.sendPacketNearby(location, packet, 64);
+    }
+
+    public static void sendPacketNearby(Location location, Packet packet, double radius) {
+        radius *= radius;
+        final org.bukkit.World world = location.getWorld();
+        for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
+            if (ply == null || world != ply.getWorld()) {
+                continue;
+            }
+            if (location.distanceSquared(ply.getLocation()) > radius) {
+                continue;
+            }
+            sendPacket(ply, packet);
+        }
+    }
+
+    public static void sendToOnline(Packet... packets) {
+        Validate.notNull(packets, "packets cannot be null");
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player == null || !player.isOnline())
+                continue;
+            for (Packet packet : packets) {
+                sendPacket(player, packet);
+            }
+        }
     }
 
     public static void setDestination(LivingEntity bukkitEntity, double x, double y, double z, float speed) {

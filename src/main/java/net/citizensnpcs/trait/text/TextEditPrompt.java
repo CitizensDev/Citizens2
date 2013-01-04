@@ -20,8 +20,7 @@ public class TextEditPrompt extends StringPrompt {
     public Prompt acceptInput(ConversationContext context, String input) {
         int index = (Integer) context.getSessionData("index");
         text.edit(index, input);
-        Messaging
-                .sendTr((CommandSender) context.getForWhom(), Messages.TEXT_EDITOR_EDITED_TEXT, index, input);
+        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.TEXT_EDITOR_EDITED_TEXT, index, input);
         return new TextStartPrompt(text);
     }
 

@@ -267,8 +267,8 @@ public class LinearWaypointProvider implements WaypointProvider {
             if (!event.getRightClicked().hasMetadata("waypointindex"))
                 return;
             editingSlot = event.getRightClicked().getMetadata("waypointindex").get(0).asInt();
-            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
-                    formatLoc(waypoints.get(editingSlot).getLocation()));
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot, formatLoc(waypoints
+                    .get(editingSlot).getLocation()));
         }
 
         @EventHandler
@@ -288,8 +288,8 @@ public class LinearWaypointProvider implements WaypointProvider {
                 editingSlot += diff > 0 ? 1 : -1;
             }
             normaliseEditingSlot();
-            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
-                    formatLoc(waypoints.get(editingSlot).getLocation()));
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot, formatLoc(waypoints
+                    .get(editingSlot).getLocation()));
         }
 
         private void onWaypointsModified() {
@@ -339,8 +339,8 @@ public class LinearWaypointProvider implements WaypointProvider {
         }
 
         private Iterator<Waypoint> getNewIterator() {
-            LinearWaypointsCompleteEvent event = new LinearWaypointsCompleteEvent(
-                    LinearWaypointProvider.this, waypoints.iterator());
+            LinearWaypointsCompleteEvent event = new LinearWaypointsCompleteEvent(LinearWaypointProvider.this,
+                    waypoints.iterator());
             Bukkit.getPluginManager().callEvent(event);
             Iterator<Waypoint> next = event.getNextWaypoints();
             return next;

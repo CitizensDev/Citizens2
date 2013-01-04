@@ -30,8 +30,7 @@ public class TextStartPrompt extends StringPrompt {
         else if (input.equalsIgnoreCase("random"))
             Messaging.sendTr(sender, Messages.TEXT_EDITOR_RANDOM_TALKER_SET, text.toggleRandomTalker());
         else if (input.equalsIgnoreCase("realistic looking"))
-            Messaging.sendTr(sender, Messages.TEXT_EDITOR_REALISTIC_LOOKING_SET,
-                    text.toggleRealisticLooking());
+            Messaging.sendTr(sender, Messages.TEXT_EDITOR_REALISTIC_LOOKING_SET, text.toggleRealisticLooking());
         else if (input.equalsIgnoreCase("close") || input.equalsIgnoreCase("talk-close"))
             Messaging.sendTr(sender, Messages.TEXT_EDITOR_CLOSE_TALKER_SET, text.toggle());
         else if (input.equalsIgnoreCase("range")) {

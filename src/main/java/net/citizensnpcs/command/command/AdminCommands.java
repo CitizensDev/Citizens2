@@ -23,10 +23,8 @@ public class AdminCommands {
 
     @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "admin")
     public void citizens(CommandContext args, CommandSender sender, NPC npc) {
-        Messaging.send(
-                sender,
-                "          "
-                        + StringHelper.wrapHeader("<e>Citizens v" + plugin.getDescription().getVersion()));
+        Messaging.send(sender,
+                "          " + StringHelper.wrapHeader("<e>Citizens v" + plugin.getDescription().getVersion()));
         Messaging.send(sender, "     <7>-- <c>Written by fullwall and aPunch");
         Messaging.send(sender, "     <7>-- <c>Source Code: http://github.com/CitizensDev");
         Messaging.send(sender, "     <7>-- <c>Website: " + plugin.getDescription().getWebsite());
