@@ -150,8 +150,8 @@ public class Equipment extends Trait {
 
     @Override
     public String toString() {
-        return "{hand=" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2]
-                + ",leggings=" + equipment[3] + ",boots=" + equipment[4] + "}";
+        return "{hand=" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2] + ",leggings="
+                + equipment[3] + ",boots=" + equipment[4] + "}";
     }
 
     private static class PlayerEquipmentWrapper implements EntityEquipment {

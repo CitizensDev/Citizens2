@@ -131,8 +131,7 @@ public class ItemStorage {
         }
 
         if (root.keyExists("enchantments")) {
-            Map<Enchantment, Integer> enchantments = deserialiseEnchantments(
-                    root.getRelative("enchantments"), res);
+            Map<Enchantment, Integer> enchantments = deserialiseEnchantments(root.getRelative("enchantments"), res);
             res.addEnchantments(enchantments);
         }
         deserialiseMeta(root.getRelative("meta"), res);

@@ -23,7 +23,8 @@ public interface NPCRegistry extends Iterable<NPC> {
      * Deregisters the {@link NPC} and removes all data about it from the data
      * store.
      * 
-     * @param npc The NPC to deregister
+     * @param npc
+     *            The NPC to deregister
      */
     public void deregister(NPC npc);
 

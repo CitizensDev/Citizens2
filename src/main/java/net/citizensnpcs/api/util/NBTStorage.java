@@ -147,8 +147,8 @@ public class NBTStorage implements Storage {
         }
 
         private Tag findLastTag(String key, boolean relative) {
-            String[] parts = Iterables.toArray(Splitter.on('.')
-                    .split(relative ? createRelativeKey(key) : key), String.class);
+            String[] parts = Iterables.toArray(Splitter.on('.').split(relative ? createRelativeKey(key) : key),
+                    String.class);
             Map<String, Tag> map = findLastParent(key);
             if (!map.containsKey(parts[parts.length - 1]))
                 return null;

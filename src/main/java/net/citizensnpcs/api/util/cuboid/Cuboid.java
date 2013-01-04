@@ -51,8 +51,8 @@ public class Cuboid {
     }
 
     public boolean includesPoint(int x, int y, int z) {
-        return lowCoords[0] <= x && lowCoords[1] <= y && lowCoords[2] <= z && highCoords[0] >= x
-                && highCoords[1] >= y && highCoords[2] >= z;
+        return lowCoords[0] <= x && lowCoords[1] <= y && lowCoords[2] <= z && highCoords[0] >= x && highCoords[1] >= y
+                && highCoords[2] >= z;
     }
 
     public boolean includesPoint(int[] point) {
@@ -85,6 +85,7 @@ public class Cuboid {
 
     @Override
     public String toString() {
-        return "x1=" + lowCoords[0] + " y1=" + lowCoords[1] + " z1=" + lowCoords[2] + " x2=" + highCoords[0] + " y2=" + highCoords[1] + " z2=" + highCoords[2];
+        return "x1=" + lowCoords[0] + " y1=" + lowCoords[1] + " z1=" + lowCoords[2] + " x2=" + highCoords[0] + " y2="
+                + highCoords[1] + " z2=" + highCoords[2];
     }
 }

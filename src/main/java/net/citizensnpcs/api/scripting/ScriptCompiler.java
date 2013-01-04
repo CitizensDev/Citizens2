@@ -29,8 +29,7 @@ import com.google.common.io.Closeables;
  * to compile.
  */
 public class ScriptCompiler extends Thread {
-    private final ScriptEngineManager engineManager = new ScriptEngineManager(
-            ScriptCompiler.class.getClassLoader());
+    private final ScriptEngineManager engineManager = new ScriptEngineManager(ScriptCompiler.class.getClassLoader());
     private final Map<String, ScriptEngine> engines = Maps.newHashMap();
     private final Function<File, FileEngine> fileEngineConverter = new Function<File, FileEngine>() {
         @Override
@@ -117,16 +116,15 @@ public class ScriptCompiler extends Thread {
                         callback.onScriptCompiled(engine.file, compiled);
                     }
                 } catch (IOException e) {
-                    System.err.println("[Citizens]: IO error while reading " + engine.file
-                            + " for scripting.");
+                    System.err.println("[Citizens]: IO error while reading " + engine.file + " for scripting.");
                     e.printStackTrace();
                 } catch (ScriptException e) {
-                    System.err.println("[Citizens]: Compile error while parsing script at "
-                            + engine.file.getName() + ".");
+                    System.err.println("[Citizens]: Compile error while parsing script at " + engine.file.getName()
+                            + ".");
                     Throwables.getRootCause(e).printStackTrace();
                 } catch (Throwable t) {
-                    System.err.println("[Citizens]: Unexpected error while parsing script at "
-                            + engine.file.getName() + ".");
+                    System.err.println("[Citizens]: Unexpected error while parsing script at " + engine.file.getName()
+                            + ".");
                     t.printStackTrace();
                 } finally {
                     Closeables.closeQuietly(reader);

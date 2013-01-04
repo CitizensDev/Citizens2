@@ -220,8 +220,7 @@ public class YamlStorage implements Storage {
         @Override
         public Map<String, Object> getValuesDeep() {
             ConfigurationSection subSection = config.getConfigurationSection(current);
-            return (Map<String, Object>) (subSection == null ? Collections.emptyMap() : subSection
-                    .getValues(true));
+            return (Map<String, Object>) (subSection == null ? Collections.emptyMap() : subSection.getValues(true));
         }
 
         @Override

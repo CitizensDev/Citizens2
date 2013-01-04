@@ -68,8 +68,7 @@ public class PersistenceLoaderTest {
     public void usesSpecificCollectionClass() {
         root.setInt("list.0", 5);
         root.setInt("set.0", 5);
-        SpecificCollectionClassTest instance = PersistenceLoader
-                .load(SpecificCollectionClassTest.class, root);
+        SpecificCollectionClassTest instance = PersistenceLoader.load(SpecificCollectionClassTest.class, root);
         assertEquals(instance.list.getClass(), LinkedList.class);
         assertEquals(instance.set.getClass(), LinkedHashSet.class);
     }

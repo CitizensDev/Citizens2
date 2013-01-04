@@ -55,8 +55,10 @@ public interface Script {
      * Invokes a root-level method using the method name and args and returns
      * the result.
      * 
-     * @param name The method name
-     * @param args The method arguments
+     * @param name
+     *            The method name
+     * @param args
+     *            The method arguments
      * @return The result of the method call, or null if there was none
      */
     public Object invoke(String name, Object... args);

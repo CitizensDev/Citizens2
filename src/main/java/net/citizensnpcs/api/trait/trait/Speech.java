@@ -9,9 +9,9 @@ import net.citizensnpcs.api.trait.Trait;
  * Represents the default speech settings of an NPC.
  */
 public class Speech extends Trait {
-	
-	@Persist("")
-	private String defaultVocalChord = DEFAULT_VOCAL_CHORD;
+
+    @Persist("")
+    private String defaultVocalChord = DEFAULT_VOCAL_CHORD;
 
     public Speech() {
         super("speech");
@@ -34,7 +34,7 @@ public class Speech extends Trait {
     public void setDefaultVocalChord(Class<VocalChord> clazz) {
         defaultVocalChord = CitizensAPI.getSpeechFactory().getVocalChordName(clazz);
     }
-    
+
     @Override
     public String toString() {
         return "DefaultVocalChord{" + defaultVocalChord + "}";

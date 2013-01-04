@@ -118,8 +118,8 @@ public class DatabaseStorage implements Storage {
         PreparedStatement stmt = null;
         Table created = null;
         try {
-            stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS `" + name + "`(`" + pk + "` "
-                    + directType + primaryType + ")");
+            stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS `" + name + "`(`" + pk + "` " + directType
+                    + primaryType + ")");
             stmt.execute();
             created = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(directType);
             tables.put(name, created);
@@ -134,8 +134,8 @@ public class DatabaseStorage implements Storage {
     private String ensureRelation(String pk, Table from, final Table to) {
         Connection conn = getConnection();
         try {
-            String existing = queryRunner.query(conn, "SELECT `fk_" + to.name + "` FROM " + from.name
-                    + " WHERE " + from.primaryKey + " = ?", new ResultSetHandler<String>() {
+            String existing = queryRunner.query(conn, "SELECT `fk_" + to.name + "` FROM " + from.name + " WHERE "
+                    + from.primaryKey + " = ?", new ResultSetHandler<String>() {
                 @Override
                 public String handle(ResultSet rs) throws SQLException {
                     return rs.next() ? rs.getString("fk_" + to.name) : null;
@@ -171,8 +171,8 @@ public class DatabaseStorage implements Storage {
         }
         try {
             if (conn == null || conn.isClosed()) {
-                conn = (username.isEmpty() && password.isEmpty()) ? DriverManager.getConnection(url)
-                        : DriverManager.getConnection(url, username, password);
+                conn = (username.isEmpty() && password.isEmpty()) ? DriverManager.getConnection(url) : DriverManager
+                        .getConnection(url, username, password);
                 return conn;
             }
         } catch (SQLException ex) {
@@ -349,8 +349,7 @@ public class DatabaseStorage implements Storage {
                 stmt = conn.prepareStatement("SELECT `" + table.primaryKey + "` FROM `" + current + "`");
                 rs = stmt.executeQuery();
                 while (rs.next()) {
-                    final Traversed found = new Traversed(table, rs.getString(table.primaryKey),
-                            table.primaryKey);
+                    final Traversed found = new Traversed(table, rs.getString(table.primaryKey), table.primaryKey);
                     keys.add(new DatabaseKey() {
                         @Override
                         public Traversed getRoot() {
@@ -395,8 +394,8 @@ public class DatabaseStorage implements Storage {
             if (!t.found.hasColumn(t.column))
                 return null;
             try {
-                return queryRunner.query(getConnection(), "SELECT `" + t.column + "` FROM " + t.found.name
-                        + " WHERE `" + t.found.primaryKey + "`=?", resultSetHandler, t.key);
+                return queryRunner.query(getConnection(), "SELECT `" + t.column + "` FROM " + t.found.name + " WHERE `"
+                        + t.found.primaryKey + "`=?", resultSetHandler, t.key);
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 return null;
@@ -431,8 +430,8 @@ public class DatabaseStorage implements Storage {
                     queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`=? WHERE `"
                             + t.found.primaryKey + "`=?", null, t.key);
                 } else {
-                    queryRunner.update(conn, "DELETE FROM `" + t.found.name + "` WHERE `"
-                            + t.found.primaryKey + "=?", t.key);
+                    queryRunner.update(conn, "DELETE FROM `" + t.found.name + "` WHERE `" + t.found.primaryKey + "=?",
+                            t.key);
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -488,8 +487,8 @@ public class DatabaseStorage implements Storage {
                         + t.found.primaryKey + "=?", value, t.key);
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                System.out.println("UPDATE " + t.found.name + " SET " + t.column + "=? WHERE "
-                        + t.found.primaryKey + "=?" + " " + value + " " + t.key);
+                System.out.println("UPDATE " + t.found.name + " SET " + t.column + "=? WHERE " + t.found.primaryKey
+                        + "=?" + " " + value + " " + t.key);
             }
         }
 
@@ -606,8 +605,7 @@ public class DatabaseStorage implements Storage {
         public void insert(String primary) {
             Connection conn = getConnection();
             try {
-                queryRunner.update(conn, "INSERT INTO `" + name + "` (`" + primaryKey + "`) VALUES (?)",
-                        primary);
+                queryRunner.update(conn, "INSERT INTO `" + name + "` (`" + primaryKey + "`) VALUES (?)", primary);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }

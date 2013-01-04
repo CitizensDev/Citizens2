@@ -49,8 +49,7 @@ public class QuadTree {
     }
 
     private QuadNode ascendFirstSearch(QuadNode node, int x, int z) {
-        while (node != null
-                && (node.x > x || node.z > z || (node.x + node.size) < x || (node.z + node.size) < z)) {
+        while (node != null && (node.x > x || node.z > z || (node.x + node.size) < x || (node.z + node.size) < z)) {
             node = node.parent;
         }
         if (node == null)
@@ -441,8 +440,7 @@ public class QuadTree {
 
     private boolean nodeFullyContainsCuboid(QuadNode node, Cuboid cuboid) {
         return node.x <= cuboid.lowCoords[0] && node.z <= cuboid.lowCoords[2]
-                && (node.x + node.size) >= cuboid.highCoords[0]
-                && (node.z + node.size) >= cuboid.highCoords[2];
+                && (node.x + node.size) >= cuboid.highCoords[0] && (node.z + node.size) >= cuboid.highCoords[2];
     }
 
     public boolean overlapsExisting(Cuboid cuboid) {

@@ -256,8 +256,7 @@ public abstract class AbstractQueryRunner {
      * @throws SQLException
      *             If a database access error occurs
      */
-    public void fillStatementWithBean(PreparedStatement stmt, Object bean, String... propertyNames)
-            throws SQLException {
+    public void fillStatementWithBean(PreparedStatement stmt, Object bean, String... propertyNames) throws SQLException {
         PropertyDescriptor[] descriptors;
         try {
             descriptors = Introspector.getBeanInfo(bean.getClass()).getPropertyDescriptors();
@@ -280,8 +279,7 @@ public abstract class AbstractQueryRunner {
                 }
             }
             if (!found) {
-                throw new RuntimeException("Couldn't find bean property: " + bean.getClass() + " "
-                        + propertyName);
+                throw new RuntimeException("Couldn't find bean property: " + bean.getClass() + " " + propertyName);
             }
         }
         fillStatementWithBean(stmt, bean, sorted);

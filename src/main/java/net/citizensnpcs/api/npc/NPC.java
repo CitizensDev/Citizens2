@@ -79,7 +79,7 @@ public interface NPC extends Agent {
      * @return Default speech controller
      */
     public SpeechController getDefaultSpeechController();
-    
+
     /**
      * Gets the full name of this NPC.
      * 

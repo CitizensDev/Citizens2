@@ -71,6 +71,16 @@ public final class CitizensAPI {
     }
 
     /**
+     * Gets the current implementation's {@link SpeechFactory}.
+     * 
+     * @see CitizensPlugin
+     * @return Citizens speech factory
+     */
+    public static SpeechFactory getSpeechFactory() {
+        return getImplementation().getSpeechFactory();
+    }
+
+    /**
      * Gets the current implementation's {@link TraitFactory}.
      * 
      * @see CitizensPlugin
@@ -80,16 +90,6 @@ public final class CitizensAPI {
         return getImplementation().getTraitFactory();
     }
 
-   /**
-    * Gets the current implementation's {@link SpeechFactory}.
-    * 
-    * @see CitizensPlugin
-    * @return Citizens speech factory
-    */
-   public static SpeechFactory getSpeechFactory() {
-       return getImplementation().getSpeechFactory();
-   }
-    
     /**
      * @return Whether a Citizens implementation is currently present
      */

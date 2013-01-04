@@ -22,11 +22,11 @@ import com.google.common.collect.Maps;
 
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
-    private final SpeechController speechController = new SimpleSpeechController(this);
     private final int id;
     protected final MetadataStore metadata = new SimpleMetadataStore();
     private String name;
     protected final List<Runnable> runnables = Lists.newArrayList();
+    private final SpeechController speechController = new SimpleSpeechController(this);
     protected final Map<Class<? extends Trait>, Trait> traits = Maps.newHashMap();
 
     protected AbstractNPC(int id, String name) {
@@ -94,13 +94,14 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public SpeechController getDefaultSpeechController() {
-    	// TODO: Remove in future versions.
-    	// This is here to add the Speech trait to any existing NPCs
-    	// that were created pre-SpeechController, if invoked.
-    	if (!hasTrait(Speech.class)) addTrait(Speech.class);
+        // TODO: Remove in future versions.
+        // This is here to add the Speech trait to any existing NPCs
+        // that were created pre-SpeechController, if invoked.
+        if (!hasTrait(Speech.class))
+            addTrait(Speech.class);
         return speechController;
     }
-    
+
     @Override
     public String getFullName() {
         return name;

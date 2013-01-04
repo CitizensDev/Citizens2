@@ -50,7 +50,8 @@ public class PlayerCreateNPCEvent extends NPCEvent implements Cancellable {
      * Sets the reason for cancelling the event. This will be sent to the
      * {@link Player} creator to explain why the NPC cannot be created.
      * 
-     * @param reason The reason explaining the cancellation
+     * @param reason
+     *            The reason explaining the cancellation
      */
     public void setCancelReason(String reason) {
         this.reason = reason;

@@ -22,18 +22,18 @@ public interface CitizensPlugin extends Plugin {
     public File getScriptFolder();
 
     /**
-     * Gets the TraitFactory.
-     * 
-     * @return Citizens trait factory
-     */
-    public TraitFactory getTraitFactory();
-    
-    /**
      * Gets the SpeechFactory.
      * 
      * @return Citizens speech factory
      */
     public SpeechFactory getSpeechFactory();
+
+    /**
+     * Gets the TraitFactory.
+     * 
+     * @return Citizens trait factory
+     */
+    public TraitFactory getTraitFactory();
 
     /**
      * Called when the current Citizens implementation is changed

@@ -23,8 +23,7 @@ public class SimpleGoalController implements GoalController {
     @Override
     public void addGoal(Goal goal, int priority) {
         Preconditions.checkNotNull(goal, "goal cannot be null");
-        Preconditions.checkState(priority > 0 && priority < Integer.MAX_VALUE,
-                "priority must be greater than 0");
+        Preconditions.checkState(priority > 0 && priority < Integer.MAX_VALUE, "priority must be greater than 0");
         SimpleGoalEntry entry = new SimpleGoalEntry(goal, priority);
         if (possibleGoals.contains(entry))
             return;
