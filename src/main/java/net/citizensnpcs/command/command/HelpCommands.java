@@ -112,8 +112,7 @@ public class HelpCommands {
             throw new CommandException(Messages.COMMAND_PAGE_MISSING, page);
     }
 
-    private void sendSpecificHelp(CommandSender sender, String rootCommand, String modifier)
-            throws CommandException {
+    private void sendSpecificHelp(CommandSender sender, String rootCommand, String modifier) throws CommandException {
         CommandInfo info = plugin.getCommandInfo(rootCommand, modifier);
         if (info == null)
             throw new CommandException(Messages.COMMAND_MISSING, rootCommand + " " + modifier);
@@ -165,7 +164,7 @@ public class HelpCommands {
     private static final String COMMAND_FORMAT = "<7>/<c>%s%s <7>- <e>%s";
 
     private static final String format(Command command) {
-        return String.format(COMMAND_FORMAT, command.aliases()[0], (command.usage().isEmpty() ? "" : " "
-                + command.usage()), Messaging.tryTranslate(command.desc()));
+        return String.format(COMMAND_FORMAT, command.aliases()[0],
+                (command.usage().isEmpty() ? "" : " " + command.usage()), Messaging.tryTranslate(command.desc()));
     }
 }

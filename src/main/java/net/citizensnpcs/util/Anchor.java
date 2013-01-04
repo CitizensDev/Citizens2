@@ -44,14 +44,14 @@ public class Anchor {
     }
 
     public String stringValue() {
-        return name + ";" + location.getWorld().getName() + ";" + location.getX() + ";" + location.getY()
-                + ";" + location.getZ();
+        return name + ";" + location.getWorld().getName() + ";" + location.getX() + ";" + location.getY() + ";"
+                + location.getZ();
     }
 
     @Override
     public String toString() {
-        return "Name: " + name + " World: " + location.getWorld().getName() + " Location: "
-                + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
+        return "Name: " + name + " World: " + location.getWorld().getName() + " Location: " + location.getBlockX()
+                + "," + location.getBlockY() + "," + location.getBlockZ();
     }
 
 }

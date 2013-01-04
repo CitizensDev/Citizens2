@@ -26,8 +26,7 @@ public class WaypointCommands {
             min = 1,
             max = 1,
             permission = "waypoints.disableteleport")
-    public void disableTeleporting(CommandContext args, CommandSender sender, NPC npc)
-            throws CommandException {
+    public void disableTeleporting(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         npc.getNavigator().getDefaultParameters().stuckAction(null);
         Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_DISABLED);
     }
@@ -47,8 +46,7 @@ public class WaypointCommands {
             if (args.hasFlag('a')) {
                 waypoints.describeProviders(sender);
             } else
-                Messaging.sendTr(sender, Messages.CURRENT_WAYPOINT_PROVIDER,
-                        waypoints.getCurrentProviderName());
+                Messaging.sendTr(sender, Messages.CURRENT_WAYPOINT_PROVIDER, waypoints.getCurrentProviderName());
             return;
         }
         boolean success = waypoints.setWaypointProvider(args.getString(1));

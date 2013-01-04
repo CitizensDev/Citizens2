@@ -30,8 +30,7 @@ public class ScriptCommands {
             min = 2,
             max = 2,
             permission = "script.compile")
-    public void runScript(final CommandContext args, final CommandSender sender, NPC npc)
-            throws CommandException {
+    public void runScript(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         File file = new File(CitizensAPI.getScriptFolder(), args.getString(1));
         if (!file.exists())
             throw new CommandException(Messages.SCRIPT_FILE_MISSING, args.getString(1));

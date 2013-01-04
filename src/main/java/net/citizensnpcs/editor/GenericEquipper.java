@@ -56,8 +56,7 @@ public class GenericEquipper implements Equipper {
             case AIR:
                 for (int i = 0; i < 5; i++) {
                     if (trait.get(i) != null && trait.get(i).getType() != Material.AIR) {
-                        equipper.getWorld().dropItemNaturally(toEquip.getBukkitEntity().getLocation(),
-                                trait.get(i));
+                        equipper.getWorld().dropItemNaturally(toEquip.getBukkitEntity().getLocation(), trait.get(i));
                         trait.set(i, null);
                     }
                 }

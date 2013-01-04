@@ -202,16 +202,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         }
     }
 
-    public static interface MovementController {
-        void leftClick(PlayerInteractEvent event);
-
-        void rightClick(PlayerInteractEvent event);
-
-        void rightClickEntity(NPCRightClickEvent event);
-
-        void run(Player rider);
-    }
-
     public class GroundController implements MovementController {
         private void jump() {
             boolean allowed = getHandle().onGround;
@@ -247,6 +237,16 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         private static final float AIR_SPEED = 1.5F;
         private static final float GROUND_SPEED = 4F;
         private static final float JUMP_VELOCITY = 0.6F;
+    }
+
+    public static interface MovementController {
+        void leftClick(PlayerInteractEvent event);
+
+        void rightClick(PlayerInteractEvent event);
+
+        void rightClickEntity(NPCRightClickEvent event);
+
+        void run(Player rider);
     }
 
     private static final Map<EntityType, Class<? extends MovementController>> controllerTypes = Maps

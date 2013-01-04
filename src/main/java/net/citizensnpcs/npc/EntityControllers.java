@@ -38,8 +38,8 @@ import com.google.common.collect.Maps;
 
 public class EntityControllers {
 
-    private static final Map<EntityType, Class<? extends EntityController>> TYPES = Maps
-            .newEnumMap(EntityType.class);
+    private static final Map<EntityType, Class<? extends EntityController>> TYPES = Maps.newEnumMap(EntityType.class);
+
     public static EntityController createForType(EntityType type) {
         Class<? extends EntityController> controllerClass = TYPES.get(type);
         if (controllerClass == null)

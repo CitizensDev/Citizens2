@@ -18,8 +18,7 @@ import net.minecraft.server.v1_4_6.Packet3Chat;
 import net.minecraft.server.v1_4_6.Packet51MapChunk;
 
 public class EmptyNetHandler extends PlayerConnection {
-    public EmptyNetHandler(MinecraftServer minecraftServer, NetworkManager networkManager,
-            EntityPlayer entityPlayer) {
+    public EmptyNetHandler(MinecraftServer minecraftServer, NetworkManager networkManager, EntityPlayer entityPlayer) {
         super(minecraftServer, networkManager, entityPlayer);
     }
 

@@ -102,8 +102,7 @@ public class Template {
         }
     }
 
-    private static YamlStorage templates = new YamlStorage(new File(CitizensAPI.getDataFolder(),
-            "templates.yml"));
+    private static YamlStorage templates = new YamlStorage(new File(CitizensAPI.getDataFolder(), "templates.yml"));
 
     public static Template byName(String name) {
         if (!templates.getKey("").keyExists(name))

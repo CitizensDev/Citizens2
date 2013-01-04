@@ -35,8 +35,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class CommandManager {
-    private final Map<Class<? extends Annotation>, CommandAnnotationProcessor> annotationProcessors = Maps
-            .newHashMap();
+    private final Map<Class<? extends Annotation>, CommandAnnotationProcessor> annotationProcessors = Maps.newHashMap();
 
     /*
      * Mapping of commands (including aliases) with a description. Root commands
@@ -77,8 +76,8 @@ public class CommandManager {
      * @throws CommandException
      *             Any exceptions caused from execution of the command
      */
-    public void execute(org.bukkit.command.Command command, String[] args, CommandSender sender,
-            Object... methodArgs) throws CommandException {
+    public void execute(org.bukkit.command.Command command, String[] args, CommandSender sender, Object... methodArgs)
+            throws CommandException {
         // must put command into split.
         String[] newArgs = new String[args.length + 1];
         System.arraycopy(args, 0, newArgs, 1, args.length);
@@ -90,8 +89,7 @@ public class CommandManager {
     }
 
     // Attempt to execute a command.
-    private void executeMethod(String[] args, CommandSender sender, Object[] methodArgs)
-            throws CommandException {
+    private void executeMethod(String[] args, CommandSender sender, Object[] methodArgs) throws CommandException {
         String cmdName = args[0];
         String modifier = args.length > 1 ? args[1] : "";
 
@@ -288,8 +286,7 @@ public class CommandManager {
     // Returns whether a player has access to a command.
     private boolean hasPermission(Method method, CommandSender sender) {
         Command cmd = method.getAnnotation(Command.class);
-        if (cmd.permission().isEmpty() || hasPermission(sender, cmd.permission())
-                || hasPermission(sender, "admin"))
+        if (cmd.permission().isEmpty() || hasPermission(sender, cmd.permission()) || hasPermission(sender, "admin"))
             return true;
 
         return false;

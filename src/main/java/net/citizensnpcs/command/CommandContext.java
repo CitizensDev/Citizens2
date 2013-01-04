@@ -215,7 +215,7 @@ public class CommandContext {
             location = ((BlockCommandSender) sender).getBlock().getLocation();
         return location;
     }
-    
+
     public String[] getSlice(int index) {
         String[] slice = new String[args.length - index];
         System.arraycopy(args, index, slice, 0, args.length - index);

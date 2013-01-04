@@ -53,9 +53,9 @@ public class TriggerEditPrompt extends StringPrompt {
     }
 
     public static Conversation start(Player player, WaypointEditor editor) {
-        final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin())
-                .withLocalEcho(false).withEscapeSequence("exit").withEscapeSequence("/npc path")
-                .withModality(false).withFirstPrompt(new TriggerEditPrompt(editor)).buildConversation(player);
+        final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin()).withLocalEcho(false)
+                .withEscapeSequence("exit").withEscapeSequence("/npc path").withModality(false)
+                .withFirstPrompt(new TriggerEditPrompt(editor)).buildConversation(player);
         conversation.begin();
         return conversation;
     }

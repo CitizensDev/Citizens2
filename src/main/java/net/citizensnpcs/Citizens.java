@@ -62,8 +62,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private CitizensNPCRegistry npcRegistry;
     private NPCDataStore saves;
     private NPCSelector selector;
-    private CitizensTraitFactory traitFactory;
     private CitizensSpeechFactory speechFactory;
+    private CitizensTraitFactory traitFactory;
 
     private void despawnNPCs() {
         Iterator<NPC> itr = npcRegistry.iterator();
@@ -131,13 +131,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
-    public TraitFactory getTraitFactory() {
-        return traitFactory;
+    public SpeechFactory getSpeechFactory() {
+        return speechFactory;
     }
 
     @Override
-    public SpeechFactory getSpeechFactory() {
-        return speechFactory;
+    public TraitFactory getTraitFactory() {
+        return traitFactory;
     }
 
     @Override

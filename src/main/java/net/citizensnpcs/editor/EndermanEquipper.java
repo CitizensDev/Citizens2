@@ -27,8 +27,7 @@ public class EndermanEquipper implements Equipper {
                 return;
             }
         } else {
-            equipper.getWorld()
-                    .dropItemNaturally(npc.getBukkitEntity().getLocation(), carried.toItemStack(1));
+            equipper.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), carried.toItemStack(1));
             ((Enderman) npc.getBukkitEntity()).setCarriedMaterial(hand.getData());
         }
 

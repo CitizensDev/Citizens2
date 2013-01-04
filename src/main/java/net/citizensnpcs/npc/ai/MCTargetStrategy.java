@@ -48,6 +48,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         return handle.getBukkitEntity().getLocation(HANDLE_LOCATION)
                 .distanceSquared(target.getBukkitEntity().getLocation(TARGET_LOCATION));
     }
+
     @Override
     public CancelReason getCancelReason() {
         return cancelReason;

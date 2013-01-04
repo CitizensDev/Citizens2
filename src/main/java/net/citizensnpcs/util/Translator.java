@@ -37,8 +37,8 @@ public class Translator {
         this.resourceFile = resourceFile;
         this.defaultLocale = locale;
         try {
-            preferredBundle = ResourceBundle.getBundle(PREFIX, defaultLocale, new FileClassLoader(
-                    Translator.class.getClassLoader(), resourceFile));
+            preferredBundle = ResourceBundle.getBundle(PREFIX, defaultLocale,
+                    new FileClassLoader(Translator.class.getClassLoader(), resourceFile));
         } catch (MissingResourceException e) {
             preferredBundle = getDefaultBundle();
             Messaging.log(translate(Messages.MISSING_TRANSLATIONS, locale));
@@ -53,8 +53,8 @@ public class Translator {
 
     private ResourceBundle getBundle(Locale locale) {
         try {
-            ResourceBundle bundle = ResourceBundle.getBundle(PREFIX, locale, new FileClassLoader(
-                    Translator.class.getClassLoader(), resourceFile));
+            ResourceBundle bundle = ResourceBundle.getBundle(PREFIX, locale,
+                    new FileClassLoader(Translator.class.getClassLoader(), resourceFile));
             return bundle == null ? preferredBundle : bundle;
         } catch (MissingResourceException e) {
             return preferredBundle;
@@ -275,8 +275,8 @@ public class Translator {
     public static String translate(String key, Locale preferredLocale, Object... msg) {
         if (instance == null)
             createInstance();
-        return StringHelper.parseColors(msg.length == 0 ? instance.translate(key, preferredLocale) : instance
-                .format(key, preferredLocale, msg));
+        return StringHelper.parseColors(msg.length == 0 ? instance.translate(key, preferredLocale) : instance.format(
+                key, preferredLocale, msg));
     }
 
     public static String translate(String key, Object... msg) {

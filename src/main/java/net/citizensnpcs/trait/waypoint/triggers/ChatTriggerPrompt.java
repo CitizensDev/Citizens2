@@ -27,8 +27,7 @@ public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPr
                 Messaging.sendErrorTr((CommandSender) context.getForWhom(),
                         Messages.WAYPOINT_TRIGGER_CHAT_INVALID_RADIUS);
             } catch (IndexOutOfBoundsException e) {
-                Messaging.sendErrorTr((CommandSender) context.getForWhom(),
-                        Messages.WAYPOINT_TRIGGER_CHAT_NO_RADIUS);
+                Messaging.sendErrorTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_CHAT_NO_RADIUS);
             }
             return this;
         }

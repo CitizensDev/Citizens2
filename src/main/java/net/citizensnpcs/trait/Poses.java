@@ -53,8 +53,7 @@ public class Poses extends Trait {
         paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
         int i = 0;
         for (Pose pose : poses.values()) {
-            String line = "<a>" + i + "<b>  " + pose.getName() + "<c>  " + pose.getPitch() + "/"
-                    + pose.getYaw();
+            String line = "<a>" + i + "<b>  " + pose.getName() + "<c>  " + pose.getPitch() + "/" + pose.getYaw();
             paginator.addLine(line);
             i++;
         }

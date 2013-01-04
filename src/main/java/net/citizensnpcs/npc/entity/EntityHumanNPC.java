@@ -189,8 +189,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             net.minecraft.server.v1_4_6.ItemStack previous = previousEquipment[i];
             net.minecraft.server.v1_4_6.ItemStack current = getEquipment(i);
             if (previous != current) {
-                NMS.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i,
-                        current));
+                NMS.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i, current));
                 previousEquipment[i] = current;
             }
         }

@@ -23,8 +23,8 @@ public class EditorCommands {
             min = 1,
             max = 1,
             permission = "npc.edit.equip")
-    @Requirements(selected = true, ownership = true, types = { EntityType.ENDERMAN, EntityType.PLAYER,
-            EntityType.PIG, EntityType.SHEEP })
+    @Requirements(selected = true, ownership = true, types = { EntityType.ENDERMAN, EntityType.PLAYER, EntityType.PIG,
+            EntityType.SHEEP })
     public void equip(CommandContext args, Player player, NPC npc) {
         Editor.enterOrLeave(player, new EquipmentEditor(player, npc));
     }
@@ -37,8 +37,8 @@ public class EditorCommands {
             min = 1,
             max = 1,
             permission = "npc.edit.path")
-    @Requirements(selected = true, ownership = true, excludedTypes = { EntityType.BLAZE,
-            EntityType.ENDER_DRAGON, EntityType.GHAST, EntityType.BAT, EntityType.WITHER, EntityType.SQUID })
+    @Requirements(selected = true, ownership = true, excludedTypes = { EntityType.BLAZE, EntityType.ENDER_DRAGON,
+            EntityType.GHAST, EntityType.BAT, EntityType.WITHER, EntityType.SQUID })
     public void path(CommandContext args, Player player, NPC npc) {
         Editor.enterOrLeave(player, npc.getTrait(Waypoints.class).getEditor(player));
     }
