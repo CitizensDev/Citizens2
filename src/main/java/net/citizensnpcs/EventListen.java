@@ -92,8 +92,8 @@ public class EventListen implements Listener {
                     return;
                 }
                 toRespawn.put(coord, npc.getId());
-                Messaging.debug("Despawned id ", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z
-                        + "]");
+                Messaging
+                        .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
             }
         }
     }
@@ -268,22 +268,23 @@ public class EventListen implements Listener {
             int id = ids.get(i);
             boolean success = spawn(id);
             if (!success) {
-                Messaging.debug("Couldn't respawn id " + id + " during chunk event at [" + coord.x + "," + coord.z
-                        + "]");
+                Messaging.debug("Couldn't respawn id", id, "during chunk event at [" + coord.x + "," + coord.z + "]");
                 continue;
             }
             ids.remove(i);
-            Messaging.debug("Spawned id ", id, "due to chunk event at [" + coord.x + "," + coord.z + "]");
+            Messaging.debug("Spawned id", id, "due to chunk event at [" + coord.x + "," + coord.z + "]");
         }
     }
 
     private boolean spawn(int id) {
         NPC npc = npcRegistry.getById(id);
-        if (npc == null)
+        if (npc == null) {
+            Messaging.debug("Couldn't despawn unknown NPC id", id);
             return false;
+        }
         Location spawn = npc.getTrait(CurrentLocation.class).getLocation();
         if (spawn == null) {
-            Messaging.debug("Couldn't find a spawn location for despawned NPC ID: " + id);
+            Messaging.debug("Couldn't find a spawn location for despawned NPC id", id);
             return false;
         }
         return npc.spawn(spawn);

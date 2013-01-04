@@ -50,8 +50,10 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean despawn(DespawnReason reason) {
-        if (!isSpawned())
+        if (!isSpawned()) {
+            Messaging.debug("Tried to despawn", getId(), "while already despawned.");
             return false;
+        }
 
         NPCDespawnEvent event = new NPCDespawnEvent(this, reason);
         if (reason == DespawnReason.CHUNK_UNLOAD)
@@ -59,6 +61,7 @@ public class CitizensNPC extends AbstractNPC {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             getBukkitEntity().getLocation().getChunk().load();
+            Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Force loaded chunk.");
             return false;
         }
         boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
@@ -190,13 +193,16 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public boolean spawn(Location at) {
         Preconditions.checkNotNull(at, "location cannot be null");
-        if (isSpawned())
+        if (isSpawned()) {
+            Messaging.debug("Tried to spawn", getId(), "while already spawned.");
             return false;
+        }
 
         entityController.spawn(at, this);
         EntityLiving mcEntity = getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
         if (!couldSpawn) {
+            Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.");
             // we need to wait for a chunk load before trying to spawn
             mcEntity = null;
             EventListen.addForRespawn(at, getId());
@@ -207,6 +213,7 @@ public class CitizensNPC extends AbstractNPC {
         Bukkit.getPluginManager().callEvent(spawnEvent);
         if (spawnEvent.isCancelled()) {
             mcEntity = null;
+            Messaging.debug("Couldn't spawn", getId(), "due to event cancellation.");
             return false;
         }
 
