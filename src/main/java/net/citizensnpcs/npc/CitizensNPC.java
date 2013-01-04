@@ -204,7 +204,7 @@ public class CitizensNPC extends AbstractNPC {
         if (!couldSpawn) {
             Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.");
             // we need to wait for a chunk load before trying to spawn
-            mcEntity = null;
+            entityController.remove();
             EventListen.addForRespawn(at, getId());
             return true;
         }
@@ -212,7 +212,7 @@ public class CitizensNPC extends AbstractNPC {
         NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at);
         Bukkit.getPluginManager().callEvent(spawnEvent);
         if (spawnEvent.isCancelled()) {
-            mcEntity = null;
+            entityController.remove();
             Messaging.debug("Couldn't spawn", getId(), "due to event cancellation.");
             return false;
         }
