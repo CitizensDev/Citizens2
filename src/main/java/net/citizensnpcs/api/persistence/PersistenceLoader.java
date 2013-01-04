@@ -30,8 +30,7 @@ public class PersistenceLoader {
         private PersistField(Field field, Object instance) {
             this.field = field;
             this.persistAnnotation = field.getAnnotation(Persist.class);
-            this.key = persistAnnotation.value().equals("UNINITIALISED") ? field.getName()
-                    : persistAnnotation.value();
+            this.key = persistAnnotation.value().equals("UNINITIALISED") ? field.getName() : persistAnnotation.value();
             Class<?> fallback = field.getType();
             if (field.getGenericType() instanceof ParameterizedType) {
                 fallback = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
@@ -109,8 +108,8 @@ public class PersistenceLoader {
         if (!Collection.class.isAssignableFrom(collectionType))
             throw loadException;
         if (List.class.isAssignableFrom(type)) {
-            List<Object> list = (List<Object>) (!List.class.isAssignableFrom(collectionType) ? Lists
-                    .newArrayList() : collectionType.newInstance());
+            List<Object> list = (List<Object>) (!List.class.isAssignableFrom(collectionType) ? Lists.newArrayList()
+                    : collectionType.newInstance());
             Object raw = root.getRaw(field.key);
             if (raw instanceof List && collectionType.isAssignableFrom(raw.getClass()))
                 list = (List<Object>) raw;
@@ -122,8 +121,8 @@ public class PersistenceLoader {
             if (Set.class.isAssignableFrom(collectionType)) {
                 set = (Set<Object>) collectionType.newInstance();
             } else {
-                set = field.getType().isEnum() ? EnumSet.noneOf((Class<? extends Enum>) field.getType())
-                        : Sets.newHashSet();
+                set = field.getType().isEnum() ? EnumSet.noneOf((Class<? extends Enum>) field.getType()) : Sets
+                        .newHashSet();
             }
             Object raw = root.getRaw(field.key);
             if (raw instanceof Set && collectionType.isAssignableFrom(raw.getClass()))
