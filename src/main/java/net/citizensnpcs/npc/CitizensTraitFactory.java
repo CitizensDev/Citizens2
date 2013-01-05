@@ -40,7 +40,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class CitizensTraitFactory implements TraitFactory {
-    private final Map<String, Class<? extends Trait>> registered = Maps.newHashMap();
+    private final Map<String, TraitInfo> registered = Maps.newHashMap();
 
     public CitizensTraitFactory() {
         registerTrait(TraitInfo.create(Age.class).withName("age"));
@@ -68,15 +68,16 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(WoolColor.class).withName("woolcolor"));
         registerTrait(TraitInfo.create(ZombieModifier.class).withName("zombiemodifier"));
 
-        for (String trait : registered.keySet())
+        for (String trait : registered.keySet()) {
             INTERNAL_TRAITS.add(trait);
+        }
     }
 
     public void addPlotters(Graph graph) {
-        for (Map.Entry<String, Class<? extends Trait>> entry : registered.entrySet()) {
+        for (Map.Entry<String, TraitInfo> entry : registered.entrySet()) {
             if (INTERNAL_TRAITS.contains(entry.getKey()))
                 continue;
-            final Class<? extends Trait> traitClass = entry.getValue();
+            final Class<? extends Trait> traitClass = entry.getValue().getTraitClass();
             graph.addPlotter(new Metrics.Plotter(entry.getKey()) {
                 @Override
                 public int getValue() {
@@ -91,34 +92,32 @@ public class CitizensTraitFactory implements TraitFactory {
         }
     }
 
-    private <T extends Trait> T create(Class<T> trait) {
-        try {
-            return trait.newInstance();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    private <T extends Trait> T create(TraitInfo info) {
+        return info.tryCreateInstance();
     }
 
     @Override
     public <T extends Trait> T getTrait(Class<T> clazz) {
-        if (!registered.containsValue(clazz))
-            return null;
-        return create(clazz);
+        for (TraitInfo entry : registered.values()) {
+            if (clazz == entry.getTraitClass())
+                return create(entry);
+        }
+        return null;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(String name) {
-        Class<? extends Trait> clazz = registered.get(name);
-        if (clazz == null)
+        TraitInfo info = registered.get(name);
+        if (info == null)
             return null;
-        return (T) create(clazz);
+        return (T) create(info);
     }
 
     @Override
     public Class<? extends Trait> getTraitClass(String name) {
-        return registered.get(name.toLowerCase());
+        TraitInfo info = registered.get(name.toLowerCase());
+        return info == null ? null : info.getTraitClass();
     }
 
     @Override
@@ -129,9 +128,9 @@ public class CitizensTraitFactory implements TraitFactory {
     @Override
     public void registerTrait(TraitInfo info) {
         Preconditions.checkNotNull(info, "info cannot be null");
-        if (registered.containsKey(info))
+        if (registered.containsKey(info.getTraitName()))
             throw new IllegalArgumentException("trait name already registered");
-        registered.put(info.getTraitName(), info.getTraitClass());
+        registered.put(info.getTraitName(), info);
     }
 
     private static final Set<String> INTERNAL_TRAITS = Sets.newHashSet();
