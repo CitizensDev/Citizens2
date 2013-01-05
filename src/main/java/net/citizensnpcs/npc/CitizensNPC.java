@@ -199,7 +199,7 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         entityController.spawn(at, this);
-        EntityLiving mcEntity = getHandle();
+        EntityLiving mcEntity = ((CraftLivingEntity) getBukkitEntity()).getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
         if (!couldSpawn) {
             Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.");
