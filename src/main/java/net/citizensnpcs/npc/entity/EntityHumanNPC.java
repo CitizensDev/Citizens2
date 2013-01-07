@@ -13,16 +13,16 @@ import net.citizensnpcs.npc.network.EmptyNetworkManager;
 import net.citizensnpcs.npc.network.EmptySocket;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_4_6.Connection;
 import net.minecraft.server.v1_4_6.EntityPlayer;
 import net.minecraft.server.v1_4_6.EnumGamemode;
-import net.minecraft.server.v1_4_6.PlayerInteractManager;
 import net.minecraft.server.v1_4_6.MathHelper;
 import net.minecraft.server.v1_4_6.MinecraftServer;
 import net.minecraft.server.v1_4_6.Navigation;
-import net.minecraft.server.v1_4_6.Connection;
 import net.minecraft.server.v1_4_6.NetworkManager;
 import net.minecraft.server.v1_4_6.Packet32EntityLook;
 import net.minecraft.server.v1_4_6.Packet5EntityEquipment;
+import net.minecraft.server.v1_4_6.PlayerInteractManager;
 import net.minecraft.server.v1_4_6.World;
 
 import org.bukkit.Bukkit;
@@ -112,8 +112,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
 
         getNavigation().e(true);
-        X = 0.5F; // stepHeight - must not stay as the default 0 (breaks steps).
-                  // Check the EntityPlayer constructor for the new name.
+        X = 1F; // stepHeight - must not stay as the default 0 (breaks steps).
+                // Check the EntityPlayer constructor for the new name.
 
         try {
             socket.close();
