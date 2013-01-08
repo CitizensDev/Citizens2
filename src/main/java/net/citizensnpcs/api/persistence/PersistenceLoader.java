@@ -106,6 +106,7 @@ public class PersistenceLoader {
         Object value;
         Class<?> type = field.getType();
         Class<?> collectionType = field.getCollectionType();
+        // TODO: this is pretty ugly.
         if (!Collection.class.isAssignableFrom(collectionType) && !Map.class.isAssignableFrom(collectionType))
             throw loadException;
         if (List.class.isAssignableFrom(type)) {
@@ -122,13 +123,18 @@ public class PersistenceLoader {
             if (Set.class.isAssignableFrom(collectionType)) {
                 set = (Set<Object>) collectionType.newInstance();
             } else {
-                set = field.getType().isEnum() ? EnumSet.noneOf((Class<? extends Enum>) field.getType()) : Sets
-                        .newHashSet();
+                if (field.getType().isEnum()) {
+                    set = EnumSet.noneOf((Class<? extends Enum>) field.getType());
+                } else {
+                    set = (Set<Object>) (field.get() != null && Set.class.isAssignableFrom(field.get().getClass()) ? field
+                            .get().getClass().newInstance()
+                            : Sets.newHashSet());
+                }
             }
             Object raw = root.getRaw(field.key);
-            if (raw instanceof Set && collectionType.isAssignableFrom(raw.getClass()))
+            if (raw instanceof Set && collectionType.isAssignableFrom(raw.getClass())) {
                 set = (Set<Object>) raw;
-            else
+            } else
                 deserialiseCollection(set, root, field);
             value = set;
         } else if (Map.class.isAssignableFrom(type)) {
@@ -136,7 +142,8 @@ public class PersistenceLoader {
             if (Map.class.isAssignableFrom(collectionType)) {
                 map = (Map<String, Object>) collectionType.newInstance();
             } else {
-                map = Maps.newHashMap();
+                map = (Map<String, Object>) (field.get() != null && Map.class.isAssignableFrom(field.get().getClass())
+                        && !field.get().getClass().isInterface() ? field.get() : Maps.newHashMap());
             }
             deserialiseMap(map, root, field);
             value = map;

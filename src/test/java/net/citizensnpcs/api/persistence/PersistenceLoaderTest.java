@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
@@ -25,6 +26,13 @@ public class PersistenceLoaderTest {
     public void canAccessPrivateMembers() {
         root.setInt("integer", 5);
         assertThat(PersistenceLoader.load(SaveLoadTest.class, root).integer, is(5));
+    }
+
+    @Test
+    public void testTypeInference() {
+        root.setString("map.1", "1");
+        InferenceTest test = PersistenceLoader.load(InferenceTest.class, root);
+        assertThat(test.map, is(ConcurrentHashMap.class));
     }
 
     @Test
@@ -77,6 +85,11 @@ public class PersistenceLoaderTest {
         SpecificCollectionClassTest instance = PersistenceLoader.load(SpecificCollectionClassTest.class, root);
         assertEquals(instance.list.getClass(), LinkedList.class);
         assertEquals(instance.set.getClass(), LinkedHashSet.class);
+    }
+
+    public static class InferenceTest {
+        @Persist
+        public Map<String, Integer> map = new ConcurrentHashMap<String, Integer>();
     }
 
     public static class CollectionTest {
