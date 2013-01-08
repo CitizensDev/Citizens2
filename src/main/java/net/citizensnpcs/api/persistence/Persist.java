@@ -31,6 +31,12 @@ public @interface Persist {
     /**
      * The save key to use when saving. If not present, the field name will be
      * used instead.
+     * 
+     * <ul>
+     * <li><code>@Persist</code> -> root key + field name</li>
+     * <li><code>@Persist("")</code> -> root key + "" (or simply root key)</li>
+     * <li><code>@Persist("sub")</code> root key + "sub"</li>
+     * </ul>
      */
     String value() default "UNINITIALISED";
 }

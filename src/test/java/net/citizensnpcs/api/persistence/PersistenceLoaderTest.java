@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.citizensnpcs.api.util.DataKey;
@@ -32,13 +33,18 @@ public class PersistenceLoaderTest {
     }
 
     @Test
-    public void loadsList() {
+    public void loadsCollections() {
         for (int i = 0; i < 6; i++) {
             root.setInt("list." + i, i);
+            root.setInt("set." + i, i);
+            root.setInt("map." + i, i);
         }
         CollectionTest test = PersistenceLoader.load(CollectionTest.class, root);
         for (int i = 0; i < 6; i++) {
             assertThat(test.list.get(i).intValue(), is(i));
+            assertThat(test.set.contains(i), is(true));
+            assertThat(test.map.containsKey(Integer.toString(i)), is(true));
+            assertThat(test.map.get(Integer.toString(i)).intValue(), is(i));
         }
     }
 
@@ -76,6 +82,10 @@ public class PersistenceLoaderTest {
     public static class CollectionTest {
         @Persist
         private List<Integer> list;
+        @Persist
+        private Set<Integer> set;
+        @Persist
+        private Map<String, Integer> map;
     }
 
     public static class IllegalCollectionClassTest {

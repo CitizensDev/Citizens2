@@ -15,6 +15,7 @@ import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Location;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Primitives;
 
@@ -105,7 +106,7 @@ public class PersistenceLoader {
         Object value;
         Class<?> type = field.getType();
         Class<?> collectionType = field.getCollectionType();
-        if (!Collection.class.isAssignableFrom(collectionType))
+        if (!Collection.class.isAssignableFrom(collectionType) && !Map.class.isAssignableFrom(collectionType))
             throw loadException;
         if (List.class.isAssignableFrom(type)) {
             List<Object> list = (List<Object>) (!List.class.isAssignableFrom(collectionType) ? Lists.newArrayList()
@@ -130,6 +131,15 @@ public class PersistenceLoader {
             else
                 deserialiseCollection(set, root, field);
             value = set;
+        } else if (Map.class.isAssignableFrom(type)) {
+            Map<String, Object> map;
+            if (Map.class.isAssignableFrom(collectionType)) {
+                map = (Map<String, Object>) collectionType.newInstance();
+            } else {
+                map = Maps.newHashMap();
+            }
+            deserialiseMap(map, root, field);
+            value = map;
         } else
             value = deserialiseValue(field, root.getRelative(field.key));
         if (value == null && field.isRequired())
@@ -142,6 +152,15 @@ public class PersistenceLoader {
         if (value != null && !type.isAssignableFrom(value.getClass()))
             return;
         field.set(value);
+    }
+
+    private static void deserialiseMap(Map<String, Object> map, DataKey root, PersistField field) {
+        for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
+            Object loaded = deserialiseValue(field, subKey);
+            if (loaded == null)
+                continue;
+            map.put(subKey.name(), loaded);
+        }
     }
 
     private static void deserialiseCollection(Collection<Object> collection, DataKey root, PersistField field) {
