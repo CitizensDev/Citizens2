@@ -107,8 +107,12 @@ public class CitizensNPC extends AbstractNPC {
                     }
                 });
         for (DataKey traitKey : keys) {
-            if (traitKey.keyExists("enabled") && !traitKey.getBoolean("enabled"))
+            if (traitKey.keyExists("enabled") && !traitKey.getBoolean("enabled")
+                    && traitKey.getRaw("enabled") instanceof Boolean) {
+                // we want to avoid coercion here as YAML can coerce map
+                // existence to boolean
                 continue;
+            }
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
             Trait trait;
             if (hasTrait(clazz)) {
@@ -173,7 +177,8 @@ public class CitizensNPC extends AbstractNPC {
         }
         if (traitNames.length() > 0) {
             root.setString("traitnames", traitNames.substring(0, traitNames.length() - 1));
-        }
+        } else
+            root.setString("traitnames", "");
         removeTraitData(root);
     }
 
