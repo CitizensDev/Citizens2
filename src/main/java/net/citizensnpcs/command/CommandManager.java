@@ -90,12 +90,12 @@ public class CommandManager {
 
     // Attempt to execute a command.
     private void executeMethod(String[] args, CommandSender sender, Object[] methodArgs) throws CommandException {
-        String cmdName = args[0];
+        String cmdName = args[0].toLowerCase();
         String modifier = args.length > 1 ? args[1] : "";
 
-        Method method = commands.get(cmdName.toLowerCase() + " " + modifier.toLowerCase());
+        Method method = commands.get(cmdName + " " + modifier.toLowerCase());
         if (method == null)
-            method = commands.get(cmdName.toLowerCase() + " *");
+            method = commands.get(cmdName + " *");
 
         if (method == null)
             throw new UnhandledCommandException();
@@ -274,8 +274,8 @@ public class CommandManager {
      * @return Whether the command is handled
      */
     public boolean hasCommand(org.bukkit.command.Command cmd, String modifier) {
-        return commands.containsKey(cmd.getName().toLowerCase() + " " + modifier.toLowerCase())
-                || commands.containsKey(cmd.getName().toLowerCase() + " *");
+        String cmdName = cmd.getName().toLowerCase();
+        return commands.containsKey(cmdName + " " + modifier.toLowerCase()) || commands.containsKey(cmdName + " *");
     }
 
     // Returns whether a CommandSenders has permission.
