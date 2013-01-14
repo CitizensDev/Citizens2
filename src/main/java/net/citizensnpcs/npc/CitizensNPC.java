@@ -1,6 +1,7 @@
 package net.citizensnpcs.npc;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -36,6 +37,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
@@ -99,13 +101,13 @@ public class CitizensNPC extends AbstractNPC {
         // Load traits
 
         String traitNames = root.getString("traitnames");
-        Iterable<DataKey> keys = traitNames.isEmpty() ? root.getRelative("traits").getSubKeys() : Iterables.transform(
-                Splitter.on(',').split(traitNames), new Function<String, DataKey>() {
-                    @Override
-                    public DataKey apply(@Nullable String input) {
-                        return root.getRelative("traits." + input);
-                    }
-                });
+        Set<DataKey> keys = Sets.newHashSet(root.getRelative("traits").getSubKeys());
+        Iterables.addAll(keys, Iterables.transform(Splitter.on(',').split(traitNames), new Function<String, DataKey>() {
+            @Override
+            public DataKey apply(@Nullable String input) {
+                return root.getRelative("traits." + input);
+            }
+        }));
         for (DataKey traitKey : keys) {
             if (traitKey.keyExists("enabled") && !traitKey.getBoolean("enabled")
                     && traitKey.getRaw("enabled") instanceof Boolean) {
