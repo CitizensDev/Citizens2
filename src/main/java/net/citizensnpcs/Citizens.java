@@ -314,7 +314,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     return goalCount;
                 }
             });
-
             traitFactory.addPlotters(metrics.createGraph("traits"));
             saves.addPlotters(metrics.createGraph("Storage type"));
             metrics.start();
@@ -333,9 +332,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void storeNPCs(CommandContext args) {
         storeNPCs();
         boolean async = args.hasFlag('a');
-        if (async)
+        if (async) {
             saves.saveToDisk();
-        else
+        } else
             saves.saveToDiskImmediate();
     }
 
