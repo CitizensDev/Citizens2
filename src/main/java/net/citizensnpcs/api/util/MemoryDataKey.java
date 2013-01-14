@@ -14,17 +14,38 @@ import com.google.common.collect.Iterables;
 
 public class MemoryDataKey extends DataKey {
     private String name;
-    private final String path;
     private final ConfigurationSection root;
 
     public MemoryDataKey() {
+        super("");
         root = new MemoryConfiguration();
-        path = "";
     }
 
     private MemoryDataKey(ConfigurationSection root, String path) {
+        super(path);
         this.root = root;
-        this.path = path;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        MemoryDataKey other = (MemoryDataKey) obj;
+        if (path == null) {
+            if (other.path != null) {
+                return false;
+            }
+        } else if (!path.equals(other.path)) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -95,6 +116,14 @@ public class MemoryDataKey extends DataKey {
         if (section == null)
             return Collections.emptyMap();
         return section.getValues(true);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        return result;
     }
 
     @Override

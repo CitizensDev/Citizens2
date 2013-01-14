@@ -15,9 +15,7 @@ public class NavigatorParameters implements Cloneable {
     private final List<BlockExaminer> examiners = Lists.newArrayList();
     private float range;
     private float speedModifier = 1F;
-
     private int stationaryTicks = -1;
-
     private StuckAction stuckAction;
 
     /**

@@ -113,14 +113,8 @@ public class NBTStorage implements Storage {
     }
 
     public class NBTKey extends DataKey {
-        private final String current;
-
         public NBTKey(String root) {
-            this.current = root;
-        }
-
-        private String createRelativeKey(String from) {
-            return createRelativeKey(current, from);
+            super(root);
         }
 
         private String createRelativeKey(String parent, String sub) {
@@ -129,6 +123,31 @@ public class NBTStorage implements Storage {
             if (sub.charAt(0) == '.')
                 return parent.isEmpty() ? sub.substring(1, sub.length()) : parent + sub;
             return parent.isEmpty() ? sub : parent + "." + sub;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            NBTKey other = (NBTKey) obj;
+            if (!getOuterType().equals(other.getOuterType())) {
+                return false;
+            }
+            if (path == null) {
+                if (other.path != null) {
+                    return false;
+                }
+            } else if (!path.equals(other.path)) {
+                return false;
+            }
+            return true;
         }
 
         private Map<String, Tag> findLastParent(String key) {
@@ -192,6 +211,10 @@ public class NBTStorage implements Storage {
             return parts[parts.length - 1];
         }
 
+        private NBTStorage getOuterType() {
+            return NBTStorage.this;
+        }
+
         @Override
         public Object getRaw(String key) {
             throw new UnsupportedOperationException();
@@ -212,7 +235,7 @@ public class NBTStorage implements Storage {
 
         @Override
         public Iterable<DataKey> getSubKeys() {
-            Tag tag = findLastTag(current, false);
+            Tag tag = findLastTag(path, false);
             if (!(tag instanceof CompoundTag))
                 return Collections.emptyList();
             List<DataKey> subKeys = Lists.newArrayList();
@@ -224,7 +247,7 @@ public class NBTStorage implements Storage {
 
         @Override
         public Map<String, Object> getValuesDeep() {
-            Tag tag = findLastTag(current, false);
+            Tag tag = findLastTag(path, false);
             if (!(tag instanceof CompoundTag))
                 return Collections.emptyMap();
             Queue<Node> node = new ArrayDeque<Node>(ImmutableList.of(new Node(tag)));
@@ -244,14 +267,23 @@ public class NBTStorage implements Storage {
         }
 
         @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + getOuterType().hashCode();
+            result = prime * result + ((path == null) ? 0 : path.hashCode());
+            return result;
+        }
+
+        @Override
         public boolean keyExists(String key) {
             return findLastTag(createRelativeKey(key)) != null;
         }
 
         @Override
         public String name() {
-            int last = current.lastIndexOf('.');
-            return current.substring(last == 0 ? 0 : last + 1);
+            int last = path.lastIndexOf('.');
+            return path.substring(last == 0 ? 0 : last + 1);
         }
 
         private void putTag(String key, Tag tag) {

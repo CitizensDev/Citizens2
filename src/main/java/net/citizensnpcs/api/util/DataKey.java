@@ -6,6 +6,40 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public abstract class DataKey {
+    protected final String path;
+
+    protected DataKey(String path) {
+        this.path = path;
+    }
+
+    protected String createRelativeKey(String from) {
+        from = from.replace("-", "");
+        if (from.isEmpty())
+            return path;
+        if (from.charAt(0) == '.')
+            return path.isEmpty() ? from.substring(1, from.length()) : path + from;
+        return path.isEmpty() ? from : path + "." + from;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        DataKey other = (DataKey) obj;
+        if (path == null) {
+            if (other.path != null) {
+                return false;
+            }
+        } else if (!path.equals(other.path)) {
+            return false;
+        }
+        return true;
+    }
+
     public abstract boolean getBoolean(String key);
 
     public boolean getBoolean(String key, boolean value) {
@@ -66,6 +100,14 @@ public abstract class DataKey {
     public abstract Iterable<DataKey> getSubKeys();
 
     public abstract Map<String, Object> getValuesDeep();
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        return result;
+    }
 
     public abstract boolean keyExists(String key);
 

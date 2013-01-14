@@ -236,23 +236,12 @@ public class DatabaseStorage implements Storage {
     }
 
     public class DatabaseKey extends DataKey {
-        private final String current;
-
         private DatabaseKey() {
-            this("");
+            super("");
         }
 
         private DatabaseKey(String root) {
-            current = root;
-        }
-
-        private String createRelativeKey(String from) {
-            from = from.replace("-", "");
-            if (from.isEmpty())
-                return current;
-            if (from.charAt(0) == '.')
-                return current.isEmpty() ? from.substring(1, from.length()) : current + from;
-            return current.isEmpty() ? from : current + "." + from;
+            super(root);
         }
 
         @Override
@@ -337,16 +326,16 @@ public class DatabaseStorage implements Storage {
         }
 
         private Iterable<DataKey> getSingleKeys(List<DataKey> keys) {
-            if (!tables.containsKey(current))
+            if (!tables.containsKey(path))
                 return keys;
-            Table table = tables.get(current);
+            Table table = tables.get(path);
             if (table.primaryKey == null)
                 return keys;
             PreparedStatement stmt = null;
             ResultSet rs = null;
             try {
                 Connection conn = getConnection();
-                stmt = conn.prepareStatement("SELECT `" + table.primaryKey + "` FROM `" + current + "`");
+                stmt = conn.prepareStatement("SELECT `" + table.primaryKey + "` FROM `" + path + "`");
                 rs = stmt.executeQuery();
                 while (rs.next()) {
                     final Traversed found = new Traversed(table, rs.getString(table.primaryKey), table.primaryKey);
@@ -383,7 +372,7 @@ public class DatabaseStorage implements Storage {
         @Override
         public Iterable<DataKey> getSubKeys() {
             List<DataKey> keys = Lists.newArrayList();
-            if (current.split("\\.").length == 1) {
+            if (path.split("\\.").length == 1) {
                 return getSingleKeys(keys);
             }
             // TODO: handle longer case
@@ -414,7 +403,7 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public String name() {
-            Traversed t = traverse(current, true);
+            Traversed t = traverse(path, true);
             System.err.println(t);
             return t.key != null ? t.key : t.found.name;
         }

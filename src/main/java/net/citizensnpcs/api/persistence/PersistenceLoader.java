@@ -161,21 +161,21 @@ public class PersistenceLoader {
         field.set(value);
     }
 
-    private static void deserialiseMap(Map<String, Object> map, DataKey root, PersistField field) {
-        for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
-            Object loaded = deserialiseValue(field, subKey);
-            if (loaded == null)
-                continue;
-            map.put(subKey.name(), loaded);
-        }
-    }
-
     private static void deserialiseCollection(Collection<Object> collection, DataKey root, PersistField field) {
         for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
             Object loaded = deserialiseValue(field, subKey);
             if (loaded == null)
                 continue;
             collection.add(loaded);
+        }
+    }
+
+    private static void deserialiseMap(Map<String, Object> map, DataKey root, PersistField field) {
+        for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
+            Object loaded = deserialiseValue(field, subKey);
+            if (loaded == null)
+                continue;
+            map.put(subKey.name(), loaded);
         }
     }
 

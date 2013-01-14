@@ -85,10 +85,8 @@ public class YamlStorage implements Storage {
     }
 
     public class YamlKey extends DataKey {
-        private final String current;
-
         public YamlKey(String root) {
-            current = root;
+            super(root);
         }
 
         /* @Override
@@ -101,7 +99,7 @@ public class YamlStorage implements Storage {
 
         @Override
         public boolean getBoolean(String key) {
-            String path = getKeyExt(key);
+            String path = createRelativeKey(key);
             if (pathExists(path)) {
                 if (config.getString(path) == null)
                     return config.getBoolean(path);
@@ -112,7 +110,7 @@ public class YamlStorage implements Storage {
 
         @Override
         public boolean getBoolean(String key, boolean def) {
-            return config.getBoolean(getKeyExt(key), def);
+            return config.getBoolean(createRelativeKey(key), def);
         }
 
         @Override
@@ -122,7 +120,7 @@ public class YamlStorage implements Storage {
 
         @Override
         public double getDouble(String key, double def) {
-            String path = getKeyExt(key);
+            String path = createRelativeKey(key);
             if (pathExists(path)) {
                 Object value = config.get(path);
                 if (value instanceof Number)
@@ -142,7 +140,7 @@ public class YamlStorage implements Storage {
 
         @Override
         public int getInt(String key, int def) {
-            String path = getKeyExt(key);
+            String path = createRelativeKey(key);
             if (pathExists(path)) {
                 Object value = config.get(path);
                 if (value instanceof Number)
@@ -155,14 +153,6 @@ public class YamlStorage implements Storage {
             return def;
         }
 
-        private String getKeyExt(String from) {
-            if (from.isEmpty())
-                return current;
-            if (from.charAt(0) == '.')
-                return current.isEmpty() ? from.substring(1, from.length()) : current + from;
-            return current.isEmpty() ? from : current + "." + from;
-        }
-
         @Override
         public long getLong(String key) {
             return getLong(key, 0L);
@@ -170,7 +160,7 @@ public class YamlStorage implements Storage {
 
         @Override
         public long getLong(String key, long def) {
-            String path = getKeyExt(key);
+            String path = createRelativeKey(key);
             if (pathExists(path)) {
                 Object value = config.get(path);
                 if (value instanceof Number)
@@ -185,19 +175,19 @@ public class YamlStorage implements Storage {
 
         @Override
         public Object getRaw(String key) {
-            return config.get(getKeyExt(key));
+            return config.get(createRelativeKey(key));
         }
 
         @Override
         public YamlKey getRelative(String relative) {
             if (relative == null || relative.isEmpty())
                 return this;
-            return new YamlKey(getKeyExt(relative));
+            return new YamlKey(createRelativeKey(relative));
         }
 
         @Override
         public String getString(String key) {
-            String path = getKeyExt(key);
+            String path = createRelativeKey(key);
             if (pathExists(path)) {
                 return config.get(path).toString();
             }
@@ -206,7 +196,7 @@ public class YamlStorage implements Storage {
 
         @Override
         public Iterable<DataKey> getSubKeys() {
-            ConfigurationSection section = config.getConfigurationSection(current);
+            ConfigurationSection section = config.getConfigurationSection(path);
             if (section == null)
                 return Collections.emptyList();
             List<DataKey> res = new ArrayList<DataKey>();
@@ -219,59 +209,59 @@ public class YamlStorage implements Storage {
         @SuppressWarnings("unchecked")
         @Override
         public Map<String, Object> getValuesDeep() {
-            ConfigurationSection subSection = config.getConfigurationSection(current);
+            ConfigurationSection subSection = config.getConfigurationSection(path);
             return (Map<String, Object>) (subSection == null ? Collections.emptyMap() : subSection.getValues(true));
         }
 
         @Override
         public boolean keyExists(String key) {
-            return config.get(getKeyExt(key)) != null;
+            return config.get(createRelativeKey(key)) != null;
         }
 
         @Override
         public String name() {
-            int last = current.lastIndexOf('.');
-            return current.substring(last == 0 ? 0 : last + 1);
+            int last = path.lastIndexOf('.');
+            return path.substring(last == 0 ? 0 : last + 1);
         }
 
         @Override
         public void removeKey(String key) {
-            config.set(getKeyExt(key), null);
+            config.set(createRelativeKey(key), null);
         }
 
         @Override
         public void setBoolean(String key, boolean value) {
-            config.set(getKeyExt(key), value);
+            config.set(createRelativeKey(key), value);
         }
 
         @Override
         public void setDouble(String key, double value) {
-            config.set(getKeyExt(key), String.valueOf(value));
+            config.set(createRelativeKey(key), String.valueOf(value));
         }
 
         @Override
         public void setInt(String key, int value) {
-            config.set(getKeyExt(key), value);
+            config.set(createRelativeKey(key), value);
         }
 
         @Override
         public void setLong(String key, long value) {
-            config.set(getKeyExt(key), value);
+            config.set(createRelativeKey(key), value);
         }
 
         @Override
         public void setRaw(String key, Object value) {
-            config.set(getKeyExt(key), value);
+            config.set(createRelativeKey(key), value);
         }
 
         @Override
         public void setString(String key, String value) {
-            config.set(getKeyExt(key), value);
+            config.set(createRelativeKey(key), value);
         }
 
         @Override
         public String toString() {
-            return "YamlKey [path=" + current + "]";
+            return "YamlKey [path=" + path + "]";
         }
     }
 }

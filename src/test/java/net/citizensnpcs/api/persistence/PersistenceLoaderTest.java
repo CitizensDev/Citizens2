@@ -29,13 +29,6 @@ public class PersistenceLoaderTest {
     }
 
     @Test
-    public void testTypeInference() {
-        root.setString("map.1", "1");
-        InferenceTest test = PersistenceLoader.load(InferenceTest.class, root);
-        assertThat(test.map, is(ConcurrentHashMap.class));
-    }
-
-    @Test
     public void illegalCollectionClass() {
         assertThat(PersistenceLoader.load(IllegalCollectionClassTest.class, root), is(nullValue()));
     }
@@ -79,6 +72,13 @@ public class PersistenceLoaderTest {
     }
 
     @Test
+    public void testTypeInference() {
+        root.setString("map.1", "1");
+        InferenceTest test = PersistenceLoader.load(InferenceTest.class, root);
+        assertThat(test.map, is(ConcurrentHashMap.class));
+    }
+
+    @Test
     public void usesSpecificCollectionClass() {
         root.setInt("list.0", 5);
         root.setInt("set.0", 5);
@@ -87,23 +87,23 @@ public class PersistenceLoaderTest {
         assertEquals(instance.set.getClass(), LinkedHashSet.class);
     }
 
-    public static class InferenceTest {
-        @Persist
-        public Map<String, Integer> map = new ConcurrentHashMap<String, Integer>();
-    }
-
     public static class CollectionTest {
         @Persist
         private List<Integer> list;
         @Persist
-        private Set<Integer> set;
-        @Persist
         private Map<String, Integer> map;
+        @Persist
+        private Set<Integer> set;
     }
 
     public static class IllegalCollectionClassTest {
         @Persist(collectionType = Integer.class)
         private List<Integer> list;
+    }
+
+    public static class InferenceTest {
+        @Persist
+        public Map<String, Integer> map = new ConcurrentHashMap<String, Integer>();
     }
 
     public static class RequiredTest {

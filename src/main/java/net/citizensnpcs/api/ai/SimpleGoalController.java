@@ -161,6 +161,8 @@ public class SimpleGoalController implements GoalController {
     }
 
     public class SimpleGoalSelector implements GoalSelector {
+        private GoalStatus status = GoalStatus.RUNNING;
+
         @Override
         public void finish() {
             finishCurrentGoalExecution();
@@ -175,6 +177,11 @@ public class SimpleGoalController implements GoalController {
         }
 
         @Override
+        public GoalStatus getStatus() {
+            return status;
+        }
+
+        @Override
         public void select(Goal goal) {
             resetGoalList();
             addGoalToExecution(goal);
@@ -184,6 +191,11 @@ public class SimpleGoalController implements GoalController {
         public void selectAdditional(Goal... goals) {
             for (Goal goal : goals)
                 addGoalToExecution(goal);
+        }
+
+        @Override
+        public void setStatus(GoalStatus status) {
+            this.status = status;
         }
     }
 }
