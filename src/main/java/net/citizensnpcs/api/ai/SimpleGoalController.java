@@ -17,7 +17,7 @@ public class SimpleGoalController implements GoalController {
     private int executingPriority = -1;
     private Goal executingRootGoal;
     private volatile boolean paused;
-    private final List<SimpleGoalEntry> possibleGoals = Lists.newArrayList();
+    private final List<GoalEntry> possibleGoals = Lists.newArrayList();
     private final GoalSelector selector = new SimpleGoalSelector();
 
     @Override
@@ -35,6 +35,7 @@ public class SimpleGoalController implements GoalController {
         if (CitizensAPI.hasImplementation())
             Bukkit.getPluginManager().registerEvents(goal, CitizensAPI.getPlugin());
         executingGoals.add(goal);
+        goal.run(selector);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class SimpleGoalController implements GoalController {
 
     @Override
     public Iterator<GoalEntry> iterator() {
-        final Iterator<SimpleGoalEntry> itr = possibleGoals.iterator();
+        final Iterator<GoalEntry> itr = possibleGoals.iterator();
         return new Iterator<GoalEntry>() {
             GoalEntry cur;
 
@@ -84,7 +85,7 @@ public class SimpleGoalController implements GoalController {
     public void removeGoal(Goal goal) {
         Preconditions.checkNotNull(goal, "goal cannot be null");
         for (int j = 0; j < possibleGoals.size(); ++j) {
-            Goal test = possibleGoals.get(j).goal;
+            Goal test = possibleGoals.get(j).getGoal();
             if (!test.equals(goal))
                 continue;
             possibleGoals.remove(j--);
@@ -116,28 +117,28 @@ public class SimpleGoalController implements GoalController {
         this.paused = paused;
     }
 
-    private void setupExecution(SimpleGoalEntry entry) {
+    private void setupExecution(GoalEntry entry) {
         finishCurrentGoalExecution();
-        executingPriority = entry.priority;
-        executingRootGoal = entry.goal;
-        addGoalToExecution(entry.goal);
+        executingPriority = entry.getPriority();
+        executingRootGoal = entry.getGoal();
+        addGoalToExecution(entry.getGoal());
     }
 
     private void trySelectGoal() {
         int searchPriority = Math.max(executingPriority, 1);
         for (int i = possibleGoals.size() - 1; i >= 0; --i) {
-            SimpleGoalEntry entry = possibleGoals.get(i);
-            if (searchPriority > entry.priority)
+            GoalEntry entry = possibleGoals.get(i);
+            if (searchPriority > entry.getPriority())
                 return;
-            if (entry.goal == executingRootGoal || !entry.goal.shouldExecute(selector))
+            if (entry.getGoal() == executingRootGoal || !entry.getGoal().shouldExecute(selector))
                 continue;
             if (i == 0) {
                 setupExecution(entry);
                 return;
             }
             for (int j = i - 1; j >= 0; --j) {
-                SimpleGoalEntry next = possibleGoals.get(j);
-                boolean unequalPriorities = next.priority != entry.priority;
+                GoalEntry next = possibleGoals.get(j);
+                boolean unequalPriorities = next.getPriority() != entry.getPriority();
                 if (unequalPriorities || j == 0) {
                     if (unequalPriorities)
                         j++; // we want the previous entry where entry.priority
@@ -147,8 +148,8 @@ public class SimpleGoalController implements GoalController {
                         setupExecution(entry);
                         break;
                     }
-                    SimpleGoalEntry selected = possibleGoals.get(ran);
-                    if (selected.priority != entry.priority) {
+                    GoalEntry selected = possibleGoals.get(ran);
+                    if (selected.getPriority() != entry.getPriority()) {
                         setupExecution(entry);
                         break;
                     }
