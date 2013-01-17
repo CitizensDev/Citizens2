@@ -1,8 +1,8 @@
 package net.citizensnpcs.trait.waypoint;
 
-import net.minecraft.server.v1_4_6.DamageSource;
-import net.minecraft.server.v1_4_6.EntityEnderCrystal;
-import net.minecraft.server.v1_4_6.World;
+import net.minecraft.server.v1_4_R1.DamageSource;
+import net.minecraft.server.v1_4_R1.EntityEnderCrystal;
+import net.minecraft.server.v1_4_R1.World;
 
 public class EntityEnderCrystalMarker extends EntityEnderCrystal {
     public EntityEnderCrystalMarker(World world) {

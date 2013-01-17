@@ -5,9 +5,9 @@ import java.net.Socket;
 import java.security.PrivateKey;
 
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_4_6.Connection;
-import net.minecraft.server.v1_4_6.NetworkManager;
-import net.minecraft.server.v1_4_6.Packet;
+import net.minecraft.server.v1_4_R1.Connection;
+import net.minecraft.server.v1_4_R1.NetworkManager;
+import net.minecraft.server.v1_4_R1.Packet;
 
 public class EmptyNetworkManager extends NetworkManager {
 
