@@ -21,10 +21,10 @@ public class SheepEquipper implements Equipper {
             Messaging.sendTr(equipper, toEquip.getTrait(Sheared.class).toggle() ? Messages.SHEARED_SET
                     : Messages.SHEARED_STOPPED, toEquip.getName());
         } else if (hand.getType() == Material.INK_SACK) {
-            if (sheep.getColor() == DyeColor.getByData((byte) (15 - hand.getData().getData())))
+            if (sheep.getColor() == DyeColor.getByWoolData((byte) (15 - hand.getData().getData())))
                 return;
 
-            DyeColor color = DyeColor.getByData((byte) (15 - hand.getData().getData()));
+            DyeColor color = DyeColor.getByWoolData((byte) (15 - hand.getData().getData()));
             toEquip.getTrait(WoolColor.class).setColor(color);
             Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED, toEquip.getName(), color.name()
                     .toLowerCase().replace("_", " "));
