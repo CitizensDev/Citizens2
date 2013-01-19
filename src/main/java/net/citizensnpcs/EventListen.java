@@ -271,7 +271,7 @@ public class EventListen implements Listener {
                 Messaging.debug("Couldn't respawn id", id, "during chunk event at [" + coord.x + "," + coord.z + "]");
                 continue;
             }
-            ids.remove(i);
+            ids.remove(i--);
             Messaging.debug("Spawned id", id, "due to chunk event at [" + coord.x + "," + coord.z + "]");
         }
     }
