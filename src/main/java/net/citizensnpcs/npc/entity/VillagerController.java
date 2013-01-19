@@ -13,8 +13,8 @@ import net.minecraft.server.v1_4_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_4_R1.entity.CraftVillager;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Villager;
 import org.bukkit.util.Vector;
 
@@ -90,7 +90,7 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
-        public Entity getBukkitEntity() {
+        public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null)
                 bukkitEntity = new VillagerNPC(this);
             return super.getBukkitEntity();

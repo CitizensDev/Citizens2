@@ -12,8 +12,8 @@ import net.minecraft.server.v1_4_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_4_R1.entity.CraftWitch;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Witch;
 import org.bukkit.util.Vector;
 
@@ -82,7 +82,7 @@ public class WitchController extends MobEntityController {
         }
 
         @Override
-        public Entity getBukkitEntity() {
+        public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null)
                 bukkitEntity = new WitchNPC(this);
             return super.getBukkitEntity();
