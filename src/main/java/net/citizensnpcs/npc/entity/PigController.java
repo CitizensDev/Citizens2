@@ -13,8 +13,8 @@ import net.minecraft.server.v1_4_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPig;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
 import org.bukkit.util.Vector;
 
@@ -89,7 +89,7 @@ public class PigController extends MobEntityController {
         }
 
         @Override
-        public Entity getBukkitEntity() {
+        public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null)
                 bukkitEntity = new PigNPC(this);
             return super.getBukkitEntity();
