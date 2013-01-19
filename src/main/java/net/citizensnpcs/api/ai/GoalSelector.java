@@ -14,12 +14,6 @@ public interface GoalSelector {
     void finishAndRemove();
 
     /**
-     * @return The current {@link GoalStatus} describing the execution state to
-     *         parent nodes
-     */
-    GoalStatus getStatus();
-
-    /**
      * Replaces the execution of any running {@link Goal}s with the specified
      * goal.
      * 
@@ -36,12 +30,4 @@ public interface GoalSelector {
      *            The additional goals
      */
     void selectAdditional(Goal... goals);
-
-    /**
-     * Sets the current {@link GoalStatus}.
-     * 
-     * @param status
-     *            The new status
-     */
-    void setStatus(GoalStatus status);
 }

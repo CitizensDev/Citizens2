@@ -3,20 +3,24 @@ package net.citizensnpcs.api.ai.tree;
 import java.util.Collection;
 import java.util.Collections;
 
-import net.citizensnpcs.api.ai.GoalStatus;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
+/**
+ * A decorator is a wrapper over a {@link Behavior}, which can add functionality
+ * such as filtering {@link BehaviorStatus}es, conditions, timer loops and more
+ * without knowing the internals of the behavior it wraps.
+ */
 public class Decorator extends BehaviorGoalAdapter {
     private final Collection<Runnable> resetCallbacks;
     private final Collection<Runnable> runCallbacks;
     private final Collection<Function<Boolean, Boolean>> shouldExecuteTransformers;
-    private final Collection<Function<GoalStatus, GoalStatus>> statusTransformers;
+    private final Collection<Function<BehaviorStatus, BehaviorStatus>> statusTransformers;
     private final Behavior wrapping;
 
     private Decorator(Behavior toWrap, Collection<Runnable> runCallbacks,
-            Collection<Function<GoalStatus, GoalStatus>> statusTransformers,
+            Collection<Function<BehaviorStatus, BehaviorStatus>> statusTransformers,
             Collection<Function<Boolean, Boolean>> shouldExecuteTransformers, Collection<Runnable> resetCallbacks) {
         this.wrapping = toWrap;
         this.runCallbacks = runCallbacks;
@@ -34,12 +38,12 @@ public class Decorator extends BehaviorGoalAdapter {
     }
 
     @Override
-    public GoalStatus run() {
+    public BehaviorStatus run() {
         for (Runnable runnable : runCallbacks) {
             runnable.run();
         }
-        GoalStatus status = wrapping.run();
-        for (Function<GoalStatus, GoalStatus> transformer : statusTransformers) {
+        BehaviorStatus status = wrapping.run();
+        for (Function<BehaviorStatus, BehaviorStatus> transformer : statusTransformers) {
             status = transformer.apply(status);
         }
         return status;
@@ -58,7 +62,7 @@ public class Decorator extends BehaviorGoalAdapter {
         private Collection<Runnable> resetCallbacks = Collections.emptyList();
         private Collection<Runnable> runCallbacks = Collections.emptyList();
         private Collection<Function<Boolean, Boolean>> shouldExecuteTransformers = Collections.emptyList();
-        private Collection<Function<GoalStatus, GoalStatus>> statusTransformers = Collections.emptyList();
+        private Collection<Function<BehaviorStatus, BehaviorStatus>> statusTransformers = Collections.emptyList();
         private final Behavior toWrap;
 
         private Builder(Behavior toWrap) {
@@ -90,7 +94,7 @@ public class Decorator extends BehaviorGoalAdapter {
             return this;
         }
 
-        public Builder withStatusTransformer(Function<GoalStatus, GoalStatus> transformer) {
+        public Builder withStatusTransformer(Function<BehaviorStatus, BehaviorStatus> transformer) {
             if (statusTransformers == Collections.EMPTY_LIST)
                 statusTransformers = Lists.newArrayList();
             statusTransformers.add(transformer);

@@ -6,6 +6,10 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+/**
+ * The base class for composite {@link Behavior}s, which handle the transition
+ * between multiple sub-behaviors.
+ */
 public abstract class Composite extends BehaviorGoalAdapter {
     private final List<Behavior> behaviors;
 

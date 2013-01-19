@@ -1,15 +1,19 @@
 package net.citizensnpcs.api.ai.tree;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import net.citizensnpcs.api.ai.GoalStatus;
 
 import com.google.common.base.Function;
 
+/**
+ * A selector of sub-goals, that chooses a single {@link Behavior} to execute
+ * from a list. The default selection function is a random selection.
+ */
 public class Selector extends Composite {
     private Behavior executing;
     private boolean retryChildren = false;
@@ -34,16 +38,16 @@ public class Selector extends Composite {
     }
 
     @Override
-    public GoalStatus run() {
+    public BehaviorStatus run() {
         if (executing == null) {
             executing = getNextBehavior();
         }
-        GoalStatus status = executing.run();
-        if (status == GoalStatus.FAILURE) {
+        BehaviorStatus status = executing.run();
+        if (status == BehaviorStatus.FAILURE) {
             if (retryChildren) {
                 executing.reset();
                 executing = getNextBehavior();
-                return GoalStatus.RUNNING;
+                return BehaviorStatus.RUNNING;
             }
         }
         return status;
@@ -62,11 +66,26 @@ public class Selector extends Composite {
             return new Selector(selectionFunction, retryChildren, behaviors);
         }
 
+        /**
+         * Sets whether to retry child {@link Behavior}s when they return
+         * {@link BehaviorStatus#FAILURE}.
+         * 
+         * @param retry
+         *            Whether to retry children (default: false)
+         */
         public Builder retryChildren(boolean retry) {
             retryChildren = retry;
             return this;
         }
 
+        /**
+         * Sets the {@link Function} that selects a {@link Behavior} to execute
+         * from a list of behaviors, such as a random selection or a priority
+         * selection. See {@link Selectors} for some helper methods.
+         * 
+         * @param function
+         *            The selection function
+         */
         public Builder selectionFunction(Function<List<Behavior>, Behavior> function) {
             selectionFunction = function;
             return this;
@@ -74,10 +93,19 @@ public class Selector extends Composite {
     }
 
     private static final Random RANDOM = new Random();
+
     private static final Function<List<Behavior>, Behavior> RANDOM_SELECTION = new Function<List<Behavior>, Behavior>() {
         @Override
         public Behavior apply(@Nullable List<Behavior> behaviors) {
             return behaviors.get(RANDOM.nextInt(behaviors.size()));
         }
     };
+
+    public static Builder selecting(Behavior... behaviors) {
+        return selecting(Arrays.asList(behaviors));
+    }
+
+    public static Builder selecting(Collection<Behavior> behaviors) {
+        return new Builder(behaviors);
+    }
 }
