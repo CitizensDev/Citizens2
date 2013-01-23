@@ -17,6 +17,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.trait.trait.Speech;
+import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.command.Command;
@@ -274,7 +275,7 @@ public class NPCCommands {
             permission = "npc.create")
     @Requirements
     public void create(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        String name = StringHelper.parseColors(args.getJoinedStrings(1));
+        String name = Colorizer.parseColors(args.getJoinedStrings(1));
         if (name.length() > 16) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
             name = name.substring(0, 15);
@@ -966,9 +967,8 @@ public class NPCCommands {
             min = 2,
             permission = "npc.speak")
     public void speak(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-
         String type = npc.getTrait(Speech.class).getDefaultVocalChord();
-        String message = StringHelper.parseColors(args.getJoinedStrings(1));
+        String message = Colorizer.parseColors(args.getJoinedStrings(1));
 
         if (message.length() <= 0) {
             Messaging.send(sender, "Default Vocal Chord for " + npc.getName() + ": "

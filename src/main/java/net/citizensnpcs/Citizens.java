@@ -3,6 +3,7 @@ package net.citizensnpcs;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Locale;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -19,6 +20,7 @@ import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
+import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.command.CommandManager;
 import net.citizensnpcs.command.CommandManager.CommandInfo;
@@ -173,6 +175,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onEnable() {
+        setupTranslator();
         CitizensAPI.setImplementation(this);
         // Disable if the server is not using the compatible Minecraft version
         String mcVersion = Util.getMinecraftVersion();
@@ -287,6 +290,28 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         } catch (NoClassDefFoundError e) {
             Messaging.logTr(Messages.ERROR_LOADING_ECONOMY);
         }
+    }
+
+    private void setupTranslator() {
+        Locale locale = Locale.getDefault();
+        String setting = Setting.LOCALE.asString();
+        if (!setting.isEmpty()) {
+            String[] parts = setting.split("[\\._]");
+            switch (parts.length) {
+                case 1:
+                    locale = new Locale(parts[0]);
+                    break;
+                case 2:
+                    locale = new Locale(parts[0], parts[1]);
+                    break;
+                case 3:
+                    locale = new Locale(parts[0], parts[1], parts[2]);
+                    break;
+                default:
+                    break;
+            }
+        }
+        Translator.setInstance(new File(getDataFolder(), "lang"), locale);
     }
 
     private void startMetrics() {

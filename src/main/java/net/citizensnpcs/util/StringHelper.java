@@ -1,16 +1,11 @@
 package net.citizensnpcs.util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.util.Colorizer;
 
 import org.bukkit.ChatColor;
 
 public class StringHelper {
-    private static Pattern COLOR_MATCHER;
-
-    private static String GROUP = ChatColor.COLOR_CHAR + "$1";
 
     public static String capitalize(Object string) {
         String capitalize = string.toString();
@@ -67,13 +62,8 @@ public class StringHelper {
         return p[n];
     }
 
-    public static String parseColors(String parsed) {
-        Matcher matcher = COLOR_MATCHER.matcher(ChatColor.translateAlternateColorCodes('&', parsed));
-        return matcher.replaceAll(GROUP);
-    }
-
     public static String wrap(Object string) {
-        return wrap(string, parseColors(Setting.MESSAGE_COLOUR.asString()));
+        return wrap(string, Colorizer.parseColors(Setting.MESSAGE_COLOUR.asString()));
     }
 
     public static String wrap(Object string, ChatColor colour) {
@@ -81,18 +71,11 @@ public class StringHelper {
     }
 
     public static String wrap(Object string, String colour) {
-        return parseColors(Setting.HIGHLIGHT_COLOUR.asString()) + string.toString() + colour;
+        return Colorizer.parseColors(Setting.HIGHLIGHT_COLOUR.asString()) + string.toString() + colour;
     }
 
     public static String wrapHeader(Object string) {
         String highlight = Setting.HIGHLIGHT_COLOUR.asString();
         return highlight + "=====[ " + string.toString() + highlight + " ]=====";
-    }
-
-    static {
-        String colors = "";
-        for (ChatColor color : ChatColor.values())
-            colors += color.getChar();
-        COLOR_MATCHER = Pattern.compile("\\<([COLORS])\\>".replace("COLORS", colors), Pattern.CASE_INSENSITIVE);
     }
 }
