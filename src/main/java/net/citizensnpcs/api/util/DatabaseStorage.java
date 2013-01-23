@@ -75,7 +75,9 @@ public class DatabaseStorage implements Storage {
         this.username = username;
         this.password = password;
         this.type = DatabaseType.match(driver);
-        this.type.load();
+        boolean success = this.type.load();
+        if (success == false)
+            throw new SQLException("Couldn't load driver");
     }
 
     private void createForeignKey(Table from, Table to) {
@@ -232,7 +234,8 @@ public class DatabaseStorage implements Storage {
 
     @Override
     public String toString() {
-        return "DatabaseStorage {url=" + url + ", username=" + username + ", password=" + password + "}";
+        return "DatabaseStorage [tables=" + tables + ", url=" + url + ", username=" + username + ", password="
+                + password + "]";
     }
 
     public class DatabaseKey extends DataKey {

@@ -9,9 +9,13 @@ import net.citizensnpcs.api.ai.SimpleGoalController;
 import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
 import net.citizensnpcs.api.ai.speech.SpeechController;
 import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.event.NPCAddTraitEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
+import net.citizensnpcs.api.event.NPCRemoveTraitEvent;
+import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Speech;
+import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,6 +29,7 @@ public abstract class AbstractNPC implements NPC {
     private final int id;
     protected final MetadataStore metadata = new SimpleMetadataStore();
     private String name;
+    private final List<String> removedTraits = Lists.newArrayList();
     protected final List<Runnable> runnables = Lists.newArrayList();
     private final SpeechController speechController = new SimpleSpeechController(this);
     protected final Map<Class<? extends Trait>, Trait> traits = Maps.newHashMap();
@@ -63,6 +68,8 @@ public abstract class AbstractNPC implements NPC {
                 runnables.remove(replaced);
             runnables.add(trait);
         }
+
+        Bukkit.getPluginManager().callEvent(new NPCAddTraitEvent(this, trait));
     }
 
     @Override
@@ -149,11 +156,40 @@ public abstract class AbstractNPC implements NPC {
     public void removeTrait(Class<? extends Trait> traitClass) {
         Trait trait = traits.remove(traitClass);
         if (trait != null) {
+            Bukkit.getPluginManager().callEvent(new NPCRemoveTraitEvent(this, trait));
+            removedTraits.add(trait.getName());
             if (trait.isRunImplemented())
                 runnables.remove(trait);
             HandlerList.unregisterAll(trait);
             trait.onRemove();
         }
+    }
+
+    private void removeTraitData(DataKey root) {
+        for (String name : removedTraits) {
+            root.removeKey("traits." + name);
+        }
+        removedTraits.clear();
+    }
+
+    public void save(DataKey root) {
+        root.setString("name", getFullName());
+        metadata.saveTo(root.getRelative("metadata"));
+
+        // Save all existing traits
+        StringBuilder traitNames = new StringBuilder();
+        for (Trait trait : traits.values()) {
+            DataKey traitKey = root.getRelative("traits." + trait.getName());
+            trait.save(traitKey);
+            PersistenceLoader.save(trait, traitKey);
+            removedTraits.remove(trait.getName());
+            traitNames.append(trait.getName() + ",");
+        }
+        if (traitNames.length() > 0) {
+            root.setString("traitnames", traitNames.substring(0, traitNames.length() - 1));
+        } else
+            root.setString("traitnames", "");
+        removeTraitData(root);
     }
 
     @Override

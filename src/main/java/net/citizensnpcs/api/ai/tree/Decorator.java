@@ -3,8 +3,8 @@ package net.citizensnpcs.api.ai.tree;
 import java.util.Collection;
 import java.util.Collections;
 
-
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 /**
@@ -15,17 +15,17 @@ import com.google.common.collect.Lists;
 public class Decorator extends BehaviorGoalAdapter {
     private final Collection<Runnable> resetCallbacks;
     private final Collection<Runnable> runCallbacks;
-    private final Collection<Function<Boolean, Boolean>> shouldExecuteTransformers;
+    private final Collection<Predicate<Boolean>> shouldExecutePredicates;
     private final Collection<Function<BehaviorStatus, BehaviorStatus>> statusTransformers;
     private final Behavior wrapping;
 
     private Decorator(Behavior toWrap, Collection<Runnable> runCallbacks,
             Collection<Function<BehaviorStatus, BehaviorStatus>> statusTransformers,
-            Collection<Function<Boolean, Boolean>> shouldExecuteTransformers, Collection<Runnable> resetCallbacks) {
+            Collection<Predicate<Boolean>> shouldExecutePredicates, Collection<Runnable> resetCallbacks) {
         this.wrapping = toWrap;
         this.runCallbacks = runCallbacks;
         this.statusTransformers = statusTransformers;
-        this.shouldExecuteTransformers = shouldExecuteTransformers;
+        this.shouldExecutePredicates = shouldExecutePredicates;
         this.resetCallbacks = resetCallbacks;
     }
 
@@ -52,7 +52,7 @@ public class Decorator extends BehaviorGoalAdapter {
     @Override
     public boolean shouldExecute() {
         boolean shouldExecute = wrapping.shouldExecute();
-        for (Function<Boolean, Boolean> transformer : shouldExecuteTransformers) {
+        for (Predicate<Boolean> transformer : shouldExecutePredicates) {
             shouldExecute = transformer.apply(shouldExecute);
         }
         return shouldExecute;
@@ -61,7 +61,7 @@ public class Decorator extends BehaviorGoalAdapter {
     public static class Builder {
         private Collection<Runnable> resetCallbacks = Collections.emptyList();
         private Collection<Runnable> runCallbacks = Collections.emptyList();
-        private Collection<Function<Boolean, Boolean>> shouldExecuteTransformers = Collections.emptyList();
+        private Collection<Predicate<Boolean>> shouldExecutePredicates = Collections.emptyList();
         private Collection<Function<BehaviorStatus, BehaviorStatus>> statusTransformers = Collections.emptyList();
         private final Behavior toWrap;
 
@@ -70,7 +70,7 @@ public class Decorator extends BehaviorGoalAdapter {
         }
 
         public Decorator build() {
-            return new Decorator(toWrap, runCallbacks, statusTransformers, shouldExecuteTransformers, resetCallbacks);
+            return new Decorator(toWrap, runCallbacks, statusTransformers, shouldExecutePredicates, resetCallbacks);
         }
 
         public Builder withPreRunCallback(Runnable callback) {
@@ -87,10 +87,10 @@ public class Decorator extends BehaviorGoalAdapter {
             return this;
         }
 
-        public Builder withShouldExecuteTransformer(Function<Boolean, Boolean> transformer) {
-            if (shouldExecuteTransformers == Collections.EMPTY_LIST)
-                shouldExecuteTransformers = Lists.newArrayList();
-            shouldExecuteTransformers.add(transformer);
+        public Builder withShouldExecutePredicate(Predicate<Boolean> predicate) {
+            if (shouldExecutePredicates == Collections.EMPTY_LIST)
+                shouldExecutePredicates = Lists.newArrayList();
+            shouldExecutePredicates.add(predicate);
             return this;
         }
 
