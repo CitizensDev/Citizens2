@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.Translator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -37,6 +39,24 @@ public class Messaging {
         log(Level.INFO, Translator.translate(key, msg));
     }
 
+    private static String prettify(String message) {
+        String trimmed = message.trim();
+        String messageColour = Colorizer.parseColors(Setting.MESSAGE_COLOUR.asString());
+        if (!trimmed.isEmpty()) {
+            if (trimmed.charAt(0) == ChatColor.COLOR_CHAR) {
+                ChatColor test = ChatColor.getByChar(trimmed.substring(1, 2));
+                if (test == null) {
+                    message = messageColour + message;
+                } else
+                    messageColour = test.toString();
+            } else
+                message = messageColour + message;
+        }
+        message = message.replace("[[", Colorizer.parseColors(Setting.HIGHLIGHT_COLOUR.asString()));
+        message = message.replace("]]", messageColour);
+        return message;
+    }
+
     public static void send(CommandSender sender, Object... msg) {
         sendMessageTo(sender, SPACE.join(msg));
     }
@@ -50,23 +70,9 @@ public class Messaging {
     }
 
     private static void sendMessageTo(CommandSender sender, String rawMessage) {
-        rawMessage = StringHelper.parseColors(rawMessage);
+        rawMessage = Colorizer.parseColors(rawMessage);
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
-            String trimmed = message.trim();
-            String messageColour = StringHelper.parseColors(Setting.MESSAGE_COLOUR.asString());
-            if (!trimmed.isEmpty()) {
-                if (trimmed.charAt(0) == ChatColor.COLOR_CHAR) {
-                    ChatColor test = ChatColor.getByChar(trimmed.substring(1, 2));
-                    if (test == null) {
-                        message = messageColour + message;
-                    } else
-                        messageColour = test.toString();
-                } else
-                    message = messageColour + message;
-            }
-            message = message.replace("[[", StringHelper.parseColors(Setting.HIGHLIGHT_COLOUR.asString()));
-            message = message.replace("]]", messageColour);
-            sender.sendMessage(message);
+            sender.sendMessage(prettify(message));
         }
     }
 
@@ -98,22 +104,7 @@ public class Messaging {
     }
 
     public static String tr(String key, Object... messages) {
-        String message = Translator.translate(key, messages);
-        String trimmed = message.trim();
-        String messageColour = StringHelper.parseColors(Setting.MESSAGE_COLOUR.asString());
-        if (!trimmed.isEmpty()) {
-            if (trimmed.charAt(0) == ChatColor.COLOR_CHAR) {
-                ChatColor test = ChatColor.getByChar(trimmed.substring(1, 2));
-                if (test == null) {
-                    message = messageColour + message;
-                } else
-                    messageColour = test.toString();
-            } else
-                message = messageColour + message;
-        }
-        message = message.replace("[[", StringHelper.parseColors(Setting.HIGHLIGHT_COLOUR.asString()));
-        message = message.replace("]]", messageColour);
-        return message;
+        return prettify(Translator.translate(key, messages));
     }
 
     public static String tryTranslate(Object possible) {
