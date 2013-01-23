@@ -1,6 +1,5 @@
 package net.citizensnpcs.npc;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -36,13 +35,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
-    private final List<String> removedTraits = Lists.newArrayList();
 
     public CitizensNPC(int id, String name, EntityController entityController) {
         super(id, name);
@@ -148,40 +145,9 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public void removeTrait(Class<? extends Trait> clazz) {
-        Trait present = traits.get(clazz);
-        if (present != null)
-            removedTraits.add(present.getName());
-        super.removeTrait(clazz);
-    }
-
-    private void removeTraitData(DataKey root) {
-        for (String name : removedTraits) {
-            root.removeKey("traits." + name);
-        }
-        removedTraits.clear();
-    }
-
     public void save(DataKey root) {
-        root.setString("name", getFullName());
-
-        metadata.saveTo(root.getRelative("metadata"));
+        super.save(root);
         navigator.save(root.getRelative("navigator"));
-
-        // Save all existing traits
-        StringBuilder traitNames = new StringBuilder();
-        for (Trait trait : traits.values()) {
-            DataKey traitKey = root.getRelative("traits." + trait.getName());
-            trait.save(traitKey);
-            PersistenceLoader.save(trait, traitKey);
-            removedTraits.remove(trait.getName());
-            traitNames.append(trait.getName() + ",");
-        }
-        if (traitNames.length() > 0) {
-            root.setString("traitnames", traitNames.substring(0, traitNames.length() - 1));
-        } else
-            root.setString("traitnames", "");
-        removeTraitData(root);
     }
 
     public void setEntityController(EntityController newController) {
