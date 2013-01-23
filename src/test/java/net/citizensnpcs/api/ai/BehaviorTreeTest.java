@@ -7,15 +7,15 @@ public class BehaviorTreeTest {
     private GoalController test;
 
     @Test
+    public void decorator() {
+    }
+
+    @Test
     public void selector() {
     }
 
     @Test
     public void sequence() {
-    }
-
-    @Test
-    public void decorator() {
     }
 
     @Before
