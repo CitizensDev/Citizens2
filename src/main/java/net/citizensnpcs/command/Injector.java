@@ -4,8 +4,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
-import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.api.util.Messaging;
 
+@Deprecated
 public class Injector {
     private final Class<?>[] argClasses;
     private final Object[] args;

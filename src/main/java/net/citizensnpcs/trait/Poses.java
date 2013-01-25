@@ -2,12 +2,12 @@ package net.citizensnpcs.trait;
 
 import java.util.Map;
 
+import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.command.exception.CommandException;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.Pose;
 import net.citizensnpcs.util.Util;

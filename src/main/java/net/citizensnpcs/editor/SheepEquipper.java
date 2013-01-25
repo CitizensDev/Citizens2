@@ -1,10 +1,10 @@
 package net.citizensnpcs.editor;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Material;

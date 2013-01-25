@@ -19,11 +19,11 @@ import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_4_R1.EntityPlayer;
 

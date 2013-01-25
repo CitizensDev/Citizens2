@@ -10,13 +10,13 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.DatabaseStorage;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.NBTStorage;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.entity.EntityType;

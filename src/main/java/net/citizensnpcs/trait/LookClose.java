@@ -6,11 +6,11 @@ import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.command.CommandConfigurable;
+import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.command.CommandConfigurable;
-import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.Location;

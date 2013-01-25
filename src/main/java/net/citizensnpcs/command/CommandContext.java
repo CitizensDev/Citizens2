@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+@Deprecated
 public class CommandContext {
     protected String[] args;
     protected final Set<Character> flags = new HashSet<Character>();

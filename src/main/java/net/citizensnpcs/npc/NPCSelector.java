@@ -9,8 +9,8 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.event.NPCSelectEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;

@@ -1,6 +1,6 @@
 package net.citizensnpcs.command.exception;
 
-import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.api.util.Messaging;
 
 public class CommandException extends Exception {
     public CommandException() {

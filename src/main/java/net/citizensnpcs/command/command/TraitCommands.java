@@ -3,16 +3,15 @@ package net.citizensnpcs.command.command;
 import java.util.List;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.command.Command;
+import net.citizensnpcs.api.command.CommandConfigurable;
+import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.command.exception.NoPermissionsException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.command.Command;
-import net.citizensnpcs.command.CommandConfigurable;
-import net.citizensnpcs.command.CommandContext;
-import net.citizensnpcs.command.Requirements;
-import net.citizensnpcs.command.exception.CommandException;
-import net.citizensnpcs.command.exception.NoPermissionsException;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.command.CommandSender;

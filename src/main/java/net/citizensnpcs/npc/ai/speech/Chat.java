@@ -4,16 +4,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.speech.Talkable;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
+import net.citizensnpcs.api.ai.speech.Talkable;
 import net.citizensnpcs.api.ai.speech.VocalChord;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.api.util.Messaging;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 public class Chat implements VocalChord {
 

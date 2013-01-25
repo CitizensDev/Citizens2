@@ -1,8 +1,8 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.trait.waypoint.WaypointEditor;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;

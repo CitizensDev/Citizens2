@@ -4,8 +4,8 @@ import java.util.Map;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;

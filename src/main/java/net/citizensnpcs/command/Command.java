@@ -3,6 +3,7 @@ package net.citizensnpcs.command;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
     /**
