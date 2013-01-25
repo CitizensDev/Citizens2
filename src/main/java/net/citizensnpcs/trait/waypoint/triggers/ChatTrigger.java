@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.api.util.Messaging;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

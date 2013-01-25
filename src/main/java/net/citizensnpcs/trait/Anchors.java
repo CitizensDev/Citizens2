@@ -6,9 +6,9 @@ import java.util.List;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

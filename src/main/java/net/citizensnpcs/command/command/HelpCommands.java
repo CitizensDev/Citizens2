@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Set;
 
 import net.citizensnpcs.Citizens;
+import net.citizensnpcs.api.command.Command;
+import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.CommandManager.CommandInfo;
+import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.command.Command;
-import net.citizensnpcs.command.CommandContext;
-import net.citizensnpcs.command.CommandManager.CommandInfo;
-import net.citizensnpcs.command.Requirements;
-import net.citizensnpcs.command.exception.CommandException;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.StringHelper;
 

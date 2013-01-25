@@ -1,4 +1,4 @@
-package net.citizensnpcs.command;
+package net.citizensnpcs.command.command;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -6,14 +6,16 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.command.CommandAnnotationProcessor;
+import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.command.exception.RequirementMissingException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
-import net.citizensnpcs.command.exception.CommandException;
-import net.citizensnpcs.command.exception.RequirementMissingException;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;

@@ -6,6 +6,7 @@ import net.citizensnpcs.command.exception.CommandException;
 
 import org.bukkit.command.CommandSender;
 
+@Deprecated
 public interface CommandAnnotationProcessor {
     /**
      * @return The {@link Annotation} class that this processor will accept.

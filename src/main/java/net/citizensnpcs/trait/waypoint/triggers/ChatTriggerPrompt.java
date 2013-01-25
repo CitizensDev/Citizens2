@@ -2,8 +2,8 @@ package net.citizensnpcs.trait.waypoint.triggers;
 
 import java.util.List;
 
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;

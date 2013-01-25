@@ -1,5 +1,6 @@
 package net.citizensnpcs.command.exception;
 
+
 public class CommandUsageException extends CommandException {
     protected String usage;
 

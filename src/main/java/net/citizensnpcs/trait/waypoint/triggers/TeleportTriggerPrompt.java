@@ -2,8 +2,8 @@ package net.citizensnpcs.trait.waypoint.triggers;
 
 import java.util.regex.Pattern;
 
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

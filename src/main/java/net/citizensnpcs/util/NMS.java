@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Messaging;
 import net.minecraft.server.v1_4_R1.ControllerJump;
 import net.minecraft.server.v1_4_R1.ControllerLook;
 import net.minecraft.server.v1_4_R1.DamageSource;

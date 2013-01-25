@@ -3,6 +3,8 @@ package net.citizensnpcs.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.citizensnpcs.api.util.Messaging;
+
 import org.bukkit.command.CommandSender;
 
 public class Paginator {

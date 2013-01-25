@@ -2,8 +2,8 @@ package net.citizensnpcs;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Messaging;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 

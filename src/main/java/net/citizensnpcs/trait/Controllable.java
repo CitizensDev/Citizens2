@@ -3,14 +3,14 @@ package net.citizensnpcs.trait;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
+import net.citizensnpcs.api.command.CommandConfigurable;
+import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.command.CommandConfigurable;
-import net.citizensnpcs.command.CommandContext;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_4_R1.EntityLiving;
 import net.minecraft.server.v1_4_R1.EntityPlayer;

@@ -1,9 +1,8 @@
 package net.citizensnpcs.command.command;
 
+import net.citizensnpcs.api.command.Command;
+import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.command.Command;
-import net.citizensnpcs.command.CommandContext;
-import net.citizensnpcs.command.Requirements;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.editor.EquipmentEditor;
 import net.citizensnpcs.trait.text.Text;

@@ -7,7 +7,7 @@ import net.citizensnpcs.api.ai.speech.VocalChord;
 import net.citizensnpcs.api.ai.speech.event.SpeechBystanderEvent;
 import net.citizensnpcs.api.ai.speech.event.SpeechTargetedEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.Messaging;
+import net.citizensnpcs.api.util.Messaging;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;

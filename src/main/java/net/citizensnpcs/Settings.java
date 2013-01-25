@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
 
@@ -25,8 +26,14 @@ public class Settings {
             } else
                 setting.loadFromKey(root);
         }
+        updateMessagingSettings();
 
         save();
+    }
+
+    private void updateMessagingSettings() {
+        Messaging.configure(Setting.DEBUG_MODE.asBoolean(), Setting.MESSAGE_COLOUR.asString(),
+                Setting.HIGHLIGHT_COLOUR.asString());
     }
 
     public void reload() {
@@ -34,6 +41,7 @@ public class Settings {
         for (Setting setting : Setting.values())
             if (root.keyExists(setting.path))
                 setting.loadFromKey(root);
+        updateMessagingSettings();
 
         save();
     }
