@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.util;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -21,11 +22,14 @@ public class Messaging {
     private static String HIGHLIGHT_COLOUR = ChatColor.YELLOW.toString();
     private static String MESSAGE_COLOUR = ChatColor.GREEN.toString();
     private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
+    private static Logger LOGGER = Logger.getLogger("Citizens");
 
     public static void configure(boolean debug, String messageColour, String highlightColour) {
         DEBUG = debug;
         MESSAGE_COLOUR = messageColour;
         HIGHLIGHT_COLOUR = highlightColour;
+        if (Bukkit.getLogger() != null)
+            LOGGER = Bukkit.getLogger();
     }
 
     public static void debug(Object... msg) {
@@ -34,19 +38,15 @@ public class Messaging {
     }
 
     private static void log(Level level, Object... msg) {
-        Bukkit.getLogger().log(level, SPACE.join(msg));
+        LOGGER.log(level, "[Citizens] " + SPACE.join(msg));
     }
 
     public static void log(Object... msg) {
-        prefixedLog("[Citizens] ", msg);
+        log(Level.INFO, msg);
     }
 
     public static void logTr(String key, Object... msg) {
-        prefixedLog("[Citizens] ", Translator.translate(key, msg));
-    }
-
-    public static void prefixedLog(String prefix, Object... msg) {
-        log(Level.INFO, prefix, msg);
+        log(Level.INFO, Translator.translate(key, msg));
     }
 
     private static String prettify(String message) {

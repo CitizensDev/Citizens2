@@ -43,9 +43,7 @@ public class CommandManager {
      */
     private final Map<String, Method> commands = new HashMap<String, Method>();
 
-    // Stores the injector used to getInstance.
     private Injector injector;
-    // Used to store the instances associated with a method.
     private final Map<Method, Object> instances = new HashMap<Method, Object>();
     private final ListMultimap<Method, Annotation> registeredAnnotations = ArrayListMultimap.create();
     private final Set<Method> serverCommands = new HashSet<Method>();
@@ -336,6 +334,14 @@ public class CommandManager {
         for (Method method : clazz.getMethods()) {
             if (!method.isAnnotationPresent(Command.class))
                 continue;
+            // We want to be able invoke with an instance
+            if (!Modifier.isStatic(method.getModifiers())) {
+                // Can't register this command if we don't have an instance
+                if (obj == null)
+                    continue;
+                instances.put(method, obj);
+            }
+
             Command cmd = method.getAnnotation(Command.class);
             // Cache the aliases too
             for (String alias : cmd.aliases()) {
@@ -370,15 +376,6 @@ public class CommandManager {
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (parameterTypes.length <= 1 || parameterTypes[1] == CommandSender.class)
                 serverCommands.add(method);
-
-            // We want to be able invoke with an instance
-            if (!Modifier.isStatic(method.getModifiers())) {
-                // Can't register this command if we don't have an instance
-                if (obj == null)
-                    continue;
-
-                instances.put(method, obj);
-            }
         }
     }
 
