@@ -20,9 +20,9 @@ public class Messaging {
     private static final Splitter CHAT_NEWLINE_SPLITTER = Splitter.on(CHAT_NEWLINE);
     private static boolean DEBUG = false;
     private static String HIGHLIGHT_COLOUR = ChatColor.YELLOW.toString();
+    private static Logger LOGGER = Logger.getLogger("Citizens");
     private static String MESSAGE_COLOUR = ChatColor.GREEN.toString();
     private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
-    private static Logger LOGGER = Logger.getLogger("Citizens");
 
     public static void configure(boolean debug, String messageColour, String highlightColour) {
         DEBUG = debug;

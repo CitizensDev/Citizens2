@@ -12,9 +12,12 @@ import java.util.concurrent.BlockingQueue;
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.Invocable;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import javax.script.SimpleBindings;
+import javax.script.SimpleScriptContext;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -28,7 +31,7 @@ import com.google.common.io.Closeables;
  * thread - {@link ScriptCompiler#run()} will block while waiting for new tasks
  * to compile.
  */
-public class ScriptCompiler extends Thread {
+public class ScriptCompiler implements Runnable {
     private final ScriptEngineManager engineManager = new ScriptEngineManager(ScriptCompiler.class.getClassLoader());
     private final Map<String, ScriptEngine> engines = Maps.newHashMap();
     private final Function<File, FileEngine> fileEngineConverter = new Function<File, FileEngine>() {
@@ -38,23 +41,19 @@ public class ScriptCompiler extends Thread {
                 return null;
             String fileName = file.getName();
             String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-            if (!engines.containsKey(extension)) {
-                ScriptEngine search = engineManager.getEngineByExtension(extension);
-                if (search != null && (!(search instanceof Compilable) || !(search instanceof Invocable)))
-                    search = null;
-                engines.put(extension, search);
-            }
-            ScriptEngine engine = engines.get(extension);
+            ScriptEngine engine = loadEngine(extension);
             if (engine == null)
                 return null;
             return new FileEngine(file, engine);
         }
     };
     private final List<ContextProvider> globalContextProviders = Lists.newArrayList();
+    private final Thread runningThread;
     private final BlockingQueue<CompileTask> toCompile = new ArrayBlockingQueue<CompileTask>(50);
 
     public ScriptCompiler() {
-        super("Citizens Script Compiler");
+        runningThread = new Thread(this, "Citizens Script Compiler");
+        runningThread.start();
     }
 
     /**
@@ -81,6 +80,21 @@ public class ScriptCompiler extends Thread {
      */
     public CompileTaskBuilder compile(Iterable<File> files) {
         return compile(Iterables.toArray(files, File.class));
+    }
+
+    public void interrupt() {
+        runningThread.interrupt();
+    }
+
+    private ScriptEngine loadEngine(String extension) {
+        ScriptEngine engine = engines.get(extension);
+        if (engine == null) {
+            ScriptEngine search = engineManager.getEngineByExtension(extension);
+            if (search != null && (!(search instanceof Compilable) || !(search instanceof Invocable)))
+                search = null;
+            engines.put(extension, search);
+        }
+        return engine;
     }
 
     /**
@@ -136,6 +150,20 @@ public class ScriptCompiler extends Thread {
         }
     }
 
+    public void run(String code, String extension) throws ScriptException {
+        run(code, extension, null);
+    }
+
+    public void run(String code, String extension, Map<String, Object> vars) throws ScriptException {
+        ScriptEngine engine = loadEngine(extension);
+        if (engine == null)
+            throw new ScriptException("Couldn't load engine with extension " + extension);
+        ScriptContext context = new SimpleScriptContext();
+        if (vars != null)
+            context.setBindings(new SimpleBindings(vars), ScriptContext.ENGINE_SCOPE);
+        engine.eval(extension, context);
+    }
+
     private class CompileTask {
         private final CompileCallback[] callbacks;
         private final ContextProvider[] contextProviders;
@@ -174,7 +202,7 @@ public class ScriptCompiler extends Thread {
         }
     }
 
-    private static class FileEngine { // File + ScriptEngine POJO
+    private static class FileEngine {
         final ScriptEngine engine;
         final File file;
 

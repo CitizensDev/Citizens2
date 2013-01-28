@@ -58,7 +58,6 @@ public final class CitizensAPI {
     public static ScriptCompiler getScriptCompiler() {
         if (scriptCompiler == null) {
             scriptCompiler = new ScriptCompiler();
-            scriptCompiler.start();
         }
         return scriptCompiler;
     }
