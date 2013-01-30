@@ -171,6 +171,10 @@ public class PersistenceLoader {
     }
 
     private static void deserialiseMap(Map<String, Object> map, DataKey root, PersistField field) {
+        if (root.getRaw(field.key) instanceof Map) {
+            map.putAll((Map<? extends String, ? extends Object>) root.getRaw(field.key));
+            return;
+        }
         for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
             Object loaded = deserialiseValue(field, subKey);
             if (loaded == null)

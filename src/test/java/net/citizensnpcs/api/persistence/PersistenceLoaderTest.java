@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.persistence;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
@@ -52,6 +53,19 @@ public class PersistenceLoaderTest {
     @Test
     public void processesRequiredCorrectly() {
         assertThat(PersistenceLoader.load(RequiredTest.class, root), is(nullValue()));
+    }
+
+    @Test
+    public void testMapReload() {
+        root.setBoolean("enabled.trig1", true);
+        TestMap stored = PersistenceLoader.load(TestMap.class, root);
+        PersistenceLoader.save(stored, root);
+        assertThat(PersistenceLoader.load(TestMap.class, root).enabled.get("trig1"), equalTo(true));
+    }
+
+    public static class TestMap {
+        @Persist(value = "enabled", collectionType = ConcurrentHashMap.class)
+        private final Map<String, Boolean> enabled = new ConcurrentHashMap<String, Boolean>();
     }
 
     @Test
