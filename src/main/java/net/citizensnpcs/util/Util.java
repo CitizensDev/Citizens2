@@ -26,9 +26,9 @@ public class Util {
 
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
-    private static Constructor<?> SEED_GENERATOR_CONSTRUCTOR = null;
-
     private static Constructor<? extends Random> RNG_CONSTRUCTOR = null;
+
+    private static Constructor<?> SEED_GENERATOR_CONSTRUCTOR = null;
 
     public static void assumePose(LivingEntity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);

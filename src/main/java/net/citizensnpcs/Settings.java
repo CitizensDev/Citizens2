@@ -31,11 +31,6 @@ public class Settings {
         save();
     }
 
-    private void updateMessagingSettings() {
-        Messaging.configure(Setting.DEBUG_MODE.asBoolean(), Setting.MESSAGE_COLOUR.asString(),
-                Setting.HIGHLIGHT_COLOUR.asString());
-    }
-
     public void reload() {
         config.load();
         for (Setting setting : Setting.values())
@@ -50,6 +45,11 @@ public class Settings {
         config.save();
     }
 
+    private void updateMessagingSettings() {
+        Messaging.configure(Setting.DEBUG_MODE.asBoolean(), Setting.MESSAGE_COLOUR.asString(),
+                Setting.HIGHLIGHT_COLOUR.asString());
+    }
+
     public enum Setting {
         CHAT_BYSTANDERS_HEAR_TARGETED_CHAT("npc.chat.options.bystanders-hear-targeted-chat", true),
         CHAT_FORMAT("npc.chat.format.no-targets", "[<npc>]: <text>"),
@@ -61,6 +61,7 @@ public class Settings {
         CHAT_MULTIPLE_TARGETS_FORMAT("npc.chat.options.multiple-targets-format",
                 "<target>|, <target>| & <target>| & others"),
         CHAT_RANGE("npc.chat.options.range", 5),
+        CHECK_MINECRAFT_VERSION("advanced.check-minecraft-version", true),
         DATABASE_DRIVER("storage.database.driver", ""),
         DATABASE_PASSWORD("storage.database.password", ""),
         DATABASE_URL("storage.database.url", ""),
