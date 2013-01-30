@@ -489,6 +489,18 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "id",
+            desc = "Sends the selected NPC's ID to the sender",
+            modifiers = { "id" },
+            min = 1,
+            max = 1,
+            permission = "npc.id")
+    public void id(CommandContext args, CommandSender sender, NPC npc) {
+        Messaging.send(sender, npc.getId());
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "list (page) ((-a) --owner (owner) --type (type) --char (char))",
             desc = "List NPCs",
             flags = "a",
