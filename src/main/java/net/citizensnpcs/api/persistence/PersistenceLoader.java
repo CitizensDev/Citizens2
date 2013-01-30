@@ -171,10 +171,6 @@ public class PersistenceLoader {
     }
 
     private static void deserialiseMap(Map<String, Object> map, DataKey root, PersistField field) {
-        if (root.getRaw(field.key) instanceof Map) {
-            map.putAll((Map<? extends String, ? extends Object>) root.getRaw(field.key));
-            return;
-        }
         for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
             Object loaded = deserialiseValue(field, subKey);
             if (loaded == null)
@@ -356,6 +352,13 @@ public class PersistenceLoader {
                 String key = createRelativeKey(field.key, i);
                 serialiseValue(field, root.getRelative(key), object);
                 i++;
+            }
+        } else if (Map.class.isAssignableFrom(field.getType())) {
+            Map<String, Object> map = field.get();
+            root.removeKey(field.key);
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                String key = createRelativeKey(field.key, entry.getKey());
+                serialiseValue(field, root.getRelative(key), entry.getValue());
             }
         } else {
             serialiseValue(field, root.getRelative(field.key), field.get());
