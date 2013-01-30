@@ -1,5 +1,6 @@
 package net.citizensnpcs.util;
 
+import java.lang.reflect.Constructor;
 import java.util.Random;
 
 import net.citizensnpcs.api.event.NPCCollisionEvent;
@@ -17,16 +18,17 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Splitter;
 
+@SuppressWarnings("unchecked")
 public class Util {
     // Static class for small (emphasis small) utility methods
     private Util() {
     }
 
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
-
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
+    private static Constructor<?> SEED_GENERATOR_CONSTRUCTOR = null;
 
-    private static Class<?> RNG_CLASS = null;
+    private static Constructor<? extends Random> RNG_CONSTRUCTOR = null;
 
     public static void assumePose(LivingEntity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);
@@ -67,7 +69,7 @@ public class Util {
 
     public static Random getFastRandom() {
         try {
-            return (Random) RNG_CLASS.newInstance();
+            return RNG_CONSTRUCTOR.newInstance(SEED_GENERATOR_CONSTRUCTOR.newInstance());
         } catch (Exception e) {
             return new Random();
         }
@@ -127,8 +129,13 @@ public class Util {
 
     static {
         try {
-            RNG_CLASS = Class.forName("org.uncommons.maths.random.XORShiftRNG");
+            RNG_CONSTRUCTOR = (Constructor<? extends Random>) Class.forName("org.uncommons.maths.random.XORShiftRNG")
+                    .getConstructor(Class.forName("org.uncommons.maths.random.SeedGenerator"));
+            SEED_GENERATOR_CONSTRUCTOR = Class.forName("org.uncommons.maths.random.SecureRandomSeedGenerator")
+                    .getConstructor();
         } catch (ClassNotFoundException e) {
+        } catch (SecurityException e) {
+        } catch (NoSuchMethodException e) {
         }
     }
 }
