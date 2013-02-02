@@ -177,6 +177,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void onEnable() {
         setupTranslator();
         CitizensAPI.setImplementation(this);
+        config = new Settings(getDataFolder());
         // Disable if the server is not using the compatible Minecraft version
         String mcVersion = Util.getMinecraftVersion();
         compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
@@ -185,7 +186,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        config = new Settings(getDataFolder());
         registerScriptHelpers();
 
         saves = NPCDataStore.create(getDataFolder());
