@@ -101,10 +101,8 @@ public class CitizensNavigator implements Navigator, Runnable {
     public void run() {
         if (!isNavigating())
             return;
-        if (!npc.isSpawned()) {
-            stopNavigating(CancelReason.NPC_DESPAWNED);
+        if (!npc.isSpawned())
             return;
-        }
         if (updateStationaryStatus())
             return;
         updatePathfindingRange();
@@ -154,9 +152,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         localParams = defaultParams.clone();
         PathStrategy newStrategy;
-        if (Setting.USE_NEW_PATHFINDER.asBoolean())
+        if (Setting.USE_NEW_PATHFINDER.asBoolean()) {
             newStrategy = new AStarNavigationStrategy(npc, target, localParams);
-        else
+        } else
             newStrategy = new MCNavigationStrategy(npc, target, localParams);
         switchStrategyTo(newStrategy);
     }
