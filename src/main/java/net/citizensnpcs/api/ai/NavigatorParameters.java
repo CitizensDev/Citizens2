@@ -156,7 +156,7 @@ public class NavigatorParameters implements Cloneable {
     /**
      * Sets the pathfinding range in blocks. The pathfinding range determines
      * how far away the {@link Navigator} will attempt to pathfind before giving
-     * up to save computations.
+     * up to save computation.
      * 
      * @param range
      *            The new range

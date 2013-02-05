@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.citizensnpcs.api.astar.Agent;
@@ -82,5 +83,15 @@ public class Path implements Plan {
         private boolean hasCallbacks() {
             return callbacks != null;
         }
+
+        @Override
+        public String toString() {
+            return vector.toString();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(path);
     }
 }

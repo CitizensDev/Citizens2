@@ -34,10 +34,6 @@ public class VectorNode extends AStarNode implements PathPoint {
         callbacks.add(callback);
     }
 
-    boolean at(Vector goal) {
-        return location.distanceSquared(goal) <= 10;
-    }
-
     @Override
     public Plan buildPlan() {
         Iterable<VectorNode> parents = getParents();
