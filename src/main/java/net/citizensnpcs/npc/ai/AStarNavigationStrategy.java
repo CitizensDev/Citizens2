@@ -31,9 +31,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         this.destination = dest;
         this.npc = npc;
         Location location = npc.getBukkitEntity().getEyeLocation();
-        plan = ASTAR.runFully(new VectorGoal(dest),
-                new VectorNode(location, new ChunkBlockSource(location, params.range()), params.examiners()),
-                (int) (params.range() * 10));
+        plan = ASTAR.runFully(new VectorGoal(dest, (float) params.distanceMargin()), new VectorNode(location,
+                new ChunkBlockSource(location, params.range()), params.examiners()), (int) (params.range() * 10));
         if (plan == null || plan.isComplete()) {
             setCancelReason(CancelReason.STUCK);
         } else {
@@ -53,13 +52,15 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public boolean update() {
-        if (getCancelReason() != null || plan == null || plan.isComplete())
+        if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
+        }
         if (npc.getBukkitEntity().getLocation(NPC_LOCATION).toVector().distanceSquared(vector) <= params
                 .distanceMargin()) {
             plan.update(npc);
-            if (plan.isComplete())
+            if (plan.isComplete()) {
                 return true;
+            }
             vector = plan.getCurrentVector();
             World world = npc.getBukkitEntity().getWorld();
             world.playEffect(vector.toLocation(world), Effect.STEP_SOUND, Material.STONE.getId());
@@ -70,8 +71,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double dY = vector.getY() - handle.locY;
         double xzDistance = dX * dX + dZ * dZ;
         double distance = xzDistance + dY * dY;
-
-        if (distance >= 0.00001 && (dY > 0 && xzDistance <= 2.75)) {
+        if (distance > 0 && dY > 0 && xzDistance <= 4.205) {
+            // 2.75 -> 4.205 (allow for diagonal jumping)
             NMS.setShouldJump(npc.getBukkitEntity());
         }
         NMS.setDestination(npc.getBukkitEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
