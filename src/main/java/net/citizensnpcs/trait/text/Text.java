@@ -133,8 +133,9 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
             // If the cooldown is not expired, do not send text
             Date cooldown = cooldowns.get(player.getName());
             if (cooldown != null) {
-                if (!new Date().after(cooldown))
+                if (!new Date().after(cooldown)) {
                     return;
+                }
                 cooldowns.remove(player.getName());
             }
             if (!sendText(player))

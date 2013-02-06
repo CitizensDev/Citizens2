@@ -2,9 +2,9 @@ package net.citizensnpcs.npc;
 
 import java.util.Iterator;
 
-import net.citizensnpcs.NPCDataStore;
 import net.citizensnpcs.api.event.NPCCreateEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -26,6 +26,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         saves = store;
     }
 
+    @Override
     public NPC createNPC(EntityType type, int id, String name) {
         Preconditions.checkNotNull(name, "name cannot be null");
         Preconditions.checkNotNull(type, "type cannot be null");
@@ -45,7 +46,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
     @Override
     public void deregister(NPC npc) {
         npcs.remove(npc.getId());
-        saves.remove(npc);
+        if (saves != null)
+            saves.clearData(npc);
         npc.despawn();
     }
 
@@ -58,7 +60,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
             npc.despawn();
             for (Trait t : npc.getTraits())
                 t.onRemove();
-            saves.remove(npc);
+            if (saves != null)
+                saves.clearData(npc);
         }
     }
 

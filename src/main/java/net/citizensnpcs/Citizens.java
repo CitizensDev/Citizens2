@@ -2,8 +2,10 @@ package net.citizensnpcs;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -18,14 +20,20 @@ import net.citizensnpcs.api.event.CitizensEnableEvent;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.npc.SimpleNPCDataStore;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
+import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.NBTStorage;
+import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.Translator;
+import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.commands.AdminCommands;
 import net.citizensnpcs.commands.EditorCommands;
 import net.citizensnpcs.commands.HelpCommands;
@@ -55,6 +63,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CommandManager commands = new CommandManager();
@@ -64,7 +73,41 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private NPCDataStore saves;
     private NPCSelector selector;
     private CitizensSpeechFactory speechFactory;
+    private final Map<String, NPCRegistry> storedRegistries = Maps.newHashMap();
     private CitizensTraitFactory traitFactory;
+
+    @Override
+    public NPCRegistry createAnonymousNPCRegistry(NPCDataStore store) {
+        return new CitizensNPCRegistry(store);
+    }
+
+    @Override
+    public NPCRegistry createNamedNPCRegistry(String name, NPCDataStore store) {
+        NPCRegistry created = new CitizensNPCRegistry(store);
+        storedRegistries.put(name, created);
+        return created;
+    }
+
+    private NPCDataStore createStorage(File folder) {
+        Storage saves = null;
+        String type = Setting.STORAGE_TYPE.asString();
+        if (type.equalsIgnoreCase("db") || type.equalsIgnoreCase("database")) {
+            try {
+                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
+                        Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                Messaging.logTr(Messages.DATABASE_CONNECTION_FAILED);
+            }
+        } else if (type.equalsIgnoreCase("nbt")) {
+            saves = new NBTStorage(folder + File.separator + Setting.STORAGE_FILE.asString(), "Citizens NPC Storage");
+        }
+        if (saves == null)
+            saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
+        if (!saves.load())
+            return null;
+        return SimpleNPCDataStore.create(saves);
+    }
 
     private void despawnNPCs() {
         Iterator<NPC> itr = npcRegistry.iterator();
@@ -115,6 +158,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     public Iterable<CommandInfo> getCommands(String base) {
         return commands.getCommands(base);
+    }
+
+    @Override
+    public NPCRegistry getNamedNPCRegistry(String name) {
+        return storedRegistries.get(name);
     }
 
     @Override
@@ -187,7 +235,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
         registerScriptHelpers();
 
-        saves = NPCDataStore.create(getDataFolder());
+        saves = createStorage(getDataFolder());
         if (saves == null) {
             Messaging.severeTr(Messages.FAILED_LOAD_SAVES);
             getServer().getPluginManager().disablePlugin(this);
@@ -200,7 +248,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         speechFactory = new CitizensSpeechFactory();
         speechFactory.register(Chat.class, "chat");
 
-        getServer().getPluginManager().registerEvents(new EventListen(), this);
+        getServer().getPluginManager().registerEvents(new EventListen(storedRegistries), this);
 
         if (Setting.NPC_COST.asDouble() > 0)
             setupEconomy();
@@ -214,6 +262,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             @Override
             public void run() {
                 saves.loadInto(npcRegistry);
+                Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, Iterables.size(npcRegistry), "?");
                 startMetrics();
                 scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
                 Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
@@ -265,6 +314,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         saves.loadInto(npcRegistry);
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
+    }
+
+    @Override
+    public void removeNamedNPCRegistry(String name) {
+        storedRegistries.remove(name);
     }
 
     private void scheduleSaveTask(int delay) {
@@ -337,7 +391,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 }
             });
             traitFactory.addPlotters(metrics.createGraph("traits"));
-            saves.addPlotters(metrics.createGraph("Storage type"));
             metrics.start();
         } catch (IOException e) {
             Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
@@ -371,5 +424,4 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private static final String COMPATIBLE_MC_VERSION = "1.4.7";
-
 }
