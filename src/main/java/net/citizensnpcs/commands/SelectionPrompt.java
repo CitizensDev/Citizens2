@@ -1,4 +1,4 @@
-package net.citizensnpcs.command.command;
+package net.citizensnpcs.commands;
 
 import java.util.List;
 

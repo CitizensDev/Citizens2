@@ -1,4 +1,4 @@
-package net.citizensnpcs.command.command;
+package net.citizensnpcs.commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandManager.CommandInfo;
+import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
@@ -35,7 +36,7 @@ public class HelpCommands {
             modifiers = { "help" },
             min = 1,
             max = 2,
-            permission = "help")
+            permission = "citizens.help")
     @Requirements
     public void citizensHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = 1;
@@ -71,7 +72,7 @@ public class HelpCommands {
             modifiers = { "help" },
             min = 1,
             max = 2,
-            permission = "npc.help")
+            permission = "citizens.npc.help")
     @Requirements
     public void npcHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = 1;
@@ -90,7 +91,7 @@ public class HelpCommands {
             modifiers = { "help" },
             min = 1,
             max = 2,
-            permission = "script.help")
+            permission = "citizens.script.help")
     @Requirements
     public void scriptHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = 1;
@@ -129,7 +130,7 @@ public class HelpCommands {
             modifiers = { "help" },
             min = 1,
             max = 2,
-            permission = "templates.help")
+            permission = "citizens.templates.help")
     @Requirements
     public void templatesHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = 1;
@@ -148,7 +149,7 @@ public class HelpCommands {
             modifiers = { "help" },
             min = 1,
             max = 2,
-            permission = "waypoints.help")
+            permission = "citizens.waypoints.help")
     @Requirements
     public void waypointsHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = 1;

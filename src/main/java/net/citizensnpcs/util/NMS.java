@@ -212,6 +212,11 @@ public class NMS {
         throw new IllegalArgumentException("unable to find valid entity superclass");
     }
 
+    public static void removeFromServerPlayerList(Player player) {
+        EntityPlayer handle = ((CraftPlayer) player).getHandle();
+        ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
+    }
+
     public static void sendPacket(Player player, Packet packet) {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
@@ -380,10 +385,5 @@ public class NMS {
             else if (Stairs.class.isAssignableFrom(material.getData()))
                 STAIR_MATERIALS.add(material.getId());
         }
-    }
-
-    public static void removeFromServerPlayerList(Player player) {
-        EntityPlayer handle = ((CraftPlayer) player).getHandle();
-        ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
     }
 }

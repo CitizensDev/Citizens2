@@ -1,8 +1,9 @@
-package net.citizensnpcs.command.command;
+package net.citizensnpcs.commands;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
@@ -24,7 +25,7 @@ public class WaypointCommands {
             modifiers = { "disableteleport" },
             min = 1,
             max = 1,
-            permission = "waypoints.disableteleport")
+            permission = "citizens.waypoints.disableteleport")
     public void disableTeleporting(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         npc.getNavigator().getDefaultParameters().stuckAction(null);
         Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_DISABLED);
@@ -38,7 +39,7 @@ public class WaypointCommands {
             min = 1,
             max = 2,
             flags = "a",
-            permission = "waypoints.provider")
+            permission = "citizens.waypoints.provider")
     public void provider(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Waypoints waypoints = npc.getTrait(Waypoints.class);
         if (args.argsLength() == 1) {

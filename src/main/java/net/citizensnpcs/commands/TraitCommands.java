@@ -1,4 +1,4 @@
-package net.citizensnpcs.command.command;
+package net.citizensnpcs.commands;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandConfigurable;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
 import net.citizensnpcs.api.npc.NPC;
@@ -22,7 +23,6 @@ import com.google.common.collect.Lists;
 
 @Requirements(selected = true, ownership = true)
 public class TraitCommands {
-
     @Command(aliases = { "trait", "tr" }, usage = "add [trait name]...", desc = "Adds traits to the NPC", modifiers = {
             "add", "a" }, min = 1, permission = "npc.trait")
     public void add(CommandContext args, CommandSender sender, NPC npc) throws CommandException {

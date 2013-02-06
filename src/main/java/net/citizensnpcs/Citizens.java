@@ -26,15 +26,14 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Translator;
-import net.citizensnpcs.command.command.AdminCommands;
-import net.citizensnpcs.command.command.EditorCommands;
-import net.citizensnpcs.command.command.HelpCommands;
-import net.citizensnpcs.command.command.NPCCommands;
-import net.citizensnpcs.command.command.RequirementsProcessor;
-import net.citizensnpcs.command.command.ScriptCommands;
-import net.citizensnpcs.command.command.TemplateCommands;
-import net.citizensnpcs.command.command.TraitCommands;
-import net.citizensnpcs.command.command.WaypointCommands;
+import net.citizensnpcs.commands.AdminCommands;
+import net.citizensnpcs.commands.EditorCommands;
+import net.citizensnpcs.commands.HelpCommands;
+import net.citizensnpcs.commands.NPCCommands;
+import net.citizensnpcs.commands.ScriptCommands;
+import net.citizensnpcs.commands.TemplateCommands;
+import net.citizensnpcs.commands.TraitCommands;
+import net.citizensnpcs.commands.WaypointCommands;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
@@ -242,8 +241,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void registerCommands() {
         commands.setInjector(new Injector(this));
-        commands.registerAnnotationProcessor(new RequirementsProcessor());
-
         // Register command classes
         commands.register(AdminCommands.class);
         commands.register(EditorCommands.class);
