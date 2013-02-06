@@ -3,6 +3,7 @@ package net.citizensnpcs.npc;
 import java.util.Iterator;
 
 import net.citizensnpcs.NPCDataStore;
+import net.citizensnpcs.api.event.NPCCreateEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
@@ -10,6 +11,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.NMS;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -31,6 +33,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         if (npc == null)
             throw new IllegalStateException("Could not create NPC.");
         npcs.put(npc.getId(), npc);
+        Bukkit.getPluginManager().callEvent(new NPCCreateEvent(npc));
         return npc;
     }
 
