@@ -25,13 +25,10 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_4_R1.EntityPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -62,13 +59,6 @@ public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
     private final ListMultimap<ChunkCoord, Integer> toRespawn = ArrayListMultimap.create();
 
-    public EventListen() {
-        instance = this; // TODO: remove singleton
-    }
-
-    /*
-     * Chunk events
-     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
@@ -175,10 +165,9 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
-        if (!(handle instanceof NPCHolder))
+        if (!(event.getPlayer() instanceof NPCHolder))
             return;
-        ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
+        NMS.removeFromServerPlayerList(event.getPlayer());
         // on teleport, player NPCs are added to the server player list. this is
         // undesirable as player NPCs are not real players and confuse plugins.
     }
@@ -209,10 +198,6 @@ public class EventListen implements Listener {
         }
     }
 
-    /*
-     * Player events
-     */
-
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = npcRegistry.getNPC(event.getRightClicked());
@@ -221,7 +206,6 @@ public class EventListen implements Listener {
 
         Player player = event.getPlayer();
 
-        // Call right-click event
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
         Bukkit.getPluginManager().callEvent(rightClickEvent);
     }
@@ -231,9 +215,6 @@ public class EventListen implements Listener {
         Editor.leave(event.getPlayer());
     }
 
-    /*
-     * World events
-     */
     @EventHandler(ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
         for (ChunkCoord chunk : toRespawn.keySet()) {
@@ -349,11 +330,8 @@ public class EventListen implements Listener {
         }
     }
 
-    private static EventListen instance;
-
-    public static void addForRespawn(Location loc, int id) {
-        if (instance == null)
-            return;
-        instance.toRespawn.put(instance.toCoord(loc), id);
+    @EventHandler
+    public void onNeedsRespawn(NPCNeedsRespawnEvent event) {
+        toRespawn.put(toCoord(event.getSpawnLocation()), event.getNPC().getId());
     }
 }

@@ -4,7 +4,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import net.citizensnpcs.EventListen;
+import net.citizensnpcs.NPCNeedsRespawnEvent;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
@@ -76,11 +76,6 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public LivingEntity getBukkitEntity() {
         return entityController.getBukkitEntity();
-    }
-
-    @Deprecated
-    public EntityLiving getHandle() {
-        return ((CraftLivingEntity) getBukkitEntity()).getHandle();
     }
 
     @Override
@@ -178,7 +173,7 @@ public class CitizensNPC extends AbstractNPC {
             Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.");
             // we need to wait for a chunk load before trying to spawn
             entityController.remove();
-            EventListen.addForRespawn(at, getId());
+            Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return true;
         }
 

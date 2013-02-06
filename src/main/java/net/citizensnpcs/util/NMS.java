@@ -17,6 +17,7 @@ import net.minecraft.server.v1_4_R1.EnchantmentManager;
 import net.minecraft.server.v1_4_R1.Entity;
 import net.minecraft.server.v1_4_R1.EntityLiving;
 import net.minecraft.server.v1_4_R1.EntityMonster;
+import net.minecraft.server.v1_4_R1.EntityPlayer;
 import net.minecraft.server.v1_4_R1.EntityTypes;
 import net.minecraft.server.v1_4_R1.MathHelper;
 import net.minecraft.server.v1_4_R1.MobEffectList;
@@ -68,6 +69,7 @@ public class NMS {
     private static Field SPEED_FIELD;
     private static Set<Integer> STAIR_MATERIALS = Sets.newHashSet();
     private static Field THREAD_STOPPER;
+
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
         if (bukkitEntity == null)
             return;
@@ -80,6 +82,7 @@ public class NMS {
             handle.world.players.add(handle);
         }
     }
+
     public static void attack(EntityLiving handle, EntityLiving target) {
         int damage = handle instanceof EntityMonster ? ((EntityMonster) handle).c((Entity) target) : 2;
 
@@ -377,5 +380,10 @@ public class NMS {
             else if (Stairs.class.isAssignableFrom(material.getData()))
                 STAIR_MATERIALS.add(material.getId());
         }
+    }
+
+    public static void removeFromServerPlayerList(Player player) {
+        EntityPlayer handle = ((CraftPlayer) player).getHandle();
+        ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
     }
 }
