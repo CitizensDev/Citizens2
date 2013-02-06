@@ -15,6 +15,7 @@ import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
 import net.citizensnpcs.api.command.exception.ServerCommandException;
+import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -326,17 +327,18 @@ public class NPCCommands {
         Location spawnLoc = null;
         if (sender instanceof Player) {
             spawnLoc = args.getSenderLocation();
-            PlayerCreateNPCEvent event = new PlayerCreateNPCEvent((Player) sender, npc);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                npc.destroy();
-                String reason = "Couldn't create NPC.";
-                if (!event.getCancelReason().isEmpty())
-                    reason += " Reason: " + event.getCancelReason();
-                throw new CommandException(reason);
-            }
         } else if (sender instanceof BlockCommandSender) {
             spawnLoc = args.getSenderLocation();
+        }
+        CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
+                : new CommandSenderCreateNPCEvent(sender, npc);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            npc.destroy();
+            String reason = "Couldn't create NPC.";
+            if (!event.getCancelReason().isEmpty())
+                reason += " Reason: " + event.getCancelReason();
+            throw new CommandException(reason);
         }
 
         if (args.hasValueFlag("at")) {
