@@ -16,11 +16,9 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_4_R1.Connection;
 import net.minecraft.server.v1_4_R1.EntityPlayer;
 import net.minecraft.server.v1_4_R1.EnumGamemode;
-import net.minecraft.server.v1_4_R1.MathHelper;
 import net.minecraft.server.v1_4_R1.MinecraftServer;
 import net.minecraft.server.v1_4_R1.Navigation;
 import net.minecraft.server.v1_4_R1.NetworkManager;
-import net.minecraft.server.v1_4_R1.Packet32EntityLook;
 import net.minecraft.server.v1_4_R1.Packet5EntityEquipment;
 import net.minecraft.server.v1_4_R1.PlayerInteractManager;
 import net.minecraft.server.v1_4_R1.World;
@@ -125,8 +123,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     @Override
     public void j_() {
         super.j_();
-        if (!npc.data().get("removefromplayerlist", true))
-            g();
         if (npc == null)
             return;
 
@@ -138,10 +134,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
 
         updateEquipment();
-        NMS.sendPacketNearby(
-                getBukkitEntity().getLocation(),
-                new Packet32EntityLook(id, (byte) MathHelper.d(yaw * 256.0F / 360.0F), (byte) MathHelper
-                        .d(pitch * 256.0F / 360.0F)));
+        if (!npc.data().get("removefromplayerlist", true))
+            g();
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
 
