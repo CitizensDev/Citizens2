@@ -7,6 +7,7 @@ import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -139,12 +140,32 @@ public interface NPC extends Agent {
     public boolean isSpawned();
 
     /**
+     * Loads the {@link NPC} from the given {@link DataKey}. This reloads all
+     * traits, respawns the NPC and sets it up for execution. Should not be
+     * called often.
+     * 
+     * @param key
+     *            The root data key
+     */
+    public void load(DataKey key);
+
+    /**
      * Removes a trait from this NPC.
      * 
      * @param trait
      *            Trait to remove
      */
     public void removeTrait(Class<? extends Trait> trait);
+
+    /**
+     * Saves the {@link NPC} to the given {@link DataKey}. This includes all
+     * metadata, traits, and spawn information that will allow it to respawn at
+     * a later time via {@link #load(DataKey)}.
+     * 
+     * @param key
+     *            The root data key
+     */
+    public void save(DataKey key);
 
     /**
      * Sets the name of this NPC.

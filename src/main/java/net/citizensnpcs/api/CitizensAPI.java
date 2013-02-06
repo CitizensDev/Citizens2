@@ -3,6 +3,7 @@ package net.citizensnpcs.api;
 import java.io.File;
 
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
+import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
@@ -24,6 +25,37 @@ public final class CitizensAPI {
     private static ScriptCompiler scriptCompiler;
 
     /**
+     * Creates a new <em>anonymous</em> {@link NPCRegistry} with its own set of
+     * {@link NPC}s. This is not stored by the Citizens plugin.
+     * 
+     * @since 2.0.8
+     * @param store
+     *            The {@link NPCDataStore} to use with the registry
+     * @return A new anonymous NPCRegistry that is not accessible via
+     *         {@link #getPluginNPCRegistry(String)}
+     */
+    public static NPCRegistry createAnonymousNPCRegistry(NPCDataStore store) {
+        return getImplementation().createAnonymousNPCRegistry(store);
+    }
+
+    /**
+     * Creates a new {@link NPCRegistry} with its own set of {@link NPC}s. This
+     * is stored in memory with the Citizens plugin, and can be accessed via
+     * {@link #getNamedNPCRegistry(String)}.
+     * 
+     * @param name
+     *            The plugin name
+     * @param store
+     *            The {@link NPCDataStore} to use with the registry
+     * @since 2.0.8
+     * @return A new NPCRegistry, that can also be retrieved via
+     *         {@link #getPluginNPCRegistry(String)}
+     */
+    public static NPCRegistry createNamedNPCRegistry(String name, NPCDataStore store) {
+        return getImplementation().createNamedNPCRegistry(name, store);
+    }
+
+    /**
      * @return The data folder of the current implementation
      */
     public static File getDataFolder() {
@@ -37,7 +69,22 @@ public final class CitizensAPI {
     }
 
     /**
-     * Gets the current implementation's {@link NPCRegistry}.
+     * Retrieves the {@link NPCRegistry} previously created via
+     * {@link #createNamedNPCRegistry(String)} with the given name, or null if
+     * not found.
+     * 
+     * @param name
+     *            The registry name
+     * @since 2.0.8
+     * @return A NPCRegistry previously created via
+     *         {@link #createNamedNPCRegistry(String)}, or null if not found
+     */
+    public static NPCRegistry getNamedNPCRegistry(String name) {
+        return getImplementation().getNamedNPCRegistry(name);
+    }
+
+    /**
+     * Gets the current implementation's <em>default</em> {@link NPCRegistry}.
      * 
      * @return The NPC registry
      */
@@ -106,6 +153,19 @@ public final class CitizensAPI {
      */
     public static void registerEvents(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, getPlugin());
+    }
+
+    /**
+     * Removes any previously created {@link NPCRegistry} stored under the given
+     * name.
+     * 
+     * @since 2.0.8
+     * @param name
+     *            The name previously given to
+     *            {@link #createNamedNPCRegistry(String)}
+     */
+    public static void removeNamedNPCRegistry(String name) {
+        getImplementation().removeNamedNPCRegistry(name);
     }
 
     /**

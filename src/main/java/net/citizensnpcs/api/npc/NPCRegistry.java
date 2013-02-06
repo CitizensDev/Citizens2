@@ -9,6 +9,20 @@ import org.bukkit.entity.EntityType;
 public interface NPCRegistry extends Iterable<NPC> {
 
     /**
+     * Creates an {@link NPC} with the given id. WARNING: may overwrite any
+     * existing NPC in the registry with the same ID.
+     * 
+     * @param type
+     *            The {@link EntityType} of the NPC.
+     * @param id
+     *            The NPC ID
+     * @param name
+     *            The NPC name
+     * @return The created NPC
+     */
+    public NPC createNPC(EntityType type, int id, String name);
+
+    /**
      * Creates an despawned {@link NPC}.
      * 
      * @param type
