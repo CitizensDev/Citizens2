@@ -48,6 +48,10 @@ public class CommandManager {
     private final ListMultimap<Method, Annotation> registeredAnnotations = ArrayListMultimap.create();
     private final Set<Method> serverCommands = new HashSet<Method>();
 
+    public CommandManager() {
+        registerAnnotationProcessor(new RequirementsProcessor());
+    }
+
     /**
      * 
      * Attempt to execute a command using the root {@link Command} given. A list
@@ -273,9 +277,9 @@ public class CommandManager {
         return commands.containsKey(cmdName + " " + modifier.toLowerCase()) || commands.containsKey(cmdName + " *");
     }
 
-    // Returns whether a CommandSenders has permission.
+    // Returns whether a CommandSender has permission.
     private boolean hasPermission(CommandSender sender, String perm) {
-        return sender.hasPermission("citizens." + perm);
+        return sender.hasPermission(perm);
     }
 
     // Returns whether a player has access to a command.
