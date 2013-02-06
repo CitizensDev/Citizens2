@@ -53,6 +53,11 @@ public class Path implements Plan {
     }
 
     @Override
+    public String toString() {
+        return Arrays.toString(path);
+    }
+
+    @Override
     public void update(Agent agent) {
         if (isComplete())
             return;
@@ -88,10 +93,5 @@ public class Path implements Plan {
         public String toString() {
             return vector.toString();
         }
-    }
-
-    @Override
-    public String toString() {
-        return Arrays.toString(path);
     }
 }

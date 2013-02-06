@@ -56,19 +56,6 @@ public class PersistenceLoaderTest {
     }
 
     @Test
-    public void testMapReload() {
-        root.setBoolean("enabled.trig1", true);
-        TestMap stored = PersistenceLoader.load(TestMap.class, root);
-        PersistenceLoader.save(stored, root);
-        assertThat(PersistenceLoader.load(TestMap.class, root).enabled.get("trig1"), equalTo(true));
-    }
-
-    public static class TestMap {
-        @Persist(value = "enabled", collectionType = ConcurrentHashMap.class)
-        private final Map<String, Boolean> enabled = new ConcurrentHashMap<String, Boolean>();
-    }
-
-    @Test
     public void saveLoadCycle() throws Exception {
         SaveLoadTest test = new SaveLoadTest();
         PersistenceLoader.save(test, root);
@@ -83,6 +70,14 @@ public class PersistenceLoaderTest {
     @Before
     public void setUp() {
         root = new MemoryDataKey();
+    }
+
+    @Test
+    public void testMapReload() {
+        root.setBoolean("enabled.trig1", true);
+        TestMap stored = PersistenceLoader.load(TestMap.class, root);
+        PersistenceLoader.save(stored, root);
+        assertThat(PersistenceLoader.load(TestMap.class, root).enabled.get("trig1"), equalTo(true));
     }
 
     @Test
@@ -148,5 +143,10 @@ public class PersistenceLoaderTest {
 
         @Persist(collectionType = LinkedHashSet.class)
         private Set<Integer> set;
+    }
+
+    public static class TestMap {
+        @Persist(value = "enabled", collectionType = ConcurrentHashMap.class)
+        private final Map<String, Boolean> enabled = new ConcurrentHashMap<String, Boolean>();
     }
 }

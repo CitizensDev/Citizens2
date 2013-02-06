@@ -56,5 +56,4 @@ public class EntityTargetNPCEvent extends NPCEvent implements Cancellable {
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
 }

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-
 public class Sequence extends Composite {
     private Behavior executing;
     private int executingIndex;
@@ -21,6 +20,7 @@ public class Sequence extends Composite {
 
     @Override
     public void reset() {
+        super.reset();
         if (executing != null)
             executing.reset();
         executing = null;
@@ -31,7 +31,12 @@ public class Sequence extends Composite {
     public BehaviorStatus run() {
         List<Behavior> behaviors = getBehaviors();
         if (executing == null) {
-            executing = behaviors.get(executingIndex);
+            while ((executing = behaviors.get(executingIndex)) instanceof ParallelBehavior) {
+                addParallel(executing);
+                executingIndex++;
+                if (executingIndex >= behaviors.size())
+                    return BehaviorStatus.SUCCESS;
+            }
             if (!executing.shouldExecute()) {
                 if (retryChildren) {
                     executing = null;
@@ -40,6 +45,7 @@ public class Sequence extends Composite {
                     return BehaviorStatus.FAILURE;
             }
         }
+        tickParallel();
         BehaviorStatus status = executing.run();
         switch (status) {
             case RUNNING:
@@ -51,17 +57,29 @@ public class Sequence extends Composite {
                     executing = null;
                     return BehaviorStatus.RUNNING;
                 }
+            case RESET_AND_REMOVE:
+                behaviors.remove(executingIndex);
+                return selectNext(behaviors);
             case SUCCESS:
                 executingIndex++;
-                if (executingIndex >= behaviors.size())
-                    return BehaviorStatus.SUCCESS;
-                executing = behaviors.get(executingIndex);
-                if (!executing.shouldExecute() && !retryChildren)
-                    return BehaviorStatus.FAILURE;
-                return BehaviorStatus.RUNNING;
+                return selectNext(behaviors);
             default:
                 throw new IllegalStateException();
         }
+    }
+
+    private BehaviorStatus selectNext(List<Behavior> behaviors) {
+        if (executingIndex >= behaviors.size())
+            return BehaviorStatus.SUCCESS;
+        while ((executing = behaviors.get(executingIndex)) instanceof ParallelBehavior) {
+            addParallel(executing);
+            executingIndex++;
+            if (executingIndex >= behaviors.size())
+                return BehaviorStatus.SUCCESS;
+        }
+        if (!executing.shouldExecute() && !retryChildren)
+            return BehaviorStatus.FAILURE;
+        return BehaviorStatus.RUNNING;
     }
 
     public static Sequence createRetryingSequence(Behavior... behaviors) {
