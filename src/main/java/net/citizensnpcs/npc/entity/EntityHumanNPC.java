@@ -125,6 +125,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     @Override
     public void j_() {
         super.j_();
+        if (!npc.data().get("removefromplayerlist", true))
+            g();
         if (npc == null)
             return;
 
