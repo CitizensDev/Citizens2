@@ -51,6 +51,15 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
      */
     void setPaused(boolean paused);
 
+    /**
+     * Registers a goal which can reprioritise itself dynamically every tick.
+     * Implementation note: this may slow down individual goal controller ticks
+     * as the list must be sorted every tick.
+     * 
+     * @param goal
+     */
+    void addPrioritisableGoal(PrioritisableGoal goal);
+
     public static interface GoalEntry extends Comparable<GoalEntry> {
         /**
          * @return The {@link Goal} held by this entry

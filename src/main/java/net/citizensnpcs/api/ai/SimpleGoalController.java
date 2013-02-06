@@ -16,6 +16,7 @@ public class SimpleGoalController implements GoalController {
     private final List<Goal> executingGoals = Lists.newArrayList();
     private int executingPriority = -1;
     private Goal executingRootGoal;
+    private boolean hasPrioritisableGoal;
     private volatile boolean paused;
     private final List<GoalEntry> possibleGoals = Lists.newArrayList();
     private final GoalSelector selector = new SimpleGoalSelector();
@@ -36,6 +37,28 @@ public class SimpleGoalController implements GoalController {
             Bukkit.getPluginManager().registerEvents(goal, CitizensAPI.getPlugin());
         executingGoals.add(goal);
         goal.run(selector);
+    }
+
+    public void addPrioritisableGoal(final PrioritisableGoal goal) {
+        Preconditions.checkNotNull(goal, "goal cannot be null");
+        possibleGoals.add(new GoalEntry() {
+            @Override
+            public int compareTo(GoalEntry o) {
+                int priority = getPriority();
+                return o.getPriority() > priority ? 1 : o.getPriority() < priority ? -1 : 0;
+            }
+
+            @Override
+            public Goal getGoal() {
+                return goal;
+            }
+
+            @Override
+            public int getPriority() {
+                return goal.getPriority();
+            }
+        });
+        hasPrioritisableGoal = true;
     }
 
     @Override
@@ -92,6 +115,17 @@ public class SimpleGoalController implements GoalController {
             if (test == executingRootGoal)
                 finishCurrentGoalExecution();
         }
+        if (goal instanceof PrioritisableGoal) {
+            boolean foundOther = false;
+            for (GoalEntry test : possibleGoals) {
+                if (test.getGoal() instanceof PrioritisableGoal) {
+                    foundOther = true;
+                    break;
+                }
+            }
+            if (!foundOther)
+                hasPrioritisableGoal = false;
+        }
     }
 
     private void resetGoalList() {
@@ -127,6 +161,8 @@ public class SimpleGoalController implements GoalController {
 
     private void trySelectGoal() {
         int searchPriority = Math.max(executingPriority, 1);
+        if (hasPrioritisableGoal)
+            Collections.sort(possibleGoals);
         for (int i = possibleGoals.size() - 1; i >= 0; --i) {
             GoalEntry entry = possibleGoals.get(i);
             if (searchPriority > entry.getPriority())
