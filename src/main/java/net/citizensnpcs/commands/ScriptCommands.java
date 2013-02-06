@@ -1,4 +1,4 @@
-package net.citizensnpcs.command.command;
+package net.citizensnpcs.commands;
 
 import java.io.File;
 
@@ -29,7 +29,7 @@ public class ScriptCommands {
             desc = "compile and run a script",
             min = 2,
             max = 2,
-            permission = "script.compile")
+            permission = "citizens.script.compile")
     public void runScript(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         File file = new File(CitizensAPI.getScriptFolder(), args.getString(1));
         if (!file.exists())

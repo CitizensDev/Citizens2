@@ -1,7 +1,8 @@
-package net.citizensnpcs.command.command;
+package net.citizensnpcs.commands;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.editor.EquipmentEditor;
@@ -21,7 +22,7 @@ public class EditorCommands {
             modifiers = { "equip" },
             min = 1,
             max = 1,
-            permission = "npc.edit.equip")
+            permission = "citizens.npc.edit.equip")
     @Requirements(selected = true, ownership = true, types = { EntityType.ENDERMAN, EntityType.PLAYER, EntityType.PIG,
             EntityType.SHEEP })
     public void equip(CommandContext args, Player player, NPC npc) {
@@ -35,7 +36,7 @@ public class EditorCommands {
             modifiers = { "path" },
             min = 1,
             max = 1,
-            permission = "npc.edit.path")
+            permission = "citizens.npc.edit.path")
     @Requirements(selected = true, ownership = true, excludedTypes = { EntityType.BLAZE, EntityType.ENDER_DRAGON,
             EntityType.GHAST, EntityType.BAT, EntityType.WITHER, EntityType.SQUID })
     public void path(CommandContext args, Player player, NPC npc) {
@@ -49,7 +50,7 @@ public class EditorCommands {
             modifiers = { "text" },
             min = 1,
             max = 1,
-            permission = "npc.edit.text")
+            permission = "citizens.npc.edit.text")
     public void text(CommandContext args, Player player, NPC npc) {
         Editor.enterOrLeave(player, npc.getTrait(Text.class).getEditor(player));
     }

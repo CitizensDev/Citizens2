@@ -1,8 +1,9 @@
-package net.citizensnpcs.command.command;
+package net.citizensnpcs.commands;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -20,7 +21,7 @@ public class AdminCommands {
         this.plugin = plugin;
     }
 
-    @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "admin")
+    @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "citizens.admin")
     public void citizens(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender,
                 "          " + StringHelper.wrapHeader("<e>Citizens v" + plugin.getDescription().getVersion()));
@@ -36,7 +37,7 @@ public class AdminCommands {
             modifiers = { "reload" },
             min = 1,
             max = 1,
-            permission = "admin")
+            permission = "citizens.admin")
     public void reload(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.sendTr(sender, Messages.CITIZENS_RELOADING);
         try {
@@ -57,7 +58,7 @@ public class AdminCommands {
             min = 1,
             max = 1,
             flags = "a",
-            permission = "admin")
+            permission = "citizens.admin")
     public void save(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.sendTr(sender, Messages.CITIZENS_SAVING);
         plugin.storeNPCs(args);

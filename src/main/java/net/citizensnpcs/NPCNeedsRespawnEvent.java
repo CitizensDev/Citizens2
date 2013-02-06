@@ -14,13 +14,13 @@ public class NPCNeedsRespawnEvent extends NPCEvent {
         this.spawn = at;
     }
 
-    public Location getSpawnLocation() {
-        return spawn;
-    }
-
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+
+    public Location getSpawnLocation() {
+        return spawn;
     }
 
     private static final HandlerList handlers = new HandlerList();

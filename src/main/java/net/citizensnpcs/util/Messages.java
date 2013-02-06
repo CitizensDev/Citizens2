@@ -30,15 +30,11 @@ public class Messages {
     public static final String CITIZENS_SAVING = "citizens.notifications.saving";
     public static final String COMMAND_AGE_HELP = "citizens.commands.npc.age.help";
     public static final String COMMAND_HELP_HEADER = "citizens.commands.help.header";
-    public static final String COMMAND_ID_NOT_FOUND = "citizens.commands.id-not-found";
     public static final String COMMAND_INVALID_MOBTYPE = "citizens.commands.invalid-mobtype";
-    public static final String COMMAND_INVALID_NUMBER = "citizens.commands.invalid-number";
     public static final String COMMAND_MISSING = "citizens.commands.help.command-missing";
-    public static final String COMMAND_MISSING_TRAIT = "citizens.commands.requirements.missing-required-trait";
     public static final String COMMAND_MUST_BE_INGAME = "citizens.commands.requirements.must-be-ingame";
     public static final String COMMAND_MUST_BE_OWNER = "citizens.commands.requirements.must-be-owner";
     public static final String COMMAND_MUST_HAVE_SELECTED = "citizens.commands.requirements.must-have-selected";
-    public static final String COMMAND_NO_PERMISSION = "citizens.commands.requirements.missing-permission";
     public static final String COMMAND_PAGE_MISSING = "citizens.commands.page-missing";
     public static final String COMMAND_REPORT_ERROR = "citizens.commands.console-error";
     public static final String COMMAND_REQUIREMENTS_INVALID_MOB_TYPE = "citizens.commands.requirements.disallowed-mobtype";

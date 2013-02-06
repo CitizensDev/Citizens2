@@ -163,6 +163,11 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
 
+    @EventHandler
+    public void onNeedsRespawn(NPCNeedsRespawnEvent event) {
+        toRespawn.put(toCoord(event.getSpawnLocation()), event.getNPC().getId());
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         if (!(event.getPlayer() instanceof NPCHolder))
@@ -328,10 +333,5 @@ public class EventListen implements Listener {
             result = prime * result + z;
             return result;
         }
-    }
-
-    @EventHandler
-    public void onNeedsRespawn(NPCNeedsRespawnEvent event) {
-        toRespawn.put(toCoord(event.getSpawnLocation()), event.getNPC().getId());
     }
 }

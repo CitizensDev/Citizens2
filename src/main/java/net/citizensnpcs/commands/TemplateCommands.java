@@ -1,4 +1,4 @@
-package net.citizensnpcs.command.command;
+package net.citizensnpcs.commands;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
@@ -33,7 +34,7 @@ public class TemplateCommands {
             desc = "Applies a template to the selected NPC",
             modifiers = { "apply" },
             min = 2,
-            permission = "templates.apply")
+            permission = "citizens.templates.apply")
     @Requirements
     public void apply(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Template template = Template.byName(args.getString(1));
@@ -76,7 +77,7 @@ public class TemplateCommands {
             min = 2,
             max = 2,
             flags = "o",
-            permission = "templates.create")
+            permission = "citizens.templates.create")
     public void create(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String name = args.getString(1);
         if (Template.byName(name) != null)
