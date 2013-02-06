@@ -1,6 +1,7 @@
 package net.citizensnpcs;
 
 import java.util.List;
+import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -53,11 +54,17 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
-    private final ListMultimap<ChunkCoord, Integer> toRespawn = ArrayListMultimap.create();
+    private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create();
+    private final Map<String, NPCRegistry> registries;
+
+    EventListen(Map<String, NPCRegistry> registries) {
+        this.registries = registries;
+    }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
@@ -69,7 +76,7 @@ public class EventListen implements Listener {
     public void onChunkUnload(ChunkUnloadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
         Location location = new Location(null, 0, 0, 0);
-        for (NPC npc : npcRegistry) {
+        for (NPC npc : getAllNPCs()) {
             if (!npc.isSpawned())
                 continue;
             location = npc.getBukkitEntity().getLocation(location);
@@ -81,11 +88,15 @@ public class EventListen implements Listener {
                     respawnAllFromCoord(coord);
                     return;
                 }
-                toRespawn.put(coord, npc.getId());
+                toRespawn.put(coord, npc);
                 Messaging
                         .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
             }
         }
+    }
+
+    private Iterable<NPC> getAllNPCs() {
+        return Iterables.<NPC> concat(npcRegistry, Iterables.concat(registries.values()));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -165,7 +176,7 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onNeedsRespawn(NPCNeedsRespawnEvent event) {
-        toRespawn.put(toCoord(event.getSpawnLocation()), event.getNPC().getId());
+        toRespawn.put(toCoord(event.getSpawnLocation()), event.getNPC());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -226,7 +237,7 @@ public class EventListen implements Listener {
             if (!chunk.worldName.equals(event.getWorld().getName())
                     || !event.getWorld().isChunkLoaded(chunk.x, chunk.z))
                 continue;
-            List<Integer> ids = toRespawn.get(chunk);
+            List<NPC> ids = toRespawn.get(chunk);
             for (int i = 0; i < ids.size(); i++) {
                 spawn(ids.get(i));
                 Messaging.debug("Spawned", ids.get(0), "due to world " + event.getWorld().getName() + " load");
@@ -237,7 +248,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
-        for (NPC npc : npcRegistry) {
+        for (NPC npc : getAllNPCs()) {
             if (!npc.isSpawned() || !npc.getBukkitEntity().getWorld().equals(event.getWorld()))
                 continue;
             storeForRespawn(npc);
@@ -249,9 +260,9 @@ public class EventListen implements Listener {
     }
 
     private void respawnAllFromCoord(ChunkCoord coord) {
-        List<Integer> ids = toRespawn.get(coord);
+        List<NPC> ids = toRespawn.get(coord);
         for (int i = 0; i < ids.size(); i++) {
-            int id = ids.get(i);
+            NPC id = ids.get(i);
             boolean success = spawn(id);
             if (!success) {
                 Messaging.debug("Couldn't respawn id", id, "during chunk event at [" + coord.x + "," + coord.z + "]");
@@ -262,22 +273,17 @@ public class EventListen implements Listener {
         }
     }
 
-    private boolean spawn(int id) {
-        NPC npc = npcRegistry.getById(id);
-        if (npc == null) {
-            Messaging.debug("Couldn't despawn unknown NPC id", id);
-            return false;
-        }
+    private boolean spawn(NPC npc) {
         Location spawn = npc.getTrait(CurrentLocation.class).getLocation();
         if (spawn == null) {
-            Messaging.debug("Couldn't find a spawn location for despawned NPC id", id);
+            Messaging.debug("Couldn't find a spawn location for despawned NPC id", npc);
             return false;
         }
         return npc.spawn(spawn);
     }
 
     private void storeForRespawn(NPC npc) {
-        toRespawn.put(toCoord(npc.getBukkitEntity().getLocation()), npc.getId());
+        toRespawn.put(toCoord(npc.getBukkitEntity().getLocation()), npc);
     }
 
     private ChunkCoord toCoord(Chunk chunk) {

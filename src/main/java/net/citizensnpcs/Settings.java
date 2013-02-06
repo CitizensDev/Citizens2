@@ -101,8 +101,8 @@ public class Settings {
         STORAGE_FILE("storage.file", "saves.yml"),
         STORAGE_TYPE("storage.type", "yaml"),
         SUBPLUGIN_FOLDER("subplugins.folder", "plugins"),
-        TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 60),
-        TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 30),
+        TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 1),
+        TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 1),
         TALK_ITEM("npc.text.talk-item", "340"),
         USE_NEW_PATHFINDER("npc.pathfinding.use-new-finder", false);
 
