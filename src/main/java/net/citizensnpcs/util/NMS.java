@@ -53,11 +53,8 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 0.4F;
-
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
-
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
-
     private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
     private static Field GOAL_FIELD;
     private static Field LAND_SPEED_MODIFIER_FIELD;
