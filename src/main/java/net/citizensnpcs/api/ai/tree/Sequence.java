@@ -21,46 +21,32 @@ public class Sequence extends Composite {
     @Override
     public void reset() {
         super.reset();
-        if (executing != null)
-            executing.reset();
-        executing = null;
+        resetCurrent();
         executingIndex = 0;
     }
 
     @Override
     public BehaviorStatus run() {
+        tickParallel();
         List<Behavior> behaviors = getBehaviors();
         if (executing == null) {
-            while ((executing = behaviors.get(executingIndex)) instanceof ParallelBehavior) {
-                addParallel(executing);
-                executingIndex++;
-                if (executingIndex >= behaviors.size())
-                    return BehaviorStatus.SUCCESS;
-            }
-            if (!executing.shouldExecute()) {
-                if (retryChildren) {
-                    executing = null;
-                    return BehaviorStatus.RUNNING;
-                } else
-                    return BehaviorStatus.FAILURE;
+            BehaviorStatus next = selectNext(behaviors);
+            if (next != BehaviorStatus.RUNNING) {
+                resetCurrent();
+                return next;
             }
         }
-        tickParallel();
         BehaviorStatus status = executing.run();
         switch (status) {
             case RUNNING:
                 return BehaviorStatus.RUNNING;
             case FAILURE:
-                if (!retryChildren) {
-                    return BehaviorStatus.FAILURE;
-                } else {
-                    executing = null;
-                    return BehaviorStatus.RUNNING;
-                }
+                return getContinuationStatus();
             case RESET_AND_REMOVE:
                 behaviors.remove(executingIndex);
                 return selectNext(behaviors);
             case SUCCESS:
+                resetCurrent();
                 executingIndex++;
                 return selectNext(behaviors);
             default:
@@ -68,17 +54,35 @@ public class Sequence extends Composite {
         }
     }
 
+    private void resetCurrent() {
+        stopExecution(executing);
+        executing = null;
+    }
+
+    private BehaviorStatus getContinuationStatus() {
+        resetCurrent();
+        if (retryChildren) {
+            ++executingIndex;
+            return BehaviorStatus.RUNNING;
+        } else {
+            return BehaviorStatus.FAILURE;
+        }
+    }
+
     private BehaviorStatus selectNext(List<Behavior> behaviors) {
-        if (executingIndex >= behaviors.size())
+        if (executingIndex >= behaviors.size()) {
             return BehaviorStatus.SUCCESS;
+        }
         while ((executing = behaviors.get(executingIndex)) instanceof ParallelBehavior) {
             addParallel(executing);
-            executingIndex++;
-            if (executingIndex >= behaviors.size())
+            if (++executingIndex >= behaviors.size()) {
                 return BehaviorStatus.SUCCESS;
+            }
         }
-        if (!executing.shouldExecute() && !retryChildren)
-            return BehaviorStatus.FAILURE;
+        if (!executing.shouldExecute()) {
+            return getContinuationStatus();
+        }
+        prepareForExecution(executing);
         return BehaviorStatus.RUNNING;
     }
 

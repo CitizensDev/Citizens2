@@ -5,6 +5,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import net.citizensnpcs.api.CitizensAPI;
+
+import org.bukkit.event.HandlerList;
+
 import com.google.common.collect.Lists;
 
 /**
@@ -17,6 +21,12 @@ public abstract class Composite extends BehaviorGoalAdapter {
 
     public Composite(Behavior... behaviors) {
         this(Arrays.asList(behaviors));
+    }
+
+    protected void prepareForExecution(Behavior behavior) {
+        if (behavior == null)
+            return;
+        CitizensAPI.registerEvents(behavior);
     }
 
     public Composite(Collection<Behavior> behaviors) {
@@ -37,8 +47,10 @@ public abstract class Composite extends BehaviorGoalAdapter {
     }
 
     protected void addParallel(Behavior behavior) {
-        if (behavior.shouldExecute() && !parallelExecuting.contains(behavior))
+        if (behavior.shouldExecute() && !parallelExecuting.contains(behavior)) {
             parallelExecuting.add(behavior);
+            prepareForExecution(behavior);
+        }
     }
 
     protected List<Behavior> getBehaviors() {
@@ -63,6 +75,13 @@ public abstract class Composite extends BehaviorGoalAdapter {
         return behaviors.size() > 0;
     }
 
+    protected void stopExecution(Behavior behavior) {
+        if (behavior == null)
+            return;
+        HandlerList.unregisterAll(behavior);
+        behavior.reset();
+    }
+
     protected void tickParallel() {
         Iterator<Behavior> itr = parallelExecuting.iterator();
         while (itr.hasNext()) {
@@ -74,7 +93,7 @@ public abstract class Composite extends BehaviorGoalAdapter {
                 case FAILURE:
                 case SUCCESS:
                     itr.remove();
-                    behavior.reset();
+                    stopExecution(behavior);
                     break;
                 default:
                     break;

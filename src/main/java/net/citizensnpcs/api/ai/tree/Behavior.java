@@ -2,6 +2,8 @@ package net.citizensnpcs.api.ai.tree;
 
 import net.citizensnpcs.api.ai.Goal;
 
+import org.bukkit.event.Listener;
+
 /**
  * The base class for the second iteration of the {@link Goal} API, which can be
  * made backwards compatible by extending {@link BehaviorGoalAdapter}.
@@ -15,7 +17,7 @@ import net.citizensnpcs.api.ai.Goal;
  * FAILURE | SUCCESS. The graph is made up of many {@link Selector}s and
  * {@link Sequence}s, with the leaf nodes being concrete actions.
  */
-public interface Behavior {
+public interface Behavior extends Listener {
     /**
      * Resets the behavior and any state it is holding.
      */
