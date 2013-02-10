@@ -1051,8 +1051,19 @@ public class NPCCommands {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned()) {
             npc.spawn(args.getSenderLocation());
-        } else
+            if (!sender.hasPermission("citizens.npc.tphere.multiworld")
+                    && npc.getBukkitEntity().getLocation().getWorld() != args.getSenderLocation().getWorld()) {
+                npc.despawn();
+                throw new CommandException(Messages.CANNOT_TELEPORT_ACROSS_WORLDS);
+            }
+        } else {
+            if (!sender.hasPermission("citizens.npc.tphere.multiworld")
+                    && npc.getBukkitEntity().getLocation().getWorld() != args.getSenderLocation().getWorld()) {
+                npc.despawn();
+                throw new CommandException(Messages.CANNOT_TELEPORT_ACROSS_WORLDS);
+            }
             npc.getBukkitEntity().teleport(args.getSenderLocation(), TeleportCause.COMMAND);
+        }
         Messaging.sendTr(sender, Messages.NPC_TELEPORTED, npc.getName());
     }
 
