@@ -59,11 +59,15 @@ import com.google.common.collect.ListMultimap;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
-    private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create();
     private final Map<String, NPCRegistry> registries;
+    private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create();
 
     EventListen(Map<String, NPCRegistry> registries) {
         this.registries = registries;
+    }
+
+    private Iterable<NPC> getAllNPCs() {
+        return Iterables.<NPC> concat(npcRegistry, Iterables.concat(registries.values()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -93,10 +97,6 @@ public class EventListen implements Listener {
                         .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
             }
         }
-    }
-
-    private Iterable<NPC> getAllNPCs() {
-        return Iterables.<NPC> concat(npcRegistry, Iterables.concat(registries.values()));
     }
 
     @EventHandler(ignoreCancelled = true)

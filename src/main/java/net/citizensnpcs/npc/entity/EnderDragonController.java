@@ -53,7 +53,6 @@ public class EnderDragonController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-
             }
         }
 
@@ -65,9 +64,16 @@ public class EnderDragonController extends MobEntityController {
 
         @Override
         public void c() {
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
-            else
+                if (motX != 0 || motY != 0 || motZ != 0) {
+                    motX *= 0.98;
+                    motY *= 0.98;
+                    motZ *= 0.98;
+                    yaw = getCorrectYaw(locX + motX, locZ + motZ);
+                    setPosition(locX + motX, locY + motY, locZ + motZ);
+                }
+            } else
                 super.c();
         }
 
@@ -107,6 +113,15 @@ public class EnderDragonController extends MobEntityController {
             if (bukkitEntity == null && npc != null)
                 bukkitEntity = new EnderDragonNPC(this);
             return super.getBukkitEntity();
+        }
+
+        private float getCorrectYaw(double tX, double tZ) {
+            if (locZ > tZ)
+                return (float) (-Math.toDegrees(Math.atan((locX - tX) / (locZ - tZ))));
+            if (locZ < tZ) {
+                return (float) (-Math.toDegrees(Math.atan((locX - tX) / (locZ - tZ)))) + 180.0F;
+            }
+            return yaw;
         }
 
         @Override
