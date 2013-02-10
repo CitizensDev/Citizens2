@@ -210,4 +210,5 @@ public class Messages {
     public static final String ZOMBIE_BABY_UNSET = "citizens.commands.npc.zombiemod.baby-unset";
     public static final String ZOMBIE_VILLAGER_SET = "citizens.commands.npc.zombiemod.villager-set";
     public static final String ZOMBIE_VILLAGER_UNSET = "citizens.commands.npc.zombiemod.villager-unset";
+    public static final String CANNOT_TELEPORT_ACROSS_WORLDS = "citizens.commands.npc.tphere.multiworld-not-allowed";
 }
