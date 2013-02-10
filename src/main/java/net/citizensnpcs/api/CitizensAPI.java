@@ -1,16 +1,19 @@
 package net.citizensnpcs.api;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
+import net.citizensnpcs.api.util.Messaging;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Contains methods used in order to utilize the Citizens API.
@@ -68,6 +71,18 @@ public final class CitizensAPI {
         return instance.implementation;
     }
 
+    private static ClassLoader getImplementationClassLoader() {
+        try {
+            Method method = JavaPlugin.class.getDeclaredMethod("getClassLoader", (Class<?>[]) null);
+            method.setAccessible(true);
+            return (ClassLoader) method.invoke(getImplementation(), (Object[]) null);
+        } catch (Exception ex) {
+            Messaging.severe("Unable to get Citizens classloader, scripts will not be able to import plugin classes");
+            ex.printStackTrace();
+        }
+        return CitizensAPI.class.getClassLoader();
+    }
+
     /**
      * Retrieves the {@link NPCRegistry} previously created via
      * {@link #createNamedNPCRegistry(String)} with the given name, or null if
@@ -103,8 +118,8 @@ public final class CitizensAPI {
      * @return The current {@link ScriptCompiler}
      */
     public static ScriptCompiler getScriptCompiler() {
-        if (scriptCompiler == null) {
-            scriptCompiler = new ScriptCompiler();
+        if (scriptCompiler == null && getImplementation() != null) {
+            scriptCompiler = new ScriptCompiler(getImplementationClassLoader());
         }
         return scriptCompiler;
     }

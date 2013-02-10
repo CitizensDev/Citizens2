@@ -24,17 +24,6 @@ public class BehaviorTreeTest {
     private GoalController test;
 
     @Test
-    public void singleSelector() {
-        CountedBehavior goal = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.SUCCESS));
-        Selector p = Selector.selecting(goal).build();
-        test.addGoal(p, 1);
-        test.run();
-        assertThat("Reset count", goal.resetCount, is(1));
-        assertThat("Run count", goal.runCount, is(1));
-        assertThat("Should execute count", goal.shouldExecuteCount, is(1));
-    }
-
-    @Test
     public void failureSelector() {
         final CountedBehavior goal = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.SUCCESS));
         CountedBehavior goal2 = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.FAILURE));
@@ -60,17 +49,6 @@ public class BehaviorTreeTest {
     }
 
     @Test
-    public void singleSequence() {
-        CountedBehavior goal = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.SUCCESS));
-        Sequence p = Sequence.createSequence(goal);
-        test.addGoal(p, 1);
-        test.run();
-        assertThat("Reset count", goal.resetCount, is(1));
-        assertThat("Run count", goal.runCount, is(1));
-        assertThat("Should execute count", goal.shouldExecuteCount, is(1));
-    }
-
-    @Test
     public void failureSequence() {
         CountedBehavior goal = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.FAILURE));
         CountedBehavior goal2 = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.SUCCESS));
@@ -90,12 +68,34 @@ public class BehaviorTreeTest {
         test = new SimpleGoalController();
     }
 
+    @Test
+    public void singleSelector() {
+        CountedBehavior goal = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.SUCCESS));
+        Selector p = Selector.selecting(goal).build();
+        test.addGoal(p, 1);
+        test.run();
+        assertThat("Reset count", goal.resetCount, is(1));
+        assertThat("Run count", goal.runCount, is(1));
+        assertThat("Should execute count", goal.shouldExecuteCount, is(1));
+    }
+
+    @Test
+    public void singleSequence() {
+        CountedBehavior goal = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.SUCCESS));
+        Sequence p = Sequence.createSequence(goal);
+        test.addGoal(p, 1);
+        test.run();
+        assertThat("Reset count", goal.resetCount, is(1));
+        assertThat("Run count", goal.runCount, is(1));
+        assertThat("Should execute count", goal.shouldExecuteCount, is(1));
+    }
+
     private static class CountedBehavior extends BehaviorGoalAdapter {
+        public int loggingTag = 0;
         private int resetCount;
+        private final Supplier<BehaviorStatus> ret;
         private int runCount;
         private int shouldExecuteCount;
-        private final Supplier<BehaviorStatus> ret;
-        public int loggingTag = 0;
 
         private CountedBehavior(Supplier<BehaviorStatus> ret) {
             this.ret = ret;

@@ -19,6 +19,8 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
 
+import net.citizensnpcs.api.util.Messaging;
+
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
@@ -32,7 +34,7 @@ import com.google.common.io.Closeables;
  * to compile.
  */
 public class ScriptCompiler implements Runnable {
-    private final ScriptEngineManager engineManager = new ScriptEngineManager(ScriptCompiler.class.getClassLoader());
+    private final ScriptEngineManager engineManager;
     private final Map<String, ScriptEngine> engines = Maps.newHashMap();
     private final Function<File, FileEngine> fileEngineConverter = new Function<File, FileEngine>() {
         @Override
@@ -51,7 +53,8 @@ public class ScriptCompiler implements Runnable {
     private final Thread runningThread;
     private final BlockingQueue<CompileTask> toCompile = new ArrayBlockingQueue<CompileTask>(50);
 
-    public ScriptCompiler() {
+    public ScriptCompiler(ClassLoader classLoader) {
+        engineManager = new ScriptEngineManager(classLoader);
         runningThread = new Thread(this, "Citizens Script Compiler");
         runningThread.start();
     }
@@ -130,15 +133,13 @@ public class ScriptCompiler implements Runnable {
                         callback.onScriptCompiled(engine.file, compiled);
                     }
                 } catch (IOException e) {
-                    System.err.println("[Citizens]: IO error while reading " + engine.file + " for scripting.");
+                    Messaging.severe("IO error while reading " + engine.file + " for scripting.");
                     e.printStackTrace();
                 } catch (ScriptException e) {
-                    System.err.println("[Citizens]: Compile error while parsing script at " + engine.file.getName()
-                            + ".");
+                    Messaging.severe("Compile error while parsing script at " + engine.file.getName() + ".");
                     Throwables.getRootCause(e).printStackTrace();
                 } catch (Throwable t) {
-                    System.err.println("[Citizens]: Unexpected error while parsing script at " + engine.file.getName()
-                            + ".");
+                    Messaging.severe("[Unexpected error while parsing script at " + engine.file.getName() + ".");
                     t.printStackTrace();
                 } finally {
                     Closeables.closeQuietly(reader);

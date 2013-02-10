@@ -18,11 +18,26 @@ public class Sequence extends Composite {
         this.retryChildren = retryChildren;
     }
 
+    private BehaviorStatus getContinuationStatus() {
+        resetCurrent();
+        if (retryChildren) {
+            ++executingIndex;
+            return BehaviorStatus.RUNNING;
+        } else {
+            return BehaviorStatus.FAILURE;
+        }
+    }
+
     @Override
     public void reset() {
         super.reset();
         resetCurrent();
         executingIndex = 0;
+    }
+
+    private void resetCurrent() {
+        stopExecution(executing);
+        executing = null;
     }
 
     @Override
@@ -51,21 +66,6 @@ public class Sequence extends Composite {
                 return selectNext(behaviors);
             default:
                 throw new IllegalStateException();
-        }
-    }
-
-    private void resetCurrent() {
-        stopExecution(executing);
-        executing = null;
-    }
-
-    private BehaviorStatus getContinuationStatus() {
-        resetCurrent();
-        if (retryChildren) {
-            ++executingIndex;
-            return BehaviorStatus.RUNNING;
-        } else {
-            return BehaviorStatus.FAILURE;
         }
     }
 

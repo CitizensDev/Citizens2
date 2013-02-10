@@ -23,12 +23,6 @@ public abstract class Composite extends BehaviorGoalAdapter {
         this(Arrays.asList(behaviors));
     }
 
-    protected void prepareForExecution(Behavior behavior) {
-        if (behavior == null)
-            return;
-        CitizensAPI.registerEvents(behavior);
-    }
-
     public Composite(Collection<Behavior> behaviors) {
         this.behaviors = Lists.newArrayList(behaviors);
         boolean foundNonParallel = false;
@@ -55,6 +49,12 @@ public abstract class Composite extends BehaviorGoalAdapter {
 
     protected List<Behavior> getBehaviors() {
         return behaviors;
+    }
+
+    protected void prepareForExecution(Behavior behavior) {
+        if (behavior == null)
+            return;
+        CitizensAPI.registerEvents(behavior);
     }
 
     public void removeBehavior(Behavior behavior) {
