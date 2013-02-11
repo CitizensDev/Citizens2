@@ -400,11 +400,14 @@ public class LinearWaypointProvider implements WaypointProvider {
                 return false;
             this.selector = selector;
             Waypoint next = itr.next();
-            if (npc.getBukkitEntity().getLocation().distanceSquared(next.getLocation()) < 3)
+            Location npcLoc = npc.getBukkitEntity().getLocation(cachedLocation);
+            if (npcLoc.getWorld() != next.getLocation().getWorld() || npcLoc.distanceSquared(next.getLocation()) < 3)
                 return false;
             currentDestination = next;
             getNavigator().setTarget(currentDestination.getLocation());
             return true;
         }
+
+        private final Location cachedLocation = new Location(null, 0, 0, 0);
     }
 }
