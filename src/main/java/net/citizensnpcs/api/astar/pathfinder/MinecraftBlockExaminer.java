@@ -6,15 +6,13 @@ import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
-import com.google.common.collect.Sets;
-
 public class MinecraftBlockExaminer implements BlockExaminer {
     private boolean canStandIn(Material mat) {
         return PASSABLE.contains(mat);
     }
 
     private boolean canStandOn(Material mat) {
-        return !UNWALKABLE.contains(mat);
+        return !UNWALKABLE.contains(mat) && !PASSABLE.contains(mat);
     }
 
     private boolean contains(Material[] search, Material... find) {
@@ -70,7 +68,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             Material.STONE_BUTTON, Material.SUGAR_CANE_BLOCK, Material.TRIPWIRE, Material.VINE, Material.WALL_SIGN,
             Material.WHEAT, Material.WATER, Material.WEB, Material.WOOD_BUTTON, Material.WOODEN_DOOR,
             Material.STATIONARY_WATER);
-    private static final Set<Material> UNWALKABLE = Sets.union(
-            EnumSet.of(Material.AIR, Material.LAVA, Material.STATIONARY_LAVA, Material.CACTUS), PASSABLE);
+    private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.STATIONARY_LAVA,
+            Material.CACTUS);
     private static final Vector UP = new Vector(0, 1, 0);
 }
