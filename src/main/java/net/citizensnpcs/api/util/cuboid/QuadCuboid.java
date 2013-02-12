@@ -1,13 +1,13 @@
 package net.citizensnpcs.api.util.cuboid;
 
-public class Cuboid {
+public class QuadCuboid {
     private int hashcode = 0;
     int[] highCoords = { 0, 0, 0 };
     int[] highIndex = new int[3];
     int[] lowCoords = { 0, 0, 0 };
     int[] lowIndex = new int[3];
 
-    public Cuboid(int x1, int y1, int z1, int x2, int y2, int z2) {
+    public QuadCuboid(int x1, int y1, int z1, int x2, int y2, int z2) {
         lowCoords[0] = x1;
         lowCoords[1] = y1;
         lowCoords[2] = z1;
@@ -19,7 +19,7 @@ public class Cuboid {
         this.normalize();
     }
 
-    public Cuboid(int[] low, int[] high) {
+    public QuadCuboid(int[] low, int[] high) {
         lowCoords = low.clone();
         highCoords = high.clone();
         normalize();
@@ -29,10 +29,10 @@ public class Cuboid {
     public boolean equals(Object o) {
         if (o == this) {
             return true;
-        } else if (!(o instanceof Cuboid)) {
+        } else if (!(o instanceof QuadCuboid)) {
             return false;
         }
-        Cuboid c = (Cuboid) o;
+        QuadCuboid c = (QuadCuboid) o;
 
         for (int i = 0; i < 3; i++) {
             if (lowCoords[i] != c.lowCoords[i]) {
@@ -74,7 +74,7 @@ public class Cuboid {
         }
     }
 
-    public boolean overlaps(Cuboid cuboid) {
+    public boolean overlaps(QuadCuboid cuboid) {
         for (int i = 0; i < 3; i++) {
             if (lowCoords[i] > cuboid.highCoords[i] || cuboid.lowCoords[i] > highCoords[i]) {
                 return false;

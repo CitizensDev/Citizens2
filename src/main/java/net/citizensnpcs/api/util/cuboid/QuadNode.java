@@ -6,7 +6,7 @@ import java.util.List;
 public class QuadNode {
     // We only hold the cuboids that fit completely inside of us.
     // Cuboids are always held in their minimal bounding node
-    final List<Cuboid> cuboids = new ArrayList<Cuboid>();
+    final List<QuadCuboid> cuboids = new ArrayList<QuadCuboid>();
 
     // We only hold our list of cuboids, but to prevent duplicating lists and
     // having to climb to the root to find all of the cuboids that we need to
