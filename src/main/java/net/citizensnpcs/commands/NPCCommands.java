@@ -229,6 +229,8 @@ public class NPCCommands {
                 + npc.getBukkitEntity().getType().toString().toLowerCase()))
                 || !sender.hasPermission("citizens.npc.controllable"))
             throw new NoPermissionsException();
+        if (!npc.hasTrait(Controllable.class))
+            npc.addTrait(new Controllable(false));
         Controllable trait = npc.getTrait(Controllable.class);
         boolean enabled = trait.toggle();
         String key = enabled ? Messages.CONTROLLABLE_SET : Messages.CONTROLLABLE_REMOVED;
