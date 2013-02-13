@@ -19,6 +19,7 @@ public class Messages {
     public static final String BEHAVIOUR_HELP = "citizens.commands.npc.behaviour.help";
     public static final String BEHAVIOURS_ADDED = "citizens.commands.npc.behaviour.added";
     public static final String BEHAVIOURS_REMOVED = "citizens.commands.npc.behaviour.removed";
+    public static final String CANNOT_TELEPORT_ACROSS_WORLDS = "citizens.commands.npc.tphere.multiworld-not-allowed";
     public static final String CHAT_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.chat.prompt";
     public static final String CITIZENS_IMPLEMENTATION_DISABLED = "citizens.changed-implementation";
     public static final String CITIZENS_INCOMPATIBLE = "citizens.notifications.incompatible-version";
@@ -210,5 +211,4 @@ public class Messages {
     public static final String ZOMBIE_BABY_UNSET = "citizens.commands.npc.zombiemod.baby-unset";
     public static final String ZOMBIE_VILLAGER_SET = "citizens.commands.npc.zombiemod.villager-set";
     public static final String ZOMBIE_VILLAGER_UNSET = "citizens.commands.npc.zombiemod.villager-unset";
-    public static final String CANNOT_TELEPORT_ACROSS_WORLDS = "citizens.commands.npc.tphere.multiworld-not-allowed";
 }

@@ -322,9 +322,11 @@ public class LinearWaypointProvider implements WaypointProvider {
     }
 
     private class LinearWaypointGoal implements Goal {
+        private final Location cachedLocation = new Location(null, 0, 0, 0);
         private Waypoint currentDestination;
         private Iterator<Waypoint> itr;
         private boolean paused;
+
         private GoalSelector selector;
 
         private void ensureItr() {
@@ -407,7 +409,5 @@ public class LinearWaypointProvider implements WaypointProvider {
             getNavigator().setTarget(currentDestination.getLocation());
             return true;
         }
-
-        private final Location cachedLocation = new Location(null, 0, 0, 0);
     }
 }

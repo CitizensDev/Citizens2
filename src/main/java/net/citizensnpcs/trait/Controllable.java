@@ -31,11 +31,16 @@ import com.google.common.collect.Maps;
 public class Controllable extends Trait implements Toggleable, CommandConfigurable {
     private MovementController controller = new GroundController();
     @Persist
-    private boolean enabled;
+    private boolean enabled = true;
     private EntityType explicitType;
 
     public Controllable() {
         super("controllable");
+    }
+
+    public Controllable(boolean enabled) {
+        this();
+        this.enabled = enabled;
     }
 
     @Override
