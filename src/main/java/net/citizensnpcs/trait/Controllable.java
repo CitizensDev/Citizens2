@@ -78,7 +78,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        explicitType = Util.matchEntityType(key.getString("explicittype"));
+        if (key.keyExists("explicittype"))
+            explicitType = Util.matchEntityType(key.getString("explicittype"));
     }
 
     private void loadController() {
