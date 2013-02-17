@@ -44,6 +44,8 @@ public interface CitizensPlugin extends Plugin {
      */
     public NPCRegistry getNPCRegistry();
 
+    public ClassLoader getOwningClassLoader();
+
     /**
      * @return The folder for storing scripts
      */
