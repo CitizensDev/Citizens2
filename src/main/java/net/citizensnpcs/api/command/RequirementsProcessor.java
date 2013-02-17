@@ -37,6 +37,8 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
             String error = Messaging.tr(CommandMessages.MUST_HAVE_SELECTED);
             if (canRedefineSelected) {
                 npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
+                if (methodArgs.length >= 3)
+                    methodArgs[2] = npc;
                 if (npc == null)
                     error += ' ' + Messaging.tr(CommandMessages.ID_NOT_FOUND, context.getFlagInteger("id"));
             }
