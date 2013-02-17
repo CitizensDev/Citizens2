@@ -1092,8 +1092,7 @@ public class NPCCommands {
         }
         if (args.hasValueFlag("p1")) {
             from = Bukkit.getPlayerExact(args.getFlag("p1"));
-        }
-        if (args.hasValueFlag("p2")) {
+        } else if (args.hasValueFlag("p2")) {
             to = Bukkit.getPlayerExact(args.getFlag("p2"));
         }
         if (from == null)
