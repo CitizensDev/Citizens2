@@ -7,10 +7,10 @@ package org.khelekore.prtree;
  * wants a MBR since this will actually use a lot of extra memory.
  */
 public class SimpleMBR2D implements MBR2D {
-    private final double xmin;
-    private final double ymin;
     private final double xmax;
+    private final double xmin;
     private final double ymax;
+    private final double ymin;
 
     /** Create a 2D minimum bounding box
      * @param xmin the xmin of the MBR
@@ -25,12 +25,12 @@ public class SimpleMBR2D implements MBR2D {
 	this.ymax = ymax;
     }
 
-    /** Get a string representation of this mbr. 
-     */
-    @Override public String toString () {
-	return getClass ().getSimpleName () +
-	    "{xmin: " + xmin + ", ymin: " + ymin +
-	    ", xmax: " + xmax + ", ymax: " + ymax + "}";
+    public double getMaxX () {
+	return xmax;
+    }
+
+    public double getMaxY () {
+	return ymax;
     }
 
     public double getMinX () {
@@ -41,12 +41,17 @@ public class SimpleMBR2D implements MBR2D {
 	return ymin;
     }
 
-    public double getMaxX () {
-	return xmax;
+    public boolean intersects (MBR2D other) {
+	return !(other.getMaxX () < xmin || other.getMinX () > xmax ||
+		 other.getMaxY () < ymin || other.getMinY () > ymax);
     }
 
-    public double getMaxY () {
-	return ymax;
+    /** Get a string representation of this mbr. 
+     */
+    @Override public String toString () {
+	return getClass ().getSimpleName () +
+	    "{xmin: " + xmin + ", ymin: " + ymin +
+	    ", xmax: " + xmax + ", ymax: " + ymax + "}";
     }
 
     public MBR2D union (MBR2D other) {
@@ -55,10 +60,5 @@ public class SimpleMBR2D implements MBR2D {
 	double uxmax = Math.max (xmax, other.getMaxX ());
 	double uymax = Math.max (ymax, other.getMaxY ());
 	return new SimpleMBR2D (uxmin, uymin, uxmax, uymax);
-    }
-
-    public boolean intersects (MBR2D other) {
-	return !(other.getMaxX () < xmin || other.getMinX () > xmax ||
-		 other.getMaxY () < ymin || other.getMinY () > ymax);
     }
 }

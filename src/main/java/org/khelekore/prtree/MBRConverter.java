@@ -10,17 +10,17 @@ public interface MBRConverter<T> {
      */
     int getDimensions ();
 
-    /** Get the minimum coordinate value for the given t.
-     * @param axis the axis to get the min value for
-     * @param t the object to get the mbr ordinate for
-     * @return the min value for the given axis
-     */
-    double getMin (int axis, T t);
-
     /** Get the maximum coordinate value for the given t
      * @param axis the axis to get the max value for
      * @param t the object to get the mbr ordinate for
      * @return the max value for the given axis
      */
     double getMax (int axis, T t);
+
+    /** Get the minimum coordinate value for the given t.
+     * @param axis the axis to get the min value for
+     * @param t the object to get the mbr ordinate for
+     * @return the min value for the given axis
+     */
+    double getMin (int axis, T t);
 }

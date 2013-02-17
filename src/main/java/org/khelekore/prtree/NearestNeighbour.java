@@ -9,11 +9,11 @@ import org.khelekore.prtree.NodeFilter;
 class NearestNeighbour<T> {
 
     private final MBRConverter<T> converter;
+    private final DistanceCalculator<T> dc;
     private final NodeFilter<T> filter;
     private final int maxHits;
-    private final Node<T> root;
-    private final DistanceCalculator<T> dc;
     private final PointND p;
+    private final Node<T> root;
 
     public NearestNeighbour (MBRConverter<T> converter,
 			     NodeFilter<T> filter,

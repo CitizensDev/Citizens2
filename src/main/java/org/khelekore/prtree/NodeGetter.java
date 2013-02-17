@@ -12,15 +12,15 @@ interface NodeGetter<N> {
      */
     N getNextNode (int maxObjects);
 
-    /** Check if we can get more nodes from this NodeGetter.
-     * @return true if there are more nodes, false otherwise
-     */
-    boolean hasMoreNodes ();
-
     /** Check if there is unused data in this NodeGetter.
      * @return true if there is unused data, false otherwise
      */
     boolean hasMoreData ();
+
+    /** Check if we can get more nodes from this NodeGetter.
+     * @return true if there are more nodes, false otherwise
+     */
+    boolean hasMoreNodes ();
 
     /** Split this NodeGetter into the low and high parts.
      * @param lowId the id of the low part

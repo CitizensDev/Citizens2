@@ -8,23 +8,17 @@ public interface MBR {
      */
     int getDimensions ();
 
-    /** Get the minimum value for the given axis
-     * @param axis the axis to use
-     * @return the min value
-     */
-    double getMin (int axis);
-
     /** Get the maximum value for the given axis
      * @param axis the axis to use
      * @return the x max value
      */
     double getMax (int axis);
 
-    /** Return a new MBR that is the union of this mbr and the other 
-     * @param mbr the MBR to create a union with
-     * @return the new MBR
+    /** Get the minimum value for the given axis
+     * @param axis the axis to use
+     * @return the min value
      */
-    MBR union (MBR mbr);
+    double getMin (int axis);
 
     /** Check if the other MBR intersects this one
      * @param other the MBR to check against
@@ -40,4 +34,10 @@ public interface MBR {
      * @param <T> the object type
      */
     <T> boolean intersects (T t, MBRConverter<T> converter);
+
+    /** Return a new MBR that is the union of this mbr and the other 
+     * @param mbr the MBR to create a union with
+     * @return the new MBR
+     */
+    MBR union (MBR mbr);
 }

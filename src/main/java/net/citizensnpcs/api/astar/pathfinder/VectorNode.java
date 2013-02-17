@@ -41,7 +41,7 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     public float distance(VectorNode to) {
-        return (float) location.distanceSquared(to.location);
+        return (float) location.distance(to.location);
     }
 
     private float getBlockCost() {
@@ -85,7 +85,7 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     public float heuristicDistance(Vector goal) {
-        return (float) location.distanceSquared(goal) + getBlockCost();
+        return (float) location.distance(goal) + getBlockCost();
     }
 
     private boolean isPassable(PathPoint mod) {

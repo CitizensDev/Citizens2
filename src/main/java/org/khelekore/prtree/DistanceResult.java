@@ -4,8 +4,8 @@ package org.khelekore.prtree;
  * @param <T> The node type
  */
 public class DistanceResult<T> {
-    private final T t;
     private final double dist;
+    private final T t;
     
     /** Create a new DistanceResult with a given object and distance
      * @param t the object we are measuring the distance to

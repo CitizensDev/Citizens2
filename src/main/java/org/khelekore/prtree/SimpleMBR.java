@@ -9,16 +9,16 @@ package org.khelekore.prtree;
 public class SimpleMBR implements MBR {
     private final double values[];
 
-    private SimpleMBR (int dimensions) {
-	values = new double[dimensions * 2];	
-    }
-
     /** Create a new SimpleMBR using the given double values for max and min.
      *  Note that the values should be stored as min, max, min, max.
      * @param values the min and max values for each dimension.
      */
     public SimpleMBR (double... values) {
 	this.values = values.clone ();
+    }
+
+    private SimpleMBR (int dimensions) {
+	values = new double[dimensions * 2];	
     }
 
     /** Create a new SimpleMBR from a given object and a MBRConverter
@@ -39,25 +39,12 @@ public class SimpleMBR implements MBR {
 	return values.length / 2;
     }
 
-    public double getMin (int axis) {
-	return values[axis * 2];
-    }
-
     public double getMax (int axis) {
 	return values[axis * 2 + 1];
     }
 
-    public MBR union (MBR mbr) {
-	int dims = getDimensions ();
-	SimpleMBR n = new SimpleMBR (dims);
-	int p = 0;
-	for (int i = 0; i < dims; i++) {
-	    n.values[p] = Math.min (getMin (i), mbr.getMin (i));
-	    p++;
-	    n.values[p] = Math.max (getMax (i), mbr.getMax (i));
-	    p++;
-	}
-	return n;
+    public double getMin (int axis) {
+	return values[axis * 2];
     }
 
     public boolean intersects (MBR other) {
@@ -80,5 +67,18 @@ public class SimpleMBR implements MBR {
     @Override public String toString () {
 	return getClass ().getSimpleName () +
 	    "{values: " + java.util.Arrays.toString (values) + "}";
+    }
+
+    public MBR union (MBR mbr) {
+	int dims = getDimensions ();
+	SimpleMBR n = new SimpleMBR (dims);
+	int p = 0;
+	for (int i = 0; i < dims; i++) {
+	    n.values[p] = Math.min (getMin (i), mbr.getMin (i));
+	    p++;
+	    n.values[p] = Math.max (getMax (i), mbr.getMax (i));
+	    p++;
+	}
+	return n;
     }
 }

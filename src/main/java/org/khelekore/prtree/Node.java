@@ -7,17 +7,6 @@ import java.util.PriorityQueue;
  * @param <T> the data type of the elements stored in this node
  */
 interface Node<T> {
-    /** Get the size of the node, that is how many data elements it holds
-     * @return the number of elements (leafs or child nodes) that this node has
-     */
-    int size ();
-
-    /** Get the MBR of this node
-     * @param converter the MBR converter to use for the actual objects
-     * @return the MBR for this node
-     */
-    MBR getMBR (MBRConverter<T> converter);
-
     /** Visit this node and add the leafs to the found list and add
      *  any child nodes to the list of nodes to expand.
      * @param mbr the query rectangle
@@ -35,6 +24,12 @@ interface Node<T> {
      */
     void find (MBR mbr, MBRConverter<T> converter, List<T> result);
 
+    /** Get the MBR of this node
+     * @param converter the MBR converter to use for the actual objects
+     * @return the MBR for this node
+     */
+    MBR getMBR (MBRConverter<T> converter);
+
     /** Expand the nearest neighbour search
      * @param dc the DistanceCalculator to use when calculating distances
      * @param filter the NodeFilter to use when getting node objects
@@ -50,5 +45,10 @@ interface Node<T> {
 		   int maxHits,
 		   PriorityQueue<Node<T>> queue,
 		   MinDistComparator<T, Node<T>> mdc);
+
+    /** Get the size of the node, that is how many data elements it holds
+     * @return the number of elements (leafs or child nodes) that this node has
+     */
+    int size ();
 
 }

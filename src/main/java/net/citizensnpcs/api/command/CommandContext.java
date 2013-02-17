@@ -33,8 +33,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class CommandContext {
-    private static final Pattern VALUE_FLAG = Pattern.compile("^--[a-zA-Z0-9]+$");
-    private static final Pattern FLAG = Pattern.compile("^-[a-zA-Z]+$");
     protected String[] args;
     protected final Set<Character> flags = new HashSet<Character>();
     private Location location = null;
@@ -252,4 +250,8 @@ public class CommandContext {
     public boolean matches(String command) {
         return args[0].equalsIgnoreCase(command);
     }
+
+    private static final Pattern FLAG = Pattern.compile("^-[a-zA-Z]+$");
+
+    private static final Pattern VALUE_FLAG = Pattern.compile("^--[a-zA-Z0-9]+$");
 }

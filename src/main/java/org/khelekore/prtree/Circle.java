@@ -8,8 +8,8 @@ import java.util.List;
  * @param <T> the element type
  */
 class Circle<T> {
-    private final List<T> data;
     private int currentPos;
+    private final List<T> data;
 
     public Circle (int size) {
 	data = new ArrayList<T> (size);
@@ -24,17 +24,17 @@ class Circle<T> {
 	return data.get (pos);
     }
 
+    public T getNext () {
+	T ret = data.get (currentPos++);
+	currentPos %= data.size ();
+	return ret;
+    }
+
     public int getNumElements () {
 	return data.size ();
     }
 
     public void reset () {
 	currentPos = 0;
-    }
-
-    public T getNext () {
-	T ret = data.get (currentPos++);
-	currentPos %= data.size ();
-	return ret;
     }
 }

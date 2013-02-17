@@ -14,12 +14,21 @@ import java.util.List;
  */
 class LeafBuilder {
 
-    private final int dimensions;
     private final int branchFactor;
+    private final int dimensions;
 
     public LeafBuilder (int dimensions, int branchFactor) {
 	this.dimensions = dimensions;
 	this.branchFactor = branchFactor;
+    }
+
+    private <T, N> void addGetterAndSplitter (List<NodeUsage<T>> nodes,
+					      Comparator<T> tcomp,
+					      Circle<Noder<T, N>> getters) {
+	Comparator<NodeUsage<T>> comp = new NodeUsageComparator<T> (tcomp);
+	Collections.sort (nodes, comp);
+	List<NodeUsage<T>> sortedNodes = new ArrayList<NodeUsage<T>> (nodes);
+	getters.add (new Noder<T, N> (sortedNodes));
     }
 
     public <T, N> void buildLeafs (Collection<? extends T> ls,
@@ -42,15 +51,6 @@ class LeafBuilder {
 				  getters);
 
 	getLeafs (1, ls.size (), getters, nf, leafNodes);
-    }
-
-    private <T, N> void addGetterAndSplitter (List<NodeUsage<T>> nodes,
-					      Comparator<T> tcomp,
-					      Circle<Noder<T, N>> getters) {
-	Comparator<NodeUsage<T>> comp = new NodeUsageComparator<T> (tcomp);
-	Collections.sort (nodes, comp);
-	List<NodeUsage<T>> sortedNodes = new ArrayList<NodeUsage<T>> (nodes);
-	getters.add (new Noder<T, N> (sortedNodes));
     }
 
     private <T, N> void getLeafs (int id, int totalNumberOfElements,
@@ -91,19 +91,6 @@ class LeafBuilder {
 	    splitPos++;
 	}
 	return splitPos;
-    }
-
-    private static class NodeUsageComparator<T> 
-	implements Comparator<NodeUsage<T>> {
-	private Comparator<T> sorter;
-
-	public NodeUsageComparator (Comparator<T> sorter) {
-	    this.sorter = sorter;
-	}
-
-	public int compare (NodeUsage<T> n1, NodeUsage<T> n2) {
-	    return sorter.compare (n1.getData (), n2.getData ());
-	}
     }
 
     private static class Noder<T, N> {
@@ -150,6 +137,18 @@ class LeafBuilder {
 	    return nu == null || nu.isUsed () || nu.getOwner () != p.id;
 	}
 
+	private int markPart (int numToMark, int fromId, int toId, int startPos) {
+	    NodeUsage<T> nu;
+	    while (numToMark > 0) {
+		while ((nu = data.get (startPos)) == null || 
+		       nu.getOwner () != fromId)
+		    startPos++;
+		nu.changeOwner (toId);
+		numToMark--;
+	    }
+	    return startPos;
+	}
+
 	private void split (Partition p, int gi,
 			    int nodesToMark, int fromId, int toId1, int toId2,
 			    List<Partition> partitionsToExpand) {
@@ -164,24 +163,25 @@ class LeafBuilder {
 	    pos[gi] = startPos2;
 	    partitionsToExpand.add (1, new Partition (toId2, sizePart2, pos));
 	}
+    }
 
-	private int markPart (int numToMark, int fromId, int toId, int startPos) {
-	    NodeUsage<T> nu;
-	    while (numToMark > 0) {
-		while ((nu = data.get (startPos)) == null || 
-		       nu.getOwner () != fromId)
-		    startPos++;
-		nu.changeOwner (toId);
-		numToMark--;
-	    }
-	    return startPos;
+    private static class NodeUsageComparator<T> 
+	implements Comparator<NodeUsage<T>> {
+	private Comparator<T> sorter;
+
+	public NodeUsageComparator (Comparator<T> sorter) {
+	    this.sorter = sorter;
+	}
+
+	public int compare (NodeUsage<T> n1, NodeUsage<T> n2) {
+	    return sorter.compare (n1.getData (), n2.getData ());
 	}
     }
 
     private static class Partition {
+	private int[] currentPositions;
 	private final int id;
 	private int numElementsLeft;
-	private int[] currentPositions;
 
 	public Partition (int id, int numElementsLeft, int[] currentPositions) {
 	    this.id = id;

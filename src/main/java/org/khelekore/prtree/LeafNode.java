@@ -11,8 +11,18 @@ class LeafNode<T> extends NodeBase<T, T> {
 	super (data);
     }
 
-    public MBR getMBR (T t, MBRConverter<T> converter) {
-	return new SimpleMBR (t, converter);
+    private void add (List<DistanceResult<T>> drs,
+		      DistanceResult<T> dr,
+		      int maxHits) {
+	int n = drs.size ();
+	if (n == maxHits)
+	    drs.remove (n - 1);
+	int pos = Collections.binarySearch (drs, dr, comp);
+	if (pos < 0) {
+	    // binarySearch return -(pos + 1) for new entries
+	    pos = -(pos + 1);
+	}
+	drs.add (pos, dr);
     }
 
     @Override public MBR computeMBR (MBRConverter<T> converter) {
@@ -35,6 +45,10 @@ class LeafNode<T> extends NodeBase<T, T> {
 	}
     }
 
+    public MBR getMBR (T t, MBRConverter<T> converter) {
+	return new SimpleMBR (t, converter);
+    }
+
     public void nnExpand (DistanceCalculator<T> dc,
 			  NodeFilter<T> filter,
 			  List<DistanceResult<T>> drs,
@@ -51,20 +65,6 @@ class LeafNode<T> extends NodeBase<T, T> {
 		}
 	    }
 	}
-    }
-
-    private void add (List<DistanceResult<T>> drs,
-		      DistanceResult<T> dr,
-		      int maxHits) {
-	int n = drs.size ();
-	if (n == maxHits)
-	    drs.remove (n - 1);
-	int pos = Collections.binarySearch (drs, dr, comp);
-	if (pos < 0) {
-	    // binarySearch return -(pos + 1) for new entries
-	    pos = -(pos + 1);
-	}
-	drs.add (pos, dr);
     }
 
     private static final Comparator<DistanceResult<?>> comp =
