@@ -32,8 +32,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
+    private final Location cachedEquipmentLocation = new Location(null, 0, 0, 0);
+
     private final CitizensNPC npc;
-    private final net.minecraft.server.v1_4_R1.ItemStack[] previousEquipment = { null, null, null, null, null };
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
             PlayerInteractManager playerInteractManager, NPC npc) {
@@ -181,13 +182,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private void updateEquipment() {
-        for (int i = 0; i < previousEquipment.length; i++) {
-            net.minecraft.server.v1_4_R1.ItemStack previous = previousEquipment[i];
-            net.minecraft.server.v1_4_R1.ItemStack current = getEquipment(i);
-            if (previous != current) {
-                NMS.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i, current));
-                previousEquipment[i] = current;
-            }
+        for (int i = 0; i < 5; i++) {
+            NMS.sendPacketNearby(getBukkitEntity().getLocation(cachedEquipmentLocation), new Packet5EntityEquipment(id,
+                    i, getEquipment(i)));
         }
     }
 
