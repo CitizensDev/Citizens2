@@ -58,6 +58,11 @@ public class BlazeController extends MobEntityController {
         }
 
         @Override
+        public float bB() {
+            return super.bB() * npc.getNavigator().getLocalParameters().speed();
+        }
+
+        @Override
         public void bn() {
             if (npc != null)
                 npc.update();

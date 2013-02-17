@@ -44,10 +44,15 @@ public class SquidController extends MobEntityController {
         }
 
         @Override
+        public float bB() {
+            return super.bB() * npc.getNavigator().getLocalParameters().speed();
+        }
+
+        @Override
         public void bn() {
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
-            else
+            } else
                 super.bn();
         }
 

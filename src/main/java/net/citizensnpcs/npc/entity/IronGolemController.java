@@ -43,6 +43,11 @@ public class IronGolemController extends MobEntityController {
         }
 
         @Override
+        public float bB() {
+            return super.bB() * npc.getNavigator().getLocalParameters().speed();
+        }
+
+        @Override
         public void bl() {
             super.bl();
             if (npc != null)
