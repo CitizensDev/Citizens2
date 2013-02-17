@@ -23,6 +23,7 @@ public class BlockBreaker implements Runnable {
     private boolean isDigging;
     private int startDigTick;
     private final int x, y, z;
+
     private BlockBreaker(LivingEntity entity, org.bukkit.block.Block target, Configuration config) {
         this.entity = ((CraftLivingEntity) entity).getHandle();
         this.x = target.getX();
@@ -39,7 +40,7 @@ public class BlockBreaker implements Runnable {
     }
 
     private double distanceSquared() {
-        return Math.sqrt(Math.pow(entity.locX - x, 2) + Math.pow(entity.locY - y, 2) + Math.pow(entity.locZ - z, 2));
+        return Math.pow(entity.locX - x, 2) + Math.pow(entity.locY - y, 2) + Math.pow(entity.locZ - z, 2);
     }
 
     private net.minecraft.server.v1_4_R1.ItemStack getCurrentItem() {
