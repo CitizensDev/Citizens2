@@ -79,6 +79,7 @@ permissions:
               citizens.npc.edit.text: true
           citizens.npc.tp: true
           citizens.npc.tphere: true
+          citizens.npc.tpto: true
           citizens.npc.trait.*:
             children:
                 citizens.npc.trait: true
