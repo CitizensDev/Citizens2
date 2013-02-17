@@ -1071,6 +1071,41 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "tpto [--npc1|2:id] [--p1|2:name]",
+            desc = "Teleport an NPC or player to another NPC or player",
+            modifiers = { "tpto" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.tpto")
+    @Requirements
+    public void tpto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        Entity from = null, to = null;
+        if (args.hasValueFlag("npc1")) {
+            NPC fromNPC = CitizensAPI.getNPCRegistry().getById(args.getFlagInteger("npc1"));
+            if (fromNPC != null)
+                from = fromNPC.getBukkitEntity();
+        }
+        if (args.hasValueFlag("npc2")) {
+            NPC toNPC = CitizensAPI.getNPCRegistry().getById(args.getFlagInteger("npc2"));
+            if (toNPC != null)
+                to = toNPC.getBukkitEntity();
+        }
+        if (args.hasValueFlag("p1")) {
+            from = Bukkit.getPlayerExact(args.getFlag("p1"));
+        }
+        if (args.hasValueFlag("p2")) {
+            to = Bukkit.getPlayerExact(args.getFlag("p2"));
+        }
+        if (from == null)
+            throw new CommandException(Messages.FROM_ENTITY_NOT_FOUND);
+        if (to == null)
+            throw new CommandException(Messages.TO_ENTITY_NOT_FOUND);
+        from.teleport(to);
+        Messaging.sendTr(sender, Messages.TPTO_SUCCESS);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "type [type]",
             desc = "Sets an NPC's entity type",
             modifiers = { "type" },

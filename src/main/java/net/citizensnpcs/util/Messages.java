@@ -68,6 +68,7 @@ public class Messages {
     public static final String FAILED_LOAD_SAVES = "citizens.saves.load-failed";
     public static final String FAILED_TO_MOUNT_NPC = "citizens.commands.npc.mount.failed";
     public static final String FAILED_TO_REMOVE = "citizens.commands.trait.failed-to-remove";
+    public static final String FROM_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.from-not-found";
     public static final String GAMEMODE_DESCRIBE = "citizens.commands.npc.gamemode.describe";
     public static final String GAMEMODE_INVALID = "citizens.commands.npc.gamemode.invalid";
     public static final String GAMEMODE_SET = "citizens.commands.npc.gamemode.set";
@@ -180,6 +181,8 @@ public class Messages {
     public static final String TEXT_EDITOR_REMOVED_ENTRY = "citizens.editors.text.removed-entry";
     public static final String TEXT_EDITOR_SET_ITEM = "citizens.editors.text.talk-item-set";
     public static final String TEXT_EDITOR_START_PROMPT = "citizens.editors.text.start-prompt";
+    public static final String TO_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.to-not-found";
+    public static final String TPTO_SUCCESS = "citizens.commands.npc.tpto.success";
     public static final String TRAIT_LOAD_FAILED = "citizens.notifications.trait-load-failed";
     public static final String TRAIT_NOT_CONFIGURABLE = "citizens.commands.traitc.not-configurable";
     public static final String TRAIT_NOT_FOUND = "citizens.commands.traitc.missing";
