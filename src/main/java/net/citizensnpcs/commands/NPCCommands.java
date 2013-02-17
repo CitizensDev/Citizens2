@@ -92,10 +92,10 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "citizens.npc.age")
-    @Requirements(selected = true, ownership = true, types = { EntityType.CHICKEN, EntityType.COW,
-            EntityType.MUSHROOM_COW, EntityType.OCELOT, EntityType.PIG, EntityType.SHEEP, EntityType.VILLAGER,
-            EntityType.WOLF })
+    @Requirements(selected = true, ownership = true)
     public void age(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (!npc.isSpawned() || !(npc.getBukkitEntity() instanceof Ageable))
+            throw new CommandException(Messages.MOBTYPE_CANNOT_BE_AGED);
         Age trait = npc.getTrait(Age.class);
 
         boolean toggleLock = args.hasFlag('l');
