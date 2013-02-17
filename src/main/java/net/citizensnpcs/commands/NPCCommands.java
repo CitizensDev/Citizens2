@@ -1080,6 +1080,8 @@ public class NPCCommands {
     @Requirements
     public void tpto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Entity from = null, to = null;
+        if (npc != null)
+            from = npc.getBukkitEntity();
         if (args.hasValueFlag("npc1")) {
             NPC fromNPC = CitizensAPI.getNPCRegistry().getById(args.getFlagInteger("npc1"));
             if (fromNPC != null)
