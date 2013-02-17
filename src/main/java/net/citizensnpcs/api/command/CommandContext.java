@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
@@ -32,6 +33,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class CommandContext {
+    private static final Pattern VALUE_FLAG = Pattern.compile("^--[a-zA-Z0-9]+$");
+    private static final Pattern FLAG = Pattern.compile("^-[a-zA-Z]+$");
     protected String[] args;
     protected final Set<Character> flags = new HashSet<Character>();
     private Location location = null;
@@ -57,9 +60,9 @@ public class CommandContext {
                     quoted += " " + test;
                     if (test.charAt(test.length() - 1) == quote) {
                         args[i] = quoted.substring(0, quoted.length() - 1);
-                        for (int j = i + 1; j != inner; ++j)
-                            args[j] = "";
                         // remove ending quote
+                        for (int j = i + 1; j != inner; ++j)
+                            args[j] = ""; // collapse previous
                         break;
                     }
                 }
@@ -67,25 +70,25 @@ public class CommandContext {
         }
         for (i = 1; i < args.length; ++i) {
             // second pass for flags
-            if (args[i].length() == 0)
+            int length = args[i].length();
+            if (length == 0)
                 continue;
-            if (i + 1 < args.length && args[i].length() > 2 && args[i].matches("^--[a-zA-Z]+$")) {
+            if (i + 1 < args.length && length > 2 && VALUE_FLAG.matcher(args[i]).matches()) {
                 int inner = i + 1;
                 while (args[inner].length() == 0) {
                     // later args may have been quoted
-                    ++inner;
-                    if (inner >= args.length) {
+                    if (++inner >= args.length) {
                         inner = -1;
                         break;
                     }
                 }
 
                 if (inner != -1) {
-                    valueFlags.put(args[i].toLowerCase().replaceFirst("--", ""), args[inner]);
+                    valueFlags.put(args[i].toLowerCase().substring(2), args[inner]);
                     args[i] = "";
                     args[inner] = "";
                 }
-            } else if (args[i].charAt(0) == '-' && args[i].matches("^-[a-zA-Z]+$")) {
+            } else if (FLAG.matcher(args[i]).matches()) {
                 for (int k = 1; k < args[i].length(); k++)
                     flags.add(args[i].charAt(k));
                 args[i] = "";
