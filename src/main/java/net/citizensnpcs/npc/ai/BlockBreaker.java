@@ -16,19 +16,20 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class BlockBreaker implements Runnable {
+    private final Configuration configuration;
     private int currentDamage;
     private int currentTick;
     private final EntityLiving entity;
     private boolean isDigging;
-    private final int startDigTick;
+    private int startDigTick;
     private final int x, y, z;
-
-    public BlockBreaker(LivingEntity entity, org.bukkit.block.Block target) {
+    private BlockBreaker(LivingEntity entity, org.bukkit.block.Block target, Configuration config) {
         this.entity = ((CraftLivingEntity) entity).getHandle();
         this.x = target.getX();
         this.y = target.getY();
         this.z = target.getZ();
         this.startDigTick = (int) (System.currentTimeMillis() / 50);
+        this.configuration = config;
     }
 
     public void cancel() {
@@ -37,8 +38,12 @@ public class BlockBreaker implements Runnable {
         entity.world.g(entity.id, x, y, z, -1);
     }
 
+    private double distanceSquared() {
+        return Math.sqrt(Math.pow(entity.locX - x, 2) + Math.pow(entity.locY - y, 2) + Math.pow(entity.locZ - z, 2));
+    }
+
     private net.minecraft.server.v1_4_R1.ItemStack getCurrentItem() {
-        return entity.getEquipment(0);
+        return configuration.item() != null ? CraftItemStack.asNMSCopy(configuration.item()) : entity.getEquipment(0);
     }
 
     private float getStrength(Block block) {
@@ -55,15 +60,23 @@ public class BlockBreaker implements Runnable {
         }
     }
 
+    public boolean isFinished() {
+        return !isDigging;
+    }
+
     @Override
     public void run() {
         if (!isDigging) {
             cancel();
             return;
         }
+        currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
+        if (configuration.radiusSquared() > 0 && distanceSquared() >= configuration.radiusSquared()) {
+            startDigTick = currentTick;
+            return;
+        }
         if (entity instanceof EntityPlayer)
             PlayerAnimation.ARM_SWING.play((Player) entity.getBukkitEntity());
-        currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
         Block block = Block.byId[entity.world.getTypeId(x, y, z)];
         if (block == null) {
             cancel();
@@ -114,5 +127,40 @@ public class BlockBreaker implements Runnable {
             strength /= 5.0F;
         }
         return strength;
+    }
+
+    public static class Configuration {
+        private org.bukkit.inventory.ItemStack itemStack;
+
+        private double radius;
+
+        public org.bukkit.inventory.ItemStack item() {
+            return itemStack;
+        }
+
+        public Configuration item(org.bukkit.inventory.ItemStack stack) {
+            itemStack = stack;
+            return this;
+        }
+
+        public Configuration radius(double radius) {
+            this.radius = radius;
+            return this;
+        }
+
+        public double radiusSquared() {
+            return Math.pow(radius, 2);
+        }
+    }
+
+    private static final Configuration EMPTY = new Configuration();
+
+    public static BlockBreaker create(LivingEntity entity, org.bukkit.block.Block target) {
+        return createWithConfiguration(entity, target, EMPTY);
+    }
+
+    public static BlockBreaker createWithConfiguration(LivingEntity entity, org.bukkit.block.Block target,
+            Configuration config) {
+        return new BlockBreaker(entity, target, config);
     }
 }
