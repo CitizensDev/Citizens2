@@ -23,8 +23,7 @@ public class EditorCommands {
             min = 1,
             max = 1,
             permission = "citizens.npc.edit.equip")
-    @Requirements(selected = true, ownership = true, types = { EntityType.ENDERMAN, EntityType.PLAYER, EntityType.PIG,
-            EntityType.SHEEP })
+    @Requirements(selected = true, ownership = true)
     public void equip(CommandContext args, Player player, NPC npc) {
         Editor.enterOrLeave(player, new EquipmentEditor(player, npc));
     }
