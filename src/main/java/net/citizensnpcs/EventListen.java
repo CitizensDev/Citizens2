@@ -217,8 +217,9 @@ public class EventListen implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = npcRegistry.getNPC(event.getRightClicked());
-        if (npc == null)
+        if (npc == null) {
             return;
+        }
 
         Player player = event.getPlayer();
 
