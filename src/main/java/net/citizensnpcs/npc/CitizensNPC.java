@@ -88,6 +88,7 @@ public class CitizensNPC extends AbstractNPC {
         return getBukkitEntity() != null;
     }
 
+    @Override
     public void load(final DataKey root) {
         metadata.loadFrom(root.getRelative("metadata"));
         // Load traits
@@ -177,6 +178,7 @@ public class CitizensNPC extends AbstractNPC {
             return true;
         }
 
+        NMS.setHeadYaw(mcEntity, at.getYaw());
         NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at);
         Bukkit.getPluginManager().callEvent(spawnEvent);
         if (spawnEvent.isCancelled()) {
@@ -185,7 +187,6 @@ public class CitizensNPC extends AbstractNPC {
             return false;
         }
 
-        NMS.setHeadYaw(mcEntity, at.getYaw());
         getBukkitEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         // Set the spawned state
