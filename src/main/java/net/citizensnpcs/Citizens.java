@@ -175,6 +175,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
+    public ClassLoader getOwningClassLoader() {
+        return getClassLoader();
+    }
+
+    @Override
     public File getScriptFolder() {
         return new File(getDataFolder(), "scripts");
     }
