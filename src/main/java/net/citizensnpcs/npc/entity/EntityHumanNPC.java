@@ -47,7 +47,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     @Override
     public float bB() {
-        return super.bB() * npc.getNavigator().getDefaultParameters().speed();
+        return super.bB() * npc.getNavigator().getLocalParameters().speed();
     }
 
     @Override

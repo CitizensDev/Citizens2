@@ -39,8 +39,12 @@ public class GhastController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-
             }
+        }
+
+        @Override
+        public float bB() {
+            return super.bB() * npc.getNavigator().getLocalParameters().speed();
         }
 
         @Override

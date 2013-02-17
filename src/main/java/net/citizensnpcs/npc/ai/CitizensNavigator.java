@@ -31,7 +31,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
     private final NPC npc;
-
     private int stationaryTicks;
 
     public CitizensNavigator(NPC npc) {
@@ -56,7 +55,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     @Override
     public NavigatorParameters getLocalParameters() {
         if (!isNavigating())
-            throw new IllegalStateException("not navigating");
+            return defaultParams;
         return localParams;
     }
 
