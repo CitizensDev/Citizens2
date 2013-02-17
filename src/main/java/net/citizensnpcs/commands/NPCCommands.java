@@ -1071,31 +1071,35 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "tpto [--npc1|2:id] [--p1|2:name]",
+            usage = "tpto [player name|npc id] [player name|npc id]",
             desc = "Teleport an NPC or player to another NPC or player",
             modifiers = { "tpto" },
-            min = 1,
-            max = 1,
+            min = 3,
+            max = 3,
             permission = "citizens.npc.tpto")
     @Requirements
     public void tpto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Entity from = null, to = null;
         if (npc != null)
             from = npc.getBukkitEntity();
-        if (args.hasValueFlag("npc1")) {
-            NPC fromNPC = CitizensAPI.getNPCRegistry().getById(args.getFlagInteger("npc1"));
+        boolean firstWasPlayer = false;
+        try {
+            int id = args.getInteger(1);
+            NPC fromNPC = CitizensAPI.getNPCRegistry().getById(id);
             if (fromNPC != null)
                 from = fromNPC.getBukkitEntity();
+        } catch (NumberFormatException e) {
+            from = Bukkit.getPlayerExact(args.getString(1));
+            firstWasPlayer = true;
         }
-        if (args.hasValueFlag("npc2")) {
-            NPC toNPC = CitizensAPI.getNPCRegistry().getById(args.getFlagInteger("npc2"));
+        try {
+            int id = args.getInteger(2);
+            NPC toNPC = CitizensAPI.getNPCRegistry().getById(id);
             if (toNPC != null)
                 to = toNPC.getBukkitEntity();
-        }
-        if (args.hasValueFlag("p1")) {
-            from = Bukkit.getPlayerExact(args.getFlag("p1"));
-        } else if (args.hasValueFlag("p2")) {
-            to = Bukkit.getPlayerExact(args.getFlag("p2"));
+        } catch (NumberFormatException e) {
+            if (!firstWasPlayer)
+                to = Bukkit.getPlayerExact(args.getString(2));
         }
         if (from == null)
             throw new CommandException(Messages.FROM_ENTITY_NOT_FOUND);
