@@ -738,7 +738,7 @@ public class NPCCommands {
             if (trait.addPose(args.getFlag("save"), args.getSenderLocation())) {
                 Messaging.sendTr(sender, Messages.POSE_ADDED);
             } else
-                throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("assume"));
+                throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("save"));
         } else if (args.hasValueFlag("assume")) {
             String pose = args.getFlag("assume");
             if (pose.isEmpty())

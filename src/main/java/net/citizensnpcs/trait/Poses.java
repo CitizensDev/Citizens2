@@ -25,10 +25,11 @@ public class Poses extends Trait {
     }
 
     public boolean addPose(String name, Location location) {
+        name = name.toLowerCase();
         Pose newPose = new Pose(name, location.getPitch(), location.getYaw());
         if (poses.containsValue(newPose) || poses.containsKey(name))
             return false;
-        poses.put(name.toLowerCase(), newPose);
+        poses.put(name, newPose);
         return true;
     }
 
@@ -68,6 +69,7 @@ public class Poses extends Trait {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
+        poses.clear();
         for (DataKey sub : key.getRelative("list").getIntegerSubKeys())
             try {
                 String[] parts = sub.getString("").split(";");
