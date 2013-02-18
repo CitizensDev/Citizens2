@@ -3,6 +3,7 @@ package net.citizensnpcs.api.ai;
 import java.util.List;
 
 import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
 
 import com.google.common.collect.Lists;
@@ -11,12 +12,25 @@ public class NavigatorParameters implements Cloneable {
     private AttackStrategy attackStrategy;
     private boolean avoidWater;
     private float baseSpeed;
+    private final List<NavigatorCallback> callbacks = Lists.newArrayListWithExpectedSize(3);
     private double distanceMargin = 3F;
     private final List<BlockExaminer> examiners = Lists.newArrayList();
     private float range;
     private float speedModifier = 1F;
     private int stationaryTicks = -1;
     private StuckAction stuckAction;
+
+    /**
+     * Adds a {@link NavigatorCallback} that will be removed
+     * <em>immediately</em> after being called.
+     * 
+     * @param callback
+     *            The callback
+     */
+    public NavigatorParameters addSingleUseCallback(NavigatorCallback callback) {
+        callbacks.add(callback);
+        return this;
+    }
 
     /**
      * @return The {@link AttackStrategy} currently in use (may be null)
@@ -72,6 +86,13 @@ public class NavigatorParameters implements Cloneable {
     public NavigatorParameters baseSpeed(float speed) {
         this.baseSpeed = speed;
         return this;
+    }
+
+    /**
+     * @return All callbacks currently registered
+     */
+    public Iterable<NavigatorCallback> callbacks() {
+        return callbacks;
     }
 
     /**
