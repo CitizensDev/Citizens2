@@ -29,8 +29,10 @@ public class TraitCommands {
         List<String> added = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
-            if (!sender.hasPermission("citizens.npc.trait." + traitName))
+            if (!sender.hasPermission("citizens.npc.trait." + traitName)) {
                 failed.add(String.format("%s: No permission", traitName));
+                continue;
+            }
 
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
@@ -84,8 +86,10 @@ public class TraitCommands {
         List<String> removed = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
-            if (!sender.hasPermission("citizens.npc.trait." + traitName))
+            if (!sender.hasPermission("citizens.npc.trait." + traitName)) {
                 failed.add(String.format("%s: No permission", traitName));
+                continue;
+            }
 
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
@@ -118,8 +122,10 @@ public class TraitCommands {
         List<String> removed = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
-            if (!sender.hasPermission("citizens.npc.trait." + traitName))
+            if (!sender.hasPermission("citizens.npc.trait." + traitName)) {
                 failed.add(String.format("%s: No permission", traitName));
+                continue;
+            }
 
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {

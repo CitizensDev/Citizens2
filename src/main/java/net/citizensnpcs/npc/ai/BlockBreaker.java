@@ -34,6 +34,9 @@ public class BlockBreaker implements Runnable {
     }
 
     public void cancel() {
+        if (configuration.callback() != null) {
+            configuration.callback().run();
+        }
         isDigging = false;
         currentDamage = -1;
         entity.world.g(entity.id, x, y, z, -1);
@@ -131,11 +134,20 @@ public class BlockBreaker implements Runnable {
     }
 
     public static class Configuration {
+        private Runnable callback;
         private org.bukkit.inventory.ItemStack itemStack;
-
         private double radius;
 
-        public org.bukkit.inventory.ItemStack item() {
+        private Runnable callback() {
+            return callback;
+        }
+
+        public Configuration callback(Runnable callback) {
+            this.callback = callback;
+            return this;
+        }
+
+        private org.bukkit.inventory.ItemStack item() {
             return itemStack;
         }
 
@@ -149,7 +161,7 @@ public class BlockBreaker implements Runnable {
             return this;
         }
 
-        public double radiusSquared() {
+        private double radiusSquared() {
             return Math.pow(radius, 2);
         }
     }

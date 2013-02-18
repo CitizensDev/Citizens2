@@ -1,5 +1,7 @@
 package net.citizensnpcs.npc.ai;
 
+import java.util.Iterator;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
@@ -10,6 +12,7 @@ import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
+import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
@@ -115,7 +118,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             PathStrategy old = executing;
             Bukkit.getPluginManager().callEvent(event);
             if (old == executing)
-                stopNavigating();
+                stopNavigating(null);
         }
     }
 
@@ -174,6 +177,15 @@ public class CitizensNavigator implements Navigator, Runnable {
     private void stopNavigating(CancelReason reason) {
         if (!isNavigating())
             return;
+        Iterator<NavigatorCallback> itr = localParams.callbacks().iterator();
+        while (itr.hasNext()) {
+            itr.next().onCompletion(reason);
+            itr.remove();
+        }
+        if (reason == null) {
+            stopNavigating(reason);
+            return;
+        }
         if (reason == CancelReason.STUCK && localParams.stuckAction() != null) {
             StuckAction action = localParams.stuckAction();
             boolean shouldContinue = action.run(npc, this);
