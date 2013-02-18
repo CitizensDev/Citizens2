@@ -51,6 +51,10 @@ public class CommandContext {
             } else if (args[i].charAt(0) == '\'' || args[i].charAt(0) == '"') {
                 char quote = args[i].charAt(0);
                 String quoted = args[i].substring(1); // remove initial quote
+                if (quoted.length() > 0 && quoted.charAt(quoted.length() - 1) == quote) {
+                    args[i] = quoted.substring(0, quoted.length() - 1);
+                    continue;
+                }
                 for (int inner = i + 1; inner < args.length; inner++) {
                     if (args[inner].isEmpty())
                         continue;
