@@ -190,7 +190,8 @@ public class NMS {
 
     public static void look(LivingEntity bukkitEntity, float yaw, float pitch) {
         EntityLiving handle = getHandle(bukkitEntity);
-        handle.yaw = handle.az = yaw;
+        handle.yaw = yaw;
+        setHeadYaw(handle, yaw);
         handle.pitch = pitch;
     }
 
@@ -253,6 +254,7 @@ public class NMS {
 
     public static void setHeadYaw(EntityLiving handle, float yaw) {
         handle.az = yaw;
+        handle.aA = yaw;
     }
 
     public static void setLandSpeedModifier(EntityLiving handle, float speed) {
