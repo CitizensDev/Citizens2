@@ -16,9 +16,11 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_4_R1.Connection;
 import net.minecraft.server.v1_4_R1.EntityPlayer;
 import net.minecraft.server.v1_4_R1.EnumGamemode;
+import net.minecraft.server.v1_4_R1.MathHelper;
 import net.minecraft.server.v1_4_R1.MinecraftServer;
 import net.minecraft.server.v1_4_R1.Navigation;
 import net.minecraft.server.v1_4_R1.NetworkManager;
+import net.minecraft.server.v1_4_R1.Packet35EntityHeadRotation;
 import net.minecraft.server.v1_4_R1.Packet5EntityEquipment;
 import net.minecraft.server.v1_4_R1.PlayerInteractManager;
 import net.minecraft.server.v1_4_R1.World;
@@ -126,6 +128,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         super.j_();
         if (npc == null)
             return;
+        int i = MathHelper.d(az * 256.0F / 360.0F);
+        NMS.sendToOnline(new Packet35EntityHeadRotation(id, (byte) i));
         if (getBukkitEntity() != null && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
             if (!npc.getNavigator().isNavigating() && !NMS.inWater(getBukkitEntity()))
                 move(0, -0.2, 0);
