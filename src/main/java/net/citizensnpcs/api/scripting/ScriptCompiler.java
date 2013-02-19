@@ -57,6 +57,7 @@ public class ScriptCompiler implements Runnable {
         engineManager = new ScriptEngineManager(classLoader);
         runningThread = new Thread(this, "Citizens Script Compiler");
         runningThread.start();
+        runningThread.setContextClassLoader(classLoader);
     }
 
     /**
