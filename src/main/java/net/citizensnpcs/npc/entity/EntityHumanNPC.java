@@ -35,7 +35,8 @@ import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private final Location cachedEquipmentLocation = new Location(null, 0, 0, 0);
-
+    private boolean gravity = true;
+    private int headYawCount;
     private final CitizensNPC npc;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
@@ -128,11 +129,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         super.j_();
         if (npc == null)
             return;
-        int i = MathHelper.d(az * 256.0F / 360.0F);
-        NMS.sendToOnline(new Packet35EntityHeadRotation(id, (byte) i));
-        if (getBukkitEntity() != null && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            if (!npc.getNavigator().isNavigating() && !NMS.inWater(getBukkitEntity()))
-                move(0, -0.2, 0);
+        boolean navigating = npc.getNavigator().isNavigating();
+        if (!navigating && ++headYawCount >= 20) {
+            int i = MathHelper.d(az * 256.0F / 360.0F);
+            NMS.sendPacketNearby(getBukkitEntity().getLocation(cachedEquipmentLocation),
+                    new Packet35EntityHeadRotation(id, (byte) i));
+            headYawCount = 0;
+        }
+        if (gravity && !navigating && getBukkitEntity() != null
+                && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION)) && !NMS.inWater(getBukkitEntity())) {
+            move(0, -0.2, 0);
             // gravity. also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
         }
@@ -144,14 +150,15 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             motX = motY = motZ = 0;
 
         NMS.updateSenses(this);
-        if (npc.getNavigator().isNavigating()) {
+        if (navigating) {
             Navigation navigation = getNavigation();
             if (!navigation.f())
                 navigation.e();
             moveOnCurrentHeading();
-        } else if (motX != 0 || motZ != 0 || motY != 0)
+        } else if (motX != 0 || motZ != 0 || motY != 0) {
             e(0, 0); // is this necessary? it does controllable but sometimes
                      // players sink into the ground
+        }
 
         if (noDamageTicks > 0)
             --noDamageTicks;
@@ -217,6 +224,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         @Override
         public void removeMetadata(String metadataKey, Plugin owningPlugin) {
             server.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
+        }
+
+        public void setGravityEnabled(boolean enabled) {
+            ((EntityHumanNPC) getHandle()).gravity = enabled;
         }
 
         @Override
