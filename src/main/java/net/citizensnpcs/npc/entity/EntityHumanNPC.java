@@ -126,7 +126,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         super.j_();
         if (npc == null)
             return;
-
         if (getBukkitEntity() != null && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
             if (!npc.getNavigator().isNavigating() && !NMS.inWater(getBukkitEntity()))
                 move(0, -0.2, 0);
