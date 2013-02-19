@@ -24,7 +24,6 @@ import net.minecraft.server.v1_4_R1.MobEffectList;
 import net.minecraft.server.v1_4_R1.Navigation;
 import net.minecraft.server.v1_4_R1.NetworkManager;
 import net.minecraft.server.v1_4_R1.Packet;
-import net.minecraft.server.v1_4_R1.Packet35EntityHeadRotation;
 import net.minecraft.server.v1_4_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_4_R1.World;
 
@@ -263,10 +262,6 @@ public class NMS {
         }
         handle.az = yaw;
         handle.aA = yaw;
-        if (handle instanceof EntityPlayer) {
-            int i = MathHelper.d(yaw * 256.0F / 360.0F);
-            sendToOnline(new Packet35EntityHeadRotation(handle.id, (byte) i));
-        }
     }
 
     public static void setLandSpeedModifier(EntityLiving handle, float speed) {
