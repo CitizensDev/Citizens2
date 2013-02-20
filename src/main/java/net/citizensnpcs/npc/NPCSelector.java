@@ -29,7 +29,7 @@ import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.Lists;
 
-public class NPCSelector implements Listener {
+public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelector {
     private int consoleSelectedNPC = -1;
     private final Plugin plugin;
 
@@ -38,6 +38,7 @@ public class NPCSelector implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
+    @Override
     public NPC getSelected(CommandSender sender) {
         if (sender instanceof Player) {
             return getSelectedFromMetadatable((Player) sender);
