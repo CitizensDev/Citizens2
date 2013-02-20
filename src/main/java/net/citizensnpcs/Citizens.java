@@ -161,6 +161,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
+    public net.citizensnpcs.api.npc.NPCSelector getDefaultNPCSelector() {
+        return selector;
+    }
+
+    @Override
     public NPCRegistry getNamedNPCRegistry(String name) {
         return storedRegistries.get(name);
     }
