@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.ListResourceBundle;
 import java.util.Locale;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class Translator {
                     new FileClassLoader(Translator.class.getClassLoader(), resourceFile));
         } catch (MissingResourceException e) {
             preferredBundle = getDefaultBundle();
-            System.err.println("[Citizens]: Missing preferred location bundle.");
+            Messaging.severe("Missing preferred location bundle.");
         }
     }
 
@@ -121,7 +122,7 @@ public class Translator {
                 string = string.replaceFirst("/", "");
                 InputStream stream = Translator.class.getResourceAsStream('/' + string);
                 if (stream != null) {
-                    new Thread(new SaveResourceThread(folder, string)).start();
+                    new Thread(new SaveResource(folder, string)).start();
                     return stream;
                 }
             }
@@ -129,11 +130,11 @@ public class Translator {
         }
     }
 
-    private static class SaveResourceThread implements Runnable {
+    private static class SaveResource implements Runnable {
         private final String fileName;
         private final File rootFolder;
 
-        private SaveResourceThread(File rootFolder, String fileName) {
+        private SaveResource(File rootFolder, String fileName) {
             this.rootFolder = rootFolder;
             this.fileName = fileName;
         }
@@ -165,11 +166,54 @@ public class Translator {
         }
     }
 
+    public static interface TranslationProvider {
+        InputStream createInputStream();
+
+        String getName();
+    }
+
     private static ResourceBundle defaultBundle;
-
     private static Translator instance;
-
     public static final String PREFIX = "messages";
+
+    private static void addTranslation(TranslationProvider from, File to) {
+        Properties props = new Properties();
+        InputStream in = from.createInputStream();
+        try {
+            props.load(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            Closeables.closeQuietly(in);
+        }
+        if (to.exists()) {
+            try {
+                props.load(in = new FileInputStream(to));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                Closeables.closeQuietly(in);
+            }
+        }
+        OutputStream out = null;
+        try {
+            props.store(out = new FileOutputStream(to), "");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            Closeables.closeQuietly(out);
+        }
+    }
+
+    public static void addTranslations(Collection<TranslationProvider> providers) {
+        for (TranslationProvider provider : providers) {
+            addTranslation(provider, new File(instance.resourceFile, provider.getName()));
+        }
+        defaultBundle = null;
+        setInstance(instance.resourceFile, instance.preferredBundle.getLocale());
+    }
 
     private static Properties getDefaultBundleProperties() {
         Properties defaults = new Properties();
