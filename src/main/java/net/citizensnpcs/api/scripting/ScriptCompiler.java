@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -52,12 +53,14 @@ public class ScriptCompiler implements Runnable {
     private final List<ContextProvider> globalContextProviders = Lists.newArrayList();
     private final Thread runningThread;
     private final BlockingQueue<CompileTask> toCompile = new ArrayBlockingQueue<CompileTask>(50);
+    private final WeakReference<ClassLoader> classLoader;
 
     public ScriptCompiler(ClassLoader classLoader) {
         engineManager = new ScriptEngineManager(classLoader);
         runningThread = new Thread(this, "Citizens Script Compiler");
         runningThread.setContextClassLoader(classLoader);
         runningThread.start();
+        this.classLoader = new WeakReference<ClassLoader>(classLoader);
     }
 
     /**
@@ -93,7 +96,16 @@ public class ScriptCompiler implements Runnable {
     private ScriptEngine loadEngine(String extension) {
         ScriptEngine engine = engines.get(extension);
         if (engine == null) {
+            ClassLoader replace = classLoader.get();
+            ClassLoader old = null;
+            if (replace != null) {
+                old = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(replace);
+            }
             ScriptEngine search = engineManager.getEngineByExtension(extension);
+            if (replace != null) {
+                Thread.currentThread().setContextClassLoader(old);
+            }
             if (search != null && (!(search instanceof Compilable) || !(search instanceof Invocable)))
                 search = null;
             engines.put(extension, search);
