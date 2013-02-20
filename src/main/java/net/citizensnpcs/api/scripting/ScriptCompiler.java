@@ -35,6 +35,7 @@ import com.google.common.io.Closeables;
  * to compile.
  */
 public class ScriptCompiler implements Runnable {
+    private final WeakReference<ClassLoader> classLoader;
     private final ScriptEngineManager engineManager;
     private final Map<String, ScriptEngine> engines = Maps.newHashMap();
     private final Function<File, FileEngine> fileEngineConverter = new Function<File, FileEngine>() {
@@ -53,7 +54,6 @@ public class ScriptCompiler implements Runnable {
     private final List<ContextProvider> globalContextProviders = Lists.newArrayList();
     private final Thread runningThread;
     private final BlockingQueue<CompileTask> toCompile = new ArrayBlockingQueue<CompileTask>(50);
-    private final WeakReference<ClassLoader> classLoader;
 
     public ScriptCompiler(ClassLoader classLoader) {
         engineManager = new ScriptEngineManager(classLoader);

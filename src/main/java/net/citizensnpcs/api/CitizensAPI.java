@@ -3,8 +3,10 @@ package net.citizensnpcs.api;
 import java.io.File;
 
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.npc.NPCSelector;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
 
@@ -60,6 +62,10 @@ public final class CitizensAPI {
      */
     public static File getDataFolder() {
         return getImplementation().getDataFolder();
+    }
+
+    public static NPCSelector getDefaultNPCSelector() {
+        return getImplementation().getDefaultNPCSelector();
     }
 
     private static CitizensPlugin getImplementation() {

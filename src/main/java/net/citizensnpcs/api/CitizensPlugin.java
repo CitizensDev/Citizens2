@@ -5,6 +5,7 @@ import java.io.File;
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.npc.NPCSelector;
 import net.citizensnpcs.api.trait.TraitFactory;
 
 import org.bukkit.plugin.Plugin;
@@ -27,6 +28,8 @@ public interface CitizensPlugin extends Plugin {
      *         {@link #getNamedNPCRegistry(String)}
      */
     public NPCRegistry createNamedNPCRegistry(String name, NPCDataStore store);
+
+    public NPCSelector getDefaultNPCSelector();
 
     /**
      * 
