@@ -15,7 +15,7 @@ public class ResourceTranslationProvider implements TranslationProvider {
 
     @Override
     public InputStream createInputStream() {
-        return clazz.getResourceAsStream(name);
+        return clazz.getResourceAsStream('/' + name);
     }
 
     @Override
