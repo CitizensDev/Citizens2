@@ -62,11 +62,13 @@ public class NMS {
     private static Field LAND_SPEED_MODIFIER_FIELD;
     private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
     private static Field NAVIGATION_WORLD_FIELD;
+    private static final Location packetCacheLocation = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE;
     private static final Random RANDOM = Util.getFastRandom();
     private static Set<Integer> SLAB_MATERIALS = Sets.newHashSet();
     private static Field SPEED_FIELD;
     private static Set<Integer> STAIR_MATERIALS = Sets.newHashSet();
+
     private static Field THREAD_STOPPER;
 
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
@@ -232,7 +234,7 @@ public class NMS {
             if (ply == null || world != ply.getWorld()) {
                 continue;
             }
-            if (location.distanceSquared(ply.getLocation()) > radius) {
+            if (location.distanceSquared(ply.getLocation(packetCacheLocation)) > radius) {
                 continue;
             }
             for (Packet packet : packets) {
