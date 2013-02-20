@@ -1,5 +1,7 @@
 package net.citizensnpcs.util;
 
+import java.util.Arrays;
+
 import net.minecraft.server.v1_4_R1.EntityPlayer;
 import net.minecraft.server.v1_4_R1.Packet;
 import net.minecraft.server.v1_4_R1.Packet17EntityLocationAction;
@@ -79,6 +81,6 @@ public enum PlayerAnimation {
     }
 
     protected void sendPacketNearby(Packet packet, EntityPlayer player, int radius) {
-        NMS.sendPacketNearby(player.getBukkitEntity().getLocation(), packet, radius);
+        NMS.sendPacketsNearby(player.getBukkitEntity().getLocation(), Arrays.asList(packet), radius);
     }
 }

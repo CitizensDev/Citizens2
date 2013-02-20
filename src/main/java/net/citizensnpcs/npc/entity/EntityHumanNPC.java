@@ -20,6 +20,7 @@ import net.minecraft.server.v1_4_R1.MathHelper;
 import net.minecraft.server.v1_4_R1.MinecraftServer;
 import net.minecraft.server.v1_4_R1.Navigation;
 import net.minecraft.server.v1_4_R1.NetworkManager;
+import net.minecraft.server.v1_4_R1.Packet;
 import net.minecraft.server.v1_4_R1.Packet35EntityHeadRotation;
 import net.minecraft.server.v1_4_R1.Packet5EntityEquipment;
 import net.minecraft.server.v1_4_R1.PlayerInteractManager;
@@ -34,10 +35,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
-    private final Location cachedEquipmentLocation = new Location(null, 0, 0, 0);
     private boolean gravity = true;
-    private int headYawCount;
     private final CitizensNPC npc;
+    private final Location packetLocationCache = new Location(null, 0, 0, 0);
+    private int packetUpdateCount;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
             PlayerInteractManager playerInteractManager, NPC npc) {
@@ -130,20 +131,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (npc == null)
             return;
         boolean navigating = npc.getNavigator().isNavigating();
-        if (!navigating && ++headYawCount >= 20) {
-            int i = MathHelper.d(az * 256.0F / 360.0F);
-            NMS.sendPacketNearby(getBukkitEntity().getLocation(cachedEquipmentLocation),
-                    new Packet35EntityHeadRotation(id, (byte) i));
-            headYawCount = 0;
-        }
+        updatePackets(navigating);
         if (gravity && !navigating && getBukkitEntity() != null
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION)) && !NMS.inWater(getBukkitEntity())) {
             move(0, -0.2, 0);
             // gravity. also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
         }
-
-        updateEquipment();
         if (!npc.data().get("removefromplayerlist", true))
             g();
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
@@ -191,10 +185,18 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         NMS.setHeadYaw(this, yaw);
     }
 
-    private void updateEquipment() {
-        for (int i = 0; i < 5; i++) {
-            NMS.sendPacketNearby(getBukkitEntity().getLocation(cachedEquipmentLocation), new Packet5EntityEquipment(id,
-                    i, getEquipment(i)));
+    private void updatePackets(boolean navigating) {
+        if (++packetUpdateCount >= 20) {
+            Location current = getBukkitEntity().getLocation(packetLocationCache);
+            Packet[] packets = new Packet[navigating ? 5 : 6];
+            if (!navigating) {
+                packets[5] = new Packet35EntityHeadRotation(id, (byte) MathHelper.d(az * 256.0F / 360.0F));
+            }
+            for (int i = 0; i < 5; i++) {
+                packets[i] = new Packet5EntityEquipment(id, i, getEquipment(i));
+            }
+            NMS.sendPacketsNearby(current, packets);
+            packetUpdateCount = 0;
         }
     }
 

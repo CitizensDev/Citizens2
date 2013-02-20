@@ -2,6 +2,8 @@ package net.citizensnpcs.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -219,11 +221,11 @@ public class NMS {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 
-    public static void sendPacketNearby(Location location, Packet packet) {
-        NMS.sendPacketNearby(location, packet, 64);
+    public static void sendPacketsNearby(Location location, Collection<Packet> packets) {
+        NMS.sendPacketsNearby(location, packets, 64);
     }
 
-    public static void sendPacketNearby(Location location, Packet packet, double radius) {
+    public static void sendPacketsNearby(Location location, Collection<Packet> packets, double radius) {
         radius *= radius;
         final org.bukkit.World world = location.getWorld();
         for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
@@ -233,8 +235,14 @@ public class NMS {
             if (location.distanceSquared(ply.getLocation()) > radius) {
                 continue;
             }
-            sendPacket(ply, packet);
+            for (Packet packet : packets) {
+                sendPacket(ply, packet);
+            }
         }
+    }
+
+    public static void sendPacketsNearby(Location location, Packet... packets) {
+        NMS.sendPacketsNearby(location, Arrays.asList(packets), 64);
     }
 
     public static void sendToOnline(Packet... packets) {
