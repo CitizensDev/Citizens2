@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ListResourceBundle;
 import java.util.Locale;
@@ -213,6 +214,10 @@ public class Translator {
         }
         defaultBundle = null;
         setInstance(instance.resourceFile, instance.preferredBundle.getLocale());
+    }
+
+    public static void addTranslations(TranslationProvider... providers) {
+        addTranslations(Arrays.asList(providers));
     }
 
     private static Properties getDefaultBundleProperties() {
