@@ -36,7 +36,7 @@ public class HelpCommands {
             modifiers = { "help" },
             min = 1,
             max = 2,
-            permission = "citizens.help")
+            permission = "citizens.citizens.help")
     @Requirements
     public void citizensHelp(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         int page = 1;

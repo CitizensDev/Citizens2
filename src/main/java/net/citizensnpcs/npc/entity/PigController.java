@@ -52,7 +52,7 @@ public class PigController extends MobEntityController {
 
         @Override
         public float bB() {
-            return super.bB() * npc.getNavigator().getLocalParameters().speed();
+            return npc == null ? super.bB() : super.bB() * npc.getNavigator().getLocalParameters().speed();
         }
 
         @Override
