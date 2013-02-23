@@ -28,8 +28,6 @@ public class Util {
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     private static Constructor<? extends Random> RNG_CONSTRUCTOR = null;
 
-    private static Constructor<?> SEED_GENERATOR_CONSTRUCTOR = null;
-
     public static void assumePose(LivingEntity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);
     }
@@ -69,8 +67,11 @@ public class Util {
 
     public static Random getFastRandom() {
         try {
-            return RNG_CONSTRUCTOR.newInstance(SEED_GENERATOR_CONSTRUCTOR.newInstance());
+            byte[] seed = new byte[20];
+            new Random().nextBytes(seed);
+            return RNG_CONSTRUCTOR.newInstance(seed);
         } catch (Exception e) {
+            e.printStackTrace();
             return new Random();
         }
     }
@@ -130,12 +131,11 @@ public class Util {
     static {
         try {
             RNG_CONSTRUCTOR = (Constructor<? extends Random>) Class.forName("org.uncommons.maths.random.XORShiftRNG")
-                    .getConstructor(Class.forName("org.uncommons.maths.random.SeedGenerator"));
-            SEED_GENERATOR_CONSTRUCTOR = Class.forName("org.uncommons.maths.random.SecureRandomSeedGenerator")
-                    .getConstructor();
+                    .getConstructor(byte[].class);
         } catch (ClassNotFoundException e) {
         } catch (SecurityException e) {
         } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 }
