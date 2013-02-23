@@ -161,9 +161,9 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     @Override
     public void save(DataKey key) {
-        if (explicitType == null)
+        if (explicitType == null) {
             key.removeKey("explicittype");
-        else
+        } else
             key.setString("explicittype", explicitType.name());
     }
 

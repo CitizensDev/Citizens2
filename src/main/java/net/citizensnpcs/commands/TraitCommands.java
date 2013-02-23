@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
 @Requirements(selected = true, ownership = true)
 public class TraitCommands {
     @Command(aliases = { "trait", "tr" }, usage = "add [trait name]...", desc = "Adds traits to the NPC", modifiers = {
-            "add", "a" }, min = 1, permission = "npc.trait")
+            "add", "a" }, min = 1, permission = "citizens.npc.trait")
     public void add(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         List<String> added = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
@@ -59,7 +59,7 @@ public class TraitCommands {
             modifiers = { "*" },
             min = 1,
             flags = "*",
-            permission = "npc.trait-configure")
+            permission = "citizens.npc.trait-configure")
     public void configure(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String traitName = args.getString(0);
         if (!sender.hasPermission("citizens.npc.trait-configure." + traitName))
@@ -81,7 +81,7 @@ public class TraitCommands {
             desc = "Removes traits on the NPC",
             modifiers = { "remove", "rem", "r" },
             min = 1,
-            permission = "npc.trait")
+            permission = "citizens.npc.trait")
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         List<String> removed = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
@@ -116,7 +116,7 @@ public class TraitCommands {
             desc = "Toggles traits on the NPC",
             modifiers = { "*" },
             min = 1,
-            permission = "npc.trait")
+            permission = "citizens.npc.trait")
     public void toggle(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         List<String> added = Lists.newArrayList();
         List<String> removed = Lists.newArrayList();

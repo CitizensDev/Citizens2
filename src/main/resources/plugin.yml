@@ -35,11 +35,27 @@ permissions:
             citizens.admin: true
             citizens.admin.avoid-limits: true
             citizens.admin.remove.all: true
-      citizens.help: true
+      citizens.help.*:
+        children:
+            citizens.npc.help: true
+            citizens.trait.help: true
+            citizens.help: true
+            citizens.waypoints.help: true
+            citizens.templates.help: true
+            citizens.citizens.help: true
+            citizens.script.help: true
       citizens.script.*:
         children:
             citizens.script.compile: true
             citizens.script.help: true
+      citizens.templates.*:
+        children:
+            citizens.templates.apply: true
+            citizens.templates.create: true
+      citizens.waypoints.*:
+        children:
+            citizens.waypoints.disableteleport: true
+            citizens.waypoints.provider: true
       citizens.npc.*:
         children:
           citizens.npc.age: true
