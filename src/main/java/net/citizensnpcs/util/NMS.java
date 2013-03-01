@@ -246,6 +246,10 @@ public class NMS {
     public static void sendPacketsNearby(Location location, Packet... packets) {
         NMS.sendPacketsNearby(location, Arrays.asList(packets), 64);
     }
+    
+    public static void sendPacketNearby(Location location, Packet packet) {
+        NMS.sendPacketsNearby(location, Arrays.asList(packet), 64);
+    }
 
     public static void sendToOnline(Packet... packets) {
         Validate.notNull(packets, "packets cannot be null");
