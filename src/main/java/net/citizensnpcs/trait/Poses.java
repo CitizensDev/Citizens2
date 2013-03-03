@@ -63,6 +63,15 @@ public class Poses extends Trait {
             throw new CommandException(Messages.COMMAND_PAGE_MISSING);
     }
 
+
+    public Pose getAnchor(String name) {
+        for (Pose pose : poses.values())
+            if (pose.getName().equalsIgnoreCase(name))
+                return pose;
+        return null;
+    }
+
+
     public boolean hasPose(String pose) {
         return poses.containsKey(pose.toLowerCase());
     }
