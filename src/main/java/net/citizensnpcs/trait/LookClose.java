@@ -114,6 +114,14 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         key.setBoolean("realisticlooking", realisticLooking);
     }
 
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    public void setRealisticLooking(boolean realistic) {
+        this.realisticLooking = realistic;
+    }
+
     @Override
     public boolean toggle() {
         enabled = !enabled;
