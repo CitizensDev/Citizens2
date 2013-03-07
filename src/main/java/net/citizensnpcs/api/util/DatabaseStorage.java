@@ -248,6 +248,11 @@ public class DatabaseStorage implements Storage {
         }
 
         @Override
+        protected String createRelativeKey(String from) {
+            return super.createRelativeKey(from.replace("-", ""));
+        }
+
+        @Override
         public boolean getBoolean(String key) {
             final Traversed t = traverse(createRelativeKey(key), false);
             if (t == INVALID_TRAVERSAL)

@@ -13,7 +13,6 @@ public abstract class DataKey {
     }
 
     protected String createRelativeKey(String from) {
-        from = from.replace("-", "");
         if (from.isEmpty())
             return path;
         if (from.charAt(0) == '.')
