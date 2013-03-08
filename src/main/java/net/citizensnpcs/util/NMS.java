@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -32,7 +31,6 @@ import net.minecraft.server.v1_4_R1.World;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
@@ -41,12 +39,9 @@ import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.material.Stairs;
-import org.bukkit.material.Step;
 import org.bukkit.plugin.PluginLoadOrder;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 @SuppressWarnings("unchecked")
 public class NMS {
@@ -65,10 +60,7 @@ public class NMS {
     private static final Location packetCacheLocation = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE;
     private static final Random RANDOM = Util.getFastRandom();
-    private static Set<Integer> SLAB_MATERIALS = Sets.newHashSet();
     private static Field SPEED_FIELD;
-    private static Set<Integer> STAIR_MATERIALS = Sets.newHashSet();
-
     private static Field THREAD_STOPPER;
 
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
@@ -223,6 +215,10 @@ public class NMS {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 
+    public static void sendPacketNearby(Location location, Packet packet) {
+        NMS.sendPacketsNearby(location, Arrays.asList(packet), 64);
+    }
+
     public static void sendPacketsNearby(Location location, Collection<Packet> packets) {
         NMS.sendPacketsNearby(location, packets, 64);
     }
@@ -245,10 +241,6 @@ public class NMS {
 
     public static void sendPacketsNearby(Location location, Packet... packets) {
         NMS.sendPacketsNearby(location, Arrays.asList(packets), 64);
-    }
-    
-    public static void sendPacketNearby(Location location, Packet packet) {
-        NMS.sendPacketsNearby(location, Arrays.asList(packet), 64);
     }
 
     public static void sendToOnline(Packet... packets) {
@@ -395,15 +387,6 @@ public class NMS {
             ENTITY_CLASS_TO_INT = (Map<Class<?>, Integer>) field.get(null);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
-        }
-    }
-
-    static {
-        for (Material material : Material.values()) {
-            if (Step.class.isAssignableFrom(material.getData()))
-                SLAB_MATERIALS.add(material.getId());
-            else if (Stairs.class.isAssignableFrom(material.getData()))
-                STAIR_MATERIALS.add(material.getId());
         }
     }
 }
