@@ -53,6 +53,7 @@ import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -66,6 +67,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Villager.Profession;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.google.common.base.Splitter;
@@ -1145,6 +1147,31 @@ public class NPCCommands {
         }
         String key = vulnerable ? Messages.VULNERABLE_STOPPED : Messages.VULNERABLE_SET;
         Messaging.sendTr(sender, key, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "wolf (-s(itting) a(ngry) t(amed)) --collar [rgb color]",
+            desc = "Sets wolf modifiers",
+            modifiers = { "wolf" },
+            min = 1,
+            max = 1,
+            flags = "sat",
+            permission = "citizens.npc.wolf")
+    @Requirements(selected = true, ownership = true, types = EntityType.WOLF)
+    public void wolf(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        Wolf wolf = (Wolf) npc.getBukkitEntity();
+        wolf.setAngry(args.hasFlag('a'));
+        wolf.setSitting(args.hasFlag('s'));
+        wolf.setTamed(args.hasFlag('t'));
+        if (args.hasValueFlag("collar")) {
+            String unparsed = args.getFlag("colour");
+            int rgb = Integer.parseInt(unparsed.replace("#", ""));
+            DyeColor color = DyeColor.getByColor(org.bukkit.Color.fromRGB(rgb));
+            if (color == null)
+                throw new CommandException(Messages.COLLAR_COLOUR_NOT_RECOGNISED);
+            wolf.setCollarColor(color);
+        }
     }
 
     @Command(

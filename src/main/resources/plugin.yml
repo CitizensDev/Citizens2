@@ -101,3 +101,4 @@ permissions:
                 citizens.npc.trait: true
                 citizens.npc.trait-configure: true
           citizens.npc.vulnerable: true
+          citizens.npc.wolf: true

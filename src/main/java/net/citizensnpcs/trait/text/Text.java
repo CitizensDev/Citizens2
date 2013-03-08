@@ -183,7 +183,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
         int index = 0;
         if (randomTalker)
-            index = new Random().nextInt(text.size());
+            index = RANDOM.nextInt(text.size());
         else {
             if (currentIndex > text.size() - 1)
                 currentIndex = 0;
@@ -191,8 +191,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         }
 
         npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
-        // Messaging.sendWithNPC(player, Setting.CHAT_PREFIX.asString() +
-        // text.get(index), npc);
         return true;
     }
 
