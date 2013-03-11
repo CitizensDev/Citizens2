@@ -71,7 +71,6 @@ public class Util {
             new Random().nextBytes(seed);
             return RNG_CONSTRUCTOR.newInstance(seed);
         } catch (Exception e) {
-            e.printStackTrace();
             return new Random();
         }
     }
