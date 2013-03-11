@@ -1,23 +1,15 @@
 package net.citizensnpcs.trait.waypoint;
 
-import java.util.Random;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
-import net.citizensnpcs.api.ai.GoalSelector;
-import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
+import net.citizensnpcs.api.ai.goals.WanderGoal;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 
 public class WanderWaypointProvider implements WaypointProvider {
-    private WanderGoal currentGoal;
-    private NPC npc;
+    private Goal currentGoal;
     private volatile boolean paused;
     private int xrange, yrange;
 
@@ -51,9 +43,8 @@ public class WanderWaypointProvider implements WaypointProvider {
 
     @Override
     public void onSpawn(NPC npc) {
-        this.npc = npc;
         if (currentGoal == null) {
-            currentGoal = new WanderGoal();
+            currentGoal = WanderGoal.createWithNPC(npc);
             CitizensAPI.registerEvents(currentGoal);
         }
         npc.getDefaultGoalController().addGoal(currentGoal, 1);
@@ -70,60 +61,6 @@ public class WanderWaypointProvider implements WaypointProvider {
         this.paused = paused;
     }
 
-    private class WanderGoal implements Goal {
-        private final Random random = new Random();
-        private GoalSelector selector;
-
-        private Location findRandomPosition() {
-            Location base = npc.getBukkitEntity().getLocation();
-            Location found = null;
-            int range = 10;
-            int yrange = 2;
-            for (int i = 0; i < 10; i++) {
-                int x = base.getBlockX() + random.nextInt(2 * range) - range;
-                int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
-                int z = base.getBlockZ() + random.nextInt(2 * range) - range;
-                Block block = base.getWorld().getBlockAt(x, y, z);
-                if (block.isEmpty() && block.getRelative(BlockFace.DOWN).isEmpty()) {
-                    found = block.getLocation();
-                    break;
-                }
-            }
-            return found;
-        }
-
-        @EventHandler
-        public void onFinish(NavigationCompleteEvent event) {
-            if (selector != null)
-                selector.finish();
-        }
-
-        @Override
-        public void reset() {
-            selector = null;
-        }
-
-        @Override
-        public void run(GoalSelector selector) {
-            if (!npc.getNavigator().isNavigating())
-                selector.finish();
-        }
-
-        @Override
-        public boolean shouldExecute(GoalSelector selector) {
-            if (!npc.isSpawned() || paused || npc.getNavigator().isNavigating())
-                return false;
-            Location dest = findRandomPosition();
-            if (dest == null)
-                return false;
-
-            npc.getNavigator().setTarget(dest);
-            this.selector = selector;
-            return true;
-        }
-    }
-
     private static final int DEFAULT_XRANGE = 3;
-
     private static final int DEFAULT_YRANGE = 25;
 }
