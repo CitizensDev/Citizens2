@@ -17,7 +17,7 @@ public abstract class DataKey {
             return path;
         if (from.charAt(0) == '.')
             return path.isEmpty() ? from.substring(1, from.length()) : path + from;
-        return path.isEmpty() ? from : path + "." + from;
+        return path.isEmpty() ? from : path + '.' + from;
     }
 
     @Override

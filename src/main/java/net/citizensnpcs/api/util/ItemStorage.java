@@ -121,10 +121,20 @@ public class ItemStorage {
     }
 
     public static ItemStack loadItemStack(DataKey root) {
-        Material matched = Material.matchMaterial(root.getString("type", root.getString("id")));
-        if (matched == null)
+        String raw = root.getString("type", root.getString("id"));
+        if (raw == null || raw.length() == 0)
             return null;
-        ItemStack res = new ItemStack(matched, root.getInt("amount"), (short) (root.getInt("durability",
+        int id = -1;
+        try {
+            id = Integer.parseInt(raw);
+        } catch (NumberFormatException ex) {
+            Material match = Material.matchMaterial(root.getString("type", root.getString("id")));
+            if (match != null)
+                id = match.getId();
+        }
+        if (id <= 0)
+            return null;
+        ItemStack res = new ItemStack(id, root.getInt("amount"), (short) (root.getInt("durability",
                 root.getInt("data", 0))));
         if (root.keyExists("mdata") && res.getData() != null) {
             res.getData().setData((byte) root.getInt("mdata"));
@@ -147,8 +157,7 @@ public class ItemStorage {
         if (item == null)
             return;
         migrateForSave(key);
-        String type = item.getType() == null ? Material.AIR.name() : item.getType().name();
-        key.setString("type", type);
+        key.setInt("type", item.getTypeId());
         key.setInt("amount", item.getAmount());
         key.setInt("durability", item.getDurability());
         if (item.getData() != null) {

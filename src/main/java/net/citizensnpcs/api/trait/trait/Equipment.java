@@ -71,12 +71,14 @@ public class Equipment extends Trait {
     @Override
     @SuppressWarnings("deprecation")
     public void onSpawn() {
+        if (!(npc.getBukkitEntity() instanceof LivingEntity))
+            return;
         if (npc.getBukkitEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getBukkitEntity();
             if (equipment[0] != null)
                 enderman.setCarriedMaterial(equipment[0].getData());
         } else {
-            LivingEntity entity = npc.getBukkitEntity();
+            LivingEntity entity = (LivingEntity) npc.getBukkitEntity();
             EntityEquipment equip = getEquipmentFromEntity(entity);
             if (equipment[0] != null)
                 equip.setItemInHand(equipment[0]);
@@ -117,12 +119,14 @@ public class Equipment extends Trait {
      */
     @SuppressWarnings("deprecation")
     public void set(int slot, ItemStack item) {
+        if (!(npc.getBukkitEntity() instanceof LivingEntity))
+            return;
         if (npc.getBukkitEntity() instanceof Enderman) {
             if (slot != 0)
                 throw new UnsupportedOperationException("Slot can only be 0 for enderman");
             ((Enderman) npc.getBukkitEntity()).setCarriedMaterial(item.getData());
         } else {
-            EntityEquipment equip = getEquipmentFromEntity(npc.getBukkitEntity());
+            EntityEquipment equip = getEquipmentFromEntity((LivingEntity) npc.getBukkitEntity());
             switch (slot) {
                 case 0:
                     equip.setItemInHand(item);
