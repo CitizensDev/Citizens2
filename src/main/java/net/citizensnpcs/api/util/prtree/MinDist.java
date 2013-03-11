@@ -1,4 +1,4 @@
-package org.khelekore.prtree;
+package net.citizensnpcs.api.util.prtree;
 
 /** Class that can calculate the MINDIST between a point and a rectangle
  */

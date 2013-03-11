@@ -1,4 +1,4 @@
-package org.khelekore.prtree;
+package net.citizensnpcs.api.util.prtree;
 
 /** Class to hold object and distance to it
  * @param <T> The node type

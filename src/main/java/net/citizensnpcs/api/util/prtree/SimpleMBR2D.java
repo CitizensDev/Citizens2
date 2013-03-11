@@ -1,4 +1,4 @@
-package org.khelekore.prtree;
+package net.citizensnpcs.api.util.prtree;
 
 /** An implementation of MBR that keeps 4 double values for the actual min and
  *  max values needed.

@@ -1,4 +1,4 @@
-package org.khelekore.prtree;
+package net.citizensnpcs.api.util.prtree;
 
 /** A class that given a T can tell the minimum and maximum 
  *  ordinates for that object.

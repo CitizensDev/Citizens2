@@ -1,10 +1,11 @@
-package org.khelekore.prtree;
+package net.citizensnpcs.api.util.prtree;
 
 import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.List;
-import org.khelekore.prtree.DistanceResult;
-import org.khelekore.prtree.NodeFilter;
+
+import net.citizensnpcs.api.util.prtree.DistanceResult;
+import net.citizensnpcs.api.util.prtree.NodeFilter;
 
 class NearestNeighbour<T> {
 

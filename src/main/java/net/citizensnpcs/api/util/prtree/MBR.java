@@ -1,4 +1,4 @@
-package org.khelekore.prtree;
+package net.citizensnpcs.api.util.prtree;
 
 /** A minimum bounding box for n dimensions.
  */ 

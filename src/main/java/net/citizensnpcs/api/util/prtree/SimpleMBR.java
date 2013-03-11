@@ -1,4 +1,4 @@
-package org.khelekore.prtree;
+package net.citizensnpcs.api.util.prtree;
 
 /** An implementation of MBRND that keeps a double array with the max
  *  and min values

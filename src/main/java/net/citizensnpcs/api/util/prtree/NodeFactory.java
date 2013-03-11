@@ -1,4 +1,4 @@
-package org.khelekore.prtree;
+package net.citizensnpcs.api.util.prtree;
 
 /** A factory that creates the nodes (either leaf or internal).
  * @param <T> the data stored in the node

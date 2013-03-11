@@ -1,4 +1,4 @@
-package org.khelekore.prtree;
+package net.citizensnpcs.api.util.prtree;
 
 /** A class that can calculate the distance to a given object
  *  stored in the PRTree

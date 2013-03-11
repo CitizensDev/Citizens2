@@ -1,4 +1,4 @@
-package org.khelekore.prtree;
+package net.citizensnpcs.api.util.prtree;
 
 /** A node used while building the leaf sets, holds the actual data
  *  and an identifier for the partition this node belongs to.
