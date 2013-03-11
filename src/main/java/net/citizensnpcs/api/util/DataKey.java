@@ -9,7 +9,7 @@ import com.google.common.collect.Iterables;
 
 public abstract class DataKey {
     protected final String path;
-    boolean database = this instanceof DatabaseKey;
+    private final boolean database = this instanceof DatabaseKey;
 
     protected DataKey(String path) {
         this.path = path;
@@ -24,15 +24,21 @@ public abstract class DataKey {
         return path.isEmpty() ? from : path + '.' + from;
     }
 
+    private boolean transferring = false;
+
     protected void transferOld(String key) {
-        if (database)
+        if (database || transferring)
             return;
+        transferring = true;
         String repl = key.replace("-", "");
-        if (!keyExists(repl))
+        if (!keyExists(repl)) {
+            transferring = false;
             return;
+        }
         Object value = getRaw(repl);
         removeKey(repl);
         setRaw(key, value);
+        transferring = false;
     }
 
     @Override
