@@ -2,22 +2,37 @@ package net.citizensnpcs.api.util;
 
 import java.util.Map;
 
+import net.citizensnpcs.api.util.DatabaseStorage.DatabaseKey;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public abstract class DataKey {
     protected final String path;
+    boolean database = this instanceof DatabaseKey;
 
     protected DataKey(String path) {
         this.path = path;
     }
 
     protected String createRelativeKey(String from) {
+        transferOld(from);
         if (from.isEmpty())
             return path;
         if (from.charAt(0) == '.')
             return path.isEmpty() ? from.substring(1, from.length()) : path + from;
         return path.isEmpty() ? from : path + '.' + from;
+    }
+
+    protected void transferOld(String key) {
+        if (database)
+            return;
+        String repl = key.replace("-", "");
+        if (!keyExists(repl))
+            return;
+        Object value = getRaw(repl);
+        removeKey(repl);
+        setRaw(key, value);
     }
 
     @Override
