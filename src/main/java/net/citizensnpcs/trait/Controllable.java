@@ -120,7 +120,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (!npc.isSpawned() || !enabled)
+        if (!npc.isSpawned() || !enabled || !event.getPlayer().isSneaking())
             return;
         EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
         Action performed = event.getAction();
