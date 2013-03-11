@@ -64,7 +64,7 @@ public class Poses extends Trait {
     }
 
 
-    public Pose getAnchor(String name) {
+    public Pose getPose(String name) {
         for (Pose pose : poses.values())
             if (pose.getName().equalsIgnoreCase(name))
                 return pose;
