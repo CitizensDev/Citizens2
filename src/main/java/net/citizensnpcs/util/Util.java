@@ -47,9 +47,9 @@ public class Util {
     public static void faceEntity(LivingEntity from, LivingEntity at) {
         if (from.getWorld() != at.getWorld())
             return;
-        double xDiff, yDiff, zDiff;
         Location atLocation = at.getLocation(AT_LOCATION);
         Location fromLocation = from.getLocation(FROM_LOCATION);
+        double xDiff, yDiff, zDiff;
         xDiff = atLocation.getX() - fromLocation.getX();
         yDiff = atLocation.getY() - fromLocation.getY();
         zDiff = atLocation.getZ() - fromLocation.getZ();
