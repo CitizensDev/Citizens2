@@ -16,6 +16,7 @@ import net.minecraft.server.v1_4_R1.ControllerLook;
 import net.minecraft.server.v1_4_R1.DamageSource;
 import net.minecraft.server.v1_4_R1.EnchantmentManager;
 import net.minecraft.server.v1_4_R1.Entity;
+import net.minecraft.server.v1_4_R1.EntityHuman;
 import net.minecraft.server.v1_4_R1.EntityLiving;
 import net.minecraft.server.v1_4_R1.EntityMonster;
 import net.minecraft.server.v1_4_R1.EntityPlayer;
@@ -267,6 +268,8 @@ public class NMS {
             yaw -= 360.0F;
         }
         handle.az = yaw;
+        if (!(handle instanceof EntityHuman))
+            handle.ax = yaw;
         handle.aA = yaw;
     }
 
