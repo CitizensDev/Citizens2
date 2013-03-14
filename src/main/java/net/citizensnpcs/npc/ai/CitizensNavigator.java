@@ -103,8 +103,11 @@ public class CitizensNavigator implements Navigator, Runnable {
     public void run() {
         if (!isNavigating())
             return;
-        if (!npc.isSpawned())
+        if (!npc.isSpawned()) {
+            if (isNavigating())
+                stopNavigating(CancelReason.NPC_DESPAWNED);
             return;
+        }
         if (updateStationaryStatus())
             return;
         updatePathfindingRange();
