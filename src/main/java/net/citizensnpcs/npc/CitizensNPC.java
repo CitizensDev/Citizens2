@@ -152,7 +152,7 @@ public class CitizensNPC extends AbstractNPC {
         Location prev = null;
         if (wasSpawned) {
             prev = getBukkitEntity().getLocation();
-            despawn();
+            despawn(DespawnReason.PENDING_RESPAWN);
         }
         entityController = newController;
         if (wasSpawned)

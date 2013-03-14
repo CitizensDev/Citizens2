@@ -16,6 +16,7 @@ import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
 import net.citizensnpcs.api.command.exception.ServerCommandException;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -444,7 +445,7 @@ public class NPCCommands {
                 throw new CommandException(Messages.NO_NPC_WITH_ID_FOUND, id);
         }
         npc.getTrait(Spawned.class).setSpawned(false);
-        npc.despawn();
+        npc.despawn(DespawnReason.REMOVAL);
         Messaging.sendTr(sender, Messages.NPC_DESPAWNED, npc.getName());
     }
 
@@ -851,7 +852,7 @@ public class NPCCommands {
             newName = newName.substring(0, 15);
         }
         Location prev = npc.isSpawned() ? npc.getBukkitEntity().getLocation() : null;
-        npc.despawn();
+        npc.despawn(DespawnReason.PENDING_RESPAWN);
         npc.setName(newName);
         if (prev != null)
             npc.spawn(prev);
@@ -1059,13 +1060,13 @@ public class NPCCommands {
             npc.spawn(args.getSenderLocation());
             if (!sender.hasPermission("citizens.npc.tphere.multiworld")
                     && npc.getBukkitEntity().getLocation().getWorld() != args.getSenderLocation().getWorld()) {
-                npc.despawn();
+                npc.despawn(DespawnReason.REMOVAL);
                 throw new CommandException(Messages.CANNOT_TELEPORT_ACROSS_WORLDS);
             }
         } else {
             if (!sender.hasPermission("citizens.npc.tphere.multiworld")
                     && npc.getBukkitEntity().getLocation().getWorld() != args.getSenderLocation().getWorld()) {
-                npc.despawn();
+                npc.despawn(DespawnReason.REMOVAL);
                 throw new CommandException(Messages.CANNOT_TELEPORT_ACROSS_WORLDS);
             }
             npc.getBukkitEntity().teleport(args.getSenderLocation(), TeleportCause.COMMAND);

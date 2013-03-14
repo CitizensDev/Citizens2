@@ -14,6 +14,7 @@ import net.citizensnpcs.api.event.NPCDamageByBlockEvent;
 import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCDeathEvent;
+import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
@@ -177,6 +178,12 @@ public class EventListen implements Listener {
     @EventHandler
     public void onNeedsRespawn(NPCNeedsRespawnEvent event) {
         toRespawn.put(toCoord(event.getSpawnLocation()), event.getNPC());
+    }
+
+    @EventHandler
+    public void onNPCDespawn(NPCDespawnEvent event) {
+        if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL)
+            toRespawn.remove(toCoord(event.getNPC().getBukkitEntity().getLocation()), event.getNPC());
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -2,6 +2,7 @@ package net.citizensnpcs.npc;
 
 import java.util.Iterator;
 
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
@@ -48,7 +49,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         npcs.remove(npc.getId());
         if (saves != null)
             saves.clearData(npc);
-        npc.despawn();
+        npc.despawn(DespawnReason.REMOVAL);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         while (itr.hasNext()) {
             NPC npc = itr.next();
             itr.remove();
-            npc.despawn();
+            npc.despawn(DespawnReason.REMOVAL);
             for (Trait t : npc.getTraits())
                 t.onRemove();
             if (saves != null)
