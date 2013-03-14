@@ -44,7 +44,7 @@ public class WanderWaypointProvider implements WaypointProvider {
     @Override
     public void onSpawn(NPC npc) {
         if (currentGoal == null) {
-            currentGoal = WanderGoal.createWithNPC(npc);
+            currentGoal = WanderGoal.createWithNPCAndRange(npc, xrange, yrange);
             CitizensAPI.registerEvents(currentGoal);
         }
         npc.getDefaultGoalController().addGoal(currentGoal, 1);
