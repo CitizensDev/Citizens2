@@ -39,6 +39,7 @@ public class SimpleGoalController implements GoalController {
         goal.run(selector);
     }
 
+    @Override
     public void addPrioritisableGoal(final PrioritisableGoal goal) {
         Preconditions.checkNotNull(goal, "goal cannot be null");
         possibleGoals.add(new GoalEntry() {
@@ -167,8 +168,9 @@ public class SimpleGoalController implements GoalController {
             GoalEntry entry = possibleGoals.get(i);
             if (searchPriority > entry.getPriority())
                 return;
-            if (entry.getGoal() == executingRootGoal || !entry.getGoal().shouldExecute(selector))
+            if (entry.getGoal() == executingRootGoal || !entry.getGoal().shouldExecute(selector)) {
                 continue;
+            }
             if (i == 0) {
                 setupExecution(entry);
                 return;

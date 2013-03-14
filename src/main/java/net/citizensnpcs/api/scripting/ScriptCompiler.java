@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -132,34 +136,11 @@ public class ScriptCompiler implements Runnable {
             CompileTask task;
             try {
                 task = toCompile.take();
+                task.future.get();
             } catch (InterruptedException e) {
                 return;
-            }
-            for (FileEngine engine : task.files) {
-                Compilable compiler = (Compilable) engine.engine;
-                Reader reader = null;
-                try {
-                    reader = new FileReader(engine.file);
-                    CompiledScript src = compiler.compile(reader);
-                    ScriptFactory compiled = new SimpleScriptFactory(src, task.contextProviders);
-                    for (CompileCallback callback : task.callbacks) {
-                        callback.onScriptCompiled(engine.file, compiled);
-                    }
-                } catch (IOException e) {
-                    Messaging.severe("IO error while reading " + engine.file + " for scripting.");
-                    e.printStackTrace();
-                } catch (ScriptException e) {
-                    Messaging.severe("Compile error while parsing script at " + engine.file.getName() + ".");
-                    Throwables.getRootCause(e).printStackTrace();
-                } catch (Throwable t) {
-                    Messaging.severe("[Unexpected error while parsing script at " + engine.file.getName() + ".");
-                    t.printStackTrace();
-                } finally {
-                    Closeables.closeQuietly(reader);
-                }
-            }
-            for (CompileCallback callback : task.callbacks) {
-                callback.onCompileTaskFinished();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -178,10 +159,11 @@ public class ScriptCompiler implements Runnable {
         engine.eval(extension, context);
     }
 
-    private class CompileTask {
+    private class CompileTask implements Callable<ScriptFactory[]> {
         private final CompileCallback[] callbacks;
         private final ContextProvider[] contextProviders;
         private final FileEngine[] files;
+        private final Future<ScriptFactory[]> future;
 
         public CompileTask(CompileTaskBuilder builder) {
             List<ContextProvider> copy = Lists.newArrayList(builder.contextProviders);
@@ -189,6 +171,41 @@ public class ScriptCompiler implements Runnable {
             this.contextProviders = copy.toArray(new ContextProvider[copy.size()]);
             this.files = builder.files;
             this.callbacks = builder.callbacks.toArray(new CompileCallback[builder.callbacks.size()]);
+            this.future = new FutureTask<ScriptFactory[]>(this);
+        }
+
+        @Override
+        public ScriptFactory[] call() throws Exception {
+            ScriptFactory[] compiledFactories = new ScriptFactory[files.length];
+            for (int i = 0; i < files.length; i++) {
+                FileEngine engine = files[i];
+                Compilable compiler = (Compilable) engine.engine;
+                Reader reader = null;
+                try {
+                    reader = new FileReader(engine.file);
+                    CompiledScript src = compiler.compile(reader);
+                    ScriptFactory compiled = new SimpleScriptFactory(src, contextProviders);
+                    for (CompileCallback callback : callbacks) {
+                        callback.onScriptCompiled(engine.file, compiled);
+                    }
+                    compiledFactories[i] = compiled;
+                } catch (IOException e) {
+                    Messaging.severe("IO error while reading " + engine.file + " for scripting.");
+                    e.printStackTrace();
+                } catch (ScriptException e) {
+                    Messaging.severe("Compile error while parsing script at " + engine.file.getName() + ".");
+                    Throwables.getRootCause(e).printStackTrace();
+                } catch (Throwable t) {
+                    Messaging.severe("Unexpected error while parsing script at " + engine.file.getName() + ".");
+                    t.printStackTrace();
+                } finally {
+                    Closeables.closeQuietly(reader);
+                }
+            }
+            for (CompileCallback callback : callbacks) {
+                callback.onCompileTaskFinished();
+            }
+            return compiledFactories;
         }
     }
 
@@ -203,6 +220,12 @@ public class ScriptCompiler implements Runnable {
 
         public boolean begin() {
             return toCompile.offer(new CompileTask(this));
+        }
+
+        public Future<ScriptFactory[]> beginWithFuture() {
+            CompileTask t = new CompileTask(this);
+            toCompile.offer(t);
+            return t.future;
         }
 
         public CompileTaskBuilder withCallback(CompileCallback callback) {
