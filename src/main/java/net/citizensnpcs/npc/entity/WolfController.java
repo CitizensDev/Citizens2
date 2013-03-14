@@ -45,7 +45,7 @@ public class WolfController extends MobEntityController {
 
         @Override
         public float bB() {
-            return npc == null ? super.bB() : super.bB() * npc.getNavigator().getLocalParameters().speed();
+            return NMS.modifiedSpeed(super.bB(), npc);
         }
 
         @Override

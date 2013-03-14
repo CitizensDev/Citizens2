@@ -53,13 +53,12 @@ public class EndermanController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-
             }
         }
 
         @Override
         public float bB() {
-            return npc == null ? super.bB() : super.bB() * npc.getNavigator().getLocalParameters().speed();
+            return NMS.modifiedSpeed(super.bB(), npc);
         }
 
         @Override

@@ -53,21 +53,22 @@ public class BlazeController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-
             }
         }
 
         @Override
         public float bB() {
-            return npc == null ? super.bB() : super.bB() * npc.getNavigator().getLocalParameters().speed();
+            return NMS.modifiedSpeed(super.bB(), npc);
         }
 
         @Override
         public void bn() {
-            if (npc != null)
+            if (npc != null) {
+                NMS.updateAI(this);
                 npc.update();
-            else
+            } else {
                 super.bn();
+            }
         }
 
         @Override
