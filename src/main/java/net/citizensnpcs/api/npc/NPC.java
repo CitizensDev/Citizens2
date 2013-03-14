@@ -39,7 +39,8 @@ public interface NPC extends Agent {
     public MetadataStore data();
 
     /**
-     * Despawns this NPC.
+     * Despawns this NPC. This is equivalent to calling
+     * {@link #despawn(DespawnReason)} with {@link DespawnReason#PLUGIN}.
      * 
      * @return Whether this NPC was able to despawn
      */
