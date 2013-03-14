@@ -192,6 +192,10 @@ public class NMS {
         handle.pitch = pitch;
     }
 
+    public static float modifiedSpeed(float baseSpeed, NPC npc) {
+        return npc == null ? baseSpeed : baseSpeed * npc.getNavigator().getLocalParameters().speedModifier();
+    }
+
     public static void registerEntityClass(Class<?> clazz) {
         if (ENTITY_CLASS_TO_INT.containsKey(clazz))
             return;

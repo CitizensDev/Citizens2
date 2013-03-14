@@ -4,7 +4,6 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.v1_4_R1.EntityHuman;
 import net.minecraft.server.v1_4_R1.EntityLiving;
 import net.minecraft.server.v1_4_R1.Navigation;
 
@@ -21,12 +20,10 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         this.target = dest;
         this.parameters = params;
         EntityLiving handle = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
-        if (handle instanceof EntityHuman) {
-            handle.onGround = true;
-            // not sure of a better way around this - if onGround is false, then
-            // navigation won't execute, and calling entity.move doesn't
-            // entirely fix the problem.
-        }
+        handle.onGround = true;
+        // not sure of a better way around this - if onGround is false, then
+        // navigation won't execute, and calling entity.move doesn't
+        // entirely fix the problem.
         navigation = handle.getNavigation();
         navigation.a(parameters.avoidWater());
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), parameters.speed());

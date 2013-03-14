@@ -4,11 +4,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.ai.Navigator;
-import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
+import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -326,13 +329,12 @@ public class LinearWaypointProvider implements WaypointProvider {
         private Waypoint currentDestination;
         private Iterator<Waypoint> itr;
         private boolean paused;
-
         private GoalSelector selector;
 
         private void ensureItr() {
-            if (itr == null)
+            if (itr == null) {
                 itr = waypoints.iterator();
-            else if (!itr.hasNext())
+            } else if (!itr.hasNext())
                 itr = getNewIterator();
         }
 
@@ -350,21 +352,6 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         public boolean isPaused() {
             return paused;
-        }
-
-        @EventHandler
-        public void onNavigationComplete(NavigationCompleteEvent event) {
-            if (selector == null || !event.getNavigator().equals(getNavigator()))
-                return;
-            Waypoint from = currentDestination;
-            selector.finish();
-            Location finished = event.getNavigator().getTargetAsLocation();
-            if (finished == null || from == null)
-                return;
-            if (finished.getWorld() != from.getLocation().getWorld())
-                return;
-            if (finished.equals(from.getLocation()))
-                from.onReach(npc);
         }
 
         public void onProviderChanged() {
@@ -392,21 +379,31 @@ public class LinearWaypointProvider implements WaypointProvider {
         }
 
         @Override
-        public boolean shouldExecute(GoalSelector selector) {
+        public boolean shouldExecute(final GoalSelector selector) {
             if (paused || currentDestination != null || !npc.isSpawned() || getNavigator().isNavigating()) {
                 return false;
             }
             ensureItr();
             boolean shouldExecute = itr.hasNext();
-            if (!shouldExecute)
+            if (!shouldExecute) {
                 return false;
+            }
             this.selector = selector;
             Waypoint next = itr.next();
             Location npcLoc = npc.getBukkitEntity().getLocation(cachedLocation);
-            if (npcLoc.getWorld() != next.getLocation().getWorld() || npcLoc.distanceSquared(next.getLocation()) < 3)
+            if (npcLoc.getWorld() != next.getLocation().getWorld() || npcLoc.distanceSquared(next.getLocation()) < 3) {
                 return false;
+            }
             currentDestination = next;
             getNavigator().setTarget(currentDestination.getLocation());
+            getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
+                @Override
+                public void onCompletion(@Nullable CancelReason cancelReason) {
+                    selector.finish();
+                    if (currentDestination != null)
+                        currentDestination.onReach(npc);
+                }
+            });
             return true;
         }
     }
