@@ -303,6 +303,9 @@ public class NPCCommands {
                 type = EntityType.PLAYER;
             }
         }
+        if (!sender.hasPermission("citizens.npc.create.*")
+                && !sender.hasPermission("citizens.npc.create." + type.name().toLowerCase().replace("_", "")))
+            throw new NoPermissionsException();
 
         npc = npcRegistry.createNPC(type, name);
         String msg = "You created [[" + npc.getName() + "]]";
