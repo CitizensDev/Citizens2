@@ -647,8 +647,20 @@ public class NPCCommands {
         }
 
         npc.getBukkitEntity().teleport(to, TeleportCause.COMMAND);
-
         Messaging.sendTr(sender, Messages.MOVETO_TELEPORTED, npc.getName(), to);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            modifiers = "nameplate",
+            desc = "Toggle nameplate visibility",
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.nameplate")
+    @Requirements(selected = true, ownership = true, excludedTypes = EntityType.PLAYER)
+    public void nameplate(CommandContext args, CommandSender sender, NPC npc) {
+        npc.getBukkitEntity().setCustomNameVisible(!npc.getBukkitEntity().isCustomNameVisible());
+        Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_TOGGLED);
     }
 
     @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "citizens.npc.info")
