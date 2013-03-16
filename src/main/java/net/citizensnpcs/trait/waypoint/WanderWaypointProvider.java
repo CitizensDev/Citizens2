@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class WanderWaypointProvider implements WaypointProvider {
     private Goal currentGoal;
     private volatile boolean paused;
-    private int xrange, yrange;
+    private int xrange = DEFAULT_XRANGE, yrange = DEFAULT_YRANGE;
 
     @Override
     public WaypointEditor createEditor(Player player) {

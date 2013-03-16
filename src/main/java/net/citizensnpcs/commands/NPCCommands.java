@@ -1170,9 +1170,14 @@ public class NPCCommands {
         wolf.setSitting(args.hasFlag('s'));
         wolf.setTamed(args.hasFlag('t'));
         if (args.hasValueFlag("collar")) {
-            String unparsed = args.getFlag("colour");
-            int rgb = Integer.parseInt(unparsed.replace("#", ""));
-            DyeColor color = DyeColor.getByColor(org.bukkit.Color.fromRGB(rgb));
+            String unparsed = args.getFlag("collar");
+            DyeColor color = null;
+            try {
+                DyeColor.valueOf(unparsed.toUpperCase().replace(' ', '_'));
+            } catch (IllegalArgumentException e) {
+                int rgb = Integer.parseInt(unparsed.replace("#", ""));
+                color = DyeColor.getByColor(org.bukkit.Color.fromRGB(rgb));
+            }
             if (color == null)
                 throw new CommandException(Messages.COLLAR_COLOUR_NOT_RECOGNISED);
             wolf.setCollarColor(color);

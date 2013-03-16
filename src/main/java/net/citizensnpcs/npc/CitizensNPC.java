@@ -69,7 +69,7 @@ public class CitizensNPC extends AbstractNPC {
         for (Trait trait : traits.values())
             trait.onDespawn();
         entityController.remove();
-
+        navigator.onDespawn();
         return true;
     }
 

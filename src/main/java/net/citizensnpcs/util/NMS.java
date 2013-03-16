@@ -275,8 +275,10 @@ public class NMS {
             yaw -= 360.0F;
         }
         handle.aA = yaw;
-        if (!(handle instanceof EntityHuman))
+        if (!(handle instanceof EntityHuman)) {
             handle.ay = yaw;
+            handle.az = yaw;
+        }
     }
 
     public static void setLandSpeedModifier(EntityLiving handle, float speed) {
