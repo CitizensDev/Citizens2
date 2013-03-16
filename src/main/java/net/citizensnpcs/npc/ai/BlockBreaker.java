@@ -1,17 +1,17 @@
 package net.citizensnpcs.npc.ai;
 
 import net.citizensnpcs.util.PlayerAnimation;
-import net.minecraft.server.v1_4_R1.Block;
-import net.minecraft.server.v1_4_R1.Enchantment;
-import net.minecraft.server.v1_4_R1.EnchantmentManager;
-import net.minecraft.server.v1_4_R1.EntityLiving;
-import net.minecraft.server.v1_4_R1.EntityPlayer;
-import net.minecraft.server.v1_4_R1.ItemStack;
-import net.minecraft.server.v1_4_R1.Material;
-import net.minecraft.server.v1_4_R1.MobEffectList;
+import net.minecraft.server.v1_5_R1.Block;
+import net.minecraft.server.v1_5_R1.Enchantment;
+import net.minecraft.server.v1_5_R1.EnchantmentManager;
+import net.minecraft.server.v1_5_R1.EntityLiving;
+import net.minecraft.server.v1_5_R1.EntityPlayer;
+import net.minecraft.server.v1_5_R1.ItemStack;
+import net.minecraft.server.v1_5_R1.Material;
+import net.minecraft.server.v1_5_R1.MobEffectList;
 
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_4_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_5_R1.inventory.CraftItemStack;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -39,19 +39,19 @@ public class BlockBreaker implements Runnable {
         }
         isDigging = false;
         currentDamage = -1;
-        entity.world.g(entity.id, x, y, z, -1);
+        entity.world.f(entity.id, x, y, z, -1);
     }
 
     private double distanceSquared() {
         return Math.pow(entity.locX - x, 2) + Math.pow(entity.locY - y, 2) + Math.pow(entity.locZ - z, 2);
     }
 
-    private net.minecraft.server.v1_4_R1.ItemStack getCurrentItem() {
+    private net.minecraft.server.v1_5_R1.ItemStack getCurrentItem() {
         return configuration.item() != null ? CraftItemStack.asNMSCopy(configuration.item()) : entity.getEquipment(0);
     }
 
     private float getStrength(Block block) {
-        float base = block.m(null, 0, 0, 0);
+        float base = block.l(null, 0, 0, 0);
         return base < 0.0F ? 0.0F : (!isDestroyable(block) ? 1.0F / base / 100.0F : strengthMod(block) / base / 30.0F);
     }
 
@@ -101,7 +101,7 @@ public class BlockBreaker implements Runnable {
     }
 
     private void setBlockDamage(int modifiedDamage) {
-        entity.world.g(entity.id, x, y, z, modifiedDamage);
+        entity.world.f(entity.id, x, y, z, modifiedDamage);
     }
 
     private float strengthMod(Block block) {

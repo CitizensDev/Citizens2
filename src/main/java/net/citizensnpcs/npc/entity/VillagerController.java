@@ -7,14 +7,15 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_4_R1.EntityHuman;
-import net.minecraft.server.v1_4_R1.EntityVillager;
-import net.minecraft.server.v1_4_R1.World;
+import net.minecraft.server.v1_5_R1.EntityAgeable;
+import net.minecraft.server.v1_5_R1.EntityHuman;
+import net.minecraft.server.v1_5_R1.EntityVillager;
+import net.minecraft.server.v1_5_R1.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftVillager;
+import org.bukkit.craftbukkit.v1_5_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftVillager;
 import org.bukkit.entity.Villager;
 import org.bukkit.util.Vector;
 
@@ -34,8 +35,7 @@ public class VillagerController extends MobEntityController {
         public EntityVillagerNPC(World world) {
             this(world, null);
         }
-
-        public EntityVillagerNPC(World world, NPC npc) {
+	    public EntityVillagerNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
@@ -45,26 +45,26 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
-        public boolean a(EntityHuman entityhuman) {
+        public boolean a_(EntityHuman entityhuman) {
             if (npc == null)
-                return super.a(entityhuman);
+                return super.a_(entityhuman);
             return false; // block trades
         }
 
         @Override
-        public float bB() {
-            return NMS.modifiedSpeed(super.bB(), npc);
+        public float bE() {
+            return NMS.modifiedSpeed(super.bE(), npc);
         }
 
         @Override
-        public void bl() {
-            super.bl();
+        public void bo() {
+            super.bo();
             if (npc != null)
                 npc.update();
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_4_R1.Entity entity) {
+        public void collide(net.minecraft.server.v1_5_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);

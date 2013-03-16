@@ -5,14 +5,15 @@ import java.net.Socket;
 import java.security.PrivateKey;
 
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_4_R1.Connection;
-import net.minecraft.server.v1_4_R1.NetworkManager;
-import net.minecraft.server.v1_4_R1.Packet;
+import net.minecraft.server.v1_5_R1.Connection;
+import net.minecraft.server.v1_5_R1.IConsoleLogManager;
+import net.minecraft.server.v1_5_R1.NetworkManager;
+import net.minecraft.server.v1_5_R1.Packet;
 
 public class EmptyNetworkManager extends NetworkManager {
 
-    public EmptyNetworkManager(Socket socket, String string, Connection conn, PrivateKey key) throws IOException {
-        super(socket, string, conn, key);
+    public EmptyNetworkManager(IConsoleLogManager logManager, Socket socket, String string, Connection conn, PrivateKey key) throws IOException {
+        super(logManager, socket, string, conn, key);
 
         NMS.stopNetworkThreads(this);
     }
