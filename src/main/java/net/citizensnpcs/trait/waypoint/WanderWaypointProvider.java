@@ -4,6 +4,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.goals.WanderGoal;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.entity.Player;
@@ -11,7 +12,10 @@ import org.bukkit.entity.Player;
 public class WanderWaypointProvider implements WaypointProvider {
     private Goal currentGoal;
     private volatile boolean paused;
-    private int xrange = DEFAULT_XRANGE, yrange = DEFAULT_YRANGE;
+    @Persist
+    private final int xrange = DEFAULT_XRANGE;
+    @Persist
+    private final int yrange = DEFAULT_YRANGE;
 
     @Override
     public WaypointEditor createEditor(Player player) {
@@ -37,8 +41,6 @@ public class WanderWaypointProvider implements WaypointProvider {
 
     @Override
     public void load(DataKey key) {
-        xrange = key.getInt("xrange", DEFAULT_XRANGE);
-        yrange = key.getInt("yrange", DEFAULT_YRANGE);
     }
 
     @Override
@@ -52,8 +54,6 @@ public class WanderWaypointProvider implements WaypointProvider {
 
     @Override
     public void save(DataKey key) {
-        key.setInt("xrange", xrange);
-        key.setInt("yrange", yrange);
     }
 
     @Override

@@ -107,6 +107,7 @@ public class Messages {
     public static final String MONEY_WITHDRAWN = "citizens.economy.money-withdrawn";
     public static final String MOVETO_FORMAT = "citizens.commands.npc.moveto.format";
     public static final String MOVETO_TELEPORTED = "citizens.commands.npc.moveto.teleported";
+    public static final String NAMEPLATE_VISIBILITY_TOGGLED = "citizens.commands.npc.nameplate.toggled";
     public static final String NO_NPC_WITH_ID_FOUND = "citizens.commands.npc.spawn.missing-npc-id";
     public static final String NO_STORED_SPAWN_LOCATION = "citizens.commands.npc.spawn.no-location";
     public static final String NOT_LIVING_MOBTYPE = "citizens.commands.npc.create.not-living-mobtype";
