@@ -101,8 +101,7 @@ public class NMS {
             return;
         if (knockbackLevel > 0) {
             target.g(-MathHelper.sin((float) (handle.yaw * Math.PI / 180.0F)) * knockbackLevel * 0.5F, 0.1D,
-
-            MathHelper.cos((float) (handle.yaw * Math.PI / 180.0F)) * knockbackLevel * 0.5F);
+                    MathHelper.cos((float) (handle.yaw * Math.PI / 180.0F)) * knockbackLevel * 0.5F);
             handle.motX *= 0.6D;
             handle.motZ *= 0.6D;
         }
@@ -153,6 +152,10 @@ public class NMS {
         return ((CraftLivingEntity) entity).getHandle();
     }
 
+    public static float getHeadYaw(EntityLiving handle) {
+        return handle.aA;
+    }
+
     public static float getSpeedFor(NPC npc) {
         EntityType entityType = npc.getBukkitEntity().getType();
         Float cached = MOVEMENT_SPEEDS.get(entityType);
@@ -174,7 +177,7 @@ public class NMS {
 
     public static boolean inWater(LivingEntity entity) {
         EntityLiving mcEntity = getHandle(entity);
-        return mcEntity.H() || mcEntity.I();
+        return mcEntity.G() || mcEntity.I();
     }
 
     public static void loadPlugins() {
@@ -271,10 +274,9 @@ public class NMS {
         while (yaw >= 180.0F) {
             yaw -= 360.0F;
         }
-        handle.az = yaw;
-        if (!(handle instanceof EntityHuman))
-            handle.ax = yaw;
         handle.aA = yaw;
+        if (!(handle instanceof EntityHuman))
+            handle.ay = yaw;
     }
 
     public static void setLandSpeedModifier(EntityLiving handle, float speed) {

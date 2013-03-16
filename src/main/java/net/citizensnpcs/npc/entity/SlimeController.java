@@ -41,7 +41,6 @@ public class SlimeController extends MobEntityController {
             if (npc != null) {
                 setSize(3);
                 NMS.clearGoals(goalSelector, targetSelector);
-
             }
         }
 
@@ -59,9 +58,9 @@ public class SlimeController extends MobEntityController {
 
         @Override
         public void bq() {
-            if (npc == null)
+            if (npc == null) {
                 super.bq();
-            else {
+            } else {
                 npc.update();
                 NMS.updateAI(this);
             }

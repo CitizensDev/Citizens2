@@ -7,7 +7,6 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_5_R1.EntityAgeable;
 import net.minecraft.server.v1_5_R1.EntityHuman;
 import net.minecraft.server.v1_5_R1.EntityVillager;
 import net.minecraft.server.v1_5_R1.World;
@@ -35,20 +34,18 @@ public class VillagerController extends MobEntityController {
         public EntityVillagerNPC(World world) {
             this(world, null);
         }
-	    public EntityVillagerNPC(World world, NPC npc) {
+
+        public EntityVillagerNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-
             }
         }
 
         @Override
         public boolean a_(EntityHuman entityhuman) {
-            if (npc == null)
-                return super.a_(entityhuman);
-            return false; // block trades
+            return npc == null ? super.a_(entityhuman) : false; // block trades
         }
 
         @Override

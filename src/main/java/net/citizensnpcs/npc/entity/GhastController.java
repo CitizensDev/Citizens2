@@ -49,9 +49,9 @@ public class GhastController extends MobEntityController {
 
         @Override
         public void bq() {
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
-            else
+            } else
                 super.bq();
         }
 
