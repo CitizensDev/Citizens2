@@ -366,7 +366,7 @@ public class NMS {
 
     static {
         // true field above false and three synchronised lists
-        THREAD_STOPPER = getField(NetworkManager.class, "m");
+        THREAD_STOPPER = getField(NetworkManager.class, "n");
 
         // constants taken from source code
         MOVEMENT_SPEEDS.put(EntityType.CHICKEN, 0.25F);
