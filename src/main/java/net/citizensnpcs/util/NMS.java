@@ -11,32 +11,32 @@ import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
-import net.minecraft.server.v1_4_R1.ControllerJump;
-import net.minecraft.server.v1_4_R1.ControllerLook;
-import net.minecraft.server.v1_4_R1.DamageSource;
-import net.minecraft.server.v1_4_R1.EnchantmentManager;
-import net.minecraft.server.v1_4_R1.Entity;
-import net.minecraft.server.v1_4_R1.EntityHuman;
-import net.minecraft.server.v1_4_R1.EntityLiving;
-import net.minecraft.server.v1_4_R1.EntityMonster;
-import net.minecraft.server.v1_4_R1.EntityPlayer;
-import net.minecraft.server.v1_4_R1.EntityTypes;
-import net.minecraft.server.v1_4_R1.MathHelper;
-import net.minecraft.server.v1_4_R1.MobEffectList;
-import net.minecraft.server.v1_4_R1.Navigation;
-import net.minecraft.server.v1_4_R1.NetworkManager;
-import net.minecraft.server.v1_4_R1.Packet;
-import net.minecraft.server.v1_4_R1.PathfinderGoalSelector;
-import net.minecraft.server.v1_4_R1.World;
+import net.minecraft.server.v1_5_R1.ControllerJump;
+import net.minecraft.server.v1_5_R1.ControllerLook;
+import net.minecraft.server.v1_5_R1.DamageSource;
+import net.minecraft.server.v1_5_R1.EnchantmentManager;
+import net.minecraft.server.v1_5_R1.Entity;
+import net.minecraft.server.v1_5_R1.EntityHuman;
+import net.minecraft.server.v1_5_R1.EntityLiving;
+import net.minecraft.server.v1_5_R1.EntityMonster;
+import net.minecraft.server.v1_5_R1.EntityPlayer;
+import net.minecraft.server.v1_5_R1.EntityTypes;
+import net.minecraft.server.v1_5_R1.MathHelper;
+import net.minecraft.server.v1_5_R1.MobEffectList;
+import net.minecraft.server.v1_5_R1.Navigation;
+import net.minecraft.server.v1_5_R1.NetworkManager;
+import net.minecraft.server.v1_5_R1.Packet;
+import net.minecraft.server.v1_5_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_5_R1.World;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_5_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -174,7 +174,7 @@ public class NMS {
 
     public static boolean inWater(LivingEntity entity) {
         EntityLiving mcEntity = getHandle(entity);
-        return mcEntity.I() || mcEntity.J();
+        return mcEntity.H() || mcEntity.I();
     }
 
     public static void loadPlugins() {
@@ -182,7 +182,7 @@ public class NMS {
     }
 
     public static void look(ControllerLook controllerLook, EntityLiving handle, EntityLiving target) {
-        controllerLook.a(target, 10.0F, handle.bp());
+        controllerLook.a(target, 10.0F, handle.bs());
     }
 
     public static void look(LivingEntity bukkitEntity, float yaw, float pitch) {
@@ -361,7 +361,7 @@ public class NMS {
     }
 
     public static void updateSenses(EntityLiving entity) {
-        entity.aA().a();
+        entity.aD().a();
     }
 
     static {
@@ -381,8 +381,8 @@ public class NMS {
         MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
         MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
 
-        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bP");
-        SPEED_FIELD = getField(EntityLiving.class, "bH");
+        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bQ");
+        SPEED_FIELD = getField(EntityLiving.class, "bI");
         NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
         PATHFINDING_RANGE = getField(Navigation.class, "e");
         GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");

@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_4_R1.EntitySilverfish;
-import net.minecraft.server.v1_4_R1.World;
+import net.minecraft.server.v1_5_R1.EntitySilverfish;
+import net.minecraft.server.v1_5_R1.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftSilverfish;
+import org.bukkit.craftbukkit.v1_5_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftSilverfish;
 import org.bukkit.entity.Silverfish;
 import org.bukkit.util.Vector;
 
@@ -44,21 +44,21 @@ public class SilverfishController extends MobEntityController {
         }
 
         @Override
-        public float bB() {
-            return NMS.modifiedSpeed(super.bB(), npc);
+        public float bE() {
+            return NMS.modifiedSpeed(super.bE(), npc);
         }
 
         @Override
-        public void bl() {
-            super.bl();
+        public void bo() {
+            super.bo();
             if (npc != null)
                 npc.update();
         }
 
         @Override
-        public void bn() {
+        public void bq() {
             if (npc == null)
-                super.bn();
+                super.bq();
             else {
                 NMS.updateAI(this);
                 npc.update();
@@ -66,7 +66,7 @@ public class SilverfishController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_4_R1.Entity entity) {
+        public void collide(net.minecraft.server.v1_5_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);

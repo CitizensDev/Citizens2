@@ -13,23 +13,23 @@ import net.citizensnpcs.npc.network.EmptyNetworkManager;
 import net.citizensnpcs.npc.network.EmptySocket;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_4_R1.Connection;
-import net.minecraft.server.v1_4_R1.EntityPlayer;
-import net.minecraft.server.v1_4_R1.EnumGamemode;
-import net.minecraft.server.v1_4_R1.MathHelper;
-import net.minecraft.server.v1_4_R1.MinecraftServer;
-import net.minecraft.server.v1_4_R1.Navigation;
-import net.minecraft.server.v1_4_R1.NetworkManager;
-import net.minecraft.server.v1_4_R1.Packet;
-import net.minecraft.server.v1_4_R1.Packet35EntityHeadRotation;
-import net.minecraft.server.v1_4_R1.Packet5EntityEquipment;
-import net.minecraft.server.v1_4_R1.PlayerInteractManager;
-import net.minecraft.server.v1_4_R1.World;
+import net.minecraft.server.v1_5_R1.Connection;
+import net.minecraft.server.v1_5_R1.EntityPlayer;
+import net.minecraft.server.v1_5_R1.EnumGamemode;
+import net.minecraft.server.v1_5_R1.MathHelper;
+import net.minecraft.server.v1_5_R1.MinecraftServer;
+import net.minecraft.server.v1_5_R1.Navigation;
+import net.minecraft.server.v1_5_R1.NetworkManager;
+import net.minecraft.server.v1_5_R1.Packet;
+import net.minecraft.server.v1_5_R1.Packet35EntityHeadRotation;
+import net.minecraft.server.v1_5_R1.Packet5EntityEquipment;
+import net.minecraft.server.v1_5_R1.PlayerInteractManager;
+import net.minecraft.server.v1_5_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_5_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -51,12 +51,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public float bB() {
-        return NMS.modifiedSpeed(super.bB(), npc);
+    public float bE() {
+        return NMS.modifiedSpeed(super.bE(), npc);
     }
 
     @Override
-    public void collide(net.minecraft.server.v1_4_R1.Entity entity) {
+    public void collide(net.minecraft.server.v1_5_R1.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
@@ -102,7 +102,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         Socket socket = new EmptySocket();
         NetworkManager conn = null;
         try {
-            conn = new EmptyNetworkManager(socket, "npc mgr", new Connection() {
+            conn = new EmptyNetworkManager(server.getLogger(), socket, "npc mgr", new Connection() {
                 @Override
                 public boolean a() {
                     return false;
@@ -126,8 +126,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public void j_() {
-        super.j_();
+    public void l_() {
+        super.l_();
         if (npc == null)
             return;
         boolean navigating = npc.getNavigator().isNavigating();
@@ -162,26 +162,26 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private void moveOnCurrentHeading() {
         NMS.updateAI(this);
         // taken from EntityLiving update method
-        if (bF) {
+        if (bG) {
             /* boolean inLiquid = H() || J();
              if (inLiquid) {
                  motY += 0.04;
              } else //(handled elsewhere)*/
-            if (onGround && bV == 0) {
-                bi();
-                bV = 10;
+            if (onGround && bX == 0) {
+                bl();
+                bX = 10;
             }
         } else
-            bV = 0;
+            bX = 0;
 
-        bC *= 0.98F;
+        bF *= 0.98F;
         bD *= 0.98F;
         bE *= 0.9F;
 
-        float prev = aN;
-        aN *= bB();
-        e(bC, bD); // movement method
-        aN = prev;
+        float prev = aO;
+        aO *= bE();
+        e(bF, bD); // movement method
+        aO = prev;
         NMS.setHeadYaw(this, yaw);
     }
 
