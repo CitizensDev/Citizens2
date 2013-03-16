@@ -389,8 +389,9 @@ public class NPCCommands {
             throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
         }
 
-        if (!args.hasFlag('u'))
+        if (!args.hasFlag('u')) {
             npc.spawn(spawnLoc);
+        }
 
         if (args.hasValueFlag("trait")) {
             Iterable<String> parts = Splitter.on(',').trimResults().split(args.getFlag("trait"));

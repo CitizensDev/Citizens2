@@ -198,6 +198,7 @@ public class CitizensNPC extends AbstractNPC {
         for (Trait trait : traits.values())
             trait.onSpawn();
         getBukkitEntity().setRemoveWhenFarAway(false);
+        getBukkitEntity().setCustomName(getFullName());
         return true;
     }
 
