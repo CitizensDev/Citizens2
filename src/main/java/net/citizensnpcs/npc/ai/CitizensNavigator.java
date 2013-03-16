@@ -93,6 +93,10 @@ public class CitizensNavigator implements Navigator, Runnable {
             defaultParams.stuckAction(null);
     }
 
+    public void onDespawn() {
+        stopNavigating(CancelReason.NPC_DESPAWNED);
+    }
+
     public void onSpawn() {
         if (defaultParams.baseSpeed() == UNINITIALISED_SPEED)
             defaultParams.baseSpeed(NMS.getSpeedFor(npc));
@@ -103,11 +107,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     public void run() {
         if (!isNavigating())
             return;
-        if (!npc.isSpawned()) {
-            if (isNavigating())
-                stopNavigating(CancelReason.NPC_DESPAWNED);
-            return;
-        }
         if (updateStationaryStatus())
             return;
         updatePathfindingRange();
@@ -235,5 +234,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private static final Location STATIONARY_LOCATION = new Location(null, 0, 0, 0);
+
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;
 }
