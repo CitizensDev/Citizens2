@@ -57,9 +57,9 @@ public class SilverfishController extends MobEntityController {
 
         @Override
         public void bq() {
-            if (npc == null)
+            if (npc == null) {
                 super.bq();
-            else {
+            } else {
                 NMS.updateAI(this);
                 npc.update();
             }

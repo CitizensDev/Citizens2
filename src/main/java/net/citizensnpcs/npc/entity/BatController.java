@@ -65,7 +65,7 @@ public class BatController extends MobEntityController {
         @Override
         public void bo() {
             if (npc == null)
-                super.bl();
+                super.bo();
             else {
                 NMS.updateAI(this);
                 npc.update();

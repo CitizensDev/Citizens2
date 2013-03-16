@@ -40,7 +40,6 @@ public class PigZombieController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-
             }
         }
 
@@ -58,9 +57,9 @@ public class PigZombieController extends MobEntityController {
 
         @Override
         public void bq() {
-            if (npc == null)
+            if (npc == null) {
                 super.bq();
-            else {
+            } else {
                 NMS.updateAI(this);
                 npc.update();
             }

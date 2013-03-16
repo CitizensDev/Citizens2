@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public class EmptySocket extends Socket {
-
     @Override
     public InputStream getInputStream() {
         return new ByteArrayInputStream(EMPTY);

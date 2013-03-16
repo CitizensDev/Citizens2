@@ -11,10 +11,9 @@ import net.minecraft.server.v1_5_R1.NetworkManager;
 import net.minecraft.server.v1_5_R1.Packet;
 
 public class EmptyNetworkManager extends NetworkManager {
-
-    public EmptyNetworkManager(IConsoleLogManager logManager, Socket socket, String string, Connection conn, PrivateKey key) throws IOException {
+    public EmptyNetworkManager(IConsoleLogManager logManager, Socket socket, String string, Connection conn,
+            PrivateKey key) throws IOException {
         super(logManager, socket, string, conn, key);
-
         NMS.stopNetworkThreads(this);
     }
 

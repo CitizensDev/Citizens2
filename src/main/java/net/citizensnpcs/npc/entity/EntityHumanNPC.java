@@ -115,7 +115,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
 
         getNavigation().e(true);
-        X = 1F; // stepHeight - must not stay as the default 0 (breaks steps).
+        Y = 1F; // stepHeight - must not stay as the default 0 (breaks steps).
                 // Check the EntityPlayer constructor for the new name.
 
         try {
@@ -163,7 +163,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         NMS.updateAI(this);
         // taken from EntityLiving update method
         if (bG) {
-            /* boolean inLiquid = H() || J();
+            /* boolean inLiquid = G() || I();
              if (inLiquid) {
                  motY += 0.04;
              } else //(handled elsewhere)*/
@@ -174,13 +174,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         } else
             bX = 0;
 
-        bF *= 0.98F;
         bD *= 0.98F;
-        bE *= 0.9F;
+        bE *= 0.98F;
+        bF *= 0.9F;
 
         float prev = aO;
         aO *= bE();
-        e(bF, bD); // movement method
+        e(bD, bE); // movement method
         aO = prev;
         NMS.setHeadYaw(this, yaw);
     }
@@ -190,7 +190,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             Location current = getBukkitEntity().getLocation(packetLocationCache);
             Packet[] packets = new Packet[navigating ? 5 : 6];
             if (!navigating) {
-                packets[5] = new Packet35EntityHeadRotation(id, (byte) MathHelper.d(az * 256.0F / 360.0F));
+                packets[5] = new Packet35EntityHeadRotation(id,
+                        (byte) MathHelper.d(NMS.getHeadYaw(this) * 256.0F / 360.0F));
             }
             for (int i = 0; i < 5; i++) {
                 packets[i] = new Packet5EntityEquipment(id, i, getEquipment(i));

@@ -50,9 +50,9 @@ public class GiantController extends MobEntityController {
 
         @Override
         public void bq() {
-            if (npc == null)
+            if (npc == null) {
                 super.bq();
-            else
+            } else
                 npc.update();
         }
 
