@@ -652,13 +652,14 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            modifiers = "nameplate",
+            modifiers = { "name" },
+            usage = "name",
             desc = "Toggle nameplate visibility",
             min = 1,
             max = 1,
-            permission = "citizens.npc.nameplate")
-    @Requirements(selected = true, ownership = true, excludedTypes = EntityType.PLAYER)
-    public void nameplate(CommandContext args, CommandSender sender, NPC npc) {
+            permission = "citizens.npc.name")
+    @Requirements(selected = true, ownership = true)
+    public void name(CommandContext args, CommandSender sender, NPC npc) {
         npc.getBukkitEntity().setCustomNameVisible(!npc.getBukkitEntity().isCustomNameVisible());
         Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_TOGGLED);
     }
