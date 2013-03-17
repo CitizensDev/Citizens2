@@ -1,5 +1,7 @@
 package net.citizensnpcs.npc.ai;
 
+import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
+import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.server.v1_5_R1.Block;
 import net.minecraft.server.v1_5_R1.Enchantment;
@@ -15,7 +17,8 @@ import org.bukkit.craftbukkit.v1_5_R1.inventory.CraftItemStack;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-public class BlockBreaker implements Runnable {
+public class BlockBreaker extends BehaviorGoalAdapter {
+    private final LivingEntity bukkitEntity;
     private final Configuration configuration;
     private int currentDamage;
     private int currentTick;
@@ -26,20 +29,12 @@ public class BlockBreaker implements Runnable {
 
     private BlockBreaker(LivingEntity entity, org.bukkit.block.Block target, Configuration config) {
         this.entity = ((CraftLivingEntity) entity).getHandle();
+        this.bukkitEntity = entity;
         this.x = target.getX();
         this.y = target.getY();
         this.z = target.getZ();
         this.startDigTick = (int) (System.currentTimeMillis() / 50);
         this.configuration = config;
-    }
-
-    public void cancel() {
-        if (configuration.callback() != null) {
-            configuration.callback().run();
-        }
-        isDigging = false;
-        currentDamage = -1;
-        entity.world.f(entity.id, x, y, z, -1);
     }
 
     private double distanceSquared() {
@@ -69,28 +64,37 @@ public class BlockBreaker implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void reset() {
+        if (configuration.callback() != null) {
+            configuration.callback().run();
+        }
+        isDigging = false;
+        setBlockDamage(currentDamage = -1);
+    }
+
+    @Override
+    public BehaviorStatus run() {
         if (!isDigging) {
-            cancel();
-            return;
+            reset();
+            return BehaviorStatus.SUCCESS;
         }
         currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
         if (configuration.radiusSquared() > 0 && distanceSquared() >= configuration.radiusSquared()) {
             startDigTick = currentTick;
-            return;
+            return BehaviorStatus.RUNNING;
         }
         if (entity instanceof EntityPlayer)
             PlayerAnimation.ARM_SWING.play((Player) entity.getBukkitEntity());
         Block block = Block.byId[entity.world.getTypeId(x, y, z)];
         if (block == null) {
-            cancel();
+            return BehaviorStatus.SUCCESS;
         } else {
             int tickDifference = currentTick - startDigTick;
             float damage = getStrength(block) * (tickDifference + 1);
             if (damage >= 1F) {
                 entity.world.getWorld().getBlockAt(x, y, z)
                         .breakNaturally(CraftItemStack.asCraftMirror(getCurrentItem()));
-                cancel();
+                return BehaviorStatus.SUCCESS;
             }
             int modifiedDamage = (int) (damage * 10.0F);
             if (modifiedDamage != currentDamage) {
@@ -98,10 +102,16 @@ public class BlockBreaker implements Runnable {
                 currentDamage = modifiedDamage;
             }
         }
+        return BehaviorStatus.RUNNING;
     }
 
     private void setBlockDamage(int modifiedDamage) {
         entity.world.f(entity.id, x, y, z, modifiedDamage);
+    }
+
+    @Override
+    public boolean shouldExecute() {
+        return org.bukkit.Material.getMaterial(entity.world.getTypeId(x, y, z)) != null;
     }
 
     private float strengthMod(Block block) {
