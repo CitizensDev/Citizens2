@@ -64,6 +64,7 @@ permissions:
           citizens.npc.controllable: true
           citizens.npc.copy: true
           citizens.npc.create: true
+          citizens.npc.create.*: true
           citizens.npc.despawn: true
           citizens.npc.edit.*:
             children:
