@@ -88,11 +88,21 @@ public class Selector extends Composite {
          * Sets whether to retry child {@link Behavior}s when they return
          * {@link BehaviorStatus#FAILURE}.
          * 
-         * @param retry
-         *            Whether to retry children (default: false)
          */
         public Builder retryChildren() {
             retryChildren = true;
+            return this;
+        }
+
+        /**
+         * Sets whether to retry child {@link Behavior}s when they return
+         * {@link BehaviorStatus#FAILURE}.
+         * 
+         * @param retry
+         *            Whether to retry children
+         */
+        public Builder retryChildren(boolean b) {
+            retryChildren = b;
             return this;
         }
 

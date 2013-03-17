@@ -44,6 +44,10 @@ public class YamlStorage implements Storage {
         }
     }
 
+    public File getFile() {
+        return file;
+    }
+
     @Override
     public YamlKey getKey(String root) {
         return new YamlKey(root);
