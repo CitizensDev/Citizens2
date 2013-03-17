@@ -139,7 +139,7 @@ public class NPCCommands {
             min = 1,
             max = 3,
             permission = "citizens.npc.anchor")
-    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
+    @Requirements(selected = true, ownership = true)
     public void anchor(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Anchors trait = npc.getTrait(Anchors.class);
         if (args.hasValueFlag("save")) {
@@ -746,7 +746,7 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "citizens.npc.pose")
-    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
+    @Requirements(selected = true, ownership = true)
     public void pose(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Poses trait = npc.getTrait(Poses.class);
         if (args.hasValueFlag("save")) {
