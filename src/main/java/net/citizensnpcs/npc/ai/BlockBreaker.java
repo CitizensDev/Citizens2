@@ -18,7 +18,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class BlockBreaker extends BehaviorGoalAdapter {
-    private final LivingEntity bukkitEntity;
     private final Configuration configuration;
     private int currentDamage;
     private int currentTick;
@@ -29,7 +28,6 @@ public class BlockBreaker extends BehaviorGoalAdapter {
 
     private BlockBreaker(LivingEntity entity, org.bukkit.block.Block target, Configuration config) {
         this.entity = ((CraftLivingEntity) entity).getHandle();
-        this.bukkitEntity = entity;
         this.x = target.getX();
         this.y = target.getY();
         this.z = target.getZ();
