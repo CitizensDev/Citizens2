@@ -11,6 +11,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
+import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.CommandManager.CommandInfo;
@@ -54,17 +55,6 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CommandManager commands = new CommandManager();
@@ -434,5 +424,5 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return false;
     }
 
-    private static final String COMPATIBLE_MC_VERSION = "1.5";
+    private static final String COMPATIBLE_MC_VERSION = "1.5.1";
 }
