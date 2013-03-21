@@ -11,7 +11,6 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
-import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.CommandManager.CommandInfo;
@@ -55,6 +54,16 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CommandManager commands = new CommandManager();
@@ -191,7 +200,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String cmdName, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String cmdName, String[] args) {
         String modifier = args.length > 0 ? args[0] : "";
         if (!commands.hasCommand(command, modifier) && !modifier.isEmpty()) {
             return suggestClosestModifier(sender, command.getName(), modifier);
