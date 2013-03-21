@@ -4,11 +4,11 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.v1_5_R1.EntityLiving;
-import net.minecraft.server.v1_5_R1.Navigation;
+import net.minecraft.server.v1_5_R2.EntityLiving;
+import net.minecraft.server.v1_5_R2.Navigation;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_5_R2.entity.CraftLivingEntity;
 
 public class MCNavigationStrategy extends AbstractPathStrategy {
     private final Navigation navigation;

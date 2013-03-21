@@ -8,12 +8,12 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.minecraft.server.v1_5_R1.EntityLiving;
-import net.minecraft.server.v1_5_R1.EntityPlayer;
-import net.minecraft.server.v1_5_R1.Navigation;
+import net.minecraft.server.v1_5_R2.EntityLiving;
+import net.minecraft.server.v1_5_R2.EntityPlayer;
+import net.minecraft.server.v1_5_R2.Navigation;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_5_R2.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {

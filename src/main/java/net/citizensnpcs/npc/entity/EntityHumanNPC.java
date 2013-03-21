@@ -13,23 +13,23 @@ import net.citizensnpcs.npc.network.EmptyNetworkManager;
 import net.citizensnpcs.npc.network.EmptySocket;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_5_R1.Connection;
-import net.minecraft.server.v1_5_R1.EntityPlayer;
-import net.minecraft.server.v1_5_R1.EnumGamemode;
-import net.minecraft.server.v1_5_R1.MathHelper;
-import net.minecraft.server.v1_5_R1.MinecraftServer;
-import net.minecraft.server.v1_5_R1.Navigation;
-import net.minecraft.server.v1_5_R1.NetworkManager;
-import net.minecraft.server.v1_5_R1.Packet;
-import net.minecraft.server.v1_5_R1.Packet35EntityHeadRotation;
-import net.minecraft.server.v1_5_R1.Packet5EntityEquipment;
-import net.minecraft.server.v1_5_R1.PlayerInteractManager;
-import net.minecraft.server.v1_5_R1.World;
+import net.minecraft.server.v1_5_R2.Connection;
+import net.minecraft.server.v1_5_R2.EntityPlayer;
+import net.minecraft.server.v1_5_R2.EnumGamemode;
+import net.minecraft.server.v1_5_R2.MathHelper;
+import net.minecraft.server.v1_5_R2.MinecraftServer;
+import net.minecraft.server.v1_5_R2.Navigation;
+import net.minecraft.server.v1_5_R2.NetworkManager;
+import net.minecraft.server.v1_5_R2.Packet;
+import net.minecraft.server.v1_5_R2.Packet35EntityHeadRotation;
+import net.minecraft.server.v1_5_R2.Packet5EntityEquipment;
+import net.minecraft.server.v1_5_R2.PlayerInteractManager;
+import net.minecraft.server.v1_5_R2.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_5_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R2.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -56,7 +56,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public void collide(net.minecraft.server.v1_5_R1.Entity entity) {
+    public void collide(net.minecraft.server.v1_5_R2.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);

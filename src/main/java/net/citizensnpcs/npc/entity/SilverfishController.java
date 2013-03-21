@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_5_R1.EntitySilverfish;
-import net.minecraft.server.v1_5_R1.World;
+import net.minecraft.server.v1_5_R2.EntitySilverfish;
+import net.minecraft.server.v1_5_R2.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_5_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_5_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_5_R1.entity.CraftSilverfish;
+import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R2.entity.CraftSilverfish;
 import org.bukkit.entity.Silverfish;
 import org.bukkit.util.Vector;
 
@@ -66,7 +66,7 @@ public class SilverfishController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_5_R1.Entity entity) {
+        public void collide(net.minecraft.server.v1_5_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
