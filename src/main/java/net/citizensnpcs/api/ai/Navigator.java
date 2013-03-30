@@ -3,6 +3,7 @@ package net.citizensnpcs.api.ai;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 /**
@@ -72,10 +73,22 @@ public interface Navigator {
      * Sets the current navigation to an entity target.
      * 
      * @param target
-     *            The {@link LivingEntity} to path towards
+     *            The {@link Entity} to path towards
      * @param aggressive
      *            Whether to attack the target when close enough
      */
+    void setTarget(Entity target, boolean aggressive);
+
+    /**
+     * Sets the current navigation to an entity target.
+     * 
+     * @param target
+     *            The {@link LivingEntity} to path towards
+     * @param aggressive
+     *            Whether to attack the target when close enough
+     * @deprecated See {@link #setTarget(Entity, boolean)}
+     */
+    @Deprecated
     void setTarget(LivingEntity target, boolean aggressive);
 
     /**
