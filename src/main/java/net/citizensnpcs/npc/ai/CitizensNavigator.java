@@ -22,6 +22,7 @@ import net.citizensnpcs.util.NMS;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
@@ -134,7 +135,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     @Override
-    public void setTarget(LivingEntity target, boolean aggressive) {
+    public void setTarget(Entity target, boolean aggressive) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
         if (target == null) {
@@ -144,6 +145,11 @@ public class CitizensNavigator implements Navigator, Runnable {
         localParams = defaultParams.clone();
         PathStrategy newStrategy = new MCTargetStrategy(npc, target, aggressive, localParams);
         switchStrategyTo(newStrategy);
+    }
+
+    @Override
+    public void setTarget(LivingEntity target, boolean aggressive) {
+        setTarget((Entity) target, aggressive);
     }
 
     @Override
