@@ -12,7 +12,6 @@ import java.util.WeakHashMap;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.minecraft.server.v1_5_R2.ControllerJump;
-import net.minecraft.server.v1_5_R2.ControllerLook;
 import net.minecraft.server.v1_5_R2.DamageSource;
 import net.minecraft.server.v1_5_R2.EnchantmentManager;
 import net.minecraft.server.v1_5_R2.Entity;
@@ -77,8 +76,8 @@ public class NMS {
         }
     }
 
-    public static void attack(EntityLiving handle, EntityLiving target) {
-        int damage = handle instanceof EntityMonster ? ((EntityMonster) handle).c((Entity) target) : 2;
+    public static void attack(EntityLiving handle, Entity target) {
+        int damage = handle instanceof EntityMonster ? ((EntityMonster) handle).c(target) : 2;
 
         if (handle.hasEffect(MobEffectList.INCREASE_DAMAGE)) {
             damage += 3 << handle.getEffect(MobEffectList.INCREASE_DAMAGE).getAmplifier();
@@ -91,8 +90,8 @@ public class NMS {
         int knockbackLevel = 0;
 
         if (target instanceof EntityLiving) {
-            damage += EnchantmentManager.a(handle, target);
-            knockbackLevel += EnchantmentManager.getKnockbackEnchantmentLevel(handle, target);
+            damage += EnchantmentManager.a(handle, (EntityLiving) target);
+            knockbackLevel += EnchantmentManager.getKnockbackEnchantmentLevel(handle, (EntityLiving) target);
         }
 
         boolean success = target.damageEntity(DamageSource.mobAttack(handle), damage);
@@ -137,7 +136,7 @@ public class NMS {
         return constructor;
     }
 
-    private static Field getField(Class<?> clazz, String field) {
+    public static Field getField(Class<?> clazz, String field) {
         Field f = null;
         try {
             f = clazz.getDeclaredField(field);
@@ -184,8 +183,8 @@ public class NMS {
         ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.POSTWORLD);
     }
 
-    public static void look(ControllerLook controllerLook, EntityLiving handle, EntityLiving target) {
-        controllerLook.a(target, 10.0F, handle.bs());
+    public static void look(EntityLiving handle, Entity target) {
+        handle.getControllerLook().a(target, 10.0F, handle.bs());
     }
 
     public static void look(LivingEntity bukkitEntity, float yaw, float pitch) {
