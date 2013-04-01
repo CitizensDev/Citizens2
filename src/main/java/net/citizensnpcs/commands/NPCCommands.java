@@ -35,7 +35,6 @@ import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
-import net.citizensnpcs.trait.Behaviour;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
@@ -202,26 +201,6 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "behaviour [scripts] (-r)",
-            desc = "Sets the behaviour of a NPC",
-            help = Messages.BEHAVIOUR_HELP,
-            modifiers = { "behaviour", "behavior", "ai" },
-            flags = "r",
-            min = 2,
-            permission = "citizens.npc.behaviour")
-    public void behaviour(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        Iterable<String> files = Splitter.on(',').split(args.getJoinedStrings(1, ','));
-        if (args.hasFlag('r')) {
-            npc.getTrait(Behaviour.class).removeScripts(files);
-            Messaging.sendTr(sender, Messages.BEHAVIOURS_REMOVED);
-        } else {
-            npc.getTrait(Behaviour.class).addScripts(files);
-            Messaging.sendTr(sender, Messages.BEHAVIOURS_ADDED);
-        }
-    }
-
-    @Command(
-            aliases = { "npc" },
             usage = "controllable|control -f",
             desc = "Toggles whether the NPC can be ridden and controlled",
             modifiers = { "controllable", "control" },
@@ -319,12 +298,6 @@ public class NPCCommands {
                 age = -24000;
                 msg += " as a baby";
             }
-        }
-
-        if (args.hasValueFlag("b") || args.hasValueFlag("behaviours") || args.hasValueFlag("behaviors")) {
-            String behaviours = args.getFlag("b", args.getFlag("behaviours", args.getFlag("behaviors")));
-            npc.getTrait(Behaviour.class).addScripts(Splitter.on(',').split(behaviours));
-            msg += " with the specified behaviours";
         }
 
         msg += ".";
