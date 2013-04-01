@@ -1,18 +1,20 @@
 package net.citizensnpcs.api.scripting;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadFactory;
 
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -28,8 +30,8 @@ import net.citizensnpcs.api.util.Messaging;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
@@ -38,13 +40,23 @@ import com.google.common.io.Closeables;
  * thread - {@link ScriptCompiler#run()} will block while waiting for new tasks
  * to compile.
  */
-public class ScriptCompiler implements Runnable {
+public class ScriptCompiler {
     private final WeakReference<ClassLoader> classLoader;
     private final ScriptEngineManager engineManager;
     private final Map<String, ScriptEngine> engines = Maps.newHashMap();
-    private final Function<File, FileEngine> fileEngineConverter = new Function<File, FileEngine>() {
+    private final ExecutorService executor = Executors.newCachedThreadPool(new ThreadFactory() {
+        int n = 1;
+
         @Override
-        public FileEngine apply(File file) {
+        public Thread newThread(Runnable r) {
+            Thread created = new Thread(r, "Citizens Script Compiler #" + n++);
+            created.setContextClassLoader(classLoader.get());
+            return created;
+        }
+    });
+    private final Function<File, SimpleScriptSource> fileEngineConverter = new Function<File, SimpleScriptSource>() {
+        @Override
+        public SimpleScriptSource apply(File file) {
             if (!file.isFile())
                 return null;
             String fileName = file.getName();
@@ -52,18 +64,13 @@ public class ScriptCompiler implements Runnable {
             ScriptEngine engine = loadEngine(extension);
             if (engine == null)
                 return null;
-            return new FileEngine(file, engine);
+            return new SimpleScriptSource(file, engine);
         }
     };
     private final List<ContextProvider> globalContextProviders = Lists.newArrayList();
-    private final Thread runningThread;
-    private final BlockingQueue<CompileTask> toCompile = new ArrayBlockingQueue<CompileTask>(50);
 
     public ScriptCompiler(ClassLoader classLoader) {
         engineManager = new ScriptEngineManager(classLoader);
-        runningThread = new Thread(this, "Citizens Script Compiler");
-        runningThread.setContextClassLoader(classLoader);
-        runningThread.start();
         this.classLoader = new WeakReference<ClassLoader>(classLoader);
     }
 
@@ -74,27 +81,31 @@ public class ScriptCompiler implements Runnable {
      *            The files to compile
      * @return The {@link CompileTaskBuilder}
      */
-    public CompileTaskBuilder compile(File... files) {
-        if (files == null || files.length == 0)
-            throw new IllegalArgumentException("files should have a length of at least one");
-        List<FileEngine> toCompile = Lists.newArrayList();
-        for (File file : files) {
-            FileEngine res = fileEngineConverter.apply(file);
-            if (res != null)
-                toCompile.add(res);
-        }
-        return new CompileTaskBuilder(toCompile.toArray(new FileEngine[toCompile.size()]));
+    public CompileTaskBuilder compile(File file) {
+        if (file == null)
+            throw new IllegalArgumentException("file should not be null");
+        return new CompileTaskBuilder(fileEngineConverter.apply(file));
     }
 
     /**
-     * A helper method for {@link #compile(File...)}
+     * Create a builder to compile the given source code.
+     * 
+     * @param src
+     *            The source code to compile
+     * @param identifier
+     *            A unique identifier of the source code
+     * @param extension
+     *            The source code externsion
+     * @return The {@link CompileTaskBuilder}
      */
-    public CompileTaskBuilder compile(Iterable<File> files) {
-        return compile(Iterables.toArray(files, File.class));
+    public CompileTaskBuilder compile(String src, String identifier, String extension) {
+        if (src == null)
+            throw new IllegalArgumentException("source must not be null");
+        return new CompileTaskBuilder(new SimpleScriptSource(src, identifier, loadEngine(extension)));
     }
 
     public void interrupt() {
-        runningThread.interrupt();
+        executor.shutdownNow();
     }
 
     private ScriptEngine loadEngine(String extension) {
@@ -130,21 +141,6 @@ public class ScriptCompiler implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            CompileTask task;
-            try {
-                task = toCompile.take();
-                task.future.get();
-            } catch (InterruptedException e) {
-                return;
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void run(String code, String extension) throws ScriptException {
         run(code, extension, null);
     }
@@ -159,73 +155,72 @@ public class ScriptCompiler implements Runnable {
         engine.eval(extension, context);
     }
 
-    private class CompileTask implements Callable<ScriptFactory[]> {
+    private class CompileTask implements Callable<ScriptFactory> {
+        private final boolean cache;
         private final CompileCallback[] callbacks;
         private final ContextProvider[] contextProviders;
-        private final FileEngine[] files;
-        private final Future<ScriptFactory[]> future;
+        private final SimpleScriptSource engine;
+        private final Future<ScriptFactory> future;
 
         public CompileTask(CompileTaskBuilder builder) {
             List<ContextProvider> copy = Lists.newArrayList(builder.contextProviders);
             copy.addAll(globalContextProviders);
             this.contextProviders = copy.toArray(new ContextProvider[copy.size()]);
-            this.files = builder.files;
             this.callbacks = builder.callbacks.toArray(new CompileCallback[builder.callbacks.size()]);
-            this.future = new FutureTask<ScriptFactory[]>(this);
+            this.engine = builder.engine;
+            this.future = new FutureTask<ScriptFactory>(this);
+            this.cache = builder.cache;
         }
 
         @Override
-        public ScriptFactory[] call() throws Exception {
-            ScriptFactory[] compiledFactories = new ScriptFactory[files.length];
-            for (int i = 0; i < files.length; i++) {
-                FileEngine engine = files[i];
-                Compilable compiler = (Compilable) engine.engine;
-                Reader reader = null;
-                try {
-                    reader = new FileReader(engine.file);
-                    CompiledScript src = compiler.compile(reader);
-                    ScriptFactory compiled = new SimpleScriptFactory(src, contextProviders);
-                    for (CompileCallback callback : callbacks) {
-                        callback.onScriptCompiled(engine.file, compiled);
-                    }
-                    compiledFactories[i] = compiled;
-                } catch (IOException e) {
-                    Messaging.severe("IO error while reading " + engine.file + " for scripting.");
-                    e.printStackTrace();
-                } catch (ScriptException e) {
-                    Messaging.severe("Compile error while parsing script at " + engine.file.getName() + ".");
-                    Throwables.getRootCause(e).printStackTrace();
-                } catch (Throwable t) {
-                    Messaging.severe("Unexpected error while parsing script at " + engine.file.getName() + ".");
-                    t.printStackTrace();
-                } finally {
-                    Closeables.closeQuietly(reader);
-                }
+        public ScriptFactory call() {
+            if (cache && CACHE.containsKey(engine.getIdentifier()))
+                return CACHE.get(engine.getIdentifier());
+            Compilable compiler = (Compilable) engine.engine;
+            Reader reader = null;
+            try {
+                CompiledScript src = compiler.compile(reader = engine.getReader());
+                ScriptFactory compiled = new SimpleScriptFactory(src, contextProviders);
+                if (cache)
+                    CACHE.put(engine.getIdentifier(), compiled);
+                for (CompileCallback callback : callbacks)
+                    callback.onScriptCompiled(engine.getIdentifier(), compiled);
+                return compiled;
+            } catch (IOException e) {
+                Messaging.severe("IO error while reading a file for scripting.");
+                e.printStackTrace();
+            } catch (ScriptException e) {
+                Messaging.severe("Compile error while parsing script.");
+                Throwables.getRootCause(e).printStackTrace();
+            } catch (Throwable t) {
+                Messaging.severe("Unexpected error while parsing script at.");
+                t.printStackTrace();
+            } finally {
+                Closeables.closeQuietly(reader);
             }
-            for (CompileCallback callback : callbacks) {
-                callback.onCompileTaskFinished();
-            }
-            return compiledFactories;
+            return null;
         }
     }
 
     public class CompileTaskBuilder {
-        private final List<CompileCallback> callbacks = Lists.newArrayList();
+        private boolean cache;
+        private List<CompileCallback> callbacks;
         private final List<ContextProvider> contextProviders = Lists.newArrayList();
-        private final FileEngine[] files;
+        private final SimpleScriptSource engine;
 
-        private CompileTaskBuilder(FileEngine[] files) {
-            this.files = files;
+        private CompileTaskBuilder(SimpleScriptSource engine) {
+            this.engine = engine;
         }
 
-        public boolean begin() {
-            return toCompile.offer(new CompileTask(this));
-        }
-
-        public Future<ScriptFactory[]> beginWithFuture() {
+        public Future<ScriptFactory> beginWithFuture() {
             CompileTask t = new CompileTask(this);
-            toCompile.offer(t);
+            executor.submit(t);
             return t.future;
+        }
+
+        public CompileTaskBuilder cache(boolean cache) {
+            this.cache = cache;
+            return this;
         }
 
         public CompileTaskBuilder withCallback(CompileCallback callback) {
@@ -239,13 +234,35 @@ public class ScriptCompiler implements Runnable {
         }
     }
 
-    private static class FileEngine {
-        final ScriptEngine engine;
-        final File file;
+    private static class SimpleScriptSource {
+        private final ScriptEngine engine;
+        private final File file;
+        private final String identifier;
+        private final String src;
 
-        FileEngine(File file, ScriptEngine engine) {
+        private SimpleScriptSource(File file, ScriptEngine engine) {
             this.file = file;
+            this.identifier = file.getAbsolutePath();
             this.engine = engine;
+            this.src = null;
+        }
+
+        private SimpleScriptSource(String src, String identifier, ScriptEngine engine) {
+            this.src = src;
+            this.identifier = identifier;
+            this.engine = engine;
+            this.file = null;
+        }
+
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        @SuppressWarnings("resource")
+        public Reader getReader() throws FileNotFoundException {
+            return file == null ? new StringReader(src) : new FileReader(file);
         }
     }
+
+    private static final Map<String, ScriptFactory> CACHE = new MapMaker().weakValues().makeMap();
 }

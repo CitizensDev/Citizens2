@@ -8,8 +8,10 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public abstract class DataKey {
-    protected final String path;
     private final boolean database = this instanceof DatabaseKey;
+    protected final String path;
+
+    private boolean transferring = false;
 
     protected DataKey(String path) {
         this.path = path;
@@ -22,23 +24,6 @@ public abstract class DataKey {
         if (from.charAt(0) == '.')
             return path.isEmpty() ? from.substring(1, from.length()) : path + from;
         return path.isEmpty() ? from : path + '.' + from;
-    }
-
-    private boolean transferring = false;
-
-    protected void transferOld(String key) {
-        if (database || transferring)
-            return;
-        transferring = true;
-        String repl = key.replace("-", "");
-        if (!keyExists(repl)) {
-            transferring = false;
-            return;
-        }
-        Object value = getRaw(repl);
-        removeKey(repl);
-        setRaw(key, value);
-        transferring = false;
     }
 
     @Override
@@ -100,6 +85,10 @@ public abstract class DataKey {
         return value;
     }
 
+    public String getPath() {
+        return path;
+    }
+
     public abstract Object getRaw(String key);
 
     public DataKey getRelative(int key) {
@@ -146,6 +135,21 @@ public abstract class DataKey {
     public abstract void setRaw(String key, Object value);
 
     public abstract void setString(String key, String value);
+
+    protected void transferOld(String key) {
+        if (database || transferring)
+            return;
+        transferring = true;
+        String repl = key.replace("-", "");
+        if (!keyExists(repl)) {
+            transferring = false;
+            return;
+        }
+        Object value = getRaw(repl);
+        removeKey(repl);
+        setRaw(key, value);
+        transferring = false;
+    }
 
     private static final Predicate<DataKey> SIMPLE_INTEGER_FILTER = new Predicate<DataKey>() {
         @Override

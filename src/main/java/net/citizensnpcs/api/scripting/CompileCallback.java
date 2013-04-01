@@ -1,24 +1,16 @@
 package net.citizensnpcs.api.scripting;
 
-import java.io.File;
-
-/**
- * A simple callback interface for use in {@link ScriptCompiler}.
- */
 public interface CompileCallback {
     /**
-     * Called when the compile task is completely finished and all scripts have
-     * been compiled or rejected.
-     */
-    public void onCompileTaskFinished();
-
-    /**
-     * Called when a script has been compiled using the relevant script engine.
+     * Called when the {@link ScriptFactory} has been compiled successfully.
+     * Note that this may be called <em>in another thread</em> - make sure your
+     * handling code is threadsafe.
      * 
-     * @param file
-     *            The file that the script was compiled from
-     * @param script
-     *            The newly created script
+     * @param sourceDescriptor
+     *            A source description: may be a file name or a unique
+     *            identifier assigned to a source string, or null.
+     * @param compiled
+     *            The compiled source code
      */
-    public void onScriptCompiled(File file, ScriptFactory script);
+    public void onScriptCompiled(String sourceDescriptor, ScriptFactory compiled);
 }
