@@ -10,7 +10,6 @@ import com.google.common.collect.Iterables;
 public abstract class DataKey {
     private final boolean database = this instanceof DatabaseKey;
     protected final String path;
-
     private boolean transferring = false;
 
     protected DataKey(String path) {

@@ -3,14 +3,14 @@ package net.citizensnpcs.api.astar.pathfinder;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
-public interface BlockSource {
-    int getBlockTypeIdAt(int x, int y, int z);
+public abstract class BlockSource {
+    public abstract int getBlockTypeIdAt(int x, int y, int z);
 
-    int getBlockTypeIdAt(Vector pos);
+    public Material getMaterialAt(int x, int y, int z) {
+        return Material.getMaterial(getBlockTypeIdAt(x, y, z));
+    }
 
-    int getLightLevel(Vector pos);
-
-    Material getMaterialAt(int x, int y, int z);
-
-    Material getMaterialAt(Vector pos);
+    public Material getMaterialAt(Vector pos) {
+        return getMaterialAt(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
+    }
 }

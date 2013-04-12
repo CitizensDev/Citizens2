@@ -14,7 +14,6 @@
 		<bukkit.version>LATEST</bukkit.version>
 		<rhino.version>1.7R2</rhino.version>
 		<powermock.version>1.4.12</powermock.version>
-		<uncommons-math.version>LATEST</uncommons-math.version>
 		<build.number>Unknown</build.number>
 	</properties>
 
@@ -31,22 +30,6 @@
 			<artifactId>bukkit</artifactId>
 			<version>${bukkit.version}</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.uncommons.maths</groupId>
-			<artifactId>uncommons-maths</artifactId>
-			<version>${uncommons-math.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>jfree</groupId>
-					<artifactId>jcommon</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jfree</groupId>
-					<artifactId>jfreechart</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>

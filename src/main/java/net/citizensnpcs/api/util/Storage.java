@@ -1,7 +1,6 @@
 package net.citizensnpcs.api.util;
 
 public interface Storage {
-
     /**
      * Returns a {@link DataKey} starting from the given root.
      * 
