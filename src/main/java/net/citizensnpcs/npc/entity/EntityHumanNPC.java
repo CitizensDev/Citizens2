@@ -138,8 +138,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // gravity. also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
         }
-        if (!npc.data().get("removefromplayerlist", true))
+        if (!npc.data().get("removefromplayerlist", true)) {
             g();
+        }
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
 
