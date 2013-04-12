@@ -30,7 +30,6 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
@@ -1116,7 +1115,7 @@ public class NPCCommands {
         EntityType type = Util.matchEntityType(args.getString(1));
         if (type == null)
             throw new CommandException(Messages.INVALID_ENTITY_TYPE, args.getString(1));
-        ((CitizensNPC) npc).setEntityController(EntityControllers.createForType(type));
+        npc.setBukkitEntityType(type);
         Messaging.sendTr(sender, Messages.ENTITY_TYPE_SET, npc.getName(), args.getString(1));
     }
 
