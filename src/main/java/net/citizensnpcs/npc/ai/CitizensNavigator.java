@@ -106,7 +106,7 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public void run() {
-        if (!isNavigating())
+        if (!isNavigating() || !npc.isSpawned())
             return;
         if (updateStationaryStatus())
             return;
