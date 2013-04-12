@@ -10,6 +10,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 /**
@@ -167,6 +168,19 @@ public interface NPC extends Agent {
      *            The root data key
      */
     public void save(DataKey key);
+
+    /**
+     * Sets the {@link EntityType} of this NPC. Currently only accepts
+     * <em>living</em> entity types, with scope for additional types in the
+     * future. The NPC will respawned if currently spawned, or will remain
+     * despawned otherwise.
+     * 
+     * @param type
+     *            The new mob type
+     * @throws IllegalArgumentException
+     *             If the type is not a living entity type
+     */
+    public void setBukkitEntityType(EntityType type);
 
     /**
      * Sets the name of this NPC.
