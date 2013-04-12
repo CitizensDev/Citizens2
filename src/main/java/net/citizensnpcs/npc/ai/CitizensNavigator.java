@@ -240,6 +240,5 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private static final Location STATIONARY_LOCATION = new Location(null, 0, 0, 0);
-
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;
 }

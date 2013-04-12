@@ -40,7 +40,6 @@ public class MagmaCubeController extends MobEntityController {
             if (npc != null) {
                 setSize(3);
                 NMS.clearGoals(goalSelector, targetSelector);
-
             }
         }
 
