@@ -1,6 +1,5 @@
 package net.citizensnpcs.util;
 
-import java.lang.reflect.Constructor;
 import java.util.Random;
 
 import net.citizensnpcs.api.event.NPCCollisionEvent;
@@ -18,7 +17,6 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Splitter;
 
-@SuppressWarnings("unchecked")
 public class Util {
     // Static class for small (emphasis small) utility methods
     private Util() {
@@ -26,7 +24,6 @@ public class Util {
 
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
-    private static Constructor<? extends Random> RNG_CONSTRUCTOR = null;
 
     public static void assumePose(LivingEntity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);
@@ -66,13 +63,7 @@ public class Util {
     }
 
     public static Random getFastRandom() {
-        try {
-            byte[] seed = new byte[20];
-            new Random().nextBytes(seed);
-            return RNG_CONSTRUCTOR.newInstance(seed);
-        } catch (Exception e) {
-            return new Random();
-        }
+        return new XORShiftRNG();
     }
 
     public static String getMinecraftVersion() {
@@ -125,16 +116,5 @@ public class Util {
             }
         }
         return false;
-    }
-
-    static {
-        try {
-            RNG_CONSTRUCTOR = (Constructor<? extends Random>) Class.forName("org.uncommons.maths.random.XORShiftRNG")
-                    .getConstructor(byte[].class);
-        } catch (ClassNotFoundException e) {
-        } catch (SecurityException e) {
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 }
