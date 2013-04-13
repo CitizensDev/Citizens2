@@ -11,7 +11,9 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_5_R2.EntityEnderDragon;
 import net.minecraft.server.v1_5_R2.EntityLiving;
 import net.minecraft.server.v1_5_R2.EntityPlayer;
 
@@ -167,6 +169,19 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             key.setString("explicittype", explicitType.name());
     }
 
+    private void setMountedYaw(EntityLiving handle) {
+        if (handle instanceof EntityEnderDragon)
+            return; // EnderDragon handles this separately
+        double tX = handle.locX + handle.motX;
+        double tZ = handle.locZ + handle.motZ;
+        if (handle.locZ > tZ) {
+            handle.yaw = (float) -Math.toDegrees(Math.atan((handle.locX - tX) / (handle.locZ - tZ))) + 180F;
+        } else if (handle.locZ < tZ) {
+            handle.yaw = (float) -Math.toDegrees(Math.atan((handle.locX - tX) / (handle.locZ - tZ)));
+        }
+        NMS.setHeadYaw(handle, handle.yaw);
+    }
+
     @Override
     public boolean toggle() {
         enabled = !enabled;
@@ -205,6 +220,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             handle.motX = dir.getX();
             handle.motY = dir.getY();
             handle.motZ = dir.getZ();
+            setMountedYaw(handle);
         }
     }
 
@@ -238,6 +254,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                     .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
             handle.motX += handle.passenger.motX * speedMod;
             handle.motZ += handle.passenger.motZ * speedMod;
+            setMountedYaw(handle);
         }
 
         private static final float AIR_SPEED = 1.5F;
