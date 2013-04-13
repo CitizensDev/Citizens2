@@ -22,7 +22,6 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
     private double range = Setting.DEFAULT_LOOK_CLOSE_RANGE.asDouble();
-
     private boolean realisticLooking = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
 
     public LookClose() {
