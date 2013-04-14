@@ -228,7 +228,7 @@ public class NPCCommands {
             min = 1,
             max = 1,
             permission = "citizens.npc.copy")
-    public void copy(CommandContext args, CommandSender sender, NPC npc) {
+    public void copy(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         EntityType type = npc.getTrait(MobType.class).getType();
         String name = args.getFlag("name", npc.getFullName());
         CitizensNPC copy = (CitizensNPC) npcRegistry.createNPC(type, name);
@@ -247,6 +247,18 @@ public class NPCCommands {
 
         for (Trait trait : copy.getTraits())
             trait.onCopy();
+
+        CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
+                : new CommandSenderCreateNPCEvent(sender, copy);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            event.getNPC().destroy();
+            String reason = "Couldn't create NPC.";
+            if (!event.getCancelReason().isEmpty())
+                reason += " Reason: " + event.getCancelReason();
+            throw new CommandException(reason);
+        }
+
         Messaging.sendTr(sender, Messages.NPC_COPIED, npc.getName());
         selector.select(sender, copy);
     }
@@ -298,8 +310,6 @@ public class NPCCommands {
                 msg += " as a baby";
             }
         }
-
-        msg += ".";
 
         // Initialize necessary traits
         if (!Setting.SERVER_OWNS_NPCS.asBoolean())
@@ -399,7 +409,7 @@ public class NPCCommands {
         if (npc.getBukkitEntity() instanceof Ageable)
             npc.getTrait(Age.class).setAge(age);
         selector.select(sender, npc);
-        Messaging.send(sender, msg);
+        Messaging.send(sender, msg + '.');
     }
 
     @Command(

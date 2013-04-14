@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.EntityTargetNPCEvent;
 import net.citizensnpcs.api.event.NPCCombustByBlockEvent;
@@ -17,7 +18,6 @@ import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
@@ -73,30 +73,54 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
-        ChunkCoord coord = toCoord(event.getChunk());
-        respawnAllFromCoord(coord);
+        respawnAllFromCoord(toCoord(event.getChunk()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
-        Location location = new Location(null, 0, 0, 0);
+        Location loc = new Location(null, 0, 0, 0);
         for (NPC npc : getAllNPCs()) {
             if (!npc.isSpawned())
                 continue;
-            location = npc.getBukkitEntity().getLocation(location);
-            boolean sameChunkCoordinates = coord.z == location.getBlockZ() >> 4 && coord.x == location.getBlockX() >> 4;
-            if (sameChunkCoordinates && event.getWorld().equals(location.getWorld())) {
-                if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
-                    event.setCancelled(true);
-                    Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
-                    respawnAllFromCoord(coord);
-                    return;
-                }
-                toRespawn.put(coord, npc);
-                Messaging
-                        .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+            loc = npc.getBukkitEntity().getLocation(loc);
+            boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
+            if (!sameChunkCoordinates || !event.getWorld().equals(loc.getWorld()))
+                continue;
+            if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
+                event.setCancelled(true);
+                Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
+                respawnAllFromCoord(coord);
+                return;
             }
+            toRespawn.put(coord, npc);
+            Messaging.debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onCommandSenderCreateNPC(CommandSenderCreateNPCEvent event) {
+        if (event.getCreator().hasPermission("citizens.admin.avoid-limits"))
+            return;
+        int limit = Setting.DEFAULT_NPC_LIMIT.asInt();
+        int maxChecks = Setting.MAX_NPC_LIMIT_CHECKS.asInt();
+        for (int i = maxChecks; i >= 0; i--) {
+            if (!event.getCreator().hasPermission("citizens.npc.limit." + i))
+                continue;
+            limit = i;
+            break;
+        }
+        if (limit < 0)
+            return;
+        int owned = 0;
+        for (NPC npc : npcRegistry) {
+            if (!event.getNPC().equals(npc) && npc.getTrait(Owner.class).isOwnedBy(event.getCreator()))
+                owned++;
+        }
+        int wouldOwn = owned + 1;
+        if (wouldOwn >= limit) {
+            event.setCancelled(true);
+            event.setCancelReason(Messaging.tr(Messages.OVER_NPC_LIMIT, limit));
         }
     }
 
@@ -196,32 +220,6 @@ public class EventListen implements Listener {
         // undesirable as player NPCs are not real players and confuse plugins.
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
-        if (event.getCreator().hasPermission("citizens.admin.avoid-limits"))
-            return;
-        int limit = Setting.DEFAULT_NPC_LIMIT.asInt();
-        int maxChecks = Setting.MAX_NPC_LIMIT_CHECKS.asInt();
-        for (int i = maxChecks; i >= 0; i--) {
-            if (!event.getCreator().hasPermission("citizens.npc.limit." + i))
-                continue;
-            limit = i;
-            break;
-        }
-        if (limit < 0)
-            return;
-        int owned = 0;
-        for (NPC npc : npcRegistry) {
-            if (!event.getNPC().equals(npc) && npc.getTrait(Owner.class).isOwnedBy(event.getCreator()))
-                owned++;
-        }
-        int wouldOwn = owned + 1;
-        if (wouldOwn >= limit) {
-            event.setCancelled(true);
-            event.setCancelReason(Messaging.tr(Messages.OVER_NPC_LIMIT, limit));
-        }
-    }
-
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = npcRegistry.getNPC(event.getRightClicked());
@@ -230,7 +228,6 @@ public class EventListen implements Listener {
         }
 
         Player player = event.getPlayer();
-
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
         Bukkit.getPluginManager().callEvent(rightClickEvent);
     }
@@ -246,12 +243,7 @@ public class EventListen implements Listener {
             if (!chunk.worldName.equals(event.getWorld().getName())
                     || !event.getWorld().isChunkLoaded(chunk.x, chunk.z))
                 continue;
-            List<NPC> ids = toRespawn.get(chunk);
-            for (int i = 0; i < ids.size(); i++) {
-                spawn(ids.get(i));
-                Messaging.debug("Spawned", ids.get(0), "due to world " + event.getWorld().getName() + " load");
-            }
-            toRespawn.removeAll(chunk);
+            respawnAllFromCoord(chunk);
         }
     }
 
@@ -271,21 +263,22 @@ public class EventListen implements Listener {
     private void respawnAllFromCoord(ChunkCoord coord) {
         List<NPC> ids = toRespawn.get(coord);
         for (int i = 0; i < ids.size(); i++) {
-            NPC id = ids.get(i);
-            boolean success = spawn(id);
+            NPC npc = ids.get(i);
+            boolean success = spawn(npc);
             if (!success) {
-                Messaging.debug("Couldn't respawn id", id, "during chunk event at [" + coord.x + "," + coord.z + "]");
+                Messaging.debug("Couldn't respawn id", npc.getId(), "during chunk event at [" + coord.x + "," + coord.z
+                        + "]");
                 continue;
             }
             ids.remove(i--);
-            Messaging.debug("Spawned id", id, "due to chunk event at [" + coord.x + "," + coord.z + "]");
+            Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
         }
     }
 
     private boolean spawn(NPC npc) {
         Location spawn = npc.getTrait(CurrentLocation.class).getLocation();
         if (spawn == null) {
-            Messaging.debug("Couldn't find a spawn location for despawned NPC id", npc);
+            Messaging.debug("Couldn't find a spawn location for despawned NPC id", npc.getId());
             return false;
         }
         return npc.spawn(spawn);
@@ -334,10 +327,7 @@ public class EventListen implements Listener {
             } else if (!worldName.equals(other.worldName)) {
                 return false;
             }
-            if (x != other.x || z != other.z) {
-                return false;
-            }
-            return true;
+            return x == other.x && z == other.z;
         }
 
         @Override
@@ -345,8 +335,7 @@ public class EventListen implements Listener {
             final int prime = 31;
             int result = prime + ((worldName == null) ? 0 : worldName.hashCode());
             result = prime * result + x;
-            result = prime * result + z;
-            return result;
+            return prime * result + z;
         }
     }
 }
