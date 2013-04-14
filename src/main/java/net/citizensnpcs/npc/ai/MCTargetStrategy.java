@@ -96,7 +96,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
     @Override
     public boolean update() {
-        if (target == null || target.dead) {
+        if (target == null || !target.getBukkitEntity().isValid()) {
             cancelReason = CancelReason.TARGET_DIED;
             return true;
         }
