@@ -67,7 +67,7 @@ public class Owner extends Trait {
      *            Name of the player to set as owner of an NPC
      */
     public void setOwner(String owner) {
-        this.owner = owner.toLowerCase();
+        this.owner = owner;
     }
 
     @Override
