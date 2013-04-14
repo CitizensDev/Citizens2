@@ -252,10 +252,15 @@ public class EventListen implements Listener {
         for (NPC npc : getAllNPCs()) {
             if (!npc.isSpawned() || !npc.getBukkitEntity().getWorld().equals(event.getWorld()))
                 continue;
-            storeForRespawn(npc);
-            npc.despawn(DespawnReason.WORLD_UNLOAD);
-            if (event.isCancelled())
+            boolean despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
+            if (event.isCancelled() || !despawned) {
+                for (ChunkCoord coord : toRespawn.keySet()) {
+                    if (event.getWorld().getName().equals(coord.worldName))
+                        respawnAllFromCoord(coord);
+                }
                 return;
+            }
+            storeForRespawn(npc);
             Messaging.debug("Despawned", npc.getId() + "due to world unload at", event.getWorld().getName());
         }
     }
