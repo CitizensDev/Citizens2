@@ -80,6 +80,11 @@ public class Messaging {
     }
 
     private static void sendMessageTo(CommandSender sender, String rawMessage) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            rawMessage = rawMessage.replace("<player>", player.getName());
+            rawMessage = rawMessage.replace("<world>", player.getWorld().getName());
+        }
         rawMessage = Colorizer.parseColors(rawMessage);
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
             sender.sendMessage(prettify(message));
@@ -92,16 +97,9 @@ public class Messaging {
 
     public static void sendWithNPC(CommandSender sender, Object msg, NPC npc) {
         String send = msg.toString();
-
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            send = send.replace("<player>", player.getName());
-            send = send.replace("<world>", player.getWorld().getName());
-        }
         send = send.replace("<owner>", npc.getTrait(Owner.class).getOwner());
         send = send.replace("<npc>", npc.getName());
         send = send.replace("<id>", Integer.toString(npc.getId()));
-
         send(sender, send);
     }
 

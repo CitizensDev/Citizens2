@@ -33,7 +33,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 
-public class NBTStorage implements Storage {
+public class NBTStorage implements FileStorage {
     private final File file;
     private final String name;
     private final Map<String, Tag> root = Maps.newHashMap();
@@ -57,6 +57,11 @@ public class NBTStorage implements Storage {
         } catch (IOException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Could not create file: " + file.getName());
         }
+    }
+
+    @Override
+    public File getFile() {
+        return file;
     }
 
     @Override

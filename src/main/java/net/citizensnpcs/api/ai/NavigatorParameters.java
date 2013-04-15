@@ -32,6 +32,9 @@ public class NavigatorParameters implements Cloneable {
         return this;
     }
 
+    public void addSingleUseCallback(Object callback) {
+    }
+
     /**
      * @return The {@link AttackStrategy} currently in use (may be null)
      */

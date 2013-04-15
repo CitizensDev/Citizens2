@@ -63,7 +63,8 @@ public interface NPC extends Agent {
     public void destroy();
 
     /**
-     * Gets the Bukkit entity associated with this NPC.
+     * Gets the Bukkit entity associated with this NPC. This may be
+     * <code>null</code> if {@link #isSpawned()} is false.
      * 
      * @return Entity associated with this NPC
      */

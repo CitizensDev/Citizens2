@@ -4,17 +4,11 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
 public class MinecraftBlockExaminer implements BlockExaminer {
-    private boolean canStandIn(Material mat) {
-        return PASSABLE.contains(mat);
-    }
-
-    private boolean canStandOn(Material mat) {
-        return !UNWALKABLE.contains(mat) && !PASSABLE.contains(mat);
-    }
-
     private boolean contains(Material[] search, Material... find) {
         for (Material haystack : search) {
             for (Material needle : find)
@@ -59,6 +53,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     private static final Vector DOWN = new Vector(0, -1, 0);
+
     private static final Set<Material> PASSABLE = EnumSet.of(Material.AIR, Material.DEAD_BUSH, Material.DETECTOR_RAIL,
             Material.DIODE, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.FENCE_GATE,
             Material.ITEM_FRAME, Material.LADDER, Material.LEVER, Material.LONG_GRASS, Material.MELON_STEM,
@@ -68,7 +63,22 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             Material.STONE_BUTTON, Material.SUGAR_CANE_BLOCK, Material.TRIPWIRE, Material.VINE, Material.WALL_SIGN,
             Material.WHEAT, Material.WATER, Material.WEB, Material.WOOD_BUTTON, Material.WOODEN_DOOR,
             Material.STATIONARY_WATER);
+
     private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.STATIONARY_LAVA,
             Material.CACTUS);
     private static final Vector UP = new Vector(0, 1, 0);
+
+    public static boolean canStandIn(Material mat) {
+        return PASSABLE.contains(mat);
+    }
+
+    public static boolean canStandOn(Block block) {
+        Block up = block.getRelative(BlockFace.UP);
+        return canStandOn(block.getType()) && canStandIn(up.getType())
+                && canStandIn(up.getRelative(BlockFace.UP).getType());
+    }
+
+    public static boolean canStandOn(Material mat) {
+        return !UNWALKABLE.contains(mat) && !PASSABLE.contains(mat);
+    }
 }
