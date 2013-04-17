@@ -293,7 +293,7 @@ public class NPCCommands {
                 type = EntityType.PLAYER;
             }
         }
-        if (!sender.hasPermission("citizens.npc.create.*")
+        if (!sender.hasPermission("citizens.npc.create.*") && !sender.hasPermission("citizens.npc.createall")
                 && !sender.hasPermission("citizens.npc.create." + type.name().toLowerCase().replace("_", "")))
             throw new NoPermissionsException();
 
