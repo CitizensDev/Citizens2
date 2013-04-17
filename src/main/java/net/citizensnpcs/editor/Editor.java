@@ -16,17 +16,17 @@ public abstract class Editor implements Listener {
 
     public abstract void end();
 
-    private static final Map<String, Editor> editing = new HashMap<String, Editor>();
+    private static final Map<String, Editor> EDITING = new HashMap<String, Editor>();
 
     private static void enter(Player player, Editor editor) {
         editor.begin();
         player.getServer().getPluginManager()
                 .registerEvents(editor, player.getServer().getPluginManager().getPlugin("Citizens"));
-        editing.put(player.getName(), editor);
+        EDITING.put(player.getName(), editor);
     }
 
     public static void enterOrLeave(Player player, Editor editor) {
-        Editor edit = editing.get(player.getName());
+        Editor edit = EDITING.get(player.getName());
         if (edit == null)
             enter(player, editor);
         else if (edit.getClass() == editor.getClass())
@@ -36,22 +36,22 @@ public abstract class Editor implements Listener {
     }
 
     public static boolean hasEditor(Player player) {
-        return editing.containsKey(player.getName());
+        return EDITING.containsKey(player.getName());
     }
 
     public static void leave(Player player) {
         if (!hasEditor(player))
             return;
-        Editor editor = editing.remove(player.getName());
+        Editor editor = EDITING.remove(player.getName());
         HandlerList.unregisterAll(editor);
         editor.end();
     }
 
     public static void leaveAll() {
-        for (Entry<String, Editor> entry : editing.entrySet()) {
+        for (Entry<String, Editor> entry : EDITING.entrySet()) {
             entry.getValue().end();
             HandlerList.unregisterAll(entry.getValue());
         }
-        editing.clear();
+        EDITING.clear();
     }
 }
