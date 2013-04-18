@@ -18,6 +18,7 @@ import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
@@ -67,6 +68,32 @@ public class EventListen implements Listener {
         this.registries = registries;
     }
 
+    private void checkCreationEvent(CommandSenderCreateNPCEvent event) {
+        if (event.getCreator().hasPermission("citizens.admin.avoid-limits"))
+            return;
+        int limit = Setting.DEFAULT_NPC_LIMIT.asInt();
+        int maxChecks = Setting.MAX_NPC_LIMIT_CHECKS.asInt();
+        for (int i = maxChecks; i >= 0; i--) {
+            if (!event.getCreator().hasPermission("citizens.npc.limit." + i))
+                continue;
+            limit = i;
+            break;
+        }
+        if (limit < 0)
+            return;
+        int owned = 0;
+        for (NPC npc : npcRegistry) {
+            if (!event.getNPC().equals(npc) && npc.hasTrait(Owner.class)
+                    && npc.getTrait(Owner.class).isOwnedBy(event.getCreator()))
+                owned++;
+        }
+        int wouldOwn = owned + 1;
+        if (wouldOwn >= limit) {
+            event.setCancelled(true);
+            event.setCancelReason(Messaging.tr(Messages.OVER_NPC_LIMIT, limit));
+        }
+    }
+
     private Iterable<NPC> getAllNPCs() {
         return Iterables.<NPC> concat(npcRegistry, Iterables.concat(registries.values()));
     }
@@ -100,28 +127,7 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onCommandSenderCreateNPC(CommandSenderCreateNPCEvent event) {
-        if (event.getCreator().hasPermission("citizens.admin.avoid-limits"))
-            return;
-        int limit = Setting.DEFAULT_NPC_LIMIT.asInt();
-        int maxChecks = Setting.MAX_NPC_LIMIT_CHECKS.asInt();
-        for (int i = maxChecks; i >= 0; i--) {
-            if (!event.getCreator().hasPermission("citizens.npc.limit." + i))
-                continue;
-            limit = i;
-            break;
-        }
-        if (limit < 0)
-            return;
-        int owned = 0;
-        for (NPC npc : npcRegistry) {
-            if (!event.getNPC().equals(npc) && npc.getTrait(Owner.class).isOwnedBy(event.getCreator()))
-                owned++;
-        }
-        int wouldOwn = owned + 1;
-        if (wouldOwn >= limit) {
-            event.setCancelled(true);
-            event.setCancelReason(Messaging.tr(Messages.OVER_NPC_LIMIT, limit));
-        }
+        checkCreationEvent(event);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -218,6 +224,11 @@ public class EventListen implements Listener {
         NMS.removeFromServerPlayerList(event.getPlayer());
         // on teleport, player NPCs are added to the server player list. this is
         // undesirable as player NPCs are not real players and confuse plugins.
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
+        checkCreationEvent(event);
     }
 
     @EventHandler
