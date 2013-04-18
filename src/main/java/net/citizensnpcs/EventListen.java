@@ -88,7 +88,7 @@ public class EventListen implements Listener {
                 owned++;
         }
         int wouldOwn = owned + 1;
-        if (wouldOwn >= limit) {
+        if (wouldOwn > limit) {
             event.setCancelled(true);
             event.setCancelReason(Messaging.tr(Messages.OVER_NPC_LIMIT, limit));
         }
