@@ -77,9 +77,8 @@ public class ItemStorage {
         }
         if (root.keyExists("book")) {
             BookMeta meta = ensureMeta(res);
-            int i = 0;
             for (DataKey sub : root.getRelative("book.pages").getIntegerSubKeys()) {
-                meta.setPage(i, sub.getString(""));
+                meta.addPage(sub.getString(""));
             }
             meta.setTitle(root.getString("book.title"));
             meta.setAuthor(root.getString("book.author"));
@@ -209,7 +208,7 @@ public class ItemStorage {
         if (meta instanceof BookMeta) {
             BookMeta book = (BookMeta) meta;
             DataKey pages = key.getRelative("book.pages");
-            for (int i = 0; i < book.getPageCount(); i++) {
+            for (int i = 1; i <= book.getPageCount(); i++) {
                 pages.setString(Integer.toString(i), book.getPage(i));
             }
             key.setString("book.title", book.getTitle());
