@@ -439,7 +439,7 @@ public class NPCCommands {
             aliases = { "npc" },
             usage = "gamemode [gamemode]",
             desc = "Changes the gamemode",
-            modifiers = { "gravity" },
+            modifiers = { "gamemode" },
             min = 1,
             max = 2,
             permission = "citizens.npc.gravity")
