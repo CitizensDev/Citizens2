@@ -902,9 +902,9 @@ public class NPCCommands {
                     if (test.getName().equalsIgnoreCase(name))
                         possible.add(test);
                 }
-                if (possible.size() == 1)
+                if (possible.size() == 1) {
                     toSelect = possible.get(0);
-                else if (possible.size() > 1) {
+                } else if (possible.size() > 1) {
                     SelectionPrompt.start(selector, (Player) sender, possible);
                     return;
                 }

@@ -6,12 +6,12 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_5_R2.PlayerInteractManager;
-import net.minecraft.server.v1_5_R2.World;
+import net.minecraft.server.v1_5_R3.PlayerInteractManager;
+import net.minecraft.server.v1_5_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
