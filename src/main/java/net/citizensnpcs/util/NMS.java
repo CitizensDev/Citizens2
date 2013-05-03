@@ -363,7 +363,7 @@ public class NMS {
     }
 
     public static void updateSenses(EntityLiving entity) {
-        entity.aD().a();
+        entity.getEntitySenses().a();
     }
 
     static {
