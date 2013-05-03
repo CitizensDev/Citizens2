@@ -5,10 +5,10 @@ import java.net.Socket;
 import java.security.PrivateKey;
 
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_5_R2.Connection;
-import net.minecraft.server.v1_5_R2.IConsoleLogManager;
-import net.minecraft.server.v1_5_R2.NetworkManager;
-import net.minecraft.server.v1_5_R2.Packet;
+import net.minecraft.server.v1_5_R3.Connection;
+import net.minecraft.server.v1_5_R3.IConsoleLogManager;
+import net.minecraft.server.v1_5_R3.NetworkManager;
+import net.minecraft.server.v1_5_R3.Packet;
 
 public class EmptyNetworkManager extends NetworkManager {
     public EmptyNetworkManager(IConsoleLogManager logManager, Socket socket, String string, Connection conn,

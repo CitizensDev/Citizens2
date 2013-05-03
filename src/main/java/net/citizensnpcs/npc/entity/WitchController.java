@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_5_R2.EntityWitch;
-import net.minecraft.server.v1_5_R2.World;
+import net.minecraft.server.v1_5_R3.EntityWitch;
+import net.minecraft.server.v1_5_R3.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftWitch;
+import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftWitch;
 import org.bukkit.entity.Witch;
 import org.bukkit.util.Vector;
 
@@ -55,7 +55,7 @@ public class WitchController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_5_R2.Entity entity) {
+        public void collide(net.minecraft.server.v1_5_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);

@@ -10,7 +10,7 @@ import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_5_R2.EntityLiving;
+import net.minecraft.server.v1_5_R3.EntityLiving;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
