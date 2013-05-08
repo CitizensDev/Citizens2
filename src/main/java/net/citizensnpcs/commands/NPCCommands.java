@@ -1151,7 +1151,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "wolf (-s(itting) a(ngry) t(amed)) --collar [rgb color]",
+            usage = "wolf (-s(itting) a(ngry) t(amed)) --collar [hex rgb color|name]",
             desc = "Sets wolf modifiers",
             modifiers = { "wolf" },
             min = 1,
@@ -1168,9 +1168,9 @@ public class NPCCommands {
             String unparsed = args.getFlag("collar");
             DyeColor color = null;
             try {
-                DyeColor.valueOf(unparsed.toUpperCase().replace(' ', '_'));
+                color = DyeColor.valueOf(unparsed.toUpperCase().replace(' ', '_'));
             } catch (IllegalArgumentException e) {
-                int rgb = Integer.parseInt(unparsed.replace("#", ""));
+                int rgb = Integer.parseInt(unparsed.replace("#", ""), 16);
                 color = DyeColor.getByColor(org.bukkit.Color.fromRGB(rgb));
             }
             if (color == null)
