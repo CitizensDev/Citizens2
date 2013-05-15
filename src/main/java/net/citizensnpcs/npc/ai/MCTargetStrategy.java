@@ -95,6 +95,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     @Override
+    public String toString() {
+        return "MCTargetStrategy [target=" + target + "]";
+    }
+
+    @Override
     public boolean update() {
         if (target == null || !target.getBukkitEntity().isValid()) {
             cancelReason = CancelReason.TARGET_DIED;
@@ -155,6 +160,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private static final double ATTACK_DISTANCE = 1.75 * 1.75;
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
     private static Field NAV_E, NAV_J, NAV_M;
+
     private static final Location TARGET_LOCATION = new Location(null, 0, 0, 0);
 
     static {

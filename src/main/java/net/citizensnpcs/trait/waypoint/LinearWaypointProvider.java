@@ -419,9 +419,13 @@ public class LinearWaypointProvider implements WaypointProvider {
             getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(@Nullable CancelReason cancelReason) {
-                    selector.finish();
-                    if (currentDestination != null)
+                    if (npc.isSpawned()
+                            && currentDestination != null
+                            && Util.locationWithinRange(npc.getBukkitEntity().getLocation(),
+                                    currentDestination.getLocation(), 4)) {
                         currentDestination.onReach(npc);
+                    }
+                    selector.finish();
                 }
             });
             return true;

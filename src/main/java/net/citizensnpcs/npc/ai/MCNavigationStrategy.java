@@ -47,6 +47,11 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
     }
 
     @Override
+    public String toString() {
+        return "MCNavigationStrategy [target=" + target + "]";
+    }
+
+    @Override
     public boolean update() {
         if (getCancelReason() != null)
             return true;

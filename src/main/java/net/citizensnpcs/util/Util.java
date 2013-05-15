@@ -87,6 +87,14 @@ public class Util {
         return location.getWorld().isChunkLoaded(chunkX, chunkZ);
     }
 
+    public static boolean locationWithinRange(Location current, Location target, double range) {
+        if (current == null || target == null)
+            return false;
+        if (current.getWorld() != target.getWorld())
+            return false;
+        return current.distanceSquared(target) < Math.pow(range, 2);
+    }
+
     public static EntityType matchEntityType(String toMatch) {
         EntityType type = EntityType.fromName(toMatch);
         if (type != null)
