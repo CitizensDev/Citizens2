@@ -37,6 +37,10 @@ public class Messaging {
             log(msg);
     }
 
+    public static boolean isDebugging() {
+        return DEBUG;
+    }
+
     private static void log(Level level, Object... msg) {
         LOGGER.log(level, "[Citizens] " + SPACE.join(msg));
     }
