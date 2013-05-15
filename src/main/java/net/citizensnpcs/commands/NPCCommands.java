@@ -334,37 +334,7 @@ public class NPCCommands {
         }
 
         if (args.hasValueFlag("at")) {
-            String[] parts = Iterables.toArray(Splitter.on(':').split(args.getFlag("at")), String.class);
-            if (parts.length > 0) {
-                String worldName = args.getSenderLocation() != null ? args.getSenderLocation().getWorld().getName()
-                        : "";
-                int x = 0, y = 0, z = 0;
-                float yaw = 0F, pitch = 0F;
-                switch (parts.length) {
-                    case 6:
-                        pitch = Float.parseFloat(parts[5]);
-                    case 5:
-                        yaw = Float.parseFloat(parts[4]);
-                    case 4:
-                        worldName = parts[3];
-                    case 3:
-                        x = Integer.parseInt(parts[0]);
-                        y = Integer.parseInt(parts[1]);
-                        z = Integer.parseInt(parts[2]);
-                        break;
-                    default:
-                        throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-                }
-                World world = Bukkit.getWorld(worldName);
-                if (world == null)
-                    throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-                spawnLoc = new Location(world, x, y, z, yaw, pitch);
-            } else {
-                Player search = Bukkit.getPlayerExact(args.getFlag("at"));
-                if (search == null)
-                    throw new CommandException(Messages.PLAYER_NOT_FOUND_FOR_SPAWN);
-                spawnLoc = search.getLocation();
-            }
+            spawnLoc = Util.parseLocation(args.getSenderLocation(), args.getFlag("at"));
         }
         if (spawnLoc == null) {
             npc.destroy();

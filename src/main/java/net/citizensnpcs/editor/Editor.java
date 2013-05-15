@@ -26,6 +26,8 @@ public abstract class Editor implements Listener {
     }
 
     public static void enterOrLeave(Player player, Editor editor) {
+        if (editor == null)
+            return;
         Editor edit = EDITING.get(player.getName());
         if (edit == null)
             enter(player, editor);
