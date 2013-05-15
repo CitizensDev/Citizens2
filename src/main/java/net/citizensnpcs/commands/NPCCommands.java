@@ -868,9 +868,18 @@ public class NPCCommands {
             } catch (NumberFormatException ex) {
                 String name = args.getString(1);
                 List<NPC> possible = Lists.newArrayList();
+                double range = -1;
+                if (args.hasValueFlag("r"))
+                    range = Math.abs(args.getFlagDouble("r"));
                 for (NPC test : npcRegistry) {
-                    if (test.getName().equalsIgnoreCase(name))
+                    if (test.getName().equalsIgnoreCase(name)) {
+                        if (range > 0
+                                && test.isSpawned()
+                                && !Util.locationWithinRange(args.getSenderLocation(), test.getBukkitEntity()
+                                        .getLocation(), range))
+                            continue;
                         possible.add(test);
+                    }
                 }
                 if (possible.size() == 1) {
                     toSelect = possible.get(0);
@@ -922,15 +931,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "spawn [id]",
+            usage = "spawn (id)",
             desc = "Spawn an existing NPC",
             modifiers = { "spawn" },
-            min = 2,
+            min = 1,
             max = 2,
             permission = "citizens.npc.spawn")
     @Requirements(ownership = true)
     public void spawn(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        NPC respawn = npcRegistry.getById(args.getInteger(1));
+        NPC respawn = args.argsLength() > 1 ? npcRegistry.getById(args.getInteger(1)) : npc;
         if (respawn == null)
             throw new CommandException(Messages.NO_NPC_WITH_ID_FOUND, args.getInteger(1));
         if (respawn.isSpawned())
