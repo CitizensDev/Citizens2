@@ -18,6 +18,7 @@ import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.NMS;
 
 import org.bukkit.Bukkit;
@@ -190,6 +191,8 @@ public class CitizensNavigator implements Navigator, Runnable {
             itr.next().onCompletion(reason);
             itr.remove();
         }
+        if (Messaging.isDebugging())
+            Messaging.debug(npc.getId(), "cancelling with reason", reason);
         if (reason == null) {
             stopNavigating();
             return;
@@ -211,6 +214,8 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private void switchStrategyTo(PathStrategy newStrategy) {
+        if (Messaging.isDebugging())
+            Messaging.debug(npc.getId(), "changing to new PathStrategy", newStrategy);
         if (executing != null)
             Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
         executing = newStrategy;
