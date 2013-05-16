@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.command.CommandConfigurable;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -170,7 +171,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     private void setMountedYaw(EntityLiving handle) {
-        if (handle instanceof EntityEnderDragon)
+        if (handle instanceof EntityEnderDragon || !Setting.USE_BOAT_CONTROLS.asBoolean())
             return; // EnderDragon handles this separately
         double tX = handle.locX + handle.motX;
         double tZ = handle.locZ + handle.motZ;
