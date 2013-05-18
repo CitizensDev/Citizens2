@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.ai;
 
 import java.lang.reflect.Field;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.AttackStrategy;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -43,7 +44,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private boolean canAttack() {
         return attackTicks == 0
                 && (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
-                && distanceSquared() <= ATTACK_DISTANCE && hasLineOfSight();
+                && distanceSquared() <= Setting.NPC_ATTACK_DISTANCE.asDouble() && hasLineOfSight();
     }
 
     @Override
@@ -157,7 +158,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     private static final int ATTACK_DELAY_TICKS = 20;
-    private static final double ATTACK_DISTANCE = 1.75 * 1.75;
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
     private static Field NAV_E, NAV_J, NAV_M;
 
