@@ -27,7 +27,7 @@ import com.google.common.collect.Maps;
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
     private final int id;
-    protected final MetadataStore metadata = new SimpleMetadataStore();
+    protected final MetadataStore metadata = new SimpleMetadataStore(this);
     private String name;
     private final List<String> removedTraits = Lists.newArrayList();
     protected final List<Runnable> runnables = Lists.newArrayList();
@@ -172,6 +172,7 @@ public abstract class AbstractNPC implements NPC {
         removedTraits.clear();
     }
 
+    @Override
     public void save(DataKey root) {
         root.setString("name", getFullName());
         metadata.saveTo(root.getRelative("metadata"));
