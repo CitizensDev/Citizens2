@@ -85,6 +85,11 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public Location getStoredLocation() {
+        return isSpawned() ? getBukkitEntity().getLocation() : getTrait(CurrentLocation.class).getLocation();
+    }
+
+    @Override
     public boolean isSpawned() {
         return getBukkitEntity() != null;
     }
