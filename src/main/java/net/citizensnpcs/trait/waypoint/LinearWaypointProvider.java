@@ -55,8 +55,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         if (args.hasFlag('h')) {
             waypoints.add(new Waypoint(player.getLocation()));
             return null;
-        }
-        if (args.hasValueFlag("at")) {
+        } else if (args.hasValueFlag("at")) {
             try {
                 Location location = Util.parseLocation(player.getLocation(), args.getFlag("at"));
                 waypoints.add(new Waypoint(location));
@@ -64,8 +63,15 @@ public class LinearWaypointProvider implements WaypointProvider {
                 Messaging.sendError(player, e.getMessage());
             }
             return null;
-        }
-        if (args.hasFlag('p')) {
+        } else if (args.hasFlag('c')) {
+            waypoints.clear();
+            return null;
+        } else if (args.hasFlag('l')) {
+            if (waypoints.size() > 0) {
+                waypoints.remove(waypoints.size() - 1);
+            }
+            return null;
+        } else if (args.hasFlag('p')) {
             setPaused(!isPaused());
             return null;
         }
