@@ -7,6 +7,7 @@ import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Location;
@@ -19,7 +20,9 @@ import org.bukkit.entity.LivingEntity;
 public interface NPC extends Agent {
 
     /**
-     * Adds a trait to this NPC.
+     * Adds a trait to this NPC. This will use the {@link TraitFactory} defined
+     * for this NPC to construct and attach a trait using
+     * {@link #addTrait(Trait)}.
      * 
      * @param trait
      *            The class of the trait to add
@@ -92,7 +95,8 @@ public interface NPC extends Agent {
     public String getFullName();
 
     /**
-     * Gets the unique ID of this NPC.
+     * Gets the unique ID of this NPC. This is not guaranteed to be globally
+     * unique across server sessions.
      * 
      * @return ID of this NPC
      */
@@ -111,7 +115,18 @@ public interface NPC extends Agent {
     public Navigator getNavigator();
 
     /**
-     * Gets a trait from the given class.
+     * If the NPC is not spawned, then this method will return the last known
+     * location, or null if it has never been spawned. Otherwise, it is
+     * equivalent to calling <code>npc.getBukkitEntity().getLocation()</code>.
+     * 
+     * @return The stored location, or <code>null</code> if none was found.
+     */
+    public Location getStoredLocation();
+
+    /**
+     * Gets a trait from the given class. If the NPC does not currently have the
+     * trait then it will be created and attached using {@link #addTrait(Class)}
+     * .
      * 
      * @param trait
      *            Trait to get
