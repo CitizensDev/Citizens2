@@ -29,6 +29,7 @@ public class VillagerController extends MobEntityController {
     }
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
+        private boolean blockTrades = true;
         private final CitizensNPC npc;
 
         public EntityVillagerNPC(World world) {
@@ -45,7 +46,8 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public boolean a_(EntityHuman entityhuman) {
-            return npc == null ? super.a_(entityhuman) : false; // block trades
+            return npc == null || !blockTrades ? super.a_(entityhuman) : false; // block
+                                                                                // trades
         }
 
         @Override
@@ -101,6 +103,14 @@ public class VillagerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        public boolean isBlockingTrades() {
+            return blockTrades;
+        }
+
+        public void setBlockTrades(boolean blocked) {
+            this.blockTrades = blocked;
         }
     }
 

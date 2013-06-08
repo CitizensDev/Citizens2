@@ -53,7 +53,7 @@ public class BatController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-                a(false);
+                setFlying(false);
             }
         }
 
@@ -120,6 +120,10 @@ public class BatController extends MobEntityController {
             super.l_();
             if (npc != null)
                 npc.update();
+        }
+
+        public void setFlying(boolean flying) {
+            a(flying);
         }
     }
 }

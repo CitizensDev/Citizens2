@@ -43,6 +43,7 @@ public class CreeperController extends MobEntityController {
     }
 
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHolder {
+        private boolean allowPowered;
         private final CitizensNPC npc;
 
         public EntityCreeperNPC(World world) {
@@ -59,7 +60,7 @@ public class CreeperController extends MobEntityController {
 
         @Override
         public void a(EntityLightning entitylightning) {
-            if (npc == null)
+            if (npc == null || allowPowered)
                 super.a(entitylightning);
         }
 
@@ -116,6 +117,10 @@ public class CreeperController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        public void setAllowPowered(boolean allowPowered) {
+            this.allowPowered = allowPowered;
         }
     }
 }
