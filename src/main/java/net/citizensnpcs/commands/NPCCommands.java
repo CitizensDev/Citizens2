@@ -675,7 +675,7 @@ public class NPCCommands {
             max = 1,
             flags = "ar",
             permission = "citizens.npc.playerlist")
-    @Requirements(types = EntityType.PLAYER)
+    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
     public void playerlist(CommandContext args, CommandSender sender, NPC npc) {
         boolean remove = !npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
         if (args.hasFlag('a'))
@@ -698,7 +698,6 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "citizens.npc.pose")
-    @Requirements(selected = true, ownership = true)
     public void pose(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Poses trait = npc.getTrait(Poses.class);
         if (args.hasValueFlag("save")) {
