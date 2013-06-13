@@ -2,22 +2,17 @@ package net.citizensnpcs.api.util;
 
 import java.util.Map;
 
-import net.citizensnpcs.api.util.DatabaseStorage.DatabaseKey;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public abstract class DataKey {
-    private final boolean database = this instanceof DatabaseKey;
     protected final String path;
-    private boolean transferring = false;
 
     protected DataKey(String path) {
         this.path = path;
     }
 
     protected String createRelativeKey(String from) {
-        transferOld(from);
         if (from.isEmpty())
             return path;
         if (from.charAt(0) == '.')
@@ -134,21 +129,6 @@ public abstract class DataKey {
     public abstract void setRaw(String key, Object value);
 
     public abstract void setString(String key, String value);
-
-    protected void transferOld(String key) {
-        if (database || transferring)
-            return;
-        transferring = true;
-        String repl = key.replace("-", "");
-        if (repl.isEmpty() || createRelativeKey(repl).isEmpty() || !keyExists(repl)) {
-            transferring = false;
-            return;
-        }
-        Object value = getRaw(repl);
-        removeKey(repl);
-        setRaw(key, value);
-        transferring = false;
-    }
 
     private static final Predicate<DataKey> SIMPLE_INTEGER_FILTER = new Predicate<DataKey>() {
         @Override
