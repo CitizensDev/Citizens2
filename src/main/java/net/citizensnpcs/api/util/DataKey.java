@@ -140,7 +140,7 @@ public abstract class DataKey {
             return;
         transferring = true;
         String repl = key.replace("-", "");
-        if (!keyExists(repl)) {
+        if (repl.isEmpty() || !keyExists(repl)) {
             transferring = false;
             return;
         }
