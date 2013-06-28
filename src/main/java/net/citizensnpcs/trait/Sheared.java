@@ -24,7 +24,8 @@ public class Sheared extends Trait implements Toggleable {
 
     @Override
     public void onSpawn() {
-        ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
+        if (npc.getBukkitEntity() instanceof Sheep)
+            ((Sheep) npc.getBukkitEntity()).setSheared(sheared);
     }
 
     @Override
