@@ -6,7 +6,7 @@ main: net.citizensnpcs.Citizens
 website: http://www.citizensnpcs.com
 commands:
   traitc:
-    aliases: [trc, tc]
+    aliases: [trc]
     description: Configures traits
   trait:
     aliases: [tr]
