@@ -11,6 +11,13 @@ public interface NPCDataStore {
     void clearData(NPC npc);
 
     /**
+     * @param registry
+     *            The registry for the unique ID.
+     * @return An ID for a new NPC to identify them uniquely
+     */
+    int createUniqueNPCId(NPCRegistry registry);
+
+    /**
      * Loads NPCs from disk into the given {@link NPCRegistry}. The registry
      * should be cleared before this is called.
      * 

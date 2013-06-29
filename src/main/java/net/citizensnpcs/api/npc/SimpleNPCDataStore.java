@@ -19,6 +19,22 @@ public class SimpleNPCDataStore implements NPCDataStore {
     }
 
     @Override
+    public int createUniqueNPCId(NPCRegistry registry) {
+        DataKey key = root.getKey("");
+        int newId;
+        if (!key.keyExists("last-created-npc-id")) {
+            newId = 0;
+            while (registry.getById(newId++) != null)
+                ;
+            newId -= 1;
+        } else {
+            newId = key.getInt("last-created-npc-id") + 1;
+        }
+        key.setInt("last-created-npc-id", newId);
+        return newId;
+    }
+
+    @Override
     public void loadInto(NPCRegistry registry) {
         for (DataKey key : root.getKey("npc").getIntegerSubKeys()) {
             int id = Integer.parseInt(key.name());
@@ -63,10 +79,6 @@ public class SimpleNPCDataStore implements NPCDataStore {
             store(npc);
     }
 
-    private static final String LOAD_NAME_NOT_FOUND = "citizens.notifications.npc-name-not-found";
-
-    private static final String LOAD_UNKNOWN_NPC_TYPE = "citizens.notifications.unknown-npc-type";
-
     public static NPCDataStore create(Storage storage) {
         return new SimpleNPCDataStore(storage);
     }
@@ -92,4 +104,7 @@ public class SimpleNPCDataStore implements NPCDataStore {
         }
         return type;
     }
+
+    private static final String LOAD_NAME_NOT_FOUND = "citizens.notifications.npc-name-not-found";
+    private static final String LOAD_UNKNOWN_NPC_TYPE = "citizens.notifications.unknown-npc-type";
 }
