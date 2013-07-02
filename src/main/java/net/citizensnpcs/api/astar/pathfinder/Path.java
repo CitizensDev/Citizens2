@@ -8,7 +8,6 @@ import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
 
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
@@ -26,18 +25,10 @@ public class Path implements Plan {
     private PathEntry[] cull(Iterable<VectorNode> unfiltered) {
         // possibly expose cullability in an API
         List<PathEntry> path = Lists.newArrayList();
-        Vector last = null;
         for (VectorNode node : unfiltered) {
             if (node.callbacks != null)
                 continue;
             Vector vector = node.location;
-            if (last != null && vector.getBlockY() == last.getBlockY()) {
-                if (node.blockSource.getMaterialAt(vector) == Material.AIR
-                        && node.blockSource.getMaterialAt(last) == Material.AIR) {
-                    continue;
-                }
-            }
-            last = vector;
             path.add(new PathEntry(vector, node.callbacks));
         }
         return path.toArray(new PathEntry[path.size()]);

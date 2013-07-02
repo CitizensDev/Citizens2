@@ -177,8 +177,8 @@ public class SimpleGoalController implements GoalController {
             }
             for (int j = i - 1; j >= 0; --j) {
                 GoalEntry next = possibleGoals.get(j);
-                boolean unequalPriorities = next.getPriority() != entry.getPriority();
-                if (unequalPriorities || j == 0) {
+                boolean unequalPriorities = next.getPriority() != entry.getPriority() || j == 0;
+                if (unequalPriorities) {
                     if (unequalPriorities)
                         j++; // we want the previous entry where entry.priority
                              // == next.priority
