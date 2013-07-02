@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_5_R3.EntityBlaze;
-import net.minecraft.server.v1_5_R3.World;
+import net.minecraft.server.v1_6_R1.EntityBlaze;
+import net.minecraft.server.v1_6_R1.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftBlaze;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftBlaze;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
 import org.bukkit.entity.Blaze;
 import org.bukkit.util.Vector;
 
@@ -56,23 +56,23 @@ public class BlazeController extends MobEntityController {
             }
         }
 
-        @Override
-        public float bE() {
-            return NMS.modifiedSpeed(super.bE(), npc);
-        }
+        /* @Override
+         public float bE() {
+             return NMS.modifiedSpeed(super.bE(), npc);
+         }*/
 
         @Override
-        public void bq() {
+        public void bh() {
             if (npc != null) {
                 NMS.updateAI(this);
                 npc.update();
             } else {
-                super.bq();
+                super.bh();
             }
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_5_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_6_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);

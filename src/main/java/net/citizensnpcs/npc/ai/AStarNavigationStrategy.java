@@ -10,12 +10,9 @@ import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_5_R3.EntityLiving;
+import net.minecraft.server.v1_6_R1.EntityLiving;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 public class AStarNavigationStrategy extends AbstractPathStrategy {
@@ -62,8 +59,6 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                 return true;
             }
             vector = plan.getCurrentVector();
-            World world = npc.getBukkitEntity().getWorld();
-            world.playEffect(vector.toLocation(world), Effect.STEP_SOUND, Material.STONE.getId());
         }
         EntityLiving handle = NMS.getHandle(npc.getBukkitEntity());
         double dX = vector.getBlockX() - handle.locX;

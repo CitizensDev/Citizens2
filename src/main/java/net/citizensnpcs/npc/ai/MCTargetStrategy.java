@@ -11,15 +11,16 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityLiving;
-import net.minecraft.server.v1_5_R3.EntityPlayer;
-import net.minecraft.server.v1_5_R3.Navigation;
-import net.minecraft.server.v1_5_R3.PathEntity;
+import net.minecraft.server.v1_6_R1.Entity;
+import net.minecraft.server.v1_6_R1.EntityInsentient;
+import net.minecraft.server.v1_6_R1.EntityLiving;
+import net.minecraft.server.v1_6_R1.EntityPlayer;
+import net.minecraft.server.v1_6_R1.Navigation;
+import net.minecraft.server.v1_6_R1.PathEntity;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
@@ -27,18 +28,19 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private int attackTicks;
     private CancelReason cancelReason;
     private final EntityLiving handle;
-    private final Navigation navigation;
+    private final NPC npc;
     private final NavigatorParameters parameters;
+    private final TargetNavigator targetNavigator;
     private final Entity target;
-    private final NavigationFieldWrapper wrapper;
 
-    public MCTargetStrategy(NPC handle, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
-        this.handle = ((CraftLivingEntity) handle.getBukkitEntity()).getHandle();
+    public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
+        this.npc = npc;
+        this.handle = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
         this.target = ((CraftEntity) target).getHandle();
-        this.navigation = this.handle.getNavigation();
+        this.targetNavigator = this.handle instanceof EntityInsentient ? new NavigationFieldWrapper(
+                ((EntityInsentient) this.handle).getNavigation()) : new AStarTargeter();
         this.aggro = aggro;
         this.parameters = params;
-        this.wrapper = new NavigationFieldWrapper(this.navigation);
     }
 
     private boolean canAttack() {
@@ -87,12 +89,12 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     private void setPath() {
-        navigation.a(wrapper.findPath(handle, target), parameters.speed());
+        targetNavigator.setPath();
     }
 
     @Override
     public void stop() {
-        navigation.g();
+        targetNavigator.stop();
     }
 
     @Override
@@ -112,7 +114,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
         if (cancelReason != null)
             return true;
-        navigation.a(parameters.avoidWater());
         setPath();
         NMS.look(handle, target);
         if (aggro && canAttack()) {
@@ -133,11 +134,31 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         return false;
     }
 
-    private class NavigationFieldWrapper {
+    private class AStarTargeter implements TargetNavigator {
+        private AStarNavigationStrategy strategy = new AStarNavigationStrategy(npc, target.getBukkitEntity()
+                .getLocation(TARGET_LOCATION), parameters);
+
+        @Override
+        public void setPath() {
+            strategy = new AStarNavigationStrategy(npc, target.getBukkitEntity().getLocation(TARGET_LOCATION),
+                    parameters);
+            strategy.update();
+            cancelReason = strategy.getCancelReason();
+        }
+
+        @Override
+        public void stop() {
+            strategy.stop();
+        }
+    }
+
+    private class NavigationFieldWrapper implements TargetNavigator {
         float e;
         boolean j = true, k, l, m;
+        private final Navigation navigation;
 
         private NavigationFieldWrapper(Navigation navigation) {
+            this.navigation = navigation;
             this.k = navigation.c();
             this.l = navigation.a();
             try {
@@ -155,12 +176,28 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         public PathEntity findPath(Entity from, Entity to) {
             return handle.world.findPath(from, to, e, j, k, l, m);
         }
+
+        @Override
+        public void setPath() {
+            navigation.a(parameters.avoidWater());
+            navigation.a(findPath(handle, target), parameters.speed());
+        }
+
+        @Override
+        public void stop() {
+            navigation.g();
+        }
+    }
+
+    private static interface TargetNavigator {
+        void setPath();
+
+        void stop();
     }
 
     private static final int ATTACK_DELAY_TICKS = 20;
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
     private static Field NAV_E, NAV_J, NAV_M;
-
     private static final Location TARGET_LOCATION = new Location(null, 0, 0, 0);
 
     static {

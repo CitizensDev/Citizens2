@@ -14,12 +14,12 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_5_R3.EntityEnderDragon;
-import net.minecraft.server.v1_5_R3.EntityLiving;
-import net.minecraft.server.v1_5_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R1.EntityEnderDragon;
+import net.minecraft.server.v1_6_R1.EntityLiving;
+import net.minecraft.server.v1_6_R1.EntityPlayer;
 
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -226,6 +226,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     public class GroundController implements MovementController {
+        private double speed = 0.07D;
+
         private void jump() {
             boolean allowed = getHandle().onGround;
             if (!allowed)
@@ -253,9 +255,36 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             boolean onGround = handle.onGround;
             float speedMod = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
+
+            updateSpeed(handle, speedMod);
+            setMountedYaw(handle);
+        }
+
+        private void updateSpeed(EntityLiving handle, float speedMod) {
+            double oldSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
+            double horizontal = ((EntityLiving) handle.passenger).bf;
+            if (horizontal > 0.0D) {
+                double dXcos = -Math.sin(handle.passenger.yaw * Math.PI / 180.0F);
+                double dXsin = Math.cos(handle.passenger.yaw * Math.PI / 180.0F);
+                handle.motX += dXcos * this.speed * 0.05;
+                handle.motZ += dXsin * this.speed * 0.05;
+            }
             handle.motX += handle.passenger.motX * speedMod;
             handle.motZ += handle.passenger.motZ * speedMod;
-            setMountedYaw(handle);
+
+            double newSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
+            if (newSpeed > 0.35D) {
+                double movementFactor = 0.35D / newSpeed;
+                handle.motX *= movementFactor;
+                handle.motZ *= movementFactor;
+                newSpeed = 0.35D;
+            }
+
+            if (newSpeed > oldSpeed && this.speed < 0.35D) {
+                this.speed = Math.min(0.35D, (this.speed + ((0.35D - this.speed) / 35.0D)));
+            } else {
+                this.speed = Math.max(0.07D, (this.speed - ((this.speed - 0.07D) / 35.0D)));
+            }
         }
 
         private static final float AIR_SPEED = 1.5F;

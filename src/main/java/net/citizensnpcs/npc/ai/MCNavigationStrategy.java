@@ -4,11 +4,11 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.v1_5_R3.EntityLiving;
-import net.minecraft.server.v1_5_R3.Navigation;
+import net.minecraft.server.v1_6_R1.EntityInsentient;
+import net.minecraft.server.v1_6_R1.Navigation;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftLivingEntity;
 
 public class MCNavigationStrategy extends AbstractPathStrategy {
     private final Navigation navigation;
@@ -19,7 +19,7 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         super(TargetType.LOCATION);
         this.target = dest;
         this.parameters = params;
-        EntityLiving handle = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
+        EntityInsentient handle = (EntityInsentient) ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
         handle.onGround = true;
         // not sure of a better way around this - if onGround is false, then
         // navigation won't execute, and calling entity.move doesn't
@@ -27,7 +27,7 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         navigation = handle.getNavigation();
         navigation.a(parameters.avoidWater());
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), parameters.speed());
-        if (navigation.f())
+        if (navigation.g())
             setCancelReason(CancelReason.STUCK);
     }
 
@@ -57,6 +57,6 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
             return true;
         navigation.a(parameters.avoidWater());
         navigation.a(parameters.speed());
-        return navigation.f();
+        return navigation.g();
     }
 }

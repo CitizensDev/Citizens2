@@ -11,31 +11,33 @@ import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
-import net.minecraft.server.v1_5_R3.ControllerJump;
-import net.minecraft.server.v1_5_R3.DamageSource;
-import net.minecraft.server.v1_5_R3.EnchantmentManager;
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityHuman;
-import net.minecraft.server.v1_5_R3.EntityLiving;
-import net.minecraft.server.v1_5_R3.EntityMonster;
-import net.minecraft.server.v1_5_R3.EntityPlayer;
-import net.minecraft.server.v1_5_R3.EntityTypes;
-import net.minecraft.server.v1_5_R3.MathHelper;
-import net.minecraft.server.v1_5_R3.MobEffectList;
-import net.minecraft.server.v1_5_R3.Navigation;
-import net.minecraft.server.v1_5_R3.NetworkManager;
-import net.minecraft.server.v1_5_R3.Packet;
-import net.minecraft.server.v1_5_R3.PathfinderGoalSelector;
-import net.minecraft.server.v1_5_R3.World;
+import net.citizensnpcs.npc.entity.EntityHumanNPC;
+import net.minecraft.server.v1_6_R1.ControllerJump;
+import net.minecraft.server.v1_6_R1.DamageSource;
+import net.minecraft.server.v1_6_R1.EnchantmentManager;
+import net.minecraft.server.v1_6_R1.Entity;
+import net.minecraft.server.v1_6_R1.EntityHuman;
+import net.minecraft.server.v1_6_R1.EntityInsentient;
+import net.minecraft.server.v1_6_R1.EntityLiving;
+import net.minecraft.server.v1_6_R1.EntityPlayer;
+import net.minecraft.server.v1_6_R1.EntityTypes;
+import net.minecraft.server.v1_6_R1.GenericAttributes;
+import net.minecraft.server.v1_6_R1.MathHelper;
+import net.minecraft.server.v1_6_R1.MobEffectList;
+import net.minecraft.server.v1_6_R1.Navigation;
+import net.minecraft.server.v1_6_R1.NetworkManager;
+import net.minecraft.server.v1_6_R1.Packet;
+import net.minecraft.server.v1_6_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_6_R1.World;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -48,20 +50,6 @@ public class NMS {
     private NMS() {
         // util class
     }
-
-    private static final float DEFAULT_SPEED = 0.4F;
-    private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
-    private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
-    private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
-    private static Field GOAL_FIELD;
-    private static Field LAND_SPEED_MODIFIER_FIELD;
-    private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
-    private static Field NAVIGATION_WORLD_FIELD;
-    private static final Location packetCacheLocation = new Location(null, 0, 0, 0);
-    private static Field PATHFINDING_RANGE;
-    private static final Random RANDOM = Util.getFastRandom();
-    private static Field SPEED_FIELD;
-    private static Field THREAD_STOPPER;
 
     public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
         if (bukkitEntity == null)
@@ -77,7 +65,7 @@ public class NMS {
     }
 
     public static void attack(EntityLiving handle, Entity target) {
-        int damage = handle instanceof EntityMonster ? ((EntityMonster) handle).c(target) : 2;
+        float damage = (float) handle.a(GenericAttributes.e).e();
 
         if (handle.hasEffect(MobEffectList.INCREASE_DAMAGE)) {
             damage += 3 << handle.getEffect(MobEffectList.INCREASE_DAMAGE).getAmplifier();
@@ -179,12 +167,20 @@ public class NMS {
         return mcEntity.G() || mcEntity.I();
     }
 
+    public static boolean isSentient(LivingEntity entity) {
+        return !(((CraftLivingEntity) entity).getHandle() instanceof EntityInsentient);
+    }
+
     public static void loadPlugins() {
         ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.POSTWORLD);
     }
 
     public static void look(EntityLiving handle, Entity target) {
-        handle.getControllerLook().a(target, 10.0F, handle.bs());
+        if (handle instanceof EntityInsentient) {
+            ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).bl());
+        } else if (handle instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) handle).setTargetLook(target, 10F, 40);
+        }
     }
 
     public static void look(LivingEntity bukkitEntity, float yaw, float pitch) {
@@ -237,7 +233,7 @@ public class NMS {
             if (ply == null || world != ply.getWorld()) {
                 continue;
             }
-            if (location.distanceSquared(ply.getLocation(packetCacheLocation)) > radius) {
+            if (location.distanceSquared(ply.getLocation(PACKET_CACHE_LOCATION)) > radius) {
                 continue;
             }
             for (Packet packet : packets) {
@@ -262,7 +258,12 @@ public class NMS {
     }
 
     public static void setDestination(LivingEntity bukkitEntity, double x, double y, double z, float speed) {
-        ((CraftLivingEntity) bukkitEntity).getHandle().getControllerMove().a(x, y, z, speed);
+        EntityLiving handle = ((CraftLivingEntity) bukkitEntity).getHandle();
+        if (handle instanceof EntityInsentient) {
+            ((EntityInsentient) handle).getControllerMove().a(x, y, z, speed);
+        } else if (handle instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) handle).setMoveDestination(x, y, z, speed);
+        }
     }
 
     public static void setHeadYaw(EntityLiving handle, float yaw) {
@@ -273,10 +274,10 @@ public class NMS {
         while (yaw >= 180.0F) {
             yaw -= 360.0F;
         }
-        handle.aA = yaw;
+        handle.aP = yaw;
         if (!(handle instanceof EntityHuman))
-            handle.ay = yaw;
-        handle.aB = yaw;
+            handle.aN = yaw;
+        handle.aQ = yaw;
     }
 
     public static void setLandSpeedModifier(EntityLiving handle, float speed) {
@@ -290,8 +291,13 @@ public class NMS {
     }
 
     public static void setShouldJump(LivingEntity entity) {
-        ControllerJump controller = getHandle(entity).getControllerJump();
-        controller.a();
+        EntityLiving handle = getHandle(entity);
+        if (handle instanceof EntityInsentient) {
+            ControllerJump controller = ((EntityInsentient) handle).getControllerJump();
+            controller.a();
+        } else if (handle instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) handle).setShouldJump();
+        }
     }
 
     public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
@@ -332,17 +338,25 @@ public class NMS {
     }
 
     public static void updateAI(EntityLiving entity) {
-        updateSenses(entity);
-        entity.getNavigation().e();
-        entity.getControllerMove().c();
-        entity.getControllerLook().a();
-        entity.getControllerJump().b();
+        if (entity instanceof EntityInsentient) {
+            EntityInsentient handle = (EntityInsentient) entity;
+            handle.getEntitySenses().a();
+            handle.getNavigation().e();
+            handle.getControllerMove().c();
+            handle.getControllerLook().a();
+            handle.getControllerJump().b();
+        } else if (entity instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) entity).updateAI();
+        }
     }
 
     public static void updateNavigationWorld(LivingEntity entity, org.bukkit.World world) {
         if (NAVIGATION_WORLD_FIELD == null)
             return;
-        EntityLiving handle = ((CraftLivingEntity) entity).getHandle();
+        EntityLiving en = ((CraftLivingEntity) entity).getHandle();
+        if (!(en instanceof EntityInsentient))
+            return;
+        EntityInsentient handle = (EntityInsentient) en;
         World worldHandle = ((CraftWorld) world).getHandle();
         try {
             NAVIGATION_WORLD_FIELD.set(handle.getNavigation(), worldHandle);
@@ -352,9 +366,13 @@ public class NMS {
     }
 
     public static void updatePathfindingRange(NPC npc, float pathfindingRange) {
-        if (PATHFINDING_RANGE == null)
+        if (PATHFINDING_RANGE == null || !npc.isSpawned())
             return;
-        Navigation navigation = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle().getNavigation();
+        EntityLiving en = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
+        if (!(en instanceof EntityInsentient))
+            return;
+        EntityInsentient handle = (EntityInsentient) en;
+        Navigation navigation = handle.getNavigation();
         try {
             PATHFINDING_RANGE.set(navigation, pathfindingRange);
         } catch (Exception e) {
@@ -362,31 +380,43 @@ public class NMS {
         }
     }
 
-    public static void updateSenses(EntityLiving entity) {
-        entity.getEntitySenses().a();
-    }
+    private static final float DEFAULT_SPEED = 1F;
+    private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
+    private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
+    private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
+    private static Field GOAL_FIELD;
+    private static Field LAND_SPEED_MODIFIER_FIELD;
+    private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
+    private static Field NAVIGATION_WORLD_FIELD;
+    private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
+    private static Field PATHFINDING_RANGE;
+    private static final Random RANDOM = Util.getFastRandom();
+    private static Field SPEED_FIELD;
+
+    private static Field THREAD_STOPPER;
 
     static {
+        // TODO: speed fields are all wrong - need to use attributes
+
         // true field above false and three synchronised lists
         THREAD_STOPPER = getField(NetworkManager.class, "n");
 
         // constants taken from source code
-        MOVEMENT_SPEEDS.put(EntityType.CHICKEN, 0.25F);
-        MOVEMENT_SPEEDS.put(EntityType.COW, 0.2F);
-        MOVEMENT_SPEEDS.put(EntityType.CREEPER, 0.3F);
-        MOVEMENT_SPEEDS.put(EntityType.IRON_GOLEM, 0.15F);
-        MOVEMENT_SPEEDS.put(EntityType.MUSHROOM_COW, 0.2F);
-        MOVEMENT_SPEEDS.put(EntityType.OCELOT, 0.23F);
-        MOVEMENT_SPEEDS.put(EntityType.SHEEP, 0.25F);
-        MOVEMENT_SPEEDS.put(EntityType.SNOWMAN, 0.25F);
-        MOVEMENT_SPEEDS.put(EntityType.PIG, 0.27F);
+        MOVEMENT_SPEEDS.put(EntityType.CHICKEN, 1F);
+        MOVEMENT_SPEEDS.put(EntityType.COW, 1F);
+        MOVEMENT_SPEEDS.put(EntityType.CREEPER, 1F);
+        MOVEMENT_SPEEDS.put(EntityType.IRON_GOLEM, 1F);
+        MOVEMENT_SPEEDS.put(EntityType.MUSHROOM_COW, 1F);
+        MOVEMENT_SPEEDS.put(EntityType.OCELOT, 1F);
+        MOVEMENT_SPEEDS.put(EntityType.SHEEP, 1F);
+        MOVEMENT_SPEEDS.put(EntityType.SNOWMAN, 1F);
+        MOVEMENT_SPEEDS.put(EntityType.PIG, 1F);
         MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 0.3F);
-
-        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bQ");
+        MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 1F);
+        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bs");
         SPEED_FIELD = getField(EntityLiving.class, "bI");
         NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
-        PATHFINDING_RANGE = getField(Navigation.class, "e");
+        PATHFINDING_RANGE = getField(Navigation.class, "d");
         GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
 
         try {

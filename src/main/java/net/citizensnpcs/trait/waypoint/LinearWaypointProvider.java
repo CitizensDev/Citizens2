@@ -382,8 +382,9 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         public void onProviderChanged() {
             itr = waypoints.iterator();
-            if (currentDestination != null)
+            if (currentDestination != null) {
                 selector.finish();
+            }
         }
 
         @Override
@@ -394,13 +395,15 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @Override
         public void run(GoalSelector selector) {
-            if (!getNavigator().isNavigating())
+            if (!getNavigator().isNavigating()) {
                 selector.finish();
+            }
         }
 
         public void setPaused(boolean pause) {
-            if (pause && currentDestination != null)
+            if (pause && currentDestination != null) {
                 selector.finish();
+            }
             paused = pause;
         }
 
@@ -417,7 +420,9 @@ public class LinearWaypointProvider implements WaypointProvider {
             this.selector = selector;
             Waypoint next = itr.next();
             Location npcLoc = npc.getBukkitEntity().getLocation(cachedLocation);
-            if (npcLoc.getWorld() != next.getLocation().getWorld() || npcLoc.distanceSquared(next.getLocation()) < 3) {
+            if (npcLoc.getWorld() != next.getLocation().getWorld()
+                    || npcLoc.distanceSquared(next.getLocation()) < npc.getNavigator().getLocalParameters()
+                            .distanceMargin()) {
                 return false;
             }
             currentDestination = next;

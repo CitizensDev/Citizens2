@@ -7,34 +7,34 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R1.EntitySnowman;
+import net.minecraft.server.v1_6_R1.EntityHorse;
 import net.minecraft.server.v1_6_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_6_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftSnowman;
-import org.bukkit.entity.Snowman;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftHorse;
+import org.bukkit.entity.Horse;
 import org.bukkit.util.Vector;
 
-public class SnowmanController extends MobEntityController {
-    public SnowmanController() {
-        super(EntitySnowmanNPC.class);
+public class HorseController extends MobEntityController {
+    public HorseController() {
+        super(EntityHorseNPC.class);
     }
 
     @Override
-    public Snowman getBukkitEntity() {
-        return (Snowman) super.getBukkitEntity();
+    public Horse getBukkitEntity() {
+        return (Horse) super.getBukkitEntity();
     }
 
-    public static class EntitySnowmanNPC extends EntitySnowman implements NPCHolder {
+    public static class EntityHorseNPC extends EntityHorse implements NPCHolder {
         private final CitizensNPC npc;
 
-        public EntitySnowmanNPC(World world) {
+        public EntityHorseNPC(World world) {
             this(world, null);
         }
 
-        public EntitySnowmanNPC(World world, NPC npc) {
+        public EntityHorseNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
@@ -42,15 +42,16 @@ public class SnowmanController extends MobEntityController {
             }
         }
 
-        /* @Override
-         public float bE() {
-             return NMS.modifiedSpeed(super.bE(), npc);
-         }*/
+        /*@Override
+        public float bE() {
+            return NMS.modifiedSpeed(super.bE(), npc);
+        }*/
 
         @Override
-        public void be() {
-            super.be();
-            if (npc != null)
+        public void c() {
+            if (npc == null) {
+                super.c();
+            } else
                 npc.update();
         }
 
@@ -88,7 +89,7 @@ public class SnowmanController extends MobEntityController {
         @Override
         public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null)
-                bukkitEntity = new SnowmanNPC(this);
+                bukkitEntity = new HorseNPC(this);
             return super.getBukkitEntity();
         }
 
@@ -98,10 +99,10 @@ public class SnowmanController extends MobEntityController {
         }
     }
 
-    public static class SnowmanNPC extends CraftSnowman implements NPCHolder {
+    public static class HorseNPC extends CraftHorse implements NPCHolder {
         private final CitizensNPC npc;
 
-        public SnowmanNPC(EntitySnowmanNPC entity) {
+        public HorseNPC(EntityHorseNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
         }
