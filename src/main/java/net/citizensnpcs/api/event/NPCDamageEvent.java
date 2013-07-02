@@ -19,7 +19,7 @@ public class NPCDamageEvent extends NPCEvent implements Cancellable {
         return event.getCause();
     }
 
-    public int getDamage() {
+    public double getDamage() {
         return event.getDamage();
     }
 
@@ -42,9 +42,9 @@ public class NPCDamageEvent extends NPCEvent implements Cancellable {
         event.setDamage(damage);
     }
 
-    private static final HandlerList handlers = new HandlerList();
-
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    private static final HandlerList handlers = new HandlerList();
 }
