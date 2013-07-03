@@ -107,7 +107,7 @@ public class NMS {
                 List<?> list = (List<?>) NMS.GOAL_FIELD.get(selector);
                 list.clear();
             } catch (Exception e) {
-                Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getMessage());
+                Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
             }
         }
     }
@@ -130,7 +130,7 @@ public class NMS {
             f = clazz.getDeclaredField(field);
             f.setAccessible(true);
         } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getMessage());
+            Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
         }
         return f;
     }
@@ -140,7 +140,7 @@ public class NMS {
     }
 
     public static float getHeadYaw(EntityLiving handle) {
-        return handle.aA;
+        return handle.aP;
     }
 
     public static float getSpeedFor(NPC npc) {
@@ -300,6 +300,19 @@ public class NMS {
         }
     }
 
+    public static boolean shouldJump(net.minecraft.server.v1_6_R1.Entity entity) {
+        if (JUMP_FIELD == null || !(entity instanceof EntityLiving))
+            return false;
+        try {
+            return JUMP_FIELD.getBoolean(entity);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
             Class<? extends Entity> clazz, EntityType type) {
         World handle = ((CraftWorld) world).getHandle();
@@ -381,43 +394,24 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 1F;
+
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
     private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
-    private static Field GOAL_FIELD;
-    private static Field LAND_SPEED_MODIFIER_FIELD;
+    private static Field GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
+    private static final Field JUMP_FIELD = getField(EntityLiving.class, "bd");
+    private static Field LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bs");
     private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
-    private static Field NAVIGATION_WORLD_FIELD;
+    private static Field NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static Field PATHFINDING_RANGE;
+    private static Field PATHFINDING_RANGE = getField(Navigation.class, "d");
     private static final Random RANDOM = Util.getFastRandom();
-    private static Field SPEED_FIELD;
-
-    private static Field THREAD_STOPPER;
+    private static Field SPEED_FIELD = getField(EntityLiving.class, "bI");
+    private static Field THREAD_STOPPER = getField(NetworkManager.class, "n");
+    // true field above false and three synchronised lists
 
     static {
         // TODO: speed fields are all wrong - need to use attributes
-
-        // true field above false and three synchronised lists
-        THREAD_STOPPER = getField(NetworkManager.class, "n");
-
-        // constants taken from source code
-        MOVEMENT_SPEEDS.put(EntityType.CHICKEN, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.COW, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.CREEPER, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.IRON_GOLEM, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.MUSHROOM_COW, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.OCELOT, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.SHEEP, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.SNOWMAN, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.PIG, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.PLAYER, 1F);
-        MOVEMENT_SPEEDS.put(EntityType.VILLAGER, 1F);
-        LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bs");
-        SPEED_FIELD = getField(EntityLiving.class, "bI");
-        NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
-        PATHFINDING_RANGE = getField(Navigation.class, "d");
-        GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
 
         try {
             Field field = getField(EntityTypes.class, "d");
