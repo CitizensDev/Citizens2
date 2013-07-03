@@ -134,6 +134,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         controllerJump = new PlayerControllerJump(this);
         controllerLook = new PlayerControllerLook(this);
         controllerMove = new PlayerControllerMove(this);
+        entitySenses = new PlayerEntitySenses(this);
     }
 
     public boolean isNavigating() {
