@@ -48,13 +48,13 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     @Override
     public void configure(CommandContext args) {
-        if (args.hasFlag('f'))
+        if (args.hasFlag('f')) {
             explicitType = EntityType.BLAZE;
-        else if (args.hasFlag('g'))
+        } else if (args.hasFlag('g')) {
             explicitType = EntityType.OCELOT;
-        else if (args.hasFlag('r'))
+        } else if (args.hasFlag('r')) {
             explicitType = null;
-        else if (args.hasValueFlag("explicittype"))
+        } else if (args.hasValueFlag("explicittype"))
             explicitType = Util.matchEntityType(args.getFlag("explicittype"));
         if (npc.isSpawned())
             loadController();
@@ -123,7 +123,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (!npc.isSpawned() || !enabled || !event.getPlayer().isSneaking())
+        if (!npc.isSpawned() || !enabled)
             return;
         EntityPlayer handle = ((CraftPlayer) event.getPlayer()).getHandle();
         Action performed = event.getAction();
@@ -255,7 +255,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             boolean onGround = handle.onGround;
             float speedMod = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
-
             updateSpeed(handle, speedMod);
             setMountedYaw(handle);
         }
@@ -266,8 +265,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             if (horizontal > 0.0D) {
                 double dXcos = -Math.sin(handle.passenger.yaw * Math.PI / 180.0F);
                 double dXsin = Math.cos(handle.passenger.yaw * Math.PI / 180.0F);
-                handle.motX += dXcos * this.speed * 0.05;
-                handle.motZ += dXsin * this.speed * 0.05;
+                handle.motX += dXcos * this.speed * 0.5;
+                handle.motZ += dXsin * this.speed * 0.5;
             }
             handle.motX += handle.passenger.motX * speedMod;
             handle.motZ += handle.passenger.motZ * speedMod;

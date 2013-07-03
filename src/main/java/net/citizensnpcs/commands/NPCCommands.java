@@ -205,7 +205,7 @@ public class NPCCommands {
             modifiers = { "controllable", "control" },
             min = 1,
             max = 1,
-            flags = "f")
+            flags = "m")
     public void controllable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if ((npc.isSpawned() && !sender.hasPermission("citizens.npc.controllable."
                 + npc.getBukkitEntity().getType().toString().toLowerCase()))
@@ -218,6 +218,9 @@ public class NPCCommands {
         boolean enabled = trait.toggle();
         String key = enabled ? Messages.CONTROLLABLE_SET : Messages.CONTROLLABLE_REMOVED;
         Messaging.sendTr(sender, key, npc.getName());
+        if (enabled && args.hasFlag('m') && sender instanceof Player) {
+            trait.mount((Player) sender);
+        }
     }
 
     @Command(
