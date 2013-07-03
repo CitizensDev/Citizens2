@@ -341,7 +341,7 @@ public class NMS {
         if (entity instanceof EntityInsentient) {
             EntityInsentient handle = (EntityInsentient) entity;
             handle.getEntitySenses().a();
-            handle.getNavigation().e();
+            handle.getNavigation().f();
             handle.getControllerMove().c();
             handle.getControllerLook().a();
             handle.getControllerJump().b();
