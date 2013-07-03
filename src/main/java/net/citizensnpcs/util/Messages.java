@@ -157,6 +157,7 @@ public class Messages {
     public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
     public static final String SPEED_MODIFIER_ABOVE_LIMIT = "citizens.commands.npc.speed.modifier-above-limit";
     public static final String SPEED_MODIFIER_SET = "citizens.commands.npc.speed.set";
+    public static final String TELEPORT_NPC_LOCATION_NOT_FOUND = "citizens.commands.npc.tp.location-not-found";
     public static final String TELEPORTED_TO_NPC = "citizens.commands.npc.tp.teleported";
     public static final String TEMPLATE_APPLIED = "citizens.commands.template.applied";
     public static final String TEMPLATE_CONFLICT = "citizens.commands.template.conflict";
