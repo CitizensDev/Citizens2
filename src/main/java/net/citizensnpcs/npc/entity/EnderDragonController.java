@@ -56,11 +56,6 @@ public class EnderDragonController extends MobEntityController {
             }
         }
 
-        /* @Override
-         public float bE() {
-             return NMS.modifiedSpeed(super.bE(), npc);
-         }*/
-
         @Override
         public void bh() {
             if (npc == null) {

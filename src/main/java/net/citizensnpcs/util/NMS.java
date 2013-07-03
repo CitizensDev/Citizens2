@@ -35,15 +35,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_6_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_6_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginLoadOrder;
-
-import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
 public class NMS {
@@ -144,22 +141,9 @@ public class NMS {
     }
 
     public static float getSpeedFor(NPC npc) {
-        EntityType entityType = npc.getBukkitEntity().getType();
-        Float cached = MOVEMENT_SPEEDS.get(entityType);
-        if (cached != null)
-            return cached;
-        if (SPEED_FIELD == null) {
-            MOVEMENT_SPEEDS.put(entityType, DEFAULT_SPEED);
+        if (!npc.isSpawned())
             return DEFAULT_SPEED;
-        }
-        try {
-            float speed = SPEED_FIELD.getFloat(((CraftEntity) npc.getBukkitEntity()).getHandle());
-            MOVEMENT_SPEEDS.put(entityType, speed);
-            return speed;
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-            return DEFAULT_SPEED;
-        }
+        return (float) NMS.getHandle(npc.getBukkitEntity()).a(GenericAttributes.d).b();
     }
 
     public static boolean inWater(LivingEntity entity) {
@@ -280,16 +264,6 @@ public class NMS {
         handle.aQ = yaw;
     }
 
-    public static void setLandSpeedModifier(EntityLiving handle, float speed) {
-        if (LAND_SPEED_MODIFIER_FIELD == null)
-            return;
-        try {
-            LAND_SPEED_MODIFIER_FIELD.setFloat(handle, speed);
-        } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_UPDATING_SPEED, e.getMessage());
-        }
-    }
-
     public static void setShouldJump(LivingEntity entity) {
         EntityLiving handle = getHandle(entity);
         if (handle instanceof EntityInsentient) {
@@ -394,25 +368,19 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 1F;
-
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
     private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
     private static Field GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
     private static final Field JUMP_FIELD = getField(EntityLiving.class, "bd");
-    private static Field LAND_SPEED_MODIFIER_FIELD = getField(EntityLiving.class, "bs");
-    private static final Map<EntityType, Float> MOVEMENT_SPEEDS = Maps.newEnumMap(EntityType.class);
     private static Field NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(Navigation.class, "d");
     private static final Random RANDOM = Util.getFastRandom();
-    private static Field SPEED_FIELD = getField(EntityLiving.class, "bI");
     private static Field THREAD_STOPPER = getField(NetworkManager.class, "n");
     // true field above false and three synchronised lists
 
     static {
-        // TODO: speed fields are all wrong - need to use attributes
-
         try {
             Field field = getField(EntityTypes.class, "d");
             ENTITY_INT_TO_CLASS = (Map<Integer, Class<?>>) field.get(null);
