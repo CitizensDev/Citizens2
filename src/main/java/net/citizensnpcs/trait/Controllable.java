@@ -52,6 +52,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             explicitType = EntityType.BLAZE;
         } else if (args.hasFlag('g')) {
             explicitType = EntityType.OCELOT;
+        } else if (args.hasFlag('o')) {
+            explicitType = EntityType.UNKNOWN;
         } else if (args.hasFlag('r')) {
             explicitType = null;
         } else if (args.hasValueFlag("explicittype"))
@@ -191,7 +193,34 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return enabled;
     }
 
-    public class AirController implements MovementController {
+    private double updateHorizontralSpeed(EntityLiving handle, double speed, float speedMod) {
+        double oldSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
+        double horizontal = ((EntityLiving) handle.passenger).bf;
+        if (horizontal > 0.0D) {
+            double dXcos = -Math.sin(handle.passenger.yaw * Math.PI / 180.0F);
+            double dXsin = Math.cos(handle.passenger.yaw * Math.PI / 180.0F);
+            handle.motX += dXcos * speed * 0.5;
+            handle.motZ += dXsin * speed * 0.5;
+        }
+        handle.motX += handle.passenger.motX * speedMod;
+        handle.motZ += handle.passenger.motZ * speedMod;
+
+        double newSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
+        if (newSpeed > 0.35D) {
+            double movementFactor = 0.35D / newSpeed;
+            handle.motX *= movementFactor;
+            handle.motZ *= movementFactor;
+            newSpeed = 0.35D;
+        }
+
+        if (newSpeed > oldSpeed && speed < 0.35D) {
+            return (float) Math.min(0.35D, (speed + ((0.35D - speed) / 35.0D)));
+        } else {
+            return (float) Math.max(0.07D, (speed - ((speed - 0.07D) / 35.0D)));
+        }
+    }
+
+    public class LookAirController implements MovementController {
         boolean paused = false;
 
         @Override
@@ -248,29 +277,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             boolean onGround = handle.onGround;
             float speedMod = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
-            updateSpeed(handle, speedMod);
-            setMountedYaw(handle);
-        }
-
-        private void updateSpeed(EntityLiving handle, float speedMod) {
-            double oldSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
-            double horizontal = ((EntityLiving) handle.passenger).bf;
-            if (horizontal > 0.0D) {
-                double dXcos = -Math.sin(handle.passenger.yaw * Math.PI / 180.0F);
-                double dXsin = Math.cos(handle.passenger.yaw * Math.PI / 180.0F);
-                handle.motX += dXcos * this.speed * 0.5;
-                handle.motZ += dXsin * this.speed * 0.5;
-            }
-            handle.motX += handle.passenger.motX * speedMod;
-            handle.motZ += handle.passenger.motZ * speedMod;
-
-            double newSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
-            if (newSpeed > 0.35D) {
-                double movementFactor = 0.35D / newSpeed;
-                handle.motX *= movementFactor;
-                handle.motZ *= movementFactor;
-                newSpeed = 0.35D;
-            }
+            this.speed = updateHorizontralSpeed(handle, speed, speedMod);
 
             boolean shouldJump = NMS.shouldJump(handle.passenger);
             if (shouldJump) {
@@ -283,11 +290,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             }
             jumpTicks = Math.max(0, jumpTicks - 1);
 
-            if (newSpeed > oldSpeed && this.speed < 0.35D) {
-                this.speed = Math.min(0.35D, (this.speed + ((0.35D - this.speed) / 35.0D)));
-            } else {
-                this.speed = Math.max(0.07D, (this.speed - ((this.speed - 0.07D) / 35.0D)));
-            }
+            setMountedYaw(handle);
         }
 
         private static final float AIR_SPEED = 1.5F;
@@ -305,14 +308,50 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         void run(Player rider);
     }
 
+    public class PlayerInputAirController implements MovementController {
+        boolean paused = false;
+        private double speed;
+
+        @Override
+        public void leftClick(PlayerInteractEvent event) {
+            paused = !paused;
+        }
+
+        @Override
+        public void rightClick(PlayerInteractEvent event) {
+            getHandle().motY = -0.3F;
+        }
+
+        @Override
+        public void rightClickEntity(NPCRightClickEvent event) {
+            enterOrLeaveVehicle(event.getClicker());
+        }
+
+        @Override
+        public void run(Player rider) {
+            if (paused) {
+                getHandle().motY = 0.001;
+                return;
+            }
+            EntityLiving handle = getHandle();
+            this.speed = updateHorizontralSpeed(handle, this.speed, 1F);
+            boolean shouldJump = NMS.shouldJump(handle.passenger);
+            if (shouldJump) {
+                handle.motY = 0.3F;
+            }
+            handle.motY *= 0.98F;
+        }
+    }
+
     private static final Map<EntityType, Class<? extends MovementController>> controllerTypes = Maps
             .newEnumMap(EntityType.class);
 
     static {
-        controllerTypes.put(EntityType.BAT, AirController.class);
-        controllerTypes.put(EntityType.BLAZE, AirController.class);
-        controllerTypes.put(EntityType.ENDER_DRAGON, AirController.class);
-        controllerTypes.put(EntityType.GHAST, AirController.class);
-        controllerTypes.put(EntityType.WITHER, AirController.class);
+        controllerTypes.put(EntityType.BAT, PlayerInputAirController.class);
+        controllerTypes.put(EntityType.BLAZE, PlayerInputAirController.class);
+        controllerTypes.put(EntityType.ENDER_DRAGON, PlayerInputAirController.class);
+        controllerTypes.put(EntityType.GHAST, PlayerInputAirController.class);
+        controllerTypes.put(EntityType.WITHER, PlayerInputAirController.class);
+        controllerTypes.put(EntityType.UNKNOWN, LookAirController.class);
     }
 }
