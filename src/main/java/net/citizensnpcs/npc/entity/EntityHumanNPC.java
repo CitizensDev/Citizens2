@@ -16,6 +16,7 @@ import net.citizensnpcs.util.Util;
 import net.citizensnpcs.util.nms.PlayerControllerJump;
 import net.citizensnpcs.util.nms.PlayerControllerLook;
 import net.citizensnpcs.util.nms.PlayerControllerMove;
+import net.citizensnpcs.util.nms.PlayerEntitySenses;
 import net.minecraft.server.v1_6_R1.Connection;
 import net.minecraft.server.v1_6_R1.Entity;
 import net.minecraft.server.v1_6_R1.EntityPlayer;
@@ -32,6 +33,7 @@ import net.minecraft.server.v1_6_R1.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R1.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -41,6 +43,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private PlayerControllerJump controllerJump;
     private PlayerControllerLook controllerLook;
     private PlayerControllerMove controllerMove;
+    private PlayerEntitySenses entitySenses;
     private boolean gravity = true;
     private int jumpTicks = 0;
     private final CitizensNPC npc;
@@ -207,6 +210,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     public void updateAI() {
+        entitySenses.a();
         controllerMove.c();
         controllerLook.a();
         controllerJump.b();
@@ -239,6 +243,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
 
         @Override
+        public EntityHumanNPC getHandle() {
+            return (EntityHumanNPC) this.entity;
+        }
+
+        @Override
         public List<MetadataValue> getMetadata(String metadataKey) {
             return cserver.getEntityMetadata().getMetadata(this, metadataKey);
         }
@@ -246,6 +255,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean hasLineOfSight(org.bukkit.entity.Entity other) {
+            return getHandle().entitySenses.canSee(((CraftEntity) other).getHandle());
         }
 
         @Override
@@ -259,7 +273,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
 
         public void setGravityEnabled(boolean enabled) {
-            ((EntityHumanNPC) getHandle()).gravity = enabled;
+            getHandle().gravity = enabled;
         }
 
         @Override
