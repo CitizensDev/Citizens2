@@ -1026,6 +1026,10 @@ public class NPCCommands {
             permission = "citizens.npc.tp")
     public void tp(CommandContext args, Player player, NPC npc) {
         Location to = npc.getTrait(CurrentLocation.class).getLocation();
+        if (to == null) {
+            Messaging.sendError(player, Messages.TELEPORT_NPC_LOCATION_NOT_FOUND);
+            return;
+        }
         player.teleport(to, TeleportCause.COMMAND);
         Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());
     }
