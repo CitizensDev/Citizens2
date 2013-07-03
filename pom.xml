@@ -54,7 +54,8 @@
 			<artifactId>craftbukkit</artifactId>
 			<version>${craftbukkit.version}</version>
 			<type>jar</type>
-			<scope>provided</scope>
+			<scope>system</scope>
+			<systemPath>${basedir}/cb-fullwall.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>net.citizensnpcs</groupId>
