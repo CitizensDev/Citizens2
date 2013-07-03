@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
@@ -227,15 +226,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     public class GroundController implements MovementController {
-        private int jumpTicks;
+        private int jumpTicks = 0;
         private double speed = 0.07D;
-
-        private void jump() {
-            boolean allowed = getHandle().onGround;
-            if (!allowed)
-                return;
-            getHandle().motY = JUMP_VELOCITY;
-        }
 
         @Override
         public void leftClick(PlayerInteractEvent event) {
@@ -280,18 +272,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                 newSpeed = 0.35D;
             }
 
-            boolean shouldJump = false;
-            try {
-                if (JUMP_FIELD != null)
-                    shouldJump = JUMP_FIELD.getBoolean(handle.passenger);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            boolean shouldJump = NMS.shouldJump(handle.passenger);
             if (shouldJump) {
                 if (handle.onGround && jumpTicks == 0) {
-                    jump();
+                    getHandle().motY = JUMP_VELOCITY;
                     jumpTicks = 10;
                 }
             } else {
@@ -323,7 +307,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     private static final Map<EntityType, Class<? extends MovementController>> controllerTypes = Maps
             .newEnumMap(EntityType.class);
-    private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "bd");
 
     static {
         controllerTypes.put(EntityType.BAT, AirController.class);
