@@ -1,6 +1,9 @@
 package net.citizensnpcs.trait;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
@@ -226,6 +229,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     public class GroundController implements MovementController {
+        private int jumpTicks;
         private double speed = 0.07D;
 
         private void jump() {
@@ -279,6 +283,24 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                 newSpeed = 0.35D;
             }
 
+            try {
+                if (JUMP_FIELD.getBoolean(handle.passenger)) {
+                    if (handle.onGround && jumpTicks == 0) {
+                        JUMP_METHOD.invoke(handle, (Object[]) null);
+                        jumpTicks = 10;
+                    }
+                } else {
+                    jumpTicks = 0;
+                }
+                jumpTicks = Math.max(0, jumpTicks - 1);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+
             if (newSpeed > oldSpeed && this.speed < 0.35D) {
                 this.speed = Math.min(0.35D, (this.speed + ((0.35D - this.speed) / 35.0D)));
             } else {
@@ -303,6 +325,22 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     private static final Map<EntityType, Class<? extends MovementController>> controllerTypes = Maps
             .newEnumMap(EntityType.class);
+
+    private static Field JUMP_FIELD;
+    private static Method JUMP_METHOD = null;
+
+    static {
+        JUMP_FIELD = NMS.getField(EntityLiving.class, "bd");
+        JUMP_FIELD.setAccessible(true);
+        try {
+            JUMP_METHOD = EntityLiving.class.getDeclaredMethod("ba", (Class<?>[]) null);
+            JUMP_METHOD.setAccessible(true);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 
     static {
         controllerTypes.put(EntityType.BAT, AirController.class);
