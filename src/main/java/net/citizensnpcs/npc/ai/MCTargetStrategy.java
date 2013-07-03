@@ -154,9 +154,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     private class NavigationFieldWrapper implements TargetNavigator {
-        float e;
         boolean j = true, k, l, m;
         private final Navigation navigation;
+        float speed;
 
         private NavigationFieldWrapper(Navigation navigation) {
             this.navigation = navigation;
@@ -164,18 +164,18 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             this.l = navigation.a();
             try {
                 if (NAV_E != null)
-                    e = (float) ((AttributeInstance) NAV_E.get(navigation)).e();
+                    speed = (float) ((AttributeInstance) NAV_E.get(navigation)).e();
                 if (NAV_J != null)
                     j = NAV_J.getBoolean(navigation);
                 if (NAV_M != null)
                     m = NAV_M.getBoolean(navigation);
             } catch (Exception ex) {
-                e = parameters.speed();
+                speed = parameters.speed();
             }
         }
 
         public PathEntity findPath(Entity from, Entity to) {
-            return handle.world.findPath(from, to, e, j, k, l, m);
+            return handle.world.findPath(from, to, speed, j, k, l, m);
         }
 
         @Override

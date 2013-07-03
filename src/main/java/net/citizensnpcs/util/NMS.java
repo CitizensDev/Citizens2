@@ -12,6 +12,7 @@ import java.util.WeakHashMap;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
+import net.minecraft.server.v1_6_R1.AttributeInstance;
 import net.minecraft.server.v1_6_R1.ControllerJump;
 import net.minecraft.server.v1_6_R1.DamageSource;
 import net.minecraft.server.v1_6_R1.EnchantmentManager;
@@ -62,7 +63,8 @@ public class NMS {
     }
 
     public static void attack(EntityLiving handle, Entity target) {
-        float damage = (float) handle.a(GenericAttributes.e).e();
+        AttributeInstance attribute = handle.a(GenericAttributes.e);
+        float damage = (float) (attribute == null ? 1D : attribute.e());
 
         if (handle.hasEffect(MobEffectList.INCREASE_DAMAGE)) {
             damage += 3 << handle.getEffect(MobEffectList.INCREASE_DAMAGE).getAmplifier();
@@ -143,7 +145,10 @@ public class NMS {
     public static float getSpeedFor(NPC npc) {
         if (!npc.isSpawned())
             return DEFAULT_SPEED;
-        return (float) NMS.getHandle(npc.getBukkitEntity()).a(GenericAttributes.d).b();
+        // this is correct, but too slow. TODO: investigate
+        // return (float)
+        // NMS.getHandle(npc.getBukkitEntity()).a(GenericAttributes.d).b();
+        return DEFAULT_SPEED;
     }
 
     public static boolean inWater(LivingEntity entity) {
