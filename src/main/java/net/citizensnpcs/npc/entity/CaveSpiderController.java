@@ -64,11 +64,6 @@ public class CaveSpiderController extends MobEntityController {
                 npc.update();
         }
 
-        /* @Override
-         public float bE() {
-         return NMS.modifiedSpeed(super.bE(), npc);
-         }*/
-
         @Override
         public void bh() {
             if (npc == null)

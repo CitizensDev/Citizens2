@@ -67,11 +67,6 @@ public class BatController extends MobEntityController {
             }
         }
 
-        /* @Override
-         public float bE() {
-         return NMS.modifiedSpeed(super.bE(), npc);
-         }*/
-
         @Override
         public void collide(net.minecraft.server.v1_6_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling

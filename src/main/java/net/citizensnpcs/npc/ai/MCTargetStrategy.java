@@ -11,6 +11,7 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
+import net.minecraft.server.v1_6_R1.AttributeInstance;
 import net.minecraft.server.v1_6_R1.Entity;
 import net.minecraft.server.v1_6_R1.EntityInsentient;
 import net.minecraft.server.v1_6_R1.EntityLiving;
@@ -30,17 +31,17 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final EntityLiving handle;
     private final NPC npc;
     private final NavigatorParameters parameters;
-    private final TargetNavigator targetNavigator;
     private final Entity target;
+    private final TargetNavigator targetNavigator;
 
     public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
         this.npc = npc;
+        this.parameters = params;
         this.handle = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
         this.target = ((CraftEntity) target).getHandle();
         this.targetNavigator = this.handle instanceof EntityInsentient ? new NavigationFieldWrapper(
                 ((EntityInsentient) this.handle).getNavigation()) : new AStarTargeter();
         this.aggro = aggro;
-        this.parameters = params;
     }
 
     private boolean canAttack() {
@@ -163,7 +164,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             this.l = navigation.a();
             try {
                 if (NAV_E != null)
-                    e = NAV_E.getFloat(navigation);
+                    e = (float) ((AttributeInstance) NAV_E.get(navigation)).e();
                 if (NAV_J != null)
                     j = NAV_J.getBoolean(navigation);
                 if (NAV_M != null)

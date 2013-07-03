@@ -42,11 +42,6 @@ public class SkeletonController extends MobEntityController {
             }
         }
 
-        /* @Override
-         public float bE() {
-             return NMS.modifiedSpeed(super.bE(), npc);
-         }
-        */
         @Override
         public void be() {
             super.be();
