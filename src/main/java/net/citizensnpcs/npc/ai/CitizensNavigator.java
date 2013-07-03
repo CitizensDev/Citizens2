@@ -85,7 +85,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     public void load(DataKey root) {
-        defaultParams.baseSpeed((float) root.getDouble("speed", UNINITIALISED_SPEED));
         defaultParams.range((float) root.getDouble("pathfindingrange", Setting.DEFAULT_PATHFINDING_RANGE.asFloat()));
         defaultParams.stationaryTicks(root.getInt("stationaryticks", Setting.DEFAULT_STATIONARY_TICKS.asInt()));
         defaultParams.speedModifier((float) root.getDouble("speedmodifier", 1F));
@@ -127,7 +126,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     public void save(DataKey root) {
-        root.setDouble("speed", defaultParams.baseSpeed());
         root.setDouble("pathfindingrange", defaultParams.range());
         root.setInt("stationaryticks", defaultParams.stationaryTicks());
         root.setDouble("speedmodifier", defaultParams.speedModifier());
