@@ -14,11 +14,16 @@ import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRemoveTraitEvent;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.MemoryDataKey;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
 
 import com.google.common.collect.Lists;
@@ -70,6 +75,19 @@ public abstract class AbstractNPC implements NPC {
         }
 
         Bukkit.getPluginManager().callEvent(new NPCAddTraitEvent(this, trait));
+    }
+
+    @Override
+    public NPC clone() {
+        NPC copy = CitizensAPI.getNPCRegistry().createNPC(getTrait(MobType.class).getType(), getFullName());
+        DataKey key = new MemoryDataKey();
+        this.save(key);
+        copy.load(key);
+
+        for (Trait trait : copy.getTraits()) {
+            trait.onCopy();
+        }
+        return copy;
     }
 
     @Override
@@ -196,6 +214,15 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void setName(String name) {
         this.name = name;
+        if (!isSpawned())
+            return;
+        LivingEntity bukkitEntity = getBukkitEntity();
+        bukkitEntity.setCustomName(getFullName());
+        if (bukkitEntity.getType() == EntityType.PLAYER) {
+            Location old = bukkitEntity.getLocation();
+            despawn(DespawnReason.PENDING_RESPAWN);
+            spawn(old);
+        }
     }
 
     public void update() {

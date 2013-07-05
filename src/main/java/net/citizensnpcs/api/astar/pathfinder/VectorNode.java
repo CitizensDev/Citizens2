@@ -6,6 +6,7 @@ import net.citizensnpcs.api.astar.AStarNode;
 import net.citizensnpcs.api.astar.Plan;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
@@ -16,6 +17,8 @@ public class VectorNode extends AStarNode implements PathPoint {
     List<PathCallback> callbacks;
     private final BlockExaminer[] examiners;
     final Vector location;
+
+    boolean played = false;
 
     public VectorNode(Location location, BlockSource source, BlockExaminer... examiners) {
         this(location.toVector(), source, examiners);
@@ -56,6 +59,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public Iterable<AStarNode> getNeighbours() {
+        World world = blockSource.getWorld();
         List<AStarNode> nodes = Lists.newArrayList();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {

@@ -11,9 +11,9 @@ import com.google.common.collect.Lists;
 public class NavigatorParameters implements Cloneable {
     private AttackStrategy attackStrategy;
     private boolean avoidWater;
-    private float baseSpeed;
+    private float baseSpeed = 1F;
     private final List<NavigatorCallback> callbacks = Lists.newArrayListWithExpectedSize(3);
-    private double distanceMargin = 3F;
+    private double distanceMargin = 2F;
     private final List<BlockExaminer> examiners = Lists.newArrayList();
     private float range;
     private float speedModifier = 1F;

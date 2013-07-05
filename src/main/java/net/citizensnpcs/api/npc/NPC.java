@@ -17,7 +17,7 @@ import org.bukkit.entity.LivingEntity;
 /**
  * Represents an NPC with optional {@link Trait}s.
  */
-public interface NPC extends Agent {
+public interface NPC extends Agent, Cloneable {
 
     /**
      * Adds a trait to this NPC. This will use the {@link TraitFactory} defined
@@ -36,6 +36,12 @@ public interface NPC extends Agent {
      *            Trait to add
      */
     public void addTrait(Trait trait);
+
+    /**
+     * @return A clone of the NPC. May not be an exact copy depending on the
+     *         {@link Trait}s installed.
+     */
+    public NPC clone();
 
     /**
      * @return The metadata store of this NPC.

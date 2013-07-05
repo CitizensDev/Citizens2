@@ -8,7 +8,6 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
     private final int chunkX;
     private final int chunkZ;
     int t;
-
     protected final World world;
 
     protected CachingChunkBlockSource(Location location, float radius) {
@@ -58,5 +57,10 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
             }
         }
         return null;
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }
