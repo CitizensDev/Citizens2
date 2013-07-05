@@ -380,9 +380,18 @@ public class NMS {
             }
             return;
         }
+        if (PATHFINDING_RANGE == null)
+            return;
         EntityInsentient handle = (EntityInsentient) en;
         Navigation navigation = handle.getNavigation();
-        navigation.a(pathfindingRange);
+        try {
+            AttributeInstance inst = (AttributeInstance) PATHFINDING_RANGE.get(navigation);
+            inst.a(pathfindingRange);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final float DEFAULT_SPEED = 1F;
@@ -393,8 +402,8 @@ public class NMS {
     private static final Field JUMP_FIELD = getField(EntityLiving.class, "bd");
     private static Field NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
+    private static Field PATHFINDING_RANGE = getField(Navigation.class, "e");
     private static final Random RANDOM = Util.getFastRandom();
-
     private static Field THREAD_STOPPER = getField(NetworkManager.class, "n");
     // true field above false and three synchronised lists
 

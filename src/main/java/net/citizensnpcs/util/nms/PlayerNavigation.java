@@ -382,6 +382,12 @@ public class PlayerNavigation extends Navigation {
         }
     }
 
+    public void setRange(float pathfindingRange) {
+        if (this.e != null) {
+            this.e.a(pathfindingRange);
+        }
+    }
+
     private static EntityInsentient getDummyInsentient(EntityHumanNPC from) {
         return new EntityInsentient(null) {
         };

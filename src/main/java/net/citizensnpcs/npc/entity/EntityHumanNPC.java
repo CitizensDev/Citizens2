@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -144,8 +145,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         AttributeInstance range = this.aT().a(GenericAttributes.b);
         if (range == null) {
             range = this.aT().b(GenericAttributes.b);
-            range.a(16D);
         }
+        range.a(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
         controllerJump = new PlayerControllerJump(this);
         controllerLook = new PlayerControllerLook(this);
         controllerMove = new PlayerControllerMove(this);
@@ -252,7 +253,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     public void updatePathfindingRange(float pathfindingRange) {
-        this.navigation.a(pathfindingRange);
+        this.navigation.setRange(pathfindingRange);
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder {

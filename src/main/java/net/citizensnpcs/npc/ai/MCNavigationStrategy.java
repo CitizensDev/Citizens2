@@ -28,8 +28,9 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         navigation = NMS.getNavigation(handle);
         navigation.a(parameters.avoidWater());
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), parameters.speed());
-        if (NMS.isNavigationFinished(navigation))
+        if (NMS.isNavigationFinished(navigation)) {
             setCancelReason(CancelReason.STUCK);
+        }
     }
 
     @Override
