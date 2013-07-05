@@ -142,6 +142,11 @@ public class NMS {
         return handle.aP;
     }
 
+    public static Navigation getNavigation(EntityLiving handle) {
+        return handle instanceof EntityInsentient ? ((EntityInsentient) handle).getNavigation()
+                : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getNavigation() : null;
+    }
+
     public static float getSpeedFor(NPC npc) {
         if (!npc.isSpawned())
             return DEFAULT_SPEED;
@@ -156,8 +161,8 @@ public class NMS {
         return mcEntity.G() || mcEntity.I();
     }
 
-    public static boolean isSentient(LivingEntity entity) {
-        return !(((CraftLivingEntity) entity).getHandle() instanceof EntityInsentient);
+    public static boolean isNavigationFinished(Navigation navigation) {
+        return navigation.g();
     }
 
     public static void loadPlugins() {
@@ -308,6 +313,10 @@ public class NMS {
         return entity.getBukkitEntity();
     }
 
+    public static void stopNavigation(Navigation navigation) {
+        navigation.h();
+    }
+
     public static void stopNetworkThreads(NetworkManager manager) {
         if (THREAD_STOPPER == null)
             return;
@@ -333,13 +342,17 @@ public class NMS {
         if (entity instanceof EntityInsentient) {
             EntityInsentient handle = (EntityInsentient) entity;
             handle.getEntitySenses().a();
-            handle.getNavigation().f();
+            NMS.updateNavigation(handle.getNavigation());
             handle.getControllerMove().c();
             handle.getControllerLook().a();
             handle.getControllerJump().b();
         } else if (entity instanceof EntityHumanNPC) {
             ((EntityHumanNPC) entity).updateAI();
         }
+    }
+
+    public static void updateNavigation(Navigation navigation) {
+        navigation.f();
     }
 
     public static void updateNavigationWorld(LivingEntity entity, org.bukkit.World world) {
@@ -358,18 +371,18 @@ public class NMS {
     }
 
     public static void updatePathfindingRange(NPC npc, float pathfindingRange) {
-        if (PATHFINDING_RANGE == null || !npc.isSpawned())
+        if (!npc.isSpawned())
             return;
         EntityLiving en = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
-        if (!(en instanceof EntityInsentient))
+        if (!(en instanceof EntityInsentient)) {
+            if (en instanceof EntityHumanNPC) {
+                ((EntityHumanNPC) en).updatePathfindingRange(pathfindingRange);
+            }
             return;
+        }
         EntityInsentient handle = (EntityInsentient) en;
         Navigation navigation = handle.getNavigation();
-        try {
-            PATHFINDING_RANGE.set(navigation, pathfindingRange);
-        } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_UPDATING_PATHFINDING_RANGE, e.getMessage());
-        }
+        navigation.a(pathfindingRange);
     }
 
     private static final float DEFAULT_SPEED = 1F;
@@ -380,8 +393,8 @@ public class NMS {
     private static final Field JUMP_FIELD = getField(EntityLiving.class, "bd");
     private static Field NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static Field PATHFINDING_RANGE = getField(Navigation.class, "d");
     private static final Random RANDOM = Util.getFastRandom();
+
     private static Field THREAD_STOPPER = getField(NetworkManager.class, "n");
     // true field above false and three synchronised lists
 

@@ -17,12 +17,16 @@ import net.citizensnpcs.util.nms.PlayerControllerJump;
 import net.citizensnpcs.util.nms.PlayerControllerLook;
 import net.citizensnpcs.util.nms.PlayerControllerMove;
 import net.citizensnpcs.util.nms.PlayerEntitySenses;
+import net.citizensnpcs.util.nms.PlayerNavigation;
+import net.minecraft.server.v1_6_R1.AttributeInstance;
 import net.minecraft.server.v1_6_R1.Connection;
 import net.minecraft.server.v1_6_R1.Entity;
 import net.minecraft.server.v1_6_R1.EntityPlayer;
 import net.minecraft.server.v1_6_R1.EnumGamemode;
+import net.minecraft.server.v1_6_R1.GenericAttributes;
 import net.minecraft.server.v1_6_R1.MathHelper;
 import net.minecraft.server.v1_6_R1.MinecraftServer;
+import net.minecraft.server.v1_6_R1.Navigation;
 import net.minecraft.server.v1_6_R1.NetworkManager;
 import net.minecraft.server.v1_6_R1.Packet;
 import net.minecraft.server.v1_6_R1.Packet35EntityHeadRotation;
@@ -46,6 +50,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private PlayerEntitySenses entitySenses;
     private boolean gravity = true;
     private int jumpTicks = 0;
+    private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private int packetUpdateCount;
@@ -56,8 +61,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         playerInteractManager.setGameMode(EnumGamemode.SURVIVAL);
 
         this.npc = (CitizensNPC) npc;
-        if (npc != null)
+        if (npc != null) {
             initialise(minecraftServer);
+        }
     }
 
     @Override
@@ -102,6 +108,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return controllerJump;
     }
 
+    public Navigation getNavigation() {
+        return navigation;
+    }
+
     @Override
     public NPC getNPC() {
         return npc;
@@ -131,10 +141,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         } catch (IOException ex) {
             // swallow
         }
+        AttributeInstance range = this.aT().a(GenericAttributes.b);
+        if (range == null) {
+            range = this.aT().b(GenericAttributes.b);
+            range.a(16D);
+        }
         controllerJump = new PlayerControllerJump(this);
         controllerLook = new PlayerControllerLook(this);
         controllerMove = new PlayerControllerMove(this);
         entitySenses = new PlayerEntitySenses(this);
+        navigation = new PlayerNavigation(this, world);
     }
 
     public boolean isNavigating() {
@@ -161,17 +177,18 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             motX = motY = motZ = 0;
 
         if (navigating) {
-            // Navigation navigation = getNavigation();
-            // if (!navigation.g())
-            // navigation.e();
+            if (!NMS.isNavigationFinished(navigation)) {
+                NMS.updateNavigation(navigation);
+            }
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0) {
             e(0, 0); // is this necessary? it does controllable but sometimes
                      // players sink into the ground
         }
 
-        if (noDamageTicks > 0)
+        if (noDamageTicks > 0) {
             --noDamageTicks;
+        }
         npc.update();
     }
 
@@ -187,8 +204,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                 ba();
                 jumpTicks = 10;
             }
-        } else
+        } else {
             jumpTicks = 0;
+        }
 
         be *= 0.98F;
         bf *= 0.98F;
@@ -211,6 +229,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     public void updateAI() {
+        navigation.f();
         entitySenses.a();
         controllerMove.c();
         controllerLook.a();
@@ -231,6 +250,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             NMS.sendPacketsNearby(current, packets);
             packetUpdateCount = 0;
         }
+    }
+
+    public void updatePathfindingRange(float pathfindingRange) {
+        this.navigation.a(pathfindingRange);
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder {
@@ -284,5 +307,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private static final float EPSILON = 0.005F;
+
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }

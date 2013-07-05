@@ -11,9 +11,9 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
+import net.citizensnpcs.util.nms.PlayerNavigation;
 import net.minecraft.server.v1_6_R1.AttributeInstance;
 import net.minecraft.server.v1_6_R1.Entity;
-import net.minecraft.server.v1_6_R1.EntityInsentient;
 import net.minecraft.server.v1_6_R1.EntityLiving;
 import net.minecraft.server.v1_6_R1.EntityPlayer;
 import net.minecraft.server.v1_6_R1.Navigation;
@@ -39,8 +39,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         this.parameters = params;
         this.handle = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
         this.target = ((CraftEntity) target).getHandle();
-        this.targetNavigator = this.handle instanceof EntityInsentient ? new NavigationFieldWrapper(
-                ((EntityInsentient) this.handle).getNavigation()) : new AStarTargeter();
+        Navigation nav = NMS.getNavigation(this.handle);
+        this.targetNavigator = nav != null && !Setting.USE_NEW_PATHFINDER.asBoolean() ? new NavigationFieldWrapper(nav)
+                : new AStarTargeter();
         this.aggro = aggro;
     }
 
@@ -172,12 +173,21 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             this.k = navigation.c();
             this.l = navigation.a();
             try {
-                if (NAV_E != null)
-                    speed = (float) ((AttributeInstance) NAV_E.get(navigation)).e();
-                if (NAV_J != null)
-                    j = NAV_J.getBoolean(navigation);
-                if (NAV_M != null)
-                    m = NAV_M.getBoolean(navigation);
+                if (navigation instanceof PlayerNavigation) {
+                    if (P_NAV_E != null)
+                        speed = (float) ((AttributeInstance) P_NAV_E.get(navigation)).e();
+                    if (P_NAV_J != null)
+                        j = P_NAV_J.getBoolean(navigation);
+                    if (P_NAV_M != null)
+                        m = P_NAV_M.getBoolean(navigation);
+                } else {
+                    if (E_NAV_E != null)
+                        speed = (float) ((AttributeInstance) E_NAV_E.get(navigation)).e();
+                    if (E_NAV_J != null)
+                        j = E_NAV_J.getBoolean(navigation);
+                    if (E_NAV_M != null)
+                        m = E_NAV_M.getBoolean(navigation);
+                }
             } catch (Exception ex) {
                 speed = parameters.speed();
             }
@@ -195,7 +205,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         @Override
         public void stop() {
-            navigation.g();
+            NMS.stopNavigation(navigation);
         }
     }
 
@@ -206,13 +216,17 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     private static final int ATTACK_DELAY_TICKS = 20;
+    private static Field E_NAV_E, E_NAV_J, E_NAV_M;
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
-    private static Field NAV_E, NAV_J, NAV_M;
+    private static Field P_NAV_E, P_NAV_J, P_NAV_M;
     private static final Location TARGET_LOCATION = new Location(null, 0, 0, 0);
 
     static {
-        NAV_E = NMS.getField(Navigation.class, "e");
-        NAV_J = NMS.getField(Navigation.class, "j");
-        NAV_M = NMS.getField(Navigation.class, "m");
+        E_NAV_E = NMS.getField(Navigation.class, "e");
+        E_NAV_J = NMS.getField(Navigation.class, "j");
+        E_NAV_M = NMS.getField(Navigation.class, "m");
+        P_NAV_E = NMS.getField(PlayerNavigation.class, "e");
+        P_NAV_J = NMS.getField(PlayerNavigation.class, "j");
+        P_NAV_M = NMS.getField(PlayerNavigation.class, "m");
     }
 }

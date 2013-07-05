@@ -22,10 +22,7 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R1.EntityHuman;
 import net.minecraft.server.v1_6_R1.EntityLiving;
-import net.minecraft.server.v1_6_R1.EntityPlayer;
-import net.minecraft.server.v1_6_R1.Packet20NamedEntitySpawn;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -216,10 +213,6 @@ public class CitizensNPC extends AbstractNPC {
             trait.onSpawn();
         getBukkitEntity().setRemoveWhenFarAway(false);
         getBukkitEntity().setCustomName(getFullName());
-        if (mcEntity instanceof EntityPlayer) {
-            Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn((EntityHuman) mcEntity);
-            NMS.sendToOnline(packet);
-        }
         return true;
     }
 

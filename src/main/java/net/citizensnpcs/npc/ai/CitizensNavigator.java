@@ -161,7 +161,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         localParams = defaultParams.clone();
         PathStrategy newStrategy;
-        if (Setting.USE_NEW_PATHFINDER.asBoolean() || NMS.isSentient(npc.getBukkitEntity())) {
+        if (Setting.USE_NEW_PATHFINDER.asBoolean()) {
             newStrategy = new AStarNavigationStrategy(npc, target, localParams);
         } else
             newStrategy = new MCNavigationStrategy(npc, target, localParams);
