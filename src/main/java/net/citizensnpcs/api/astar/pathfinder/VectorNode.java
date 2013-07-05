@@ -6,19 +6,16 @@ import net.citizensnpcs.api.astar.AStarNode;
 import net.citizensnpcs.api.astar.Plan;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
 
 public class VectorNode extends AStarNode implements PathPoint {
     private float blockCost = -1;
-    final BlockSource blockSource;
+    private final BlockSource blockSource;
     List<PathCallback> callbacks;
     private final BlockExaminer[] examiners;
     final Vector location;
-
-    boolean played = false;
 
     public VectorNode(Location location, BlockSource source, BlockExaminer... examiners) {
         this(location.toVector(), source, examiners);
@@ -32,8 +29,9 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public void addCallback(PathCallback callback) {
-        if (callbacks == null)
+        if (callbacks == null) {
             callbacks = Lists.newArrayList();
+        }
         callbacks.add(callback);
     }
 
@@ -59,7 +57,6 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public Iterable<AStarNode> getNeighbours() {
-        World world = blockSource.getWorld();
         List<AStarNode> nodes = Lists.newArrayList();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -89,14 +86,15 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     public float heuristicDistance(Vector goal) {
-        return (float) (location.distance(goal) + getBlockCost()) * TIEBREAKER;
+        return (float) (location.distanceSquared(goal) + getBlockCost()) * TIEBREAKER;
     }
 
     private boolean isPassable(PathPoint mod) {
         for (BlockExaminer examiner : examiners) {
             boolean passable = examiner.isPassable(blockSource, mod);
-            if (!passable)
+            if (!passable) {
                 return false;
+            }
         }
         return true;
     }
