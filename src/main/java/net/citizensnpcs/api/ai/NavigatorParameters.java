@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
+import net.citizensnpcs.api.astar.AStarMachine;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
 
 import com.google.common.collect.Lists;
@@ -19,6 +20,7 @@ public class NavigatorParameters implements Cloneable {
     private float speedModifier = 1F;
     private int stationaryTicks = -1;
     private StuckAction stuckAction;
+    private boolean useNewPathfinder;
 
     /**
      * Adds a {@link NavigatorCallback} that will be removed
@@ -274,6 +276,33 @@ public class NavigatorParameters implements Cloneable {
      */
     public NavigatorParameters stuckAction(StuckAction action) {
         stuckAction = action;
+        return this;
+    }
+
+    /**
+     * @see #useNewPathfinder(boolean)
+     * @return Whether to use the new pathfinder
+     */
+    public boolean useNewPathfinder() {
+        return useNewPathfinder;
+    }
+
+    /**
+     * Sets whether or not to use an A* pathfinder defined in
+     * {@link AStarMachine} for pathfinding.
+     * 
+     * If this is set to false, then the Minecraft pathfinder will be used,
+     * which may or may not be more consistent.
+     * 
+     * Note that certain API features will not be possible if this is set to
+     * false - this includes {@link #examiner(BlockExaminer)} and
+     * {@link #distanceMargin(double)}.
+     * 
+     * @param use
+     *            Whether to use the A* pathfinder
+     */
+    public NavigatorParameters useNewPathfinder(boolean use) {
+        useNewPathfinder = use;
         return this;
     }
 }
