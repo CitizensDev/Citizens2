@@ -169,8 +169,9 @@ public class CitizensNPC extends AbstractNPC {
             despawn(DespawnReason.PENDING_RESPAWN);
         }
         entityController = newController;
-        if (wasSpawned)
+        if (wasSpawned) {
             spawn(prev);
+        }
     }
 
     @Override

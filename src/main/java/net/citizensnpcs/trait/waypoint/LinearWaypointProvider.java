@@ -122,7 +122,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         int editingSlot = waypoints.size() - 1;
         private final Player player;
         private boolean showPath;
-        Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
+        private final Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
 
         private LinearWaypointEditor(Player player) {
             this.player = player;
@@ -150,13 +150,15 @@ public class LinearWaypointProvider implements WaypointProvider {
         }
 
         private void createWaypointMarkers() {
-            for (int i = 0; i < waypoints.size(); i++)
+            for (int i = 0; i < waypoints.size(); i++) {
                 createWaypointMarker(i, waypoints.get(i));
+            }
         }
 
         private void destroyWaypointMarkers() {
-            for (Entity entity : waypointMarkers.values())
+            for (Entity entity : waypointMarkers.values()) {
                 entity.remove();
+            }
             waypointMarkers.clear();
         }
 
@@ -180,8 +182,9 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @Override
         public Waypoint getCurrentWaypoint() {
-            if (waypoints.size() == 0 || !editing)
+            if (waypoints.size() == 0 || !editing) {
                 return null;
+            }
             normaliseEditingSlot();
             return waypoints.get(editingSlot);
         }
@@ -189,8 +192,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         private Location getPreviousWaypoint(int fromSlot) {
             if (waypoints.size() <= 1)
                 return null;
-            fromSlot--;
-            if (fromSlot < 0)
+            if (--fromSlot < 0)
                 fromSlot = waypoints.size() - 1;
             return waypoints.get(fromSlot).getLocation();
         }
@@ -201,14 +203,16 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @EventHandler
         public void onNPCDespawn(NPCDespawnEvent event) {
-            if (event.getNPC().equals(npc))
+            if (event.getNPC().equals(npc)) {
                 Editor.leave(player);
+            }
         }
 
         @EventHandler
         public void onNPCRemove(NPCRemoveEvent event) {
-            if (event.getNPC().equals(npc))
+            if (event.getNPC().equals(npc)) {
                 Editor.leave(player);
+            }
         }
 
         @EventHandler(ignoreCancelled = true)
@@ -217,21 +221,21 @@ public class LinearWaypointProvider implements WaypointProvider {
                 return;
             String message = event.getMessage();
             if (message.equalsIgnoreCase("triggers")) {
+                event.setCancelled(true);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
                         conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
                     }
                 });
-                return;
             } else if (message.equalsIgnoreCase("clear")) {
+                event.setCancelled(true);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
                         clearWaypoints();
                     }
                 });
-                return;
             } else if (message.equalsIgnoreCase("toggle path")) {
                 event.setCancelled(true);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
@@ -241,7 +245,6 @@ public class LinearWaypointProvider implements WaypointProvider {
                         togglePath();
                     }
                 });
-                return;
             }
         }
 

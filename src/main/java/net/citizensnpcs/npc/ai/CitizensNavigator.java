@@ -161,10 +161,11 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         localParams = defaultParams.clone();
         PathStrategy newStrategy;
-        if (Setting.USE_NEW_PATHFINDER.asBoolean()) {
+        if (Setting.USE_NEW_PATHFINDER.asBoolean() || localParams.useNewPathfinder()) {
             newStrategy = new AStarNavigationStrategy(npc, target, localParams);
-        } else
+        } else {
             newStrategy = new MCNavigationStrategy(npc, target, localParams);
+        }
         switchStrategyTo(newStrategy);
     }
 
