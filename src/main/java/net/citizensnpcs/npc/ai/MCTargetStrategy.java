@@ -189,7 +189,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
                         m = E_NAV_M.getBoolean(navigation);
                 }
             } catch (Exception ex) {
-                range = parameters.speed();
+                range = parameters.range();
             }
         }
 
