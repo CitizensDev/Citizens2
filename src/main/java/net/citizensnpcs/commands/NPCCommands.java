@@ -26,10 +26,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.Colorizer;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
@@ -232,24 +229,18 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.copy")
     public void copy(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        EntityType type = npc.getTrait(MobType.class).getType();
         String name = args.getFlag("name", npc.getFullName());
-        CitizensNPC copy = (CitizensNPC) npcRegistry.createNPC(type, name);
-        CitizensNPC from = (CitizensNPC) npc;
+        NPC copy = npc.clone();
+        if (!copy.getFullName().equals(name)) {
+            copy.setName(name);
+        }
 
-        DataKey key = new MemoryDataKey();
-        from.save(key);
-        copy.load(key);
-
-        if (from.isSpawned() && args.getSenderLocation() != null) {
+        if (copy.isSpawned() && args.getSenderLocation() != null) {
             Location location = args.getSenderLocation();
             location.getChunk().load();
             copy.getBukkitEntity().teleport(location);
             copy.getTrait(CurrentLocation.class).setLocation(location);
         }
-
-        for (Trait trait : copy.getTraits())
-            trait.onCopy();
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
                 : new CommandSenderCreateNPCEvent(sender, copy);

@@ -308,6 +308,7 @@ public class NMS {
             Messaging.logTr(Messages.ERROR_SPAWNING_CUSTOM_ENTITY, e.getMessage());
             return null;
         }
+        entity.setLocation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         handle.addEntity(entity);
         entity.setLocation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         return entity.getBukkitEntity();
