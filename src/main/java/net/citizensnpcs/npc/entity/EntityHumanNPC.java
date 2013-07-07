@@ -208,7 +208,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         } else {
             jumpTicks = 0;
         }
-
         be *= 0.98F;
         bf *= 0.98F;
         bg *= 0.9F;
