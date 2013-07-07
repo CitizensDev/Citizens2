@@ -31,7 +31,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     private final NavigatorParameters defaultParams = new NavigatorParameters().baseSpeed(UNINITIALISED_SPEED)
             .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt()).stuckAction(TeleportStuckAction.INSTANCE)
-            .examiner(new MinecraftBlockExaminer());
+            .examiner(new MinecraftBlockExaminer()).useNewPathfinder(Setting.USE_NEW_PATHFINDER.asBoolean());
     private PathStrategy executing;
     private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
@@ -161,7 +161,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         localParams = defaultParams.clone();
         PathStrategy newStrategy;
-        if (Setting.USE_NEW_PATHFINDER.asBoolean() || localParams.useNewPathfinder()) {
+        if (localParams.useNewPathfinder()) {
             newStrategy = new AStarNavigationStrategy(npc, target, localParams);
         } else {
             newStrategy = new MCNavigationStrategy(npc, target, localParams);
