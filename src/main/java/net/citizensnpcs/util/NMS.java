@@ -12,32 +12,32 @@ import java.util.WeakHashMap;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_6_R1.AttributeInstance;
-import net.minecraft.server.v1_6_R1.ControllerJump;
-import net.minecraft.server.v1_6_R1.DamageSource;
-import net.minecraft.server.v1_6_R1.EnchantmentManager;
-import net.minecraft.server.v1_6_R1.Entity;
-import net.minecraft.server.v1_6_R1.EntityHuman;
-import net.minecraft.server.v1_6_R1.EntityInsentient;
-import net.minecraft.server.v1_6_R1.EntityLiving;
-import net.minecraft.server.v1_6_R1.EntityPlayer;
-import net.minecraft.server.v1_6_R1.EntityTypes;
-import net.minecraft.server.v1_6_R1.GenericAttributes;
-import net.minecraft.server.v1_6_R1.MathHelper;
-import net.minecraft.server.v1_6_R1.MobEffectList;
-import net.minecraft.server.v1_6_R1.Navigation;
-import net.minecraft.server.v1_6_R1.NetworkManager;
-import net.minecraft.server.v1_6_R1.Packet;
-import net.minecraft.server.v1_6_R1.PathfinderGoalSelector;
-import net.minecraft.server.v1_6_R1.World;
+import net.minecraft.server.v1_6_R2.AttributeInstance;
+import net.minecraft.server.v1_6_R2.ControllerJump;
+import net.minecraft.server.v1_6_R2.DamageSource;
+import net.minecraft.server.v1_6_R2.EnchantmentManager;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityHuman;
+import net.minecraft.server.v1_6_R2.EntityInsentient;
+import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.EntityTypes;
+import net.minecraft.server.v1_6_R2.GenericAttributes;
+import net.minecraft.server.v1_6_R2.MathHelper;
+import net.minecraft.server.v1_6_R2.MobEffectList;
+import net.minecraft.server.v1_6_R2.Navigation;
+import net.minecraft.server.v1_6_R2.NetworkManager;
+import net.minecraft.server.v1_6_R2.Packet;
+import net.minecraft.server.v1_6_R2.PathfinderGoalSelector;
+import net.minecraft.server.v1_6_R2.World;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -63,8 +63,8 @@ public class NMS {
     }
 
     public static void attack(EntityLiving handle, Entity target) {
-        AttributeInstance attribute = handle.a(GenericAttributes.e);
-        float damage = (float) (attribute == null ? 1D : attribute.e());
+        AttributeInstance attribute = handle.getAttributeInstance(GenericAttributes.e);
+        float damage = (float) (attribute == null ? 1D : attribute.getValue());
 
         if (handle.hasEffect(MobEffectList.INCREASE_DAMAGE)) {
             damage += 3 << handle.getEffect(MobEffectList.INCREASE_DAMAGE).getAmplifier();
@@ -171,7 +171,7 @@ public class NMS {
 
     public static void look(EntityLiving handle, Entity target) {
         if (handle instanceof EntityInsentient) {
-            ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).bl());
+            ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).bp());
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setTargetLook(target, 10F, 40);
         }
@@ -284,7 +284,7 @@ public class NMS {
         }
     }
 
-    public static boolean shouldJump(net.minecraft.server.v1_6_R1.Entity entity) {
+    public static boolean shouldJump(net.minecraft.server.v1_6_R2.Entity entity) {
         if (JUMP_FIELD == null || !(entity instanceof EntityLiving))
             return false;
         try {
@@ -387,7 +387,7 @@ public class NMS {
         Navigation navigation = handle.getNavigation();
         try {
             AttributeInstance inst = (AttributeInstance) PATHFINDING_RANGE.get(navigation);
-            inst.a(pathfindingRange);
+            inst.setValue(pathfindingRange);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

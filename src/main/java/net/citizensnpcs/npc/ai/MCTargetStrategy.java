@@ -12,16 +12,16 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.nms.PlayerNavigation;
-import net.minecraft.server.v1_6_R1.AttributeInstance;
-import net.minecraft.server.v1_6_R1.Entity;
-import net.minecraft.server.v1_6_R1.EntityLiving;
-import net.minecraft.server.v1_6_R1.EntityPlayer;
-import net.minecraft.server.v1_6_R1.Navigation;
-import net.minecraft.server.v1_6_R1.PathEntity;
+import net.minecraft.server.v1_6_R2.AttributeInstance;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.Navigation;
+import net.minecraft.server.v1_6_R2.PathEntity;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
@@ -175,14 +175,14 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             try {
                 if (navigation instanceof PlayerNavigation) {
                     if (P_NAV_E != null)
-                        range = (float) ((AttributeInstance) P_NAV_E.get(navigation)).e();
+                        range = (float) ((AttributeInstance) P_NAV_E.get(navigation)).getValue();
                     if (P_NAV_J != null)
                         j = P_NAV_J.getBoolean(navigation);
                     if (P_NAV_M != null)
                         m = P_NAV_M.getBoolean(navigation);
                 } else {
                     if (E_NAV_E != null)
-                        range = (float) ((AttributeInstance) E_NAV_E.get(navigation)).e();
+                        range = (float) ((AttributeInstance) E_NAV_E.get(navigation)).getValue();
                     if (E_NAV_J != null)
                         j = E_NAV_J.getBoolean(navigation);
                     if (E_NAV_M != null)
