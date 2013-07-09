@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R1.EntityHorse;
-import net.minecraft.server.v1_6_R1.World;
+import net.minecraft.server.v1_6_R2.EntityHorse;
+import net.minecraft.server.v1_6_R2.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftHorse;
+import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftHorse;
 import org.bukkit.entity.Horse;
 import org.bukkit.util.Vector;
 
@@ -51,7 +51,7 @@ public class HorseController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_6_R1.Entity entity) {
+        public void collide(net.minecraft.server.v1_6_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);

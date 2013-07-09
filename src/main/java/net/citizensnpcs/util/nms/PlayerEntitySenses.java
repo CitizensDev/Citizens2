@@ -3,8 +3,8 @@ package net.citizensnpcs.util.nms;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.server.v1_6_R1.Entity;
-import net.minecraft.server.v1_6_R1.EntityLiving;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityLiving;
 
 public class PlayerEntitySenses {
     EntityLiving entity;

@@ -1,19 +1,19 @@
 package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_6_R1.AttributeInstance;
-import net.minecraft.server.v1_6_R1.Block;
-import net.minecraft.server.v1_6_R1.Entity;
-import net.minecraft.server.v1_6_R1.EntityInsentient;
-import net.minecraft.server.v1_6_R1.GenericAttributes;
-import net.minecraft.server.v1_6_R1.IBlockAccess;
-import net.minecraft.server.v1_6_R1.Material;
-import net.minecraft.server.v1_6_R1.MathHelper;
-import net.minecraft.server.v1_6_R1.Navigation;
-import net.minecraft.server.v1_6_R1.PathEntity;
-import net.minecraft.server.v1_6_R1.PathPoint;
-import net.minecraft.server.v1_6_R1.Vec3D;
-import net.minecraft.server.v1_6_R1.World;
+import net.minecraft.server.v1_6_R2.AttributeInstance;
+import net.minecraft.server.v1_6_R2.Block;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityInsentient;
+import net.minecraft.server.v1_6_R2.GenericAttributes;
+import net.minecraft.server.v1_6_R2.IBlockAccess;
+import net.minecraft.server.v1_6_R2.Material;
+import net.minecraft.server.v1_6_R2.MathHelper;
+import net.minecraft.server.v1_6_R2.Navigation;
+import net.minecraft.server.v1_6_R2.PathEntity;
+import net.minecraft.server.v1_6_R2.PathPoint;
+import net.minecraft.server.v1_6_R2.Vec3D;
+import net.minecraft.server.v1_6_R2.World;
 
 public class PlayerNavigation extends Navigation {
     private final EntityHumanNPC a;
@@ -34,7 +34,7 @@ public class PlayerNavigation extends Navigation {
         super(getDummyInsentient(entityinsentient), world);
         this.a = entityinsentient;
         this.b = world;
-        this.e = entityinsentient.a(GenericAttributes.b);
+        this.e = entityinsentient.getAttributeInstance(GenericAttributes.b);
     }
 
     @Override
@@ -244,7 +244,7 @@ public class PlayerNavigation extends Navigation {
 
     @Override
     public float d() {
-        return (float) this.e.e();
+        return (float) this.e.getValue();
     }
 
     @Override
@@ -384,7 +384,7 @@ public class PlayerNavigation extends Navigation {
 
     public void setRange(float pathfindingRange) {
         if (this.e != null) {
-            this.e.a(pathfindingRange);
+            this.e.setValue(pathfindingRange);
         }
     }
 

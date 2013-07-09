@@ -14,12 +14,12 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R1.EntityEnderDragon;
-import net.minecraft.server.v1_6_R1.EntityLiving;
-import net.minecraft.server.v1_6_R1.EntityPlayer;
+import net.minecraft.server.v1_6_R2.EntityEnderDragon;
+import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
 
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
