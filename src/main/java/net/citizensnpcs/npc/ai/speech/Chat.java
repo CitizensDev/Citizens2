@@ -16,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 public class Chat implements VocalChord {
+
     public final String VOCAL_CHORD_NAME = "chat";
 
     @Override
@@ -25,6 +26,7 @@ public class Chat implements VocalChord {
 
     @Override
     public void talk(SpeechContext context) {
+
         // Check valid talker
         if (context.getTalker() == null)
             return;
