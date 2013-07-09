@@ -45,6 +45,8 @@ public class Messages {
     public static final String COMMAND_TOO_MANY_ARGUMENTS = "citizens.commands.requirements.too-many-arguments";
     public static final String CONTROLLABLE_REMOVED = "citizens.commands.npc.controllable.removed";
     public static final String CONTROLLABLE_SET = "citizens.commands.npc.controllable.set";
+    public static final String COPIER_EDITOR_BEGIN = "citizens.editors.copier.begin";
+    public static final String COPIER_EDITOR_END = "citizens.editors.copier.end";
     public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.waypoints.current-provider";
     public static final String DATABASE_CONNECTION_FAILED = "citizens.notifications.database-connection-failed";
     public static final String DELAY_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.delay.prompt";
