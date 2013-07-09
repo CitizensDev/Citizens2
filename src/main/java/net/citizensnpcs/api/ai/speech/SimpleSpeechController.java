@@ -1,11 +1,11 @@
 package net.citizensnpcs.api.ai.speech;
 
-import org.bukkit.Bukkit;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Speech;
+
+import org.bukkit.Bukkit;
 
 /**
  * Simple implementation of {@link SpeechController} which allows a NPC to speak
@@ -13,7 +13,6 @@ import net.citizensnpcs.api.trait.trait.Speech;
  * 
  */
 public class SimpleSpeechController implements SpeechController {
-
     NPC npc;
 
     public SimpleSpeechController(NPC npc) {

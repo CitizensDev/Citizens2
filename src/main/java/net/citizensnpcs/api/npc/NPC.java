@@ -222,4 +222,5 @@ public interface NPC extends Agent, Cloneable {
     public boolean spawn(Location location);
 
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
+    public static final String LEASH_PROTECTED_METADATA = "protected.leash";
 }

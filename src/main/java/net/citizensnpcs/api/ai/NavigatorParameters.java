@@ -118,9 +118,13 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Returns the distance margin that the {@link Navigator} will be able to
-     * stop from the target. The margin will be measured against the block
-     * distance squared.
+     * Returns the distance margin or leeway that the {@link Navigator} will be
+     * able to stop from the target destination. The margin will be measured
+     * against the block distance squared.
+     * 
+     * For example: if the distance margin were 2, then the {@link Navigator}
+     * could stop moving towards the target when it is 2 blocks squared away
+     * from it.
      * 
      * @return The distance margin
      */
