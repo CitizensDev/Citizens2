@@ -4,6 +4,7 @@ import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.editor.CopierEditor;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.editor.EquipmentEditor;
 import net.citizensnpcs.trait.text.Text;
@@ -14,6 +15,17 @@ import org.bukkit.entity.Player;
 
 @Requirements(selected = true, ownership = true)
 public class EditorCommands {
+    @Command(
+            aliases = { "npc" },
+            usage = "copier",
+            desc = "Toggle the NPC copier",
+            modifiers = { "copier" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.edit.copier")
+    public void copier(CommandContext args, Player player, NPC npc) {
+        Editor.enterOrLeave(player, new CopierEditor(player, npc));
+    }
 
     @Command(
             aliases = { "npc" },
@@ -23,7 +35,6 @@ public class EditorCommands {
             min = 1,
             max = 1,
             permission = "citizens.npc.edit.equip")
-    @Requirements(selected = true, ownership = true)
     public void equip(CommandContext args, Player player, NPC npc) {
         Editor.enterOrLeave(player, new EquipmentEditor(player, npc));
     }

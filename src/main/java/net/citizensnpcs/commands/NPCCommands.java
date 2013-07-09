@@ -90,7 +90,6 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "citizens.npc.age")
-    @Requirements(selected = true, ownership = true)
     public void age(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (!npc.isSpawned() || !(npc.getBukkitEntity() instanceof Ageable))
             throw new CommandException(Messages.MOBTYPE_CANNOT_BE_AGED);
@@ -108,8 +107,9 @@ public class NPCCommands {
         int age = 0;
         try {
             age = args.getInteger(1);
-            if (age < -24000 || age > 0)
+            if (age < -24000 || age > 0) {
                 throw new CommandException(Messages.INVALID_AGE);
+            }
             Messaging.sendTr(sender, Messages.AGE_SET_NORMAL, npc.getName(), age);
         } catch (NumberFormatException ex) {
             if (args.getString(1).equalsIgnoreCase("baby")) {
@@ -134,7 +134,6 @@ public class NPCCommands {
             min = 1,
             max = 3,
             permission = "citizens.npc.anchor")
-    @Requirements(selected = true, ownership = true)
     public void anchor(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Anchors trait = npc.getTrait(Anchors.class);
         if (args.hasValueFlag("save")) {

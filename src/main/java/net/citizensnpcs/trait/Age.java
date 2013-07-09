@@ -40,14 +40,16 @@ public class Age extends Trait implements Toggleable {
 
     @Override
     public void run() {
-        if (!locked && isAgeable())
+        if (!locked && isAgeable()) {
             age = ageable.getAge();
+        }
     }
 
     public void setAge(int age) {
         this.age = age;
-        if (isAgeable())
+        if (isAgeable()) {
             ageable.setAge(age);
+        }
     }
 
     @Override
