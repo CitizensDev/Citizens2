@@ -39,7 +39,6 @@ public class SilverfishController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-
             }
         }
 
@@ -48,6 +47,16 @@ public class SilverfishController extends MobEntityController {
             super.bh();
             if (npc != null)
                 npc.update();
+        }
+
+        @Override
+        public boolean bH() {
+            if (npc == null)
+                return super.bH();
+            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
+                return super.bH();
+            return false; // shouldLeash
         }
 
         @Override

@@ -57,6 +57,16 @@ public class PigController extends MobEntityController {
         }
 
         @Override
+        public boolean bH() {
+            if (npc == null)
+                return super.bH();
+            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
+                return super.bH();
+            return false; // shouldLeash
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_6_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
