@@ -64,7 +64,7 @@ public class Messages {
     public static final String ERROR_STOPPING_NETWORK_THREADS = "citizens.nms-errors.stopping-network-threads";
     public static final String ERROR_UPDATING_NAVIGATION_WORLD = "citizens.nms-errors.updating-navigation-world";
     public static final String ERROR_UPDATING_PATHFINDING_RANGE = "citizens.nms-errors.updating-pathfinding-range";
-    public static final String ERROR_UPDATING_SPEED = "citizens.nms-erorrs.updating-land-modifier";
+    public static final String ERROR_UPDATING_SPEED = "citizens.nms-errors.updating-land-modifier";
     public static final String EXCEPTION_UPDATING_NPC = "citizens.notifications.exception-updating-npc";
     public static final String FAILED_LOAD_SAVES = "citizens.saves.load-failed";
     public static final String FAILED_TO_MOUNT_NPC = "citizens.commands.npc.mount.failed";
@@ -190,6 +190,7 @@ public class Messages {
     public static final String TRAIT_NOT_CONFIGURABLE = "citizens.commands.traitc.not-configurable";
     public static final String TRAIT_NOT_FOUND = "citizens.commands.traitc.missing";
     public static final String TRAIT_NOT_FOUND_ON_NPC = "citizens.commands.traitc.not-on-npc";
+    public static final String TRAIT_ONSPAWN_FAILED = "citizens.notifications.trait-onspawn-failed";
     public static final String TRAITS_ADDED = "citizens.commands.trait.added";
     public static final String TRAITS_FAILED_TO_ADD = "citizens.commands.trait.failed-to-add";
     public static final String TRAITS_FAILED_TO_CHANGE = "citizens.commands.trait.failed-to-change";

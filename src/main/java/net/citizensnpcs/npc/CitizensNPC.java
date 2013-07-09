@@ -210,8 +210,14 @@ public class CitizensNPC extends AbstractNPC {
 
         navigator.onSpawn();
         // Modify NPC using traits after the entity has been created
-        for (Trait trait : traits.values())
-            trait.onSpawn();
+        for (Trait trait : traits.values()) {
+            try {
+                trait.onSpawn();
+            } catch (Exception ex) {
+                Messaging.severeTr(Messages.TRAIT_ONSPAWN_FAILED, trait.getName(), getId());
+                ex.printStackTrace();
+            }
+        }
         getBukkitEntity().setRemoveWhenFarAway(false);
         getBukkitEntity().setCustomName(getFullName());
         return true;
