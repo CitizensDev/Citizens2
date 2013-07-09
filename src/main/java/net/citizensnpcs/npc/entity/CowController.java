@@ -71,6 +71,9 @@ public class CowController extends MobEntityController {
             boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
                 return super.bH();
+            if (super.bH()) {
+                a(true, false); // clearLeash with client update
+            }
             return false; // shouldLeash
         }
 
