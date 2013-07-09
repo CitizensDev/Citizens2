@@ -213,7 +213,7 @@ public class CitizensNPC extends AbstractNPC {
         for (Trait trait : traits.values()) {
             try {
                 trait.onSpawn();
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 Messaging.severeTr(Messages.TRAIT_ONSPAWN_FAILED, trait.getName(), getId());
                 ex.printStackTrace();
             }
