@@ -45,8 +45,6 @@ public abstract class MobEntityController extends AbstractEntityController {
         }
     }
 
-    private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = Maps.newHashMap();
-
     private static Constructor<?> getConstructor(Class<?> clazz) {
         Constructor<?> constructor = CONSTRUCTOR_CACHE.get(clazz);
         if (constructor != null)
@@ -57,4 +55,6 @@ public abstract class MobEntityController extends AbstractEntityController {
             throw new IllegalStateException("unable to find an entity constructor");
         }
     }
+
+    private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = Maps.newHashMap();
 }
