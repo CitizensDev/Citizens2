@@ -86,6 +86,8 @@ public class Messages {
     public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
     public static final String INVALID_TRIGGER_TELEPORT_FORMAT = "citizens.editors.waypoints.triggers.teleport.invalid-format";
+    public static final String LEASHABLE_SET = "citizens.commands.npc.leashable.set";
+    public static final String LEASHABLE_STOPPED = "citizens.commands.npc.leashable.stopped";
     public static final String LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT = "citizens.editors.waypoints.linear.added-waypoint";
     public static final String LINEAR_WAYPOINT_EDITOR_BEGIN = "citizens.editors.waypoints.linear.begin";
     public static final String LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET = "citizens.editors.waypoints.linear.edit-slot-set";

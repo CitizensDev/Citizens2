@@ -460,6 +460,26 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "leashable",
+            desc = "Toggles leashability",
+            modifiers = { "leashable" },
+            min = 1,
+            max = 1,
+            flags = "t",
+            permission = "citizens.npc.leashable")
+    public void leashable(CommandContext args, CommandSender sender, NPC npc) {
+        boolean vulnerable = !npc.data().get(NPC.LEASH_PROTECTED_METADATA, true);
+        if (args.hasFlag('t')) {
+            npc.data().set(NPC.LEASH_PROTECTED_METADATA, vulnerable);
+        } else {
+            npc.data().setPersistent(NPC.LEASH_PROTECTED_METADATA, vulnerable);
+        }
+        String key = vulnerable ? Messages.LEASHABLE_STOPPED : Messages.LEASHABLE_SET;
+        Messaging.sendTr(sender, key, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "list (page) ((-a) --owner (owner) --type (type) --char (char))",
             desc = "List NPCs",
             flags = "a",
