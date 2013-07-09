@@ -230,7 +230,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     public void updateAI() {
-        navigation.f();
         entitySenses.a();
         controllerMove.c();
         controllerLook.a();
