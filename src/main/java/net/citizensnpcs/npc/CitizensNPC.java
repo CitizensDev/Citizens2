@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import java.util.Collection;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -211,7 +212,9 @@ public class CitizensNPC extends AbstractNPC {
 
         navigator.onSpawn();
         // Modify NPC using traits after the entity has been created
-        for (Trait trait : traits.values()) {
+        Collection<Trait> onSpawn = traits.values();
+        // work around traits modifying the map during this iteration.
+        for (Trait trait : onSpawn.toArray(new Trait[onSpawn.size()])) {
             try {
                 trait.onSpawn();
             } catch (Throwable ex) {
