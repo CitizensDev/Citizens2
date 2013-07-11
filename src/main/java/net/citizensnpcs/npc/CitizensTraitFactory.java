@@ -21,14 +21,17 @@ import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
+import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.NPCSkeletonType;
+import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
+import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.ZombieModifier;
 import net.citizensnpcs.trait.text.Text;
@@ -47,9 +50,11 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));
         registerTrait(TraitInfo.create(Equipment.class).withName("equipment"));
         registerTrait(TraitInfo.create(Gravity.class).withName("gravity"));
+        registerTrait(TraitInfo.create(HorseModifiers.class).withName("horsemodifiers"));
         registerTrait(TraitInfo.create(Inventory.class).withName("inventory"));
         registerTrait(TraitInfo.create(CurrentLocation.class).withName("location"));
         registerTrait(TraitInfo.create(LookClose.class).withName("lookclose"));
+        registerTrait(TraitInfo.create(OcelotModifiers.class).withName("ocelotmodifiers"));
         registerTrait(TraitInfo.create(Owner.class).withName("owner"));
         registerTrait(TraitInfo.create(Poses.class).withName("poses"));
         registerTrait(TraitInfo.create(Powered.class).withName("powered"));
@@ -64,6 +69,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(MobType.class).withName("type"));
         registerTrait(TraitInfo.create(Waypoints.class).withName("waypoints"));
         registerTrait(TraitInfo.create(WoolColor.class).withName("woolcolor"));
+        registerTrait(TraitInfo.create(WolfModifiers.class).withName("wolfmodifiers"));
         registerTrait(TraitInfo.create(ZombieModifier.class).withName("zombiemodifier"));
 
         for (String trait : registered.keySet()) {

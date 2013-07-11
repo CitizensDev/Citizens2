@@ -25,6 +25,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -32,6 +33,7 @@ import net.citizensnpcs.util.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,6 +52,7 @@ import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -246,6 +249,16 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Editor.leave(event.getPlayer());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onVehicleEnter(VehicleEnterEvent event) {
+        if (!npcRegistry.isNPC(event.getEntered()))
+            return;
+        NPC npc = npcRegistry.getNPC(event.getEntered());
+        if (npc.getBukkitEntity().getType() == EntityType.HORSE && !npc.getTrait(Controllable.class).isEnabled()) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
