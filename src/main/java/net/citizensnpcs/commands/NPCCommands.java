@@ -34,12 +34,15 @@ import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
+import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.NPCSkeletonType;
+import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
+import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.ZombieModifier;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
@@ -59,11 +62,14 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse.Color;
+import org.bukkit.entity.Horse.Style;
+import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Villager.Profession;
-import org.bukkit.entity.Wolf;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.google.common.base.Splitter;
@@ -448,6 +454,63 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "horse (--color color) (--type type) (--style style) (-cb)",
+            desc = "Sets horse modifiers",
+            help = "Use the -c flag to make the horse have a chest, or the -b flag to stop them from having a chest.",
+            modifiers = { "horse" },
+            min = 1,
+            max = 1,
+            flags = "cb",
+            permission = "citizens.npc.horse")
+    @Requirements(selected = true, ownership = true, types = { EntityType.HORSE })
+    public void horse(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        HorseModifiers horse = npc.getTrait(HorseModifiers.class);
+        String output = "";
+        if (args.hasFlag('c')) {
+            horse.setCarryingChest(true);
+            output += Messaging.tr(Messages.HORSE_CHEST_SET) + " ";
+        } else if (args.hasFlag('b')) {
+            horse.setCarryingChest(false);
+            output += Messaging.tr(Messages.HORSE_CHEST_UNSET) + " ";
+        }
+        if (args.hasValueFlag("color") || args.hasValueFlag("colour")) {
+            String colorRaw = args.getFlag("color", args.getFlag("colour"));
+            Color color = Util.matchEnum(Color.values(), colorRaw);
+            if (color == null) {
+                String valid = Util.listValuesPretty(Color.values());
+                throw new CommandException(Messages.INVALID_HORSE_COLOR, valid);
+            }
+            horse.setColor(color);
+            output += Messaging.tr(Messages.HORSE_COLOR_SET, Util.prettyEnum(color));
+        }
+        if (args.hasValueFlag("type")) {
+            Variant variant = Util.matchEnum(Variant.values(), args.getFlag("type"));
+            if (variant == null) {
+                String valid = Util.listValuesPretty(Variant.values());
+                throw new CommandException(Messages.INVALID_HORSE_VARIANT, valid);
+            }
+            horse.setType(variant);
+            output += Messaging.tr(Messages.HORSE_TYPE_SET, Util.prettyEnum(variant));
+        }
+        if (args.hasValueFlag("style")) {
+            Style style = Util.matchEnum(Style.values(), args.getFlag("style"));
+            if (style == null) {
+                String valid = Util.listValuesPretty(Style.values());
+                throw new CommandException(Messages.INVALID_HORSE_STYLE, valid);
+            }
+            horse.setStyle(style);
+            output += Messaging.tr(Messages.HORSE_STYLE_SET, Util.prettyEnum(style));
+        }
+        if (output.isEmpty()) {
+            Messaging.sendTr(sender, Messages.HORSE_DESCRIBE, Util.prettyEnum(horse.getColor()),
+                    Util.prettyEnum(horse.getType()), Util.prettyEnum(horse.getStyle()));
+        } else {
+            sender.sendMessage(output);
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "id",
             desc = "Sends the selected NPC's ID to the sender",
             modifiers = { "id" },
@@ -646,6 +709,33 @@ public class NPCCommands {
                 continue;
             String message = "     <e>- <a>" + trait.getName();
             Messaging.send(sender, message);
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "ocelot (--type type) (-s(itting), -n(ot sitting))",
+            desc = "Set the ocelot type of an NPC and whether it is sitting",
+            modifiers = { "ocelot" },
+            min = 1,
+            max = 1,
+            flags = "sn",
+            permission = "citizens.npc.ocelot")
+    @Requirements(selected = true, ownership = true, types = { EntityType.OCELOT })
+    public void ocelot(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        OcelotModifiers trait = npc.getTrait(OcelotModifiers.class);
+        if (args.hasFlag('s')) {
+            trait.setSitting(true);
+        } else if (args.hasFlag('n')) {
+            trait.setSitting(false);
+        }
+        if (args.hasValueFlag("type")) {
+            Ocelot.Type type = Util.matchEnum(Ocelot.Type.values(), args.getFlag("type"));
+            if (type == null) {
+                String valid = Util.listValuesPretty(Ocelot.Type.values());
+                throw new CommandException(Messages.INVALID_OCELOT_TYPE, valid);
+            }
+            trait.setType(type);
         }
     }
 
@@ -1155,10 +1245,10 @@ public class NPCCommands {
             permission = "citizens.npc.wolf")
     @Requirements(selected = true, ownership = true, types = EntityType.WOLF)
     public void wolf(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        Wolf wolf = (Wolf) npc.getBukkitEntity();
-        wolf.setAngry(args.hasFlag('a'));
-        wolf.setSitting(args.hasFlag('s'));
-        wolf.setTamed(args.hasFlag('t'));
+        WolfModifiers trait = npc.getTrait(WolfModifiers.class);
+        trait.setAngry(args.hasFlag('a'));
+        trait.setSitting(args.hasFlag('s'));
+        trait.setTamed(args.hasFlag('t'));
         if (args.hasValueFlag("collar")) {
             String unparsed = args.getFlag("collar");
             DyeColor color = null;
@@ -1170,7 +1260,7 @@ public class NPCCommands {
             }
             if (color == null)
                 throw new CommandException(Messages.COLLAR_COLOUR_NOT_RECOGNISED);
-            wolf.setCollarColor(color);
+            trait.setCollarColor(color);
         }
     }
 

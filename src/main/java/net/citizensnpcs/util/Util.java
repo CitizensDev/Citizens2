@@ -17,6 +17,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
@@ -24,9 +25,6 @@ public class Util {
     // Static class for small (emphasis small) utility methods
     private Util() {
     }
-
-    private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
 
     public static void assumePose(LivingEntity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);
@@ -85,6 +83,10 @@ public class Util {
         int chunkX = location.getBlockX() >> 4;
         int chunkZ = location.getBlockZ() >> 4;
         return location.getWorld().isChunkLoaded(chunkX, chunkZ);
+    }
+
+    public static String listValuesPretty(Enum<?>[] values) {
+        return Joiner.on(", ").join(values).toLowerCase().replace('_', ' ');
     }
 
     public static boolean locationWithinRange(Location current, Location target, double range) {
@@ -161,4 +163,11 @@ public class Util {
             return search.getLocation();
         }
     }
+
+    public static String prettyEnum(Enum<?> e) {
+        return e.name().toLowerCase().replace('_', ' ');
+    }
+
+    private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
 }
