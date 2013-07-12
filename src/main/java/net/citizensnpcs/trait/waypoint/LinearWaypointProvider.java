@@ -107,8 +107,9 @@ public class LinearWaypointProvider implements WaypointProvider {
     public void save(DataKey key) {
         key.removeKey("points");
         key = key.getRelative("points");
-        for (int i = 0; i < waypoints.size(); ++i)
+        for (int i = 0; i < waypoints.size(); ++i) {
             PersistenceLoader.save(waypoints.get(i), key.getRelative(i));
+        }
     }
 
     @Override
@@ -142,7 +143,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         }
 
         private void createWaypointMarker(int index, Waypoint waypoint) {
-            Entity entity = spawnMarker(player.getWorld(), waypoint.getLocation().add(0, 1, 0));
+            Entity entity = spawnMarker(player.getWorld(), waypoint.getLocation().clone().add(0, 1, 0));
             if (entity == null)
                 return;
             entity.setMetadata("waypointindex", new FixedMetadataValue(CitizensAPI.getPlugin(), index));
