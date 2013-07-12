@@ -54,19 +54,19 @@ public class Waypoint {
         for (int i = start; i < triggers.size(); i++) {
             WaypointTrigger trigger = triggers.get(i);
             trigger.onWaypointReached(npc, location);
-            if (trigger instanceof DelayTrigger) {
-                int delay = ((DelayTrigger) trigger).getDelay();
-                if (delay <= 0)
-                    continue;
-                final int newStart = i;
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        runTriggers(npc, newStart);
-                    }
-                }, delay);
-                break;
-            }
+            if (!(trigger instanceof DelayTrigger))
+                continue;
+            int delay = ((DelayTrigger) trigger).getDelay();
+            if (delay <= 0)
+                continue;
+            final int newStart = i;
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    runTriggers(npc, newStart);
+                }
+            }, delay);
+            break;
         }
     }
 
