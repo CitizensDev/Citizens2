@@ -6,7 +6,6 @@ import net.citizensnpcs.api.util.Colorizer;
 import org.bukkit.ChatColor;
 
 public class StringHelper {
-
     public static String capitalize(Object string) {
         String capitalize = string.toString();
         return capitalize.length() == 0 ? "" : Character.toUpperCase(capitalize.charAt(0))

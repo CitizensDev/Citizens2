@@ -19,10 +19,24 @@ public enum PlayerAnimation {
             sendPacketNearby(packet, player, radius);
         }
     },
+    CRIT {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 6);
+            sendPacketNearby(packet, player, radius);
+        }
+    },
     HURT {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
             Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 2);
+            sendPacketNearby(packet, player, radius);
+        }
+    },
+    MAGIC_CRIT {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 7);
             sendPacketNearby(packet, player, radius);
         }
     },
