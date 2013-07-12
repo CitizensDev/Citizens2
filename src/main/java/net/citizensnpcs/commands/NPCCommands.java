@@ -867,10 +867,8 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = { EntityType.VILLAGER })
     public void profession(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String profession = args.getString(1);
-        Profession parsed;
-        try {
-            parsed = Profession.valueOf(profession.toUpperCase());
-        } catch (IllegalArgumentException ex) {
+        Profession parsed = Util.matchEnum(Profession.values(), profession.toUpperCase());
+        if (parsed == null) {
             throw new CommandException(Messages.INVALID_PROFESSION);
         }
         npc.getTrait(VillagerProfession.class).setProfession(parsed);
