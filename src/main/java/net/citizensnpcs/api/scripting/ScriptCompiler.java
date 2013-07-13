@@ -204,7 +204,7 @@ public class ScriptCompiler {
 
     public class CompileTaskBuilder {
         private boolean cache;
-        private List<CompileCallback> callbacks;
+        private final List<CompileCallback> callbacks = Lists.newArrayList();
         private final List<ContextProvider> contextProviders = Lists.newArrayList();
         private final SimpleScriptSource engine;
 

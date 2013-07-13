@@ -423,9 +423,6 @@ public class CommandManager {
         }
     }
 
-    // Logger for general errors.
-    private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
-
     private static int getLevenshteinDistance(String s, String t) {
         if (s == null || t == null)
             throw new IllegalArgumentException("Strings must not be null");
@@ -474,4 +471,7 @@ public class CommandManager {
         // actually has the most recent cost counts
         return p[n];
     }
+
+    // Logger for general errors.
+    private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
 }

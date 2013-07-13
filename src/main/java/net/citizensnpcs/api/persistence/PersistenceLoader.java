@@ -2,6 +2,7 @@ package net.citizensnpcs.api.persistence;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -76,18 +77,6 @@ public class PersistenceLoader {
 
         private static final Object NULL = new Object();
     }
-
-    private static final Map<Class<?>, Field[]> fieldCache = new WeakHashMap<Class<?>, Field[]>();
-    private static final Map<Class<? extends Persister<?>>, Persister<?>> loadedDelegates = new WeakHashMap<Class<? extends Persister<?>>, Persister<?>>();
-    private static final Exception loadException = new Exception() {
-        @SuppressWarnings("unused")
-        public void fillInStackTrace(StackTraceElement[] elements) {
-        }
-
-        private static final long serialVersionUID = -4245839150826112365L;
-    };
-
-    private static final Map<Class<?>, Class<? extends Persister<?>>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister<?>>>();
 
     private static String createRelativeKey(String key, int ext) {
         return createRelativeKey(key, Integer.toString(ext));
@@ -181,8 +170,9 @@ public class PersistenceLoader {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static Object deserialiseValue(PersistField field, DataKey root) {
-        if (field.delegate == null && field.field.getType().isEnum()) {
-            Class<? extends Enum> clazz = (Class<? extends Enum>) field.getType();
+        Class<?> type = field.field.getType().isEnum() ? field.field.getType() : getGenericType(field.field);
+        if (field.delegate == null && type.isEnum()) {
+            Class<? extends Enum> clazz = (Class<? extends Enum>) type;
             Object obj = root.getRaw("");
             if (obj instanceof String) {
                 try {
@@ -193,6 +183,7 @@ public class PersistenceLoader {
             }
         }
         return field.delegate == null ? root.getRaw("") : field.delegate.create(root);
+
     }
 
     private static void ensureDelegateLoaded(Class<? extends Persister<?>> delegateClass) {
@@ -251,6 +242,13 @@ public class PersistenceLoader {
             }
         }
         return toFilter.toArray(new Field[toFilter.size()]);
+    }
+
+    private static Class<?> getGenericType(Field field) {
+        if (field.getGenericType() == null || !(field.getGenericType() instanceof ParameterizedType))
+            return field.getType();
+        Type[] args = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+        return args.length > 0 && args[0] instanceof Class ? (Class<?>) args[0] : field.getType();
     }
 
     /**
@@ -369,11 +367,22 @@ public class PersistenceLoader {
     private static void serialiseValue(PersistField field, DataKey root, Object value) {
         if (field.delegate != null) {
             ((Persister<Object>) field.delegate).save(value, root);
-        } else if (field.getType().isEnum()) {
+        } else if (value instanceof Enum) {
             root.setRaw("", ((Enum<?>) value).name());
         } else
             root.setRaw("", value);
     }
+
+    private static final Map<Class<?>, Field[]> fieldCache = new WeakHashMap<Class<?>, Field[]>();
+    private static final Map<Class<? extends Persister<?>>, Persister<?>> loadedDelegates = new WeakHashMap<Class<? extends Persister<?>>, Persister<?>>();
+    private static final Exception loadException = new Exception() {
+        @SuppressWarnings("unused")
+        public void fillInStackTrace(StackTraceElement[] elements) {
+        }
+
+        private static final long serialVersionUID = -4245839150826112365L;
+    };
+    private static final Map<Class<?>, Class<? extends Persister<?>>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister<?>>>();
 
     static {
         registerPersistDelegate(Location.class, LocationPersister.class);
