@@ -932,6 +932,25 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "respawn [delay in ticks]",
+            desc = "Sets an NPC's respawn delay in ticks",
+            modifiers = { "respawn" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.respawn")
+    public void respawn(CommandContext args, CommandSender sender, NPC npc) {
+        if (args.argsLength() > 1) {
+            int delay = args.getInteger(1);
+            npc.data().setPersistent(NPC.RESPAWN_DELAY_METADATA, delay);
+            Messaging.sendTr(sender, Messages.RESPAWN_DELAY_SET, delay);
+        } else {
+            Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1));
+        }
+
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "select|sel [id|name] (--r range)",
             desc = "Select a NPC with the given ID or name",
             modifiers = { "select", "sel" },

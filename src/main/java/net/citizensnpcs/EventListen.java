@@ -186,17 +186,31 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
-        NPC npc = npcRegistry.getNPC(event.getEntity());
+        final NPC npc = npcRegistry.getNPC(event.getEntity());
         if (npc == null)
             return;
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
+        final Location location = npc.getBukkitEntity().getLocation();
         npc.despawn(DespawnReason.DEATH);
+
+        if (npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1) >= 0) {
+            int delay = npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    if (!npc.isSpawned()) {
+                        npc.spawn(location);
+                    }
+                }
+            }, delay);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntitySpawn(CreatureSpawnEvent event) {
-        if (event.isCancelled() && npcRegistry.isNPC(event.getEntity()))
+        if (event.isCancelled() && npcRegistry.isNPC(event.getEntity())) {
             event.setCancelled(false);
+        }
     }
 
     @EventHandler

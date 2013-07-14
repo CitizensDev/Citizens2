@@ -155,6 +155,8 @@ public class Messages {
     public static final String REMOVE_INCORRECT_SYNTAX = "citizens.commands.npc.remove.incorrect-syntax";
     public static final String REMOVED_ALL_NPCS = "citizens.commands.npc.remove.removed-all";
     public static final String REMOVED_FROM_PLAYERLIST = "citizens.commands.npc.playerlist.removed";
+    public static final String RESPAWN_DELAY_DESCRIBE = "citizens.commands.npc.respawn.describe";
+    public static final String RESPAWN_DELAY_SET = "citizens.commands.npc.respawn.delay-set";
     public static final String SADDLED_SET = "citizens.editors.equipment.saddled-set";
     public static final String SADDLED_STOPPED = "citizens.editors.equipment.saddled-stopped";
     public static final String SCRIPT_COMPILED = "citizens.commands.script.compiled";

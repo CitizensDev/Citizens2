@@ -152,7 +152,7 @@ public class NMS {
             return DEFAULT_SPEED;
         // this is correct, but too slow. TODO: investigate
         // return (float)
-        // NMS.getHandle(npc.getBukkitEntity()).a(GenericAttributes.d).b();
+        // NMS.getHandle(npc.getBukkitEntity()).getAttributeInstance(GenericAttributes.d).getValue();
         return DEFAULT_SPEED;
     }
 
