@@ -57,7 +57,7 @@ public class LinearWaypointProvider implements WaypointProvider {
             return null;
         } else if (args.hasValueFlag("at")) {
             try {
-                Location location = Util.parseLocation(player.getLocation(), args.getFlag("at"));
+                Location location = CommandContext.parseLocation(player.getLocation(), args.getFlag("at"));
                 waypoints.add(new Waypoint(location));
             } catch (CommandException e) {
                 Messaging.sendError(player, e.getMessage());

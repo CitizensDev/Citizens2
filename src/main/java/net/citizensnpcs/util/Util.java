@@ -2,7 +2,6 @@ package net.citizensnpcs.util;
 
 import java.util.Random;
 
-import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -10,7 +9,6 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -19,7 +17,6 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 
 public class Util {
     // Static class for small (emphasis small) utility methods
@@ -129,39 +126,6 @@ public class Util {
             }
         }
         return false;
-    }
-
-    public static Location parseLocation(Location currentLocation, String flag) throws CommandException {
-        String[] parts = Iterables.toArray(Splitter.on(':').split(flag), String.class);
-        if (parts.length > 0) {
-            String worldName = currentLocation != null ? currentLocation.getWorld().getName() : "";
-            int x = 0, y = 0, z = 0;
-            float yaw = 0F, pitch = 0F;
-            switch (parts.length) {
-                case 6:
-                    pitch = Float.parseFloat(parts[5]);
-                case 5:
-                    yaw = Float.parseFloat(parts[4]);
-                case 4:
-                    worldName = parts[3];
-                case 3:
-                    x = Integer.parseInt(parts[0]);
-                    y = Integer.parseInt(parts[1]);
-                    z = Integer.parseInt(parts[2]);
-                    break;
-                default:
-                    throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-            }
-            World world = Bukkit.getWorld(worldName);
-            if (world == null)
-                throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-            return new Location(world, x, y, z, yaw, pitch);
-        } else {
-            Player search = Bukkit.getPlayerExact(flag);
-            if (search == null)
-                throw new CommandException(Messages.PLAYER_NOT_FOUND_FOR_SPAWN);
-            return search.getLocation();
-        }
     }
 
     public static String prettyEnum(Enum<?> e) {

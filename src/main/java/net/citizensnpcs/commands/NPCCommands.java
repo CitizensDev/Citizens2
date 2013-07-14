@@ -333,8 +333,9 @@ public class NPCCommands {
         }
 
         if (args.hasValueFlag("at")) {
-            spawnLoc = Util.parseLocation(args.getSenderLocation(), args.getFlag("at"));
+            spawnLoc = CommandContext.parseLocation(args.getSenderLocation(), args.getFlag("at"));
         }
+
         if (spawnLoc == null) {
             npc.destroy();
             throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
