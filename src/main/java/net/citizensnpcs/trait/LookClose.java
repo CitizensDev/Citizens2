@@ -92,10 +92,12 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     public void run() {
         if (!enabled || !npc.isSpawned() || npc.getNavigator().isNavigating())
             return;
-        if (hasInvalidTarget())
+        if (hasInvalidTarget()) {
             findNewTarget();
-        if (lookingAt != null && canSeeTarget())
+        }
+        if (lookingAt != null && canSeeTarget()) {
             Util.faceEntity(npc.getBukkitEntity(), lookingAt);
+        }
     }
 
     @Override
