@@ -110,6 +110,10 @@ public abstract class DataKey {
         return prime + ((path == null) ? 0 : path.hashCode());
     }
 
+    public boolean keyExists() {
+        return keyExists("");
+    }
+
     public abstract boolean keyExists(String key);
 
     public abstract String name();
