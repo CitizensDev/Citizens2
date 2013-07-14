@@ -24,11 +24,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import net.citizensnpcs.api.command.exception.CommandException;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -201,13 +207,16 @@ public class CommandContext {
         return slice;
     }
 
-    public Location getSenderLocation() {
+    public Location getSenderLocation() throws CommandException {
         if (location != null || sender == null)
             return location;
         if (sender instanceof Player)
             location = ((Player) sender).getLocation();
         else if (sender instanceof BlockCommandSender)
             location = ((BlockCommandSender) sender).getBlock().getLocation();
+        if (hasValueFlag("location")) {
+            location = parseLocation(location, getFlag("location"));
+        }
         return location;
     }
 
@@ -255,7 +264,39 @@ public class CommandContext {
         return args[0].equalsIgnoreCase(command);
     }
 
-    private static final Pattern FLAG = Pattern.compile("^-[a-zA-Z]+$");
+    public static Location parseLocation(Location currentLocation, String flag) throws CommandException {
+        String[] parts = Iterables.toArray(Splitter.on(':').omitEmptyStrings().split(flag), String.class);
+        if (parts.length > 0) {
+            String worldName = currentLocation != null ? currentLocation.getWorld().getName() : "";
+            int x = 0, y = 0, z = 0;
+            float yaw = 0F, pitch = 0F;
+            switch (parts.length) {
+                case 6:
+                    pitch = Float.parseFloat(parts[5]);
+                case 5:
+                    yaw = Float.parseFloat(parts[4]);
+                case 4:
+                    worldName = parts[3];
+                case 3:
+                    x = Integer.parseInt(parts[0]);
+                    y = Integer.parseInt(parts[1]);
+                    z = Integer.parseInt(parts[2]);
+                    break;
+                default:
+                    throw new CommandException(CommandMessages.INVALID_SPAWN_LOCATION);
+            }
+            World world = Bukkit.getWorld(worldName);
+            if (world == null)
+                throw new CommandException(CommandMessages.INVALID_SPAWN_LOCATION);
+            return new Location(world, x, y, z, yaw, pitch);
+        } else {
+            Player search = Bukkit.getPlayerExact(flag);
+            if (search == null)
+                throw new CommandException(CommandMessages.PLAYER_NOT_FOUND_FOR_SPAWN);
+            return search.getLocation();
+        }
+    }
 
+    private static final Pattern FLAG = Pattern.compile("^-[a-zA-Z]+$");
     private static final Pattern VALUE_FLAG = Pattern.compile("^--[a-zA-Z0-9]+$");
 }
