@@ -36,6 +36,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -236,8 +237,9 @@ public class CitizensNPC extends AbstractNPC {
                 navigator.run();
             }
         } catch (Exception ex) {
-            Messaging.logTr(Messages.EXCEPTION_UPDATING_NPC, getId(), ex.getMessage());
-            ex.printStackTrace();
+            Throwable error = Throwables.getRootCause(ex);
+            Messaging.logTr(Messages.EXCEPTION_UPDATING_NPC, getId(), error.getMessage());
+            error.printStackTrace();
         }
     }
 
