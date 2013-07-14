@@ -86,6 +86,12 @@ public class Sequence extends Composite {
         return BehaviorStatus.RUNNING;
     }
 
+    @Override
+    public String toString() {
+        return "Sequence [executing=" + executing + ", executingIndex=" + executingIndex + ", retryChildren="
+                + retryChildren + ", getBehaviors()=" + getBehaviors() + "]";
+    }
+
     public static Sequence createRetryingSequence(Behavior... behaviors) {
         return createRetryingSequence(Arrays.asList(behaviors));
     }

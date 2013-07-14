@@ -71,6 +71,12 @@ public class Selector extends Composite {
         return status;
     }
 
+    @Override
+    public String toString() {
+        return "Selector [executing=" + executing + ", retryChildren=" + retryChildren + ", selectionFunction="
+                + selectionFunction + ", getBehaviors()=" + getBehaviors() + "]";
+    }
+
     public static class Builder {
         private final Collection<Behavior> behaviors;
         private boolean retryChildren;
@@ -120,6 +126,14 @@ public class Selector extends Composite {
         }
     }
 
+    public static Builder selecting(Behavior... behaviors) {
+        return selecting(Arrays.asList(behaviors));
+    }
+
+    public static Builder selecting(Collection<Behavior> behaviors) {
+        return new Builder(behaviors);
+    }
+
     private static final Random RANDOM = new Random();
 
     private static final Function<List<Behavior>, Behavior> RANDOM_SELECTION = new Function<List<Behavior>, Behavior>() {
@@ -128,12 +142,4 @@ public class Selector extends Composite {
             return behaviors.get(RANDOM.nextInt(behaviors.size()));
         }
     };
-
-    public static Builder selecting(Behavior... behaviors) {
-        return selecting(Arrays.asList(behaviors));
-    }
-
-    public static Builder selecting(Collection<Behavior> behaviors) {
-        return new Builder(behaviors);
-    }
 }
