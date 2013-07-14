@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadFactory;
 
 import javax.script.Compilable;
@@ -50,13 +50,12 @@ public class ScriptCompiler {
         @Override
         public Thread newThread(Runnable r) {
             Thread created = new Thread(r, "Citizens Script Compiler #" + n++);
-            created.setContextClassLoader(classLoader.get());
             return created;
         }
     });
-    private final Function<File, SimpleScriptSource> fileEngineConverter = new Function<File, SimpleScriptSource>() {
+    private final Function<File, ScriptSource> fileEngineConverter = new Function<File, ScriptSource>() {
         @Override
-        public SimpleScriptSource apply(File file) {
+        public ScriptSource apply(File file) {
             if (!file.isFile())
                 return null;
             String fileName = file.getName();
@@ -64,14 +63,14 @@ public class ScriptCompiler {
             ScriptEngine engine = loadEngine(extension);
             if (engine == null)
                 return null;
-            return new SimpleScriptSource(file, engine);
+            return new ScriptSource(file, engine);
         }
     };
     private final List<ContextProvider> globalContextProviders = Lists.newArrayList();
 
-    public ScriptCompiler(ClassLoader classLoader) {
-        engineManager = new ScriptEngineManager(classLoader);
-        this.classLoader = new WeakReference<ClassLoader>(classLoader);
+    public ScriptCompiler(ClassLoader overrideClassLoader) {
+        engineManager = new ScriptEngineManager(overrideClassLoader);
+        classLoader = new WeakReference<ClassLoader>(overrideClassLoader);
     }
 
     /**
@@ -84,7 +83,10 @@ public class ScriptCompiler {
     public CompileTaskBuilder compile(File file) {
         if (file == null)
             throw new IllegalArgumentException("file should not be null");
-        return new CompileTaskBuilder(fileEngineConverter.apply(file));
+        ScriptSource source = fileEngineConverter.apply(file);
+        if (source == null)
+            throw new IllegalArgumentException("could not recognise file");
+        return new CompileTaskBuilder(source);
     }
 
     /**
@@ -101,7 +103,7 @@ public class ScriptCompiler {
     public CompileTaskBuilder compile(String src, String identifier, String extension) {
         if (src == null)
             throw new IllegalArgumentException("source must not be null");
-        return new CompileTaskBuilder(new SimpleScriptSource(src, identifier, loadEngine(extension)));
+        return new CompileTaskBuilder(new ScriptSource(src, identifier, loadEngine(extension)));
     }
 
     public void interrupt() {
@@ -110,22 +112,17 @@ public class ScriptCompiler {
 
     private ScriptEngine loadEngine(String extension) {
         ScriptEngine engine = engines.get(extension);
-        if (engine == null) {
-            ClassLoader replace = classLoader.get();
-            ClassLoader old = null;
-            if (replace != null) {
-                old = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(replace);
-            }
-            ScriptEngine search = engineManager.getEngineByExtension(extension);
-            if (replace != null) {
-                Thread.currentThread().setContextClassLoader(old);
-            }
-            if (search != null && (!(search instanceof Compilable) || !(search instanceof Invocable)))
-                search = null;
-            engines.put(extension, search);
+        if (engine != null)
+            return engine;
+        ScriptEngine search = engineManager.getEngineByExtension(extension);
+        if (search != null && (!(search instanceof Compilable) || !(search instanceof Invocable)))
+            search = null;
+        engines.put(extension, search);
+        ClassLoader cl = classLoader.get();
+        if (cl != null) {
+            updateSunClassLoader(cl);
         }
-        return engine;
+        return search;
     }
 
     /**
@@ -155,12 +152,24 @@ public class ScriptCompiler {
         engine.eval(extension, context);
     }
 
+    private void updateSunClassLoader(ClassLoader cl) {
+        if (CLASSLOADER_OVERRIDE_ENABLED) {
+            try {
+                Object global = GET_GLOBAL.invoke(null);
+                if (GET_APPLICATION_CLASS_LOADER.invoke(global) == null) {
+                    INIT_APPLICATION_CLASS_LOADER.invoke(global, cl);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private class CompileTask implements Callable<ScriptFactory> {
         private final boolean cache;
         private final CompileCallback[] callbacks;
         private final ContextProvider[] contextProviders;
-        private final SimpleScriptSource engine;
-        private final Future<ScriptFactory> future;
+        private final ScriptSource engine;
 
         public CompileTask(CompileTaskBuilder builder) {
             List<ContextProvider> copy = Lists.newArrayList(builder.contextProviders);
@@ -168,7 +177,6 @@ public class ScriptCompiler {
             this.contextProviders = copy.toArray(new ContextProvider[copy.size()]);
             this.callbacks = builder.callbacks.toArray(new CompileCallback[builder.callbacks.size()]);
             this.engine = builder.engine;
-            this.future = new FutureTask<ScriptFactory>(this);
             this.cache = builder.cache;
         }
 
@@ -193,7 +201,7 @@ public class ScriptCompiler {
                 Messaging.severe("Compile error while parsing script.");
                 Throwables.getRootCause(e).printStackTrace();
             } catch (Throwable t) {
-                Messaging.severe("Unexpected error while parsing script at.");
+                Messaging.severe("Unexpected error while parsing script.");
                 t.printStackTrace();
             } finally {
                 Closeables.closeQuietly(reader);
@@ -206,16 +214,15 @@ public class ScriptCompiler {
         private boolean cache;
         private final List<CompileCallback> callbacks = Lists.newArrayList();
         private final List<ContextProvider> contextProviders = Lists.newArrayList();
-        private final SimpleScriptSource engine;
+        private final ScriptSource engine;
 
-        private CompileTaskBuilder(SimpleScriptSource engine) {
+        private CompileTaskBuilder(ScriptSource engine) {
             this.engine = engine;
         }
 
         public Future<ScriptFactory> beginWithFuture() {
-            CompileTask t = new CompileTask(this);
-            executor.submit(t);
-            return t.future;
+            CompileTask task = new CompileTask(this);
+            return executor.submit(task);
         }
 
         public CompileTaskBuilder cache(boolean cache) {
@@ -234,20 +241,20 @@ public class ScriptCompiler {
         }
     }
 
-    private static class SimpleScriptSource {
+    private static class ScriptSource {
         private final ScriptEngine engine;
         private final File file;
         private final String identifier;
         private final String src;
 
-        private SimpleScriptSource(File file, ScriptEngine engine) {
+        private ScriptSource(File file, ScriptEngine engine) {
             this.file = file;
             this.identifier = file.getAbsolutePath();
             this.engine = engine;
             this.src = null;
         }
 
-        private SimpleScriptSource(String src, String identifier, ScriptEngine engine) {
+        private ScriptSource(String src, String identifier, ScriptEngine engine) {
             this.src = src;
             this.identifier = identifier;
             this.engine = engine;
@@ -264,5 +271,30 @@ public class ScriptCompiler {
         }
     }
 
+    public static void main(String[] args) {
+    }
+
     private static final Map<String, ScriptFactory> CACHE = new MapMaker().weakValues().makeMap();
+
+    private static boolean CLASSLOADER_OVERRIDE_ENABLED;
+    private static Method GET_APPLICATION_CLASS_LOADER, GET_GLOBAL, INIT_APPLICATION_CLASS_LOADER;
+    static {
+        try {
+            Class<?> CONTEXT_FACTORY = Class.forName("sun.org.mozilla.javascript.internal.ContextFactory");
+            GET_APPLICATION_CLASS_LOADER = CONTEXT_FACTORY.getDeclaredMethod("getApplicationClassLoader");
+            GET_APPLICATION_CLASS_LOADER.setAccessible(true);
+            GET_GLOBAL = CONTEXT_FACTORY.getDeclaredMethod("getGlobal");
+            GET_GLOBAL.setAccessible(true);
+            INIT_APPLICATION_CLASS_LOADER = CONTEXT_FACTORY.getDeclaredMethod("initApplicationClassLoader",
+                    ClassLoader.class);
+            INIT_APPLICATION_CLASS_LOADER.setAccessible(true);
+            CLASSLOADER_OVERRIDE_ENABLED = true;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 }
