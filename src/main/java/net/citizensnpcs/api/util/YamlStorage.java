@@ -45,6 +45,25 @@ public class YamlStorage implements FileStorage {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        YamlStorage other = (YamlStorage) obj;
+        if (file == null) {
+            if (other.file != null) {
+                return false;
+            }
+        } else if (!file.equals(other.file)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public File getFile() {
         return file;
     }
@@ -52,6 +71,14 @@ public class YamlStorage implements FileStorage {
     @Override
     public YamlKey getKey(String root) {
         return new YamlKey(root);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((file == null) ? 0 : file.hashCode());
+        return result;
     }
 
     @Override
@@ -90,17 +117,22 @@ public class YamlStorage implements FileStorage {
     }
 
     public class YamlKey extends DataKey {
+
         public YamlKey(String root) {
             super(root);
         }
 
-        /* @Override
-         public void copy(String to) {
-             ConfigurationSection root = config.getConfigurationSection(current);
-             if (root == null)
-                 return;
-             config.createSection(to, root.getValues(true));
-         }*/
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!super.equals(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            YamlKey other = (YamlKey) obj;
+            return getOuterType().equals(other.getOuterType());
+        }
 
         @Override
         public boolean getBoolean(String key) {
@@ -178,6 +210,10 @@ public class YamlStorage implements FileStorage {
             return def;
         }
 
+        private YamlStorage getOuterType() {
+            return YamlStorage.this;
+        }
+
         @Override
         public Object getRaw(String key) {
             return config.get(createRelativeKey(key));
@@ -216,6 +252,13 @@ public class YamlStorage implements FileStorage {
         public Map<String, Object> getValuesDeep() {
             ConfigurationSection subSection = config.getConfigurationSection(path);
             return (Map<String, Object>) (subSection == null ? Collections.emptyMap() : subSection.getValues(true));
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = prime * super.hashCode() + getOuterType().hashCode();
+            return result;
         }
 
         @Override
