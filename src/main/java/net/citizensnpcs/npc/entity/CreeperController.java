@@ -67,8 +67,9 @@ public class CreeperController extends MobEntityController {
         @Override
         public void bh() {
             super.bh();
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
+            }
         }
 
         @Override
