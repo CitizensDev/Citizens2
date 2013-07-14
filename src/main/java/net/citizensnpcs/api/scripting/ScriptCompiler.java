@@ -289,12 +289,9 @@ public class ScriptCompiler {
                     ClassLoader.class);
             INIT_APPLICATION_CLASS_LOADER.setAccessible(true);
             CLASSLOADER_OVERRIDE_ENABLED = true;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Messaging
+                    .severe("Unable to load Rhino script classes - javascript scripts will only be able to access CraftBukkit");
         }
     }
 }
