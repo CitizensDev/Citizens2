@@ -247,6 +247,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                 packets[i] = new Packet5EntityEquipment(id, i, getEquipment(i));
             }
             NMS.sendPacketsNearby(current, packets);
+            boolean removeFromPlayerList = Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean();
+            NMS.addOrRemoveFromPlayerList(getBukkitEntity(),
+                    npc.data().get("removefromplayerlist", removeFromPlayerList));
             packetUpdateCount = 0;
         }
     }
