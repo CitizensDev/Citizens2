@@ -121,12 +121,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (aggro && canAttack()) {
             AttackStrategy strategy = parameters.attackStrategy();
             if (strategy != null && strategy.handle((LivingEntity) handle.getBukkitEntity(), getTarget())) {
-            } else if (handle instanceof EntityPlayer) {
-                EntityPlayer humanHandle = (EntityPlayer) handle;
-                humanHandle.attack(target);
-                PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
-            } else {
-                NMS.attack(handle, target);
             }
             attackTicks = ATTACK_DELAY_TICKS;
         }
@@ -216,6 +210,21 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     private static final int ATTACK_DELAY_TICKS = 20;
+    static final AttackStrategy DEFAULT_ATTACK_STRATEGY = new AttackStrategy() {
+        @Override
+        public boolean handle(LivingEntity attacker, LivingEntity bukkitTarget) {
+            EntityLiving handle = NMS.getHandle(attacker);
+            EntityLiving target = NMS.getHandle(bukkitTarget);
+            if (handle instanceof EntityPlayer) {
+                EntityPlayer humanHandle = (EntityPlayer) handle;
+                humanHandle.attack(target);
+                PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
+            } else {
+                NMS.attack(handle, target);
+            }
+            return false;
+        }
+    };
     private static Field E_NAV_E, E_NAV_J, E_NAV_M;
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
     private static Field P_NAV_E, P_NAV_J, P_NAV_M;
