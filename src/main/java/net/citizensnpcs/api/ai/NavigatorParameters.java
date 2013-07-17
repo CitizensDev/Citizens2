@@ -14,6 +14,7 @@ public class NavigatorParameters implements Cloneable {
     private boolean avoidWater;
     private float baseSpeed = 1F;
     private final List<NavigatorCallback> callbacks = Lists.newArrayListWithExpectedSize(3);
+    private AttackStrategy defaultStrategy;
     private double distanceMargin = 2F;
     private final List<BlockExaminer> examiners = Lists.newArrayList();
     private float range;
@@ -34,14 +35,13 @@ public class NavigatorParameters implements Cloneable {
         return this;
     }
 
-    public void addSingleUseCallback(Object callback) {
-    }
-
     /**
-     * @return The {@link AttackStrategy} currently in use (may be null)
+     * @return The {@link AttackStrategy} currently in use or the
+     *         {@link #defaultAttackStrategy()} if not configured (may return
+     *         null)
      */
     public AttackStrategy attackStrategy() {
-        return attackStrategy;
+        return attackStrategy == null ? defaultStrategy : attackStrategy;
     }
 
     /**
@@ -115,6 +115,28 @@ public class NavigatorParameters implements Cloneable {
         } catch (CloneNotSupportedException e) {
             return null;
         }
+    }
+
+    /**
+     * Returns the configured <em>default</em> attack strategy, which tries to
+     * perform the most Minecraft-like attack on the target.
+     * 
+     * @return The default strategy
+     */
+    public AttackStrategy defaultAttackStrategy() {
+        return this.defaultStrategy;
+    }
+
+    /**
+     * Sets the default {@link AttackStrategy}.
+     * 
+     * @param defaultStrategy
+     *            The new default strategy
+     * @see #defaultAttackStrategy()
+     */
+    public NavigatorParameters defaultAttackStrategy(AttackStrategy defaultStrategy) {
+        this.defaultStrategy = defaultStrategy;
+        return this;
     }
 
     /**
