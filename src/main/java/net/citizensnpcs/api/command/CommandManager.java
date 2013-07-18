@@ -42,7 +42,6 @@ public class CommandManager {
      * (one for each alias) with the method.
      */
     private final Map<String, Method> commands = new HashMap<String, Method>();
-
     private Injector injector;
     private final Map<Method, Object> instances = new HashMap<Method, Object>();
     private final ListMultimap<Method, Annotation> registeredAnnotations = ArrayListMultimap.create();

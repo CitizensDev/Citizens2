@@ -224,4 +224,5 @@ public interface NPC extends Agent, Cloneable {
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
     public static final String LEASH_PROTECTED_METADATA = "protected-leash";
     public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
+    public static final String TARGETABLE_METADATA = "protected-target";
 }
