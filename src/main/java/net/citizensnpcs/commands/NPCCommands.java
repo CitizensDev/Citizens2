@@ -1136,6 +1136,25 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "targetable",
+            desc = "Toggles an NPC's targetability",
+            modifiers = { "targetable" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.targetable")
+    public void targetable(CommandContext args, CommandSender sender, NPC npc) {
+        boolean targetable = !npc.data().get(NPC.TARGETABLE_METADATA,
+                npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+        if (args.hasFlag('t')) {
+            npc.data().set(NPC.TARGETABLE_METADATA, targetable);
+        } else {
+            npc.data().setPersistent(NPC.TARGETABLE_METADATA, targetable);
+        }
+        Messaging.sendTr(sender, targetable ? Messages.TARGETABLE_SET : Messages.TARGETABLE_UNSET, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "tp",
             desc = "Teleport to a NPC",
             modifiers = { "tp", "teleport" },

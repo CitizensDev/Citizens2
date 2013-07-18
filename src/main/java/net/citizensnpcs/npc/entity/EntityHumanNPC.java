@@ -30,6 +30,7 @@ import net.minecraft.server.v1_6_R2.MinecraftServer;
 import net.minecraft.server.v1_6_R2.Navigation;
 import net.minecraft.server.v1_6_R2.NetworkManager;
 import net.minecraft.server.v1_6_R2.Packet;
+import net.minecraft.server.v1_6_R2.Packet201PlayerInfo;
 import net.minecraft.server.v1_6_R2.Packet35EntityHeadRotation;
 import net.minecraft.server.v1_6_R2.Packet5EntityEquipment;
 import net.minecraft.server.v1_6_R2.PlayerInteractManager;
@@ -55,6 +56,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private int packetUpdateCount;
+    private int useListName = -1;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
             PlayerInteractManager playerInteractManager, NPC npc) {
@@ -171,7 +173,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // gravity. also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
         }
-        if (!npc.data().get("removefromplayerlist", true)) {
+        if (!npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())) {
             h();
         }
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
@@ -238,18 +240,24 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private void updatePackets(boolean navigating) {
         if (++packetUpdateCount >= 30) {
             Location current = getBukkitEntity().getLocation(packetLocationCache);
-            Packet[] packets = new Packet[navigating ? 5 : 6];
+            Packet[] packets = new Packet[navigating ? 6 : 7];
             if (!navigating) {
-                packets[5] = new Packet35EntityHeadRotation(id,
+                packets[6] = new Packet35EntityHeadRotation(id,
                         (byte) MathHelper.d(NMS.getHeadYaw(this) * 256.0F / 360.0F));
             }
             for (int i = 0; i < 5; i++) {
                 packets[i] = new Packet5EntityEquipment(id, i, getEquipment(i));
             }
-            NMS.sendPacketsNearby(current, packets);
             boolean removeFromPlayerList = Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean();
             NMS.addOrRemoveFromPlayerList(getBukkitEntity(),
                     npc.data().get("removefromplayerlist", removeFromPlayerList));
+            int useListName = removeFromPlayerList ? 0 : 1;
+            if (useListName != this.useListName || this.useListName == -1) {
+                this.useListName = useListName;
+                packets[5] = new Packet201PlayerInfo(getBukkitEntity().getPlayerListName(), !removeFromPlayerList,
+                        removeFromPlayerList ? 9999 : ping);
+            }
+            NMS.sendPacketsNearby(current, packets);
             packetUpdateCount = 0;
         }
     }

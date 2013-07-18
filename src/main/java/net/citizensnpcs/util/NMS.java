@@ -209,6 +209,8 @@ public class NMS {
     }
 
     public static void sendPacket(Player player, Packet packet) {
+        if (packet == null)
+            return;
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 
