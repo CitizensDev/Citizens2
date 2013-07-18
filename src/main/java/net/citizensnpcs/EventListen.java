@@ -218,7 +218,8 @@ public class EventListen implements Listener {
         NPC npc = npcRegistry.getNPC(event.getTarget());
         if (npc == null)
             return;
-        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+        event.setCancelled(!npc.data().get(NPC.TARGETABLE_METADATA,
+                !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)));
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
 
