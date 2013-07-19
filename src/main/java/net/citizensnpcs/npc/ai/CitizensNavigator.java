@@ -171,8 +171,9 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private void stopNavigating() {
-        if (executing != null)
+        if (executing != null) {
             executing.stop();
+        }
         executing = null;
         localParams = defaultParams;
         stationaryTicks = 0;
@@ -209,8 +210,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         NavigationCancelEvent event = new NavigationCancelEvent(this, reason);
         PathStrategy old = executing;
         Bukkit.getPluginManager().callEvent(event);
-        if (old == executing)
+        if (old == executing) {
             stopNavigating();
+        }
     }
 
     private void switchStrategyTo(PathStrategy newStrategy) {

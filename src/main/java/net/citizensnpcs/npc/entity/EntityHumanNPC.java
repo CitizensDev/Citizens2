@@ -204,7 +204,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                  motY += 0.04;
              } else //(handled elsewhere)*/
             if (onGround && jumpTicks == 0) {
-                ba();
+                bd();
                 jumpTicks = 10;
             }
         } else {
@@ -216,6 +216,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
         e(be, bf); // movement method
         NMS.setHeadYaw(this, yaw);
+        if (jumpTicks > 0) {
+            jumpTicks--;
+        }
     }
 
     public void setMoveDestination(double x, double y, double z, float speed) {

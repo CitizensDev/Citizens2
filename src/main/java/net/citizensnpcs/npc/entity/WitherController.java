@@ -28,6 +28,7 @@ public class WitherController extends MobEntityController {
     }
 
     public static class EntityWitherNPC extends EntityWither implements NPCHolder {
+        private int jumpTicks;
         private final CitizensNPC npc;
 
         public EntityWitherNPC(World world) {
@@ -67,6 +68,8 @@ public class WitherController extends MobEntityController {
         public void c() {
             if (npc == null) {
                 super.c();
+            } else {
+                updateAIWithMovement();
             }
         }
 
@@ -111,6 +114,32 @@ public class WitherController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        private void updateAIWithMovement() {
+            NMS.updateAI(this);
+            // taken from EntityLiving update method
+            if (bd) {
+                /* boolean inLiquid = G() || I();
+                 if (inLiquid) {
+                     motY += 0.04;
+                 } else //(handled elsewhere)*/
+                if (onGround && jumpTicks == 0) {
+                    bd();
+                    jumpTicks = 10;
+                }
+            } else {
+                jumpTicks = 0;
+            }
+            be *= 0.98F;
+            bf *= 0.98F;
+            bg *= 0.9F;
+
+            e(be, bf); // movement method
+            NMS.setHeadYaw(this, yaw);
+            if (jumpTicks > 0) {
+                jumpTicks--;
+            }
         }
     }
 
