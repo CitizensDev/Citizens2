@@ -42,6 +42,7 @@ public class EndermanController extends MobEntityController {
     }
 
     public static class EntityEndermanNPC extends EntityEnderman implements NPCHolder {
+        private int jumpTicks;
         private final CitizensNPC npc;
 
         public EntityEndermanNPC(World world) {
@@ -91,7 +92,7 @@ public class EndermanController extends MobEntityController {
             if (npc == null)
                 super.c();
             else {
-                NMS.updateAI(this);
+                updateAIWithMovement();
                 npc.update();
             }
         }
@@ -137,6 +138,39 @@ public class EndermanController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        protected boolean j(double d1, double d2, double d3) {
+            if (npc == null) {
+                return super.j(d1, d2, d3);
+            }
+            return false;
+        }
+
+        private void updateAIWithMovement() {
+            NMS.updateAI(this);
+            // taken from EntityLiving update method
+            if (bd) {
+                /* boolean inLiquid = G() || I();
+                 if (inLiquid) {
+                     motY += 0.04;
+                 } else //(handled elsewhere)*/
+                if (onGround && jumpTicks == 0) {
+                    bd();
+                    jumpTicks = 10;
+                }
+            } else {
+                jumpTicks = 0;
+            }
+            be *= 0.98F;
+            bf *= 0.98F;
+            bg *= 0.9F;
+            e(be, bf); // movement method
+            NMS.setHeadYaw(this, yaw);
+            if (jumpTicks > 0) {
+                jumpTicks--;
+            }
         }
     }
 }

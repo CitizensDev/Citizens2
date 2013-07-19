@@ -326,8 +326,9 @@ public class LinearWaypointProvider implements WaypointProvider {
         }
 
         private void onWaypointsModified() {
-            if (currentGoal != null)
+            if (currentGoal != null) {
                 currentGoal.onProviderChanged();
+            }
         }
 
         private void removeWaypointMarker(Waypoint waypoint) {
@@ -387,7 +388,12 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void onProviderChanged() {
             itr = waypoints.iterator();
             if (currentDestination != null) {
-                selector.finish();
+                if (selector != null) {
+                    selector.finish();
+                }
+                if (npc != null && npc.getNavigator().isNavigating()) {
+                    npc.getNavigator().cancelNavigation();
+                }
             }
         }
 
