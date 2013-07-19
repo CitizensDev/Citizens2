@@ -23,8 +23,8 @@ import com.google.common.collect.Lists;
 
 @Requirements(selected = true, ownership = true)
 public class TraitCommands {
-    @Command(aliases = { "trait", "tr" }, usage = "add [trait name]...", desc = "Adds traits to the NPC", modifiers = {
-            "add", "a" }, min = 1, permission = "citizens.npc.trait")
+    @Command(aliases = { "특성", "tr" }, usage = "추가 [특성 이름]...", desc = "NPC에 특성을 추가합니다", modifiers = {
+            "추가", "a" }, min = 1, permission = "citizens.npc.trait")
     public void add(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         List<String> added = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
@@ -36,11 +36,11 @@ public class TraitCommands {
 
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
-                failed.add(String.format("%s: Trait not found", traitName));
+                failed.add(String.format("%s: 특성을 찾을 수 없습니다", traitName));
                 continue;
             }
             if (npc.hasTrait(clazz)) {
-                failed.add(String.format("%s: Already added", traitName));
+                failed.add(String.format("%s: 이미 추가되었습니다", traitName));
                 continue;
             }
             npc.addTrait(clazz);
@@ -53,9 +53,9 @@ public class TraitCommands {
     }
 
     @Command(
-            aliases = { "traitc", "trc" },
-            usage = "[trait name] (flags)",
-            desc = "Configures a trait",
+            aliases = { "특성", "trc" },
+            usage = "[특성 이름] (플래그)",
+            desc = "특성을 설정합니다",
             modifiers = { "*" },
             min = 1,
             flags = "*",
@@ -76,10 +76,10 @@ public class TraitCommands {
     }
 
     @Command(
-            aliases = { "trait", "tr" },
-            usage = "remove [trait name]...",
-            desc = "Removes traits on the NPC",
-            modifiers = { "remove", "rem", "r" },
+            aliases = { "특성", "tr" },
+            usage = "제거 [특성 이름]...",
+            desc = "NPC의 특성을 제거합니다",
+            modifiers = { "제거", "rem", "r" },
             min = 1,
             permission = "citizens.npc.trait")
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
@@ -93,12 +93,12 @@ public class TraitCommands {
 
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
-                failed.add(String.format("%s: Trait not found", traitName));
+                failed.add(String.format("%s: 특성을 찾을 수 없습니다", traitName));
                 continue;
             }
             boolean hasTrait = npc.hasTrait(clazz);
             if (!hasTrait) {
-                failed.add(String.format("%s: Trait not attached", traitName));
+                failed.add(String.format("%s: 포함된 특성이 아닙니다", traitName));
                 continue;
             }
             npc.removeTrait(clazz);
@@ -111,9 +111,9 @@ public class TraitCommands {
     }
 
     @Command(
-            aliases = { "trait", "tr" },
-            usage = "[trait name], [trait name]...",
-            desc = "Toggles traits on the NPC",
+            aliases = { "특성", "tr" },
+            usage = "[특성 이름], [특성 이름]...",
+            desc = "NPC의 특성 이름을 전환합니다",
             modifiers = { "*" },
             min = 1,
             permission = "citizens.npc.trait")
@@ -123,13 +123,13 @@ public class TraitCommands {
         List<String> failed = Lists.newArrayList();
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
             if (!sender.hasPermission("citizens.npc.trait." + traitName)) {
-                failed.add(String.format("%s: No permission", traitName));
+                failed.add(String.format("%s: 권한 없음", traitName));
                 continue;
             }
 
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
-                failed.add(String.format("%s: Trait not found", traitName));
+                failed.add(String.format("%s: 특성을 찾을 수 없습니다", traitName));
                 continue;
             }
             boolean remove = npc.hasTrait(clazz);

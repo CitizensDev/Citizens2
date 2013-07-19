@@ -1,7 +1,6 @@
 package net.citizensnpcs;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Locale;
@@ -272,7 +271,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             public void run() {
                 saves.loadInto(npcRegistry);
                 Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, Iterables.size(npcRegistry), "?");
-                startMetrics();
                 scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
                 Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             }
@@ -373,38 +371,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Translator.setInstance(new File(getDataFolder(), "lang"), locale);
     }
 
-    private void startMetrics() {
-        try {
-            Metrics metrics = new Metrics(Citizens.this);
-            if (metrics.isOptOut())
-                return;
-            metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
-                @Override
-                public int getValue() {
-                    if (npcRegistry == null)
-                        return 0;
-                    return Iterables.size(npcRegistry);
-                }
-            });
-            metrics.addCustomData(new Metrics.Plotter("Total goals") {
-                @Override
-                public int getValue() {
-                    if (npcRegistry == null)
-                        return 0;
-                    int goalCount = 0;
-                    for (NPC npc : npcRegistry) {
-                        goalCount += Iterables.size(npc.getDefaultGoalController());
-                    }
-                    return goalCount;
-                }
-            });
-            traitFactory.addPlotters(metrics.createGraph("traits"));
-            metrics.start();
-        } catch (IOException e) {
-            Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
-        }
-    }
-
     public void storeNPCs() {
         if (saves == null)
             return;
@@ -431,5 +397,5 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return false;
     }
 
-    private static final String COMPATIBLE_MC_VERSION = "1.6.2";
+    private static final String COMPATIBLE_MC_VERSION = "1.5.2";
 }

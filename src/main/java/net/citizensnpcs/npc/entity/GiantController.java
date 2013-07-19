@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R2.EntityGiantZombie;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_5_R3.EntityGiantZombie;
+import net.minecraft.server.v1_5_R3.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftGiant;
+import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftGiant;
 import org.bukkit.entity.Giant;
 import org.bukkit.util.Vector;
 
@@ -43,9 +43,14 @@ public class GiantController extends MobEntityController {
         }
 
         @Override
-        public void bk() {
+        public float bE() {
+            return NMS.modifiedSpeed(super.bE(), npc);
+        }
+
+        @Override
+        public void bq() {
             if (npc == null) {
-                super.bk();
+                super.bq();
             } else {
                 NMS.updateAI(this);
                 npc.update();
@@ -53,7 +58,7 @@ public class GiantController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_6_R2.Entity entity) {
+        public void collide(net.minecraft.server.v1_5_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -109,5 +114,4 @@ public class GiantController extends MobEntityController {
             return npc;
         }
     }
-
 }

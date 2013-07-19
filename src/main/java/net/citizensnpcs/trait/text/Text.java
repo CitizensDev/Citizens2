@@ -55,7 +55,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent event) {
-        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
+        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "시민 대화");
     }
 
     void edit(int index, String newText) {
@@ -64,7 +64,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     public Editor getEditor(final Player player) {
         final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
-                .withLocalEcho(false).withEscapeSequence("/npc text").withEscapeSequence("exit").withModality(false)
+                .withLocalEcho(false).withEscapeSequence("/시민 대화").withEscapeSequence("exit").withModality(false)
                 .withFirstPrompt(new TextStartPrompt(this)).buildConversation(player);
         return new Editor() {
 
@@ -109,9 +109,8 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         if (!event.getNPC().equals(npc))
             return;
         String localPattern = itemInHandPattern.equals("default") ? Setting.TALK_ITEM.asString() : itemInHandPattern;
-        if (Util.matchesItemInHand(event.getClicker(), localPattern) && !shouldTalkClose()) {
+        if (Util.matchesItemInHand(event.getClicker(), localPattern) && !shouldTalkClose())
             sendText(event.getClicker());
-        }
     }
 
     private void populateDefaultText() {
@@ -169,7 +168,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     }
 
     boolean sendPage(Player player, int page) {
-        Paginator paginator = new Paginator().header(npc.getName() + "'s Text Entries");
+        Paginator paginator = new Paginator().header(npc.getName() + "의 대화 항목");
         for (int i = 0; i < text.size(); i++)
             paginator.addLine("<a>" + i + " <7>- <e>" + text.get(i));
 

@@ -16,10 +16,10 @@ import org.bukkit.entity.Player;
 public class EditorCommands {
 
     @Command(
-            aliases = { "npc" },
-            usage = "equip",
-            desc = "Toggle the equipment editor",
-            modifiers = { "equip" },
+            aliases = { "시민" },
+            usage = "장비",
+            desc = "장비 수정자로 전환합니다",
+            modifiers = { "장비" },
             min = 1,
             max = 1,
             permission = "citizens.npc.edit.equip")
@@ -29,25 +29,24 @@ public class EditorCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "path",
-            desc = "Toggle the waypoint editor",
-            modifiers = { "path" },
+            aliases = { "시민" },
+            usage = "경로",
+            desc = "웨이포인트 수정자로 전환합니다",
+            modifiers = { "경로" },
             min = 1,
             max = 1,
-            flags = "*",
             permission = "citizens.npc.edit.path")
     @Requirements(selected = true, ownership = true, excludedTypes = { EntityType.BLAZE, EntityType.ENDER_DRAGON,
             EntityType.GHAST, EntityType.BAT, EntityType.WITHER, EntityType.SQUID })
     public void path(CommandContext args, Player player, NPC npc) {
-        Editor.enterOrLeave(player, npc.getTrait(Waypoints.class).getEditor(player, args));
+        Editor.enterOrLeave(player, npc.getTrait(Waypoints.class).getEditor(player));
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "text",
-            desc = "Toggle the text editor",
-            modifiers = { "text" },
+            aliases = { "시민" },
+            usage = "대화",
+            desc = "대화 수정자로 전환합니다",
+            modifiers = { "대화" },
             min = 1,
             max = 1,
             permission = "citizens.npc.edit.text")

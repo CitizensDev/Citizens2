@@ -20,7 +20,7 @@ public class TriggerRemovePrompt extends StringPrompt {
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase("back")) {
+        if (input.equalsIgnoreCase("뒤로")) {
             context.setSessionData("said", false);
             return (Prompt) context.getSessionData("previous");
         }

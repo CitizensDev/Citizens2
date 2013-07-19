@@ -1,29 +1,29 @@
 name: Citizens
 authors: [aPunch, fullwall]
 softdepend: [Vault]
-version: ${project.version} (build ${BUILD_NUMBER})
+version: 2.0.8-SNAPSHOT (build 803)
 main: net.citizensnpcs.Citizens
 website: http://www.citizensnpcs.com
 commands:
   traitc:
-    aliases: [trc]
+    aliases: [trc, tc]
     description: Configures traits
-  trait:
+  특성:
     aliases: [tr]
     description: Trait commands
-  script:
+  스크립트:
     aliases: [sc]
     description: Scripting commands
-  citizens:
-    aliases: [citizens2]
+  시티즌:
+    aliases: [citizens]
     description: Administration commands
-  npc:
-    aliases: [npc2]
+  시민:
+    aliases: [npc]
     description: Basic commands for all NPC-related things
-  template:
+  템플릿:
     aliases: [tpl]
     description: Template commands
-  waypoint:
+  웨이포인트:
     aliases: [waypoints, wp]
     description: Waypoint commands
 permissions:

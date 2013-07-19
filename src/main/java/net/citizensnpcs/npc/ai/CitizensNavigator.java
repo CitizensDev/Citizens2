@@ -18,7 +18,6 @@ import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.NMS;
 
 import org.bukkit.Bukkit;
@@ -31,7 +30,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     private final NavigatorParameters defaultParams = new NavigatorParameters().baseSpeed(UNINITIALISED_SPEED)
             .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt()).stuckAction(TeleportStuckAction.INSTANCE)
-            .examiner(new MinecraftBlockExaminer()).useNewPathfinder(Setting.USE_NEW_PATHFINDER.asBoolean());
+            .examiner(new MinecraftBlockExaminer());
     private PathStrategy executing;
     private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
@@ -85,6 +84,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     public void load(DataKey root) {
+        defaultParams.baseSpeed((float) root.getDouble("speed", UNINITIALISED_SPEED));
         defaultParams.range((float) root.getDouble("pathfindingrange", Setting.DEFAULT_PATHFINDING_RANGE.asFloat()));
         defaultParams.stationaryTicks(root.getInt("stationaryticks", Setting.DEFAULT_STATIONARY_TICKS.asInt()));
         defaultParams.speedModifier((float) root.getDouble("speedmodifier", 1F));
@@ -126,6 +126,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     public void save(DataKey root) {
+        root.setDouble("speed", defaultParams.baseSpeed());
         root.setDouble("pathfindingrange", defaultParams.range());
         root.setInt("stationaryticks", defaultParams.stationaryTicks());
         root.setDouble("speedmodifier", defaultParams.speedModifier());
@@ -161,11 +162,10 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         localParams = defaultParams.clone();
         PathStrategy newStrategy;
-        if (localParams.useNewPathfinder()) {
+        if (Setting.USE_NEW_PATHFINDER.asBoolean()) {
             newStrategy = new AStarNavigationStrategy(npc, target, localParams);
-        } else {
+        } else
             newStrategy = new MCNavigationStrategy(npc, target, localParams);
-        }
         switchStrategyTo(newStrategy);
     }
 
@@ -190,8 +190,6 @@ public class CitizensNavigator implements Navigator, Runnable {
             itr.next().onCompletion(reason);
             itr.remove();
         }
-        if (Messaging.isDebugging())
-            Messaging.debug(npc.getId(), "cancelling with reason", reason);
         if (reason == null) {
             stopNavigating();
             return;
@@ -213,8 +211,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private void switchStrategyTo(PathStrategy newStrategy) {
-        if (Messaging.isDebugging())
-            Messaging.debug(npc.getId(), "changing to new PathStrategy", newStrategy);
         if (executing != null)
             Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
         executing = newStrategy;

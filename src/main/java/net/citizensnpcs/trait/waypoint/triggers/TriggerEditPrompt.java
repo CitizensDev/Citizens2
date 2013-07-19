@@ -24,11 +24,11 @@ public class TriggerEditPrompt extends StringPrompt {
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
         input = input.toLowerCase().trim();
-        if (input.contains("add")) {
+        if (input.contains("추가")) {
             context.setSessionData("said", false);
             return new TriggerAddPrompt(editor);
         }
-        if (input.contains("remove")) {
+        if (input.contains("제거")) {
             context.setSessionData("said", false);
             return new TriggerRemovePrompt(editor);
         }
@@ -54,7 +54,7 @@ public class TriggerEditPrompt extends StringPrompt {
 
     public static Conversation start(Player player, WaypointEditor editor) {
         final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin()).withLocalEcho(false)
-                .withEscapeSequence("exit").withEscapeSequence("/npc path").withModality(false)
+                .withEscapeSequence("exit").withEscapeSequence("/시민 경로").withModality(false)
                 .withFirstPrompt(new TriggerEditPrompt(editor)).buildConversation(player);
         conversation.begin();
         return conversation;

@@ -25,9 +25,9 @@ public class TeleportTriggerPrompt extends RegexPrompt implements WaypointTrigge
     @Override
     protected Prompt acceptValidatedInput(ConversationContext context, String input) {
         input = input.trim();
-        if (input.equalsIgnoreCase("back"))
+        if (input.equalsIgnoreCase("뒤로"))
             return (Prompt) context.getSessionData("previous");
-        if (input.equalsIgnoreCase("here")) {
+        if (input.equalsIgnoreCase("이곳")) {
             Player player = (Player) context.getForWhom();
             context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY, new TeleportTrigger(player.getLocation()));
             return (Prompt) context.getSessionData(WaypointTriggerPrompt.RETURN_PROMPT_KEY);
@@ -52,6 +52,6 @@ public class TeleportTriggerPrompt extends RegexPrompt implements WaypointTrigge
         return Messaging.tr(Messages.WAYPOINT_TRIGGER_TELEPORT_PROMPT);
     }
 
-    private static final Pattern PATTERN = Pattern.compile("here|back|[\\p{L}]+?:[0-9]+?:[0-9]+?:[0-9]+?",
+    private static final Pattern PATTERN = Pattern.compile("이곳|뒤로|[\\p{L}]+?:[0-9]+?:[0-9]+?:[0-9]+?",
             Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 }

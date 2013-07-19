@@ -26,7 +26,10 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
@@ -81,12 +84,12 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "age [age] (-l)",
-            desc = "Set the age of a NPC",
+            aliases = { "시민" },
+            usage = "나이 [나이] (-l)",
+            desc = "NPC의 나이를 설정합니다",
             help = Messages.COMMAND_AGE_HELP,
             flags = "l",
-            modifiers = { "age" },
+            modifiers = { "나이" },
             min = 1,
             max = 2,
             permission = "citizens.npc.age")
@@ -112,10 +115,10 @@ public class NPCCommands {
                 throw new CommandException(Messages.INVALID_AGE);
             Messaging.sendTr(sender, Messages.AGE_SET_NORMAL, npc.getName(), age);
         } catch (NumberFormatException ex) {
-            if (args.getString(1).equalsIgnoreCase("baby")) {
+            if (args.getString(1).equalsIgnoreCase("아기")) {
                 age = -24000;
                 Messaging.sendTr(sender, Messages.AGE_SET_BABY, npc.getName());
-            } else if (args.getString(1).equalsIgnoreCase("adult")) {
+            } else if (args.getString(1).equalsIgnoreCase("어른")) {
                 age = 0;
                 Messaging.sendTr(sender, Messages.AGE_SET_ADULT, npc.getName());
             } else
@@ -126,53 +129,53 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "anchor (--save [name]|--assume [name]|--remove [name]) (-a)(-c)",
-            desc = "Changes/Saves/Lists NPC's location anchor(s)",
+            aliases = { "시민" },
+            usage = "고정 (--저장 [이름]|--가정 [이름]|--삭제 [이름]) (-a)(-c)",
+            desc = "NPC의 고정된 위치를 저장/변경/나열합니다",
             flags = "ac",
-            modifiers = { "anchor" },
+            modifiers = { "고정" },
             min = 1,
             max = 3,
             permission = "citizens.npc.anchor")
     @Requirements(selected = true, ownership = true)
     public void anchor(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Anchors trait = npc.getTrait(Anchors.class);
-        if (args.hasValueFlag("save")) {
-            if (args.getFlag("save").isEmpty())
+        if (args.hasValueFlag("저장")) {
+            if (args.getFlag("저장").isEmpty())
                 throw new CommandException(Messages.INVALID_ANCHOR_NAME);
 
             if (args.getSenderLocation() == null)
                 throw new ServerCommandException();
 
             if (args.hasFlag('c')) {
-                if (trait.addAnchor(args.getFlag("save"), args.getSenderTargetBlockLocation())) {
+                if (trait.addAnchor(args.getFlag("저장"), args.getSenderTargetBlockLocation())) {
                     Messaging.sendTr(sender, Messages.ANCHOR_ADDED);
                 } else
-                    throw new CommandException(Messages.ANCHOR_ALREADY_EXISTS, args.getFlag("save"));
+                    throw new CommandException(Messages.ANCHOR_ALREADY_EXISTS, args.getFlag("저장"));
             } else {
-                if (trait.addAnchor(args.getFlag("save"), args.getSenderLocation())) {
+                if (trait.addAnchor(args.getFlag("저장"), args.getSenderLocation())) {
                     Messaging.sendTr(sender, Messages.ANCHOR_ADDED);
                 } else
-                    throw new CommandException(Messages.ANCHOR_ALREADY_EXISTS, args.getFlag("save"));
+                    throw new CommandException(Messages.ANCHOR_ALREADY_EXISTS, args.getFlag("저장"));
             }
-        } else if (args.hasValueFlag("assume")) {
-            if (args.getFlag("assume").isEmpty())
+        } else if (args.hasValueFlag("가정")) {
+            if (args.getFlag("가정").isEmpty())
                 throw new CommandException(Messages.INVALID_ANCHOR_NAME);
 
-            Anchor anchor = trait.getAnchor(args.getFlag("assume"));
+            Anchor anchor = trait.getAnchor(args.getFlag("가정"));
             if (anchor == null)
-                throw new CommandException(Messages.ANCHOR_MISSING, args.getFlag("assume"));
+                throw new CommandException(Messages.ANCHOR_MISSING, args.getFlag("가정"));
             npc.getBukkitEntity().teleport(anchor.getLocation());
-        } else if (args.hasValueFlag("remove")) {
-            if (args.getFlag("remove").isEmpty())
+        } else if (args.hasValueFlag("제거")) {
+            if (args.getFlag("제거").isEmpty())
                 throw new CommandException(Messages.INVALID_ANCHOR_NAME);
-            if (trait.removeAnchor(trait.getAnchor(args.getFlag("remove"))))
+            if (trait.removeAnchor(trait.getAnchor(args.getFlag("제거"))))
                 Messaging.sendTr(sender, Messages.ANCHOR_REMOVED);
             else
-                throw new CommandException(Messages.ANCHOR_MISSING, args.getFlag("remove"));
+                throw new CommandException(Messages.ANCHOR_MISSING, args.getFlag("제거"));
         } else if (!args.hasFlag('a')) {
             Paginator paginator = new Paginator().header("Anchors");
-            paginator.addLine("<e>Key: <a>ID  <b>Name  <c>World  <d>Location (X,Y,Z)");
+            paginator.addLine("<e>키: <a>ID  <b>이름  <c>월드  <d>위치 (X,Y,Z)");
             for (int i = 0; i < trait.getAnchors().size(); i++) {
                 String line = "<a>" + i + "<b>  " + trait.getAnchors().get(i).getName() + "<c>  "
                         + trait.getAnchors().get(i).getLocation().getWorld().getName() + "<d>  "
@@ -196,13 +199,13 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "controllable|control -f",
-            desc = "Toggles whether the NPC can be ridden and controlled",
-            modifiers = { "controllable", "control" },
+            aliases = { "시민" },
+            usage = "controllable|조작 -f",
+            desc = "NPC를 조작 그리고 탑승할 수 있게 전환합니다",
+            modifiers = { "controllable", "조작" },
             min = 1,
             max = 1,
-            flags = "m")
+            flags = "f")
     public void controllable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if ((npc.isSpawned() && !sender.hasPermission("citizens.npc.controllable."
                 + npc.getBukkitEntity().getType().toString().toLowerCase()))
@@ -215,41 +218,44 @@ public class NPCCommands {
         boolean enabled = trait.toggle();
         String key = enabled ? Messages.CONTROLLABLE_SET : Messages.CONTROLLABLE_REMOVED;
         Messaging.sendTr(sender, key, npc.getName());
-        if (enabled && args.hasFlag('m') && sender instanceof Player) {
-            trait.mount((Player) sender);
-        }
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "copy (--name newname)",
-            desc = "Copies an NPC",
-            modifiers = { "copy" },
+            aliases = { "시민" },
+            usage = "복사 (--이름 새이름)",
+            desc = "NPC를 복사합니다",
+            modifiers = { "복사" },
             min = 1,
             max = 1,
             permission = "citizens.npc.copy")
     public void copy(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        String name = args.getFlag("name", npc.getFullName());
-        NPC copy = npc.clone();
-        if (!copy.getFullName().equals(name)) {
-            copy.setName(name);
-        }
+        EntityType type = npc.getTrait(MobType.class).getType();
+        String name = args.getFlag("이름", npc.getFullName());
+        CitizensNPC copy = (CitizensNPC) npcRegistry.createNPC(type, name);
+        CitizensNPC from = (CitizensNPC) npc;
 
-        if (copy.isSpawned() && args.getSenderLocation() != null) {
+        DataKey key = new MemoryDataKey();
+        from.save(key);
+        copy.load(key);
+
+        if (from.isSpawned() && args.getSenderLocation() != null) {
             Location location = args.getSenderLocation();
             location.getChunk().load();
             copy.getBukkitEntity().teleport(location);
             copy.getTrait(CurrentLocation.class).setLocation(location);
         }
 
+        for (Trait trait : copy.getTraits())
+            trait.onCopy();
+
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
                 : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
-            String reason = "Couldn't create NPC.";
+            String reason = "NPC를 만들 수 업슷ㅂ니다.";
             if (!event.getCancelReason().isEmpty())
-                reason += " Reason: " + event.getCancelReason();
+                reason += " 이유: " + event.getCancelReason();
             throw new CommandException(reason);
         }
 
@@ -258,11 +264,11 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "create [name] ((-b,u) --at (x:y:z:world) --type (type) --trait ('trait1, trait2...') --b (behaviours))",
-            desc = "Create a new NPC",
+            aliases = { "시민" },
+            usage = "만들기 [이름] ((-b,u) --위치 (x:y:z:월드) --타입 (타입) --특성 ('특성1, 특성2...') --행동 (행동들))",
+            desc = "새 NPC를 만듭니다",
             flags = "bu",
-            modifiers = { "create" },
+            modifiers = { "만들기" },
             min = 2,
             permission = "citizens.npc.create")
     @Requirements
@@ -276,8 +282,8 @@ public class NPCCommands {
             throw new CommandException();
 
         EntityType type = EntityType.PLAYER;
-        if (args.hasValueFlag("type")) {
-            String inputType = args.getFlag("type");
+        if (args.hasValueFlag("타입")) {
+            String inputType = args.getFlag("타입");
             type = Util.matchEntityType(inputType);
             if (type == null) {
                 Messaging.sendErrorTr(sender, Messages.NPC_CREATE_INVALID_MOBTYPE, inputType);
@@ -292,7 +298,7 @@ public class NPCCommands {
             throw new NoPermissionsException();
 
         npc = npcRegistry.createNPC(type, name);
-        String msg = "You created [[" + npc.getName() + "]]";
+        String msg = "당신은 [[" + npc.getName() + "]]을/를 만들었습니다";
 
         int age = 0;
         if (args.hasFlag('b')) {
@@ -301,7 +307,7 @@ public class NPCCommands {
                         type.name().toLowerCase().replace("_", "-"));
             else {
                 age = -24000;
-                msg += " as a baby";
+                msg += " 아기인체로";
             }
         }
 
@@ -321,14 +327,44 @@ public class NPCCommands {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
-            String reason = "Couldn't create NPC.";
+            String reason = "NPC를 만들 수 없습니다.";
             if (!event.getCancelReason().isEmpty())
-                reason += " Reason: " + event.getCancelReason();
+                reason += " 이유: " + event.getCancelReason();
             throw new CommandException(reason);
         }
 
-        if (args.hasValueFlag("at")) {
-            spawnLoc = Util.parseLocation(args.getSenderLocation(), args.getFlag("at"));
+        if (args.hasValueFlag("위치")) {
+            String[] parts = Iterables.toArray(Splitter.on(':').split(args.getFlag("위치")), String.class);
+            if (parts.length > 0) {
+                String worldName = args.getSenderLocation() != null ? args.getSenderLocation().getWorld().getName()
+                        : "";
+                int x = 0, y = 0, z = 0;
+                float yaw = 0F, pitch = 0F;
+                switch (parts.length) {
+                    case 6:
+                        pitch = Float.parseFloat(parts[5]);
+                    case 5:
+                        yaw = Float.parseFloat(parts[4]);
+                    case 4:
+                        worldName = parts[3];
+                    case 3:
+                        x = Integer.parseInt(parts[0]);
+                        y = Integer.parseInt(parts[1]);
+                        z = Integer.parseInt(parts[2]);
+                        break;
+                    default:
+                        throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+                }
+                World world = Bukkit.getWorld(worldName);
+                if (world == null)
+                    throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+                spawnLoc = new Location(world, x, y, z, yaw, pitch);
+            } else {
+                Player search = Bukkit.getPlayerExact(args.getFlag("위치"));
+                if (search == null)
+                    throw new CommandException(Messages.PLAYER_NOT_FOUND_FOR_SPAWN);
+                spawnLoc = search.getLocation();
+            }
         }
         if (spawnLoc == null) {
             npc.destroy();
@@ -339,8 +375,8 @@ public class NPCCommands {
             npc.spawn(spawnLoc);
         }
 
-        if (args.hasValueFlag("trait")) {
-            Iterable<String> parts = Splitter.on(',').trimResults().split(args.getFlag("trait"));
+        if (args.hasValueFlag("특성")) {
+            Iterable<String> parts = Splitter.on(',').trimResults().split(args.getFlag("특성"));
             StringBuilder builder = new StringBuilder();
             for (String tr : parts) {
                 Trait trait = CitizensAPI.getTraitFactory().getTrait(tr);
@@ -351,11 +387,11 @@ public class NPCCommands {
             }
             if (builder.length() > 0)
                 builder.delete(builder.length() - 2, builder.length());
-            msg += " with traits " + builder.toString();
+            msg += " 특성들과 함께 " + builder.toString();
         }
 
-        if (args.hasValueFlag("template")) {
-            Iterable<String> parts = Splitter.on(',').trimResults().split(args.getFlag("template"));
+        if (args.hasValueFlag("템플릿")) {
+            Iterable<String> parts = Splitter.on(',').trimResults().split(args.getFlag("템플릿"));
             StringBuilder builder = new StringBuilder();
             for (String part : parts) {
                 Template template = Template.byName(part);
@@ -366,7 +402,7 @@ public class NPCCommands {
             }
             if (builder.length() > 0)
                 builder.delete(builder.length() - 2, builder.length());
-            msg += " with templates " + builder.toString();
+            msg += " 템플릿과 함께 " + builder.toString();
         }
 
         // Set age after entity spawns
@@ -377,10 +413,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "despawn (id)",
-            desc = "Despawn a NPC",
-            modifiers = { "despawn" },
+            aliases = { "시민" },
+            usage = "제거 (id)",
+            desc = "NPC를 제거합니다",
+            modifiers = { "제거" },
             min = 1,
             max = 2,
             permission = "citizens.npc.despawn")
@@ -400,10 +436,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "gamemode [gamemode]",
-            desc = "Changes the gamemode",
-            modifiers = { "gamemode" },
+            aliases = { "시민" },
+            usage = "게임모드 [게임모드]",
+            desc = "게임모드를 변경합니다",
+            modifiers = { "게임모드" },
             min = 1,
             max = 2,
             permission = "citizens.npc.gravity")
@@ -434,10 +470,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "gravity",
-            desc = "Toggles gravity",
-            modifiers = { "gravity" },
+            aliases = { "시민" },
+            usage = "위험",
+            desc = "위험으로 전환시킵니다",
+            modifiers = { "위험" },
             min = 1,
             max = 1,
             permission = "citizens.npc.gravity")
@@ -448,9 +484,9 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
+            aliases = { "시민" },
             usage = "id",
-            desc = "Sends the selected NPC's ID to the sender",
+            desc = "선택된 NPC의 ID를 보여줍니다",
             modifiers = { "id" },
             min = 1,
             max = 1,
@@ -460,11 +496,11 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "list (page) ((-a) --owner (owner) --type (type) --char (char))",
-            desc = "List NPCs",
+            aliases = { "시민" },
+            usage = "목록 (페이지) ((-a) --주인 (주인) --타입 (타입) --대화 (대화))",
+            desc = "NPC들의 목록",
             flags = "a",
-            modifiers = { "list" },
+            modifiers = { "목록" },
             min = 1,
             max = 2,
             permission = "citizens.npc.list")
@@ -481,16 +517,16 @@ public class NPCCommands {
                     npcs.add(add);
             }
         } else {
-            if (args.hasValueFlag("owner")) {
-                String name = args.getFlag("owner");
+            if (args.hasValueFlag("주인")) {
+                String name = args.getFlag("주인");
                 for (NPC add : npcRegistry) {
                     if (!npcs.contains(add) && add.getTrait(Owner.class).isOwnedBy(name))
                         npcs.add(add);
                 }
             }
 
-            if (args.hasValueFlag("type")) {
-                EntityType type = Util.matchEntityType(args.getFlag("type"));
+            if (args.hasValueFlag("타입")) {
+                EntityType type = Util.matchEntityType(args.getFlag("타입"));
 
                 if (type == null)
                     throw new CommandException(Messages.COMMAND_INVALID_MOBTYPE, type);
@@ -503,7 +539,7 @@ public class NPCCommands {
         }
 
         Paginator paginator = new Paginator().header("NPCs");
-        paginator.addLine("<e>Key: <a>ID  <b>Name");
+        paginator.addLine("<e>키: <a>ID  <b>이름");
         for (int i = 0; i < npcs.size(); i += 2) {
             String line = "<a>" + npcs.get(i).getId() + "<b>  " + npcs.get(i).getName();
             if (npcs.size() >= i + 2)
@@ -517,10 +553,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "lookclose",
-            desc = "Toggle whether a NPC will look when a player is near",
-            modifiers = { "lookclose", "look", "rotate" },
+            aliases = { "시민" },
+            usage = "근접보기",
+            desc = "NPC가 주변의 플레이어를 보도록 전환합니다",
+            modifiers = { "근접보기", "look", "rotate" },
             min = 1,
             max = 1,
             permission = "citizens.npc.lookclose")
@@ -530,10 +566,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "mount",
-            desc = "Mounts a controllable NPC",
-            modifiers = { "mount" },
+            aliases = { "시민" },
+            usage = "탑승",
+            desc = "조작가능한 NPC에 올라탑니다",
+            modifiers = { "탑승" },
             min = 1,
             max = 1,
             permission = "citizens.npc.controllable")
@@ -549,10 +585,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "moveto x:y:z:world | x y z world",
-            desc = "Teleports a NPC to a given location",
-            modifiers = "moveto",
+            aliases = { "시민" },
+            usage = "보내기 x:y:z:world | x y z world",
+            desc = "시민을 해당 위치로 보내버립니다",
+            modifiers = "보내기",
             min = 1,
             permission = "citizens.npc.moveto")
     public void moveto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
@@ -597,10 +633,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            modifiers = { "name" },
-            usage = "name",
-            desc = "Toggle nameplate visibility",
+            aliases = { "시민" },
+            modifiers = { "이름" },
+            usage = "이름",
+            desc = "명찰을 투명하게 전환시킵니다",
             min = 1,
             max = 1,
             permission = "citizens.npc.name")
@@ -610,18 +646,18 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_TOGGLED);
     }
 
-    @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "citizens.npc.info")
+    @Command(aliases = { "시민" }, desc = "NPC의 기본 정보를 보여줍니다", max = 0, permission = "citizens.npc.info")
     public void npc(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
-        Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
+        Messaging.send(sender, "    <a>타입: <e>" + npc.getTrait(MobType.class).getType());
         if (npc.isSpawned()) {
             Location loc = npc.getBukkitEntity().getLocation();
-            String format = "    <a>Spawned at <e>%d, %d, %d <a>in world<e> %s";
+            String format = "    <a>소환된 장소: <e>%d, %d, %d <a>in world<e> %s";
             Messaging.send(sender,
                     String.format(format, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName()));
         }
-        Messaging.send(sender, "    <a>Traits<e>");
+        Messaging.send(sender, "    <a>특성<e>");
         for (Trait trait : npc.getTraits()) {
             if (CitizensAPI.getTraitFactory().isInternalTrait(trait))
                 continue;
@@ -631,10 +667,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "owner [name]",
-            desc = "Set the owner of an NPC",
-            modifiers = { "owner" },
+            aliases = { "시민" },
+            usage = "주인 [이름]",
+            desc = "NPC의 주인을 설정합니다",
+            modifiers = { "주인" },
             min = 1,
             max = 2,
             permission = "citizens.npc.owner")
@@ -652,8 +688,8 @@ public class NPCCommands {
         Messaging.sendTr(sender, serverOwner ? Messages.OWNER_SET_SERVER : Messages.OWNER_SET, npc.getName(), name);
     }
 
-    @Command(aliases = { "npc" }, usage = "pathrange [range]", desc = "Sets an NPC's pathfinding range", modifiers = {
-            "pathrange", "pathfindingrange", "prange" }, min = 2, max = 2, permission = "citizens.npc.pathfindingrange")
+    @Command(aliases = { "시민" }, usage = "경로범위 [범위]", desc = "NPC의 경로 탐색 범위를 설정합니다", modifiers = {
+            "경로범위", "pathfindingrange", "prange" }, min = 2, max = 2, permission = "citizens.npc.pathfindingrange")
     public void pathfindingRange(CommandContext args, CommandSender sender, NPC npc) {
         double range = Math.max(1, args.getDouble(1));
         npc.getNavigator().getDefaultParameters().range((float) range);
@@ -661,15 +697,15 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "playerlist (-a,r)",
-            desc = "Sets whether the NPC is put in the playerlist",
-            modifiers = { "playerlist" },
+            aliases = { "시민" },
+            usage = "플레이어목록 (-a,r)",
+            desc = "NPC가 플레이어 목록에 표시되게 됩니다",
+            modifiers = { "플레이어목록" },
             min = 1,
             max = 1,
             flags = "ar",
             permission = "citizens.npc.playerlist")
-    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
+    @Requirements(types = EntityType.PLAYER)
     public void playerlist(CommandContext args, CommandSender sender, NPC npc) {
         boolean remove = !npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
         if (args.hasFlag('a'))
@@ -684,42 +720,43 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "pose (--save [name]|--assume [name]|--remove [name]) (-a)",
-            desc = "Changes/Saves/Lists NPC's head pose(s)",
+            aliases = { "시민" },
+            usage = "자세 (--저장 [이름]|--가정 [이름]|--제거 [이름]) (-a)",
+            desc = "NPC의 머리 자세를 변경/저장/나열합니다",
             flags = "a",
-            modifiers = { "pose" },
+            modifiers = { "자세" },
             min = 1,
             max = 2,
             permission = "citizens.npc.pose")
+    @Requirements(selected = true, ownership = true)
     public void pose(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Poses trait = npc.getTrait(Poses.class);
-        if (args.hasValueFlag("save")) {
-            if (args.getFlag("save").isEmpty())
+        if (args.hasValueFlag("저장")) {
+            if (args.getFlag("저장").isEmpty())
                 throw new CommandException(Messages.INVALID_POSE_NAME);
 
             if (args.getSenderLocation() == null)
                 throw new ServerCommandException();
 
-            if (trait.addPose(args.getFlag("save"), args.getSenderLocation())) {
+            if (trait.addPose(args.getFlag("저장"), args.getSenderLocation())) {
                 Messaging.sendTr(sender, Messages.POSE_ADDED);
             } else
-                throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("save"));
-        } else if (args.hasValueFlag("assume")) {
-            String pose = args.getFlag("assume");
+                throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("저장"));
+        } else if (args.hasValueFlag("가정")) {
+            String pose = args.getFlag("가정");
             if (pose.isEmpty())
                 throw new CommandException(Messages.INVALID_POSE_NAME);
 
             if (!trait.hasPose(pose))
                 throw new CommandException(Messages.POSE_MISSING, pose);
             trait.assumePose(pose);
-        } else if (args.hasValueFlag("remove")) {
-            if (args.getFlag("remove").isEmpty())
+        } else if (args.hasValueFlag("제거")) {
+            if (args.getFlag("제거").isEmpty())
                 throw new CommandException(Messages.INVALID_POSE_NAME);
-            if (trait.removePose(args.getFlag("remove"))) {
+            if (trait.removePose(args.getFlag("제거"))) {
                 Messaging.sendTr(sender, Messages.POSE_REMOVED);
             } else
-                throw new CommandException(Messages.POSE_MISSING, args.getFlag("remove"));
+                throw new CommandException(Messages.POSE_MISSING, args.getFlag("제거"));
         } else if (!args.hasFlag('a')) {
             trait.describe(sender, args.getInteger(1, 1));
         }
@@ -734,10 +771,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "power",
-            desc = "Toggle a creeper NPC as powered",
-            modifiers = { "power" },
+            aliases = { "시민" },
+            usage = "힘",
+            desc = "크리퍼 NPC가 힘세지는걸 전환합니다",
+            modifiers = { "힘" },
             min = 1,
             max = 1,
             permission = "citizens.npc.power")
@@ -748,10 +785,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "profession|prof [profession]",
-            desc = "Set a NPC's profession",
-            modifiers = { "profession", "prof" },
+            aliases = { "시민" },
+            usage = "직업|prof [직업]",
+            desc = "NPC의 직업을 설정합니다",
+            modifiers = { "직업", "prof" },
             min = 2,
             max = 2,
             permission = "citizens.npc.profession")
@@ -769,16 +806,16 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "remove|rem (all)",
-            desc = "Remove a NPC",
-            modifiers = { "remove", "rem" },
+            aliases = { "시민" },
+            usage = "삭제|rem (모두)",
+            desc = "NPC를 삭제합니다",
+            modifiers = { "삭제", "rem" },
             min = 1,
             max = 2)
     @Requirements
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
-            if (!args.getString(1).equalsIgnoreCase("all"))
+        	  if (!args.getString(1).equalsIgnoreCase("모두"))
                 throw new CommandException(Messages.REMOVE_INCORRECT_SYNTAX);
             if (!sender.hasPermission("citizens.admin.remove.all") && !sender.hasPermission("citizens.admin"))
                 throw new NoPermissionsException();
@@ -800,10 +837,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "rename [name]",
-            desc = "Rename a NPC",
-            modifiers = { "rename" },
+            aliases = { "시민" },
+            usage = "이름변경 [이름]",
+            desc = "NPC의 이름을 변경합니다",
+            modifiers = { "이름변경" },
             min = 2,
             permission = "citizens.npc.rename")
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
@@ -823,10 +860,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "select|sel [id|name] (--r range)",
-            desc = "Select a NPC with the given ID or name",
-            modifiers = { "select", "sel" },
+            aliases = { "시민" },
+            usage = "선택|sel [id|이름] (--r range)",
+            desc = "NPC의 주어진 ID나 이름을 통해 선택합니다",
+            modifiers = { "선택", "sel" },
             min = 1,
             max = 2,
             permission = "citizens.npc.select")
@@ -861,18 +898,9 @@ public class NPCCommands {
             } catch (NumberFormatException ex) {
                 String name = args.getString(1);
                 List<NPC> possible = Lists.newArrayList();
-                double range = -1;
-                if (args.hasValueFlag("r"))
-                    range = Math.abs(args.getFlagDouble("r"));
                 for (NPC test : npcRegistry) {
-                    if (test.getName().equalsIgnoreCase(name)) {
-                        if (range > 0
-                                && test.isSpawned()
-                                && !Util.locationWithinRange(args.getSenderLocation(), test.getBukkitEntity()
-                                        .getLocation(), range))
-                            continue;
+                    if (test.getName().equalsIgnoreCase(name))
                         possible.add(test);
-                    }
                 }
                 if (possible.size() == 1) {
                     toSelect = possible.get(0);
@@ -890,8 +918,8 @@ public class NPCCommands {
         Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
     }
 
-    @Command(aliases = { "npc" }, usage = "skeletontype [type]", desc = "Sets the NPC's skeleton type", modifiers = {
-            "skeletontype", "sktype" }, min = 2, max = 2, permission = "citizens.npc.skeletontype")
+    @Command(aliases = { "시민" }, usage = "스켈레톤타입 [타입]", desc = "NPC의 스켈레톤 타입을 설정합니다", modifiers = {
+            "스켈레톤타입", "sktype" }, min = 2, max = 2, permission = "citizens.npc.skeletontype")
     @Requirements(selected = true, ownership = true, types = EntityType.SKELETON)
     public void skeletonType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         SkeletonType type = (type = SkeletonType.getType(args.getInteger(1))) == null ? SkeletonType.valueOf(args
@@ -903,10 +931,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "size [size]",
-            desc = "Sets the NPC's size",
-            modifiers = { "size" },
+    		   aliases = { "시민" },
+               usage = "크기 [크기]",
+               desc = "NPC의 크기를 설정합니다",
+               modifiers = { "크기" },
             min = 1,
             max = 2,
             permission = "citizens.npc.size")
@@ -923,16 +951,16 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "spawn (id)",
-            desc = "Spawn an existing NPC",
-            modifiers = { "spawn" },
-            min = 1,
+    	    aliases = { "시민" },
+            usage = "스폰 [id]",
+            desc = "존재하는 NPC를 소환합니다",
+            modifiers = { "스폰" },
+            min = 2,
             max = 2,
             permission = "citizens.npc.spawn")
     @Requirements(ownership = true)
     public void spawn(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        NPC respawn = args.argsLength() > 1 ? npcRegistry.getById(args.getInteger(1)) : npc;
+        NPC respawn = npcRegistry.getById(args.getInteger(1));
         if (respawn == null)
             throw new CommandException(Messages.NO_NPC_WITH_ID_FOUND, args.getInteger(1));
         if (respawn.isSpawned())
@@ -952,10 +980,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "speak message to speak --target npcid|player_name --type vocal_type",
-            desc = "Uses the NPCs SpeechController to talk",
-            modifiers = { "speak" },
+    		aliases = { "시민" },
+            usage = "메세지를 말하기 --목표 npcid|플레이어 이름 --타입 vocal_type",
+            desc = "NPC의 말을 조정하는 것을 사용합니다",
+            modifiers = { "말하기" },
             min = 2,
             permission = "citizens.npc.speak")
     public void speak(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
@@ -963,38 +991,38 @@ public class NPCCommands {
         String message = Colorizer.parseColors(args.getJoinedStrings(1));
 
         if (message.length() <= 0) {
-            Messaging.send(sender, "Default Vocal Chord for " + npc.getName() + ": "
+            Messaging.send(sender, "기본 음성 가락 " + npc.getName() + ": "
                     + npc.getTrait(Speech.class).getDefaultVocalChord());
             return;
         }
 
         SpeechContext context = new SpeechContext(message);
 
-        if (args.hasValueFlag("target")) {
-            if (args.getFlag("target").matches("\\d+")) {
-                NPC target = CitizensAPI.getNPCRegistry().getById(Integer.valueOf(args.getFlag("target")));
+        if (args.hasValueFlag("목표")) {
+            if (args.getFlag("목표").matches("\\d+")) {
+                NPC target = CitizensAPI.getNPCRegistry().getById(Integer.valueOf(args.getFlag("목표")));
                 if (target != null)
                     context.addRecipient(target.getBukkitEntity());
             } else {
-                Player player = Bukkit.getPlayer(args.getFlag("target"));
+                Player player = Bukkit.getPlayer(args.getFlag("목표"));
                 if (player != null)
                     context.addRecipient(player);
             }
         }
 
-        if (args.hasValueFlag("type")) {
-            if (CitizensAPI.getSpeechFactory().isRegistered(args.getFlag("type")))
-                type = args.getFlag("type");
+        if (args.hasValueFlag("타입")) {
+            if (CitizensAPI.getSpeechFactory().isRegistered(args.getFlag("타입")))
+                type = args.getFlag("타입");
         }
 
         npc.getDefaultSpeechController().speak(context, type);
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "speed [speed]",
-            desc = "Sets the movement speed of an NPC as a percentage",
-            modifiers = { "speed" },
+    		aliases = { "시민" },
+            usage = "속도 [속도]",
+            desc = "NPC의 이동 속도를 퍼센트로 설정합니다",
+            modifiers = { "속도" },
             min = 2,
             max = 2,
             permission = "citizens.npc.speed")
@@ -1008,24 +1036,20 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "tp",
-            desc = "Teleport to a NPC",
-            modifiers = { "tp", "teleport" },
+            aliases = { "시민" },
+            usage = "텔포",
+            desc = "NPC에게로 텔포합니다",
+            modifiers = { "텔포", "텔레포트" },
             min = 1,
             max = 1,
             permission = "citizens.npc.tp")
     public void tp(CommandContext args, Player player, NPC npc) {
         Location to = npc.getTrait(CurrentLocation.class).getLocation();
-        if (to == null) {
-            Messaging.sendError(player, Messages.TELEPORT_NPC_LOCATION_NOT_FOUND);
-            return;
-        }
         player.teleport(to, TeleportCause.COMMAND);
         Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());
     }
 
-    @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport a NPC to your location", modifiers = { "tphere",
+    @Command(aliases = { "시민" }, usage = "부르기", desc = "NPC를 당신의 위치로 텔포시킵니다", modifiers = { "부르기",
             "tph", "move" }, min = 1, max = 1, permission = "citizens.npc.tphere")
     public void tphere(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.getSenderLocation() == null)
@@ -1050,10 +1074,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "tpto [player name|npc id] [player name|npc id]",
-            desc = "Teleport an NPC or player to another NPC or player",
-            modifiers = { "tpto" },
+            aliases = { "시민" },
+            usage = "이동 [플레이어 이름|npc id] [플레이어 이름|npc id]",
+            desc = "NPC 나 플레이어에서 다른 NPC나 플레이어에게로 텔포합니다",
+            modifiers = { "이동" },
             min = 3,
             max = 3,
             permission = "citizens.npc.tpto")
@@ -1090,10 +1114,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "type [type]",
-            desc = "Sets an NPC's entity type",
-            modifiers = { "type" },
+            aliases = { "시민" },
+            usage = "타입 [타입]",
+            desc = "NPC의 실제 타입을 설정합니다",
+            modifiers = { "타입" },
             min = 2,
             max = 2,
             permission = "citizens.npc.type")
@@ -1106,10 +1130,10 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "vulnerable (-t)",
-            desc = "Toggles an NPC's vulnerability",
-            modifiers = { "vulnerable" },
+            aliases = { "시민" },
+            usage = "허약 (-t)",
+            desc = "NPC가 허약해지게 전환합니다",
+            modifiers = { "허약" },
             min = 1,
             max = 1,
             flags = "t",
@@ -1126,27 +1150,27 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "wolf (-s(itting) a(ngry) t(amed)) --collar [hex rgb color|name]",
-            desc = "Sets wolf modifiers",
-            modifiers = { "wolf" },
+            aliases = { "시민" },
+            usage = "늑대 (-앉(기) 화(남) 길(든)) --목걸이 [삼원색]",
+            desc = "늑대를 수정합니다",
+            modifiers = { "늑대" },
             min = 1,
             max = 1,
-            flags = "sat",
+            flags = "앉화길",
             permission = "citizens.npc.wolf")
     @Requirements(selected = true, ownership = true, types = EntityType.WOLF)
     public void wolf(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Wolf wolf = (Wolf) npc.getBukkitEntity();
-        wolf.setAngry(args.hasFlag('a'));
-        wolf.setSitting(args.hasFlag('s'));
-        wolf.setTamed(args.hasFlag('t'));
-        if (args.hasValueFlag("collar")) {
-            String unparsed = args.getFlag("collar");
+        wolf.setAngry(args.hasFlag('화'));
+        wolf.setSitting(args.hasFlag('앉'));
+        wolf.setTamed(args.hasFlag('길'));
+        if (args.hasValueFlag("목걸이")) {
+            String unparsed = args.getFlag("목걸이");
             DyeColor color = null;
             try {
-                color = DyeColor.valueOf(unparsed.toUpperCase().replace(' ', '_'));
+                DyeColor.valueOf(unparsed.toUpperCase().replace(' ', '_'));
             } catch (IllegalArgumentException e) {
-                int rgb = Integer.parseInt(unparsed.replace("#", ""), 16);
+                int rgb = Integer.parseInt(unparsed.replace("#", ""));
                 color = DyeColor.getByColor(org.bukkit.Color.fromRGB(rgb));
             }
             if (color == null)
@@ -1156,22 +1180,22 @@ public class NPCCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "zombiemod (-b(aby), -v(illager))",
-            desc = "Sets a zombie NPC to be a baby or villager",
-            modifiers = { "zombie", "zombiemod" },
-            flags = "bv",
+            aliases = { "시민" },
+            usage = "좀비모드 (-아(기), -주(민))",
+            desc = "좀비 NPC를 아기나 주민으로 설정합니다",
+            modifiers = { "zombie", "좀비모드" },
+            flags = "아주",
             min = 1,
             max = 1,
             permission = "citizens.npc.zombiemodifier")
     @Requirements(selected = true, ownership = true, types = EntityType.ZOMBIE)
     public void zombieModifier(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         ZombieModifier trait = npc.getTrait(ZombieModifier.class);
-        if (args.hasFlag('b')) {
+        if (args.hasFlag('아')) {
             boolean isBaby = trait.toggleBaby();
             Messaging.sendTr(sender, isBaby ? Messages.ZOMBIE_BABY_SET : Messages.ZOMBIE_BABY_UNSET, npc.getName());
         }
-        if (args.hasFlag('v')) {
+        if (args.hasFlag('주')) {
             boolean isVillager = trait.toggleVillager();
             Messaging.sendTr(sender, isVillager ? Messages.ZOMBIE_VILLAGER_SET : Messages.ZOMBIE_VILLAGER_UNSET,
                     npc.getName());

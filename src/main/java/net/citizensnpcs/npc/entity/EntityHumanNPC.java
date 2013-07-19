@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -14,44 +13,29 @@ import net.citizensnpcs.npc.network.EmptyNetworkManager;
 import net.citizensnpcs.npc.network.EmptySocket;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.citizensnpcs.util.nms.PlayerControllerJump;
-import net.citizensnpcs.util.nms.PlayerControllerLook;
-import net.citizensnpcs.util.nms.PlayerControllerMove;
-import net.citizensnpcs.util.nms.PlayerEntitySenses;
-import net.citizensnpcs.util.nms.PlayerNavigation;
-import net.minecraft.server.v1_6_R2.AttributeInstance;
-import net.minecraft.server.v1_6_R2.Connection;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityPlayer;
-import net.minecraft.server.v1_6_R2.EnumGamemode;
-import net.minecraft.server.v1_6_R2.GenericAttributes;
-import net.minecraft.server.v1_6_R2.MathHelper;
-import net.minecraft.server.v1_6_R2.MinecraftServer;
-import net.minecraft.server.v1_6_R2.Navigation;
-import net.minecraft.server.v1_6_R2.NetworkManager;
-import net.minecraft.server.v1_6_R2.Packet;
-import net.minecraft.server.v1_6_R2.Packet35EntityHeadRotation;
-import net.minecraft.server.v1_6_R2.Packet5EntityEquipment;
-import net.minecraft.server.v1_6_R2.PlayerInteractManager;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_5_R3.Connection;
+import net.minecraft.server.v1_5_R3.EntityPlayer;
+import net.minecraft.server.v1_5_R3.EnumGamemode;
+import net.minecraft.server.v1_5_R3.MathHelper;
+import net.minecraft.server.v1_5_R3.MinecraftServer;
+import net.minecraft.server.v1_5_R3.Navigation;
+import net.minecraft.server.v1_5_R3.NetworkManager;
+import net.minecraft.server.v1_5_R3.Packet;
+import net.minecraft.server.v1_5_R3.Packet35EntityHeadRotation;
+import net.minecraft.server.v1_5_R3.Packet5EntityEquipment;
+import net.minecraft.server.v1_5_R3.PlayerInteractManager;
+import net.minecraft.server.v1_5_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
-    private PlayerControllerJump controllerJump;
-    private PlayerControllerLook controllerLook;
-    private PlayerControllerMove controllerMove;
-    private PlayerEntitySenses entitySenses;
     private boolean gravity = true;
-    private int jumpTicks = 0;
-    private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private int packetUpdateCount;
@@ -62,13 +46,17 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         playerInteractManager.setGameMode(EnumGamemode.SURVIVAL);
 
         this.npc = (CitizensNPC) npc;
-        if (npc != null) {
+        if (npc != null)
             initialise(minecraftServer);
-        }
     }
 
     @Override
-    public void collide(net.minecraft.server.v1_6_R2.Entity entity) {
+    public float bE() {
+        return NMS.modifiedSpeed(super.bE(), npc);
+    }
+
+    @Override
+    public void collide(net.minecraft.server.v1_5_R3.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
@@ -105,14 +93,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return super.getBukkitEntity();
     }
 
-    public PlayerControllerJump getControllerJump() {
-        return controllerJump;
-    }
-
-    public Navigation getNavigation() {
-        return navigation;
-    }
-
     @Override
     public NPC getNPC() {
         return npc;
@@ -122,18 +102,19 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         Socket socket = new EmptySocket();
         NetworkManager conn = null;
         try {
-            conn = new EmptyNetworkManager(minecraftServer.getLogger(), socket, "npc mgr", new Connection() {
+            conn = new EmptyNetworkManager(server.getLogger(), socket, "npc mgr", new Connection() {
                 @Override
                 public boolean a() {
                     return false;
                 }
-            }, minecraftServer.H().getPrivate());
+            }, server.F().getPrivate());
             playerConnection = new EmptyNetHandler(minecraftServer, conn, this);
             conn.a(playerConnection);
         } catch (IOException e) {
             // swallow
         }
 
+        getNavigation().e(true);
         Y = 1F; // stepHeight - must not stay as the default 0 (breaks steps).
                 // Check the EntityPlayer constructor for the new name.
 
@@ -142,20 +123,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         } catch (IOException ex) {
             // swallow
         }
-        AttributeInstance range = this.getAttributeInstance(GenericAttributes.b);
-        if (range == null) {
-            range = this.aW().b(GenericAttributes.b);
-        }
-        range.setValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
-        controllerJump = new PlayerControllerJump(this);
-        controllerLook = new PlayerControllerLook(this);
-        controllerMove = new PlayerControllerMove(this);
-        entitySenses = new PlayerEntitySenses(this);
-        navigation = new PlayerNavigation(this, world);
-    }
-
-    public boolean isNavigating() {
-        return npc.getNavigator().isNavigating();
     }
 
     @Override
@@ -172,67 +139,51 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // (onGround is normally updated by the client)
         }
         if (!npc.data().get("removefromplayerlist", true)) {
-            h();
+            g();
         }
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
 
+        NMS.updateSenses(this);
         if (navigating) {
-            if (!NMS.isNavigationFinished(navigation)) {
-                NMS.updateNavigation(navigation);
-            }
+            Navigation navigation = getNavigation();
+            if (!navigation.f())
+                navigation.e();
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0) {
             e(0, 0); // is this necessary? it does controllable but sometimes
                      // players sink into the ground
         }
 
-        if (noDamageTicks > 0) {
+        if (noDamageTicks > 0)
             --noDamageTicks;
-        }
         npc.update();
     }
 
     private void moveOnCurrentHeading() {
         NMS.updateAI(this);
         // taken from EntityLiving update method
-        if (bd) {
+        if (bG) {
             /* boolean inLiquid = G() || I();
              if (inLiquid) {
                  motY += 0.04;
              } else //(handled elsewhere)*/
-            if (onGround && jumpTicks == 0) {
-                ba();
-                jumpTicks = 10;
+            if (onGround && bX == 0) {
+                bl();
+                bX = 10;
             }
-        } else {
-            jumpTicks = 0;
-        }
-        be *= 0.98F;
-        bf *= 0.98F;
-        bg *= 0.9F;
+        } else
+            bX = 0;
 
-        e(be, bf); // movement method
+        bD *= 0.98F;
+        bE *= 0.98F;
+        bF *= 0.9F;
+
+        float prev = aO;
+        aO *= bE();
+        e(bD, bE); // movement method
+        aO = prev;
         NMS.setHeadYaw(this, yaw);
-    }
-
-    public void setMoveDestination(double x, double y, double z, float speed) {
-        controllerMove.a(x, y, z, speed);
-    }
-
-    public void setShouldJump() {
-        controllerJump.a();
-    }
-
-    public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
-        controllerLook.a(target, yawOffset, renderOffset);
-    }
-
-    public void updateAI() {
-        entitySenses.a();
-        controllerMove.c();
-        controllerLook.a();
-        controllerJump.b();
     }
 
     private void updatePackets(boolean navigating) {
@@ -251,28 +202,17 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
     }
 
-    public void updatePathfindingRange(float pathfindingRange) {
-        this.navigation.setRange(pathfindingRange);
-    }
-
     public static class PlayerNPC extends CraftPlayer implements NPCHolder {
-        private final CraftServer cserver;
         private final CitizensNPC npc;
 
         private PlayerNPC(EntityHumanNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
-            this.cserver = (CraftServer) Bukkit.getServer();
-        }
-
-        @Override
-        public EntityHumanNPC getHandle() {
-            return (EntityHumanNPC) this.entity;
         }
 
         @Override
         public List<MetadataValue> getMetadata(String metadataKey) {
-            return cserver.getEntityMetadata().getMetadata(this, metadataKey);
+            return server.getEntityMetadata().getMetadata(this, metadataKey);
         }
 
         @Override
@@ -281,27 +221,22 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
 
         @Override
-        public boolean hasLineOfSight(org.bukkit.entity.Entity other) {
-            return getHandle().entitySenses.canSee(((CraftEntity) other).getHandle());
-        }
-
-        @Override
         public boolean hasMetadata(String metadataKey) {
-            return cserver.getEntityMetadata().hasMetadata(this, metadataKey);
+            return server.getEntityMetadata().hasMetadata(this, metadataKey);
         }
 
         @Override
         public void removeMetadata(String metadataKey, Plugin owningPlugin) {
-            cserver.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
+            server.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
         }
 
         public void setGravityEnabled(boolean enabled) {
-            getHandle().gravity = enabled;
+            ((EntityHumanNPC) getHandle()).gravity = enabled;
         }
 
         @Override
         public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
-            cserver.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
+            server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
         }
     }
 

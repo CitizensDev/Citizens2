@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R2.EntityBat;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_5_R3.EntityBat;
+import net.minecraft.server.v1_5_R3.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftBat;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftBat;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
 import org.bukkit.entity.Bat;
 import org.bukkit.util.Vector;
 
@@ -53,14 +53,19 @@ public class BatController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-                setFlying(false);
+                a(false);
             }
         }
 
         @Override
-        public void bh() {
+        public float bE() {
+            return NMS.modifiedSpeed(super.bE(), npc);
+        }
+
+        @Override
+        public void bo() {
             if (npc == null)
-                super.bh();
+                super.bo();
             else {
                 NMS.updateAI(this);
                 npc.update();
@@ -68,7 +73,7 @@ public class BatController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_6_R2.Entity entity) {
+        public void collide(net.minecraft.server.v1_5_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -115,10 +120,6 @@ public class BatController extends MobEntityController {
             super.l_();
             if (npc != null)
                 npc.update();
-        }
-
-        public void setFlying(boolean flying) {
-            a(flying);
         }
     }
 }

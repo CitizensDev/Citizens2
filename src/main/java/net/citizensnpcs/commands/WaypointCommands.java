@@ -19,10 +19,10 @@ public class WaypointCommands {
 
     // TODO: refactor into a policy style system
     @Command(
-            aliases = { "waypoints", "waypoint", "wp" },
-            usage = "disableteleporting",
+            aliases = { "웨이포인트", "waypoint", "wp" },
+            usage = "텔레포트비활성화",
             desc = "Disables teleportation when stuck (temporary command)",
-            modifiers = { "disableteleport" },
+            modifiers = { "텔레포트비활성화" },
             min = 1,
             max = 1,
             permission = "citizens.waypoints.disableteleport")
@@ -32,10 +32,10 @@ public class WaypointCommands {
     }
 
     @Command(
-            aliases = { "waypoints", "waypoint", "wp" },
-            usage = "provider [provider name] (-d)",
-            desc = "Sets the current waypoint provider",
-            modifiers = { "provider" },
+            aliases = { "웨이포인트", "waypoint", "wp" },
+            usage = "설비자 [설비자 이름] (-d)",
+            desc = "현재 웨이포인트 설비자를 설정합니다",
+            modifiers = { "설비자" },
             min = 1,
             max = 2,
             flags = "d",

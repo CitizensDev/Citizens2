@@ -3,7 +3,6 @@ package net.citizensnpcs.trait.waypoint;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.goals.WanderGoal;
-import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.DataKey;
@@ -19,7 +18,7 @@ public class WanderWaypointProvider implements WaypointProvider {
     private final int yrange = DEFAULT_YRANGE;
 
     @Override
-    public WaypointEditor createEditor(Player player, CommandContext args) {
+    public WaypointEditor createEditor(Player player) {
         return new WaypointEditor() {
             @Override
             public void begin() {

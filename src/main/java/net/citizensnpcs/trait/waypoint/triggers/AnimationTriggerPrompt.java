@@ -20,9 +20,9 @@ public class AnimationTriggerPrompt extends StringPrompt implements WaypointTrig
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase("back"))
+        if (input.equalsIgnoreCase("뒤로"))
             return (Prompt) context.getSessionData("previous");
-        if (input.equalsIgnoreCase("finish")) {
+        if (input.equalsIgnoreCase("마침")) {
             context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY, new AnimationTrigger(animations));
             return (Prompt) context.getSessionData(WaypointTriggerPrompt.RETURN_PROMPT_KEY);
         }

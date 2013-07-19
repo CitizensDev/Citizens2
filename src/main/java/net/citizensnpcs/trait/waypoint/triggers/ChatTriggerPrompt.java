@@ -18,7 +18,7 @@ public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPr
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase("back"))
+        if (input.equalsIgnoreCase("뒤로"))
             return (Prompt) context.getSessionData("previous");
         if (input.startsWith("radius")) {
             try {
@@ -31,7 +31,7 @@ public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPr
             }
             return this;
         }
-        if (input.equalsIgnoreCase("finish")) {
+        if (input.equalsIgnoreCase("마침")) {
             context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY, new ChatTrigger(radius, lines));
             return (Prompt) context.getSessionData(WaypointTriggerPrompt.RETURN_PROMPT_KEY);
         }

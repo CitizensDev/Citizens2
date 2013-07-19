@@ -91,7 +91,6 @@ public class Settings {
         MAX_NPC_LIMIT_CHECKS("npc.limits.max-permission-checks", 100),
         MAX_SPEED("npc.limits.max-speed", 100),
         MESSAGE_COLOUR("general.color-scheme.message", "<a>"),
-        NPC_ATTACK_DISTANCE("npc.pathfinding.attack-range", 1.75 * 1.75),
         NPC_COST("economy.npc.cost", 100D),
         QUICK_SELECT("npc.selection.quick-select", false),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("npc.player.remove-from-list", true),
@@ -105,8 +104,7 @@ public class Settings {
         TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 5),
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 10),
         TALK_ITEM("npc.text.talk-item", "340"),
-        USE_BOAT_CONTROLS("npc.controllable.use-boat-controls", true),
-        USE_NEW_PATHFINDER("npc.pathfinding.use-new-finder", true);
+        USE_NEW_PATHFINDER("npc.pathfinding.use-new-finder", false);
 
         protected String path;
         protected Object value;

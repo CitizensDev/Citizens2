@@ -7,14 +7,14 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R2.EntityHuman;
-import net.minecraft.server.v1_6_R2.EntityVillager;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_5_R3.EntityHuman;
+import net.minecraft.server.v1_5_R3.EntityVillager;
+import net.minecraft.server.v1_5_R3.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftVillager;
+import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftVillager;
 import org.bukkit.entity.Villager;
 import org.bukkit.util.Vector;
 
@@ -29,7 +29,6 @@ public class VillagerController extends MobEntityController {
     }
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
-        private boolean blockTrades = true;
         private final CitizensNPC npc;
 
         public EntityVillagerNPC(World world) {
@@ -45,20 +44,24 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
-        public boolean a(EntityHuman entityhuman) {
-            return npc == null || !blockTrades ? super.a(entityhuman) : false; // block
-                                                                               // trades
+        public boolean a_(EntityHuman entityhuman) {
+            return npc == null ? super.a_(entityhuman) : false; // block trades
         }
 
         @Override
-        public void bh() {
-            super.bh();
+        public float bE() {
+            return NMS.modifiedSpeed(super.bE(), npc);
+        }
+
+        @Override
+        public void bo() {
+            super.bo();
             if (npc != null)
                 npc.update();
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_6_R2.Entity entity) {
+        public void collide(net.minecraft.server.v1_5_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -98,14 +101,6 @@ public class VillagerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        public boolean isBlockingTrades() {
-            return blockTrades;
-        }
-
-        public void setBlockTrades(boolean blocked) {
-            this.blockTrades = blocked;
         }
     }
 

@@ -2,7 +2,6 @@ package net.citizensnpcs.npc.ai;
 
 import java.lang.reflect.Field;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.AttackStrategy;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -11,17 +10,15 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.citizensnpcs.util.nms.PlayerNavigation;
-import net.minecraft.server.v1_6_R2.AttributeInstance;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.EntityPlayer;
-import net.minecraft.server.v1_6_R2.Navigation;
-import net.minecraft.server.v1_6_R2.PathEntity;
+import net.minecraft.server.v1_5_R3.Entity;
+import net.minecraft.server.v1_5_R3.EntityLiving;
+import net.minecraft.server.v1_5_R3.EntityPlayer;
+import net.minecraft.server.v1_5_R3.Navigation;
+import net.minecraft.server.v1_5_R3.PathEntity;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
@@ -29,26 +26,24 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private int attackTicks;
     private CancelReason cancelReason;
     private final EntityLiving handle;
-    private final NPC npc;
+    private final Navigation navigation;
     private final NavigatorParameters parameters;
     private final Entity target;
-    private final TargetNavigator targetNavigator;
+    private final NavigationFieldWrapper wrapper;
 
-    public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
-        this.npc = npc;
-        this.parameters = params;
-        this.handle = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
+    public MCTargetStrategy(NPC handle, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
+        this.handle = ((CraftLivingEntity) handle.getBukkitEntity()).getHandle();
         this.target = ((CraftEntity) target).getHandle();
-        Navigation nav = NMS.getNavigation(this.handle);
-        this.targetNavigator = nav != null && !params.useNewPathfinder() ? new NavigationFieldWrapper(nav)
-                : new AStarTargeter();
+        this.navigation = this.handle.getNavigation();
         this.aggro = aggro;
+        this.parameters = params;
+        this.wrapper = new NavigationFieldWrapper(this.navigation);
     }
 
     private boolean canAttack() {
         return attackTicks == 0
                 && (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
-                && distanceSquared() <= Setting.NPC_ATTACK_DISTANCE.asDouble() && hasLineOfSight();
+                && distanceSquared() <= ATTACK_DISTANCE && hasLineOfSight();
     }
 
     @Override
@@ -91,17 +86,12 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     private void setPath() {
-        targetNavigator.setPath();
+        navigation.a(wrapper.findPath(handle, target), parameters.speed());
     }
 
     @Override
     public void stop() {
-        targetNavigator.stop();
-    }
-
-    @Override
-    public String toString() {
-        return "MCTargetStrategy [target=" + target + "]";
+        navigation.g();
     }
 
     @Override
@@ -116,6 +106,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
         if (cancelReason != null)
             return true;
+        navigation.a(parameters.avoidWater());
         setPath();
         NMS.look(handle, target);
         if (aggro && canAttack()) {
@@ -136,97 +127,39 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         return false;
     }
 
-    private class AStarTargeter implements TargetNavigator {
-        private int failureTimes = 0;
-        private AStarNavigationStrategy strategy = new AStarNavigationStrategy(npc, target.getBukkitEntity()
-                .getLocation(TARGET_LOCATION), parameters);
-
-        @Override
-        public void setPath() {
-            strategy = new AStarNavigationStrategy(npc, target.getBukkitEntity().getLocation(TARGET_LOCATION),
-                    parameters);
-            strategy.update();
-            CancelReason subReason = strategy.getCancelReason();
-            if (subReason == CancelReason.STUCK) {
-                if (failureTimes++ > 10) {
-                    cancelReason = strategy.getCancelReason();
-                }
-            } else {
-                failureTimes = 0;
-                cancelReason = strategy.getCancelReason();
-            }
-        }
-
-        @Override
-        public void stop() {
-            strategy.stop();
-        }
-    }
-
-    private class NavigationFieldWrapper implements TargetNavigator {
+    private class NavigationFieldWrapper {
+        float e;
         boolean j = true, k, l, m;
-        private final Navigation navigation;
-        float range;
 
         private NavigationFieldWrapper(Navigation navigation) {
-            this.navigation = navigation;
             this.k = navigation.c();
             this.l = navigation.a();
             try {
-                if (navigation instanceof PlayerNavigation) {
-                    if (P_NAV_E != null)
-                        range = (float) ((AttributeInstance) P_NAV_E.get(navigation)).getValue();
-                    if (P_NAV_J != null)
-                        j = P_NAV_J.getBoolean(navigation);
-                    if (P_NAV_M != null)
-                        m = P_NAV_M.getBoolean(navigation);
-                } else {
-                    if (E_NAV_E != null)
-                        range = (float) ((AttributeInstance) E_NAV_E.get(navigation)).getValue();
-                    if (E_NAV_J != null)
-                        j = E_NAV_J.getBoolean(navigation);
-                    if (E_NAV_M != null)
-                        m = E_NAV_M.getBoolean(navigation);
-                }
+                if (NAV_E != null)
+                    e = NAV_E.getFloat(navigation);
+                if (NAV_J != null)
+                    j = NAV_J.getBoolean(navigation);
+                if (NAV_M != null)
+                    m = NAV_M.getBoolean(navigation);
             } catch (Exception ex) {
-                range = parameters.range();
+                e = parameters.speed();
             }
         }
 
         public PathEntity findPath(Entity from, Entity to) {
-            return handle.world.findPath(from, to, range, j, k, l, m);
+            return handle.world.findPath(from, to, e, j, k, l, m);
         }
-
-        @Override
-        public void setPath() {
-            navigation.a(parameters.avoidWater());
-            navigation.a(findPath(handle, target), parameters.speed());
-        }
-
-        @Override
-        public void stop() {
-            NMS.stopNavigation(navigation);
-        }
-    }
-
-    private static interface TargetNavigator {
-        void setPath();
-
-        void stop();
     }
 
     private static final int ATTACK_DELAY_TICKS = 20;
-    private static Field E_NAV_E, E_NAV_J, E_NAV_M;
+    private static final double ATTACK_DISTANCE = 1.75 * 1.75;
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
-    private static Field P_NAV_E, P_NAV_J, P_NAV_M;
+    private static Field NAV_E, NAV_J, NAV_M;
     private static final Location TARGET_LOCATION = new Location(null, 0, 0, 0);
 
     static {
-        E_NAV_E = NMS.getField(Navigation.class, "e");
-        E_NAV_J = NMS.getField(Navigation.class, "j");
-        E_NAV_M = NMS.getField(Navigation.class, "m");
-        P_NAV_E = NMS.getField(PlayerNavigation.class, "e");
-        P_NAV_J = NMS.getField(PlayerNavigation.class, "j");
-        P_NAV_M = NMS.getField(PlayerNavigation.class, "m");
+        NAV_E = NMS.getField(Navigation.class, "e");
+        NAV_J = NMS.getField(Navigation.class, "j");
+        NAV_M = NMS.getField(Navigation.class, "m");
     }
 }

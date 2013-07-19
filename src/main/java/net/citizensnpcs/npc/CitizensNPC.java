@@ -22,11 +22,11 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_5_R3.EntityLiving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -82,11 +82,6 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public Navigator getNavigator() {
         return navigator;
-    }
-
-    @Override
-    public Location getStoredLocation() {
-        return isSpawned() ? getBukkitEntity().getLocation() : getTrait(CurrentLocation.class).getLocation();
     }
 
     @Override
@@ -169,9 +164,8 @@ public class CitizensNPC extends AbstractNPC {
             despawn(DespawnReason.PENDING_RESPAWN);
         }
         entityController = newController;
-        if (wasSpawned) {
+        if (wasSpawned)
             spawn(prev);
-        }
     }
 
     @Override
@@ -210,14 +204,8 @@ public class CitizensNPC extends AbstractNPC {
 
         navigator.onSpawn();
         // Modify NPC using traits after the entity has been created
-        for (Trait trait : traits.values()) {
-            try {
-                trait.onSpawn();
-            } catch (Throwable ex) {
-                Messaging.severeTr(Messages.TRAIT_ONSPAWN_FAILED, trait.getName(), getId());
-                ex.printStackTrace();
-            }
-        }
+        for (Trait trait : traits.values())
+            trait.onSpawn();
         getBukkitEntity().setRemoveWhenFarAway(false);
         getBukkitEntity().setCustomName(getFullName());
         return true;

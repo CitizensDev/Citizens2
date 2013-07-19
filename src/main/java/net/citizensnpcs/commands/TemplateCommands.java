@@ -29,10 +29,10 @@ public class TemplateCommands {
     }
 
     @Command(
-            aliases = { "template", "tpl" },
-            usage = "apply [template name] (id id2...)",
-            desc = "Applies a template to the selected NPC",
-            modifiers = { "apply" },
+            aliases = { "템플릿", "tpl" },
+            usage = "추가 [템플릿 이름] (id id2...)",
+            desc = "선택된 NPC에 템플릿을 추가합니다",
+            modifiers = { "추가" },
             min = 2,
             permission = "citizens.templates.apply")
     @Requirements
@@ -70,10 +70,10 @@ public class TemplateCommands {
     }
 
     @Command(
-            aliases = { "template", "tpl" },
-            usage = "create [template name] (-o)",
-            desc = "Creates a template from the selected NPC",
-            modifiers = { "create" },
+            aliases = { "탬플릿", "tpl" },
+            usage = "만들기 [템플릿 이름] (-o)",
+            desc = "NPC에게서 템플릿을 만듭니다",
+            modifiers = { "템플릿" },
             min = 2,
             max = 2,
             flags = "o",

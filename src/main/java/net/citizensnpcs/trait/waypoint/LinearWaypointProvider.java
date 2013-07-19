@@ -12,8 +12,6 @@ import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
-import net.citizensnpcs.api.command.CommandContext;
-import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -24,7 +22,6 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.waypoint.triggers.TriggerEditPrompt;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,30 +48,7 @@ public class LinearWaypointProvider implements WaypointProvider {
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
     @Override
-    public WaypointEditor createEditor(Player player, CommandContext args) {
-        if (args.hasFlag('h')) {
-            waypoints.add(new Waypoint(player.getLocation()));
-            return null;
-        } else if (args.hasValueFlag("at")) {
-            try {
-                Location location = Util.parseLocation(player.getLocation(), args.getFlag("at"));
-                waypoints.add(new Waypoint(location));
-            } catch (CommandException e) {
-                Messaging.sendError(player, e.getMessage());
-            }
-            return null;
-        } else if (args.hasFlag('c')) {
-            waypoints.clear();
-            return null;
-        } else if (args.hasFlag('l')) {
-            if (waypoints.size() > 0) {
-                waypoints.remove(waypoints.size() - 1);
-            }
-            return null;
-        } else if (args.hasFlag('p')) {
-            setPaused(!isPaused());
-            return null;
-        }
+    public WaypointEditor createEditor(Player player) {
         return new LinearWaypointEditor(player);
     }
 
@@ -122,7 +96,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         int editingSlot = waypoints.size() - 1;
         private final Player player;
         private boolean showPath;
-        private final Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
+        Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
 
         private LinearWaypointEditor(Player player) {
             this.player = player;
@@ -150,15 +124,13 @@ public class LinearWaypointProvider implements WaypointProvider {
         }
 
         private void createWaypointMarkers() {
-            for (int i = 0; i < waypoints.size(); i++) {
+            for (int i = 0; i < waypoints.size(); i++)
                 createWaypointMarker(i, waypoints.get(i));
-            }
         }
 
         private void destroyWaypointMarkers() {
-            for (Entity entity : waypointMarkers.values()) {
+            for (Entity entity : waypointMarkers.values())
                 entity.remove();
-            }
             waypointMarkers.clear();
         }
 
@@ -182,9 +154,8 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @Override
         public Waypoint getCurrentWaypoint() {
-            if (waypoints.size() == 0 || !editing) {
+            if (waypoints.size() == 0 || !editing)
                 return null;
-            }
             normaliseEditingSlot();
             return waypoints.get(editingSlot);
         }
@@ -192,7 +163,8 @@ public class LinearWaypointProvider implements WaypointProvider {
         private Location getPreviousWaypoint(int fromSlot) {
             if (waypoints.size() <= 1)
                 return null;
-            if (--fromSlot < 0)
+            fromSlot--;
+            if (fromSlot < 0)
                 fromSlot = waypoints.size() - 1;
             return waypoints.get(fromSlot).getLocation();
         }
@@ -203,16 +175,14 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @EventHandler
         public void onNPCDespawn(NPCDespawnEvent event) {
-            if (event.getNPC().equals(npc)) {
+            if (event.getNPC().equals(npc))
                 Editor.leave(player);
-            }
         }
 
         @EventHandler
         public void onNPCRemove(NPCRemoveEvent event) {
-            if (event.getNPC().equals(npc)) {
+            if (event.getNPC().equals(npc))
                 Editor.leave(player);
-            }
         }
 
         @EventHandler(ignoreCancelled = true)
@@ -220,23 +190,23 @@ public class LinearWaypointProvider implements WaypointProvider {
             if (!event.getPlayer().equals(player))
                 return;
             String message = event.getMessage();
-            if (message.equalsIgnoreCase("triggers")) {
-                event.setCancelled(true);
+            if (message.equalsIgnoreCase("트리거")) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
                         conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
                     }
                 });
-            } else if (message.equalsIgnoreCase("clear")) {
-                event.setCancelled(true);
+                return;
+            } else if (message.equalsIgnoreCase("청소")) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
                         clearWaypoints();
                     }
                 });
-            } else if (message.equalsIgnoreCase("toggle path")) {
+                return;
+            } else if (message.equalsIgnoreCase("토글 경로")) {
                 event.setCancelled(true);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                     @Override
@@ -245,6 +215,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                         togglePath();
                     }
                 });
+                return;
             }
         }
 
@@ -385,9 +356,8 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         public void onProviderChanged() {
             itr = waypoints.iterator();
-            if (currentDestination != null) {
+            if (currentDestination != null)
                 selector.finish();
-            }
         }
 
         @Override
@@ -398,15 +368,13 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @Override
         public void run(GoalSelector selector) {
-            if (!getNavigator().isNavigating()) {
+            if (!getNavigator().isNavigating())
                 selector.finish();
-            }
         }
 
         public void setPaused(boolean pause) {
-            if (pause && currentDestination != null) {
+            if (pause && currentDestination != null)
                 selector.finish();
-            }
             paused = pause;
         }
 
@@ -423,9 +391,7 @@ public class LinearWaypointProvider implements WaypointProvider {
             this.selector = selector;
             Waypoint next = itr.next();
             Location npcLoc = npc.getBukkitEntity().getLocation(cachedLocation);
-            if (npcLoc.getWorld() != next.getLocation().getWorld()
-                    || npcLoc.distanceSquared(next.getLocation()) < npc.getNavigator().getLocalParameters()
-                            .distanceMargin()) {
+            if (npcLoc.getWorld() != next.getLocation().getWorld() || npcLoc.distanceSquared(next.getLocation()) < 3) {
                 return false;
             }
             currentDestination = next;
@@ -433,13 +399,9 @@ public class LinearWaypointProvider implements WaypointProvider {
             getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(@Nullable CancelReason cancelReason) {
-                    if (npc.isSpawned()
-                            && currentDestination != null
-                            && Util.locationWithinRange(npc.getBukkitEntity().getLocation(),
-                                    currentDestination.getLocation(), 4)) {
-                        currentDestination.onReach(npc);
-                    }
                     selector.finish();
+                    if (currentDestination != null)
+                        currentDestination.onReach(npc);
                 }
             });
             return true;

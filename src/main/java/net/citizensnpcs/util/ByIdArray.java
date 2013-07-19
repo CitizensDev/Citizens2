@@ -134,9 +134,9 @@ public class ByIdArray<T> implements Iterable<T> {
         private int idx;
         {
             if (size > 0) {
-                if (highest == Integer.MIN_VALUE || highest >= elementData.length || elementData[highest] == null)
+                if (highest == Integer.MIN_VALUE || elementData[highest] == null)
                     recalcHighest();
-                if (lowest >= elementData.length || elementData[lowest] == null)
+                if (lowest == Integer.MAX_VALUE || elementData[lowest] == null)
                     recalcLowest();
                 idx = lowest - 1;
             }

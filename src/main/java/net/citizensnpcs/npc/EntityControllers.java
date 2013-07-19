@@ -12,7 +12,6 @@ import net.citizensnpcs.npc.entity.EnderDragonController;
 import net.citizensnpcs.npc.entity.EndermanController;
 import net.citizensnpcs.npc.entity.GhastController;
 import net.citizensnpcs.npc.entity.GiantController;
-import net.citizensnpcs.npc.entity.HorseController;
 import net.citizensnpcs.npc.entity.HumanController;
 import net.citizensnpcs.npc.entity.IronGolemController;
 import net.citizensnpcs.npc.entity.MagmaCubeController;
@@ -39,6 +38,8 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 public class EntityControllers {
+    private static final Map<EntityType, Class<? extends EntityController>> TYPES = Maps.newEnumMap(EntityType.class);
+
     public static EntityController createForType(EntityType type) {
         Class<? extends EntityController> controllerClass = TYPES.get(type);
         if (controllerClass == null)
@@ -55,8 +56,6 @@ public class EntityControllers {
         TYPES.put(type, controller);
     }
 
-    private static final Map<EntityType, Class<? extends EntityController>> TYPES = Maps.newEnumMap(EntityType.class);
-
     static {
         TYPES.put(EntityType.BAT, BatController.class);
         TYPES.put(EntityType.BLAZE, BlazeController.class);
@@ -68,7 +67,6 @@ public class EntityControllers {
         TYPES.put(EntityType.ENDERMAN, EndermanController.class);
         TYPES.put(EntityType.GHAST, GhastController.class);
         TYPES.put(EntityType.GIANT, GiantController.class);
-        TYPES.put(EntityType.HORSE, HorseController.class);
         TYPES.put(EntityType.IRON_GOLEM, IronGolemController.class);
         TYPES.put(EntityType.MAGMA_CUBE, MagmaCubeController.class);
         TYPES.put(EntityType.MUSHROOM_COW, MushroomCowController.class);

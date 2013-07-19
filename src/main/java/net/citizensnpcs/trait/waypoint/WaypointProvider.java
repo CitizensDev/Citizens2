@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait.waypoint;
 
-import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -13,10 +12,9 @@ public interface WaypointProvider {
      * 
      * @param player
      *            The player to link the editor with
-     * @param args
      * @return The editor
      */
-    public WaypointEditor createEditor(Player player, CommandContext args);
+    public WaypointEditor createEditor(Player player);
 
     /**
      * Returns whether this provider has paused execution of waypoints.

@@ -27,7 +27,7 @@ public class TextEditStartPrompt extends StringPrompt {
             context.setSessionData("index", index);
             return new TextEditPrompt(text);
         } catch (NumberFormatException ex) {
-            if (input.equalsIgnoreCase("page")) {
+            if (input.equalsIgnoreCase("페이지")) {
                 context.setSessionData("previous", this);
                 return new PageChangePrompt(text);
             }

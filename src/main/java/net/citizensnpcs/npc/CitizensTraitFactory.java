@@ -3,10 +3,6 @@ package net.citizensnpcs.npc;
 import java.util.Map;
 import java.util.Set;
 
-import net.citizensnpcs.Metrics;
-import net.citizensnpcs.Metrics.Graph;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
@@ -68,25 +64,6 @@ public class CitizensTraitFactory implements TraitFactory {
 
         for (String trait : registered.keySet()) {
             INTERNAL_TRAITS.add(trait);
-        }
-    }
-
-    public void addPlotters(Graph graph) {
-        for (Map.Entry<String, TraitInfo> entry : registered.entrySet()) {
-            if (INTERNAL_TRAITS.contains(entry.getKey()))
-                continue;
-            final Class<? extends Trait> traitClass = entry.getValue().getTraitClass();
-            graph.addPlotter(new Metrics.Plotter(entry.getKey()) {
-                @Override
-                public int getValue() {
-                    int numberUsingTrait = 0;
-                    for (NPC npc : CitizensAPI.getNPCRegistry()) {
-                        if (npc.hasTrait(traitClass))
-                            ++numberUsingTrait;
-                    }
-                    return numberUsingTrait;
-                }
-            });
         }
     }
 

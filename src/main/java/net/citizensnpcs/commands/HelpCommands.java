@@ -30,10 +30,10 @@ public class HelpCommands {
     }
 
     @Command(
-            aliases = { "citizens" },
-            usage = "help (page|command)",
-            desc = "Citizens help menu",
-            modifiers = { "help" },
+            aliases = { "시티즌" },
+            usage = "도움말 (페이지|명령어)",
+            desc = "시티즌 도움말 매뉴",
+            modifiers = { "도움말" },
             min = 1,
             max = 2,
             permission = "citizens.citizens.help")
@@ -43,9 +43,9 @@ public class HelpCommands {
         try {
             page = args.argsLength() == 2 ? args.getInteger(1) : page;
         } catch (NumberFormatException e) {
-            sendSpecificHelp(sender, "citizens", args.getString(1));
+            sendSpecificHelp(sender, "시티즌", args.getString(1));
         }
-        sendHelp(sender, "citizens", page);
+        sendHelp(sender, "시티즌", page);
     }
 
     private List<String> getLines(CommandSender sender, String baseCommand) {
@@ -66,10 +66,10 @@ public class HelpCommands {
     }
 
     @Command(
-            aliases = { "npc" },
-            usage = "help (page|command)",
-            desc = "NPC help menu",
-            modifiers = { "help" },
+            aliases = { "시민" },
+            usage = "도움말 (페이지|명령어)",
+            desc = "NPC 도움말 매뉴",
+            modifiers = { "도움말" },
             min = 1,
             max = 2,
             permission = "citizens.npc.help")
@@ -79,16 +79,16 @@ public class HelpCommands {
         try {
             page = args.argsLength() == 2 ? args.getInteger(1) : page;
         } catch (NumberFormatException e) {
-            sendSpecificHelp(sender, "npc", args.getString(1));
+            sendSpecificHelp(sender, "시민", args.getString(1));
         }
-        sendHelp(sender, "NPC", page);
+        sendHelp(sender, "시민", page);
     }
 
     @Command(
-            aliases = { "script" },
-            usage = "help (page|command)",
-            desc = "Script help menu",
-            modifiers = { "help" },
+            aliases = { "스크립트" },
+            usage = "도움말 (페이지|명령어)",
+            desc = "스크립트 도움말 매뉴",
+            modifiers = { "도움말" },
             min = 1,
             max = 2,
             permission = "citizens.script.help")
@@ -98,9 +98,9 @@ public class HelpCommands {
         try {
             page = args.argsLength() == 2 ? args.getInteger(1) : page;
         } catch (NumberFormatException e) {
-            sendSpecificHelp(sender, "script", args.getString(1));
+            sendSpecificHelp(sender, "스크립트", args.getString(1));
         }
-        sendHelp(sender, "script", page);
+        sendHelp(sender, "스크립트", page);
     }
 
     private void sendHelp(CommandSender sender, String name, int page) throws CommandException {
@@ -124,10 +124,10 @@ public class HelpCommands {
     }
 
     @Command(
-            aliases = { "template", "tpl" },
-            usage = "help (page|command)",
-            desc = "Template help menu",
-            modifiers = { "help" },
+            aliases = { "템플릿", "tpl" },
+            usage = "도움말 (페이지|도움말)",
+            desc = "템플릿 도움말 매뉴",
+            modifiers = { "도움말" },
             min = 1,
             max = 2,
             permission = "citizens.templates.help")
@@ -137,9 +137,9 @@ public class HelpCommands {
         try {
             page = args.argsLength() == 2 ? args.getInteger(1) : page;
         } catch (NumberFormatException e) {
-            sendSpecificHelp(sender, "templates", args.getString(1));
+            sendSpecificHelp(sender, "템플릿", args.getString(1));
         }
-        sendHelp(sender, "templates", page);
+        sendHelp(sender, "템플릿", page);
     }
 
     @Command(

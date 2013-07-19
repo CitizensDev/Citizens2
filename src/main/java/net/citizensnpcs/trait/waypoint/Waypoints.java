@@ -3,7 +3,6 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
@@ -58,8 +57,8 @@ public class Waypoints extends Trait {
         return providerName;
     }
 
-    public Editor getEditor(Player player, CommandContext args) {
-        return provider.createEditor(player, args);
+    public Editor getEditor(Player player) {
+        return provider.createEditor(player);
     }
 
     @Override

@@ -21,19 +21,19 @@ public class TextStartPrompt extends StringPrompt {
         String[] parts = ChatColor.stripColor(original.trim()).split(" ");
         String input = parts[0];
         CommandSender sender = (CommandSender) context.getForWhom();
-        if (input.equalsIgnoreCase("add"))
+        if (input.equalsIgnoreCase("추가"))
             return new TextAddPrompt(text);
-        else if (input.equalsIgnoreCase("edit"))
+        else if (input.equalsIgnoreCase("수정"))
             return new TextEditStartPrompt(text);
-        else if (input.equalsIgnoreCase("remove"))
+        else if (input.equalsIgnoreCase("삭제"))
             return new TextRemovePrompt(text);
-        else if (input.equalsIgnoreCase("random"))
+        else if (input.equalsIgnoreCase("랜덤"))
             Messaging.sendTr(sender, Messages.TEXT_EDITOR_RANDOM_TALKER_SET, text.toggleRandomTalker());
-        else if (input.equalsIgnoreCase("realistic looking"))
+        else if (input.equalsIgnoreCase("사실적으로 보기"))
             Messaging.sendTr(sender, Messages.TEXT_EDITOR_REALISTIC_LOOKING_SET, text.toggleRealisticLooking());
-        else if (input.equalsIgnoreCase("close") || input.equalsIgnoreCase("talk-close"))
+        else if (input.equalsIgnoreCase("근접") || input.equalsIgnoreCase("talk-close"))
             Messaging.sendTr(sender, Messages.TEXT_EDITOR_CLOSE_TALKER_SET, text.toggle());
-        else if (input.equalsIgnoreCase("range")) {
+        else if (input.equalsIgnoreCase("범위")) {
             try {
                 double range = Math.max(0, Double.parseDouble(parts[1]));
                 text.setRange(range);
@@ -43,12 +43,12 @@ public class TextStartPrompt extends StringPrompt {
             } catch (ArrayIndexOutOfBoundsException e) {
                 Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_RANGE);
             }
-        } else if (input.equalsIgnoreCase("item")) {
+        } else if (input.equalsIgnoreCase("아이템")) {
             if (parts.length > 1) {
                 text.setItemInHandPattern(parts[1]);
                 Messaging.sendTr(sender, Messages.TEXT_EDITOR_SET_ITEM, parts[1]);
             }
-        } else if (input.equalsIgnoreCase("help")) {
+        } else if (input.equalsIgnoreCase("도움말")) {
             context.setSessionData("said-text", false);
             Messaging.send(sender, getPromptText(context));
         } else
