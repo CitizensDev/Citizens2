@@ -29,7 +29,6 @@ public class HorseController extends MobEntityController {
 
     public static class EntityHorseNPC extends EntityHorse implements NPCHolder {
         private int jumpTicks;
-
         private final CitizensNPC npc;
 
         public EntityHorseNPC(World world) {
