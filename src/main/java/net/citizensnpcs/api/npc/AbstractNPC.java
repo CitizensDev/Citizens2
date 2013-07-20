@@ -42,6 +42,7 @@ public abstract class AbstractNPC implements NPC {
     protected AbstractNPC(int id, String name) {
         this.id = id;
         this.name = name;
+        addTrait(MobType.class);
     }
 
     @Override
