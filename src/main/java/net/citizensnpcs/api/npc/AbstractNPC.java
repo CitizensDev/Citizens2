@@ -57,8 +57,9 @@ public abstract class AbstractNPC implements NPC {
             return;
         }
 
-        if (trait.getNPC() == null)
+        if (trait.getNPC() == null) {
             trait.linkToNPC(this);
+        }
 
         // if an existing trait is being replaced, we need to remove the
         // currently registered runnable to avoid conflicts
