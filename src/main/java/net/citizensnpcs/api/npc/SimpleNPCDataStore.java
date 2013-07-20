@@ -23,10 +23,13 @@ public class SimpleNPCDataStore implements NPCDataStore {
         DataKey key = root.getKey("");
         int newId;
         if (!key.keyExists("last-created-npc-id")) {
-            newId = 0;
-            while (registry.getById(newId++) != null)
-                ;
-            newId -= 1;
+            int maxId = Integer.MIN_VALUE;
+            for (NPC npc : registry) {
+                if (npc.getId() > maxId) {
+                    maxId = npc.getId();
+                }
+            }
+            newId = maxId == Integer.MIN_VALUE ? 0 : maxId + 1;
         } else {
             newId = key.getInt("last-created-npc-id") + 1;
         }
