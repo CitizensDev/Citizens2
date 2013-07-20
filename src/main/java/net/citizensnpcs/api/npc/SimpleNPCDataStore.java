@@ -21,8 +21,8 @@ public class SimpleNPCDataStore implements NPCDataStore {
     @Override
     public int createUniqueNPCId(NPCRegistry registry) {
         DataKey key = root.getKey("");
-        int newId;
-        if (!key.keyExists("last-created-npc-id")) {
+        int newId = key.getInt("last-created-npc-id", -1);
+        if (newId == -1 || registry.getById(newId + 1) != null) {
             int maxId = Integer.MIN_VALUE;
             for (NPC npc : registry) {
                 if (npc.getId() > maxId) {
@@ -31,7 +31,7 @@ public class SimpleNPCDataStore implements NPCDataStore {
             }
             newId = maxId == Integer.MIN_VALUE ? 0 : maxId + 1;
         } else {
-            newId = key.getInt("last-created-npc-id") + 1;
+            newId++;
         }
         key.setInt("last-created-npc-id", newId);
         return newId;
