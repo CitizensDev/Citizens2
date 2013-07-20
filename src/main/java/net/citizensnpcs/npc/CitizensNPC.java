@@ -78,7 +78,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public LivingEntity getBukkitEntity() {
-        return entityController.getBukkitEntity();
+        return entityController == null ? null : entityController.getBukkitEntity();
     }
 
     @Override
