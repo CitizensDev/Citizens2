@@ -202,7 +202,7 @@ public class EventListen implements Listener {
                         npc.spawn(location);
                     }
                 }
-            }, delay);
+            }, delay + 2);
         }
     }
 
