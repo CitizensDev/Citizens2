@@ -18,6 +18,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
+import net.citizensnpcs.api.util.Messaging;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,6 +41,11 @@ public abstract class AbstractNPC implements NPC {
     protected final Map<Class<? extends Trait>, Trait> traits = Maps.newHashMap();
 
     protected AbstractNPC(int id, String name) {
+        if (name.length() > 16) {
+            Messaging.severe("ID", id, "created with name length greater than 16, truncating", name, "to",
+                    name.substring(0, 15));
+            name = name.substring(0, 15);
+        }
         this.id = id;
         this.name = name;
         addTrait(MobType.class);
@@ -53,7 +59,7 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void addTrait(Trait trait) {
         if (trait == null) {
-            System.err.println("[Citizens] Cannot register a null trait. Was it registered properly?");
+            Messaging.severe("Cannot register a null trait. Was it registered properly?");
             return;
         }
 
