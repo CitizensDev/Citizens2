@@ -11,6 +11,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
@@ -1060,13 +1061,17 @@ public class NPCCommands {
     @Requirements(ownership = true)
     public void spawn(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         NPC respawn = args.argsLength() > 1 ? npcRegistry.getById(args.getInteger(1)) : npc;
-        if (respawn == null)
-            throw new CommandException(Messages.NO_NPC_WITH_ID_FOUND, args.getInteger(1));
+        if (respawn == null) {
+            if (args.argsLength() > 1) {
+                throw new CommandException(Messages.NO_NPC_WITH_ID_FOUND, args.getInteger(1));
+            } else {
+                throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
+            }
+        }
         if (respawn.isSpawned())
             throw new CommandException(Messages.NPC_ALREADY_SPAWNED, respawn.getName());
-
         Location location = respawn.getTrait(CurrentLocation.class).getLocation();
-        if (location == null) {
+        if (location == null || args.hasValueFlag("location")) {
             if (args.getSenderLocation() == null)
                 throw new CommandException(Messages.NO_STORED_SPAWN_LOCATION);
 
