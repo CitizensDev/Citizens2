@@ -103,12 +103,12 @@ public class Util {
 
     public static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
         T type = null;
+        toMatch = toMatch.toLowerCase();
         for (T check : values) {
-            String name = check.name();
-            if (name.matches(toMatch) || name.equalsIgnoreCase(toMatch)
-                    || name.replace("_", "").equalsIgnoreCase(toMatch)
-                    || name.replace('_', '-').equalsIgnoreCase(toMatch)
-                    || name.replace('_', ' ').equalsIgnoreCase(toMatch) || name.startsWith(toMatch)) {
+            String name = check.name().toLowerCase();
+            if (name.matches(toMatch) || name.equals(toMatch) || name.replace("_", "").equals(toMatch)
+                    || name.replace('_', ' ').equals(toMatch) || name.replace('_', '-').equals(toMatch)
+                    || name.replace('_', ' ').equals(toMatch) || name.startsWith(toMatch)) {
                 type = check;
                 break;
             }
