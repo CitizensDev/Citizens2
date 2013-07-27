@@ -11,6 +11,9 @@ import com.google.common.collect.Lists;
  * A decorator is a wrapper over a {@link Behavior}, which can add functionality
  * such as filtering {@link BehaviorStatus}es, conditions, timer loops and more
  * without knowing the internals of the behavior it wraps.
+ * 
+ * Note that there are often simpler alternatives to a full-blown decorator,
+ * which has to be generic for many different scenarios.
  */
 public class Decorator extends BehaviorGoalAdapter {
     private final Collection<Runnable> resetCallbacks;

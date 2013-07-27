@@ -54,7 +54,7 @@ public abstract class Precondition extends BehaviorGoalAdapter {
     /**
      * Creates a {@link Precondition} that returns either
      * {@link BehaviorStatus#SUCCESS} or {@link BehaviorStatus#FAILURE}
-     * depending on the underlying {@link Condition}s return status.
+     * depending on the underlying {@link Condition}'s return status.
      * 
      * @param condition
      *            The condition to check while executing
