@@ -77,6 +77,13 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public void faceLocation(Location location) {
+        if (!isSpawned())
+            return;
+        Util.faceLocation(getBukkitEntity(), location);
+    }
+
+    @Override
     public LivingEntity getBukkitEntity() {
         return entityController == null ? null : entityController.getBukkitEntity();
     }
