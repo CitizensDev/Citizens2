@@ -72,6 +72,11 @@ public interface NPC extends Agent, Cloneable {
     public void destroy();
 
     /**
+     * Faces a given {@link Location} if the NPC is spawned.
+     */
+    public void faceLocation(Location location);
+
+    /**
      * Gets the Bukkit entity associated with this NPC. This may be
      * <code>null</code> if {@link #isSpawned()} is false.
      * 
@@ -156,6 +161,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public boolean hasTrait(Class<? extends Trait> trait);
 
+    public boolean isProtected();
+
     /**
      * Gets whether this NPC is currently spawned.
      * 
@@ -211,6 +218,17 @@ public interface NPC extends Agent, Cloneable {
      *            Name to give this NPC
      */
     public void setName(String name);
+
+    /**
+     * A helper method for using {@link #DEFAULT_PROTECTED_METADATA} to set the
+     * NPC as protected or not protected from damage/entity target events.
+     * Equivalent to
+     * <code>npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, isProtected);</code>
+     * 
+     * @param isProtected
+     *            Whether the NPC should be protected
+     */
+    public void setProtected(boolean isProtected);
 
     /**
      * Attempts to spawn this NPC.

@@ -179,6 +179,11 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public boolean isProtected() {
+        return data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+    }
+
+    @Override
     public void removeTrait(Class<? extends Trait> traitClass) {
         Trait trait = traits.remove(traitClass);
         if (trait != null) {
@@ -231,6 +236,11 @@ public abstract class AbstractNPC implements NPC {
             despawn(DespawnReason.PENDING_RESPAWN);
             spawn(old);
         }
+    }
+
+    @Override
+    public void setProtected(boolean isProtected) {
+        data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, isProtected);
     }
 
     public void update() {
