@@ -42,12 +42,17 @@ public class Util {
     public static void faceEntity(LivingEntity from, LivingEntity at) {
         if (from.getWorld() != at.getWorld())
             return;
-        Location atLocation = at.getLocation(AT_LOCATION);
+        faceLocation(from, at.getLocation(AT_LOCATION));
+    }
+
+    public static void faceLocation(LivingEntity from, Location to) {
+        if (from.getWorld() != to.getWorld())
+            return;
         Location fromLocation = from.getLocation(FROM_LOCATION);
         double xDiff, yDiff, zDiff;
-        xDiff = atLocation.getX() - fromLocation.getX();
-        yDiff = atLocation.getY() - fromLocation.getY();
-        zDiff = atLocation.getZ() - fromLocation.getZ();
+        xDiff = to.getX() - fromLocation.getX();
+        yDiff = to.getY() - fromLocation.getY();
+        zDiff = to.getZ() - fromLocation.getZ();
 
         double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
         double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
