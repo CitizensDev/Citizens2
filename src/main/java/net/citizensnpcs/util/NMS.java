@@ -325,6 +325,7 @@ public class NMS {
             return;
         try {
             THREAD_STOPPER.set(manager, false);
+            THREAD_STOPPER_2.set(manager, true);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_STOPPING_NETWORK_THREADS, e.getMessage());
         }
@@ -409,6 +410,7 @@ public class NMS {
     private static Field PATHFINDING_RANGE = getField(Navigation.class, "e");
     private static final Random RANDOM = Util.getFastRandom();
     private static Field THREAD_STOPPER = getField(NetworkManager.class, "n");
+    private static Field THREAD_STOPPER_2 = getField(NetworkManager.class, "t");
     // true field above false and three synchronised lists
 
     static {
