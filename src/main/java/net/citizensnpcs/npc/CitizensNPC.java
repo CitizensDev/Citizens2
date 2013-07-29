@@ -1,9 +1,6 @@
 package net.citizensnpcs.npc;
 
 import java.util.Collection;
-import java.util.Set;
-
-import javax.annotation.Nullable;
 
 import net.citizensnpcs.NPCNeedsRespawnEvent;
 import net.citizensnpcs.Settings.Setting;
@@ -13,7 +10,6 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
-import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
@@ -33,12 +29,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
@@ -105,38 +97,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public void load(final DataKey root) {
-        metadata.loadFrom(root.getRelative("metadata"));
-        // Load traits
-
-        String traitNames = root.getString("traitnames");
-        Set<DataKey> keys = Sets.newHashSet(root.getRelative("traits").getSubKeys());
-        Iterables.addAll(keys, Iterables.transform(Splitter.on(',').split(traitNames), new Function<String, DataKey>() {
-            @Override
-            public DataKey apply(@Nullable String input) {
-                return root.getRelative("traits." + input);
-            }
-        }));
-        for (DataKey traitKey : keys) {
-            if (traitKey.keyExists("enabled") && !traitKey.getBoolean("enabled")
-                    && traitKey.getRaw("enabled") instanceof Boolean) {
-                // we want to avoid coercion here as YAML can coerce map
-                // existence to boolean
-                continue;
-            }
-            Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
-            Trait trait;
-            if (hasTrait(clazz)) {
-                trait = getTrait(clazz);
-            } else {
-                trait = CitizensAPI.getTraitFactory().getTrait(clazz);
-                if (trait == null) {
-                    Messaging.severeTr(Messages.SKIPPING_BROKEN_TRAIT, traitKey.name(), getId());
-                    continue;
-                }
-                addTrait(trait);
-            }
-            loadTrait(trait, traitKey);
-        }
+        super.load(root);
 
         // Spawn the NPC
         CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
@@ -144,15 +105,6 @@ public class CitizensNPC extends AbstractNPC {
             spawn(spawnLocation.getLocation());
 
         navigator.load(root.getRelative("navigator"));
-    }
-
-    private void loadTrait(Trait trait, DataKey traitKey) {
-        try {
-            trait.load(traitKey);
-            PersistenceLoader.load(trait, traitKey);
-        } catch (Throwable ex) {
-            Messaging.logTr(Messages.TRAIT_LOAD_FAILED, traitKey.name(), getId());
-        }
     }
 
     @Override
