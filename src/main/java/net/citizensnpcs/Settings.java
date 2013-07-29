@@ -90,6 +90,7 @@ public class Settings {
         LOCALE("general.translation.locale", ""),
         MAX_NPC_LIMIT_CHECKS("npc.limits.max-permission-checks", 100),
         MAX_SPEED("npc.limits.max-speed", 100),
+        MAX_TEXT_RANGE("npc.chat.options.max-text-range", 500),
         MESSAGE_COLOUR("general.color-scheme.message", "<a>"),
         NPC_ATTACK_DISTANCE("npc.pathfinding.attack-range", 1.75 * 1.75),
         NPC_COST("economy.npc.cost", 100D),

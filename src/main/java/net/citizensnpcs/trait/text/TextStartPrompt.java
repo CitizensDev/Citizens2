@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.text;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 
@@ -35,7 +36,7 @@ public class TextStartPrompt extends StringPrompt {
             Messaging.sendTr(sender, Messages.TEXT_EDITOR_CLOSE_TALKER_SET, text.toggle());
         else if (input.equalsIgnoreCase("range")) {
             try {
-                double range = Math.max(0, Double.parseDouble(parts[1]));
+                double range = Math.min(Math.max(0, Double.parseDouble(parts[1])), Setting.MAX_TEXT_RANGE.asDouble());
                 text.setRange(range);
                 Messaging.sendTr(sender, Messages.TEXT_EDITOR_RANGE_SET, range);
             } catch (NumberFormatException e) {
