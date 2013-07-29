@@ -2,6 +2,9 @@ package net.citizensnpcs.api.npc;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.GoalController;
@@ -27,8 +30,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
 
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
@@ -181,6 +188,50 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public boolean isProtected() {
         return data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+    }
+
+    @Override
+    public void load(final DataKey root) {
+        metadata.loadFrom(root.getRelative("metadata"));
+        // Load traits
+
+        String traitNames = root.getString("traitnames");
+        Set<DataKey> keys = Sets.newHashSet(root.getRelative("traits").getSubKeys());
+        Iterables.addAll(keys, Iterables.transform(Splitter.on(',').split(traitNames), new Function<String, DataKey>() {
+            @Override
+            public DataKey apply(@Nullable String input) {
+                return root.getRelative("traits." + input);
+            }
+        }));
+        for (DataKey traitKey : keys) {
+            if (traitKey.keyExists("enabled") && !traitKey.getBoolean("enabled")
+                    && traitKey.getRaw("enabled") instanceof Boolean) {
+                // avoid YAML coercing map existence to boolean
+                continue;
+            }
+            Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
+            Trait trait;
+            if (hasTrait(clazz)) {
+                trait = getTrait(clazz);
+            } else {
+                trait = CitizensAPI.getTraitFactory().getTrait(clazz);
+                if (trait == null) {
+                    Messaging.severeTr("citizens.notifications.trait-load-failed", traitKey.name(), getId());
+                    continue;
+                }
+                addTrait(trait);
+            }
+            loadTrait(trait, traitKey);
+        }
+    }
+
+    private void loadTrait(Trait trait, DataKey traitKey) {
+        try {
+            trait.load(traitKey);
+            PersistenceLoader.load(trait, traitKey);
+        } catch (Throwable ex) {
+            Messaging.logTr("citizens.notifications.trait-load-failed", traitKey.name(), getId());
+        }
     }
 
     @Override
