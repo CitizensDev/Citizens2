@@ -29,6 +29,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -40,7 +41,28 @@ import com.google.common.collect.Sets;
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
     private final int id;
-    protected final MetadataStore metadata = new SimpleMetadataStore(this);
+    protected final MetadataStore metadata = new SimpleMetadataStore() {
+        @Override
+        public void remove(String key) {
+            super.remove(key);
+            if (getBukkitEntity() != null)
+                getBukkitEntity().removeMetadata(key, CitizensAPI.getPlugin());
+        }
+
+        @Override
+        public void set(String key, Object data) {
+            super.set(key, data);
+            if (getBukkitEntity() != null)
+                getBukkitEntity().setMetadata(key, new FixedMetadataValue(CitizensAPI.getPlugin(), data));
+        }
+
+        @Override
+        public void setPersistent(String key, Object data) {
+            super.setPersistent(key, data);
+            if (getBukkitEntity() != null)
+                getBukkitEntity().setMetadata(key, new FixedMetadataValue(CitizensAPI.getPlugin(), data));
+        }
+    };
     private String name;
     private final List<String> removedTraits = Lists.newArrayList();
     protected final List<Runnable> runnables = Lists.newArrayList();

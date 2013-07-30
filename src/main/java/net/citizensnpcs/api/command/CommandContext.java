@@ -269,7 +269,7 @@ public class CommandContext {
         String[] parts = Iterables.toArray(LOCATION_SPLITTER.split(flag.replaceFirst("l@", "")), String.class);
         if (parts.length > 0) {
             String worldName = currentLocation != null ? currentLocation.getWorld().getName() : "";
-            int x = 0, y = 0, z = 0;
+            double x = 0, y = 0, z = 0;
             float yaw = 0F, pitch = 0F;
             switch (parts.length) {
                 case 6:
@@ -288,9 +288,9 @@ public class CommandContext {
                     } else
                         worldName = parts[3].replaceFirst("w@", "");
                 case 3:
-                    x = Integer.parseInt(parts[0]);
-                    y = Integer.parseInt(parts[1]);
-                    z = Integer.parseInt(parts[2]);
+                    x = Double.parseDouble(parts[0]);
+                    y = Double.parseDouble(parts[1]);
+                    z = Double.parseDouble(parts[2]);
                     break;
                 default:
                     throw new CommandException(CommandMessages.INVALID_SPAWN_LOCATION);
