@@ -5,6 +5,7 @@ import java.util.Random;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
+import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Location;
@@ -33,7 +34,10 @@ public class WanderGoal extends BehaviorGoalAdapter {
             int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
             int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
             Block block = base.getWorld().getBlockAt(x, y, z);
-            if (block.isEmpty() && block.getRelative(BlockFace.DOWN).isEmpty()) {
+            Block below = block.getRelative(BlockFace.DOWN);
+            Block on = below.getRelative(BlockFace.DOWN);
+            if (MinecraftBlockExaminer.canStandIn(block.getType())
+                    && MinecraftBlockExaminer.canStandIn(below.getType()) && MinecraftBlockExaminer.canStandOn(on)) {
                 found = block.getLocation();
                 break;
             }

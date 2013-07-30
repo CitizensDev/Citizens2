@@ -265,6 +265,7 @@ public class CommandContext {
     }
 
     public static Location parseLocation(Location currentLocation, String flag) throws CommandException {
+        boolean denizen = flag.startsWith("l@");
         String[] parts = Iterables.toArray(LOCATION_SPLITTER.split(flag.replaceFirst("l@", "")), String.class);
         if (parts.length > 0) {
             String worldName = currentLocation != null ? currentLocation.getWorld().getName() : "";
@@ -272,11 +273,20 @@ public class CommandContext {
             float yaw = 0F, pitch = 0F;
             switch (parts.length) {
                 case 6:
-                    pitch = Float.parseFloat(parts[5]);
+                    if (denizen) {
+                        worldName = parts[5];
+                    } else
+                        pitch = Float.parseFloat(parts[5]);
                 case 5:
-                    yaw = Float.parseFloat(parts[4]);
+                    if (denizen) {
+                        pitch = Float.parseFloat(parts[5]);
+                    } else
+                        yaw = Float.parseFloat(parts[4]);
                 case 4:
-                    worldName = parts[3];
+                    if (denizen) {
+                        yaw = Float.parseFloat(parts[4]);
+                    } else
+                        worldName = parts[3];
                 case 3:
                     x = Integer.parseInt(parts[0]);
                     y = Integer.parseInt(parts[1]);
