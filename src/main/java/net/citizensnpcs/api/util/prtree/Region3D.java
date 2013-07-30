@@ -87,4 +87,27 @@ public class Region3D<T> implements MBR {
             return t.getMin(axis);
         }
     }
+
+    public static <T> DistanceCalculator<Region3D<T>> distanceCalculator() {
+        return new DistanceCalculator<Region3D<T>>() {
+            @Override
+            public double distanceTo(Region3D<T> t, PointND p) {
+                double x = p.getOrd(0);
+                double y = p.getOrd(1);
+                double z = p.getOrd(2);
+                return Math.sqrt(Math.pow(x - ((t.getMin(0) + t.getMax(0)) / 2), 2)
+                        + Math.pow(y - ((t.getMin(1) + t.getMax(1)) / 2), 2)
+                        + Math.pow(z - ((t.getMin(2) + t.getMax(2)) / 2), 2));
+            }
+        };
+    }
+
+    public static <T> NodeFilter<Region3D<T>> alwaysAcceptNodeFilter() {
+        return new NodeFilter<Region3D<T>>() {
+            @Override
+            public boolean accept(Region3D<T> t) {
+                return true;
+            }
+        };
+    }
 }
