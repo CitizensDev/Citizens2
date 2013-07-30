@@ -274,19 +274,19 @@ public class CommandContext {
             switch (parts.length) {
                 case 6:
                     if (denizen) {
-                        worldName = parts[5];
+                        worldName = parts[5].replaceFirst("w@", "");
                     } else
                         pitch = Float.parseFloat(parts[5]);
                 case 5:
                     if (denizen) {
-                        pitch = Float.parseFloat(parts[5]);
+                        pitch = Float.parseFloat(parts[4]);
                     } else
                         yaw = Float.parseFloat(parts[4]);
                 case 4:
-                    if (denizen) {
-                        yaw = Float.parseFloat(parts[4]);
+                    if (denizen && parts.length > 4) {
+                        yaw = Float.parseFloat(parts[3]);
                     } else
-                        worldName = parts[3];
+                        worldName = parts[3].replaceFirst("w@", "");
                 case 3:
                     x = Integer.parseInt(parts[0]);
                     y = Integer.parseInt(parts[1]);
