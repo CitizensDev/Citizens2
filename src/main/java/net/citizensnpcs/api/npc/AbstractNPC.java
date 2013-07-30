@@ -213,15 +213,16 @@ public abstract class AbstractNPC implements NPC {
             Trait trait;
             if (hasTrait(clazz)) {
                 trait = getTrait(clazz);
+                loadTrait(trait, traitKey);
             } else {
                 trait = CitizensAPI.getTraitFactory().getTrait(clazz);
                 if (trait == null) {
                     Messaging.severeTr("citizens.notifications.trait-load-failed", traitKey.name(), getId());
                     continue;
                 }
+                loadTrait(trait, traitKey);
                 addTrait(trait);
             }
-            loadTrait(trait, traitKey);
         }
     }
 
@@ -247,17 +248,10 @@ public abstract class AbstractNPC implements NPC {
         }
     }
 
-    private void removeTraitData(DataKey root) {
-        for (String name : removedTraits) {
-            root.removeKey("traits." + name);
-        }
-        removedTraits.clear();
-    }
-
     @Override
     public void save(DataKey root) {
-        root.setString("name", getFullName());
         metadata.saveTo(root.getRelative("metadata"));
+        root.setString("name", getFullName());
 
         // Save all existing traits
         StringBuilder traitNames = new StringBuilder();
@@ -272,7 +266,10 @@ public abstract class AbstractNPC implements NPC {
             root.setString("traitnames", traitNames.substring(0, traitNames.length() - 1));
         } else
             root.setString("traitnames", "");
-        removeTraitData(root);
+        for (String name : removedTraits) {
+            root.removeKey("traits." + name);
+        }
+        removedTraits.clear();
     }
 
     @Override

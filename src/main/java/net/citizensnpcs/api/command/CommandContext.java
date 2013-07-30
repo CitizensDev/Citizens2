@@ -265,7 +265,7 @@ public class CommandContext {
     }
 
     public static Location parseLocation(Location currentLocation, String flag) throws CommandException {
-        String[] parts = Iterables.toArray(Splitter.on(':').omitEmptyStrings().split(flag), String.class);
+        String[] parts = Iterables.toArray(Splitter.on(LOCATION_SPLITTER).omitEmptyStrings().split(flag), String.class);
         if (parts.length > 0) {
             String worldName = currentLocation != null ? currentLocation.getWorld().getName() : "";
             int x = 0, y = 0, z = 0;
@@ -298,5 +298,6 @@ public class CommandContext {
     }
 
     private static final Pattern FLAG = Pattern.compile("^-[a-zA-Z]+$");
+    private static final Pattern LOCATION_SPLITTER = Pattern.compile("[,]|[:]");
     private static final Pattern VALUE_FLAG = Pattern.compile("^--[a-zA-Z0-9]+$");
 }
