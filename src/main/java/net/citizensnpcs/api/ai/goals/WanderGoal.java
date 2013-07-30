@@ -10,7 +10,6 @@ import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 
 public class WanderGoal extends BehaviorGoalAdapter {
@@ -33,12 +32,9 @@ public class WanderGoal extends BehaviorGoalAdapter {
             int x = base.getBlockX() + random.nextInt(2 * xrange) - xrange;
             int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
             int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
-            Block block = base.getWorld().getBlockAt(x, y, z);
-            Block below = block.getRelative(BlockFace.DOWN);
-            Block on = below.getRelative(BlockFace.DOWN);
-            if (MinecraftBlockExaminer.canStandIn(block.getType())
-                    && MinecraftBlockExaminer.canStandIn(below.getType()) && MinecraftBlockExaminer.canStandOn(on)) {
-                found = block.getLocation();
+            Block block = base.getWorld().getBlockAt(x, y - 2, z);
+            if (MinecraftBlockExaminer.canStandOn(block)) {
+                found = block.getLocation().add(0, 1, 0);
                 break;
             }
         }
