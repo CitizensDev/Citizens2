@@ -5,12 +5,14 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_6_R2.EntityHorse;
 import net.minecraft.server.v1_6_R2.World;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftHorse;
@@ -25,6 +27,12 @@ public class HorseController extends MobEntityController {
     @Override
     public Horse getBukkitEntity() {
         return (Horse) super.getBukkitEntity();
+    }
+
+    @Override
+    public void spawn(Location at, NPC npc) {
+        npc.getTrait(HorseModifiers.class);
+        super.spawn(at, npc);
     }
 
     public static class EntityHorseNPC extends EntityHorse implements NPCHolder {
