@@ -32,10 +32,20 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
     void addPrioritisableGoal(PrioritisableGoal goal);
 
     /**
+     * Cancels and resets the currently executing goal.
+     */
+    void cancelCurrentExecution();
+
+    /**
      * Clears the goal controller of all {@link Goal}s. Will stop the execution
      * of any current goal.
      */
     void clear();
+
+    /**
+     * @return Whether a goal is currently being executed
+     */
+    boolean isExecutingGoal();
 
     /**
      * @see #setPaused(boolean)

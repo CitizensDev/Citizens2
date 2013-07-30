@@ -63,16 +63,28 @@ public class SimpleGoalController implements GoalController {
     }
 
     @Override
+    public void cancelCurrentExecution() {
+        finishCurrentGoalExecution();
+    }
+
+    @Override
     public void clear() {
         finishCurrentGoalExecution();
         possibleGoals.clear();
     }
 
     private void finishCurrentGoalExecution() {
+        if (executingRootGoal == null)
+            return;
         resetGoalList();
         executingPriority = -1;
         HandlerList.unregisterAll(executingRootGoal);
         executingRootGoal = null;
+    }
+
+    @Override
+    public boolean isExecutingGoal() {
+        return executingRootGoal != null;
     }
 
     @Override
