@@ -67,7 +67,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     @SuppressWarnings("unchecked")
     public T get(int index) {
-        if (index > elementData.length)
+        if (index >= elementData.length)
             return null;
         return (T) elementData[index];
     }

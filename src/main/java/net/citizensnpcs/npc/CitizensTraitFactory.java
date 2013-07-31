@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,10 +39,12 @@ import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class CitizensTraitFactory implements TraitFactory {
+    private final List<TraitInfo> defaultTraits = Lists.newArrayList();
     private final Map<String, TraitInfo> registered = Maps.newHashMap();
 
     public CitizensTraitFactory() {
@@ -66,7 +69,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Spawned.class).withName("spawned"));
         registerTrait(TraitInfo.create(Speech.class).withName("speech"));
         registerTrait(TraitInfo.create(Text.class).withName("text"));
-        registerTrait(TraitInfo.create(MobType.class).withName("type"));
+        registerTrait(TraitInfo.create(MobType.class).withName("type").asDefaultTrait());
         registerTrait(TraitInfo.create(Waypoints.class).withName("waypoints"));
         registerTrait(TraitInfo.create(WoolColor.class).withName("woolcolor"));
         registerTrait(TraitInfo.create(WolfModifiers.class).withName("wolfmodifiers"));
@@ -74,6 +77,13 @@ public class CitizensTraitFactory implements TraitFactory {
 
         for (String trait : registered.keySet()) {
             INTERNAL_TRAITS.add(trait);
+        }
+    }
+
+    @Override
+    public void addDefaultTraits(NPC npc) {
+        for (TraitInfo info : defaultTraits) {
+            npc.addTrait(create(info));
         }
     }
 
@@ -135,6 +145,9 @@ public class CitizensTraitFactory implements TraitFactory {
         if (registered.containsKey(info.getTraitName()))
             throw new IllegalArgumentException("trait name already registered");
         registered.put(info.getTraitName(), info);
+        if (info.isDefaultTrait()) {
+            defaultTraits.add(info);
+        }
     }
 
     private static final Set<String> INTERNAL_TRAITS = Sets.newHashSet();
