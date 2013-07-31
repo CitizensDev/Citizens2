@@ -14,8 +14,8 @@ public class EmptySocket extends Socket {
 
     @Override
     public OutputStream getOutputStream() {
-        return new ByteArrayOutputStream(1);
+        return new ByteArrayOutputStream(10);
     }
 
-    private static final byte[] EMPTY = new byte[0];
+    private static final byte[] EMPTY = new byte[20];
 }
