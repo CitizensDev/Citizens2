@@ -17,5 +17,5 @@ public class EmptySocket extends Socket {
         return new ByteArrayOutputStream(10);
     }
 
-    private static final byte[] EMPTY = new byte[20];
+    private static final byte[] EMPTY = new byte[50];
 }
