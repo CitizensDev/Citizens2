@@ -37,7 +37,6 @@ import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.commands.AdminCommands;
 import net.citizensnpcs.commands.EditorCommands;
-import net.citizensnpcs.commands.HelpCommands;
 import net.citizensnpcs.commands.NPCCommands;
 import net.citizensnpcs.commands.TemplateCommands;
 import net.citizensnpcs.commands.TraitCommands;
@@ -302,7 +301,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         // Register command classes
         commands.register(AdminCommands.class);
         commands.register(EditorCommands.class);
-        commands.register(HelpCommands.class);
         commands.register(NPCCommands.class);
         commands.register(TemplateCommands.class);
         commands.register(TraitCommands.class);

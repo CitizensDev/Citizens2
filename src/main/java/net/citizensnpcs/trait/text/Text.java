@@ -16,10 +16,10 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.Toggleable;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Paginator;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
