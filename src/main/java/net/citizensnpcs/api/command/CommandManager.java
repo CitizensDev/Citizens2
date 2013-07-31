@@ -106,17 +106,16 @@ public class CommandManager {
     private void executeMethod(String[] args, CommandSender sender, Object[] methodArgs) throws CommandException {
         String cmdName = args[0].toLowerCase();
         String modifier = args.length > 1 ? args[1] : "";
+        boolean help = modifier.toLowerCase().equals("help");
 
-        if (modifier.toLowerCase().equals("help")) {
-            if (!commands.containsKey(cmdName + " help"))
-                throw new UnhandledCommandException();
+        Method method = commands.get(cmdName + " " + modifier.toLowerCase());
+        if (method == null && !help)
+            method = commands.get(cmdName + " *");
+
+        if (method == null && help) {
             executeHelp(args, sender);
             return;
         }
-
-        Method method = commands.get(cmdName + " " + modifier.toLowerCase());
-        if (method == null)
-            method = commands.get(cmdName + " *");
 
         if (method == null)
             throw new UnhandledCommandException();
@@ -387,7 +386,9 @@ public class CommandManager {
                 for (String modifier : cmd.modifiers()) {
                     commands.put(alias + " " + modifier, method);
                 }
-                commands.put(alias + " help", null);
+                if (!commands.containsKey(alias + " help")) {
+                    commands.put(alias + " help", null);
+                }
             }
 
             List<Annotation> annotations = Lists.newArrayList();
@@ -487,7 +488,7 @@ public class CommandManager {
                 + capitalize.substring(1, capitalize.length());
     }
 
-    private static final String format(Command command, String alias) {
+    private static String format(Command command, String alias) {
         return String.format(COMMAND_FORMAT, alias, (command.usage().isEmpty() ? "" : " " + command.usage()),
                 Messaging.tryTranslate(command.desc()));
     }
