@@ -41,7 +41,7 @@ import com.google.common.collect.Sets;
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
     private final int id;
-    protected final MetadataStore metadata = new SimpleMetadataStore() {
+    private final MetadataStore metadata = new SimpleMetadataStore() {
         @Override
         public void remove(String key) {
             super.remove(key);
@@ -65,7 +65,7 @@ public abstract class AbstractNPC implements NPC {
     };
     private String name;
     private final List<String> removedTraits = Lists.newArrayList();
-    protected final List<Runnable> runnables = Lists.newArrayList();
+    private final List<Runnable> runnables = Lists.newArrayList();
     private final SpeechController speechController = new SimpleSpeechController(this);
     protected final Map<Class<? extends Trait>, Trait> traits = Maps.newHashMap();
 
@@ -77,7 +77,7 @@ public abstract class AbstractNPC implements NPC {
         }
         this.id = id;
         this.name = name;
-        addTrait(MobType.class);
+        CitizensAPI.getTraitFactory().addDefaultTraits(this);
     }
 
     @Override

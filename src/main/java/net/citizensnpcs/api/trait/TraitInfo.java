@@ -7,6 +7,7 @@ import com.google.common.base.Supplier;
  * Builds a trait.
  */
 public final class TraitInfo {
+    private boolean defaultTrait;
     private String name;
     private Supplier<? extends Trait> supplier;
     private final Class<? extends Trait> trait;
@@ -15,12 +16,21 @@ public final class TraitInfo {
         this.trait = trait;
     }
 
+    public TraitInfo asDefaultTrait() {
+        this.defaultTrait = true;
+        return this;
+    }
+
     public Class<? extends Trait> getTraitClass() {
         return trait;
     }
 
     public String getTraitName() {
         return name;
+    }
+
+    public boolean isDefaultTrait() {
+        return defaultTrait;
     }
 
     @SuppressWarnings("unchecked")

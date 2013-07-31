@@ -21,7 +21,8 @@ public class Sequence extends Composite {
     private BehaviorStatus getContinuationStatus() {
         resetCurrent();
         if (retryChildren) {
-            ++executingIndex;
+            if (++executingIndex >= getBehaviors().size())
+                return BehaviorStatus.FAILURE;
             return BehaviorStatus.RUNNING;
         } else {
             return BehaviorStatus.FAILURE;

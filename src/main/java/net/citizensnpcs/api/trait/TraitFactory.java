@@ -1,6 +1,16 @@
 package net.citizensnpcs.api.trait;
 
+import net.citizensnpcs.api.npc.NPC;
+
 public interface TraitFactory {
+
+    /**
+     * Adds all default traits to a given NPC.
+     * 
+     * @param npc
+     *            The NPC to add default traits to
+     */
+    void addDefaultTraits(NPC npc);
 
     /**
      * Gets a trait with the given class.

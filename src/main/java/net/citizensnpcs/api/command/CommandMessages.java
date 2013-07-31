@@ -17,5 +17,5 @@ public class CommandMessages {
     public static final String REQUIREMENTS_INVALID_MOB_TYPE = "citizens.commands.requirements.disallowed-mobtype";
     public static final String TOO_FEW_ARGUMENTS = "citizens.commands.requirements.too-few-arguments";
     public static final String TOO_MANY_ARGUMENTS = "citizens.commands.requirements.too-many-arguments";
-
+    public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";
 }
