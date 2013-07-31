@@ -1,6 +1,9 @@
 package net.citizensnpcs.api.command;
 
 public class CommandMessages {
+    public static final String COMMAND_HELP_HEADER = "citizens.commands.help.header";
+    public static final String COMMAND_MISSING = "citizens.commands.help.command-missing";
+    public static final String COMMAND_PAGE_MISSING = "citizens.commands.page-missing";
     public static final String ID_NOT_FOUND = "citizens.commands.id-not-found";
     public static final String INVALID_NUMBER = "citizens.commands.invalid-number";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";

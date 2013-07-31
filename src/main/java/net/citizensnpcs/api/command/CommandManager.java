@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,7 +22,9 @@ import net.citizensnpcs.api.command.exception.ServerCommandException;
 import net.citizensnpcs.api.command.exception.UnhandledCommandException;
 import net.citizensnpcs.api.command.exception.WrappedCommandException;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.Paginator;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -31,6 +34,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class CommandManager {
     private final Map<Class<? extends Annotation>, CommandAnnotationProcessor> annotationProcessors = Maps.newHashMap();
@@ -86,10 +90,29 @@ public class CommandManager {
         executeMethod(newArgs, sender, newMethodArgs);
     }
 
+    private void executeHelp(String[] args, CommandSender sender) throws CommandException {
+        if (!sender.hasPermission("citizens." + args[0] + ".help"))
+            throw new NoPermissionsException();
+        int page = 1;
+        try {
+            page = args.length == 3 ? Integer.parseInt(args[2]) : page;
+        } catch (NumberFormatException e) {
+            sendSpecificHelp(sender, args[0], args[2]);
+        }
+        sendHelp(sender, args[0], page);
+    }
+
     // Attempt to execute a command.
     private void executeMethod(String[] args, CommandSender sender, Object[] methodArgs) throws CommandException {
         String cmdName = args[0].toLowerCase();
         String modifier = args.length > 1 ? args[1] : "";
+
+        if (modifier.toLowerCase().equals("help")) {
+            if (!commands.containsKey(cmdName + " help"))
+                throw new UnhandledCommandException();
+            executeHelp(args, sender);
+            return;
+        }
 
         Method method = commands.get(cmdName + " " + modifier.toLowerCase());
         if (method == null)
@@ -218,7 +241,7 @@ public class CommandManager {
     public CommandInfo getCommand(String rootCommand, String modifier) {
         String joined = Joiner.on(' ').join(rootCommand, modifier);
         for (Entry<String, Method> entry : commands.entrySet()) {
-            if (!entry.getKey().equalsIgnoreCase(joined))
+            if (!entry.getKey().equalsIgnoreCase(joined) || entry.getValue() == null)
                 continue;
             Command commandAnnotation = entry.getValue().getAnnotation(Command.class);
             if (commandAnnotation == null)
@@ -242,7 +265,7 @@ public class CommandManager {
         List<CommandInfo> cmds = Lists.newArrayList();
         command = command.toLowerCase();
         for (Entry<String, Method> entry : commands.entrySet()) {
-            if (!entry.getKey().startsWith(command))
+            if (!entry.getKey().startsWith(command) || entry.getValue() == null)
                 continue;
             Command commandAnnotation = entry.getValue().getAnnotation(Command.class);
             if (commandAnnotation == null)
@@ -252,13 +275,26 @@ public class CommandManager {
         return cmds;
     }
 
-    // Get the usage string for a command.
+    private List<String> getLines(CommandSender sender, String baseCommand) {
+        // Ensures that commands with multiple modifiers are only added once
+        Set<CommandInfo> processed = Sets.newHashSet();
+        List<String> lines = new ArrayList<String>();
+        for (CommandInfo info : getCommands(baseCommand)) {
+            Command command = info.getCommandAnnotation();
+            if (processed.contains(info)
+                    || (!sender.hasPermission("citizens.admin") && !sender.hasPermission("citizens."
+                            + command.permission())))
+                continue;
+            lines.add(format(command, baseCommand));
+            if (command.modifiers().length > 1) {
+                processed.add(info);
+            }
+        }
+        return lines;
+    }
+
     private String getUsage(String[] args, Command cmd) {
-        StringBuilder command = new StringBuilder("/");
-        command.append(args[0] + " ");
-        // removed arbitrary positioning of flags.
-        command.append(cmd.usage());
-        return command.toString();
+        return new StringBuilder("/").append(args[0] + " ").append(cmd.usage()).toString();
     }
 
     /**
@@ -351,6 +387,7 @@ public class CommandManager {
                 for (String modifier : cmd.modifiers()) {
                     commands.put(alias + " " + modifier, method);
                 }
+                commands.put(alias + " help", null);
             }
 
             List<Annotation> annotations = Lists.newArrayList();
@@ -380,6 +417,28 @@ public class CommandManager {
             if (parameterTypes.length <= 1 || parameterTypes[1] == CommandSender.class)
                 serverCommands.add(method);
         }
+    }
+
+    private void sendHelp(CommandSender sender, String name, int page) throws CommandException {
+        if (name.equalsIgnoreCase("npc"))
+            name = "NPC";
+        Paginator paginator = new Paginator().header(capitalize(name) + " "
+                + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER));
+        for (String line : getLines(sender, name.toLowerCase()))
+            paginator.addLine(line);
+        if (!paginator.sendPage(sender, page))
+            throw new CommandException(CommandMessages.COMMAND_PAGE_MISSING, page);
+    }
+
+    private void sendSpecificHelp(CommandSender sender, String rootCommand, String modifier) throws CommandException {
+        CommandInfo info = getCommand(rootCommand, modifier);
+        if (info == null)
+            throw new CommandException(CommandMessages.COMMAND_MISSING, rootCommand + " " + modifier);
+        Messaging.send(sender, format(info.getCommandAnnotation(), rootCommand));
+        String help = Messaging.tryTranslate(info.getCommandAnnotation().help());
+        if (help.isEmpty())
+            return;
+        Messaging.send(sender, ChatColor.AQUA + help);
     }
 
     public void setInjector(Injector injector) {
@@ -420,6 +479,17 @@ public class CommandManager {
         public int hashCode() {
             return 31 + ((commandAnnotation == null) ? 0 : commandAnnotation.hashCode());
         }
+    }
+
+    private static String capitalize(Object string) {
+        String capitalize = string.toString();
+        return capitalize.length() == 0 ? "" : Character.toUpperCase(capitalize.charAt(0))
+                + capitalize.substring(1, capitalize.length());
+    }
+
+    private static final String format(Command command, String alias) {
+        return String.format(COMMAND_FORMAT, alias, (command.usage().isEmpty() ? "" : " " + command.usage()),
+                Messaging.tryTranslate(command.desc()));
     }
 
     private static int getLevenshteinDistance(String s, String t) {
@@ -470,6 +540,8 @@ public class CommandManager {
         // actually has the most recent cost counts
         return p[n];
     }
+
+    private static final String COMMAND_FORMAT = "<7>/<c>%s%s <7>- <e>%s";
 
     // Logger for general errors.
     private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
