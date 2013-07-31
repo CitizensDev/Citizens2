@@ -235,16 +235,15 @@ public abstract class AbstractNPC implements NPC {
             Trait trait;
             if (hasTrait(clazz)) {
                 trait = getTrait(clazz);
-                loadTrait(trait, traitKey);
             } else {
                 trait = CitizensAPI.getTraitFactory().getTrait(clazz);
                 if (trait == null) {
                     Messaging.severeTr("citizens.notifications.trait-load-failed", traitKey.name(), getId());
                     continue;
                 }
-                loadTrait(trait, traitKey);
                 addTrait(trait);
             }
+            loadTrait(trait, traitKey);
         }
     }
 
