@@ -107,7 +107,7 @@ public class Settings {
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 10),
         TALK_ITEM("npc.text.talk-item", "340"),
         USE_BOAT_CONTROLS("npc.controllable.use-boat-controls", true),
-        USE_NEW_PATHFINDER("npc.pathfinding.use-new-finder", true);
+        USE_NEW_PATHFINDER("npc.pathfinding.use-new-finder", false);
 
         protected String path;
         protected Object value;
