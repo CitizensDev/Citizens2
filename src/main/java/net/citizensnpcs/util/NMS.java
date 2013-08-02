@@ -36,6 +36,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
@@ -98,6 +99,10 @@ public class NMS {
             target.setOnFire(fireAspectLevel * 4);
     }
 
+    public static void changeWorlds(org.bukkit.entity.Entity entity, org.bukkit.World world) {
+        getHandle(entity).world = ((CraftWorld) world).getHandle();
+    }
+
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
         if (GOAL_FIELD == null || goalSelectors == null)
             return;
@@ -136,6 +141,10 @@ public class NMS {
 
     public static EntityLiving getHandle(LivingEntity entity) {
         return ((CraftLivingEntity) entity).getHandle();
+    }
+
+    public static net.minecraft.server.v1_6_R2.Entity getHandle(org.bukkit.entity.Entity entity) {
+        return ((CraftEntity) entity).getHandle();
     }
 
     public static float getHeadYaw(EntityLiving handle) {
@@ -186,6 +195,10 @@ public class NMS {
 
     public static float modifiedSpeed(float baseSpeed, NPC npc) {
         return npc == null ? baseSpeed : baseSpeed * npc.getNavigator().getLocalParameters().speedModifier();
+    }
+
+    public static void mount(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity passenger) {
+        NMS.getHandle(passenger).mount(NMS.getHandle(entity));
     }
 
     public static void registerEntityClass(Class<?> clazz) {
@@ -399,7 +412,6 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 1F;
-
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
     private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;

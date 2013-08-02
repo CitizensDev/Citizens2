@@ -24,9 +24,11 @@ import net.minecraft.server.v1_6_R2.EntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Preconditions;
@@ -187,6 +189,35 @@ public class CitizensNPC extends AbstractNPC {
         return true;
     }
 
+    private void teleport(final Entity entity, Location location, boolean loaded, int delay) {
+        if (!loaded)
+            location.getBlock().getChunk();
+        final Entity passenger = entity.getPassenger();
+        entity.eject();
+        entity.teleport(location);
+        if (passenger == null)
+            return;
+        teleport(passenger, location, true, delay++);
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                NMS.mount(entity, passenger);
+            }
+        };
+        if (!location.getWorld().equals(entity.getWorld())) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), task, delay);
+        } else {
+            task.run();
+        }
+    }
+
+    @Override
+    public void teleport(Location location, TeleportCause cause) {
+        if (!this.isSpawned())
+            return;
+        teleport(getBukkitEntity(), location, false, 5);
+    }
+
     @Override
     public void update() {
         try {
@@ -203,5 +234,4 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final String NPC_METADATA_MARKER = "NPC";
-
 }
