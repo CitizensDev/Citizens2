@@ -215,7 +215,7 @@ public class CitizensNPC extends AbstractNPC {
     public void teleport(Location location, TeleportCause cause) {
         if (!this.isSpawned())
             return;
-        teleport(getBukkitEntity(), location, false, 5);
+        teleport(NMS.getRootVehicle(getBukkitEntity()), location, false, 5);
     }
 
     @Override

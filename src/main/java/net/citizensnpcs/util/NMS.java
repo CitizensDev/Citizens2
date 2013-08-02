@@ -156,6 +156,14 @@ public class NMS {
                 : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getNavigation() : null;
     }
 
+    public static org.bukkit.entity.Entity getRootVehicle(org.bukkit.entity.Entity entity) {
+        Entity handle = NMS.getHandle(entity);
+        while (handle.vehicle != null) {
+            handle = handle.vehicle;
+        }
+        return handle.getBukkitEntity();
+    }
+
     public static float getSpeedFor(NPC npc) {
         if (!npc.isSpawned())
             return DEFAULT_SPEED;
