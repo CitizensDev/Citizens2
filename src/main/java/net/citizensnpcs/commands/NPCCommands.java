@@ -168,7 +168,7 @@ public class NPCCommands {
             Anchor anchor = trait.getAnchor(args.getFlag("assume"));
             if (anchor == null)
                 throw new CommandException(Messages.ANCHOR_MISSING, args.getFlag("assume"));
-            npc.getBukkitEntity().teleport(anchor.getLocation());
+            npc.teleport(anchor.getLocation(), TeleportCause.COMMAND);
         } else if (args.hasValueFlag("remove")) {
             if (args.getFlag("remove").isEmpty())
                 throw new CommandException(Messages.INVALID_ANCHOR_NAME);
@@ -198,7 +198,7 @@ public class NPCCommands {
             return;
         if (sender instanceof ConsoleCommandSender)
             throw new ServerCommandException();
-        npc.getBukkitEntity().teleport(args.getSenderLocation());
+        npc.teleport(args.getSenderLocation(), TeleportCause.COMMAND);
     }
 
     @Command(
@@ -244,7 +244,7 @@ public class NPCCommands {
         if (copy.isSpawned() && args.getSenderLocation() != null) {
             Location location = args.getSenderLocation();
             location.getChunk().load();
-            copy.getBukkitEntity().teleport(location);
+            copy.teleport(location, TeleportCause.COMMAND);
             copy.getTrait(CurrentLocation.class).setLocation(location);
         }
 
@@ -676,7 +676,7 @@ public class NPCCommands {
             }
         }
 
-        npc.getBukkitEntity().teleport(to, TeleportCause.COMMAND);
+        npc.teleport(to, TeleportCause.COMMAND);
         Messaging.sendTr(sender, Messages.MOVETO_TELEPORTED, npc.getName(), to);
     }
 
@@ -1195,7 +1195,7 @@ public class NPCCommands {
                 npc.despawn(DespawnReason.REMOVAL);
                 throw new CommandException(Messages.CANNOT_TELEPORT_ACROSS_WORLDS);
             }
-            npc.getBukkitEntity().teleport(args.getSenderLocation(), TeleportCause.COMMAND);
+            npc.teleport(args.getSenderLocation(), TeleportCause.COMMAND);
         }
         Messaging.sendTr(sender, Messages.NPC_TELEPORTED, npc.getName());
     }

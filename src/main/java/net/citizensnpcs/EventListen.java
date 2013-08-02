@@ -34,7 +34,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -48,7 +47,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -131,15 +129,6 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onCommandSenderCreateNPC(CommandSenderCreateNPCEvent event) {
         checkCreationEvent(event);
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onEntityChangedWorld(EntityTeleportEvent event) {
-        if (event.getFrom() == null || event.getTo() == null)
-            return;
-        if (event.getFrom().getWorld() == event.getTo().getWorld() || !npcRegistry.isNPC(event.getEntity()))
-            return;
-        NMS.updateNavigationWorld((LivingEntity) event.getEntity(), event.getTo().getWorld());
     }
 
     /*

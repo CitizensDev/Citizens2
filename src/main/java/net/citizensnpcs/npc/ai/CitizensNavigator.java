@@ -216,12 +216,14 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private void switchStrategyTo(PathStrategy newStrategy) {
-        if (Messaging.isDebugging())
-            Messaging.debug(npc.getId(), "changing to new PathStrategy", newStrategy);
+        Messaging.debug(npc.getId(), "changing to new PathStrategy", newStrategy);
         if (executing != null)
             Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
         executing = newStrategy;
         stationaryTicks = 0;
+        if (npc.isSpawned()) {
+            NMS.updateNavigationWorld(npc.getBukkitEntity(), npc.getBukkitEntity().getWorld());
+        }
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
     }
 
