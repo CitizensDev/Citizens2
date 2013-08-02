@@ -121,6 +121,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (aggro && canAttack()) {
             AttackStrategy strategy = parameters.attackStrategy();
             if (strategy != null && strategy.handle((LivingEntity) handle.getBukkitEntity(), getTarget())) {
+            } else if (strategy != parameters.defaultAttackStrategy()) {
+                parameters.defaultAttackStrategy().handle((LivingEntity) handle.getBukkitEntity(), getTarget());
             }
             attackTicks = ATTACK_DELAY_TICKS;
         }
