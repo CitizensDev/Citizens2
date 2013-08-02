@@ -13,6 +13,7 @@ import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 /**
  * Represents an NPC with optional {@link Trait}s.
@@ -238,6 +239,17 @@ public interface NPC extends Agent, Cloneable {
      * @return Whether this NPC was able to spawn at the location
      */
     public boolean spawn(Location location);
+
+    /**
+     * An alternative to {{@link #getBukkitEntity().getLocation()} that
+     * teleports passengers as well.
+     * 
+     * @param location
+     *            The destination location
+     * @param cause
+     *            The cause for teleporting
+     */
+    public void teleport(Location location, TeleportCause cause);
 
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
     public static final String LEASH_PROTECTED_METADATA = "protected-leash";
