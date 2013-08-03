@@ -116,6 +116,10 @@ public class NMS {
         }
     }
 
+    public static void equip(LivingEntity entity, Player equipper) {
+        getHandle(entity).a(NMS.getHandle(equipper));
+    }
+
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
             NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
