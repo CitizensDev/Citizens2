@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class TeleportStuckAction implements StuckAction {
     private TeleportStuckAction() {
@@ -36,7 +37,7 @@ public class TeleportStuckAction implements StuckAction {
             }
             block = block.getRelative(BlockFace.UP);
         }
-        npc.getBukkitEntity().teleport(block.getLocation());
+        npc.teleport(block.getLocation(), TeleportCause.PLUGIN);
         return false;
     }
 
