@@ -4,6 +4,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 
 import org.bukkit.Location;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class TeleportTrigger implements WaypointTrigger {
     @Persist(required = true)
@@ -24,7 +25,8 @@ public class TeleportTrigger implements WaypointTrigger {
 
     @Override
     public void onWaypointReached(NPC npc, Location waypoint) {
-        if (location != null)
-            npc.getBukkitEntity().teleport(waypoint);
+        if (location != null) {
+            npc.teleport(waypoint, TeleportCause.PLUGIN);
+        }
     }
 }

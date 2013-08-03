@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class CopierEditor extends Editor {
     private final String name;
@@ -44,7 +45,7 @@ public class CopierEditor extends Editor {
         if (copy.isSpawned() && player.isOnline()) {
             Location location = player.getLocation();
             location.getChunk().load();
-            copy.getBukkitEntity().teleport(location);
+            copy.teleport(location, TeleportCause.PLUGIN);
             copy.getTrait(CurrentLocation.class).setLocation(location);
         }
 
