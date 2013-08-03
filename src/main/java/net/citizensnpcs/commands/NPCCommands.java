@@ -895,17 +895,14 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.REMOVED_ALL_NPCS);
             return;
         }
-        if (!(sender instanceof Player))
-            throw new CommandException(Messages.COMMAND_MUST_BE_INGAME);
-        Player player = (Player) sender;
         if (npc == null)
             throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
-        if (!npc.getTrait(Owner.class).isOwnedBy(player))
+        if (!npc.getTrait(Owner.class).isOwnedBy(sender))
             throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
-        if (!player.hasPermission("citizens.npc.remove") && !player.hasPermission("citizens.admin"))
+        if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
             throw new NoPermissionsException();
         npc.destroy();
-        Messaging.sendTr(player, Messages.NPC_REMOVED, npc.getName());
+        Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
     }
 
     @Command(
