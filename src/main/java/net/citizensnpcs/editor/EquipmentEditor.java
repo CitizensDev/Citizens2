@@ -52,6 +52,7 @@ public class EquipmentEditor extends Editor {
         if (equipper == null)
             equipper = new GenericEquipper();
         equipper.equip(event.getPlayer(), npc);
+        event.setCancelled(true);
     }
 
     private static final Map<EntityType, Equipper> EQUIPPERS = Maps.newEnumMap(EntityType.class);
@@ -59,5 +60,6 @@ public class EquipmentEditor extends Editor {
         EQUIPPERS.put(EntityType.PIG, new PigEquipper());
         EQUIPPERS.put(EntityType.SHEEP, new SheepEquipper());
         EQUIPPERS.put(EntityType.ENDERMAN, new EndermanEquipper());
+        EQUIPPERS.put(EntityType.HORSE, new HorseEquipper());
     }
 }
