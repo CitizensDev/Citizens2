@@ -17,6 +17,7 @@ import net.minecraft.server.v1_6_R2.ControllerJump;
 import net.minecraft.server.v1_6_R2.DamageSource;
 import net.minecraft.server.v1_6_R2.EnchantmentManager;
 import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityHorse;
 import net.minecraft.server.v1_6_R2.EntityHuman;
 import net.minecraft.server.v1_6_R2.EntityInsentient;
 import net.minecraft.server.v1_6_R2.EntityLiving;
@@ -40,6 +41,7 @@ import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginLoadOrder;
@@ -116,8 +118,8 @@ public class NMS {
         }
     }
 
-    public static void equip(LivingEntity entity, Player equipper) {
-        getHandle(entity).a(NMS.getHandle(equipper));
+    public static void openHorseScreen(Horse horse, Player equipper) {
+        ((EntityHorse) getHandle(horse)).f((EntityHuman) NMS.getHandle(equipper));
     }
 
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
