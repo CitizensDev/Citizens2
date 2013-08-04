@@ -10,6 +10,6 @@ public class HorseEquipper implements Equipper {
     @Override
     public void equip(Player equipper, NPC toEquip) {
         Horse horse = (Horse) toEquip.getBukkitEntity();
-        NMS.equip(horse, equipper);
+        NMS.openHorseScreen(horse, equipper);
     }
 }
