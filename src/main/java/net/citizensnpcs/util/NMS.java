@@ -131,6 +131,8 @@ public class NMS {
     }
 
     public static Field getField(Class<?> clazz, String field) {
+        if (clazz == null)
+            return null;
         Field f = null;
         try {
             f = clazz.getDeclaredField(field);
@@ -216,6 +218,10 @@ public class NMS {
     }
 
     public static void registerEntityClass(Class<?> clazz) {
+        if (ENTITY_CLASS_TO_INT == null) {
+            ENTITY_CLASS_TO_INT = MC_ENTITY_CLASS_TO_INT;
+            ENTITY_INT_TO_CLASS = MC_ENTITY_INT_TO_CLASS;
+        }
         if (ENTITY_CLASS_TO_INT == null || ENTITY_CLASS_TO_INT.containsKey(clazz))
             return;
         Class<?> search = clazz;
@@ -426,9 +432,13 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 1F;
+
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
+
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
     private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
+    private static Map<Class<?>, Integer> MC_ENTITY_CLASS_TO_INT = null;
+    private static Map<Integer, Class<?>> MC_ENTITY_INT_TO_CLASS = null;
     private static Field GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
     private static final Field JUMP_FIELD = getField(EntityLiving.class, "bd");
     private static Field NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
@@ -447,6 +457,13 @@ public class NMS {
             ENTITY_CLASS_TO_INT = (Map<Class<?>, Integer>) field.get(null);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
+            try {
+                Field field = getField(Class.forName("ns"), "d");
+                MC_ENTITY_INT_TO_CLASS = (Map<Integer, Class<?>>) field.get(null);
+                field = getField(Class.forName("ns"), "e");
+                MC_ENTITY_CLASS_TO_INT = (Map<Class<?>, Integer>) field.get(null);
+            } catch (Exception e2) {
+            }
         }
     }
 }
