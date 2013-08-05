@@ -25,7 +25,7 @@ public class CurrentLocation extends Trait {
     }
 
     public void setLocation(Location loc) {
-        this.location = loc;
+        this.location = loc.clone();
     }
 
     @Override
