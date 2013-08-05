@@ -145,6 +145,7 @@ public class CitizensNPC extends AbstractNPC {
             return false;
         }
 
+        at = at.clone();
         entityController.spawn(at, this);
         EntityLiving mcEntity = ((CraftLivingEntity) getBukkitEntity()).getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
