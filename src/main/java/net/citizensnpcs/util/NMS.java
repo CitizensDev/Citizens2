@@ -118,10 +118,6 @@ public class NMS {
         }
     }
 
-    public static void openHorseScreen(Horse horse, Player equipper) {
-        ((EntityHorse) getHandle(horse)).f((EntityHuman) NMS.getHandle(equipper));
-    }
-
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
             NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
@@ -215,8 +211,12 @@ public class NMS {
         NMS.getHandle(passenger).mount(NMS.getHandle(entity));
     }
 
+    public static void openHorseScreen(Horse horse, Player equipper) {
+        ((EntityHorse) getHandle(horse)).f((EntityHuman) NMS.getHandle(equipper));
+    }
+
     public static void registerEntityClass(Class<?> clazz) {
-        if (ENTITY_CLASS_TO_INT.containsKey(clazz))
+        if (ENTITY_CLASS_TO_INT == null || ENTITY_CLASS_TO_INT.containsKey(clazz))
             return;
         Class<?> search = clazz;
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
