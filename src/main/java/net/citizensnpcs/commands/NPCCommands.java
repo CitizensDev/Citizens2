@@ -783,9 +783,9 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
     public void playerlist(CommandContext args, CommandSender sender, NPC npc) {
         boolean remove = !npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-        if (args.hasFlag('a'))
+        if (args.hasFlag('a')) {
             remove = false;
-        else if (args.hasFlag('r'))
+        } else if (args.hasFlag('r'))
             remove = true;
         npc.data().setPersistent("removefromplayerlist", remove);
         if (npc.isSpawned())
@@ -897,7 +897,7 @@ public class NPCCommands {
         }
         if (npc == null)
             throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
-        if (!npc.getTrait(Owner.class).isOwnedBy(sender))
+        if (!(sender instanceof ConsoleCommandSender) && !npc.getTrait(Owner.class).isOwnedBy(sender))
             throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
         if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
             throw new NoPermissionsException();

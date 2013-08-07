@@ -33,11 +33,12 @@ public class Settings {
 
     public void reload() {
         config.load();
-        for (Setting setting : Setting.values())
-            if (root.keyExists(setting.path))
+        for (Setting setting : Setting.values()) {
+            if (root.keyExists(setting.path)) {
                 setting.loadFromKey(root);
+            }
+        }
         updateMessagingSettings();
-
         save();
     }
 
