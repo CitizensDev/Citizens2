@@ -2,7 +2,6 @@ package net.citizensnpcs.trait.text;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -33,8 +32,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
+import com.google.common.collect.Maps;
+
 public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
-    private final Map<String, Date> cooldowns = new HashMap<String, Date>();
+    private final Map<String, Date> cooldowns = Maps.newHashMap();
     private int currentIndex;
     private String itemInHandPattern = "default";
     private final Plugin plugin;
@@ -67,7 +68,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
                 .withLocalEcho(false).withEscapeSequence("/npc text").withEscapeSequence("exit").withModality(false)
                 .withFirstPrompt(new TextStartPrompt(this)).buildConversation(player);
         return new Editor() {
-
             @Override
             public void begin() {
                 Messaging.sendTr(player, Messages.TEXT_EDITOR_BEGIN);
@@ -90,12 +90,15 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     public void load(DataKey key) throws NPCLoadException {
         text.clear();
         // TODO: legacy, remove later
-        for (DataKey sub : key.getIntegerSubKeys())
+        for (DataKey sub : key.getIntegerSubKeys()) {
             text.add(sub.getString(""));
-        for (DataKey sub : key.getRelative("text").getIntegerSubKeys())
+        }
+        for (DataKey sub : key.getRelative("text").getIntegerSubKeys()) {
             text.add(sub.getString(""));
-        if (text.isEmpty())
+        }
+        if (text.isEmpty()) {
             populateDefaultText();
+        }
 
         talkClose = key.getBoolean("talk-close", talkClose);
         realisticLooker = key.getBoolean("realistic-looking", realisticLooker);
