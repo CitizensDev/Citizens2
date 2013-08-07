@@ -85,6 +85,11 @@ public abstract class DataKey {
 
     public abstract Object getRaw(String key);
 
+    @SuppressWarnings("unchecked")
+    public <T> T getRawUnchecked(String key) {
+        return (T) getRaw(key);
+    }
+
     public DataKey getRelative(int key) {
         return getRelative(Integer.toString(key));
     }
