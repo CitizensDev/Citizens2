@@ -107,18 +107,19 @@ public class Util {
     }
 
     public static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
-        T type = null;
-        toMatch = toMatch.toLowerCase();
+        toMatch = toMatch.toLowerCase().replace('-', '_').replace(' ', '_');
         for (T check : values) {
-            String name = check.name().toLowerCase();
-            if (name.matches(toMatch) || name.equals(toMatch) || name.replace("_", "").equals(toMatch)
-                    || name.replace('_', ' ').equals(toMatch) || name.replace('_', '-').equals(toMatch)
-                    || name.replace('_', ' ').equals(toMatch) || name.startsWith(toMatch)) {
-                type = check;
-                break;
+            if (toMatch.equals(check.name().toLowerCase())) {
+                return check; // check for an exact match first
             }
         }
-        return type;
+        for (T check : values) {
+            String name = check.name().toLowerCase();
+            if (name.replace("_", "").equals(toMatch) || name.matches(toMatch) || name.startsWith(toMatch)) {
+                return check;
+            }
+        }
+        return null;
     }
 
     public static boolean matchesItemInHand(Player player, String setting) {
