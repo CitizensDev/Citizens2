@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
-import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
 import net.citizensnpcs.api.jnbt.ByteTag;
@@ -22,8 +21,6 @@ import net.citizensnpcs.api.jnbt.NBTInputStream;
 import net.citizensnpcs.api.jnbt.NBTOutputStream;
 import net.citizensnpcs.api.jnbt.StringTag;
 import net.citizensnpcs.api.jnbt.Tag;
-
-import org.bukkit.Bukkit;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -44,18 +41,20 @@ public class NBTStorage implements FileStorage {
 
     public NBTStorage(String file, String name) {
         this.file = new File(file);
-        if (!this.file.exists())
+        if (!this.file.exists()) {
             create();
+        }
         this.name = name;
     }
 
     private void create() {
         try {
-            Bukkit.getLogger().log(Level.INFO, "Creating file: " + file.getName());
-            file.getParentFile().mkdirs();
+            Messaging.log("Creating file: " + file.getName());
+            Files.createParentDirs(file);
             file.createNewFile();
         } catch (IOException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Could not create file: " + file.getName());
+            Messaging.severe("Could not create file: " + file.getName());
+            ex.printStackTrace();
         }
     }
 
@@ -155,8 +154,7 @@ public class NBTStorage implements FileStorage {
             return true;
         }
 
-        private Map<String, Tag> findLastParent(String key) {
-            String[] parts = Iterables.toArray(Splitter.on('.').split(key), String.class);
+        private Map<String, Tag> findLastParent(String[] parts) {
             Map<String, Tag> map = root;
             for (int i = 0; i < parts.length - 1; ++i) {
                 if (!map.containsKey(parts[i]) || !(map.get(parts[i]) instanceof CompoundTag))
@@ -171,9 +169,11 @@ public class NBTStorage implements FileStorage {
         }
 
         private Tag findLastTag(String key, boolean relative) {
-            String[] parts = Iterables.toArray(Splitter.on('.').split(relative ? createRelativeKey(key) : key),
-                    String.class);
-            Map<String, Tag> map = findLastParent(key);
+            String[] parts = Iterables.toArray(
+                    Splitter.on('.').omitEmptyStrings().split(relative ? createRelativeKey(key) : key), String.class);
+            if (parts.length == 0)
+                return new CompoundTag(name, root);
+            Map<String, Tag> map = findLastParent(parts);
             if (!map.containsKey(parts[parts.length - 1]))
                 return null;
             return map.get(parts[parts.length - 1]);
@@ -222,7 +222,10 @@ public class NBTStorage implements FileStorage {
 
         @Override
         public Object getRaw(String key) {
-            throw new UnsupportedOperationException();
+            Tag tag = findLastTag(key);
+            if (tag == null)
+                return null;
+            return tag.getValue();
         }
 
         @Override
@@ -305,8 +308,8 @@ public class NBTStorage implements FileStorage {
 
         @Override
         public void removeKey(String key) {
-            String[] parts = Iterables.toArray(Splitter.on('.').split(key), String.class);
-            Map<String, Tag> parent = findLastParent(createRelativeKey(key));
+            String[] parts = Iterables.toArray(Splitter.on('.').split(createRelativeKey(key)), String.class);
+            Map<String, Tag> parent = findLastParent(parts);
             parent.remove(parts[parts.length - 1]);
         }
 
@@ -343,7 +346,6 @@ public class NBTStorage implements FileStorage {
 
     private static class Node {
         final String parent;
-
         final Map<String, Tag> values;
 
         public Node(String parent, Tag tag) {
