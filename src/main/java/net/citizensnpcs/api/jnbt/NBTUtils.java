@@ -1,5 +1,11 @@
 package net.citizensnpcs.api.jnbt;
 
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 /*
  * JNBT License
  *
@@ -46,6 +52,62 @@ public final class NBTUtils {
      */
     private NBTUtils() {
 
+    }
+
+    public static Tag createTag(String name, Object value) {
+        Class<?> clazz = value.getClass();
+        if (clazz == byte.class || clazz == Byte.class) {
+            return new ByteTag(name, (Byte) value);
+        } else if (clazz == short.class || clazz == Short.class) {
+            return new ShortTag(name, (Short) value);
+        } else if (clazz == int.class || clazz == Integer.class) {
+            return new IntTag(name, (Integer) value);
+        } else if (clazz == long.class || clazz == Long.class) {
+            return new LongTag(name, (Long) value);
+        } else if (clazz == float.class || clazz == Float.class) {
+            return new FloatTag(name, (Float) value);
+        } else if (clazz == double.class || clazz == Double.class) {
+            return new DoubleTag(name, (Double) value);
+        } else if (clazz == byte[].class) {
+            return new ByteArrayTag(name, (byte[]) value);
+        } else if (clazz == int[].class) {
+            return new IntArrayTag(name, (int[]) value);
+        } else if (clazz == String.class) {
+            return new StringTag(name, (String) value);
+        } else if (List.class.isAssignableFrom(clazz)) {
+            List<?> list = (List<?>) value;
+            if (list.isEmpty())
+                throw new IllegalArgumentException("cannot set empty list");
+            List<Tag> newList = Lists.newArrayList();
+            Class<? extends Tag> tagClass = null;
+            for (Object v : list) {
+                Tag tag = createTag("", v);
+                if (tag == null)
+                    throw new IllegalArgumentException("cannot convert list value to tag");
+                if (tagClass == null) {
+                    tagClass = tag.getClass();
+                } else if (tagClass != tag.getClass()) {
+                    throw new IllegalArgumentException("list values must be of homogeneous type");
+                }
+                newList.add(tag);
+            }
+            return new ListTag(name, tagClass, newList);
+        } else if (Map.class.isAssignableFrom(clazz)) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) value;
+            if (map.isEmpty())
+                throw new IllegalArgumentException("cannot set empty list");
+            Map<String, Tag> newMap = Maps.newHashMap();
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                Tag tag = createTag("", entry.getValue());
+                if (tag == null)
+                    throw new IllegalArgumentException("cannot convert map value with key " + entry.getKey()
+                            + " to tag");
+                newMap.put(entry.getKey(), tag);
+            }
+            return new CompoundTag(name, newMap);
+        }
+        return null;
     }
 
     /**

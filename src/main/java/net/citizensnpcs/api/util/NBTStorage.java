@@ -19,6 +19,7 @@ import net.citizensnpcs.api.jnbt.IntTag;
 import net.citizensnpcs.api.jnbt.LongTag;
 import net.citizensnpcs.api.jnbt.NBTInputStream;
 import net.citizensnpcs.api.jnbt.NBTOutputStream;
+import net.citizensnpcs.api.jnbt.NBTUtils;
 import net.citizensnpcs.api.jnbt.StringTag;
 import net.citizensnpcs.api.jnbt.Tag;
 
@@ -134,10 +135,7 @@ public class NBTStorage implements FileStorage {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
             NBTKey other = (NBTKey) obj;
@@ -335,7 +333,10 @@ public class NBTStorage implements FileStorage {
 
         @Override
         public void setRaw(String key, Object value) {
-            throw new UnsupportedOperationException();
+            Tag tag = NBTUtils.createTag(getNameFor(key), value);
+            if (tag == null)
+                throw new IllegalArgumentException("could not convert value to tag");
+            putTag(key, tag);
         }
 
         @Override
