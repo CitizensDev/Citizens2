@@ -253,6 +253,12 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Editor.leave(event.getPlayer());
+        if (event.getPlayer().isInsideVehicle()) {
+            NPC npc = npcRegistry.getNPC(event.getPlayer().getVehicle());
+            if (npc != null) {
+                event.getPlayer().leaveVehicle();
+            }
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

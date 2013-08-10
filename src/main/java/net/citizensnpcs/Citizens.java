@@ -98,7 +98,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 Messaging.logTr(Messages.DATABASE_CONNECTION_FAILED);
             }
         } else if (type.equalsIgnoreCase("nbt")) {
-            saves = new NBTStorage(folder + File.separator + Setting.STORAGE_FILE.asString(), "Citizens NPC Storage");
+            saves = new NBTStorage(new File(folder + File.separator + Setting.STORAGE_FILE.asString()),
+                    "Citizens NPC Storage");
         }
         if (saves == null)
             saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
