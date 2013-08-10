@@ -2,7 +2,6 @@ package net.citizensnpcs.npc.ai.speech;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -25,15 +24,13 @@ public class Chat implements VocalChord {
 
     @Override
     public void talk(SpeechContext context) {
-        // Check valid talker
         if (context.getTalker() == null)
             return;
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(context.getTalker().getEntity());
         if (npc == null)
             return;
 
-        // If no recipients, chat to the world with CHAT_FORMAT and CHAT_RANGE
-        // settings
+        // chat to the world with CHAT_FORMAT and CHAT_RANGE settings
         if (!context.hasRecipients()) {
             String text = Setting.CHAT_FORMAT.asString().replace("<npc>", npc.getName())
                     .replace("<text>", context.getMessage());
@@ -42,7 +39,7 @@ public class Chat implements VocalChord {
         }
 
         // Assumed recipients at this point
-        else if (context.size() <= 1) { // One recipient
+        else if (context.size() <= 1) {
             String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<npc>", npc.getName())
                     .replace("<text>", context.getMessage());
             String targetName = "";
@@ -77,14 +74,14 @@ public class Chat implements VocalChord {
             int max = Setting.CHAT_MAX_NUMBER_OF_TARGETS.asInt();
             String[] format = Setting.CHAT_FORMAT_WITH_TARGETS_TO_BYSTANDERS.asString().split("\\|");
             if (format.length != 4)
-                Messaging.log(Level.WARNING, "npc.chat.format.with-target-to-bystanders invalid!");
+                Messaging.severe("npc.chat.format.with-target-to-bystanders invalid!");
             if (max == 1) {
                 targets = format[0].replace("<npc>", targetNames.get(0)) + format[3];
             } else if (max == 2 || targetNames.size() == 2) {
-                if (targetNames.size() == 2)
+                if (targetNames.size() == 2) {
                     targets = format[0].replace("<npc>", targetNames.get(0))
                             + format[2].replace("<npc>", targetNames.get(1));
-                else
+                } else
                     targets = format[0].replace("<npc>", targetNames.get(0))
                             + format[1].replace("<npc>", targetNames.get(1)) + format[3];
             } else if (max >= 3) {
@@ -96,9 +93,9 @@ public class Chat implements VocalChord {
                         break;
                     targets = targets + format[1].replace("<npc>", targetNames.get(x));
                 }
-                if (targetNames.size() == max)
+                if (targetNames.size() == max) {
                     targets = targets + format[2].replace("<npc>", targetNames.get(x));
-                else
+                } else
                     targets = targets + format[3];
             }
 

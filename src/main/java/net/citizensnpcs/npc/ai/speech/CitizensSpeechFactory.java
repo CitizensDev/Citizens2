@@ -13,7 +13,6 @@ import org.bukkit.entity.LivingEntity;
 import com.google.common.base.Preconditions;
 
 public class CitizensSpeechFactory implements SpeechFactory {
-
     Map<String, Class<? extends VocalChord>> registered = new HashMap<String, Class<? extends VocalChord>>();
 
     @Override

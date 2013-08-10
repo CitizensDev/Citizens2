@@ -643,6 +643,9 @@ public class NPCCommands {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+        if (npc.getBukkitEntity() == null) {
+            throw new CommandException("NPC could not be spawned.");
+        }
         Location current = npc.getBukkitEntity().getLocation();
         Location to;
         if (args.argsLength() > 1) {
