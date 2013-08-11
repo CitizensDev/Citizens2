@@ -31,7 +31,8 @@ public class TraitCommands {
         List<String> added = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
-            if (!sender.hasPermission("citizens.npc.trait." + traitName)) {
+            if (!sender.hasPermission("citizens.npc.trait." + traitName)
+                    && !sender.hasPermission("citizens.npc.trait.*")) {
                 failed.add(String.format("%s: No permission", traitName));
                 continue;
             }
@@ -69,7 +70,8 @@ public class TraitCommands {
             permission = "citizens.npc.trait-configure")
     public void configure(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String traitName = args.getString(0);
-        if (!sender.hasPermission("citizens.npc.trait-configure." + traitName))
+        if (!sender.hasPermission("citizens.npc.trait-configure." + traitName)
+                && !sender.hasPermission("citizens.npc.trait-configure.*"))
             throw new NoPermissionsException();
         Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(0));
         if (clazz == null)
@@ -93,7 +95,8 @@ public class TraitCommands {
         List<String> removed = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
-            if (!sender.hasPermission("citizens.npc.trait." + traitName)) {
+            if (!sender.hasPermission("citizens.npc.trait." + traitName)
+                    && !sender.hasPermission("citizens.npc.trait.*")) {
                 failed.add(String.format("%s: No permission", traitName));
                 continue;
             }
@@ -129,7 +132,8 @@ public class TraitCommands {
         List<String> removed = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
-            if (!sender.hasPermission("citizens.npc.trait." + traitName)) {
+            if (!sender.hasPermission("citizens.npc.trait." + traitName)
+                    && !sender.hasPermission("citizens.npc.trait.*")) {
                 failed.add(String.format("%s: No permission", traitName));
                 continue;
             }
