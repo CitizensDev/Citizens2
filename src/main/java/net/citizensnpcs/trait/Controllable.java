@@ -168,8 +168,14 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     public void save(DataKey key) {
         if (explicitType == null) {
             key.removeKey("explicittype");
-        } else
+        } else {
             key.setString("explicittype", explicitType.name());
+        }
+    }
+
+    public boolean setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return enabled;
     }
 
     private void setMountedYaw(EntityLiving handle) {
@@ -220,40 +226,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         }
     }
 
-    public class LookAirController implements MovementController {
-        boolean paused = false;
-
-        @Override
-        public void leftClick(PlayerInteractEvent event) {
-            paused = !paused;
-        }
-
-        @Override
-        public void rightClick(PlayerInteractEvent event) {
-            paused = !paused;
-        }
-
-        @Override
-        public void rightClickEntity(NPCRightClickEvent event) {
-            enterOrLeaveVehicle(event.getClicker());
-        }
-
-        @Override
-        public void run(Player rider) {
-            if (paused) {
-                getHandle().motY = 0.001;
-                return;
-            }
-            Vector dir = rider.getEyeLocation().getDirection();
-            dir.multiply(npc.getNavigator().getDefaultParameters().speedModifier());
-            EntityLiving handle = getHandle();
-            handle.motX = dir.getX();
-            handle.motY = dir.getY();
-            handle.motZ = dir.getZ();
-            setMountedYaw(handle);
-        }
-    }
-
     public class GroundController implements MovementController {
         private int jumpTicks = 0;
         private double speed = 0.07D;
@@ -296,6 +268,40 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         private static final float AIR_SPEED = 1.5F;
         private static final float GROUND_SPEED = 4F;
         private static final float JUMP_VELOCITY = 0.6F;
+    }
+
+    public class LookAirController implements MovementController {
+        boolean paused = false;
+
+        @Override
+        public void leftClick(PlayerInteractEvent event) {
+            paused = !paused;
+        }
+
+        @Override
+        public void rightClick(PlayerInteractEvent event) {
+            paused = !paused;
+        }
+
+        @Override
+        public void rightClickEntity(NPCRightClickEvent event) {
+            enterOrLeaveVehicle(event.getClicker());
+        }
+
+        @Override
+        public void run(Player rider) {
+            if (paused) {
+                getHandle().motY = 0.001;
+                return;
+            }
+            Vector dir = rider.getEyeLocation().getDirection();
+            dir.multiply(npc.getNavigator().getDefaultParameters().speedModifier());
+            EntityLiving handle = getHandle();
+            handle.motX = dir.getX();
+            handle.motY = dir.getY();
+            handle.motZ = dir.getZ();
+            setMountedYaw(handle);
+        }
     }
 
     public static interface MovementController {
