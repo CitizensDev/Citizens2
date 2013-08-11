@@ -45,6 +45,25 @@ public class VectorNode extends AStarNode implements PathPoint {
         return (float) location.distance(to.location);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        VectorNode other = (VectorNode) obj;
+        if (location == null) {
+            if (other.location != null) {
+                return false;
+            }
+        } else if (!location.equals(other.location)) {
+            return false;
+        }
+        return true;
+    }
+
     private float getBlockCost() {
         if (blockCost == -1) {
             blockCost = 0;
@@ -83,6 +102,13 @@ public class VectorNode extends AStarNode implements PathPoint {
     @Override
     public Vector getVector() {
         return location;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = prime + ((location == null) ? 0 : location.hashCode());
+        return result;
     }
 
     public float heuristicDistance(Vector goal) {

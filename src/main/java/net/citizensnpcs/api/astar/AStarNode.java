@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 public abstract class AStarNode implements Comparable<AStarNode> {
     float f, g, h;
     AStarNode parent;
-
     List<AStarNode> parents;
 
     public abstract Plan buildPlan();
@@ -17,6 +16,9 @@ public abstract class AStarNode implements Comparable<AStarNode> {
     public int compareTo(AStarNode other) {
         return Float.compare(f, other.f);
     }
+
+    @Override
+    public abstract boolean equals(Object other);
 
     public abstract Iterable<AStarNode> getNeighbours();
 
@@ -41,4 +43,7 @@ public abstract class AStarNode implements Comparable<AStarNode> {
     protected float getPathCost() {
         return f;
     }
+
+    @Override
+    public abstract int hashCode();
 }
