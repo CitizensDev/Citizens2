@@ -31,24 +31,23 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
         Requirements requirements = (Requirements) instance;
         NPC npc = (methodArgs.length >= 3 && methodArgs[2] instanceof NPC) ? (NPC) methodArgs[2] : null;
 
-        // Requirements
-        if (requirements.selected()) {
-            boolean canRedefineSelected = context.hasValueFlag("id") && sender.hasPermission("npc.select");
-            String error = Messaging.tr(CommandMessages.MUST_HAVE_SELECTED);
-            if (canRedefineSelected) {
-                npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
-                if (methodArgs.length >= 3)
-                    methodArgs[2] = npc;
-                if (npc == null)
-                    error += ' ' + Messaging.tr(CommandMessages.ID_NOT_FOUND, context.getFlagInteger("id"));
-            }
+        boolean canRedefineSelected = context.hasValueFlag("id") && sender.hasPermission("npc.select");
+        String error = Messaging.tr(CommandMessages.MUST_HAVE_SELECTED);
+        if (canRedefineSelected) {
+            npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
+            if (methodArgs.length >= 3)
+                methodArgs[2] = npc;
             if (npc == null)
-                throw new RequirementMissingException(error);
+                error += ' ' + Messaging.tr(CommandMessages.ID_NOT_FOUND, context.getFlagInteger("id"));
+        }
+        if (requirements.selected() && npc == null) {
+            throw new RequirementMissingException(error);
         }
 
         if (requirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
-                && !npc.getTrait(Owner.class).isOwnedBy(sender))
+                && !npc.getTrait(Owner.class).isOwnedBy(sender)) {
             throw new RequirementMissingException(Messaging.tr(CommandMessages.MUST_BE_OWNER));
+        }
 
         if (npc == null)
             return;
