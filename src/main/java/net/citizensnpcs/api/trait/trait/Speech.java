@@ -9,7 +9,6 @@ import net.citizensnpcs.api.trait.Trait;
  * Represents the default speech settings of an NPC.
  */
 public class Speech extends Trait {
-
     @Persist("")
     private String defaultVocalChord = DEFAULT_VOCAL_CHORD;
 

@@ -15,11 +15,13 @@ import java.util.zip.GZIPInputStream;
 import net.citizensnpcs.api.jnbt.ByteTag;
 import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.jnbt.DoubleTag;
+import net.citizensnpcs.api.jnbt.FloatTag;
 import net.citizensnpcs.api.jnbt.IntTag;
 import net.citizensnpcs.api.jnbt.LongTag;
 import net.citizensnpcs.api.jnbt.NBTInputStream;
 import net.citizensnpcs.api.jnbt.NBTOutputStream;
 import net.citizensnpcs.api.jnbt.NBTUtils;
+import net.citizensnpcs.api.jnbt.ShortTag;
 import net.citizensnpcs.api.jnbt.StringTag;
 import net.citizensnpcs.api.jnbt.Tag;
 
@@ -36,16 +38,20 @@ public class NBTStorage implements FileStorage {
     private final String name;
     private final Map<String, Tag> root = Maps.newHashMap();
 
-    public NBTStorage(String file) {
+    public NBTStorage(File file) {
         this(file, "root");
     }
 
-    public NBTStorage(String file, String name) {
-        this.file = new File(file);
+    public NBTStorage(File file, String name) {
+        this.file = file;
         if (!this.file.exists()) {
             create();
         }
         this.name = name;
+    }
+
+    public NBTStorage(String file) {
+        this(new File(file), "root");
     }
 
     private void create() {
@@ -152,6 +158,25 @@ public class NBTStorage implements FileStorage {
             return true;
         }
 
+        private Number extractNumber(Tag tag) {
+            if (tag == null)
+                return null;
+            if (tag instanceof DoubleTag) {
+                return ((DoubleTag) tag).getValue();
+            } else if (tag instanceof IntTag) {
+                return ((IntTag) tag).getValue();
+            } else if (tag instanceof ShortTag) {
+                return ((ShortTag) tag).getValue();
+            } else if (tag instanceof ByteTag) {
+                return ((ByteTag) tag).getValue();
+            } else if (tag instanceof FloatTag) {
+                return ((FloatTag) tag).getValue();
+            } else if (tag instanceof LongTag) {
+                return ((LongTag) tag).getValue();
+            }
+            return null;
+        }
+
         private Map<String, Tag> findLastParent(String[] parts) {
             Map<String, Tag> map = root;
             for (int i = 0; i < parts.length - 1; ++i) {
@@ -179,34 +204,34 @@ public class NBTStorage implements FileStorage {
 
         @Override
         public boolean getBoolean(String key) {
-            Tag tag = findLastTag(key);
-            if (tag == null || !(tag instanceof ByteTag))
+            Number number = extractNumber(findLastTag(key));
+            if (number == null)
                 return false;
-            return ((ByteTag) tag).getValue() != 0;
+            return number.byteValue() >= 1 ? true : false;
         }
 
         @Override
         public double getDouble(String key) {
-            Tag tag = findLastTag(key);
-            if (tag == null || !(tag instanceof DoubleTag))
-                return 0D;
-            return ((DoubleTag) tag).getValue();
+            Number number = extractNumber(findLastTag(key));
+            if (number == null)
+                return 0;
+            return number.doubleValue();
         }
 
         @Override
         public int getInt(String key) {
-            Tag tag = findLastTag(key);
-            if (tag == null || !(tag instanceof IntTag))
+            Number number = extractNumber(findLastTag(key));
+            if (number == null)
                 return 0;
-            return ((IntTag) tag).getValue();
+            return number.intValue();
         }
 
         @Override
         public long getLong(String key) {
-            Tag tag = findLastTag(key);
-            if (tag == null || !(tag instanceof LongTag))
+            Number number = extractNumber(findLastTag(key));
+            if (number == null)
                 return 0;
-            return ((LongTag) tag).getValue();
+            return number.longValue();
         }
 
         private String getNameFor(String key) {
