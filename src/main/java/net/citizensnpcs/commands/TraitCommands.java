@@ -9,12 +9,14 @@ import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
+import net.citizensnpcs.api.event.NPCTraitCommandAttachEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import com.google.common.base.Joiner;
@@ -43,13 +45,18 @@ public class TraitCommands {
                 failed.add(String.format("%s: Already added", traitName));
                 continue;
             }
-            npc.addTrait(clazz);
+            addTrait(npc, clazz, sender);
             added.add(StringHelper.wrap(traitName));
         }
         if (added.size() > 0)
             Messaging.sendTr(sender, Messages.TRAITS_ADDED, Joiner.on(", ").join(added));
         if (failed.size() > 0)
             Messaging.sendTr(sender, Messages.TRAITS_FAILED_TO_ADD, Joiner.on(", ").join(failed));
+    }
+
+    private void addTrait(NPC npc, Class<? extends Trait> clazz, CommandSender sender) {
+        npc.addTrait(clazz);
+        Bukkit.getPluginManager().callEvent(new NPCTraitCommandAttachEvent(npc, clazz, sender));
     }
 
     @Command(
@@ -138,7 +145,7 @@ public class TraitCommands {
                 removed.add(StringHelper.wrap(traitName));
                 continue;
             }
-            npc.addTrait(clazz);
+            addTrait(npc, clazz, sender);
             added.add(StringHelper.wrap(traitName));
         }
         if (added.size() > 0)
