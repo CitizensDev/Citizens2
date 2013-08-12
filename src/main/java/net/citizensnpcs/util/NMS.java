@@ -319,6 +319,10 @@ public class NMS {
         }
     }
 
+    public static void setStepHeight(EntityLiving entity, float height) {
+        entity.Y = height;
+    }
+
     public static boolean shouldJump(net.minecraft.server.v1_6_R2.Entity entity) {
         if (JUMP_FIELD == null || !(entity instanceof EntityLiving))
             return false;
@@ -432,15 +436,13 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 1F;
-
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
-
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
     private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
-    private static Map<Class<?>, Integer> MC_ENTITY_CLASS_TO_INT = null;
-    private static Map<Integer, Class<?>> MC_ENTITY_INT_TO_CLASS = null;
     private static Field GOAL_FIELD = getField(PathfinderGoalSelector.class, "a");
     private static final Field JUMP_FIELD = getField(EntityLiving.class, "bd");
+    private static Map<Class<?>, Integer> MC_ENTITY_CLASS_TO_INT = null;
+    private static Map<Integer, Class<?>> MC_ENTITY_INT_TO_CLASS = null;
     private static Field NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(Navigation.class, "e");

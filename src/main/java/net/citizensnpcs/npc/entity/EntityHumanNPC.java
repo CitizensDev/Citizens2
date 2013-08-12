@@ -56,6 +56,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private int packetUpdateCount;
+    private int sensesUpdateCount = 0;
     private int useListName = -1;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
@@ -136,8 +137,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // swallow
         }
 
-        Y = 1F; // stepHeight - must not stay as the default 0 (breaks steps).
-                // Check the EntityPlayer constructor for the new name.
+        NMS.setStepHeight(this, 1);// stepHeight - must not stay as the default
+                                   // 0 (breaks steps).
 
         try {
             socket.close();
@@ -234,7 +235,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     public void updateAI() {
-        entitySenses.a();
+        if (++sensesUpdateCount == 5) {
+            sensesUpdateCount = 0;
+            entitySenses.a();
+        }
         controllerMove.c();
         controllerLook.a();
         controllerJump.b();
@@ -320,6 +324,5 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private static final float EPSILON = 0.005F;
-
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }

@@ -1,15 +1,15 @@
 package net.citizensnpcs.util.nms;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.server.v1_6_R2.Entity;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 
 public class PlayerEntitySenses {
-    EntityLiving entity;
-    List<Entity> seenEntities = new ArrayList<Entity>();
-    List<Entity> unseenEntities = new ArrayList<Entity>();
+    private final EntityLiving entity;
+    private final Set<Entity> seenEntities = new HashSet<Entity>();
+    private final Set<Entity> unseenEntities = new HashSet<Entity>();
 
     public PlayerEntitySenses(EntityLiving entityinsentient) {
         this.entity = entityinsentient;

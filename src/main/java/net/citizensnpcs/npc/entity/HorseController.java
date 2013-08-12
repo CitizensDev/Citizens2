@@ -70,6 +70,7 @@ public class HorseController extends MobEntityController {
             if (npc == null) {
                 super.c();
             } else {
+                NMS.setStepHeight(this, 1);
                 updateAIWithMovement();
                 npc.update();
             }
