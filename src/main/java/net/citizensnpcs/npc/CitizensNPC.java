@@ -155,7 +155,7 @@ public class CitizensNPC extends AbstractNPC {
             // we need to wait for a chunk load before trying to spawn
             entityController.remove();
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
-            return true;
+            return false;
         }
 
         NMS.setHeadYaw(mcEntity, at.getYaw());
@@ -214,7 +214,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public void teleport(Location location, TeleportCause cause) {
-        if (!this.isSpawned())
+        if (!isSpawned())
             return;
         teleport(NMS.getRootVehicle(getBukkitEntity()), location, false, 5);
     }

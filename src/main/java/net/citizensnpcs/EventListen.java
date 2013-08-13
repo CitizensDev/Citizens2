@@ -214,7 +214,10 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onNeedsRespawn(NPCNeedsRespawnEvent event) {
-        toRespawn.put(toCoord(event.getSpawnLocation()), event.getNPC());
+        ChunkCoord coord = toCoord(event.getSpawnLocation());
+        if (toRespawn.containsEntry(coord, event.getNPC()))
+            return;
+        toRespawn.put(coord, event.getNPC());
     }
 
     @EventHandler
@@ -289,8 +292,9 @@ public class EventListen implements Listener {
             boolean despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
             if (event.isCancelled() || !despawned) {
                 for (ChunkCoord coord : toRespawn.keySet()) {
-                    if (event.getWorld().getName().equals(coord.worldName))
+                    if (event.getWorld().getName().equals(coord.worldName)) {
                         respawnAllFromCoord(coord);
+                    }
                 }
                 return;
             }
