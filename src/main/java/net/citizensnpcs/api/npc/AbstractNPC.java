@@ -150,6 +150,28 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        AbstractNPC other = (AbstractNPC) obj;
+        if (id != other.id) {
+            return false;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public GoalController getDefaultGoalController() {
         return goalController;
     }
@@ -200,6 +222,12 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public Iterable<Trait> getTraits() {
         return traits.values();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        return prime * (prime + id) + ((name == null) ? 0 : name.hashCode());
     }
 
     @Override
