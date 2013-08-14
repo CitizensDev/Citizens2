@@ -281,7 +281,7 @@ public class NPCCommands {
         String name = Colorizer.parseColors(args.getJoinedStrings(1));
         if (name.length() > 16) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
-            name = name.substring(0, 15);
+            name = name.substring(0, 16);
         }
         if (name.length() <= 0)
             throw new CommandException();
