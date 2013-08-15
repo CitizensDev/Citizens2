@@ -151,7 +151,8 @@ public class CitizensNPC extends AbstractNPC {
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
         mcEntity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         if (!couldSpawn) {
-            Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.");
+            Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.",
+                    Util.isLoaded(at) ? "Util.isLoaded true" : "Util.isLoaded false");
             // we need to wait for a chunk load before trying to spawn
             entityController.remove();
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));

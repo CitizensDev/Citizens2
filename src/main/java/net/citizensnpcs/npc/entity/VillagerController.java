@@ -1,6 +1,7 @@
 package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
+import net.citizensnpcs.api.event.NPCVehicleExitEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
@@ -15,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftVillager;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Villager;
 import org.bukkit.util.Vector;
 
@@ -119,6 +121,15 @@ public class VillagerController extends MobEntityController {
 
         public void setBlockTrades(boolean blocked) {
             this.blockTrades = blocked;
+        }
+
+        @Override
+        public void setPassengerOf(net.minecraft.server.v1_6_R2.Entity entity) {
+            if (npc != null && entity == null && vehicle != null && vehicle.getBukkitEntity() instanceof LivingEntity) {
+                Bukkit.getPluginManager().callEvent(
+                        new NPCVehicleExitEvent(npc, (LivingEntity) vehicle.getBukkitEntity()));
+            }
+            super.setPassengerOf(entity);
         }
     }
 
