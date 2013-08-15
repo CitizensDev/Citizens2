@@ -7,7 +7,6 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.command.CommandConfigurable;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.event.NPCVehicleExitEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -19,7 +18,6 @@ import net.minecraft.server.v1_6_R2.EntityEnderDragon;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
 
-import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
@@ -69,7 +67,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         if (getHandle().passenger != null) {
             if (getHandle().passenger == handle) {
                 player.leaveVehicle();
-                Bukkit.getPluginManager().callEvent(new NPCVehicleExitEvent(npc, player));
             }
             return;
         }
