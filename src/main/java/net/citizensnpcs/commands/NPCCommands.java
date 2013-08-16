@@ -60,6 +60,7 @@ import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -995,8 +996,9 @@ public class NPCCommands {
                 String name = args.getString(1);
                 List<NPC> possible = Lists.newArrayList();
                 double range = -1;
-                if (args.hasValueFlag("r"))
+                if (args.hasValueFlag("r")) {
                     range = Math.abs(args.getFlagDouble("r"));
+                }
                 for (NPC test : npcRegistry) {
                     if (test.getName().equalsIgnoreCase(name)) {
                         if (range > 0
@@ -1010,7 +1012,7 @@ public class NPCCommands {
                 if (possible.size() == 1) {
                     toSelect = possible.get(0);
                 } else if (possible.size() > 1) {
-                    SelectionPrompt.start(selector, (Player) sender, possible);
+                    SelectionPrompt.start(selector, (Conversable) sender, possible);
                     return;
                 }
             }

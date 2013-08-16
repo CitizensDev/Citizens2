@@ -10,12 +10,12 @@ import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.util.Messages;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
-import org.bukkit.entity.Player;
 
 public class SelectionPrompt extends NumericPrompt {
     private final List<NPC> choices;
@@ -54,7 +54,7 @@ public class SelectionPrompt extends NumericPrompt {
         return text;
     }
 
-    public static void start(NPCSelector selector, Player player, List<NPC> possible) {
+    public static void start(NPCSelector selector, Conversable player, List<NPC> possible) {
         final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin()).withLocalEcho(false)
                 .withEscapeSequence("exit").withModality(false)
                 .withFirstPrompt(new SelectionPrompt(selector, possible)).buildConversation(player);
