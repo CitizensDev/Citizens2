@@ -69,8 +69,9 @@ public class CommandContext {
                     if (test.charAt(test.length() - 1) == quote) {
                         args[i] = quoted.substring(0, quoted.length() - 1);
                         // remove ending quote
-                        for (int j = i + 1; j != inner; ++j)
+                        for (int j = i + 1; j <= inner; ++j) {
                             args[j] = ""; // collapse previous
+                        }
                         break;
                     }
                 }
