@@ -6,7 +6,6 @@ import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCPushEvent;
-import net.citizensnpcs.api.event.NPCVehicleExitEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -42,7 +41,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -226,14 +224,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     public void setMoveDestination(double x, double y, double z, float speed) {
         controllerMove.a(x, y, z, speed);
-    }
-
-    @Override
-    public void setPassengerOf(net.minecraft.server.v1_6_R2.Entity entity) {
-        if (npc != null && entity == null && vehicle != null && vehicle.getBukkitEntity() instanceof LivingEntity) {
-            Bukkit.getPluginManager().callEvent(new NPCVehicleExitEvent(npc, (LivingEntity) vehicle.getBukkitEntity()));
-        }
-        super.setPassengerOf(entity);
     }
 
     public void setShouldJump() {
