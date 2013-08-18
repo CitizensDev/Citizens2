@@ -1,7 +1,6 @@
 package net.citizensnpcs.npc.entity;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
-import net.citizensnpcs.api.event.NPCVehicleExitEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
@@ -17,7 +16,6 @@ import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftCreeper;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.entity.Creeper;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
 public class CreeperController extends MobEntityController {
@@ -132,15 +130,6 @@ public class CreeperController extends MobEntityController {
 
         public void setAllowPowered(boolean allowPowered) {
             this.allowPowered = allowPowered;
-        }
-
-        @Override
-        public void setPassengerOf(net.minecraft.server.v1_6_R2.Entity entity) {
-            if (npc != null && entity == null && vehicle != null && vehicle.getBukkitEntity() instanceof LivingEntity) {
-                Bukkit.getPluginManager().callEvent(
-                        new NPCVehicleExitEvent(npc, (LivingEntity) vehicle.getBukkitEntity()));
-            }
-            super.setPassengerOf(entity);
         }
     }
 }

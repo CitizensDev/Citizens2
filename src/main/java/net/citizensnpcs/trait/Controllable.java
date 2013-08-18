@@ -119,8 +119,9 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     public boolean mount(Player toMount) {
         Entity passenger = npc.getBukkitEntity().getPassenger();
-        if (passenger != null && passenger != toMount)
+        if (passenger != null && passenger != toMount) {
             return false;
+        }
         enterOrLeaveVehicle(toMount);
         return true;
     }
@@ -196,8 +197,9 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     @Override
     public boolean toggle() {
         enabled = !enabled;
-        if (!enabled && getHandle().passenger != null)
+        if (!enabled && getHandle().passenger != null) {
             getHandle().passenger.getBukkitEntity().leaveVehicle();
+        }
         return enabled;
     }
 
