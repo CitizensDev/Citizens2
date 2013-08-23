@@ -22,7 +22,6 @@ public class HumanController extends AbstractEntityController {
         final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, Colorizer.parseColors(npc
                 .getFullName()), new PlayerInteractManager(ws), npc);
         handle.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
-        handle.getBukkitEntity().teleport(at);
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
