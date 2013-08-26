@@ -26,7 +26,7 @@
 		</repository>
 		<repository>
 			<id>everything</id>
-			<url>http://repo.citizensnpcs.com</url>
+			<url>http://repo.citizensnpcs.co</url>
 		</repository>
 		<repository>
 			<id>vault-repo</id>
@@ -84,10 +84,10 @@
 		</dependency>
 	</dependencies>
 
-	<url>http://www.citizensnpcs.com</url>
+	<url>http://www.citizensnpcs.co</url>
 	<ciManagement>
 		<system>jenkins</system>
-		<url>http://ci.citizensnpcs.com</url>
+		<url>http://ci.citizensnpcs.co</url>
 	</ciManagement>
 	<scm>
 		<connection>scm:git:git://github.com/CitizensDev/Citizens2.git</connection>
