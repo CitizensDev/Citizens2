@@ -66,8 +66,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double dY = vector.getY() - handle.locY;
         double xzDistance = dX * dX + dZ * dZ;
         double distance = xzDistance + dY * dY;
-        if (distance > 0 && dY > 0 && xzDistance <= 4.205) {
-            // 2.75 -> 4.205 (allow for diagonal jumping)
+        if (distance > 0 && dY > 0 && xzDistance <= 2.75) {
             NMS.setShouldJump(npc.getBukkitEntity());
         }
         NMS.setDestination(npc.getBukkitEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
