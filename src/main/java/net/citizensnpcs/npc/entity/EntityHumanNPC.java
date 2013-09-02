@@ -17,7 +17,6 @@ import net.citizensnpcs.util.Util;
 import net.citizensnpcs.util.nms.PlayerControllerJump;
 import net.citizensnpcs.util.nms.PlayerControllerLook;
 import net.citizensnpcs.util.nms.PlayerControllerMove;
-import net.citizensnpcs.util.nms.PlayerEntitySenses;
 import net.citizensnpcs.util.nms.PlayerNavigation;
 import net.minecraft.server.v1_6_R2.AttributeInstance;
 import net.minecraft.server.v1_6_R2.Connection;
@@ -39,7 +38,6 @@ import net.minecraft.server.v1_6_R2.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -49,14 +47,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private PlayerControllerJump controllerJump;
     private PlayerControllerLook controllerLook;
     private PlayerControllerMove controllerMove;
-    private PlayerEntitySenses entitySenses;
     private boolean gravity = true;
     private int jumpTicks = 0;
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private int packetUpdateCount;
-    private int sensesUpdateCount = 0;
     private int useListName = -1;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
@@ -75,8 +71,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
-        if (npc != null)
+        if (npc != null) {
             Util.callCollisionEvent(npc, entity.getBukkitEntity());
+        }
     }
 
     @Override
@@ -153,7 +150,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         controllerJump = new PlayerControllerJump(this);
         controllerLook = new PlayerControllerLook(this);
         controllerMove = new PlayerControllerMove(this);
-        entitySenses = new PlayerEntitySenses(this);
         navigation = new PlayerNavigation(this, world);
     }
 
@@ -235,10 +231,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     public void updateAI() {
-        if (++sensesUpdateCount == 5) {
-            sensesUpdateCount = 0;
-            entitySenses.a();
-        }
         controllerMove.c();
         controllerLook.a();
         controllerJump.b();
@@ -296,11 +288,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public boolean hasLineOfSight(org.bukkit.entity.Entity other) {
-            return getHandle().entitySenses.canSee(((CraftEntity) other).getHandle());
         }
 
         @Override
