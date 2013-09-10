@@ -107,16 +107,15 @@ public class ByIdArray<T> implements Iterable<T> {
     public T remove(int index) {
         if (index > elementData.length || elementData[index] == null)
             return null;
+        @SuppressWarnings("unchecked")
+        T prev = (T) elementData[index];
+        elementData[index] = null;
+        --size;
         ++modCount;
         if (index == highest)
             recalcHighest();
         if (index == lowest)
             recalcLowest();
-        @SuppressWarnings("unchecked")
-        T prev = (T) elementData[index];
-        elementData[index] = null;
-        if (prev != null)
-            --size;
         return prev;
     }
 
@@ -125,8 +124,9 @@ public class ByIdArray<T> implements Iterable<T> {
     }
 
     public void trimToSize() {
-        if (elementData.length > highest)
+        if (elementData.length > highest) {
             elementData = Arrays.copyOf(elementData, highest + 1);
+        }
     }
 
     private class Itr implements Iterator<T> {
