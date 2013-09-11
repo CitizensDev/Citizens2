@@ -10,6 +10,7 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
@@ -38,8 +39,8 @@ public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
 
-    public CitizensNPC(int id, String name, EntityController entityController) {
-        super(id, name);
+    public CitizensNPC(int id, String name, EntityController entityController, NPCRegistry registry) {
+        super(id, name, registry);
         Preconditions.checkNotNull(entityController);
         this.entityController = entityController;
     }

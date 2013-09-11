@@ -112,9 +112,9 @@ public class ByIdArray<T> implements Iterable<T> {
         elementData[index] = null;
         --size;
         ++modCount;
-        if (index == highest)
+        if (index >= highest)
             recalcHighest();
-        if (index == lowest)
+        if (index <= lowest)
             recalcLowest();
         return prev;
     }

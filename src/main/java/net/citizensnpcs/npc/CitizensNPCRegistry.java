@@ -47,8 +47,9 @@ public class CitizensNPCRegistry implements NPCRegistry {
     @Override
     public void deregister(NPC npc) {
         npcs.remove(npc.getId());
-        if (saves != null)
+        if (saves != null) {
             saves.clearData(npc);
+        }
         npc.despawn(DespawnReason.REMOVAL);
     }
 
@@ -59,10 +60,12 @@ public class CitizensNPCRegistry implements NPCRegistry {
             NPC npc = itr.next();
             itr.remove();
             npc.despawn(DespawnReason.REMOVAL);
-            for (Trait t : npc.getTraits())
+            for (Trait t : npc.getTraits()) {
                 t.onRemove();
-            if (saves != null)
+            }
+            if (saves != null) {
                 saves.clearData(npc);
+            }
         }
     }
 
@@ -78,7 +81,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     }
 
     private CitizensNPC getByType(EntityType type, int id, String name) {
-        return new CitizensNPC(id, name, EntityControllers.createForType(type));
+        return new CitizensNPC(id, name, EntityControllers.createForType(type), this);
     }
 
     @Override
