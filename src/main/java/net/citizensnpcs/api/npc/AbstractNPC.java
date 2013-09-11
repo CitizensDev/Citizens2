@@ -64,18 +64,20 @@ public abstract class AbstractNPC implements NPC {
         }
     };
     private String name;
+    private final NPCRegistry registry;
     private final List<String> removedTraits = Lists.newArrayList();
     private final List<Runnable> runnables = Lists.newArrayList();
     private final SpeechController speechController = new SimpleSpeechController(this);
     protected final Map<Class<? extends Trait>, Trait> traits = Maps.newHashMap();
 
-    protected AbstractNPC(int id, String name) {
+    protected AbstractNPC(int id, String name, NPCRegistry registry) {
         if (name.length() > 16) {
             Messaging.severe("ID", id, "created with name length greater than 16, truncating", name, "to",
                     name.substring(0, 15));
             name = name.substring(0, 15);
         }
         this.id = id;
+        this.registry = registry;
         this.name = name;
         CitizensAPI.getTraitFactory().addDefaultTraits(this);
     }
@@ -116,7 +118,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public NPC clone() {
-        NPC copy = CitizensAPI.getNPCRegistry().createNPC(getTrait(MobType.class).getType(), getFullName());
+        NPC copy = registry.createNPC(getTrait(MobType.class).getType(), getFullName());
         DataKey key = new MemoryDataKey();
         this.save(key);
         copy.load(key);
@@ -146,7 +148,7 @@ public abstract class AbstractNPC implements NPC {
             trait.onRemove();
         }
         traits.clear();
-        CitizensAPI.getNPCRegistry().deregister(this);
+        registry.deregister(this);
     }
 
     @Override
