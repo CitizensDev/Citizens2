@@ -30,6 +30,7 @@ import net.minecraft.server.v1_6_R2.Navigation;
 import net.minecraft.server.v1_6_R2.NetworkManager;
 import net.minecraft.server.v1_6_R2.Packet;
 import net.minecraft.server.v1_6_R2.Packet201PlayerInfo;
+import net.minecraft.server.v1_6_R2.Packet34EntityTeleport;
 import net.minecraft.server.v1_6_R2.Packet35EntityHeadRotation;
 import net.minecraft.server.v1_6_R2.Packet5EntityEquipment;
 import net.minecraft.server.v1_6_R2.PlayerInteractManager;
@@ -239,10 +240,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private void updatePackets(boolean navigating) {
         if (++packetUpdateCount >= 30) {
             Location current = getBukkitEntity().getLocation(packetLocationCache);
-            Packet[] packets = new Packet[navigating ? 6 : 7];
+            Packet[] packets = new Packet[navigating ? 6 : 8];
             if (!navigating) {
                 packets[6] = new Packet35EntityHeadRotation(id,
                         (byte) MathHelper.d(NMS.getHeadYaw(this) * 256.0F / 360.0F));
+                packets[7] = new Packet34EntityTeleport(this);
             }
             for (int i = 0; i < 5; i++) {
                 packets[i] = new Packet5EntityEquipment(id, i, getEquipment(i));
