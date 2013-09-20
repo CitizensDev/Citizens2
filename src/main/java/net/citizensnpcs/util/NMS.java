@@ -12,34 +12,34 @@ import java.util.WeakHashMap;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_6_R2.AttributeInstance;
-import net.minecraft.server.v1_6_R2.ControllerJump;
-import net.minecraft.server.v1_6_R2.DamageSource;
-import net.minecraft.server.v1_6_R2.EnchantmentManager;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityHorse;
-import net.minecraft.server.v1_6_R2.EntityHuman;
-import net.minecraft.server.v1_6_R2.EntityInsentient;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.EntityPlayer;
-import net.minecraft.server.v1_6_R2.EntityTypes;
-import net.minecraft.server.v1_6_R2.GenericAttributes;
-import net.minecraft.server.v1_6_R2.MathHelper;
-import net.minecraft.server.v1_6_R2.MobEffectList;
-import net.minecraft.server.v1_6_R2.Navigation;
-import net.minecraft.server.v1_6_R2.NetworkManager;
-import net.minecraft.server.v1_6_R2.Packet;
-import net.minecraft.server.v1_6_R2.PathfinderGoalSelector;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.AttributeInstance;
+import net.minecraft.server.v1_6_R3.ControllerJump;
+import net.minecraft.server.v1_6_R3.DamageSource;
+import net.minecraft.server.v1_6_R3.EnchantmentManager;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityHorse;
+import net.minecraft.server.v1_6_R3.EntityHuman;
+import net.minecraft.server.v1_6_R3.EntityInsentient;
+import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R3.EntityTypes;
+import net.minecraft.server.v1_6_R3.GenericAttributes;
+import net.minecraft.server.v1_6_R3.MathHelper;
+import net.minecraft.server.v1_6_R3.MobEffectList;
+import net.minecraft.server.v1_6_R3.Navigation;
+import net.minecraft.server.v1_6_R3.NetworkManager;
+import net.minecraft.server.v1_6_R3.Packet;
+import net.minecraft.server.v1_6_R3.PathfinderGoalSelector;
+import net.minecraft.server.v1_6_R3.World;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
@@ -97,8 +97,9 @@ public class NMS {
 
         int fireAspectLevel = EnchantmentManager.getFireAspectEnchantmentLevel(handle);
 
-        if (fireAspectLevel > 0)
+        if (fireAspectLevel > 0) {
             target.setOnFire(fireAspectLevel * 4);
+        }
     }
 
     public static void changeWorlds(org.bukkit.entity.Entity entity, org.bukkit.World world) {
@@ -147,7 +148,7 @@ public class NMS {
         return ((CraftLivingEntity) entity).getHandle();
     }
 
-    public static net.minecraft.server.v1_6_R2.Entity getHandle(org.bukkit.entity.Entity entity) {
+    public static net.minecraft.server.v1_6_R3.Entity getHandle(org.bukkit.entity.Entity entity) {
         return ((CraftEntity) entity).getHandle();
     }
 
@@ -179,7 +180,7 @@ public class NMS {
 
     public static boolean inWater(LivingEntity entity) {
         EntityLiving mcEntity = getHandle(entity);
-        return mcEntity.G() || mcEntity.I();
+        return mcEntity.H() || mcEntity.J();
     }
 
     public static boolean isNavigationFinished(Navigation navigation) {
@@ -323,7 +324,7 @@ public class NMS {
         entity.Y = height;
     }
 
-    public static boolean shouldJump(net.minecraft.server.v1_6_R2.Entity entity) {
+    public static boolean shouldJump(net.minecraft.server.v1_6_R3.Entity entity) {
         if (JUMP_FIELD == null || !(entity instanceof EntityLiving))
             return false;
         try {
