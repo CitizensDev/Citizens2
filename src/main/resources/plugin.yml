@@ -3,7 +3,7 @@ authors: [aPunch, fullwall]
 softdepend: [Vault]
 version: ${project.version} (build ${BUILD_NUMBER})
 main: net.citizensnpcs.Citizens
-website: http://www.citizensnpcs.com
+website: http://www.citizensnpcs.co
 commands:
   traitc:
     aliases: [trc]

@@ -1,19 +1,19 @@
 package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_6_R2.AttributeInstance;
-import net.minecraft.server.v1_6_R2.Block;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityInsentient;
-import net.minecraft.server.v1_6_R2.GenericAttributes;
-import net.minecraft.server.v1_6_R2.IBlockAccess;
-import net.minecraft.server.v1_6_R2.Material;
-import net.minecraft.server.v1_6_R2.MathHelper;
-import net.minecraft.server.v1_6_R2.Navigation;
-import net.minecraft.server.v1_6_R2.PathEntity;
-import net.minecraft.server.v1_6_R2.PathPoint;
-import net.minecraft.server.v1_6_R2.Vec3D;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.AttributeInstance;
+import net.minecraft.server.v1_6_R3.Block;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityInsentient;
+import net.minecraft.server.v1_6_R3.GenericAttributes;
+import net.minecraft.server.v1_6_R3.IBlockAccess;
+import net.minecraft.server.v1_6_R3.Material;
+import net.minecraft.server.v1_6_R3.MathHelper;
+import net.minecraft.server.v1_6_R3.Navigation;
+import net.minecraft.server.v1_6_R3.PathEntity;
+import net.minecraft.server.v1_6_R3.PathPoint;
+import net.minecraft.server.v1_6_R3.Vec3D;
+import net.minecraft.server.v1_6_R3.World;
 
 public class PlayerNavigation extends Navigation {
     private final EntityHumanNPC a;
@@ -98,7 +98,7 @@ public class PlayerNavigation extends Navigation {
 
                         Material material = Block.byId[k2].material;
 
-                        if (material == Material.WATER && !this.a.G()) {
+                        if (material == Material.WATER && !this.a.H()) {
                             return false;
                         }
 
@@ -339,7 +339,7 @@ public class PlayerNavigation extends Navigation {
     }
 
     private int k() {
-        if (this.a.G() && this.m) {
+        if (this.a.H() && this.m) {
             int i = (int) this.a.boundingBox.b;
             int j = this.b.getTypeId(MathHelper.floor(this.a.locX), i, MathHelper.floor(this.a.locZ));
             int k = 0;
@@ -365,7 +365,7 @@ public class PlayerNavigation extends Navigation {
     }
 
     private boolean m() {
-        return this.a.G() || this.a.I();
+        return this.a.H() || this.a.J();
     }
 
     private void n() {

@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R2.EntityPigZombie;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.EntityPigZombie;
+import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPigZombie;
+import org.bukkit.craftbukkit.v1_6_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPigZombie;
 import org.bukkit.entity.PigZombie;
 import org.bukkit.util.Vector;
 
@@ -44,8 +44,8 @@ public class PigZombieController extends MobEntityController {
         }
 
         @Override
-        public void bh() {
-            super.bh();
+        public void bi() {
+            super.bi();
             if (npc != null)
                 npc.update();
         }
@@ -58,15 +58,15 @@ public class PigZombieController extends MobEntityController {
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
                 return super.bH();
             if (super.bH()) {
-                a(true, false); // clearLeash with client update
+                unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
         }
 
         @Override
-        public void bk() {
+        public void bl() {
             if (npc == null) {
-                super.bk();
+                super.bl();
             } else {
                 NMS.updateAI(this);
                 npc.update();
@@ -74,7 +74,7 @@ public class PigZombieController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_6_R2.Entity entity) {
+        public void collide(net.minecraft.server.v1_6_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);

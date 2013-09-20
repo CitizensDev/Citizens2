@@ -18,28 +18,28 @@ import net.citizensnpcs.util.nms.PlayerControllerJump;
 import net.citizensnpcs.util.nms.PlayerControllerLook;
 import net.citizensnpcs.util.nms.PlayerControllerMove;
 import net.citizensnpcs.util.nms.PlayerNavigation;
-import net.minecraft.server.v1_6_R2.AttributeInstance;
-import net.minecraft.server.v1_6_R2.Connection;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityPlayer;
-import net.minecraft.server.v1_6_R2.EnumGamemode;
-import net.minecraft.server.v1_6_R2.GenericAttributes;
-import net.minecraft.server.v1_6_R2.MathHelper;
-import net.minecraft.server.v1_6_R2.MinecraftServer;
-import net.minecraft.server.v1_6_R2.Navigation;
-import net.minecraft.server.v1_6_R2.NetworkManager;
-import net.minecraft.server.v1_6_R2.Packet;
-import net.minecraft.server.v1_6_R2.Packet201PlayerInfo;
-import net.minecraft.server.v1_6_R2.Packet34EntityTeleport;
-import net.minecraft.server.v1_6_R2.Packet35EntityHeadRotation;
-import net.minecraft.server.v1_6_R2.Packet5EntityEquipment;
-import net.minecraft.server.v1_6_R2.PlayerInteractManager;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.AttributeInstance;
+import net.minecraft.server.v1_6_R3.Connection;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R3.EnumGamemode;
+import net.minecraft.server.v1_6_R3.GenericAttributes;
+import net.minecraft.server.v1_6_R3.MathHelper;
+import net.minecraft.server.v1_6_R3.MinecraftServer;
+import net.minecraft.server.v1_6_R3.Navigation;
+import net.minecraft.server.v1_6_R3.NetworkManager;
+import net.minecraft.server.v1_6_R3.Packet;
+import net.minecraft.server.v1_6_R3.Packet201PlayerInfo;
+import net.minecraft.server.v1_6_R3.Packet34EntityTeleport;
+import net.minecraft.server.v1_6_R3.Packet35EntityHeadRotation;
+import net.minecraft.server.v1_6_R3.Packet5EntityEquipment;
+import net.minecraft.server.v1_6_R3.PlayerInteractManager;
+import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -68,7 +68,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public void collide(net.minecraft.server.v1_6_R2.Entity entity) {
+    public void collide(net.minecraft.server.v1_6_R3.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
@@ -145,7 +145,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
         AttributeInstance range = this.getAttributeInstance(GenericAttributes.b);
         if (range == null) {
-            range = this.aW().b(GenericAttributes.b);
+            range = this.aX().b(GenericAttributes.b);
         }
         range.setValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
         controllerJump = new PlayerControllerJump(this);
@@ -197,12 +197,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         NMS.updateAI(this);
         // taken from EntityLiving update method
         if (bd) {
-            /* boolean inLiquid = G() || I();
+            /* boolean inLiquid = H() || J();
              if (inLiquid) {
                  motY += 0.04;
              } else //(handled elsewhere)*/
             if (onGround && jumpTicks == 0) {
-                bd();
+                be();
                 jumpTicks = 10;
             }
         } else {

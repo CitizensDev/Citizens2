@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Dye;
 
 public class SheepEquipper implements Equipper {
     @Override
@@ -21,10 +22,10 @@ public class SheepEquipper implements Equipper {
             Messaging.sendTr(equipper, toEquip.getTrait(Sheared.class).toggle() ? Messages.SHEARED_SET
                     : Messages.SHEARED_STOPPED, toEquip.getName());
         } else if (hand.getType() == Material.INK_SACK) {
-            if (sheep.getColor() == DyeColor.getByWoolData((byte) (15 - hand.getData().getData())))
+            Dye dye = (Dye) hand.getData();
+            if (sheep.getColor() == dye.getColor())
                 return;
-
-            DyeColor color = DyeColor.getByWoolData((byte) (15 - hand.getData().getData()));
+            DyeColor color = dye.getColor();
             toEquip.getTrait(WoolColor.class).setColor(color);
             Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED, toEquip.getName(), color.name()
                     .toLowerCase().replace("_", " "));
