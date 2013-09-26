@@ -45,8 +45,9 @@ public class WaypointCommands {
         if (args.argsLength() == 1) {
             if (args.hasFlag('d')) {
                 waypoints.describeProviders(sender);
-            } else
+            } else {
                 Messaging.sendTr(sender, Messages.CURRENT_WAYPOINT_PROVIDER, waypoints.getCurrentProviderName());
+            }
             return;
         }
         boolean success = waypoints.setWaypointProvider(args.getString(1));

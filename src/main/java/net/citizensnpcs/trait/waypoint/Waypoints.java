@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
@@ -74,6 +75,7 @@ public class Waypoints extends Trait {
         }
         if (provider == null)
             return;
+        PersistenceLoader.load(provider, key.getRelative(providerName));
         provider.load(key.getRelative(providerName));
     }
 
@@ -87,6 +89,7 @@ public class Waypoints extends Trait {
     public void save(DataKey key) {
         if (provider == null)
             return;
+        PersistenceLoader.save(provider, key.getRelative(providerName));
         provider.save(key.getRelative(providerName));
         key.setString("provider", providerName);
     }
@@ -113,8 +116,6 @@ public class Waypoints extends Trait {
         return true;
     }
 
-    private static final Map<String, Class<? extends WaypointProvider>> providers = Maps.newHashMap();
-
     /**
      * Registers a {@link WaypointProvider}, which can be subsequently used by
      * NPCs.
@@ -128,8 +129,11 @@ public class Waypoints extends Trait {
         providers.put(name, clazz);
     }
 
+    private static final Map<String, Class<? extends WaypointProvider>> providers = Maps.newHashMap();
+
     static {
         providers.put("linear", LinearWaypointProvider.class);
         providers.put("wander", WanderWaypointProvider.class);
+        providers.put("jeebissfinding", JeebissFindingWaypointProvider.class);
     }
 }

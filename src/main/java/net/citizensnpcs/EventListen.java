@@ -176,8 +176,9 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
         final NPC npc = npcRegistry.getNPC(event.getEntity());
-        if (npc == null)
+        if (npc == null) {
             return;
+        }
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         final Location location = npc.getBukkitEntity().getLocation();
         npc.despawn(DespawnReason.DEATH);
