@@ -35,6 +35,10 @@ public class Waypoint {
         triggers.add(trigger);
     }
 
+    public double distance(Waypoint dest) {
+        return location.distance(dest.location);
+    }
+
     public Location getLocation() {
         return location;
     }

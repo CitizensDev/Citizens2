@@ -2,7 +2,6 @@ package net.citizensnpcs.trait.waypoint;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -23,16 +22,12 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.waypoint.triggers.TriggerEditPrompt;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.conversations.Conversation;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -40,10 +35,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class LinearWaypointProvider implements WaypointProvider {
     private LinearWaypointGoal currentGoal;
@@ -121,12 +114,13 @@ public class LinearWaypointProvider implements WaypointProvider {
         Conversation conversation;
         boolean editing = true;
         int editingSlot = waypoints.size() - 1;
+        WaypointMarkers markers;
         private final Player player;
         private boolean showPath;
-        private final Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
 
         private LinearWaypointEditor(Player player) {
             this.player = player;
+            this.markers = new WaypointMarkers(player.getWorld());
         }
 
         @Override
@@ -138,29 +132,14 @@ public class LinearWaypointProvider implements WaypointProvider {
             editingSlot = 0;
             waypoints.clear();
             onWaypointsModified();
-            destroyWaypointMarkers();
+            markers.destroyWaypointMarkers();
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED);
-        }
-
-        private void createWaypointMarker(int index, Waypoint waypoint) {
-            Entity entity = spawnMarker(player.getWorld(), waypoint.getLocation().clone().add(0, 1, 0));
-            if (entity == null)
-                return;
-            entity.setMetadata("waypointindex", new FixedMetadataValue(CitizensAPI.getPlugin(), index));
-            waypointMarkers.put(waypoint, entity);
         }
 
         private void createWaypointMarkers() {
             for (int i = 0; i < waypoints.size(); i++) {
-                createWaypointMarker(i, waypoints.get(i));
+                markers.createWaypointMarker(waypoints.get(i));
             }
-        }
-
-        private void destroyWaypointMarkers() {
-            for (Entity entity : waypointMarkers.values()) {
-                entity.remove();
-            }
-            waypointMarkers.clear();
         }
 
         @Override
@@ -173,7 +152,7 @@ public class LinearWaypointProvider implements WaypointProvider {
             editing = false;
             if (!showPath)
                 return;
-            destroyWaypointMarkers();
+            markers.destroyWaypointMarkers();
         }
 
         private String formatLoc(Location location) {
@@ -275,8 +254,9 @@ public class LinearWaypointProvider implements WaypointProvider {
                 Waypoint element = new Waypoint(at);
                 normaliseEditingSlot();
                 waypoints.add(editingSlot, element);
-                if (showPath)
-                    createWaypointMarker(editingSlot, element);
+                if (showPath) {
+                    markers.createWaypointMarker(element);
+                }
                 editingSlot = Math.min(editingSlot + 1, waypoints.size());
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at),
                         editingSlot + 1, waypoints.size());
@@ -284,8 +264,9 @@ public class LinearWaypointProvider implements WaypointProvider {
                 event.setCancelled(true);
                 normaliseEditingSlot();
                 Waypoint waypoint = waypoints.remove(editingSlot);
-                if (showPath)
-                    removeWaypointMarker(waypoint);
+                if (showPath) {
+                    markers.removeWaypointMarker(waypoint);
+                }
                 editingSlot = Math.max(0, editingSlot - 1);
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_REMOVED_WAYPOINT, waypoints.size(),
                         editingSlot + 1);
@@ -331,23 +312,13 @@ public class LinearWaypointProvider implements WaypointProvider {
             }
         }
 
-        private void removeWaypointMarker(Waypoint waypoint) {
-            Entity entity = waypointMarkers.remove(waypoint);
-            if (entity != null)
-                entity.remove();
-        }
-
-        private Entity spawnMarker(World world, Location at) {
-            return NMS.spawnCustomEntity(world, at, EntityEnderCrystalMarker.class, EntityType.ENDER_CRYSTAL);
-        }
-
         private void togglePath() {
             showPath = !showPath;
             if (showPath) {
                 createWaypointMarkers();
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS);
             } else {
-                destroyWaypointMarkers();
+                markers.destroyWaypointMarkers();
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_NOT_SHOWING_MARKERS);
             }
         }
