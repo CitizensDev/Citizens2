@@ -1029,8 +1029,7 @@ public class NPCCommands {
             "skeletontype", "sktype" }, min = 2, max = 2, permission = "citizens.npc.skeletontype")
     @Requirements(selected = true, ownership = true, types = EntityType.SKELETON)
     public void skeletonType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        SkeletonType type = (type = SkeletonType.getType(args.getInteger(1))) == null ? SkeletonType.valueOf(args
-                .getString(1)) : type;
+        SkeletonType type = SkeletonType.valueOf(args.getString(1));
         if (type == null)
             throw new CommandException(Messages.INVALID_SKELETON_TYPE);
         npc.getTrait(NPCSkeletonType.class).setType(type);

@@ -109,7 +109,7 @@ public class BlockBreaker extends BehaviorGoalAdapter {
 
     @Override
     public boolean shouldExecute() {
-        return org.bukkit.Material.getMaterial(entity.world.getTypeId(x, y, z)) != null;
+        return entity.world.getTypeId(x, y, z) > 0;
     }
 
     private float strengthMod(Block block) {

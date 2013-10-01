@@ -100,9 +100,6 @@ public class Util {
     }
 
     public static EntityType matchEntityType(String toMatch) {
-        EntityType type = EntityType.fromName(toMatch);
-        if (type != null)
-            return type;
         return matchEnum(EntityType.values(), toMatch);
     }
 
