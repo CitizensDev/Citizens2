@@ -18,6 +18,10 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.prtree.DistanceResult;
+import net.citizensnpcs.api.util.prtree.PRTree;
+import net.citizensnpcs.api.util.prtree.Region3D;
+import net.citizensnpcs.api.util.prtree.SimplePointND;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
@@ -29,29 +33,31 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-public class JeebissFindingWaypointProvider implements WaypointProvider {
+public class GuidedWaypointProvider implements WaypointProvider {
     @Persist("availablewaypoints")
     private final List<Waypoint> available = Lists.newArrayList();
-    private JeebissFindingWaypointProviderGoal currentGoal;
+    private GuidedFindingWaypointProviderGoal currentGoal;
     @Persist("helperwaypoints")
     private final List<Waypoint> helpers = Lists.newArrayList();
     private NPC npc;
     private boolean paused;
+    private final PRTree<Region3D<Waypoint>> tree = PRTree.create(new Region3D.Converter<Waypoint>(), 30);
 
     @Override
     public WaypointEditor createEditor(final Player player, CommandContext args) {
         return new WaypointEditor() {
-            WaypointMarkers markers = new WaypointMarkers(player.getWorld());
+            private final WaypointMarkers markers = new WaypointMarkers(player.getWorld());
 
             @Override
             public void begin() {
                 showPath();
-                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_BEGIN);
+                Messaging.sendTr(player, Messages.GUIDED_WAYPOINT_EDITOR_BEGIN);
             }
 
             private void createWaypointMarkerWithData(Waypoint element) {
@@ -64,7 +70,8 @@ public class JeebissFindingWaypointProvider implements WaypointProvider {
 
             @Override
             public void end() {
-                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_END);
+                Messaging.sendTr(player, Messages.GUIDED_WAYPOINT_EDITOR_END);
+                markers.destroyWaypointMarkers();
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -83,6 +90,7 @@ public class JeebissFindingWaypointProvider implements WaypointProvider {
                     helpers.add(element);
                 }
                 createWaypointMarkerWithData(element);
+                rebuildTree();
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -114,16 +122,29 @@ public class JeebissFindingWaypointProvider implements WaypointProvider {
 
     @Override
     public void load(DataKey key) {
+        rebuildTree();
     }
 
     @Override
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {
-            currentGoal = new JeebissFindingWaypointProviderGoal();
+            currentGoal = new GuidedFindingWaypointProviderGoal();
             CitizensAPI.registerEvents(currentGoal);
             npc.getDefaultGoalController().addGoal(currentGoal, 1);
         }
+    }
+
+    private void rebuildTree() {
+        tree.load(Lists.newArrayList(Iterables.transform(Iterables.<Waypoint> concat(available, helpers),
+                new Function<Waypoint, Region3D<Waypoint>>() {
+                    @Override
+                    public Region3D<Waypoint> apply(Waypoint arg0) {
+                        Location loc = arg0.getLocation();
+                        Vector root = new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+                        return new Region3D<Waypoint>(root, root, arg0);
+                    }
+                })));
     }
 
     @Override
@@ -135,8 +156,8 @@ public class JeebissFindingWaypointProvider implements WaypointProvider {
         this.paused = paused;
     }
 
-    private class JeebissFindingWaypointProviderGoal implements Goal {
-        JeebissPlan plan;
+    private class GuidedFindingWaypointProviderGoal implements Goal {
+        private GuidedPlan plan;
 
         @Override
         public void reset() {
@@ -147,6 +168,9 @@ public class JeebissFindingWaypointProvider implements WaypointProvider {
         public void run(GoalSelector selector) {
             if (plan.isComplete()) {
                 selector.finish();
+                return;
+            }
+            if (npc.getNavigator().isNavigating()) {
                 return;
             }
             Waypoint current = plan.getCurrentWaypoint();
@@ -161,48 +185,56 @@ public class JeebissFindingWaypointProvider implements WaypointProvider {
 
         @Override
         public boolean shouldExecute(GoalSelector selector) {
-            if (paused || available.size() == 0 || !npc.isSpawned() || npc.getNavigator().isNavigating())
+            if (paused || available.size() == 0 || !npc.isSpawned() || npc.getNavigator().isNavigating()) {
                 return false;
+            }
             Waypoint target = available.get(Util.getFastRandom().nextInt(available.size()));
-            ASTAR.runFully(new JeebissGoal(target), null);
+            plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(new Waypoint(npc.getStoredLocation())));
+            if (plan == null) {
+                return false;
+            }
             return true;
         }
     }
 
-    private static class JeebissGoal implements AStarGoal<JeebissNode> {
+    private static class GuidedGoal implements AStarGoal<GuidedNode> {
         private final Waypoint dest;
 
-        public JeebissGoal(Waypoint dest) {
+        public GuidedGoal(Waypoint dest) {
             this.dest = dest;
         }
 
         @Override
-        public float g(JeebissNode from, JeebissNode to) {
+        public float g(GuidedNode from, GuidedNode to) {
             return (float) from.distance(to.waypoint);
         }
 
         @Override
-        public float getInitialCost(JeebissNode node) {
+        public float getInitialCost(GuidedNode node) {
             return h(node);
         }
 
         @Override
-        public float h(JeebissNode from) {
+        public float h(GuidedNode from) {
             return (float) from.distance(dest);
         }
 
         @Override
-        public boolean isFinished(JeebissNode node) {
+        public boolean isFinished(GuidedNode node) {
             return node.waypoint.equals(dest);
         }
     }
 
-    private static class JeebissNode extends AStarNode {
-        private Waypoint waypoint;
+    private class GuidedNode extends AStarNode {
+        private final Waypoint waypoint;
+
+        public GuidedNode(Waypoint waypoint) {
+            this.waypoint = waypoint;
+        }
 
         @Override
         public Plan buildPlan() {
-            return new JeebissPlan(this.<JeebissNode> getParents());
+            return new GuidedPlan(this.<GuidedNode> getParents());
         }
 
         public double distance(Waypoint dest) {
@@ -217,7 +249,7 @@ public class JeebissFindingWaypointProvider implements WaypointProvider {
             if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
-            JeebissNode other = (JeebissNode) obj;
+            GuidedNode other = (GuidedNode) obj;
             if (waypoint == null) {
                 if (other.waypoint != null) {
                     return false;
@@ -230,7 +262,16 @@ public class JeebissFindingWaypointProvider implements WaypointProvider {
 
         @Override
         public Iterable<AStarNode> getNeighbours() {
-            return null;
+            List<DistanceResult<Region3D<Waypoint>>> res = tree.nearestNeighbour(Region3D
+                    .<Waypoint> distanceCalculator(), Region3D.<Waypoint> alwaysAcceptNodeFilter(), 20,
+                    new SimplePointND(waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(), waypoint
+                            .getLocation().getBlockZ()));
+            return Iterables.transform(res, new Function<DistanceResult<Region3D<Waypoint>>, AStarNode>() {
+                @Override
+                public AStarNode apply(DistanceResult<Region3D<Waypoint>> arg0) {
+                    return new GuidedNode(arg0.get().getData());
+                }
+            });
         }
 
         @Override
@@ -239,14 +280,14 @@ public class JeebissFindingWaypointProvider implements WaypointProvider {
         }
     }
 
-    private static class JeebissPlan implements Plan {
+    private static class GuidedPlan implements Plan {
         private int index = 0;
         private final Waypoint[] path;
 
-        public JeebissPlan(Iterable<JeebissNode> path) {
-            this.path = Iterables.toArray(Iterables.transform(path, new Function<JeebissNode, Waypoint>() {
+        public GuidedPlan(Iterable<GuidedNode> path) {
+            this.path = Iterables.toArray(Iterables.transform(path, new Function<GuidedNode, Waypoint>() {
                 @Override
-                public Waypoint apply(JeebissNode to) {
+                public Waypoint apply(GuidedNode to) {
                     return to.waypoint;
                 }
             }), Waypoint.class);
@@ -267,5 +308,5 @@ public class JeebissFindingWaypointProvider implements WaypointProvider {
         }
     }
 
-    private static final AStarMachine<JeebissNode, JeebissPlan> ASTAR = AStarMachine.createWithDefaultStorage();
+    private static final AStarMachine<GuidedNode, GuidedPlan> ASTAR = AStarMachine.createWithDefaultStorage();
 }

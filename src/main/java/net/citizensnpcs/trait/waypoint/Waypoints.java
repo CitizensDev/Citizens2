@@ -134,6 +134,6 @@ public class Waypoints extends Trait {
     static {
         providers.put("linear", LinearWaypointProvider.class);
         providers.put("wander", WanderWaypointProvider.class);
-        providers.put("jeebissfinding", JeebissFindingWaypointProvider.class);
+        providers.put("guided", GuidedWaypointProvider.class);
     }
 }
