@@ -78,7 +78,7 @@ public class Equipment extends Trait {
             if (equipment[0] != null)
                 enderman.setCarriedMaterial(equipment[0].getData());
         } else {
-            LivingEntity entity = (LivingEntity) npc.getBukkitEntity();
+            LivingEntity entity = npc.getBukkitEntity();
             EntityEquipment equip = getEquipmentFromEntity(entity);
             if (equipment[0] != null)
                 equip.setItemInHand(equipment[0]);
@@ -126,7 +126,7 @@ public class Equipment extends Trait {
                 throw new UnsupportedOperationException("Slot can only be 0 for enderman");
             ((Enderman) npc.getBukkitEntity()).setCarriedMaterial(item.getData());
         } else {
-            EntityEquipment equip = getEquipmentFromEntity((LivingEntity) npc.getBukkitEntity());
+            EntityEquipment equip = getEquipmentFromEntity(npc.getBukkitEntity());
             switch (slot) {
                 case 0:
                     equip.setItemInHand(item);
@@ -146,8 +146,9 @@ public class Equipment extends Trait {
                 default:
                     throw new IllegalArgumentException("Slot must be between 0 and 4");
             }
-            if (npc.getBukkitEntity() instanceof Player)
+            if (npc.getBukkitEntity() instanceof Player) {
                 ((Player) npc.getBukkitEntity()).updateInventory();
+            }
         }
         equipment[slot] = item;
     }
