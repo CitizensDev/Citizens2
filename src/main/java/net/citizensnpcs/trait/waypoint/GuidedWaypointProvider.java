@@ -15,7 +15,7 @@ import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.prtree.DistanceResult;
@@ -25,6 +25,7 @@ import net.citizensnpcs.api.util.prtree.SimplePointND;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -40,14 +41,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class GuidedWaypointProvider implements WaypointProvider {
-    @Persist("availablewaypoints")
     private final List<Waypoint> available = Lists.newArrayList();
-    private GuidedFindingWaypointProviderGoal currentGoal;
-    @Persist("helperwaypoints")
+    private GuidedAIGoal currentGoal;
     private final List<Waypoint> helpers = Lists.newArrayList();
     private NPC npc;
     private boolean paused;
-    private final PRTree<Region3D<Waypoint>> tree = PRTree.create(new Region3D.Converter<Waypoint>(), 30);
+    private PRTree<Region3D<Waypoint>> tree = PRTree.create(new Region3D.Converter<Waypoint>(), 30);
 
     @Override
     public WaypointEditor createEditor(final Player player, CommandContext args) {
@@ -86,8 +85,10 @@ public class GuidedWaypointProvider implements WaypointProvider {
                 Waypoint element = new Waypoint(at);
                 if (player.isSneaking()) {
                     available.add(element);
+                    Messaging.send(player, Messages.GUIDED_WAYPOINT_EDITOR_ADDED_AVAILABLE);
                 } else {
                     helpers.add(element);
+                    Messaging.send(player, Messages.GUIDED_WAYPOINT_EDITOR_ADDED_GUIDE);
                 }
                 createWaypointMarkerWithData(element);
                 rebuildTree();
@@ -122,6 +123,18 @@ public class GuidedWaypointProvider implements WaypointProvider {
 
     @Override
     public void load(DataKey key) {
+        for (DataKey root : key.getRelative("availablewaypoints").getIntegerSubKeys()) {
+            Waypoint waypoint = PersistenceLoader.load(Waypoint.class, root);
+            if (waypoint == null)
+                continue;
+            available.add(waypoint);
+        }
+        for (DataKey root : key.getRelative("helperwaypoints").getIntegerSubKeys()) {
+            Waypoint waypoint = PersistenceLoader.load(Waypoint.class, root);
+            if (waypoint == null)
+                continue;
+            helpers.add(waypoint);
+        }
         rebuildTree();
     }
 
@@ -129,13 +142,14 @@ public class GuidedWaypointProvider implements WaypointProvider {
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {
-            currentGoal = new GuidedFindingWaypointProviderGoal();
+            currentGoal = new GuidedAIGoal();
             CitizensAPI.registerEvents(currentGoal);
             npc.getDefaultGoalController().addGoal(currentGoal, 1);
         }
     }
 
     private void rebuildTree() {
+        tree = PRTree.create(new Region3D.Converter<Waypoint>(), 30);
         tree.load(Lists.newArrayList(Iterables.transform(Iterables.<Waypoint> concat(available, helpers),
                 new Function<Waypoint, Region3D<Waypoint>>() {
                     @Override
@@ -149,6 +163,16 @@ public class GuidedWaypointProvider implements WaypointProvider {
 
     @Override
     public void save(DataKey key) {
+        key.removeKey("availablewaypoints");
+        DataKey root = key.getRelative("availablewaypoints");
+        for (int i = 0; i < available.size(); ++i) {
+            PersistenceLoader.save(available.get(i), root.getRelative(i));
+        }
+        key.removeKey("helperwaypoints");
+        root = key.getRelative("helperwaypoints");
+        for (int i = 0; i < helpers.size(); ++i) {
+            PersistenceLoader.save(helpers.get(i), root.getRelative(i));
+        }
     }
 
     @Override
@@ -156,25 +180,31 @@ public class GuidedWaypointProvider implements WaypointProvider {
         this.paused = paused;
     }
 
-    private class GuidedFindingWaypointProviderGoal implements Goal {
+    private class GuidedAIGoal implements Goal {
         private GuidedPlan plan;
 
         @Override
         public void reset() {
             plan = null;
+            System.err.println("Reset");
         }
 
         @Override
         public void run(GoalSelector selector) {
             if (plan.isComplete()) {
                 selector.finish();
+                System.err.println("Complete");
                 return;
             }
             if (npc.getNavigator().isNavigating()) {
                 return;
             }
+            System.err.println("Updating target");
             Waypoint current = plan.getCurrentWaypoint();
             npc.getNavigator().setTarget(current.getLocation());
+            for (int i = 0; i < 5; i++)
+                current.getLocation().getWorld()
+                        .playEffect(current.getLocation().clone().add(0, 1, 0), Effect.STEP_SOUND, 1);
             npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(CancelReason cancelReason) {
@@ -190,10 +220,9 @@ public class GuidedWaypointProvider implements WaypointProvider {
             }
             Waypoint target = available.get(Util.getFastRandom().nextInt(available.size()));
             plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(new Waypoint(npc.getStoredLocation())));
-            if (plan == null) {
-                return false;
-            }
-            return true;
+            if (plan == null)
+                System.err.println("No path");
+            return plan != null;
         }
     }
 
@@ -263,7 +292,7 @@ public class GuidedWaypointProvider implements WaypointProvider {
         @Override
         public Iterable<AStarNode> getNeighbours() {
             List<DistanceResult<Region3D<Waypoint>>> res = tree.nearestNeighbour(Region3D
-                    .<Waypoint> distanceCalculator(), Region3D.<Waypoint> alwaysAcceptNodeFilter(), 20,
+                    .<Waypoint> distanceCalculator(), Region3D.<Waypoint> alwaysAcceptNodeFilter(), 15,
                     new SimplePointND(waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(), waypoint
                             .getLocation().getBlockZ()));
             return Iterables.transform(res, new Function<DistanceResult<Region3D<Waypoint>>, AStarNode>() {
