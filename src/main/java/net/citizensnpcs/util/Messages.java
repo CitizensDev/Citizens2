@@ -77,6 +77,8 @@ public class Messages {
     public static final String GAMEMODE_SET = "citizens.commands.npc.gamemode.set";
     public static final String GRAVITY_DISABLED = "citizens.commands.npc.gravity.disabled";
     public static final String GRAVITY_ENABLED = "citizens.commands.npc.gravity.enabled";
+    public static final String GUIDED_WAYPOINT_EDITOR_ADDED_AVAILABLE = "citizens.editors.waypoints.guided.added-available";
+    public static final String GUIDED_WAYPOINT_EDITOR_ADDED_GUIDE = "citizens.editors.waypoints.guided.added-guide";
     public static final String GUIDED_WAYPOINT_EDITOR_BEGIN = "citizens.editors.waypoints.guided.begin";
     public static final String GUIDED_WAYPOINT_EDITOR_END = "citizens.editors.waypoints.guided.end";
     public static final String HORSE_CHEST_SET = "citizens.commands.npc.horse.chest-set";
