@@ -212,7 +212,7 @@ public class NPCCommands {
             flags = "myn")
     public void controllable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if ((npc.isSpawned() && !sender.hasPermission("citizens.npc.controllable."
-                + npc.getBukkitEntity().getType().toString().toLowerCase()))
+                + npc.getBukkitEntity().getType().name().toLowerCase().replace("_", "")))
                 || !sender.hasPermission("citizens.npc.controllable"))
             throw new NoPermissionsException();
         if (!npc.hasTrait(Controllable.class)) {
