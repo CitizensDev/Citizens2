@@ -152,7 +152,7 @@ public class NPCCommands {
                 throw new ServerCommandException();
 
             if (args.hasFlag('c')) {
-                if (trait.addAnchor(args.getFlag("save"), args.getSenderTargetBlockLocation())) {
+                if (trait.addAnchor(args.getFlag("save"), args.getSenderTargetBlockLocation().add(0,1,0))) {
                     Messaging.sendTr(sender, Messages.ANCHOR_ADDED);
                 } else
                     throw new CommandException(Messages.ANCHOR_ALREADY_EXISTS, args.getFlag("save"));
@@ -181,12 +181,19 @@ public class NPCCommands {
             Paginator paginator = new Paginator().header("Anchors");
             paginator.addLine("<e>Key: <a>ID  <b>Name  <c>World  <d>Location (X,Y,Z)");
             for (int i = 0; i < trait.getAnchors().size(); i++) {
-                String line = "<a>" + i + "<b>  " + trait.getAnchors().get(i).getName() + "<c>  "
-                        + trait.getAnchors().get(i).getLocation().getWorld().getName() + "<d>  "
-                        + trait.getAnchors().get(i).getLocation().getBlockX() + ", "
-                        + trait.getAnchors().get(i).getLocation().getBlockY() + ", "
-                        + trait.getAnchors().get(i).getLocation().getBlockZ();
-                paginator.addLine(line);
+                if (trait.getAnchors().get(i).isLoaded()) {
+                    String line = "<a>" + i + "<b>  " + trait.getAnchors().get(i).getName() + "<c>  "
+                            + trait.getAnchors().get(i).getLocation().getWorld().getName() + "<d>  "
+                            + trait.getAnchors().get(i).getLocation().getBlockX() + ", "
+                            + trait.getAnchors().get(i).getLocation().getBlockY() + ", "
+                            + trait.getAnchors().get(i).getLocation().getBlockZ();
+                    paginator.addLine(line);
+                } else {
+                    String[] parts = trait.getAnchors().get(i).getUnloadedValue();
+                    String line = "<a>" + i + "<b>  " + trait.getAnchors().get(i).getName() + "<c>  "
+                            + parts[0] + "<d>  " + parts[1] + ", " + parts[2] + ", " + parts[3] + " <f>(unloaded)";
+                    paginator.addLine(line);
+                }
             }
 
             int page = args.getInteger(1, 1);
@@ -1004,7 +1011,7 @@ public class NPCCommands {
                         if (range > 0
                                 && test.isSpawned()
                                 && !Util.locationWithinRange(args.getSenderLocation(), test.getBukkitEntity()
-                                        .getLocation(), range))
+                                .getLocation(), range))
                             continue;
                         possible.add(test);
                     }
