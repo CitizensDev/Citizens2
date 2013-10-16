@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.ai.speech;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class Chat implements VocalChord {
         else { // Multiple recipients
             String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<npc>", npc.getName())
                     .replace("<text>", context.getMessage());
-            List<String> targetNames = Collections.emptyList();
+            List<String> targetNames = new ArrayList<String>();
             // Talk to each recipient
             for (Talkable entity : context) {
                 entity.talkTo(context, text, this);
@@ -72,20 +73,20 @@ public class Chat implements VocalChord {
                 return;
             String targets = "";
             int max = Setting.CHAT_MAX_NUMBER_OF_TARGETS.asInt();
-            String[] format = Setting.CHAT_FORMAT_WITH_TARGETS_TO_BYSTANDERS.asString().split("\\|");
+            String[] format = Setting.CHAT_MULTIPLE_TARGETS_FORMAT.asString().split("\\|");
             if (format.length != 4)
-                Messaging.severe("npc.chat.format.with-target-to-bystanders invalid!");
+                Messaging.severe("npc.chat.options.multiple-targets-format invalid!");
             if (max == 1) {
-                targets = format[0].replace("<npc>", targetNames.get(0)) + format[3];
+                targets = format[0].replace("<target>", targetNames.get(0)) + format[3];
             } else if (max == 2 || targetNames.size() == 2) {
                 if (targetNames.size() == 2) {
-                    targets = format[0].replace("<npc>", targetNames.get(0))
-                            + format[2].replace("<npc>", targetNames.get(1));
+                    targets = format[0].replace("<target>", targetNames.get(0))
+                            + format[2].replace("<target>", targetNames.get(1));
                 } else
-                    targets = format[0].replace("<npc>", targetNames.get(0))
-                            + format[1].replace("<npc>", targetNames.get(1)) + format[3];
+                    targets = format[0].replace("<target>", targetNames.get(0))
+                            + format[1].replace("<target>", targetNames.get(1)) + format[3];
             } else if (max >= 3) {
-                targets = format[0].replace("<npc>", targetNames.get(0));
+                targets = format[0].replace("<target>", targetNames.get(0));
 
                 int x = 1;
                 for (x = 1; x < max - 1; x++) {
@@ -114,17 +115,20 @@ public class Chat implements VocalChord {
             // Continue if a LivingEntity, which is compatible with
             // TalkableEntity
             if (bystander instanceof LivingEntity) {
+
+                boolean should_talk = true;
                 // Exclude targeted recipients
                 if (context.hasRecipients()) {
                     for (Talkable target : context)
-                        if (target.getEntity() == bystander)
-                            continue;
-                        else
-                            new TalkableEntity((LivingEntity) bystander).talkNear(context, text, this);
-                } else
-                    // Found a nearby LivingEntity, make it Talkable and
-                    // talkNear it
+                        if (target.getEntity().equals(bystander))
+                            should_talk = false;
+                }
+
+                // Found a nearby LivingEntity, make it Talkable and
+                // talkNear it if 'should_talk'
+                if (should_talk)
                     new TalkableEntity((LivingEntity) bystander).talkNear(context, text, this);
+
             }
     }
 
