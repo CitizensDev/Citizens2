@@ -152,7 +152,7 @@ public class NPCCommands {
                 throw new ServerCommandException();
 
             if (args.hasFlag('c')) {
-                if (trait.addAnchor(args.getFlag("save"), args.getSenderTargetBlockLocation().add(0,1,0))) {
+                if (trait.addAnchor(args.getFlag("save"), args.getSenderTargetBlockLocation())) {
                     Messaging.sendTr(sender, Messages.ANCHOR_ADDED);
                 } else
                     throw new CommandException(Messages.ANCHOR_ALREADY_EXISTS, args.getFlag("save"));
