@@ -12,9 +12,13 @@ import net.citizensnpcs.util.Messages;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 
 public class Anchors extends Trait {
-    private final List<Anchor> anchors = new ArrayList<Anchor>();
+    private List<Anchor> anchors = new ArrayList<Anchor>();
 
     public Anchors() {
         super("anchors");
@@ -41,14 +45,20 @@ public class Anchors extends Trait {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        for (DataKey sub : key.getRelative("list").getIntegerSubKeys())
+        for (DataKey sub : key.getRelative("list").getIntegerSubKeys()) {
+            String[] parts = sub.getString("").split(";");
+            Location location;
             try {
-                String[] parts = sub.getString("").split(";");
-                anchors.add(new Anchor(parts[0], new Location(Bukkit.getServer().getWorld(parts[1]), Double
-                        .valueOf(parts[2]), Double.valueOf(parts[3]), Double.valueOf(parts[4]))));
+                location = new Location(Bukkit.getServer().getWorld(parts[1]), Double
+                        .valueOf(parts[2]), Double.valueOf(parts[3]), Double.valueOf(parts[4]));
+                anchors.add(new Anchor(parts[0], location));
             } catch (NumberFormatException e) {
                 Messaging.logTr(Messages.SKIPPING_INVALID_ANCHOR, sub.name(), e.getMessage());
+            } catch (NullPointerException e) {
+                // Invalid world/location/etc. Still enough data to build an unloaded anchor
+                anchors.add(new Anchor(parts[0], sub.getString("").split(";", 2)[1]));
             }
+        }
     }
 
     public boolean removeAnchor(Anchor anchor) {
@@ -65,4 +75,12 @@ public class Anchors extends Trait {
         for (int i = 0; i < anchors.size(); i++)
             key.setString("list." + String.valueOf(i), anchors.get(i).stringValue());
     }
+
+    @EventHandler
+    public void checkWorld(WorldLoadEvent event) {
+        for (Anchor anchor : anchors)
+            if (!anchor.isLoaded())
+                anchor.load();
+    }
+
 }
