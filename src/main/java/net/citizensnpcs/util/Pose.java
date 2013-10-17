@@ -49,12 +49,12 @@ public class Pose {
     }
 
     public String stringValue() {
-        return name + ";" + pitch + ";" + yaw;
+        return name + ';' + pitch + ';' + yaw;
     }
 
     @Override
     public String toString() {
-        return "Name: " + name + " Pitch: " + pitch + " Yaw: " + yaw;
+        return "Pose{Name='" + name + "';Pitch='" + pitch + "';Yaw='" + yaw + "';}";
     }
 
 }
