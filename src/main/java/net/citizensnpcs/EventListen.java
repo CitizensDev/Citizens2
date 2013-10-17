@@ -242,7 +242,7 @@ public class EventListen implements Listener {
         checkCreationEvent(event);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = npcRegistry.getNPC(event.getRightClicked());
         if (npc == null) {
