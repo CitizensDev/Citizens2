@@ -143,6 +143,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             return;
         }
         localParams = defaultParams.clone();
+        updatePathfindingRange();
         PathStrategy newStrategy = new MCTargetStrategy(npc, target, aggressive, localParams);
         switchStrategyTo(newStrategy);
     }
@@ -161,6 +162,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             return;
         }
         localParams = defaultParams.clone();
+        updatePathfindingRange();
         PathStrategy newStrategy;
         if (localParams.useNewPathfinder()) {
             newStrategy = new AStarNavigationStrategy(npc, target, localParams);
