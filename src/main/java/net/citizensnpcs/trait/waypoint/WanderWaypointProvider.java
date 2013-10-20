@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 public class WanderWaypointProvider implements WaypointProvider {
     private Goal currentGoal;
+    private NPC npc;
     private volatile boolean paused;
     @Persist
     private final int xrange = DEFAULT_XRANGE;
@@ -43,7 +44,13 @@ public class WanderWaypointProvider implements WaypointProvider {
     }
 
     @Override
+    public void onRemove() {
+        npc.getDefaultGoalController().removeGoal(currentGoal);
+    }
+
+    @Override
     public void onSpawn(NPC npc) {
+        this.npc = npc;
         if (currentGoal == null) {
             currentGoal = WanderGoal.createWithNPCAndRange(npc, xrange, yrange);
             CitizensAPI.registerEvents(currentGoal);
@@ -61,5 +68,6 @@ public class WanderWaypointProvider implements WaypointProvider {
     }
 
     private static final int DEFAULT_XRANGE = 3;
+
     private static final int DEFAULT_YRANGE = 25;
 }

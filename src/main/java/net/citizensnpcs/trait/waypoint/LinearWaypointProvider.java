@@ -87,6 +87,11 @@ public class LinearWaypointProvider implements WaypointProvider {
     }
 
     @Override
+    public void onRemove() {
+        npc.getDefaultGoalController().removeGoal(currentGoal);
+    }
+
+    @Override
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {

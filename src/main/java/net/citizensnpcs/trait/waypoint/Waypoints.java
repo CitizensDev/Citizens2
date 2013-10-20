@@ -81,8 +81,9 @@ public class Waypoints extends Trait {
 
     @Override
     public void onSpawn() {
-        if (provider != null)
+        if (provider != null) {
             provider.onSpawn(getNPC());
+        }
     }
 
     @Override
@@ -105,14 +106,15 @@ public class Waypoints extends Trait {
     public boolean setWaypointProvider(String name) {
         name = name.toLowerCase();
         Class<? extends WaypointProvider> clazz = providers.get(name);
-        if (clazz == null)
-            return false;
-        provider = create(clazz);
-        if (provider == null)
+        if (provider != null) {
+            provider.onRemove();
+        }
+        if (clazz == null || (provider = create(clazz)) == null)
             return false;
         providerName = name;
-        if (npc != null && npc.isSpawned())
+        if (npc != null && npc.isSpawned()) {
             provider.onSpawn(npc);
+        }
         return true;
     }
 

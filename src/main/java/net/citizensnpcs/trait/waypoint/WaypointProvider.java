@@ -34,6 +34,11 @@ public interface WaypointProvider {
     public void load(DataKey key);
 
     /**
+     * Called when the provider is removed from the NPC.
+     */
+    public void onRemove();
+
+    /**
      * Called when the {@link NPC} attached to this provider is spawned.
      * 
      * @param npc
