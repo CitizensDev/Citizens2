@@ -25,12 +25,13 @@ import net.citizensnpcs.api.util.prtree.SimplePointND;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
-import org.bukkit.Effect;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -52,11 +53,18 @@ public class GuidedWaypointProvider implements WaypointProvider {
     public WaypointEditor createEditor(final Player player, CommandContext args) {
         return new WaypointEditor() {
             private final WaypointMarkers markers = new WaypointMarkers(player.getWorld());
+            private boolean showPath;
 
             @Override
             public void begin() {
                 showPath();
                 Messaging.sendTr(player, Messages.GUIDED_WAYPOINT_EDITOR_BEGIN);
+            }
+
+            private void createWaypointMarkers() {
+                for (Waypoint waypoint : Iterables.concat(available, helpers)) {
+                    markers.createWaypointMarker(waypoint);
+                }
             }
 
             private void createWaypointMarkerWithData(Waypoint element) {
@@ -71,6 +79,18 @@ public class GuidedWaypointProvider implements WaypointProvider {
             public void end() {
                 Messaging.sendTr(player, Messages.GUIDED_WAYPOINT_EDITOR_END);
                 markers.destroyWaypointMarkers();
+            }
+
+            @EventHandler(ignoreCancelled = true)
+            public void onPlayerChat(AsyncPlayerChatEvent event) {
+                if (event.getMessage().equalsIgnoreCase("toggle path")) {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                        @Override
+                        public void run() {
+                            togglePath();
+                        }
+                    });
+                }
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -111,6 +131,17 @@ public class GuidedWaypointProvider implements WaypointProvider {
             private void showPath() {
                 for (Waypoint element : Iterables.concat(available, helpers)) {
                     createWaypointMarkerWithData(element);
+                }
+            }
+
+            private void togglePath() {
+                showPath = !showPath;
+                if (showPath) {
+                    createWaypointMarkers();
+                    Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS);
+                } else {
+                    markers.destroyWaypointMarkers();
+                    Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_NOT_SHOWING_MARKERS);
                 }
             }
         };
@@ -191,25 +222,19 @@ public class GuidedWaypointProvider implements WaypointProvider {
         @Override
         public void reset() {
             plan = null;
-            System.err.println("Reset");
         }
 
         @Override
         public void run(GoalSelector selector) {
             if (plan.isComplete()) {
                 selector.finish();
-                System.err.println("Complete");
                 return;
             }
             if (npc.getNavigator().isNavigating()) {
                 return;
             }
-            System.err.println("Updating target");
             Waypoint current = plan.getCurrentWaypoint();
             npc.getNavigator().setTarget(current.getLocation());
-            for (int i = 0; i < 5; i++)
-                current.getLocation().getWorld()
-                        .playEffect(current.getLocation().clone().add(0, 1, 0), Effect.STEP_SOUND, 1);
             npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(CancelReason cancelReason) {
@@ -225,8 +250,6 @@ public class GuidedWaypointProvider implements WaypointProvider {
             }
             Waypoint target = available.get(Util.getFastRandom().nextInt(available.size()));
             plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(new Waypoint(npc.getStoredLocation())));
-            if (plan == null)
-                System.err.println("No path");
             return plan != null;
         }
     }
