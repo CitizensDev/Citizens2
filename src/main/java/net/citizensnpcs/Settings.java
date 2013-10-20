@@ -68,6 +68,7 @@ public class Settings {
         DATABASE_URL("storage.database.url", ""),
         DATABASE_USERNAME("storage.database.username", ""),
         DEBUG_MODE("general.debug-mode", false),
+        DEBUG_PATHFINDING("general.debug-mode.pathfinding", false),
         DEFAULT_LOOK_CLOSE("npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("npc.default.look-close.range", 5),
         DEFAULT_NPC_LIMIT("npc.limits.default-limit", 10),

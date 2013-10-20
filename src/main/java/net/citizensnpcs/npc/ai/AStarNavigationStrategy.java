@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.ai;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
@@ -12,6 +13,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_6_R3.EntityLiving;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -66,6 +68,11 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double dY = vector.getY() - handle.locY;
         double xzDistance = dX * dX + dZ * dZ;
         double distance = xzDistance + dY * dY;
+        if (Setting.DEBUG_PATHFINDING.asBoolean()) {
+            for (int i = 0; i < 5; i++) {
+                npc.getBukkitEntity().getWorld().playEffect(npc.getStoredLocation(), Effect.MOBSPAWNER_FLAMES, 0);
+            }
+        }
         if (distance > 0 && dY > 0 && xzDistance <= 2.75) {
             NMS.setShouldJump(npc.getBukkitEntity());
         }
