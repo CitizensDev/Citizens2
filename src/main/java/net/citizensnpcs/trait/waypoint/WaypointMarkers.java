@@ -41,6 +41,6 @@ public class WaypointMarkers {
     }
 
     public Entity spawnMarker(World world, Location at) {
-        return NMS.spawnCustomEntity(world, at, EntityEnderCrystalMarker.class, EntityType.ENDER_CRYSTAL);
+        return NMS.spawnCustomEntity(world, at, EntityEnderSignalMarker.class, EntityType.ENDER_SIGNAL);
     }
 }
