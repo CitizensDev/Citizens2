@@ -21,6 +21,7 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.Packet34EntityTeleport;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -38,6 +39,7 @@ import com.google.common.base.Throwables;
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
+    private int packetUpdateCount;
 
     public CitizensNPC(int id, String name, EntityController entityController, NPCRegistry registry) {
         super(id, name, registry);
@@ -228,6 +230,13 @@ public class CitizensNPC extends AbstractNPC {
             if (isSpawned()) {
                 NMS.trySwim(getBukkitEntity());
                 navigator.run();
+                if (++packetUpdateCount > 30) {
+                    if (!getNavigator().isNavigating()) {
+                        NMS.sendPacketNearby(getStoredLocation(),
+                                new Packet34EntityTeleport(NMS.getHandle(getBukkitEntity())));
+                    }
+                    packetUpdateCount = 0;
+                }
             }
         } catch (Exception ex) {
             Throwable error = Throwables.getRootCause(ex);
