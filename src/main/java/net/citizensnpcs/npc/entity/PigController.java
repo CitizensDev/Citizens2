@@ -50,13 +50,6 @@ public class PigController extends MobEntityController {
         }
 
         @Override
-        public void bi() {
-            super.bi();
-            if (npc != null)
-                npc.update();
-        }
-
-        @Override
         public boolean bH() {
             if (npc == null)
                 return super.bH();
@@ -67,6 +60,13 @@ public class PigController extends MobEntityController {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
+        }
+
+        @Override
+        public void bi() {
+            super.bi();
+            if (npc != null)
+                npc.update();
         }
 
         @Override
