@@ -190,8 +190,8 @@ public class NPCCommands {
                     paginator.addLine(line);
                 } else {
                     String[] parts = trait.getAnchors().get(i).getUnloadedValue();
-                    String line = "<a>" + i + "<b>  " + trait.getAnchors().get(i).getName() + "<c>  "
-                            + parts[0] + "<d>  " + parts[1] + ", " + parts[2] + ", " + parts[3] + " <f>(unloaded)";
+                    String line = "<a>" + i + "<b>  " + trait.getAnchors().get(i).getName() + "<c>  " + parts[0]
+                            + "<d>  " + parts[1] + ", " + parts[2] + ", " + parts[3] + " <f>(unloaded)";
                     paginator.addLine(line);
                 }
             }
@@ -779,6 +779,24 @@ public class NPCCommands {
         Messaging.sendTr(sender, serverOwner ? Messages.OWNER_SET_SERVER : Messages.OWNER_SET, npc.getName(), name);
     }
 
+    @Command(
+            aliases = { "npc" },
+            usage = "pathopt --avoid-water|aw [true|false]",
+            desc = "Sets an NPC's pathfinding options",
+            modifiers = { "pathopt", "po", "patho" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.pathfindingoptions")
+    public void pathfindingOptions(CommandContext args, CommandSender sender, NPC npc) {
+        if (args.hasValueFlag("avoid-water") || args.hasValueFlag("aw")) {
+            String raw = args.getFlag("avoid-water", args.getFlag("aw"));
+            boolean avoid = Boolean.parseBoolean(raw);
+            npc.getNavigator().getDefaultParameters().avoidWater(avoid);
+            Messaging.sendTr(sender, avoid ? Messages.PATHFINDING_OPTIONS_AVOID_WATER_SET
+                    : Messages.PATHFINDING_OPTIONS_AVOID_WATER_UNSET, npc.getName());
+        }
+    }
+
     @Command(aliases = { "npc" }, usage = "pathrange [range]", desc = "Sets an NPC's pathfinding range", modifiers = {
             "pathrange", "pathfindingrange", "prange" }, min = 2, max = 2, permission = "citizens.npc.pathfindingrange")
     public void pathfindingRange(CommandContext args, CommandSender sender, NPC npc) {
@@ -1011,7 +1029,7 @@ public class NPCCommands {
                         if (range > 0
                                 && test.isSpawned()
                                 && !Util.locationWithinRange(args.getSenderLocation(), test.getBukkitEntity()
-                                .getLocation(), range))
+                                        .getLocation(), range))
                             continue;
                         possible.add(test);
                     }
