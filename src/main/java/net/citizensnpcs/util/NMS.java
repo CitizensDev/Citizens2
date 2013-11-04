@@ -324,6 +324,11 @@ public class NMS {
         entity.Y = height;
     }
 
+    public static void setVerticalMovement(LivingEntity bukkitEntity, double d) {
+        EntityLiving handle = NMS.getHandle(bukkitEntity);
+        handle.bf = (float) d;
+    }
+
     public static boolean shouldJump(net.minecraft.server.v1_6_R3.Entity entity) {
         if (JUMP_FIELD == null || !(entity instanceof EntityLiving))
             return false;
