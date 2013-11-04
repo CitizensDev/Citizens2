@@ -102,10 +102,11 @@ public class PersistenceLoader {
             List<Object> list = (List<Object>) (!List.class.isAssignableFrom(collectionType) ? Lists.newArrayList()
                     : collectionType.newInstance());
             Object raw = root.getRaw(field.key);
-            if (raw instanceof List && collectionType.isAssignableFrom(raw.getClass()))
+            if (raw instanceof List && collectionType.isAssignableFrom(raw.getClass())) {
                 list = (List<Object>) raw;
-            else
+            } else {
                 deserialiseCollection(list, root, field);
+            }
             value = list;
         } else if (Set.class.isAssignableFrom(type)) {
             Set<Object> set;
@@ -335,8 +336,9 @@ public class PersistenceLoader {
     public static void save(Object instance, DataKey root) {
         Class<?> clazz = instance.getClass();
         Field[] fields = getFields(clazz);
-        for (Field field : fields)
+        for (Field field : fields) {
             serialise(new PersistField(field, instance), root);
+        }
     }
 
     private static void serialise(PersistField field, DataKey root) {
@@ -369,8 +371,9 @@ public class PersistenceLoader {
             ((Persister<Object>) field.delegate).save(value, root);
         } else if (value instanceof Enum) {
             root.setRaw("", ((Enum<?>) value).name());
-        } else
+        } else {
             root.setRaw("", value);
+        }
     }
 
     private static final Map<Class<?>, Field[]> fieldCache = new WeakHashMap<Class<?>, Field[]>();

@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.ai;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.citizensnpcs.api.ai.event.CancelReason;
@@ -13,10 +14,10 @@ public class NavigatorParameters implements Cloneable {
     private AttackStrategy attackStrategy;
     private boolean avoidWater;
     private float baseSpeed = 1F;
-    private final List<NavigatorCallback> callbacks = Lists.newArrayListWithExpectedSize(3);
+    private List<NavigatorCallback> callbacks = Lists.newArrayListWithExpectedSize(3);
     private AttackStrategy defaultStrategy;
     private double distanceMargin = 2F;
-    private final List<BlockExaminer> examiners = Lists.newArrayList();
+    private List<BlockExaminer> examiners = Lists.newArrayList();
     private float range;
     private float speedModifier = 1F;
     private int stationaryTicks = -1;
@@ -109,9 +110,17 @@ public class NavigatorParameters implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public NavigatorParameters clone() {
         try {
-            return (NavigatorParameters) super.clone();
+            NavigatorParameters clone = (NavigatorParameters) super.clone();
+            if (callbacks instanceof ArrayList) {
+                clone.callbacks = (List<NavigatorCallback>) ((ArrayList<NavigatorCallback>) callbacks).clone();
+            }
+            if (examiners instanceof ArrayList) {
+                clone.examiners = (List<BlockExaminer>) ((ArrayList<BlockExaminer>) examiners).clone();
+            }
+            return clone;
         } catch (CloneNotSupportedException e) {
             return null;
         }

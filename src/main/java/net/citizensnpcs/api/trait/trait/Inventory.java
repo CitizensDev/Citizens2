@@ -1,13 +1,13 @@
 package net.citizensnpcs.api.trait.trait;
 
+import java.util.Arrays;
+
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Arrays;
 
 /**
  * Represents an NPC's inventory.
@@ -47,8 +47,9 @@ public class Inventory extends Trait {
         for (ItemStack item : contents) {
             // Clear previous items to avoid conflicts
             key.removeKey(String.valueOf(slot));
-            if (item != null)
+            if (item != null) {
                 ItemStorage.saveItem(key.getRelative(String.valueOf(slot)), item);
+            }
             slot++;
         }
     }

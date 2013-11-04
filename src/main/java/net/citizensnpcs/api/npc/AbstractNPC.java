@@ -315,8 +315,9 @@ public abstract class AbstractNPC implements NPC {
         }
         if (traitNames.length() > 0) {
             root.setString("traitnames", traitNames.substring(0, traitNames.length() - 1));
-        } else
+        } else {
             root.setString("traitnames", "");
+        }
         for (String name : removedTraits) {
             root.removeKey("traits." + name);
         }

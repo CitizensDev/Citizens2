@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -9,16 +10,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
 public class MinecraftBlockExaminer implements BlockExaminer {
-    private boolean contains(Material[] search, Material... find) {
-        for (Material haystack : search) {
-            for (Material needle : find) {
-                if (haystack == needle)
-                    return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public float getCost(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
@@ -32,10 +23,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         if (isLiquid(above, below, in))
             return 0.5F;
         return 0.5F; // TODO: add light level-specific costs
-    }
-
-    private boolean isLiquid(Material... materials) {
-        return contains(materials, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA);
     }
 
     @Override
@@ -53,8 +40,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return true;
     }
 
-    public static boolean canStandIn(Material mat) {
-        return PASSABLE.contains(mat);
+    public static boolean canStandIn(Material... mat) {
+        return PASSABLE.containsAll(Arrays.asList(mat));
     }
 
     public static boolean canStandOn(Block block) {
@@ -65,6 +52,20 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     public static boolean canStandOn(Material mat) {
         return !UNWALKABLE.contains(mat) && !PASSABLE.contains(mat);
+    }
+
+    private static boolean contains(Material[] search, Material... find) {
+        for (Material haystack : search) {
+            for (Material needle : find) {
+                if (haystack == needle)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isLiquid(Material... materials) {
+        return contains(materials, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA);
     }
 
     private static final Vector DOWN = new Vector(0, -1, 0);
@@ -79,6 +80,5 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             Material.WOODEN_DOOR, Material.STATIONARY_WATER);
     private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.STATIONARY_LAVA,
             Material.CACTUS);
-
     private static final Vector UP = new Vector(0, 1, 0);
 }

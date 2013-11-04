@@ -51,6 +51,14 @@ public class PersistenceLoaderTest {
     }
 
     @Test
+    public void longLoadSaveTest() {
+        LongLoadSaveTest load = new LongLoadSaveTest();
+        PersistenceLoader.save(load, root);
+        PersistenceLoader.load(load, root);
+        assertEquals(load.term, 234234233);
+    }
+
+    @Test
     public void processesRequiredCorrectly() {
         assertThat(PersistenceLoader.load(RequiredTest.class, root), is(nullValue()));
     }
@@ -113,6 +121,11 @@ public class PersistenceLoaderTest {
     public static class InferenceTest {
         @Persist
         public Map<String, Integer> map = new ConcurrentHashMap<String, Integer>();
+    }
+
+    public static class LongLoadSaveTest {
+        @Persist
+        private final long term = 234234233;
     }
 
     public static class RequiredTest {
