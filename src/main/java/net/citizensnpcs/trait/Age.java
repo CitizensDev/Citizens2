@@ -29,8 +29,8 @@ public class Age extends Trait implements Toggleable {
 
     @Override
     public void onSpawn() {
-        if (npc.getBukkitEntity() instanceof Ageable) {
-            Ageable entity = (Ageable) npc.getBukkitEntity();
+        if (npc.getEntity() instanceof Ageable) {
+            Ageable entity = (Ageable) npc.getEntity();
             entity.setAge(age);
             entity.setAgeLock(locked);
             ageable = entity;

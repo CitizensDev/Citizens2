@@ -37,7 +37,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
         this.npc = npc;
         this.parameters = params;
-        this.handle = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
+        this.handle = ((CraftLivingEntity) npc.getEntity()).getHandle();
         this.target = ((CraftEntity) target).getHandle();
         Navigation nav = NMS.getNavigation(this.handle);
         this.targetNavigator = nav != null && !params.useNewPathfinder() ? new NavigationFieldWrapper(nav)

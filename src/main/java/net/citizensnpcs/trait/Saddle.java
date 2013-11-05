@@ -25,8 +25,8 @@ public class Saddle extends Trait implements Toggleable {
 
     @Override
     public void onSpawn() {
-        if (npc.getBukkitEntity() instanceof Pig) {
-            ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
+        if (npc.getEntity() instanceof Pig) {
+            ((Pig) npc.getEntity()).setSaddle(saddle);
             pig = true;
         } else
             pig = false;
@@ -36,7 +36,7 @@ public class Saddle extends Trait implements Toggleable {
     public boolean toggle() {
         saddle = !saddle;
         if (pig)
-            ((Pig) npc.getBukkitEntity()).setSaddle(saddle);
+            ((Pig) npc.getEntity()).setSaddle(saddle);
         return saddle;
     }
 

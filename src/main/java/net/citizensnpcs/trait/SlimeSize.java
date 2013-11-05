@@ -23,17 +23,17 @@ public class SlimeSize extends Trait {
 
     @Override
     public void onSpawn() {
-        if (!(npc.getBukkitEntity() instanceof Slime)) {
+        if (!(npc.getEntity() instanceof Slime)) {
             slime = false;
             return;
         }
-        ((Slime) npc.getBukkitEntity()).setSize(size);
+        ((Slime) npc.getEntity()).setSize(size);
         slime = true;
     }
 
     public void setSize(int size) {
         this.size = size;
         if (slime)
-            ((Slime) npc.getBukkitEntity()).setSize(size);
+            ((Slime) npc.getEntity()).setSize(size);
     }
 }

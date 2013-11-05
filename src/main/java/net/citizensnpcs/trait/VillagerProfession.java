@@ -25,8 +25,8 @@ public class VillagerProfession extends Trait {
 
     @Override
     public void onSpawn() {
-        if (npc.getBukkitEntity() instanceof Villager)
-            ((Villager) npc.getBukkitEntity()).setProfession(profession);
+        if (npc.getEntity() instanceof Villager)
+            ((Villager) npc.getEntity()).setProfession(profession);
     }
 
     @Override
@@ -36,8 +36,8 @@ public class VillagerProfession extends Trait {
 
     public void setProfession(Profession profession) {
         this.profession = profession;
-        if (npc.getBukkitEntity() instanceof Villager)
-            ((Villager) npc.getBukkitEntity()).setProfession(profession);
+        if (npc.getEntity() instanceof Villager)
+            ((Villager) npc.getEntity()).setProfession(profession);
     }
 
     @Override

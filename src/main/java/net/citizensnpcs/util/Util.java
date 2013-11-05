@@ -23,7 +23,7 @@ public class Util {
     private Util() {
     }
 
-    public static void assumePose(LivingEntity entity, float yaw, float pitch) {
+    public static void assumePose(Entity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);
     }
 
@@ -39,16 +39,16 @@ public class Util {
         return event;
     }
 
-    public static void faceEntity(LivingEntity from, LivingEntity at) {
-        if (from.getWorld() != at.getWorld())
+    public static void faceEntity(Entity entity, Entity at) {
+        if (entity.getWorld() != at.getWorld())
             return;
-        faceLocation(from, at.getLocation(AT_LOCATION));
+        faceLocation(entity, at.getLocation(AT_LOCATION));
     }
 
-    public static void faceLocation(LivingEntity from, Location to) {
-        if (from.getWorld() != to.getWorld())
+    public static void faceLocation(Entity entity, Location to) {
+        if (entity.getWorld() != to.getWorld())
             return;
-        Location fromLocation = from.getLocation(FROM_LOCATION);
+        Location fromLocation = entity.getLocation(FROM_LOCATION);
         double xDiff, yDiff, zDiff;
         xDiff = to.getX() - fromLocation.getX();
         yDiff = to.getY() - fromLocation.getY();
@@ -62,7 +62,11 @@ public class Util {
         if (zDiff < 0.0)
             yaw += Math.abs(180 - yaw) * 2;
 
-        NMS.look(from, (float) yaw - 90, (float) pitch);
+        NMS.look(entity, (float) yaw - 90, (float) pitch);
+    }
+
+    public static Location getEyeLocation(Entity entity) {
+        return entity instanceof LivingEntity ? ((LivingEntity) entity).getEyeLocation() : entity.getLocation();
     }
 
     public static Random getFastRandom() {

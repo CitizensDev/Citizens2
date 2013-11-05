@@ -11,7 +11,7 @@ import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.citizensnpcs.util.Util;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -29,7 +29,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         this.params = params;
         this.destination = dest;
         this.npc = npc;
-        Location location = npc.getBukkitEntity().getEyeLocation();
+        Location location = Util.getEyeLocation(npc.getEntity());
         plan = ASTAR.runFully(new VectorGoal(dest, (float) params.distanceMargin()), new VectorNode(location,
                 new ChunkBlockSource(location, params.range()), params.examiners()), 50000);
         if (plan == null || plan.isComplete()) {
@@ -54,15 +54,14 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
         }
-        if (npc.getBukkitEntity().getLocation(NPC_LOCATION).toVector().distanceSquared(vector) <= params
-                .distanceMargin()) {
+        if (npc.getEntity().getLocation(NPC_LOCATION).toVector().distanceSquared(vector) <= params.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
                 return true;
             }
             vector = plan.getCurrentVector();
         }
-        EntityLiving handle = NMS.getHandle(npc.getBukkitEntity());
+        net.minecraft.server.v1_6_R3.Entity handle = NMS.getHandle(npc.getEntity());
         double dX = vector.getBlockX() - handle.locX;
         double dZ = vector.getBlockZ() - handle.locZ;
         double dY = vector.getY() - handle.locY;
@@ -70,13 +69,13 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double distance = xzDistance + dY * dY;
         if (Setting.DEBUG_PATHFINDING.asBoolean()) {
             for (int i = 0; i < 5; i++) {
-                npc.getBukkitEntity().getWorld().playEffect(npc.getStoredLocation(), Effect.MOBSPAWNER_FLAMES, 0);
+                npc.getEntity().getWorld().playEffect(npc.getStoredLocation(), Effect.MOBSPAWNER_FLAMES, 0);
             }
         }
         if (distance > 0 && dY > 0 && xzDistance <= 2.75) {
-            NMS.setShouldJump(npc.getBukkitEntity());
+            NMS.setShouldJump(npc.getEntity());
         }
-        NMS.setDestination(npc.getBukkitEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
+        NMS.setDestination(npc.getEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
         return false;
     }
 

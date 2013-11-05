@@ -52,10 +52,10 @@ public class NMS {
         // util class
     }
 
-    public static void addOrRemoveFromPlayerList(LivingEntity bukkitEntity, boolean remove) {
-        if (bukkitEntity == null)
+    public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
+        if (entity == null)
             return;
-        EntityLiving handle = getHandle(bukkitEntity);
+        Entity handle = getHandle(entity);
         if (handle.world == null)
             return;
         if (remove) {
@@ -178,8 +178,8 @@ public class NMS {
         return DEFAULT_SPEED;
     }
 
-    public static boolean inWater(LivingEntity entity) {
-        EntityLiving mcEntity = getHandle(entity);
+    public static boolean inWater(org.bukkit.entity.Entity entity) {
+        Entity mcEntity = getHandle(entity);
         return mcEntity.H() || mcEntity.J();
     }
 
@@ -199,8 +199,8 @@ public class NMS {
         }
     }
 
-    public static void look(LivingEntity bukkitEntity, float yaw, float pitch) {
-        EntityLiving handle = getHandle(bukkitEntity);
+    public static void look(org.bukkit.entity.Entity entity, float yaw, float pitch) {
+        Entity handle = getHandle(entity);
         handle.yaw = yaw;
         setHeadYaw(handle, yaw);
         handle.pitch = pitch;
@@ -287,8 +287,8 @@ public class NMS {
         }
     }
 
-    public static void setDestination(LivingEntity bukkitEntity, double x, double y, double z, float speed) {
-        EntityLiving handle = ((CraftLivingEntity) bukkitEntity).getHandle();
+    public static void setDestination(org.bukkit.entity.Entity entity, double x, double y, double z, float speed) {
+        Entity handle = ((CraftEntity) entity).getHandle();
         if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).getControllerMove().a(x, y, z, speed);
         } else if (handle instanceof EntityHumanNPC) {
@@ -296,7 +296,10 @@ public class NMS {
         }
     }
 
-    public static void setHeadYaw(EntityLiving handle, float yaw) {
+    public static void setHeadYaw(Entity en, float yaw) {
+        if (!(en instanceof EntityLiving))
+            return;
+        EntityLiving handle = (EntityLiving) en;
         while (yaw < -180.0F) {
             yaw += 360.0F;
         }
@@ -310,8 +313,8 @@ public class NMS {
         handle.aQ = yaw;
     }
 
-    public static void setShouldJump(LivingEntity entity) {
-        EntityLiving handle = getHandle(entity);
+    public static void setShouldJump(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
         if (handle instanceof EntityInsentient) {
             ControllerJump controller = ((EntityInsentient) handle).getControllerJump();
             controller.a();
@@ -324,8 +327,10 @@ public class NMS {
         entity.Y = height;
     }
 
-    public static void setVerticalMovement(LivingEntity bukkitEntity, double d) {
-        EntityLiving handle = NMS.getHandle(bukkitEntity);
+    public static void setVerticalMovement(org.bukkit.entity.Entity bukkitEntity, double d) {
+        if (!bukkitEntity.getType().isAlive())
+            return;
+        EntityLiving handle = NMS.getHandle((LivingEntity) bukkitEntity);
         handle.bf = (float) d;
     }
 
@@ -374,11 +379,11 @@ public class NMS {
         }
     }
 
-    public static void trySwim(LivingEntity handle) {
-        trySwim(handle, 0.04F);
+    public static void trySwim(org.bukkit.entity.Entity entity) {
+        trySwim(entity, 0.04F);
     }
 
-    public static void trySwim(LivingEntity entity, float power) {
+    public static void trySwim(org.bukkit.entity.Entity entity, float power) {
         Entity handle = getHandle(entity);
         if (RANDOM.nextFloat() < 0.8F && inWater(entity)) {
             handle.motY += power;
@@ -402,10 +407,10 @@ public class NMS {
         navigation.f();
     }
 
-    public static void updateNavigationWorld(LivingEntity entity, org.bukkit.World world) {
+    public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {
         if (NAVIGATION_WORLD_FIELD == null)
             return;
-        EntityLiving en = ((CraftLivingEntity) entity).getHandle();
+        Entity en = ((CraftEntity) entity).getHandle();
         if (!(en instanceof EntityInsentient))
             return;
         EntityInsentient handle = (EntityInsentient) en;
@@ -418,9 +423,9 @@ public class NMS {
     }
 
     public static void updatePathfindingRange(NPC npc, float pathfindingRange) {
-        if (!npc.isSpawned())
+        if (!npc.isSpawned() || !npc.getEntity().getType().isAlive())
             return;
-        EntityLiving en = ((CraftLivingEntity) npc.getBukkitEntity()).getHandle();
+        EntityLiving en = ((CraftLivingEntity) npc.getEntity()).getHandle();
         if (!(en instanceof EntityInsentient)) {
             if (en instanceof EntityHumanNPC) {
                 ((EntityHumanNPC) en).updatePathfindingRange(pathfindingRange);

@@ -10,23 +10,22 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class TalkableEntity implements Talkable {
+    Entity entity;
 
-    LivingEntity entity;
-
-    public TalkableEntity(LivingEntity entity) {
+    public TalkableEntity(Entity entity) {
         this.entity = entity;
     }
 
     public TalkableEntity(NPC npc) {
-        entity = npc.getBukkitEntity();
+        entity = npc.getEntity();
     }
 
     public TalkableEntity(Player player) {
-        entity = (LivingEntity) player;
+        entity = player;
     }
 
     /**
@@ -38,34 +37,35 @@ public class TalkableEntity implements Talkable {
     @Override
     public int compareTo(Object o) {
         // If not living entity, return -1
-        if (!(o instanceof LivingEntity))
+        if (!(o instanceof Entity)) {
             return -1;
-        // If NPC and matches, return 0
-        else if (CitizensAPI.getNPCRegistry().isNPC((LivingEntity) o)
-                && CitizensAPI.getNPCRegistry().isNPC((LivingEntity) entity)
-                && CitizensAPI.getNPCRegistry().getNPC((LivingEntity) o).getId() == CitizensAPI.getNPCRegistry()
-                        .getNPC((LivingEntity) entity).getId())
+            // If NPC and matches, return 0
+        } else if (CitizensAPI.getNPCRegistry().isNPC((Entity) o)
+                && CitizensAPI.getNPCRegistry().isNPC(entity)
+                && CitizensAPI.getNPCRegistry().getNPC((Entity) o).getId() == CitizensAPI.getNPCRegistry()
+                        .getNPC(entity).getId()) {
             return 0;
-        else if ((LivingEntity) o == entity)
+        } else if (entity.equals(o)) {
             return 0;
-        // Not a match, return 1
-        else
+        } else {
             return 1;
+        }
     }
 
     @Override
-    public LivingEntity getEntity() {
+    public Entity getEntity() {
         return entity;
     }
 
     @Override
     public String getName() {
-        if (CitizensAPI.getNPCRegistry().isNPC(entity))
+        if (CitizensAPI.getNPCRegistry().isNPC(entity)) {
             return CitizensAPI.getNPCRegistry().getNPC(entity).getName();
-        else if (entity instanceof Player)
+        } else if (entity instanceof Player) {
             return ((Player) entity).getName();
-        else
+        } else {
             return entity.getType().name().replace("_", " ");
+        }
     }
 
     private void talk(String message) {
@@ -79,8 +79,7 @@ public class TalkableEntity implements Talkable {
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
-        else
-            talk(event.getMessage());
+        talk(event.getMessage());
     }
 
     @Override
@@ -89,8 +88,7 @@ public class TalkableEntity implements Talkable {
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
-        else
-            talk(event.getMessage());
+        talk(event.getMessage());
     }
 
 }

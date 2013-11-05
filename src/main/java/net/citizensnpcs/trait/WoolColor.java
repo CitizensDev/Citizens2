@@ -35,11 +35,12 @@ public class WoolColor extends Trait {
 
     @Override
     public void onSpawn() {
-        if (npc.getBukkitEntity() instanceof Sheep) {
-            ((Sheep) npc.getBukkitEntity()).setColor(color);
+        if (npc.getEntity() instanceof Sheep) {
+            ((Sheep) npc.getEntity()).setColor(color);
             sheep = true;
-        } else
+        } else {
             sheep = false;
+        }
     }
 
     @Override
@@ -49,8 +50,9 @@ public class WoolColor extends Trait {
 
     public void setColor(DyeColor color) {
         this.color = color;
-        if (sheep)
-            ((Sheep) npc.getBukkitEntity()).setColor(color);
+        if (sheep) {
+            ((Sheep) npc.getEntity()).setColor(color);
+        }
     }
 
     @Override

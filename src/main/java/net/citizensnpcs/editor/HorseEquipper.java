@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 public class HorseEquipper implements Equipper {
     @Override
     public void equip(Player equipper, NPC toEquip) {
-        Horse horse = (Horse) toEquip.getBukkitEntity();
+        Horse horse = (Horse) toEquip.getEntity();
         NMS.openHorseScreen(horse, equipper);
     }
 }

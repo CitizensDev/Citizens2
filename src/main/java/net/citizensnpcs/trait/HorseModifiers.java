@@ -46,8 +46,8 @@ public class HorseModifiers extends Trait {
 
     @Override
     public void run() {
-        if (npc.getBukkitEntity() instanceof Horse) {
-            Horse horse = (Horse) npc.getBukkitEntity();
+        if (npc.getEntity() instanceof Horse) {
+            Horse horse = (Horse) npc.getEntity();
             saddle = horse.getInventory().getSaddle();
             armor = horse.getInventory().getArmor();
         }
@@ -74,8 +74,8 @@ public class HorseModifiers extends Trait {
     }
 
     private void updateModifiers() {
-        if (npc.getBukkitEntity() instanceof Horse) {
-            Horse horse = (Horse) npc.getBukkitEntity();
+        if (npc.getEntity() instanceof Horse) {
+            Horse horse = (Horse) npc.getEntity();
             horse.setCarryingChest(carryingChest);
             horse.setColor(color);
             horse.setStyle(style);

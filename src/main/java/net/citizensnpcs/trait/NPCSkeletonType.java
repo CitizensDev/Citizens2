@@ -16,13 +16,14 @@ public class NPCSkeletonType extends Trait {
 
     @Override
     public void onSpawn() {
-        skeleton = npc.getBukkitEntity() instanceof Skeleton ? (Skeleton) npc.getBukkitEntity() : null;
+        skeleton = npc.getEntity() instanceof Skeleton ? (Skeleton) npc.getEntity() : null;
     }
 
     @Override
     public void run() {
-        if (skeleton != null)
+        if (skeleton != null) {
             skeleton.setSkeletonType(type);
+        }
     }
 
     public void setType(org.bukkit.entity.Skeleton.SkeletonType type) {

@@ -32,10 +32,11 @@ public class AnimationTrigger implements WaypointTrigger {
 
     @Override
     public void onWaypointReached(NPC npc, Location waypoint) {
-        if (npc.getBukkitEntity().getType() != EntityType.PLAYER)
+        if (npc.getEntity().getType() != EntityType.PLAYER)
             return;
-        Player player = (Player) npc.getBukkitEntity();
-        for (PlayerAnimation animation : animations)
+        Player player = (Player) npc.getEntity();
+        for (PlayerAnimation animation : animations) {
             animation.play(player);
+        }
     }
 }

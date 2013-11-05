@@ -17,7 +17,7 @@ public class SheepEquipper implements Equipper {
     @Override
     public void equip(Player equipper, NPC toEquip) {
         ItemStack hand = equipper.getItemInHand();
-        Sheep sheep = (Sheep) toEquip.getBukkitEntity();
+        Sheep sheep = (Sheep) toEquip.getEntity();
         if (hand.getType() == Material.SHEARS) {
             Messaging.sendTr(equipper, toEquip.getTrait(Sheared.class).toggle() ? Messages.SHEARED_SET
                     : Messages.SHEARED_STOPPED, toEquip.getName());

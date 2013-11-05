@@ -237,7 +237,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         public void onPlayerInteract(PlayerInteractEvent event) {
             if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL)
                 return;
-            if (event.getPlayer().getWorld() != npc.getBukkitEntity().getWorld())
+            if (event.getPlayer().getWorld() != npc.getEntity().getWorld())
                 return;
             if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
                 if (event.getClickedBlock() == null)
@@ -405,7 +405,7 @@ public class LinearWaypointProvider implements WaypointProvider {
             }
             this.selector = selector;
             Waypoint next = itr.next();
-            Location npcLoc = npc.getBukkitEntity().getLocation(cachedLocation);
+            Location npcLoc = npc.getEntity().getLocation(cachedLocation);
             if (npcLoc.getWorld() != next.getLocation().getWorld()
                     || npcLoc.distanceSquared(next.getLocation()) < npc.getNavigator().getLocalParameters()
                             .distanceMargin()) {
@@ -418,7 +418,7 @@ public class LinearWaypointProvider implements WaypointProvider {
                 public void onCompletion(@Nullable CancelReason cancelReason) {
                     if (npc.isSpawned()
                             && currentDestination != null
-                            && Util.locationWithinRange(npc.getBukkitEntity().getLocation(),
+                            && Util.locationWithinRange(npc.getEntity().getLocation(),
                                     currentDestination.getLocation(), 4)) {
                         currentDestination.onReach(npc);
                     }

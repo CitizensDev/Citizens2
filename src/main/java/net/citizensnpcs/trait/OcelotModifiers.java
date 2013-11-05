@@ -31,8 +31,8 @@ public class OcelotModifiers extends Trait {
     }
 
     private void updateModifiers() {
-        if (npc.getBukkitEntity() instanceof Ocelot) {
-            Ocelot ocelot = (Ocelot) npc.getBukkitEntity();
+        if (npc.getEntity() instanceof Ocelot) {
+            Ocelot ocelot = (Ocelot) npc.getEntity();
             ocelot.setCatType(type);
             ocelot.setSitting(sitting);
         }

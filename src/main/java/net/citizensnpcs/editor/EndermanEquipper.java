@@ -20,15 +20,15 @@ public class EndermanEquipper implements Equipper {
             return;
         }
 
-        MaterialData carried = ((Enderman) npc.getBukkitEntity()).getCarriedMaterial();
+        MaterialData carried = ((Enderman) npc.getEntity()).getCarriedMaterial();
         if (carried.getItemType() == Material.AIR) {
             if (hand.getType() == Material.AIR) {
                 Messaging.sendErrorTr(equipper, Messages.EQUIPMENT_EDITOR_INVALID_BLOCK);
                 return;
             }
         } else {
-            equipper.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), carried.toItemStack(1));
-            ((Enderman) npc.getBukkitEntity()).setCarriedMaterial(hand.getData());
+            equipper.getWorld().dropItemNaturally(npc.getEntity().getLocation(), carried.toItemStack(1));
+            ((Enderman) npc.getEntity()).setCarriedMaterial(hand.getData());
         }
 
         ItemStack set = hand.clone();

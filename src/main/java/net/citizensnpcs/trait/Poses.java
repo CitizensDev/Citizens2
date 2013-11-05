@@ -37,7 +37,7 @@ public class Poses extends Trait {
         if (!npc.isSpawned())
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
 
-        Util.assumePose(npc.getBukkitEntity(), yaw, pitch);
+        Util.assumePose(npc.getEntity(), yaw, pitch);
     }
 
     public void assumePose(Location location) {

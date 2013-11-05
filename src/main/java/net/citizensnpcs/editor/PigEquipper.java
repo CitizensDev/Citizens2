@@ -14,7 +14,7 @@ public class PigEquipper implements Equipper {
     @Override
     public void equip(Player equipper, NPC toEquip) {
         ItemStack hand = equipper.getItemInHand();
-        Pig pig = (Pig) toEquip.getBukkitEntity();
+        Pig pig = (Pig) toEquip.getEntity();
         if (hand.getType() == Material.SADDLE) {
             if (!pig.hasSaddle()) {
                 toEquip.getTrait(Saddle.class).toggle();

@@ -56,7 +56,7 @@ public class GenericEquipper implements Equipper {
             case AIR:
                 for (int i = 0; i < 5; i++) {
                     if (trait.get(i) != null && trait.get(i).getType() != Material.AIR) {
-                        equipper.getWorld().dropItemNaturally(toEquip.getBukkitEntity().getLocation(), trait.get(i));
+                        equipper.getWorld().dropItemNaturally(toEquip.getEntity().getLocation(), trait.get(i));
                         trait.set(i, null);
                     }
                 }
@@ -68,7 +68,7 @@ public class GenericEquipper implements Equipper {
         // Drop any previous equipment on the ground
         ItemStack equippedItem = trait.get(slot);
         if (equippedItem != null && equippedItem.getType() != Material.AIR)
-            equipper.getWorld().dropItemNaturally(toEquip.getBukkitEntity().getLocation(), equippedItem);
+            equipper.getWorld().dropItemNaturally(toEquip.getEntity().getLocation(), equippedItem);
 
         // Now edit the equipment based on the slot
         if (type != Material.AIR) {

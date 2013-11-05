@@ -16,6 +16,7 @@ import net.citizensnpcs.util.Util;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class LookClose extends Trait implements Toggleable, CommandConfigurable {
@@ -29,7 +30,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     private boolean canSeeTarget() {
-        return realisticLooking ? npc.getBukkitEntity().hasLineOfSight(lookingAt) : true;
+        return realisticLooking && npc.getEntity() instanceof LivingEntity ? ((LivingEntity) npc.getEntity())
+                .hasLineOfSight(lookingAt) : true;
     }
 
     @Override
@@ -40,8 +42,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     private void findNewTarget() {
-        List<Entity> nearby = npc.getBukkitEntity().getNearbyEntities(range, range, range);
-        final Location npcLocation = npc.getBukkitEntity().getLocation(NPC_LOCATION);
+        List<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
+        final Location npcLocation = npc.getEntity().getLocation(NPC_LOCATION);
         Collections.sort(nearby, new Comparator<Entity>() {
             @Override
             public int compare(Entity o1, Entity o2) {
@@ -64,8 +66,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     private boolean hasInvalidTarget() {
         if (lookingAt == null)
             return true;
-        if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getBukkitEntity().getWorld()
-                || lookingAt.getLocation().distanceSquared(npc.getBukkitEntity().getLocation()) > range) {
+        if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getEntity().getWorld()
+                || lookingAt.getLocation().distanceSquared(npc.getEntity().getLocation()) > range) {
             lookingAt = null;
         }
         return lookingAt == null;
@@ -96,7 +98,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             findNewTarget();
         }
         if (lookingAt != null && canSeeTarget()) {
-            Util.faceEntity(npc.getBukkitEntity(), lookingAt);
+            Util.faceEntity(npc.getEntity(), lookingAt);
         }
     }
 
