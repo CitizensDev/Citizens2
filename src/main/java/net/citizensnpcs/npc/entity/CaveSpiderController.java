@@ -7,6 +7,7 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.citizensnpcs.util.nms.FlyingUtil;
 import net.minecraft.server.v1_6_R3.EntityCaveSpider;
 import net.minecraft.server.v1_6_R3.World;
 
@@ -58,12 +59,28 @@ public class CaveSpiderController extends MobEntityController {
         }
 
         @Override
+        protected void a(double d0, boolean flag) {
+            if (npc == null || !npc.isFlyable()) {
+                super.a(d0, flag);
+            }
+        }
+
+        @Override
+        protected void b(float f) {
+            if (npc == null || !npc.isFlyable()) {
+                super.b(f);
+            }
+        }
+
+        @Override
         public boolean bH() {
-            if (npc == null)
+            if (npc == null) {
                 return super.bH();
+            }
             boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
-            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
+            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault)) {
                 return super.bH();
+            }
             if (super.bH()) {
                 unleash(true, false); // clearLeash with client update
             }
@@ -73,15 +90,16 @@ public class CaveSpiderController extends MobEntityController {
         @Override
         public void bi() {
             super.bi();
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
+            }
         }
 
         @Override
         public void bl() {
-            if (npc == null)
+            if (npc == null) {
                 super.bl();
-            else {
+            } else {
                 NMS.updateAI(this);
                 npc.update();
             }
@@ -92,8 +110,27 @@ public class CaveSpiderController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
+        }
+
+        @Override
+        public boolean e() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.e();
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public void e(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.e(f, f1);
+            } else {
+                FlyingUtil.moveLogic(this, f, f1);
+            }
         }
 
         @Override

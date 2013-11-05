@@ -7,6 +7,7 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.citizensnpcs.util.nms.FlyingUtil;
 import net.minecraft.server.v1_6_R3.EntityEnderman;
 import net.minecraft.server.v1_6_R3.World;
 
@@ -58,6 +59,20 @@ public class EndermanController extends MobEntityController {
         }
 
         @Override
+        protected void a(double d0, boolean flag) {
+            if (npc == null || !npc.isFlyable()) {
+                super.a(d0, flag);
+            }
+        }
+
+        @Override
+        protected void b(float f) {
+            if (npc == null || !npc.isFlyable()) {
+                super.b(f);
+            }
+        }
+
+        @Override
         public boolean bH() {
             if (npc == null)
                 return super.bH();
@@ -104,6 +119,24 @@ public class EndermanController extends MobEntityController {
             super.collide(entity);
             if (npc != null)
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+        }
+
+        @Override
+        public boolean e() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.e();
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public void e(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.e(f, f1);
+            } else {
+                FlyingUtil.moveLogic(this, f, f1);
+            }
         }
 
         @Override

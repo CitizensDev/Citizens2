@@ -10,8 +10,10 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
@@ -20,6 +22,7 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.citizensnpcs.util.nms.FlyingUtil;
 import net.minecraft.server.v1_6_R3.Packet34EntityTeleport;
 
 import org.bukkit.Bukkit;
@@ -98,6 +101,12 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public boolean isFlyable() {
+        updateFlyableState();
+        return data().get(NPC.FLYABLE_METADATA, false);
+    }
+
+    @Override
     public boolean isSpawned() {
         return getEntity() != null;
     }
@@ -140,6 +149,12 @@ public class CitizensNPC extends AbstractNPC {
         if (wasSpawned) {
             spawn(prev);
         }
+    }
+
+    @Override
+    public void setFlyable(boolean flyable) {
+        data().setPersistent(NPC.FLYABLE_METADATA, flyable);
+        updateFlyableState();
     }
 
     @Override
@@ -247,6 +262,15 @@ public class CitizensNPC extends AbstractNPC {
             Throwable error = Throwables.getRootCause(ex);
             Messaging.logTr(Messages.EXCEPTION_UPDATING_NPC, getId(), error.getMessage());
             error.printStackTrace();
+        }
+    }
+
+    private void updateFlyableState() {
+        EntityType type = getTrait(MobType.class).getType();
+        if (type == null)
+            return;
+        if (FlyingUtil.isAlwaysFlyable(type)) {
+            data().setPersistent(NPC.FLYABLE_METADATA, true);
         }
     }
 

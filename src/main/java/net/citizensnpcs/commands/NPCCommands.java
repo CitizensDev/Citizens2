@@ -422,6 +422,24 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "flyable (true|false)",
+            desc = "Toggles or sets an NPC's flyable status",
+            modifiers = { "flyable" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.flyable")
+    @Requirements(selected = true, ownership = true, excludedTypes = { EntityType.BAT, EntityType.BLAZE,
+            EntityType.ENDER_DRAGON, EntityType.GHAST, EntityType.WITHER })
+    public void flyable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        boolean flyable = args.argsLength() == 2 ? args.getString(1).equals("true") : !npc.isFlyable();
+        npc.setFlyable(flyable);
+        flyable = npc.isFlyable(); // may not have applied
+
+        Messaging.sendTr(sender, flyable ? Messages.FLYABLE_SET : Messages.FLYABLE_UNSET);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "gamemode [gamemode]",
             desc = "Changes the gamemode",
             modifiers = { "gamemode" },
