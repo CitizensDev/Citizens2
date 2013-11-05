@@ -126,7 +126,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return true;
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (!npc.isSpawned() || !enabled)
             return;
