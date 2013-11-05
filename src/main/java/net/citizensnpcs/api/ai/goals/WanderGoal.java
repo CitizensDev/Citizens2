@@ -26,7 +26,7 @@ public class WanderGoal extends BehaviorGoalAdapter {
     }
 
     private Location findRandomPosition() {
-        Location base = npc.getBukkitEntity().getLocation();
+        Location base = npc.getEntity().getLocation();
         Location found = null;
         for (int i = 0; i < 10; i++) {
             int x = base.getBlockX() + random.nextInt(2 * xrange) - xrange;

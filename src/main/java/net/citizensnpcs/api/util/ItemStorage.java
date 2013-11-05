@@ -34,7 +34,12 @@ public class ItemStorage {
     private static Map<Enchantment, Integer> deserialiseEnchantments(DataKey root, ItemStack res) {
         Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
         for (DataKey subKey : root.getSubKeys()) {
-            Enchantment enchantment = Enchantment.getById(Integer.parseInt(subKey.name()));
+            Enchantment enchantment = null;
+            try {
+                enchantment = Enchantment.getById(Integer.parseInt(subKey.name()));
+            } catch (NumberFormatException ex) {
+                enchantment = Enchantment.getByName(subKey.name());
+            }
             if (enchantment != null && enchantment.canEnchantItem(res)) {
                 int level = Math.min(subKey.getInt(""), enchantment.getMaxLevel());
                 enchantments.put(enchantment, level);
@@ -121,19 +126,14 @@ public class ItemStorage {
 
     public static ItemStack loadItemStack(DataKey root) {
         String raw = root.getString("type", root.getString("id"));
-        if (raw == null || raw.length() == 0)
+        if (raw == null || raw.length() == 0) {
             return null;
-        int id = -1;
-        try {
-            id = Integer.parseInt(raw);
-        } catch (NumberFormatException ex) {
-            Material match = Material.matchMaterial(root.getString("type", root.getString("id")));
-            if (match != null)
-                id = match.getId();
         }
-        if (id <= 0)
+        Material material = Material.matchMaterial(raw);
+        if (material == null) {
             return null;
-        ItemStack res = new ItemStack(id, root.getInt("amount"), (short) (root.getInt("durability",
+        }
+        ItemStack res = new ItemStack(material, root.getInt("amount"), (short) (root.getInt("durability",
                 root.getInt("data", 0))));
         if (root.keyExists("mdata") && res.getData() != null) {
             res.getData().setData((byte) root.getInt("mdata"));
@@ -156,7 +156,7 @@ public class ItemStorage {
         if (item == null)
             return;
         migrateForSave(key);
-        key.setInt("type", item.getTypeId());
+        key.setString("type", item.getType().name());
         key.setInt("amount", item.getAmount());
         key.setInt("durability", item.getDurability());
         if (item.getData() != null) {
@@ -166,8 +166,9 @@ public class ItemStorage {
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
             serialiseMeta(key.getRelative("meta"), meta);
-        } else
+        } else {
             key.removeKey("meta");
+        }
         serialiseEnchantments(key.getRelative("enchantments"), item.getEnchantments());
     }
 
@@ -179,8 +180,9 @@ public class ItemStorage {
     }
 
     private static void serialiseEnchantments(DataKey key, Map<Enchantment, Integer> enchantments) {
-        for (Map.Entry<Enchantment, Integer> enchantment : enchantments.entrySet())
-            key.setInt(Integer.toString(enchantment.getKey().getId()), enchantment.getValue());
+        for (Map.Entry<Enchantment, Integer> enchantment : enchantments.entrySet()) {
+            key.setInt(enchantment.getKey().getName(), enchantment.getValue());
+        }
     }
 
     private static void serialiseFireworkEffect(DataKey key, FireworkEffect effect) {

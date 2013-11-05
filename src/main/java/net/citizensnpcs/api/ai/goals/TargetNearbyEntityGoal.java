@@ -51,7 +51,7 @@ public class TargetNearbyEntityGoal extends BehaviorGoalAdapter {
     public boolean shouldExecute() {
         if (targets.size() == 0 || !npc.isSpawned())
             return false;
-        Collection<Entity> nearby = npc.getBukkitEntity().getNearbyEntities(radius, radius, radius);
+        Collection<Entity> nearby = npc.getEntity().getNearbyEntities(radius, radius, radius);
         this.target = null;
         for (Entity entity : nearby) {
             if (targets.contains(entity.getType())) {

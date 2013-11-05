@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bukkit.entity.LivingEntity;
-
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent;
 import net.citizensnpcs.api.npc.NPC;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 /**
  * SpeechContext contains information about a {@link NPCSpeechEvent}, including
@@ -28,7 +30,7 @@ public class SpeechContext implements Iterable<Talkable> {
 
     public SpeechContext(NPC talker, String message) {
         if (talker != null)
-            setTalker(talker.getBukkitEntity());
+            setTalker(talker.getEntity());
         this.message = message;
     }
 
@@ -59,7 +61,7 @@ public class SpeechContext implements Iterable<Talkable> {
      * @return the speech context
      * 
      */
-    public SpeechContext addRecipient(LivingEntity entity) {
+    public SpeechContext addRecipient(Entity entity) {
         if (recipients.isEmpty())
             recipients = new ArrayList<Talkable>();
         recipients.add(CitizensAPI.getSpeechFactory().newTalkableEntity(entity));
@@ -138,12 +140,12 @@ public class SpeechContext implements Iterable<Talkable> {
     /**
      * Sets the talker.
      * 
-     * @param talker
+     * @param entity
      *            NPC doing the talking
      * 
      */
-    public void setTalker(LivingEntity talker) {
-        this.talker = CitizensAPI.getSpeechFactory().newTalkableEntity(talker);
+    public void setTalker(Entity entity) {
+        this.talker = CitizensAPI.getSpeechFactory().newTalkableEntity(entity);
     }
 
     /**

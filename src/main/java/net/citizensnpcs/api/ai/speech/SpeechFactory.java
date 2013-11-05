@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.ai.speech;
 
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 
 /**
  * SpeechFactory keeps track of and creates new VocalChord instances, necessary
@@ -58,7 +58,7 @@ public interface SpeechFactory {
      * 
      * @return a Talkable entity
      */
-    public Talkable newTalkableEntity(LivingEntity entity);
+    public Talkable newTalkableEntity(Entity entity);
 
     /**
      * Registers a {@link VocalChord} class with the SpeechController, making it

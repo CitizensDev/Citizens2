@@ -26,7 +26,7 @@ public class TeleportStuckAction implements StuckAction {
         if (!npc.isSpawned())
             return false;
         Location base = navigator.getTargetAsLocation();
-        if (npc.getBukkitEntity().getLocation().distanceSquared(base) <= RANGE)
+        if (npc.getEntity().getLocation().distanceSquared(base) <= RANGE)
             return true;
         Block block = base.getBlock();
         int iterations = 0;

@@ -55,7 +55,7 @@ public class Path implements Plan {
         PathEntry entry = path[index];
         if (entry.hasCallbacks()) {
             NPC npc = (NPC) agent;
-            Block block = entry.getBlockUsingWorld(npc.getBukkitEntity().getWorld());
+            Block block = entry.getBlockUsingWorld(npc.getEntity().getWorld());
             for (PathCallback callback : entry.callbacks) {
                 callback.run(npc, block);
             }

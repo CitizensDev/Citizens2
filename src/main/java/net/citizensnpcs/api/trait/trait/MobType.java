@@ -33,7 +33,7 @@ public class MobType extends Trait {
 
     @Override
     public void onSpawn() {
-        type = npc.getBukkitEntity().getType();
+        type = npc.getEntity().getType();
     }
 
     @Override

@@ -51,21 +51,28 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
 
         if (npc == null)
             return;
+
         for (Class<? extends Trait> clazz : requirements.traits()) {
-            if (!npc.hasTrait(clazz))
+            if (!npc.hasTrait(clazz)) {
                 throw new RequirementMissingException(
                         Messaging.tr(CommandMessages.MISSING_TRAIT, clazz.getSimpleName()));
+            }
         }
 
         Set<EntityType> types = Sets.newEnumSet(Arrays.asList(requirements.types()), EntityType.class);
-        if (types.contains(EntityType.UNKNOWN))
+        if (types.contains(EntityType.UNKNOWN)) {
             types = EnumSet.allOf(EntityType.class);
+        }
         types.removeAll(Sets.newHashSet(requirements.excludedTypes()));
 
         EntityType type = npc.getTrait(MobType.class).getType();
         if (!types.contains(type)) {
             throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, type
                     .name().toLowerCase().replace('_', ' ')));
+        }
+        if (requirements.livingEntity() && !type.isAlive()) {
+            throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_MUST_BE_LIVING_ENTITY,
+                    methodArgs));
         }
     }
 }

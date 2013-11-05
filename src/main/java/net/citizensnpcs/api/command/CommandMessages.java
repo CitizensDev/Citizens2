@@ -15,6 +15,7 @@ public class CommandMessages {
     public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";
     public static final String REPORT_ERROR = "citizens.commands.console-error";
     public static final String REQUIREMENTS_INVALID_MOB_TYPE = "citizens.commands.requirements.disallowed-mobtype";
+    public static final String REQUIREMENTS_MUST_BE_LIVING_ENTITY = "citizens.commands.requirements.living-entity";
     public static final String TOO_FEW_ARGUMENTS = "citizens.commands.requirements.too-few-arguments";
     public static final String TOO_MANY_ARGUMENTS = "citizens.commands.requirements.too-many-arguments";
     public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";

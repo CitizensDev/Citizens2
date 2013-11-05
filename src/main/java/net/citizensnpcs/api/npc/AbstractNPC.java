@@ -26,6 +26,7 @@ import net.citizensnpcs.api.util.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
@@ -45,22 +46,25 @@ public abstract class AbstractNPC implements NPC {
         @Override
         public void remove(String key) {
             super.remove(key);
-            if (getBukkitEntity() != null)
-                getBukkitEntity().removeMetadata(key, CitizensAPI.getPlugin());
+            if (getEntity() != null) {
+                getEntity().removeMetadata(key, CitizensAPI.getPlugin());
+            }
         }
 
         @Override
         public void set(String key, Object data) {
             super.set(key, data);
-            if (getBukkitEntity() != null)
-                getBukkitEntity().setMetadata(key, new FixedMetadataValue(CitizensAPI.getPlugin(), data));
+            if (getEntity() != null) {
+                getEntity().setMetadata(key, new FixedMetadataValue(CitizensAPI.getPlugin(), data));
+            }
         }
 
         @Override
         public void setPersistent(String key, Object data) {
             super.setPersistent(key, data);
-            if (getBukkitEntity() != null)
-                getBukkitEntity().setMetadata(key, new FixedMetadataValue(CitizensAPI.getPlugin(), data));
+            if (getEntity() != null) {
+                getEntity().setMetadata(key, new FixedMetadataValue(CitizensAPI.getPlugin(), data));
+            }
         }
     };
     private String name;
@@ -186,6 +190,11 @@ public abstract class AbstractNPC implements NPC {
         if (!hasTrait(Speech.class))
             addTrait(Speech.class);
         return speechController;
+    }
+
+    @Override
+    public Entity getEntity() {
+        return getBukkitEntity();
     }
 
     @Override
@@ -329,8 +338,10 @@ public abstract class AbstractNPC implements NPC {
         this.name = name;
         if (!isSpawned())
             return;
-        LivingEntity bukkitEntity = getBukkitEntity();
-        bukkitEntity.setCustomName(getFullName());
+        Entity bukkitEntity = getEntity();
+        if (bukkitEntity instanceof LivingEntity) {
+            ((LivingEntity) bukkitEntity).setCustomName(getFullName());
+        }
         if (bukkitEntity.getType() == EntityType.PLAYER) {
             Location old = bukkitEntity.getLocation();
             despawn(DespawnReason.PENDING_RESPAWN);

@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.ai.speech;
 
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 
 /**
  * Talkable provides an interface for talking to Players, Entities and NPCs.
@@ -13,7 +13,7 @@ public interface Talkable extends Comparable<Object> {
      * 
      * @return a LivingEntity
      */
-    public LivingEntity getEntity();
+    public Entity getEntity();
 
     /**
      * Gets the name of the Talkable LivingEntity

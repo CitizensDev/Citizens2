@@ -11,6 +11,8 @@ import org.bukkit.entity.EntityType;
 public @interface Requirements {
     EntityType[] excludedTypes() default { EntityType.UNKNOWN };
 
+    boolean livingEntity() default false;
+
     boolean ownership() default false;
 
     boolean selected() default false;

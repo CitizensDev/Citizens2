@@ -11,6 +11,7 @@ import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -83,6 +84,7 @@ public interface NPC extends Agent, Cloneable {
      * 
      * @return Entity associated with this NPC
      */
+    @Deprecated
     public LivingEntity getBukkitEntity();
 
     /**
@@ -98,6 +100,8 @@ public interface NPC extends Agent, Cloneable {
      * @return Default speech controller
      */
     public SpeechController getDefaultSpeechController();
+
+    public Entity getEntity();
 
     /**
      * Gets the full name of this NPC.
