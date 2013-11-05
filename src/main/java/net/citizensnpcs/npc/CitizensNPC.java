@@ -22,7 +22,6 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.citizensnpcs.util.nms.FlyingUtil;
 import net.minecraft.server.v1_6_R3.Packet34EntityTeleport;
 
 import org.bukkit.Bukkit;
@@ -269,7 +268,7 @@ public class CitizensNPC extends AbstractNPC {
         EntityType type = getTrait(MobType.class).getType();
         if (type == null)
             return;
-        if (FlyingUtil.isAlwaysFlyable(type)) {
+        if (Util.isAlwaysFlyable(type)) {
             data().setPersistent(NPC.FLYABLE_METADATA, true);
         }
     }
