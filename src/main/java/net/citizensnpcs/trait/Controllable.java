@@ -203,7 +203,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return enabled;
     }
 
-    private double updateHorizontralSpeed(EntityLiving handle, double speed, float speedMod) {
+    private double updateHorizontalSpeed(EntityLiving handle, double speed, float speedMod) {
         double oldSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
         double horizontal = ((EntityLiving) handle.passenger).bf;
         if (horizontal > 0.0D) {
@@ -253,7 +253,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             boolean onGround = handle.onGround;
             float speedMod = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
-            this.speed = updateHorizontralSpeed(handle, speed, speedMod);
+            this.speed = updateHorizontalSpeed(handle, speed, speedMod);
 
             boolean shouldJump = NMS.shouldJump(handle.passenger);
             if (shouldJump) {
@@ -275,7 +275,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     public class LookAirController implements MovementController {
-        boolean paused = false;
+        private boolean paused = false;
 
         @Override
         public void leftClick(PlayerInteractEvent event) {
@@ -319,7 +319,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     public class PlayerInputAirController implements MovementController {
-        boolean paused = false;
+        private boolean paused = false;
         private double speed;
 
         @Override
@@ -344,7 +344,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                 return;
             }
             EntityLiving handle = getHandle();
-            this.speed = updateHorizontralSpeed(handle, this.speed, 1F);
+            this.speed = updateHorizontalSpeed(handle, this.speed, 1F);
             boolean shouldJump = NMS.shouldJump(handle.passenger);
             if (shouldJump) {
                 handle.motY = 0.3F;
