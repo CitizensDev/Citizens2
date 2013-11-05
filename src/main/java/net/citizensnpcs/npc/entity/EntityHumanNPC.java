@@ -14,7 +14,6 @@ import net.citizensnpcs.npc.network.EmptyNetworkManager;
 import net.citizensnpcs.npc.network.EmptySocket;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.citizensnpcs.util.nms.FlyingUtil;
 import net.citizensnpcs.util.nms.PlayerControllerJump;
 import net.citizensnpcs.util.nms.PlayerControllerLook;
 import net.citizensnpcs.util.nms.PlayerControllerMove;
@@ -105,7 +104,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (npc == null || !npc.isFlyable()) {
             super.e(f, f1);
         } else {
-            FlyingUtil.moveLogic(this, f, f1);
+            NMS.flyingMoveLogic(this, f, f1);
         }
     }
 

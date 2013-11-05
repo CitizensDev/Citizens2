@@ -7,7 +7,6 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.citizensnpcs.util.nms.FlyingUtil;
 import net.minecraft.server.v1_6_R3.EntityZombie;
 import net.minecraft.server.v1_6_R3.World;
 
@@ -101,7 +100,7 @@ public class ZombieController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
             } else {
-                FlyingUtil.moveLogic(this, f, f1);
+                NMS.flyingMoveLogic(this, f, f1);
             }
         }
 

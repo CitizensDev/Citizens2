@@ -23,6 +23,19 @@ public class Util {
     private Util() {
     }
 
+    public static boolean isAlwaysFlyable(EntityType type) {
+        switch (type) {
+            case BAT:
+            case BLAZE:
+            case GHAST:
+            case ENDER_DRAGON:
+            case WITHER:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static void assumePose(Entity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);
     }
