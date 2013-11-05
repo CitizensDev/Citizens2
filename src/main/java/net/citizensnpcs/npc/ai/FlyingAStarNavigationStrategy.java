@@ -10,6 +10,7 @@ import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_6_R3.MathHelper;
 
 import org.bukkit.Location;
@@ -27,7 +28,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         this.target = dest;
         this.parameters = params;
         this.npc = npc;
-        Location location = npc.getBukkitEntity().getEyeLocation();
+        Location location = Util.getEyeLocation(npc.getEntity());
         plan = ASTAR.runFully(new VectorGoal(dest, (float) params.distanceMargin()), new VectorNode(location,
                 new ChunkBlockSource(location, params.range()), params.examiners()), 50000);
         if (plan == null || plan.isComplete()) {
@@ -52,7 +53,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
         }
-        Location current = npc.getBukkitEntity().getLocation(NPC_LOCATION);
+        Location current = npc.getEntity().getLocation(NPC_LOCATION);
         if (current.toVector().distanceSquared(vector) <= parameters.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
@@ -65,7 +66,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         double d1 = vector.getY() + 0.1D - current.getY();
         double d2 = vector.getZ() + 0.5D - current.getZ();
 
-        Vector velocity = npc.getBukkitEntity().getVelocity();
+        Vector velocity = npc.getEntity().getVelocity();
         double motX = velocity.getX(), motY = velocity.getY(), motZ = velocity.getZ();
 
         motX += (Math.signum(d0) * 0.5D - motX) * 0.1;
@@ -75,10 +76,10 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         float normalisedTargetYaw = MathHelper.g(targetYaw - current.getYaw());
 
         velocity.setX(motX).setY(motY).setZ(motZ);
-        npc.getBukkitEntity().setVelocity(velocity);
+        npc.getEntity().setVelocity(velocity);
 
-        NMS.setVerticalMovement(npc.getBukkitEntity(), 0.5);
-        NMS.setHeadYaw(NMS.getHandle(npc.getBukkitEntity()), current.getYaw() + normalisedTargetYaw);
+        NMS.setVerticalMovement(npc.getEntity(), 0.5);
+        NMS.setHeadYaw(NMS.getHandle(npc.getEntity()), current.getYaw() + normalisedTargetYaw);
         return false;
     }
 

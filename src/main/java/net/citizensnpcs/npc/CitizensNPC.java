@@ -20,7 +20,6 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R3.EntityLiving;
 import net.minecraft.server.v1_6_R3.Packet34EntityTeleport;
 
 import org.bukkit.Bukkit;
@@ -59,15 +58,17 @@ public class CitizensNPC extends AbstractNPC {
             event.setCancelled(Setting.KEEP_CHUNKS_LOADED.asBoolean());
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            getBukkitEntity().getLocation().getChunk().load();
+            getEntity().getLocation().getChunk().load();
             Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Force loaded chunk.");
             return false;
         }
         boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
-        if (!keepSelected)
+        if (!keepSelected) {
             data().remove("selectors");
-        for (Trait trait : traits.values())
+        }
+        for (Trait trait : traits.values()) {
             trait.onDespawn();
+        }
         navigator.onDespawn();
         entityController.remove();
         return true;
@@ -77,10 +78,11 @@ public class CitizensNPC extends AbstractNPC {
     public void faceLocation(Location location) {
         if (!isSpawned())
             return;
-        Util.faceLocation(getBukkitEntity(), location);
+        Util.faceLocation(getEntity(), location);
     }
 
     @Override
+    @Deprecated
     public LivingEntity getBukkitEntity() {
         return entityController == null ? null : entityController.getBukkitEntity();
     }
@@ -92,12 +94,12 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public Location getStoredLocation() {
-        return isSpawned() ? getBukkitEntity().getLocation() : getTrait(CurrentLocation.class).getLocation();
+        return isSpawned() ? getEntity().getLocation() : getTrait(CurrentLocation.class).getLocation();
     }
 
     @Override
     public boolean isSpawned() {
-        return getBukkitEntity() != null;
+        return getEntity() != null;
     }
 
     @Override
@@ -131,7 +133,7 @@ public class CitizensNPC extends AbstractNPC {
         boolean wasSpawned = isSpawned();
         Location prev = null;
         if (wasSpawned) {
-            prev = getBukkitEntity().getLocation();
+            prev = getEntity().getLocation();
             despawn(DespawnReason.PENDING_RESPAWN);
         }
         entityController = newController;
@@ -150,7 +152,7 @@ public class CitizensNPC extends AbstractNPC {
 
         at = at.clone();
         entityController.spawn(at, this);
-        EntityLiving mcEntity = ((CraftLivingEntity) getBukkitEntity()).getHandle();
+        net.minecraft.server.v1_6_R3.Entity mcEntity = ((CraftLivingEntity) getEntity()).getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
         mcEntity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         if (!couldSpawn) {
@@ -171,7 +173,7 @@ public class CitizensNPC extends AbstractNPC {
             return false;
         }
 
-        getBukkitEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+        getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         // Set the spawned state
         getTrait(CurrentLocation.class).setLocation(at);
@@ -189,8 +191,11 @@ public class CitizensNPC extends AbstractNPC {
                 ex.printStackTrace();
             }
         }
-        getBukkitEntity().setRemoveWhenFarAway(false);
-        getBukkitEntity().setCustomName(getFullName());
+        if (getEntity() instanceof LivingEntity) {
+            LivingEntity entity = (LivingEntity) getEntity();
+            entity.setRemoveWhenFarAway(false);
+            entity.setCustomName(getFullName());
+        }
         return true;
     }
 
@@ -220,7 +225,7 @@ public class CitizensNPC extends AbstractNPC {
     public void teleport(Location location, TeleportCause cause) {
         if (!isSpawned())
             return;
-        teleport(NMS.getRootVehicle(getBukkitEntity()), location, false, 5);
+        teleport(NMS.getRootVehicle(getEntity()), location, false, 5);
     }
 
     @Override
@@ -228,12 +233,12 @@ public class CitizensNPC extends AbstractNPC {
         try {
             super.update();
             if (isSpawned()) {
-                NMS.trySwim(getBukkitEntity());
+                NMS.trySwim(getEntity());
                 navigator.run();
                 if (++packetUpdateCount > 30) {
                     if (!getNavigator().isNavigating()) {
                         NMS.sendPacketNearby(getStoredLocation(),
-                                new Packet34EntityTeleport(NMS.getHandle(getBukkitEntity())));
+                                new Packet34EntityTeleport(NMS.getHandle(getEntity())));
                     }
                     packetUpdateCount = 0;
                 }

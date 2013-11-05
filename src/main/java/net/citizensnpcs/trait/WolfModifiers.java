@@ -46,8 +46,8 @@ public class WolfModifiers extends Trait {
     }
 
     private void updateModifiers() {
-        if (npc.getBukkitEntity() instanceof Wolf) {
-            Wolf wolf = (Wolf) npc.getBukkitEntity();
+        if (npc.getEntity() instanceof Wolf) {
+            Wolf wolf = (Wolf) npc.getEntity();
             wolf.setCollarColor(collarColor);
             wolf.setSitting(sitting);
             wolf.setAngry(angry);

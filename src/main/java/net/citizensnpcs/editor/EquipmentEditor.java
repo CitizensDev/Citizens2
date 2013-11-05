@@ -48,7 +48,7 @@ public class EquipmentEditor extends Editor {
                 || !npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
             return;
 
-        Equipper equipper = EQUIPPERS.get(npc.getBukkitEntity().getType());
+        Equipper equipper = EQUIPPERS.get(npc.getEntity().getType());
         if (equipper == null)
             equipper = new GenericEquipper();
         equipper.equip(event.getPlayer(), npc);

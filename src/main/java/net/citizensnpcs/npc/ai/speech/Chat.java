@@ -1,7 +1,6 @@
 package net.citizensnpcs.npc.ai.speech;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
@@ -13,7 +12,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 
 public class Chat implements VocalChord {
     public final String VOCAL_CHORD_NAME = "chat";
@@ -109,27 +107,27 @@ public class Chat implements VocalChord {
 
     private void talkToBystanders(NPC npc, String text, SpeechContext context) {
         // Get list of nearby entities
-        List<Entity> bystanderEntities = npc.getBukkitEntity().getNearbyEntities(Setting.CHAT_RANGE.asDouble(),
+        List<Entity> bystanderEntities = npc.getEntity().getNearbyEntities(Setting.CHAT_RANGE.asDouble(),
                 Setting.CHAT_RANGE.asDouble(), Setting.CHAT_RANGE.asDouble());
-        for (Entity bystander : bystanderEntities)
+        for (Entity bystander : bystanderEntities) {
             // Continue if a LivingEntity, which is compatible with
             // TalkableEntity
-            if (bystander instanceof LivingEntity) {
-
-                boolean should_talk = true;
-                // Exclude targeted recipients
-                if (context.hasRecipients()) {
-                    for (Talkable target : context)
-                        if (target.getEntity().equals(bystander))
-                            should_talk = false;
+            boolean shouldTalk = true;
+            // Exclude targeted recipients
+            if (context.hasRecipients()) {
+                for (Talkable target : context) {
+                    if (target.getEntity().equals(bystander)) {
+                        shouldTalk = false;
+                        break;
+                    }
                 }
-
-                // Found a nearby LivingEntity, make it Talkable and
-                // talkNear it if 'should_talk'
-                if (should_talk)
-                    new TalkableEntity((LivingEntity) bystander).talkNear(context, text, this);
-
             }
-    }
 
+            // Found a nearby LivingEntity, make it Talkable and
+            // talkNear it if 'should_talk'
+            if (shouldTalk) {
+                new TalkableEntity(bystander).talkNear(context, text, this);
+            }
+        }
+    }
 }

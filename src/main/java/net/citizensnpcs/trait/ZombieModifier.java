@@ -18,9 +18,9 @@ public class ZombieModifier extends Trait {
 
     @Override
     public void onSpawn() {
-        if (npc.getBukkitEntity() instanceof Zombie) {
-            ((Zombie) npc.getBukkitEntity()).setVillager(villager);
-            ((Zombie) npc.getBukkitEntity()).setBaby(baby);
+        if (npc.getEntity() instanceof Zombie) {
+            ((Zombie) npc.getEntity()).setVillager(villager);
+            ((Zombie) npc.getEntity()).setBaby(baby);
             zombie = true;
         } else
             zombie = false;
@@ -29,14 +29,14 @@ public class ZombieModifier extends Trait {
     public boolean toggleBaby() {
         baby = !baby;
         if (zombie)
-            ((Zombie) npc.getBukkitEntity()).setBaby(baby);
+            ((Zombie) npc.getEntity()).setBaby(baby);
         return baby;
     }
 
     public boolean toggleVillager() {
         villager = !villager;
         if (zombie)
-            ((Zombie) npc.getBukkitEntity()).setVillager(villager);
+            ((Zombie) npc.getEntity()).setVillager(villager);
         return villager;
     }
 }

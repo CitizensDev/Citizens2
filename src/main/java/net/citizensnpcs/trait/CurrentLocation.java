@@ -21,7 +21,7 @@ public class CurrentLocation extends Trait {
     public void run() {
         if (!npc.isSpawned())
             return;
-        location = npc.getBukkitEntity().getLocation(location);
+        location = npc.getEntity().getLocation(location);
     }
 
     public void setLocation(Location loc) {

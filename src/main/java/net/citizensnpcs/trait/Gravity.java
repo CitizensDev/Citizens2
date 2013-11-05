@@ -21,9 +21,9 @@ public class Gravity extends Trait implements Toggleable {
     public void run() {
         if (!npc.isSpawned() || !enabled)
             return;
-        Vector vector = npc.getBukkitEntity().getVelocity();
+        Vector vector = npc.getEntity().getVelocity();
         vector.setY(Math.max(0, vector.getY()));
-        npc.getBukkitEntity().setVelocity(vector);
+        npc.getEntity().setVelocity(vector);
     }
 
     @Override

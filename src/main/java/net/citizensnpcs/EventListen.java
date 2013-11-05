@@ -111,7 +111,7 @@ public class EventListen implements Listener {
         for (NPC npc : getAllNPCs()) {
             if (!npc.isSpawned())
                 continue;
-            loc = npc.getBukkitEntity().getLocation(loc);
+            loc = npc.getEntity().getLocation(loc);
             boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
             if (!sameChunkCoordinates || !event.getWorld().equals(loc.getWorld()))
                 continue;
@@ -180,7 +180,7 @@ public class EventListen implements Listener {
             return;
         }
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
-        final Location location = npc.getBukkitEntity().getLocation();
+        final Location location = npc.getEntity().getLocation();
         npc.despawn(DespawnReason.DEATH);
 
         if (npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1) >= 0) {
@@ -224,7 +224,7 @@ public class EventListen implements Listener {
     @EventHandler
     public void onNPCDespawn(NPCDespawnEvent event) {
         if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL) {
-            toRespawn.remove(toCoord(event.getNPC().getBukkitEntity().getLocation()), event.getNPC());
+            toRespawn.remove(toCoord(event.getNPC().getEntity().getLocation()), event.getNPC());
         }
     }
 
@@ -270,7 +270,7 @@ public class EventListen implements Listener {
         if (!npcRegistry.isNPC(event.getEntered()))
             return;
         NPC npc = npcRegistry.getNPC(event.getEntered());
-        if (npc.getBukkitEntity().getType() == EntityType.HORSE && !npc.getTrait(Controllable.class).isEnabled()) {
+        if (npc.getEntity().getType() == EntityType.HORSE && !npc.getTrait(Controllable.class).isEnabled()) {
             event.setCancelled(true);
         }
     }
@@ -288,7 +288,7 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
         for (NPC npc : getAllNPCs()) {
-            if (!npc.isSpawned() || !npc.getBukkitEntity().getWorld().equals(event.getWorld()))
+            if (!npc.isSpawned() || !npc.getEntity().getWorld().equals(event.getWorld()))
                 continue;
             boolean despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
             if (event.isCancelled() || !despawned) {
@@ -329,7 +329,7 @@ public class EventListen implements Listener {
     }
 
     private void storeForRespawn(NPC npc) {
-        toRespawn.put(toCoord(npc.getBukkitEntity().getLocation()), npc);
+        toRespawn.put(toCoord(npc.getEntity().getLocation()), npc);
     }
 
     private ChunkCoord toCoord(Chunk chunk) {

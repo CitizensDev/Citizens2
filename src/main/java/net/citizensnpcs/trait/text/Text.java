@@ -129,7 +129,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     public void run() {
         if (!talkClose || !npc.isSpawned())
             return;
-        List<Entity> nearby = npc.getBukkitEntity().getNearbyEntities(range, range, range);
+        List<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
         for (Entity search : nearby) {
             if (!(search instanceof Player))
                 continue;

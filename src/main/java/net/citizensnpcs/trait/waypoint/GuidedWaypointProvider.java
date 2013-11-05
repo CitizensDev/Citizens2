@@ -98,7 +98,7 @@ public class GuidedWaypointProvider implements WaypointProvider {
                 if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL
                         || event.getClickedBlock() == null)
                     return;
-                if (event.getPlayer().getWorld() != npc.getBukkitEntity().getWorld())
+                if (event.getPlayer().getWorld() != npc.getEntity().getWorld())
                     return;
                 event.setCancelled(true);
                 Location at = event.getClickedBlock().getLocation();

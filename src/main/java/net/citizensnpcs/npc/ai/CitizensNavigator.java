@@ -180,9 +180,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         localParams = defaultParams;
         stationaryTicks = 0;
         if (npc.isSpawned()) {
-            Vector velocity = npc.getBukkitEntity().getVelocity();
+            Vector velocity = npc.getEntity().getVelocity();
             velocity.setX(0).setY(0).setZ(0);
-            npc.getBukkitEntity().setVelocity(velocity);
+            npc.getEntity().setVelocity(velocity);
         }
     }
 
@@ -224,7 +224,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         executing = newStrategy;
         stationaryTicks = 0;
         if (npc.isSpawned()) {
-            NMS.updateNavigationWorld(npc.getBukkitEntity(), npc.getBukkitEntity().getWorld());
+            NMS.updateNavigationWorld(npc.getEntity(), npc.getEntity().getWorld());
         }
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
     }
@@ -236,7 +236,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     private boolean updateStationaryStatus() {
         if (localParams.stationaryTicks() < 0)
             return false;
-        Location current = npc.getBukkitEntity().getLocation(STATIONARY_LOCATION);
+        Location current = npc.getEntity().getLocation(STATIONARY_LOCATION);
         if (lastX == current.getBlockX() && lastY == current.getBlockY() && lastZ == current.getBlockZ()) {
             if (++stationaryTicks >= localParams.stationaryTicks()) {
                 stopNavigating(CancelReason.STUCK);
