@@ -71,14 +71,14 @@ public class Equipment extends Trait {
     @Override
     @SuppressWarnings("deprecation")
     public void onSpawn() {
-        if (!(npc.getBukkitEntity() instanceof LivingEntity))
+        if (!(npc.getEntity() instanceof LivingEntity))
             return;
-        if (npc.getBukkitEntity() instanceof Enderman) {
-            Enderman enderman = (Enderman) npc.getBukkitEntity();
+        if (npc.getEntity() instanceof Enderman) {
+            Enderman enderman = (Enderman) npc.getEntity();
             if (equipment[0] != null)
                 enderman.setCarriedMaterial(equipment[0].getData());
         } else {
-            LivingEntity entity = npc.getBukkitEntity();
+            LivingEntity entity = (LivingEntity) npc.getEntity();
             EntityEquipment equip = getEquipmentFromEntity(entity);
             if (equipment[0] != null)
                 equip.setItemInHand(equipment[0]);
@@ -86,8 +86,9 @@ public class Equipment extends Trait {
             equip.setChestplate(equipment[2]);
             equip.setLeggings(equipment[3]);
             equip.setBoots(equipment[4]);
-            if (entity instanceof Player)
+            if (entity instanceof Player) {
                 ((Player) entity).updateInventory();
+            }
         }
     }
 

@@ -83,6 +83,8 @@ public interface NPC extends Agent, Cloneable {
      * <code>null</code> if {@link #isSpawned()} is false.
      * 
      * @return Entity associated with this NPC
+     * @deprecated Use {@link #getEntity()} instead
+     * @see #getEntity()
      */
     @Deprecated
     public LivingEntity getBukkitEntity();
@@ -101,6 +103,12 @@ public interface NPC extends Agent, Cloneable {
      */
     public SpeechController getDefaultSpeechController();
 
+    /**
+     * Gets the Bukkit entity associated with this NPC. This may be
+     * <code>null</code> if {@link #isSpawned()} is false.
+     * 
+     * @return Entity associated with this NPC
+     */
     public Entity getEntity();
 
     /**
@@ -166,6 +174,19 @@ public interface NPC extends Agent, Cloneable {
      */
     public boolean hasTrait(Class<? extends Trait> trait);
 
+    /**
+     * Returns whether this NPC is flyable or not.
+     * 
+     * @return Whether this NPC is flyable
+     */
+    public boolean isFlyable();
+
+    /**
+     * Gets whether this NPC is protected from damage, movement and other events
+     * that players and mobs use to change the entity state of the NPC.
+     * 
+     * @return Whether this NPC is protected
+     */
     public boolean isProtected();
 
     /**
@@ -217,6 +238,15 @@ public interface NPC extends Agent, Cloneable {
     public void setBukkitEntityType(EntityType type);
 
     /**
+     * Sets whether this NPC is <tt>flyable</tt> or not. Note that this is
+     * intended for normally <em>ground-based</em> entities only - it will
+     * generally have no effect on mob types that were originally flyable.
+     * 
+     * @param flyable
+     */
+    public void setFlyable(boolean flyable);
+
+    /**
      * Sets the name of this NPC.
      * 
      * @param name
@@ -256,6 +286,7 @@ public interface NPC extends Agent, Cloneable {
     public void teleport(Location location, TeleportCause cause);
 
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
+    public static final String FLYABLE_METADATA = "flyable";
     public static final String LEASH_PROTECTED_METADATA = "protected-leash";
     public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
     public static final String TARGETABLE_METADATA = "protected-target";

@@ -72,7 +72,7 @@ public abstract class Trait implements Listener, Runnable {
 
     /**
      * Called just before the attached {@link NPC} is despawned.
-     * {@link NPC#getBukkitEntity()} will be non-null.
+     * {@link NPC#getEntity()} will be non-null.
      */
     public void onDespawn() {
     }
@@ -84,7 +84,7 @@ public abstract class Trait implements Listener, Runnable {
     }
 
     /**
-     * Called when an {@link NPC} is spawned. {@link NPC#getBukkitEntity()} will
+     * Called when an {@link NPC} is spawned. {@link NPC#getEntity()} will
      * return null until this is called. This is also called onAttach when the
      * NPC is already spawned.
      */

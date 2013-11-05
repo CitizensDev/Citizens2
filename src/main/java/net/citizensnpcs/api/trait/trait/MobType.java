@@ -27,8 +27,9 @@ public class MobType extends Trait {
     @Override
     public void load(DataKey key) {
         type = EntityType.fromName(key.getString(""));
-        if (type == null)
+        if (type == null) {
             type = EntityType.PLAYER;
+        }
     }
 
     @Override
