@@ -3,10 +3,10 @@ package net.citizensnpcs.npc;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 
 public interface EntityController {
-    LivingEntity getBukkitEntity();
+    Entity getBukkitEntity();
 
     void remove();
 

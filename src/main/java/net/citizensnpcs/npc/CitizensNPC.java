@@ -26,7 +26,7 @@ import net.minecraft.server.v1_6_R3.Packet34EntityTeleport;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -86,6 +86,18 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     @Deprecated
     public LivingEntity getBukkitEntity() {
+        if (entityController == null) {
+            return null;
+        }
+        Entity entity = entityController.getBukkitEntity();
+        if (entity instanceof LivingEntity) {
+            return (LivingEntity) entity;
+        }
+        throw new IllegalStateException("getBukkitEntity() called on a non-living NPC");
+    }
+
+    @Override
+    public Entity getEntity() {
         return entityController == null ? null : entityController.getBukkitEntity();
     }
 
@@ -166,7 +178,7 @@ public class CitizensNPC extends AbstractNPC {
 
         at = at.clone();
         entityController.spawn(at, this);
-        net.minecraft.server.v1_6_R3.Entity mcEntity = ((CraftLivingEntity) getEntity()).getHandle();
+        net.minecraft.server.v1_6_R3.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
         mcEntity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         if (!couldSpawn) {
