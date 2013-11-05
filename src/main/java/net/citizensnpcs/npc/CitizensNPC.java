@@ -90,7 +90,7 @@ public class CitizensNPC extends AbstractNPC {
             return null;
         }
         Entity entity = entityController.getBukkitEntity();
-        if (entity instanceof LivingEntity) {
+        if (entity == null || entity instanceof LivingEntity) {
             return (LivingEntity) entity;
         }
         throw new IllegalStateException("getBukkitEntity() called on a non-living NPC");
