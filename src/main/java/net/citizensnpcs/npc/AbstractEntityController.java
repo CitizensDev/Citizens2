@@ -3,15 +3,15 @@ package net.citizensnpcs.npc;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 
 public abstract class AbstractEntityController implements EntityController {
-    private LivingEntity bukkitEntity;
+    private Entity bukkitEntity;
 
-    protected abstract LivingEntity createEntity(Location at, NPC npc);
+    protected abstract Entity createEntity(Location at, NPC npc);
 
     @Override
-    public LivingEntity getBukkitEntity() {
+    public Entity getBukkitEntity() {
         return bukkitEntity;
     }
 

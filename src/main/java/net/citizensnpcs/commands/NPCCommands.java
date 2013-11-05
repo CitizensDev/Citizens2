@@ -29,6 +29,7 @@ import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
+import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
@@ -299,11 +300,9 @@ public class NPCCommands {
             String inputType = args.getFlag("type");
             type = Util.matchEntityType(inputType);
             if (type == null) {
-                Messaging.sendErrorTr(sender, Messages.NPC_CREATE_INVALID_MOBTYPE, inputType);
-                type = EntityType.PLAYER;
-            } else if (!LivingEntity.class.isAssignableFrom(type.getEntityClass())) {
-                Messaging.sendErrorTr(sender, Messages.NOT_LIVING_MOBTYPE, type);
-                type = EntityType.PLAYER;
+                throw new CommandException(Messaging.tr(Messages.NPC_CREATE_INVALID_MOBTYPE, inputType));
+            } else if (!EntityControllers.controllerExistsForType(type)) {
+                throw new CommandException(Messaging.tr(Messages.NPC_CREATE_MISSING_MOBTYPE, inputType));
             }
         }
         if (!sender.hasPermission("citizens.npc.create.*") && !sender.hasPermission("citizens.npc.createall")

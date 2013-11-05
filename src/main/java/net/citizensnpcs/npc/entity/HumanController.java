@@ -12,12 +12,12 @@ import net.minecraft.server.v1_6_R3.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class HumanController extends AbstractEntityController {
     @Override
-    protected LivingEntity createEntity(final Location at, final NPC npc) {
+    protected Entity createEntity(final Location at, final NPC npc) {
         World ws = ((CraftWorld) at.getWorld()).getHandle();
         final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, Colorizer.parseColors(npc
                 .getFullName()), new PlayerInteractManager(ws), npc);

@@ -39,6 +39,10 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 public class EntityControllers {
+    public static boolean controllerExistsForType(EntityType type) {
+        return TYPES.containsKey(type);
+    }
+
     public static EntityController createForType(EntityType type) {
         Class<? extends EntityController> controllerClass = TYPES.get(type);
         if (controllerClass == null)

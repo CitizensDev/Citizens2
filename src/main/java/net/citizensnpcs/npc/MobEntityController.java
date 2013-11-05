@@ -5,13 +5,12 @@ import java.util.Map;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_6_R3.EntityLiving;
 import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 
 import com.google.common.collect.Maps;
 
@@ -24,8 +23,9 @@ public abstract class MobEntityController extends AbstractEntityController {
     }
 
     @Override
-    protected LivingEntity createEntity(Location at, NPC npc) {
-        EntityLiving entity = createEntityFromClass(((CraftWorld) at.getWorld()).getHandle(), npc);
+    protected Entity createEntity(Location at, NPC npc) {
+        net.minecraft.server.v1_6_R3.Entity entity = createEntityFromClass(((CraftWorld) at.getWorld()).getHandle(),
+                npc);
         entity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
 
         // entity.onGround isn't updated right away - we approximate here so
@@ -33,12 +33,12 @@ public abstract class MobEntityController extends AbstractEntityController {
         org.bukkit.Material beneath = at.getBlock().getRelative(BlockFace.DOWN).getType();
         if (beneath.isBlock())
             entity.onGround = true;
-        return (LivingEntity) entity.getBukkitEntity();
+        return entity.getBukkitEntity();
     }
 
-    private EntityLiving createEntityFromClass(Object... args) {
+    private net.minecraft.server.v1_6_R3.Entity createEntityFromClass(Object... args) {
         try {
-            return (EntityLiving) constructor.newInstance(args);
+            return (net.minecraft.server.v1_6_R3.Entity) constructor.newInstance(args);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
