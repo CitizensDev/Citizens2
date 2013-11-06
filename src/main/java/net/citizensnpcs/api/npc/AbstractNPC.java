@@ -193,11 +193,6 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public Entity getEntity() {
-        return getBukkitEntity();
-    }
-
-    @Override
     public String getFullName() {
         return name;
     }

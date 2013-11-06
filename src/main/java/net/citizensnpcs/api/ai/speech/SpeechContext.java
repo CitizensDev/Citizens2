@@ -36,8 +36,9 @@ public class SpeechContext implements Iterable<Talkable> {
 
     public SpeechContext(NPC talker, String message, LivingEntity recipient) {
         this(talker, message);
-        if (recipient != null)
+        if (recipient != null) {
             addRecipient(recipient);
+        }
     }
 
     public SpeechContext(String message) {
@@ -66,6 +67,11 @@ public class SpeechContext implements Iterable<Talkable> {
             recipients = new ArrayList<Talkable>();
         recipients.add(CitizensAPI.getSpeechFactory().newTalkableEntity(entity));
         return this;
+    }
+
+    @Deprecated
+    public SpeechContext addRecipient(LivingEntity entity) {
+        return addRecipient((Entity) entity);
     }
 
     /**
@@ -146,6 +152,11 @@ public class SpeechContext implements Iterable<Talkable> {
      */
     public void setTalker(Entity entity) {
         this.talker = CitizensAPI.getSpeechFactory().newTalkableEntity(entity);
+    }
+
+    @Deprecated
+    public void setTalker(LivingEntity entity) {
+        setTalker((Entity) entity);
     }
 
     /**
