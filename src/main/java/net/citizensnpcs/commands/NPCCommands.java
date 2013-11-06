@@ -588,8 +588,9 @@ public class NPCCommands {
         List<NPC> npcs = new ArrayList<NPC>();
 
         if (args.hasFlag('a')) {
-            for (NPC add : npcRegistry)
+            for (NPC add : npcRegistry) {
                 npcs.add(add);
+            }
         } else if (args.getValueFlags().size() == 0 && sender instanceof Player) {
             for (NPC add : npcRegistry) {
                 if (!npcs.contains(add) && add.getTrait(Owner.class).isOwnedBy(sender))
