@@ -3,6 +3,8 @@ package net.citizensnpcs.util;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Iterator;
+
 import org.junit.Test;
 
 import com.google.common.collect.Iterables;
@@ -43,6 +45,22 @@ public class ByIdArrayTest {
         array.add(1);
         array.add(2);
         assertSize(array, 2);
+    }
+
+    @Test
+    public void testIteratorRemove() {
+        ByIdArray<Integer> array = ByIdArray.create();
+        array.put(10, 1);
+        array.put(20, 2);
+        array.put(30, 3);
+        Iterator<Integer> itr = array.iterator();
+        itr.next();
+        itr.remove();
+        itr.next();
+        assertSize(array, 2);
+        assertThat(array.contains(20), is(false));
+        assertThat(array.get(10), is(1));
+        assertThat(array.get(30), is(3));
     }
 
     @Test
