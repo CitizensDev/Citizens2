@@ -158,6 +158,12 @@ public class ByIdArray<T> implements Iterable<T> {
             }
         }
 
+        private void advance() {
+            do {
+                idx++;
+            } while (idx != highest + 1 && elementData[idx] == null);
+        }
+
         @Override
         public boolean hasNext() {
             if (modCount != expected) {
@@ -176,9 +182,7 @@ public class ByIdArray<T> implements Iterable<T> {
             T next = (T) elementData[idx];
             if (next == null)
                 throw new NoSuchElementException();
-            do {
-                idx++;
-            } while (idx != highest + 1 && elementData[idx] == null);
+            advance();
             return next;
         }
 
@@ -186,8 +190,11 @@ public class ByIdArray<T> implements Iterable<T> {
         public void remove() {
             if (modCount != expected)
                 throw new ConcurrentModificationException();
+            if (elementData[idx] == null)
+                throw new NoSuchElementException();
             fastRemove(idx);
             expected = modCount;
+            advance();
         }
     }
 
