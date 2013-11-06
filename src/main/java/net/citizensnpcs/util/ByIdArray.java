@@ -26,6 +26,10 @@ public class ByIdArray<T> implements Iterable<T> {
 
     public int add(T t) {
         int index = 0;
+        if (elementData[0] == null) {
+            put(index, t);
+            return index;
+        }
         while (elementData[index++] != null) {
             if (index >= elementData.length) {
                 ensureCapacity(elementData.length + 1);
@@ -81,10 +85,12 @@ public class ByIdArray<T> implements Iterable<T> {
         if (t == null)
             throw new IllegalArgumentException("can't insert a null object");
         ++modCount;
-        if (index > highest)
+        if (index > highest) {
             highest = index;
-        if (index < lowest)
+        }
+        if (index < lowest) {
             lowest = index;
+        }
 
         ensureCapacity(index + 2);
 
@@ -94,28 +100,34 @@ public class ByIdArray<T> implements Iterable<T> {
 
     private void recalcHighest() {
         highest = elementData.length - 1;
-        while (highest != 0 && elementData[highest--] == null)
+        while (highest != 0 && elementData[--highest] == null) {
             ;
+        }
     }
 
     private void recalcLowest() {
         lowest = 0;
-        while (elementData.length > lowest && elementData[lowest++] == null)
+        while (elementData.length > lowest && elementData[lowest++] == null) {
             ;
+        }
     }
 
     public T remove(int index) {
-        if (index > elementData.length || elementData[index] == null)
+        if (index > elementData.length || elementData[index] == null) {
             return null;
+        }
         @SuppressWarnings("unchecked")
         T prev = (T) elementData[index];
         elementData[index] = null;
         --size;
         ++modCount;
-        if (index >= highest)
+
+        if (index >= highest) {
             recalcHighest();
-        if (index <= lowest)
+        }
+        if (index <= lowest) {
             recalcLowest();
+        }
         return prev;
     }
 
@@ -132,13 +144,17 @@ public class ByIdArray<T> implements Iterable<T> {
     private class Itr implements Iterator<T> {
         private int expected = ByIdArray.this.modCount;
         private int idx;
-        {
+
+        private Itr() {
             if (size > 0) {
-                if (highest == Integer.MIN_VALUE || highest >= elementData.length || elementData[highest] == null)
+                if (lowest > highest || highest == Integer.MIN_VALUE || highest >= elementData.length
+                        || elementData[highest] == null) {
                     recalcHighest();
-                if (lowest >= elementData.length || elementData[lowest] == null)
+                }
+                if (lowest > highest || lowest >= elementData.length || elementData[lowest] == null) {
                     recalcLowest();
-                idx = lowest - 1;
+                }
+                idx = lowest;
             }
         }
 
@@ -147,7 +163,7 @@ public class ByIdArray<T> implements Iterable<T> {
             if (modCount != expected) {
                 throw new ConcurrentModificationException();
             }
-            return size > 0 && highest > idx;
+            return size > 0 && highest >= idx;
         }
 
         @Override
@@ -157,12 +173,12 @@ public class ByIdArray<T> implements Iterable<T> {
                 throw new ConcurrentModificationException();
             if (idx > highest)
                 throw new NoSuchElementException();
-            do
-                idx++;
-            while (idx != highest + 1 && elementData[idx] == null);
             T next = (T) elementData[idx];
             if (next == null)
                 throw new NoSuchElementException();
+            do {
+                idx++;
+            } while (idx != highest + 1 && elementData[idx] == null);
             return next;
         }
 
