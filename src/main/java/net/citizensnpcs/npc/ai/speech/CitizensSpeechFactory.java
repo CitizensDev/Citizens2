@@ -9,6 +9,7 @@ import net.citizensnpcs.api.ai.speech.Talkable;
 import net.citizensnpcs.api.ai.speech.VocalChord;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 import com.google.common.base.Preconditions;
 
@@ -63,6 +64,10 @@ public class CitizensSpeechFactory implements SpeechFactory {
         if (entity == null)
             return null;
         return new TalkableEntity(entity);
+    }
+
+    public Talkable newTalkableEntity(LivingEntity entity) {
+        return newTalkableEntity((Entity) entity);
     }
 
     @Override
