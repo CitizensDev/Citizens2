@@ -127,7 +127,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return true;
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (!npc.isSpawned() || !enabled)
             return;
