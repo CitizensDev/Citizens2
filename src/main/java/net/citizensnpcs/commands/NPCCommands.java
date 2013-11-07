@@ -63,7 +63,6 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversable;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -933,22 +932,6 @@ public class NPCCommands {
         }
         npc.getTrait(VillagerProfession.class).setProfession(parsed);
         Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), profession);
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "randommob [id]",
-            desc = "Sets randommob",
-            modifiers = { "randommob" },
-            min = 2,
-            max = 2,
-            permission = "citizens.npc.randommob")
-    public void randommob(CommandContext args, CommandSender sender, NPC npc) {
-        UUID uuid = npc.getEntity().getUniqueId();
-        UUID random = new UUID(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits()
-                | (0x7FFFFFFF + args.getInteger(1)));
-        net.minecraft.server.v1_6_R3.Entity e = ((CraftEntity) npc.getEntity()).getHandle();
-        e.uniqueID = random;
     }
 
     @Command(
