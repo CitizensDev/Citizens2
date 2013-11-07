@@ -181,6 +181,7 @@ public class Messages {
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
     public static final String SKIPPING_INVALID_ANCHOR = "citizens.notifications.skipping-invalid-anchor";
     public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
+    public static final String SPAWN_NUMERIC_ID_ONLY = "citizens.commands.npc.spawn.numeric-id-only";
     public static final String SPEED_MODIFIER_ABOVE_LIMIT = "citizens.commands.npc.speed.modifier-above-limit";
     public static final String SPEED_MODIFIER_SET = "citizens.commands.npc.speed.set";
     public static final String TARGETABLE_SET = "citizens.commands.npc.targetable.set";

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
@@ -62,6 +63,7 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversable;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -935,6 +937,22 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "randommob [id]",
+            desc = "Sets randommob",
+            modifiers = { "randommob" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.randommob")
+    public void randommob(CommandContext args, CommandSender sender, NPC npc) {
+        UUID uuid = npc.getEntity().getUniqueId();
+        UUID random = new UUID(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits()
+                | (0x7FFFFFFF + args.getInteger(1)));
+        net.minecraft.server.v1_6_R3.Entity e = ((CraftEntity) npc.getEntity()).getHandle();
+        e.uniqueID = random;
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "remove|rem (all)",
             desc = "Remove a NPC",
             modifiers = { "remove", "rem" },
@@ -1113,7 +1131,13 @@ public class NPCCommands {
             permission = "citizens.npc.spawn")
     @Requirements(ownership = true)
     public void spawn(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        NPC respawn = args.argsLength() > 1 ? npcRegistry.getById(args.getInteger(1)) : npc;
+        NPC respawn = null;
+        try {
+            respawn = args.argsLength() > 1 ? npcRegistry.getById(args.getInteger(1)) : npc;
+        } catch (NumberFormatException ex) {
+            Messaging.sendTr(sender, Messages.SPAWN_NUMERIC_ID_ONLY);
+            return;
+        }
         if (respawn == null) {
             if (args.argsLength() > 1) {
                 throw new CommandException(Messages.NO_NPC_WITH_ID_FOUND, args.getInteger(1));
@@ -1163,7 +1187,7 @@ public class NPCCommands {
             } else {
                 Player player = Bukkit.getPlayer(args.getFlag("target"));
                 if (player != null)
-                    context.addRecipient(player);
+                    context.addRecipient((Entity) player);
             }
         }
 
@@ -1382,5 +1406,11 @@ public class NPCCommands {
             Messaging.sendTr(sender, isVillager ? Messages.ZOMBIE_VILLAGER_SET : Messages.ZOMBIE_VILLAGER_UNSET,
                     npc.getName());
         }
+    }
+
+    public static void main(String[] args) {
+        long bits = UUID.randomUUID().getLeastSignificantBits();
+        int id = (int) (bits & 0x7FFFFFFF);
+        System.err.println(id);
     }
 }
