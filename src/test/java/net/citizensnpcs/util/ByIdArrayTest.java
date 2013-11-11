@@ -58,9 +58,16 @@ public class ByIdArrayTest {
         itr.remove();
         itr.next();
         assertSize(array, 2);
-        assertThat(array.contains(20), is(false));
-        assertThat(array.get(10), is(1));
+        assertThat(array.contains(10), is(false));
+        assertThat(array.get(20), is(2));
         assertThat(array.get(30), is(3));
+
+        itr = array.iterator();
+        while (itr.hasNext()) {
+            itr.next();
+            itr.remove();
+        }
+        assertSize(array, 0);
     }
 
     @Test

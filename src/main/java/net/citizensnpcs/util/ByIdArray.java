@@ -78,7 +78,7 @@ public class ByIdArray<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new Itr();
+        return new Itr2();
     }
 
     public void put(int index, T t) {
@@ -141,11 +141,12 @@ public class ByIdArray<T> implements Iterable<T> {
         }
     }
 
-    private class Itr implements Iterator<T> {
-        private int expected = ByIdArray.this.modCount;
-        private int idx;
+    private class Itr2 implements Iterator<T> {
+        int cursor;
+        int expectedModCount = modCount;
+        int lastRet = -1;
 
-        private Itr() {
+        public Itr2() {
             if (size > 0) {
                 if (lowest > highest || highest == Integer.MIN_VALUE || highest >= elementData.length
                         || elementData[highest] == null) {
@@ -154,47 +155,54 @@ public class ByIdArray<T> implements Iterable<T> {
                 if (lowest > highest || lowest >= elementData.length || elementData[lowest] == null) {
                     recalcLowest();
                 }
-                idx = lowest;
+                cursor = lowest;
             }
         }
 
         private void advance() {
             do {
-                idx++;
-            } while (idx != highest + 1 && elementData[idx] == null);
+                cursor++;
+            } while (cursor != highest + 1 && elementData[cursor] == null);
+        }
+
+        final void checkForComodification() {
+            if (modCount != expectedModCount)
+                throw new ConcurrentModificationException();
         }
 
         @Override
         public boolean hasNext() {
-            if (modCount != expected) {
-                throw new ConcurrentModificationException();
-            }
-            return size > 0 && highest >= idx;
+            return size > 0 && highest >= cursor;
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public T next() {
-            if (modCount != expected)
+            checkForComodification();
+            int i = cursor;
+            if (cursor > highest)
+                throw new NoSuchElementException();
+            Object[] elementData = ByIdArray.this.elementData;
+            if (i >= elementData.length)
                 throw new ConcurrentModificationException();
-            if (idx > highest)
-                throw new NoSuchElementException();
-            T next = (T) elementData[idx];
-            if (next == null)
-                throw new NoSuchElementException();
             advance();
-            return next;
+            return (T) elementData[lastRet = i];
         }
 
         @Override
         public void remove() {
-            if (modCount != expected)
+            if (lastRet < 0)
+                throw new IllegalStateException();
+            checkForComodification();
+
+            try {
+                ByIdArray.this.fastRemove(lastRet);
+                cursor = lastRet;
+                lastRet = -1;
+                expectedModCount = modCount;
+            } catch (IndexOutOfBoundsException ex) {
                 throw new ConcurrentModificationException();
-            if (elementData[idx] == null)
-                throw new NoSuchElementException();
-            fastRemove(idx);
-            expected = modCount;
-            advance();
+            }
         }
     }
 
