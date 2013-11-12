@@ -1,5 +1,7 @@
 package net.citizensnpcs.npc;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import java.util.Iterator;
 
 import net.citizensnpcs.api.event.DespawnReason;
@@ -9,7 +11,6 @@ import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.ByIdArray;
 import net.citizensnpcs.util.NMS;
 
 import org.bukkit.Bukkit;
@@ -20,7 +21,7 @@ import org.bukkit.entity.LivingEntity;
 import com.google.common.base.Preconditions;
 
 public class CitizensNPCRegistry implements NPCRegistry {
-    private final ByIdArray<NPC> npcs = new ByIdArray<NPC>();
+    private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<NPC>();
     private final NPCDataStore saves;
 
     public CitizensNPCRegistry(NPCDataStore store) {
@@ -103,6 +104,6 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public Iterator<NPC> iterator() {
-        return npcs.iterator();
+        return npcs.valueCollection().iterator();
     }
 }
