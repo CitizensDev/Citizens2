@@ -5,6 +5,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+@Deprecated
 public class ByIdArray<T> implements Iterable<T> {
     private final int capacity;
     private Object[] elementData;

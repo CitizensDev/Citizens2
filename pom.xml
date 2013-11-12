@@ -64,6 +64,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+		    <groupId>net.sf.trove4j</groupId>
+		    <artifactId>trove4j</artifactId>
+		    <version>3.0.3</version>
+		    <scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>Vault</artifactId>
 			<version>${vault.version}</version>
