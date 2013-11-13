@@ -153,6 +153,12 @@
 									</includes>
 								</filter>
 							</filters>
+							<relocations>
+								<relocation>
+									<pattern>gnu.trove</pattern>
+									<shadedPattern>lib.trove</shadedPattern>
+								</relocation>
+							</relocations>
 						</configuration>
 					</execution>
 				</executions>
