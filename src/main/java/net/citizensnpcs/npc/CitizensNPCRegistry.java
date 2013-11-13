@@ -3,6 +3,7 @@ package net.citizensnpcs.npc;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
@@ -19,9 +20,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 public class CitizensNPCRegistry implements NPCRegistry {
-    private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<NPC>();
+    private final NPCCollection npcs = TROVE_EXISTS ? new TroveNPCCollection() : new MapNPCCollection();
     private final NPCDataStore saves;
 
     public CitizensNPCRegistry(NPCDataStore store) {
@@ -104,6 +106,77 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public Iterator<NPC> iterator() {
-        return npcs.valueCollection().iterator();
+        return npcs.iterator();
+    }
+
+    public static class MapNPCCollection implements NPCCollection {
+        private final Map<Integer, NPC> npcs = Maps.newHashMap();
+
+        @Override
+        public NPC get(int id) {
+            return npcs.get(id);
+        }
+
+        @Override
+        public Iterator<NPC> iterator() {
+            return npcs.values().iterator();
+        }
+
+        @Override
+        public void put(int id, NPC npc) {
+            npcs.put(id, npc);
+        }
+
+        @Override
+        public void remove(int id) {
+            npcs.remove(id);
+        }
+    }
+
+    public static interface NPCCollection extends Iterable<NPC> {
+        public NPC get(int id);
+
+        public void put(int id, NPC npc);
+
+        public void remove(int id);
+    }
+
+    public static class TroveNPCCollection implements NPCCollection {
+        private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<NPC>();
+
+        @Override
+        public NPC get(int id) {
+            return npcs.get(id);
+        }
+
+        @Override
+        public Iterator<NPC> iterator() {
+            return npcs.valueCollection().iterator();
+        }
+
+        @Override
+        public void put(int id, NPC npc) {
+            npcs.put(id, npc);
+        }
+
+        @Override
+        public void remove(int id) {
+            npcs.remove(id);
+        }
+    }
+
+    private static boolean TROVE_EXISTS = false;
+    static {
+        // allow trove dependency to be optional for debugging purposes
+        try {
+            Class.forName("gnu.trove.map.hash.TIntObjectHashMap").newInstance();
+            TROVE_EXISTS = true;
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
