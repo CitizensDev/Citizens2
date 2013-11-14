@@ -21,6 +21,7 @@ import javax.script.CompiledScript;
 import javax.script.Invocable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
@@ -115,8 +116,11 @@ public class ScriptCompiler {
         if (engine != null)
             return engine;
         ScriptEngine search = engineManager.getEngineByExtension(extension);
-        if (search != null && (!(search instanceof Compilable) || !(search instanceof Invocable)))
+        if (search != null && (!(search instanceof Compilable) || !(search instanceof Invocable))) {
             search = null;
+        } else if (search != null) {
+            search = tryUpdateClassLoader(search);
+        }
         engines.put(extension, search);
         ClassLoader cl = classLoader.get();
         if (cl != null) {
@@ -152,17 +156,31 @@ public class ScriptCompiler {
         engine.eval(extension, context);
     }
 
-    private void updateSunClassLoader(ClassLoader cl) {
-        if (CLASSLOADER_OVERRIDE_ENABLED) {
-            try {
-                Object global = GET_GLOBAL.invoke(null);
-                if (GET_APPLICATION_CLASS_LOADER.invoke(global) == null) {
-                    INIT_APPLICATION_CLASS_LOADER.invoke(global, cl);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    private ScriptEngine tryUpdateClassLoader(ScriptEngine search) {
+        ScriptEngineFactory factory = search.getFactory();
+        try {
+            Method method = factory.getClass().getMethod("getScriptEngine", ClassLoader.class);
+            ClassLoader loader = classLoader.get();
+            if (loader == null)
+                return search;
+            return (ScriptEngine) method.invoke(factory, classLoader.get());
+        } catch (Exception e) {
+            return search;
         }
+    }
+
+    private void updateSunClassLoader(ClassLoader cl) {
+        if (!CLASSLOADER_OVERRIDE_ENABLED)
+            return;
+        try {
+            Object global = GET_GLOBAL.invoke(null);
+            if (GET_APPLICATION_CLASS_LOADER.invoke(global) == null) {
+                INIT_APPLICATION_CLASS_LOADER.invoke(global, cl);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private class CompileTask implements Callable<ScriptFactory> {
@@ -269,9 +287,6 @@ public class ScriptCompiler {
         public Reader getReader() throws FileNotFoundException {
             return file == null ? new StringReader(src) : new FileReader(file);
         }
-    }
-
-    public static void main(String[] args) {
     }
 
     private static final Map<String, ScriptFactory> CACHE = new MapMaker().weakValues().makeMap();

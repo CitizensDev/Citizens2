@@ -47,7 +47,7 @@ public abstract class Composite extends BehaviorGoalAdapter {
         }
     }
 
-    protected List<Behavior> getBehaviors() {
+    public List<Behavior> getBehaviors() {
         return behaviors;
     }
 
