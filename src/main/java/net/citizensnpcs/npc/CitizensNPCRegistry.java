@@ -171,12 +171,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         try {
             Class.forName("gnu.trove.map.hash.TIntObjectHashMap").newInstance();
             TROVE_EXISTS = true;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
         }
     }
 }
