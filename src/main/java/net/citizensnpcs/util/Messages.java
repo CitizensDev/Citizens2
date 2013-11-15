@@ -184,6 +184,8 @@ public class Messages {
     public static final String SPAWN_NUMERIC_ID_ONLY = "citizens.commands.npc.spawn.numeric-id-only";
     public static final String SPEED_MODIFIER_ABOVE_LIMIT = "citizens.commands.npc.speed.modifier-above-limit";
     public static final String SPEED_MODIFIER_SET = "citizens.commands.npc.speed.set";
+    public static final String SWIMMING_SET = "citizens.commands.npc.swim.set";
+    public static final String SWIMMING_UNSET = "citizens.commands.npc.swim.unset";
     public static final String TARGETABLE_SET = "citizens.commands.npc.targetable.set";
     public static final String TARGETABLE_UNSET = "citizens.commands.npc.targetable.unset";
     public static final String TELEPORT_NPC_LOCATION_NOT_FOUND = "citizens.commands.npc.tp.location-not-found";
