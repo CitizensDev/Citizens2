@@ -1189,6 +1189,21 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "swim (--set [true|false])",
+            desc = "Sets an NPC to swim or not",
+            modifiers = { "swim" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.swim")
+    public void swim(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        boolean swim = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("swim")) : !npc.data().get(
+                NPC.SWIMMING_METADATA, true);
+        npc.data().setPersistent(NPC.SWIMMING_METADATA, swim);
+        Messaging.sendTr(sender, swim ? Messages.SWIMMING_SET : Messages.SWIMMING_UNSET, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "targetable",
             desc = "Toggles an NPC's targetability",
             modifiers = { "targetable" },
