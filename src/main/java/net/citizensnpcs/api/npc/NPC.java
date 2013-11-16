@@ -285,6 +285,7 @@ public interface NPC extends Agent, Cloneable {
      */
     public void teleport(Location location, TeleportCause cause);
 
+    public static final String DAMAGE_OTHERS_METADATA = "damage-others";
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
     public static final String FLYABLE_METADATA = "flyable";
     public static final String LEASH_PROTECTED_METADATA = "protected-leash";
