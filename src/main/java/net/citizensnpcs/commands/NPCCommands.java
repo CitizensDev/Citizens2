@@ -809,6 +809,21 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "passive (--set [true|false])",
+            desc = "Sets whether an NPC damages other entities or not",
+            modifiers = { "passive" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.passive")
+    public void passive(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        boolean passive = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("set")) : npc.data().get(
+                NPC.DAMAGE_OTHERS_METADATA, true);
+        npc.data().setPersistent(NPC.DAMAGE_OTHERS_METADATA, !passive);
+        Messaging.sendTr(sender, passive ? Messages.PASSIVE_SET : Messages.PASSIVE_UNSET, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "pathopt --avoid-water|aw [true|false]",
             desc = "Sets an NPC's pathfinding options",
             modifiers = { "pathopt", "po", "patho" },
@@ -1196,7 +1211,7 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.swim")
     public void swim(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        boolean swim = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("swim")) : !npc.data().get(
+        boolean swim = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("set")) : !npc.data().get(
                 NPC.SWIMMING_METADATA, true);
         npc.data().setPersistent(NPC.SWIMMING_METADATA, swim);
         Messaging.sendTr(sender, swim ? Messages.SWIMMING_SET : Messages.SWIMMING_UNSET, npc.getName());

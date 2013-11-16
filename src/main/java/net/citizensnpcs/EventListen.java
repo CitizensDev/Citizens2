@@ -13,6 +13,7 @@ import net.citizensnpcs.api.event.NPCCombustByEntityEvent;
 import net.citizensnpcs.api.event.NPCCombustEvent;
 import net.citizensnpcs.api.event.NPCDamageByBlockEvent;
 import net.citizensnpcs.api.event.NPCDamageByEntityEvent;
+import net.citizensnpcs.api.event.NPCDamageEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
@@ -152,8 +153,17 @@ public class EventListen implements Listener {
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         NPC npc = npcRegistry.getNPC(event.getEntity());
-        if (npc == null)
+        if (npc == null) {
+            if (event instanceof EntityDamageByEntityEvent) {
+                npc = npcRegistry.getNPC(((EntityDamageByEntityEvent) event).getDamager());
+                if (npc == null)
+                    return;
+                event.setCancelled(npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true));
+                NPCDamageEntityEvent damageEvent = new NPCDamageEntityEvent(npc, (EntityDamageByEntityEvent) event);
+                Bukkit.getPluginManager().callEvent(damageEvent);
+            }
             return;
+        }
         event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
         if (event instanceof EntityDamageByEntityEvent) {
             NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, (EntityDamageByEntityEvent) event);
