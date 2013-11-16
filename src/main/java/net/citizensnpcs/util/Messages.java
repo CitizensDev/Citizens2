@@ -150,6 +150,8 @@ public class Messages {
     public static final String OVER_NPC_LIMIT = "citizens.limits.over-npc-limit";
     public static final String OWNER_SET = "citizens.commands.npc.owner.set";
     public static final String OWNER_SET_SERVER = "citizens.commands.npc.owner.set-server";
+    public static final String PASSIVE_SET = "citizens.commands.npc.passive.set";
+    public static final String PASSIVE_UNSET = "citizens.commands.npc.passive.unset";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_SET = "citizens.commands.npc.pathopt.avoid-water-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_UNSET = "citizens.commands.npc.pathopt.avoid-water-unset";
     public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
