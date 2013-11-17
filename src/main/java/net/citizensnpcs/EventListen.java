@@ -57,6 +57,7 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
@@ -97,7 +98,8 @@ public class EventListen implements Listener {
     }
 
     private Iterable<NPC> getAllNPCs() {
-        return Iterables.<NPC> concat(npcRegistry, Iterables.concat(registries.values()));
+        return Iterables.filter(Iterables.<NPC> concat(npcRegistry, Iterables.concat(registries.values())),
+                Predicates.notNull());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -110,7 +112,7 @@ public class EventListen implements Listener {
         ChunkCoord coord = toCoord(event.getChunk());
         Location loc = new Location(null, 0, 0, 0);
         for (NPC npc : getAllNPCs()) {
-            if (!npc.isSpawned())
+            if (npc == null || !npc.isSpawned())
                 continue;
             loc = npc.getEntity().getLocation(loc);
             boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
@@ -298,7 +300,7 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
         for (NPC npc : getAllNPCs()) {
-            if (!npc.isSpawned() || !npc.getEntity().getWorld().equals(event.getWorld()))
+            if (npc == null || !npc.isSpawned() || !npc.getEntity().getWorld().equals(event.getWorld()))
                 continue;
             boolean despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
             if (event.isCancelled() || !despawned) {
