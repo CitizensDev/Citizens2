@@ -30,6 +30,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Function;
@@ -178,6 +179,16 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    @Deprecated
+    public LivingEntity getBukkitEntity() {
+        Entity entity = getEntity();
+        if (entity == null || entity instanceof LivingEntity) {
+            return (LivingEntity) entity;
+        }
+        throw new IllegalStateException("getBukkitEntity() called on a non-living NPC");
+    }
+
+    @Override
     public GoalController getDefaultGoalController() {
         return goalController;
     }
@@ -187,8 +198,9 @@ public abstract class AbstractNPC implements NPC {
         // TODO: Remove in future versions.
         // This is here to add the Speech trait to any existing NPCs
         // that were created pre-SpeechController, if invoked.
-        if (!hasTrait(Speech.class))
+        if (!hasTrait(Speech.class)) {
             addTrait(Speech.class);
+        }
         return speechController;
     }
 
@@ -209,6 +221,11 @@ public abstract class AbstractNPC implements NPC {
             if (parsed.contains("<" + color.getChar() + ">"))
                 parsed = parsed.replace("<" + color.getChar() + ">", "");
         return parsed;
+    }
+
+    @Override
+    public NPCRegistry getOwningRegistry() {
+        return registry;
     }
 
     @Override
@@ -242,8 +259,18 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public boolean isFlyable() {
+        return data().get(NPC.FLYABLE_METADATA, false);
+    }
+
+    @Override
     public boolean isProtected() {
         return data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+    }
+
+    @Override
+    public boolean isSpawned() {
+        return getEntity() != null;
     }
 
     @Override
@@ -329,6 +356,11 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public void setFlyable(boolean flyable) {
+        data().setPersistent(NPC.FLYABLE_METADATA, flyable);
+    }
+
+    @Override
     public void setName(String name) {
         this.name = name;
         if (!isSpawned())
@@ -347,6 +379,39 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void setProtected(boolean isProtected) {
         data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, isProtected);
+    }
+
+    private void teleport(final Entity entity, Location location, boolean loaded, int delay) {
+        if (!loaded)
+            location.getBlock().getChunk();
+        final Entity passenger = entity.getPassenger();
+        entity.eject();
+        entity.teleport(location);
+        if (passenger == null)
+            return;
+        teleport(passenger, location, true, delay++);
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                entity.setPassenger(passenger);
+            }
+        };
+        if (!location.getWorld().equals(entity.getWorld())) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), task, delay);
+        } else {
+            task.run();
+        }
+    }
+
+    @Override
+    public void teleport(Location location, TeleportCause cause) {
+        if (!isSpawned())
+            return;
+        Entity entity = getEntity();
+        while (entity.getVehicle() != null) {
+            entity = entity.getVehicle();
+        }
+        teleport(entity, location, false, 5);
     }
 
     public void update() {

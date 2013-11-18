@@ -138,6 +138,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public Navigator getNavigator();
 
+    public NPCRegistry getOwningRegistry();
+
     /**
      * If the NPC is not spawned, then this method will return the last known
      * location, or null if it has never been spawned. Otherwise, it is

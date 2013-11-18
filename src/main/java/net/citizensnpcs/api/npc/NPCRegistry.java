@@ -73,4 +73,11 @@ public interface NPCRegistry extends Iterable<NPC> {
      * @return Whether the given entity is an NPC
      */
     public boolean isNPC(Entity entity);
+
+    /**
+     * Returns a <em>sorted</em> view of this registry, sorted by NPC id.
+     * 
+     * @return A sorted view of the registry
+     */
+    Iterable<NPC> sorted();
 }
