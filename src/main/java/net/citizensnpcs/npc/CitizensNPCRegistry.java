@@ -2,7 +2,11 @@ package net.citizensnpcs.npc;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.citizensnpcs.api.event.DespawnReason;
@@ -109,6 +113,11 @@ public class CitizensNPCRegistry implements NPCRegistry {
         return npcs.iterator();
     }
 
+    @Override
+    public Iterable<NPC> sorted() {
+        return npcs.sorted();
+    }
+
     public static class MapNPCCollection implements NPCCollection {
         private final Map<Integer, NPC> npcs = Maps.newHashMap();
 
@@ -131,6 +140,13 @@ public class CitizensNPCRegistry implements NPCRegistry {
         public void remove(int id) {
             npcs.remove(id);
         }
+
+        @Override
+        public Iterable<NPC> sorted() {
+            List<NPC> vals = new ArrayList<NPC>(npcs.values());
+            Collections.sort(vals, NPC_COMPARATOR);
+            return vals;
+        }
     }
 
     public static interface NPCCollection extends Iterable<NPC> {
@@ -139,6 +155,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
         public void put(int id, NPC npc);
 
         public void remove(int id);
+
+        public Iterable<NPC> sorted();
     }
 
     public static class TroveNPCCollection implements NPCCollection {
@@ -163,7 +181,21 @@ public class CitizensNPCRegistry implements NPCRegistry {
         public void remove(int id) {
             npcs.remove(id);
         }
+
+        @Override
+        public Iterable<NPC> sorted() {
+            List<NPC> vals = new ArrayList<NPC>(npcs.valueCollection());
+            Collections.sort(vals, NPC_COMPARATOR);
+            return vals;
+        }
     }
+
+    private static final Comparator<NPC> NPC_COMPARATOR = new Comparator<NPC>() {
+        @Override
+        public int compare(NPC o1, NPC o2) {
+            return o1.getId() - o2.getId();
+        }
+    };
 
     private static boolean TROVE_EXISTS = false;
     static {

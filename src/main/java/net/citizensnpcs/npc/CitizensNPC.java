@@ -31,7 +31,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Preconditions;
@@ -84,19 +83,6 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    @Deprecated
-    public LivingEntity getBukkitEntity() {
-        if (entityController == null) {
-            return null;
-        }
-        Entity entity = entityController.getBukkitEntity();
-        if (entity == null || entity instanceof LivingEntity) {
-            return (LivingEntity) entity;
-        }
-        throw new IllegalStateException("getBukkitEntity() called on a non-living NPC");
-    }
-
-    @Override
     public Entity getEntity() {
         return entityController == null ? null : entityController.getBukkitEntity();
     }
@@ -114,12 +100,7 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public boolean isFlyable() {
         updateFlyableState();
-        return data().get(NPC.FLYABLE_METADATA, false);
-    }
-
-    @Override
-    public boolean isSpawned() {
-        return getEntity() != null;
+        return super.isFlyable();
     }
 
     @Override
@@ -164,7 +145,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public void setFlyable(boolean flyable) {
-        data().setPersistent(NPC.FLYABLE_METADATA, flyable);
+        super.setFlyable(flyable);
         updateFlyableState();
     }
 
@@ -223,35 +204,6 @@ public class CitizensNPC extends AbstractNPC {
             entity.setCustomName(getFullName());
         }
         return true;
-    }
-
-    private void teleport(final Entity entity, Location location, boolean loaded, int delay) {
-        if (!loaded)
-            location.getBlock().getChunk();
-        final Entity passenger = entity.getPassenger();
-        entity.eject();
-        entity.teleport(location);
-        if (passenger == null)
-            return;
-        teleport(passenger, location, true, delay++);
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                NMS.mount(entity, passenger);
-            }
-        };
-        if (!location.getWorld().equals(entity.getWorld())) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), task, delay);
-        } else {
-            task.run();
-        }
-    }
-
-    @Override
-    public void teleport(Location location, TeleportCause cause) {
-        if (!isSpawned())
-            return;
-        teleport(NMS.getRootVehicle(getEntity()), location, false, 5);
     }
 
     @Override
