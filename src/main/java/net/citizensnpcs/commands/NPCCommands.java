@@ -595,20 +595,22 @@ public class NPCCommands {
         List<NPC> npcs = new ArrayList<NPC>();
 
         if (args.hasFlag('a')) {
-            for (NPC add : npcRegistry) {
+            for (NPC add : npcRegistry.sorted()) {
                 npcs.add(add);
             }
         } else if (args.getValueFlags().size() == 0 && sender instanceof Player) {
-            for (NPC add : npcRegistry) {
-                if (!npcs.contains(add) && add.getTrait(Owner.class).isOwnedBy(sender))
+            for (NPC add : npcRegistry.sorted()) {
+                if (!npcs.contains(add) && add.getTrait(Owner.class).isOwnedBy(sender)) {
                     npcs.add(add);
+                }
             }
         } else {
             if (args.hasValueFlag("owner")) {
                 String name = args.getFlag("owner");
-                for (NPC add : npcRegistry) {
-                    if (!npcs.contains(add) && add.getTrait(Owner.class).isOwnedBy(name))
+                for (NPC add : npcRegistry.sorted()) {
+                    if (!npcs.contains(add) && add.getTrait(Owner.class).isOwnedBy(name)) {
                         npcs.add(add);
+                    }
                 }
             }
 
