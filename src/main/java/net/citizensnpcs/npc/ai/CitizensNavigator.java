@@ -37,6 +37,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
     private final NPC npc;
+    private boolean paused;
     private int stationaryTicks;
 
     public CitizensNavigator(NPC npc) {
@@ -85,6 +86,10 @@ public class CitizensNavigator implements Navigator, Runnable {
         return executing != null;
     }
 
+    public boolean isPaused() {
+        return paused;
+    }
+
     public void load(DataKey root) {
         defaultParams.range((float) root.getDouble("pathfindingrange", Setting.DEFAULT_PATHFINDING_RANGE.asFloat()));
         defaultParams.stationaryTicks(root.getInt("stationaryticks", Setting.DEFAULT_STATIONARY_TICKS.asInt()));
@@ -107,7 +112,7 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public void run() {
-        if (!isNavigating() || !npc.isSpawned())
+        if (!isNavigating() || !npc.isSpawned() || paused)
             return;
         if (updateStationaryStatus())
             return;
@@ -132,6 +137,10 @@ public class CitizensNavigator implements Navigator, Runnable {
         root.setDouble("speedmodifier", defaultParams.speedModifier());
         root.setBoolean("avoidwater", defaultParams.avoidWater());
         root.setBoolean("usedefaultstuckaction", defaultParams.stuckAction() == TeleportStuckAction.INSTANCE);
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 
     @Override

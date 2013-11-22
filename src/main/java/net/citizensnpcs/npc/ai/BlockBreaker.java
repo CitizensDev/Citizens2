@@ -88,7 +88,7 @@ public class BlockBreaker extends BehaviorGoalAdapter {
             return BehaviorStatus.SUCCESS;
         } else {
             int tickDifference = currentTick - startDigTick;
-            float damage = getStrength(block) * (tickDifference + 1);
+            float damage = getStrength(block) * (tickDifference + 1) * configuration.blockStrengthModifier();
             if (damage >= 1F) {
                 entity.world.getWorld().getBlockAt(x, y, z)
                         .breakNaturally(CraftItemStack.asCraftMirror(getCurrentItem()));
@@ -144,7 +144,17 @@ public class BlockBreaker extends BehaviorGoalAdapter {
     public static class Configuration {
         private Runnable callback;
         private org.bukkit.inventory.ItemStack itemStack;
-        private double radius;
+        private float modifier = 1;
+        private double radius = -1;
+
+        public float blockStrengthModifier() {
+            return modifier;
+        }
+
+        public Configuration blockStrengthModifier(float modifier) {
+            this.modifier = modifier;
+            return this;
+        }
 
         private Runnable callback() {
             return callback;
