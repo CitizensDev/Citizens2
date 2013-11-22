@@ -70,6 +70,20 @@ public interface Navigator {
     boolean isNavigating();
 
     /**
+     * @return Whether the navigator is currently paused
+     */
+    boolean isPaused();
+
+    /**
+     * Sets whether the navigator is paused and shouldn't process the path for
+     * now.
+     * 
+     * @param paused
+     *            Whether the navigator should be paused or not
+     */
+    void setPaused(boolean paused);
+
+    /**
      * Sets the current navigation to an entity target.
      * 
      * @param target
