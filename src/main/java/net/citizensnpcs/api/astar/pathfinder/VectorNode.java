@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.citizensnpcs.api.astar.AStarNode;
 import net.citizensnpcs.api.astar.Plan;
+import net.citizensnpcs.api.astar.pathfinder.BlockExaminer.PassableState;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -120,7 +121,10 @@ public class VectorNode extends AStarNode implements PathPoint {
     private boolean isPassable(PathPoint mod) {
         boolean passable = true;
         for (BlockExaminer examiner : examiners) {
-            passable = examiner.isPassable(blockSource, mod);
+            PassableState state = examiner.isPassable(blockSource, mod);
+            if (state == PassableState.IGNORE)
+                continue;
+            passable = state == PassableState.PASSABLE ? true : false;
         }
         return passable;
     }

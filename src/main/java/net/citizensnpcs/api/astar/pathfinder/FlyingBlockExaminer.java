@@ -16,14 +16,14 @@ public class FlyingBlockExaminer implements BlockExaminer {
     }
 
     @Override
-    public boolean isPassable(BlockSource source, PathPoint point) {
+    public PassableState isPassable(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
         Material above = source.getMaterialAt(pos.clone().add(UP));
         Material in = source.getMaterialAt(pos);
         if (MinecraftBlockExaminer.isLiquid(above, in)) {
-            return false;
+            return PassableState.UNPASSABLE;
         }
-        return MinecraftBlockExaminer.canStandIn(above, in);
+        return PassableState.fromBoolean(MinecraftBlockExaminer.canStandIn(above, in));
     }
 
     private static final Vector UP = new Vector(0, 1, 0);

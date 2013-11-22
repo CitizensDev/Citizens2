@@ -26,18 +26,18 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     @Override
-    public boolean isPassable(BlockSource source, PathPoint point) {
+    public PassableState isPassable(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
         Material above = source.getMaterialAt(pos.clone().add(UP));
         Material below = source.getMaterialAt(pos.clone().add(DOWN));
         Material in = source.getMaterialAt(pos);
         if (!below.isBlock() || !canStandOn(below)) {
-            return false;
+            return PassableState.UNPASSABLE;
         }
         if (!canStandIn(above) || !canStandIn(in)) {
-            return false;
+            return PassableState.UNPASSABLE;
         }
-        return true;
+        return PassableState.PASSABLE;
     }
 
     public static boolean canStandIn(Material... mat) {
