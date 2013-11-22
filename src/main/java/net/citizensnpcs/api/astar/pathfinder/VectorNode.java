@@ -118,13 +118,11 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     private boolean isPassable(PathPoint mod) {
+        boolean passable = true;
         for (BlockExaminer examiner : examiners) {
-            boolean passable = examiner.isPassable(blockSource, mod);
-            if (!passable) {
-                return false;
-            }
+            passable = examiner.isPassable(blockSource, mod);
         }
-        return true;
+        return passable;
     }
 
     private static final float TIEBREAKER = 1.001f;
