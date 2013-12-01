@@ -2,6 +2,7 @@ package net.citizensnpcs.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.WeakHashMap;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
+import net.citizensnpcs.npc.network.EmptyChannel;
 import net.minecraft.server.v1_7_R1.AttributeInstance;
 import net.minecraft.server.v1_7_R1.ControllerJump;
 import net.minecraft.server.v1_7_R1.DamageSource;
@@ -27,6 +29,7 @@ import net.minecraft.server.v1_7_R1.GenericAttributes;
 import net.minecraft.server.v1_7_R1.MathHelper;
 import net.minecraft.server.v1_7_R1.MobEffectList;
 import net.minecraft.server.v1_7_R1.Navigation;
+import net.minecraft.server.v1_7_R1.NetworkManager;
 import net.minecraft.server.v1_7_R1.Packet;
 import net.minecraft.server.v1_7_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_7_R1.World;
@@ -216,6 +219,21 @@ public class NMS {
         // return (float)
         // NMS.getHandle(npc.getBukkitEntity()).getAttributeInstance(GenericAttributes.d).getValue();
         return DEFAULT_SPEED;
+    }
+
+    public static void initNetworkManager(NetworkManager network) {
+        if (NETWORK_CHANNEL == null || NETWORK_ADDRESS == null)
+            return;
+        try {
+            NETWORK_CHANNEL.set(network, new EmptyChannel(null));
+            NETWORK_ADDRESS.set(network, new SocketAddress() {
+                private static final long serialVersionUID = 8207338859896320185L;
+            });
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public static boolean inWater(org.bukkit.entity.Entity entity) {
@@ -484,16 +502,19 @@ public class NMS {
     private static Map<Class<?>, Integer> MC_ENTITY_CLASS_TO_INT = null;
     private static Map<Integer, Class<?>> MC_ENTITY_INT_TO_CLASS = null;
     private static Field NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
+    private static Field NETWORK_ADDRESS = getField(NetworkManager.class, "l");
+    private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "k");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(Navigation.class, "e");
+
     private static final Random RANDOM = Util.getFastRandom();
     // true field above false and three synchronised lists
 
     static {
         try {
-            Field field = getField(EntityTypes.class, "d");
+            Field field = getField(EntityTypes.class, "e");
             ENTITY_INT_TO_CLASS = (Map<Integer, Class<?>>) field.get(null);
-            field = getField(EntityTypes.class, "e");
+            field = getField(EntityTypes.class, "f");
             ENTITY_CLASS_TO_INT = (Map<Class<?>, Integer>) field.get(null);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
