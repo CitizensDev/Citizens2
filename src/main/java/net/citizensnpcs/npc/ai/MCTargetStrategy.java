@@ -134,13 +134,15 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
     private class AStarTargeter implements TargetNavigator {
         private int failureTimes = 0;
-        private AStarNavigationStrategy strategy = new AStarNavigationStrategy(npc, target.getBukkitEntity()
-                .getLocation(TARGET_LOCATION), parameters);
+        private PathStrategy strategy;
+
+        public AStarTargeter() {
+            setStrategy();
+        }
 
         @Override
         public void setPath() {
-            strategy = new AStarNavigationStrategy(npc, target.getBukkitEntity().getLocation(TARGET_LOCATION),
-                    parameters);
+            setStrategy();
             strategy.update();
             CancelReason subReason = strategy.getCancelReason();
             if (subReason == CancelReason.STUCK) {
@@ -151,6 +153,12 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
                 failureTimes = 0;
                 cancelReason = strategy.getCancelReason();
             }
+        }
+
+        private void setStrategy() {
+            Location location = target.getBukkitEntity().getLocation(TARGET_LOCATION);
+            strategy = npc.isFlyable() ? new FlyingAStarNavigationStrategy(npc, location, parameters)
+                    : new AStarNavigationStrategy(npc, location, parameters);
         }
 
         @Override

@@ -86,6 +86,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         return executing != null;
     }
 
+    @Override
     public boolean isPaused() {
         return paused;
     }
@@ -126,8 +127,9 @@ public class CitizensNavigator implements Navigator, Runnable {
             NavigationCompleteEvent event = new NavigationCompleteEvent(this);
             PathStrategy old = executing;
             Bukkit.getPluginManager().callEvent(event);
-            if (old == executing)
+            if (old == executing) {
                 stopNavigating(null);
+            }
         }
     }
 
@@ -139,6 +141,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         root.setBoolean("usedefaultstuckaction", defaultParams.stuckAction() == TeleportStuckAction.INSTANCE);
     }
 
+    @Override
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
