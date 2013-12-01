@@ -75,9 +75,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             Material.MELON_STEM, Material.NETHER_FENCE, Material.PUMPKIN_STEM, Material.POWERED_RAIL, Material.RAILS,
             Material.RED_ROSE, Material.RED_MUSHROOM, Material.REDSTONE, Material.REDSTONE_TORCH_OFF,
             Material.REDSTONE_TORCH_OFF, Material.REDSTONE_WIRE, Material.SIGN, Material.SIGN_POST, Material.SNOW,
-            Material.STRING, Material.STONE_BUTTON, Material.SUGAR_CANE_BLOCK, Material.TRIPWIRE, Material.VINE,
-            Material.WALL_SIGN, Material.WHEAT, Material.WATER, Material.WEB, Material.WOOD_BUTTON,
-            Material.WOODEN_DOOR, Material.STATIONARY_WATER);
+            Material.DOUBLE_PLANT, Material.STRING, Material.STONE_BUTTON, Material.SUGAR_CANE_BLOCK,
+            Material.TRIPWIRE, Material.VINE, Material.WALL_SIGN, Material.WHEAT, Material.WATER, Material.WEB,
+            Material.WOOD_BUTTON, Material.WOODEN_DOOR, Material.STATIONARY_WATER);
     private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.STATIONARY_LAVA,
             Material.CACTUS);
     private static final Vector UP = new Vector(0, 1, 0);
