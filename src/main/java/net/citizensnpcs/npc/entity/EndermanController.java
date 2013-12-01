@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R3.EntityEnderman;
-import net.minecraft.server.v1_6_R3.World;
+import net.minecraft.server.v1_7_R1.EntityEnderman;
+import net.minecraft.server.v1_7_R1.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEnderman;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEnderman;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
 import org.bukkit.entity.Enderman;
 import org.bukkit.util.Vector;
 
@@ -72,29 +72,29 @@ public class EndermanController extends MobEntityController {
         }
 
         @Override
-        public boolean bH() {
+        public boolean bL() {
             if (npc == null)
-                return super.bH();
+                return super.bL();
             boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.bH();
-            if (super.bH()) {
+                return super.bL();
+            if (super.bL()) {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
         }
 
         @Override
-        public void bi() {
-            super.bi();
+        public void bn() {
+            super.bn();
             if (npc != null)
                 npc.update();
         }
 
         @Override
-        public void bl() {
+        public void bq() {
             if (npc == null)
-                super.bl();
+                super.bq();
             else {
                 NMS.updateAI(this);
                 npc.update();
@@ -102,17 +102,7 @@ public class EndermanController extends MobEntityController {
         }
 
         @Override
-        public void c() {
-            if (npc == null)
-                super.c();
-            else {
-                updateAIWithMovement();
-                npc.update();
-            }
-        }
-
-        @Override
-        public void collide(net.minecraft.server.v1_6_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_7_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -121,11 +111,12 @@ public class EndermanController extends MobEntityController {
         }
 
         @Override
-        public boolean e() {
-            if (npc == null || !npc.isFlyable()) {
-                return super.e();
-            } else {
-                return false;
+        public void e() {
+            if (npc == null)
+                super.e();
+            else {
+                updateAIWithMovement();
+                npc.update();
             }
         }
 
@@ -173,7 +164,16 @@ public class EndermanController extends MobEntityController {
         }
 
         @Override
-        protected boolean j(double d1, double d2, double d3) {
+        public boolean h_() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.h_();
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        protected boolean k(double d1, double d2, double d3) {
             if (npc == null) {
                 return super.j(d1, d2, d3);
             }
@@ -189,7 +189,7 @@ public class EndermanController extends MobEntityController {
                      motY += 0.04;
                  } else //(handled elsewhere)*/
                 if (onGround && jumpTicks == 0) {
-                    be();
+                    bj();
                     jumpTicks = 10;
                 }
             } else {

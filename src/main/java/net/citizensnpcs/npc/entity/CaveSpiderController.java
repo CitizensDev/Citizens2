@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R3.EntityCaveSpider;
-import net.minecraft.server.v1_6_R3.World;
+import net.minecraft.server.v1_7_R1.EntityCaveSpider;
+import net.minecraft.server.v1_7_R1.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftCaveSpider;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftCaveSpider;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
 import org.bukkit.entity.CaveSpider;
 import org.bukkit.util.Vector;
 
@@ -72,32 +72,32 @@ public class CaveSpiderController extends MobEntityController {
         }
 
         @Override
-        public boolean bH() {
+        public boolean bL() {
             if (npc == null) {
-                return super.bH();
+                return super.bL();
             }
             boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault)) {
-                return super.bH();
+                return super.bL();
             }
-            if (super.bH()) {
+            if (super.bL()) {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
         }
 
         @Override
-        public void bi() {
-            super.bi();
+        public void bn() {
+            super.bn();
             if (npc != null) {
                 npc.update();
             }
         }
 
         @Override
-        public void bl() {
+        public void bq() {
             if (npc == null) {
-                super.bl();
+                super.bq();
             } else {
                 NMS.updateAI(this);
                 npc.update();
@@ -105,21 +105,12 @@ public class CaveSpiderController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_6_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_7_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
-            }
-        }
-
-        @Override
-        public boolean e() {
-            if (npc == null || !npc.isFlyable()) {
-                return super.e();
-            } else {
-                return false;
             }
         }
 
@@ -164,6 +155,15 @@ public class CaveSpiderController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean h_() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.h_();
+            } else {
+                return false;
+            }
         }
     }
 }

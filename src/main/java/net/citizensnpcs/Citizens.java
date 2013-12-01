@@ -408,8 +408,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void storeNPCs() {
         if (saves == null)
             return;
-        for (NPC npc : npcRegistry)
+        for (NPC npc : npcRegistry) {
             saves.store(npc);
+        }
     }
 
     public void storeNPCs(CommandContext args) {
@@ -431,5 +432,5 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return false;
     }
 
-    private static final String COMPATIBLE_MC_VERSION = "1.6.4";
+    private static final String COMPATIBLE_MC_VERSION = "1.7.2";
 }

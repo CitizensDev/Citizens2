@@ -1,8 +1,8 @@
 package net.citizensnpcs.trait.waypoint;
 
-import net.minecraft.server.v1_6_R3.DamageSource;
-import net.minecraft.server.v1_6_R3.EntityEnderSignal;
-import net.minecraft.server.v1_6_R3.World;
+import net.minecraft.server.v1_7_R1.DamageSource;
+import net.minecraft.server.v1_7_R1.EntityEnderSignal;
+import net.minecraft.server.v1_7_R1.World;
 
 public class EntityEnderSignalMarker extends EntityEnderSignal {
     public EntityEnderSignalMarker(World world) {
@@ -19,6 +19,6 @@ public class EntityEnderSignalMarker extends EntityEnderSignal {
     }
 
     @Override
-    public void l_() {
+    public void h() {
     }
 }

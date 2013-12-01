@@ -2,41 +2,41 @@ package net.citizensnpcs.util;
 
 import java.util.Arrays;
 
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.Packet;
-import net.minecraft.server.v1_6_R3.Packet17EntityLocationAction;
-import net.minecraft.server.v1_6_R3.Packet18ArmAnimation;
-import net.minecraft.server.v1_6_R3.Packet40EntityMetadata;
+import net.minecraft.server.v1_7_R1.EntityPlayer;
+import net.minecraft.server.v1_7_R1.Packet;
+import net.minecraft.server.v1_7_R1.PacketPlayOutAnimation;
+import net.minecraft.server.v1_7_R1.PacketPlayOutBed;
+import net.minecraft.server.v1_7_R1.PacketPlayOutEntityMetadata;
 
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public enum PlayerAnimation {
     ARM_SWING {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 1);
+            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 1);
             sendPacketNearby(packet, player, radius);
         }
     },
     CRIT {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 6);
+            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 6);
             sendPacketNearby(packet, player, radius);
         }
     },
     HURT {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 2);
+            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 2);
             sendPacketNearby(packet, player, radius);
         }
     },
     MAGIC_CRIT {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 7);
+            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 7);
             sendPacketNearby(packet, player, radius);
         }
     },
@@ -49,8 +49,8 @@ public enum PlayerAnimation {
     SLEEP {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            Packet17EntityLocationAction packet = new Packet17EntityLocationAction(player, 0, (int) player.locX,
-                    (int) player.locY, (int) player.locZ);
+            PacketPlayOutBed packet = new PacketPlayOutBed(player, (int) player.locX, (int) player.locY,
+                    (int) player.locZ);
             sendPacketNearby(packet, player, radius);
         }
     },
@@ -58,7 +58,8 @@ public enum PlayerAnimation {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
             player.getBukkitEntity().setSneaking(true);
-            sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher(), true), player, radius);
+            sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
+                    radius);
         }
     },
     STOP_SITTING {
@@ -70,7 +71,7 @@ public enum PlayerAnimation {
     STOP_SLEEPING {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            Packet18ArmAnimation packet = new Packet18ArmAnimation(player, 3);
+            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 3);
             sendPacketNearby(packet, player, radius);
         }
     },
@@ -78,7 +79,8 @@ public enum PlayerAnimation {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
             player.getBukkitEntity().setSneaking(false);
-            sendPacketNearby(new Packet40EntityMetadata(player.id, player.getDataWatcher(), true), player, radius);
+            sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
+                    radius);
         }
     };
 
