@@ -196,8 +196,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // swallow
         }
 
-        NMS.setStepHeight(this, 1);// stepHeight - must not stay as the default
-                                   // 0 (breaks steps).
+        NMS.setStepHeight(this, 1); // the default (0) breaks step climbing
 
         try {
             socket.close();

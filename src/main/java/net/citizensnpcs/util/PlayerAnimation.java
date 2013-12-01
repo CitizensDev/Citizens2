@@ -15,29 +15,31 @@ public enum PlayerAnimation {
     ARM_SWING {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 1);
-            sendPacketNearby(packet, player, radius);
+            playDefaultAnimation(player, radius, 0);
         }
     },
     CRIT {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 6);
-            sendPacketNearby(packet, player, radius);
+            playDefaultAnimation(player, radius, 4);
+        }
+    },
+    EAT_FOOD {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            playDefaultAnimation(player, radius, 3);
         }
     },
     HURT {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 2);
-            sendPacketNearby(packet, player, radius);
+            playDefaultAnimation(player, radius, 1);
         }
     },
     MAGIC_CRIT {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 7);
-            sendPacketNearby(packet, player, radius);
+            playDefaultAnimation(player, radius, 5);
         }
     },
     SIT {
@@ -71,8 +73,7 @@ public enum PlayerAnimation {
     STOP_SLEEPING {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 3);
-            sendPacketNearby(packet, player, radius);
+            playDefaultAnimation(player, radius, 2);
         }
     },
     STOP_SNEAKING {
@@ -94,6 +95,11 @@ public enum PlayerAnimation {
 
     protected void playAnimation(EntityPlayer player, int radius) {
         throw new UnsupportedOperationException("unimplemented animation");
+    }
+
+    protected void playDefaultAnimation(EntityPlayer player, int radius, int code) {
+        PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, code);
+        sendPacketNearby(packet, player, radius);
     }
 
     protected void sendPacketNearby(Packet packet, EntityPlayer player, int radius) {
