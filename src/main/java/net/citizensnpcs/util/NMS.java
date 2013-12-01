@@ -27,11 +27,9 @@ import net.minecraft.server.v1_7_R1.GenericAttributes;
 import net.minecraft.server.v1_7_R1.MathHelper;
 import net.minecraft.server.v1_7_R1.MobEffectList;
 import net.minecraft.server.v1_7_R1.Navigation;
-import net.minecraft.server.v1_7_R1.NetworkManager;
 import net.minecraft.server.v1_7_R1.Packet;
 import net.minecraft.server.v1_7_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_7_R1.World;
-import net.minecraft.util.io.netty.channel.Channel;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -410,17 +408,6 @@ public class NMS {
         navigation.h();
     }
 
-    public static void stopNetworkThreads(NetworkManager manager) {
-        if (THREAD_STOPPER == null)
-            return;
-        try {
-            Channel channel = (Channel) THREAD_STOPPER.get(manager);
-            channel.close();
-        } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_STOPPING_NETWORK_THREADS, e.getMessage());
-        }
-    }
-
     public static void trySwim(org.bukkit.entity.Entity entity) {
         trySwim(entity, 0.04F);
     }
@@ -500,7 +487,6 @@ public class NMS {
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(Navigation.class, "e");
     private static final Random RANDOM = Util.getFastRandom();
-    private static Field THREAD_STOPPER = getField(NetworkManager.class, "k");
     // true field above false and three synchronised lists
 
     static {
