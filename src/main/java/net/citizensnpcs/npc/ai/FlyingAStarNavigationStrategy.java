@@ -11,7 +11,7 @@ import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R3.MathHelper;
+import net.minecraft.server.v1_7_R1.MathHelper;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;

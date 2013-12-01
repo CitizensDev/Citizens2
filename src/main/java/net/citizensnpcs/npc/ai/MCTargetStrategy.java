@@ -12,16 +12,16 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.nms.PlayerNavigation;
-import net.minecraft.server.v1_6_R3.AttributeInstance;
-import net.minecraft.server.v1_6_R3.Entity;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.Navigation;
-import net.minecraft.server.v1_6_R3.PathEntity;
+import net.minecraft.server.v1_7_R1.AttributeInstance;
+import net.minecraft.server.v1_7_R1.Entity;
+import net.minecraft.server.v1_7_R1.EntityLiving;
+import net.minecraft.server.v1_7_R1.EntityPlayer;
+import net.minecraft.server.v1_7_R1.Navigation;
+import net.minecraft.server.v1_7_R1.PathEntity;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {

@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_6_R3.EntityWither;
-import net.minecraft.server.v1_6_R3.World;
+import net.minecraft.server.v1_7_R1.EntityWither;
+import net.minecraft.server.v1_7_R1.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftWither;
+import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftWither;
 import org.bukkit.entity.Wither;
 import org.bukkit.util.Vector;
 
@@ -44,42 +44,42 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
-        public boolean bH() {
+        public boolean bL() {
             if (npc == null)
-                return super.bH();
+                return super.bL();
             boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.bH();
-            if (super.bH()) {
+                return super.bL();
+            if (super.bL()) {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
         }
 
         @Override
-        public void bi() {
-            super.bi();
+        public void bn() {
+            super.bn();
             if (npc != null) {
                 npc.update();
             }
         }
 
         @Override
-        public void c() {
-            if (npc == null) {
-                super.c();
-            } else {
-                updateAIWithMovement();
-            }
-        }
-
-        @Override
-        public void collide(net.minecraft.server.v1_6_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_7_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
             if (npc != null)
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+        }
+
+        @Override
+        public void e() {
+            if (npc == null) {
+                super.e();
+            } else {
+                updateAIWithMovement();
+            }
         }
 
         @Override
@@ -125,7 +125,7 @@ public class WitherController extends MobEntityController {
                      motY += 0.04;
                  } else //(handled elsewhere)*/
                 if (onGround && jumpTicks == 0) {
-                    be();
+                    bj();
                     jumpTicks = 10;
                 }
             } else {

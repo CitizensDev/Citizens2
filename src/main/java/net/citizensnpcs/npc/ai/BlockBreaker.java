@@ -3,17 +3,18 @@ package net.citizensnpcs.npc.ai;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.minecraft.server.v1_6_R3.Block;
-import net.minecraft.server.v1_6_R3.Enchantment;
-import net.minecraft.server.v1_6_R3.EnchantmentManager;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.ItemStack;
-import net.minecraft.server.v1_6_R3.Material;
-import net.minecraft.server.v1_6_R3.MobEffectList;
+import net.minecraft.server.v1_7_R1.Block;
+import net.minecraft.server.v1_7_R1.Blocks;
+import net.minecraft.server.v1_7_R1.Enchantment;
+import net.minecraft.server.v1_7_R1.EnchantmentManager;
+import net.minecraft.server.v1_7_R1.EntityLiving;
+import net.minecraft.server.v1_7_R1.EntityPlayer;
+import net.minecraft.server.v1_7_R1.ItemStack;
+import net.minecraft.server.v1_7_R1.Material;
+import net.minecraft.server.v1_7_R1.MobEffectList;
 
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_7_R1.inventory.CraftItemStack;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -39,17 +40,17 @@ public class BlockBreaker extends BehaviorGoalAdapter {
         return Math.pow(entity.locX - x, 2) + Math.pow(entity.locY - y, 2) + Math.pow(entity.locZ - z, 2);
     }
 
-    private net.minecraft.server.v1_6_R3.ItemStack getCurrentItem() {
+    private net.minecraft.server.v1_7_R1.ItemStack getCurrentItem() {
         return configuration.item() != null ? CraftItemStack.asNMSCopy(configuration.item()) : entity.getEquipment(0);
     }
 
     private float getStrength(Block block) {
-        float base = block.l(null, 0, 0, 0);
+        float base = block.f(null, 0, 0, 0);
         return base < 0.0F ? 0.0F : (!isDestroyable(block) ? 1.0F / base / 100.0F : strengthMod(block) / base / 30.0F);
     }
 
     private boolean isDestroyable(Block block) {
-        if (block.material.isAlwaysDestroyable()) {
+        if (block.getMaterial().isAlwaysDestroyable()) {
             return true;
         } else {
             ItemStack current = getCurrentItem();
@@ -83,7 +84,7 @@ public class BlockBreaker extends BehaviorGoalAdapter {
         }
         if (entity instanceof EntityPlayer)
             PlayerAnimation.ARM_SWING.play((Player) entity.getBukkitEntity());
-        Block block = Block.byId[entity.world.getTypeId(x, y, z)];
+        Block block = entity.world.getType(x, y, z);
         if (block == null) {
             return BehaviorStatus.SUCCESS;
         } else {
@@ -104,12 +105,12 @@ public class BlockBreaker extends BehaviorGoalAdapter {
     }
 
     private void setBlockDamage(int modifiedDamage) {
-        entity.world.f(entity.id, x, y, z, modifiedDamage);
+        entity.world.d(entity.getId(), x, y, z, modifiedDamage);
     }
 
     @Override
     public boolean shouldExecute() {
-        return entity.world.getTypeId(x, y, z) > 0;
+        return entity.world.getType(x, y, z) != Blocks.AIR;
     }
 
     private float strengthMod(Block block) {
