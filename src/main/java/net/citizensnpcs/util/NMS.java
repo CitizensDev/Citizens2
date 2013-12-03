@@ -91,8 +91,8 @@ public class NMS {
         if (!success)
             return;
         if (knockbackLevel > 0) {
-            target.g(-MathHelper.sin((float) (handle.yaw * Math.PI / 180.0F)) * knockbackLevel * 0.5F, 0.1D,
-                    MathHelper.cos((float) (handle.yaw * Math.PI / 180.0F)) * knockbackLevel * 0.5F);
+            target.g(-Math.sin(handle.yaw * Math.PI / 180.0F) * knockbackLevel * 0.5F, 0.1D,
+                    Math.cos(handle.yaw * Math.PI / 180.0F) * knockbackLevel * 0.5F);
             handle.motX *= 0.6D;
             handle.motZ *= 0.6D;
         }

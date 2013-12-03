@@ -52,7 +52,7 @@ public class PlayerControllerMove {
     }
 
     public void c() {
-        this.a.bf = 0F;
+        this.a.bf = 0;
         if (this.f) {
             this.f = false;
             int i = MathHelper.floor(this.a.boundingBox.b + 0.5D);
@@ -60,8 +60,7 @@ public class PlayerControllerMove {
             double d1 = this.d - this.a.locZ;
             double d2 = this.c - i;
             double d3 = d0 * d0 + d2 * d2 + d1 * d1;
-
-            if (d3 >= 2.5D) {
+            if (d3 >= 2.500000277905201E-7D) {
                 float f = (float) (Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
 
                 this.a.yaw = this.a(this.a.yaw, f, 30.0F);

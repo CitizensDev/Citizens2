@@ -36,6 +36,7 @@ public class PlayerNavigation extends Navigation {
         this.a = entityinsentient;
         this.b = world;
         this.e = entityinsentient.getAttributeInstance(GenericAttributes.b);
+        this.e.setValue(24);
     }
 
     @Override
@@ -254,7 +255,6 @@ public class PlayerNavigation extends Navigation {
         Vec3D localVec3D = this.c.a(this.a);
         if (localVec3D == null)
             return;
-
         this.a.setMoveDestination(localVec3D.c, localVec3D.d, localVec3D.e, this.d);
     }
 

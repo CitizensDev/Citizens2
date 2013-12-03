@@ -155,11 +155,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // (onGround is normally updated by the client)
         }
         if (!npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())) {
-            // h(); TODO
+            i();// TODO
         }
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
-
         if (navigating) {
             if (!NMS.isNavigationFinished(navigation)) {
                 NMS.updateNavigation(navigation);
@@ -173,6 +172,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (noDamageTicks > 0) {
             --noDamageTicks;
         }
+
         npc.update();
     }
 
@@ -221,12 +221,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     private void moveOnCurrentHeading() {
         NMS.updateAI(this);
-        // taken from EntityLiving update method
         if (bd) {
-            /* boolean inLiquid = H() || J();
-             if (inLiquid) {
-                 motY += 0.04;
-             } else //(handled elsewhere)*/
             if (onGround && jumpTicks == 0) {
                 bj();
                 jumpTicks = 10;
@@ -237,7 +232,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         be *= 0.98F;
         bf *= 0.98F;
         bg *= 0.9F;
-
         e(be, bf); // movement method
         NMS.setHeadYaw(this, yaw);
         if (jumpTicks > 0) {
