@@ -114,8 +114,10 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             cancelReason = CancelReason.TARGET_MOVED_WORLD;
             return true;
         }
-        if (cancelReason != null)
+        if (cancelReason != null) {
             return true;
+        }
+
         setPath();
         NMS.look(handle, target);
         if (aggro && canAttack()) {
@@ -126,8 +128,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             }
             attackTicks = ATTACK_DELAY_TICKS;
         }
-        if (attackTicks > 0)
+        if (attackTicks > 0) {
             attackTicks--;
+        }
 
         return false;
     }
