@@ -160,7 +160,7 @@ public class EventListen implements Listener {
                 npc = npcRegistry.getNPC(((EntityDamageByEntityEvent) event).getDamager());
                 if (npc == null)
                     return;
-                event.setCancelled(npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true));
+                event.setCancelled(!npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true));
                 NPCDamageEntityEvent damageEvent = new NPCDamageEntityEvent(npc, (EntityDamageByEntityEvent) event);
                 Bukkit.getPluginManager().callEvent(damageEvent);
             }

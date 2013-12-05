@@ -87,9 +87,9 @@ public class NMS {
         }
 
         boolean success = target.damageEntity(DamageSource.mobAttack(handle), damage);
-
         if (!success)
             return;
+
         if (knockbackLevel > 0) {
             target.g(-Math.sin(handle.yaw * Math.PI / 180.0F) * knockbackLevel * 0.5F, 0.1D,
                     Math.cos(handle.yaw * Math.PI / 180.0F) * knockbackLevel * 0.5F);

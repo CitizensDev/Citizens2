@@ -117,7 +117,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (cancelReason != null) {
             return true;
         }
-
         setPath();
         NMS.look(handle, target);
         if (aggro && canAttack()) {
