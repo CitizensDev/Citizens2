@@ -31,6 +31,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     private final NavigatorParameters defaultParams = new NavigatorParameters().baseSpeed(UNINITIALISED_SPEED)
             .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
             .defaultAttackStrategy(MCTargetStrategy.DEFAULT_ATTACK_STRATEGY)
+            .attackRange(Setting.NPC_ATTACK_DISTANCE.asDouble())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt()).stuckAction(TeleportStuckAction.INSTANCE)
             .examiner(new MinecraftBlockExaminer()).useNewPathfinder(Setting.USE_NEW_PATHFINDER.asBoolean());
     private PathStrategy executing;
@@ -154,7 +155,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             cancelNavigation();
             return;
         }
-        localParams = defaultParams.clone();
+        switchParams();
         updatePathfindingRange();
         PathStrategy newStrategy = new MCTargetStrategy(npc, target, aggressive, localParams);
         switchStrategyTo(newStrategy);
@@ -173,7 +174,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             cancelNavigation();
             return;
         }
-        localParams = defaultParams.clone();
+        switchParams();
         updatePathfindingRange();
         PathStrategy newStrategy;
         if (npc.isFlyable()) {
@@ -231,10 +232,15 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
     }
 
+    private void switchParams() {
+        localParams = defaultParams.clone();
+    }
+
     private void switchStrategyTo(PathStrategy newStrategy) {
         Messaging.debug(npc.getId(), "changing to new PathStrategy", newStrategy);
-        if (executing != null)
+        if (executing != null) {
             Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
+        }
         executing = newStrategy;
         stationaryTicks = 0;
         if (npc.isSpawned()) {
