@@ -23,19 +23,6 @@ public class Util {
     private Util() {
     }
 
-    public static boolean isAlwaysFlyable(EntityType type) {
-        switch (type) {
-            case BAT:
-            case BLAZE:
-            case GHAST:
-            case ENDER_DRAGON:
-            case WITHER:
-                return true;
-            default:
-                return false;
-        }
-    }
-
     public static void assumePose(Entity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);
     }
@@ -96,6 +83,19 @@ public class Util {
         return raw.substring(start, end);
     }
 
+    public static boolean isAlwaysFlyable(EntityType type) {
+        switch (type) {
+            case BAT:
+            case BLAZE:
+            case GHAST:
+            case ENDER_DRAGON:
+            case WITHER:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static boolean isLoaded(Location location) {
         if (location.getWorld() == null)
             return false;
@@ -123,7 +123,8 @@ public class Util {
     public static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
         toMatch = toMatch.toLowerCase().replace('-', '_').replace(' ', '_');
         for (T check : values) {
-            if (toMatch.equals(check.name().toLowerCase())) {
+            if (toMatch.equals(check.name().toLowerCase()) || toMatch.equals("item")
+                    && check == EntityType.DROPPED_ITEM) {
                 return check; // check for an exact match first
             }
         }
