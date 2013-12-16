@@ -270,7 +270,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public boolean isSpawned() {
-        return getEntity() != null;
+        return getEntity() != null && getEntity().isValid();
     }
 
     @Override

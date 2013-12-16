@@ -11,6 +11,7 @@ import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
 import com.google.common.collect.Lists;
 
 public class NavigatorParameters implements Cloneable {
+    private double attackRange;
     private AttackStrategy attackStrategy;
     private boolean avoidWater;
     private float baseSpeed = 1F;
@@ -33,6 +34,15 @@ public class NavigatorParameters implements Cloneable {
      */
     public NavigatorParameters addSingleUseCallback(NavigatorCallback callback) {
         callbacks.add(callback);
+        return this;
+    }
+
+    public double attackRange() {
+        return attackRange;
+    }
+
+    public NavigatorParameters attackRange(double range) {
+        this.attackRange = range;
         return this;
     }
 
