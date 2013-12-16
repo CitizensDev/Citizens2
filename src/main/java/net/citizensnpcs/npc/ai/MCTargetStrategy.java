@@ -2,7 +2,6 @@ package net.citizensnpcs.npc.ai;
 
 import java.lang.reflect.Field;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.AttackStrategy;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -48,12 +47,16 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private boolean canAttack() {
         return attackTicks == 0
                 && (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
-                && distanceSquared() <= Setting.NPC_ATTACK_DISTANCE.asDouble() && hasLineOfSight();
+                && closeEnough(distanceSquared()) && hasLineOfSight();
     }
 
     @Override
     public void clearCancelReason() {
         cancelReason = null;
+    }
+
+    private boolean closeEnough(double distance) {
+        return distance <= parameters.attackRange();
     }
 
     private double distanceSquared() {
