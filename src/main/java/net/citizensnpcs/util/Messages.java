@@ -102,6 +102,7 @@ public class Messages {
     public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
     public static final String INVALID_TRIGGER_TELEPORT_FORMAT = "citizens.editors.waypoints.triggers.teleport.invalid-format";
+    public static final String ITEM_SET = "citizens.commands.npc.item.item-set";
     public static final String LEASHABLE_SET = "citizens.commands.npc.leashable.set";
     public static final String LEASHABLE_STOPPED = "citizens.commands.npc.leashable.stopped";
     public static final String LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT = "citizens.editors.waypoints.linear.added-waypoint";
@@ -229,6 +230,7 @@ public class Messages {
     public static final String TRAITS_FAILED_TO_CHANGE = "citizens.commands.trait.failed-to-change";
     public static final String TRAITS_REMOVED = "citizens.commands.trait.removed";
     public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";
+    public static final String UNKNOWN_MATERIAL = "citizens.commands.npc.item.unknown-material";
     public static final String VULNERABLE_SET = "citizens.commands.npc.vulnerable.set";
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";

@@ -33,6 +33,7 @@ import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
+import net.citizensnpcs.npc.entity.nonliving.FallingBlockController.FallingBlockNPC;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.Controllable;
@@ -58,6 +59,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
@@ -68,6 +70,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.Horse.Variant;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
@@ -559,6 +562,37 @@ public class NPCCommands {
             permission = "citizens.npc.id")
     public void id(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, npc.getId());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "item [item]",
+            desc = "Sets the NPC's item",
+            modifiers = { "item", },
+            min = 1,
+            max = 2,
+            flags = "",
+            permission = "citizens.npc.item")
+    @Requirements(selected = true, ownership = true, types = { EntityType.DROPPED_ITEM, EntityType.ITEM_FRAME,
+            EntityType.FALLING_BLOCK })
+    public void item(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        Material mat = Material.getMaterial(args.getString(1));
+        if (mat == null)
+            throw new CommandException(Messages.UNKNOWN_MATERIAL);
+        switch (npc.getEntity().getType()) {
+            case DROPPED_ITEM:
+                ((org.bukkit.entity.Item) npc.getEntity()).getItemStack().setType(mat);
+                break;
+            case ITEM_FRAME:
+                ((ItemFrame) npc.getEntity()).getItem().setType(mat);
+                break;
+            case FALLING_BLOCK:
+                ((FallingBlockNPC) npc.getEntity()).setType(mat);
+                break;
+            default:
+                break;
+        }
+        Messaging.sendTr(sender, Messages.ITEM_SET, Util.prettyEnum(mat));
     }
 
     @Command(

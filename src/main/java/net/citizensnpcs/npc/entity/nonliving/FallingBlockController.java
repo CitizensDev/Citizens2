@@ -10,9 +10,11 @@ import net.minecraft.server.v1_7_R1.EntityFallingBlock;
 import net.minecraft.server.v1_7_R1.World;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftFallingSand;
+import org.bukkit.craftbukkit.v1_7_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
 
@@ -104,6 +106,15 @@ public class FallingBlockController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        public void setType(Material material) {
+            EntityFallingBlock e = (EntityFallingBlock) entity;
+            e.id = CraftMagicNumbers.getBlock(material);
+            if (npc.isSpawned()) {
+                npc.despawn();
+                npc.spawn(npc.getStoredLocation());
+            }
         }
     }
 }
