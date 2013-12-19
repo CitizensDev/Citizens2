@@ -569,14 +569,14 @@ public class NPCCommands {
             usage = "item [item]",
             desc = "Sets the NPC's item",
             modifiers = { "item", },
-            min = 1,
+            min = 2,
             max = 2,
             flags = "",
             permission = "citizens.npc.item")
     @Requirements(selected = true, ownership = true, types = { EntityType.DROPPED_ITEM, EntityType.ITEM_FRAME,
             EntityType.FALLING_BLOCK })
     public void item(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        Material mat = Material.getMaterial(args.getString(1));
+        Material mat = Material.matchMaterial(args.getString(1));
         if (mat == null)
             throw new CommandException(Messages.UNKNOWN_MATERIAL);
         switch (npc.getEntity().getType()) {
