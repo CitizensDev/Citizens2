@@ -22,4 +22,8 @@ public abstract class BehaviorGoalAdapter implements Goal, Behavior {
     public boolean shouldExecute(GoalSelector selector) {
         return shouldExecute();
     }
+
+    public static Goal create(Behavior behavior) {
+        return new ForwardingBehaviorGoalAdapter(behavior);
+    }
 }

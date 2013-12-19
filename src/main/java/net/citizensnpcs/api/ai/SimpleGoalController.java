@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.tree.Behavior;
+import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -20,6 +22,15 @@ public class SimpleGoalController implements GoalController {
     private volatile boolean paused;
     private final List<GoalEntry> possibleGoals = Lists.newArrayList();
     private final GoalSelector selector = new SimpleGoalSelector();
+
+    @Override
+    public void addBehavior(Behavior behavior, int priority) {
+        if (behavior instanceof Goal) {
+            addGoal((Goal) behavior, priority);
+            return;
+        }
+        addGoal(BehaviorGoalAdapter.create(behavior), priority);
+    }
 
     @Override
     public void addGoal(Goal goal, int priority) {
@@ -118,6 +129,18 @@ public class SimpleGoalController implements GoalController {
     }
 
     @Override
+    public void removeBehavior(Behavior behavior) {
+        for (int i = 0; i < possibleGoals.size(); ++i) {
+            Goal test = possibleGoals.get(i).getGoal();
+            if (test.equals(behavior)) {
+                possibleGoals.remove(i--);
+                if (test == executingRootGoal)
+                    finishCurrentGoalExecution();
+            }
+        }
+    }
+
+    @Override
     public void removeGoal(Goal goal) {
         Preconditions.checkNotNull(goal, "goal cannot be null");
         for (int j = 0; j < possibleGoals.size(); ++j) {
@@ -125,8 +148,9 @@ public class SimpleGoalController implements GoalController {
             if (!test.equals(goal))
                 continue;
             possibleGoals.remove(j--);
-            if (test == executingRootGoal)
+            if (test == executingRootGoal) {
                 finishCurrentGoalExecution();
+            }
         }
         if (goal instanceof PrioritisableGoal) {
             boolean foundOther = false;

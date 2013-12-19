@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.ai;
 
 import net.citizensnpcs.api.ai.GoalController.GoalEntry;
+import net.citizensnpcs.api.ai.tree.Behavior;
 
 /**
  * Represents a collection of goals that are prioritised and executed, allowing
@@ -11,6 +12,17 @@ import net.citizensnpcs.api.ai.GoalController.GoalEntry;
  * a lower priority are replaced via {@link Goal#reset()}.
  */
 public interface GoalController extends Runnable, Iterable<GoalEntry> {
+    /**
+     * Registers a {@link Behavior} with a given priority.
+     * 
+     * @see #addGoal(Goal, int)
+     * @param behavior
+     *            The behavior
+     * @param priority
+     *            The priority
+     */
+    void addBehavior(Behavior behavior, int priority);
+
     /**
      * Registers a {@link Goal} with a given priority. Priority must be greater
      * than 0.
@@ -52,6 +64,14 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
      * @return Whether the controller is currently paused
      */
     boolean isPaused();
+
+    /**
+     * Removes the given {@link Behavior} from rotation.
+     * 
+     * @param behavior
+     *            The behavior to remove
+     */
+    void removeBehavior(Behavior behavior);
 
     /**
      * Removes a {@link Goal} from rotation.
