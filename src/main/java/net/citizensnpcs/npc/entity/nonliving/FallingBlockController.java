@@ -2,25 +2,35 @@ package net.citizensnpcs.npc.entity.nonliving;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_7_R1.Block;
+import net.minecraft.server.v1_7_R1.Blocks;
 import net.minecraft.server.v1_7_R1.EntityFallingBlock;
 import net.minecraft.server.v1_7_R1.World;
+import net.minecraft.server.v1_7_R1.WorldServer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftFallingSand;
 import org.bukkit.craftbukkit.v1_7_R1.util.CraftMagicNumbers;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
 
-public class FallingBlockController extends MobEntityController {
-    public FallingBlockController() {
-        super(EntityFallingBlockNPC.class);
+public class FallingBlockController extends AbstractEntityController {
+    @Override
+    protected Entity createEntity(Location at, NPC npc) {
+        WorldServer ws = ((CraftWorld) at.getWorld()).getHandle();
+        final EntityFallingBlockNPC handle = new EntityFallingBlockNPC(ws, npc, at.getX(), at.getY(), at.getZ(),
+                Blocks.STONE);
+        return handle.getBukkitEntity();
     }
 
     @Override
@@ -37,6 +47,11 @@ public class FallingBlockController extends MobEntityController {
 
         public EntityFallingBlockNPC(World world, NPC npc) {
             super(world);
+            this.npc = (CitizensNPC) npc;
+        }
+
+        public EntityFallingBlockNPC(World world, NPC npc, double d0, double d1, double d2, Block block) {
+            super(world, d0, d1, d2, block);
             this.npc = (CitizensNPC) npc;
         }
 
