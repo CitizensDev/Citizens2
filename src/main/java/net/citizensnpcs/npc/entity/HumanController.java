@@ -19,6 +19,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class HumanController extends AbstractEntityController {
+    public HumanController() {
+        super();
+    }
+
     @Override
     protected Entity createEntity(final Location at, final NPC npc) {
         WorldServer ws = ((CraftWorld) at.getWorld()).getHandle();

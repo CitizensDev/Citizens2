@@ -21,6 +21,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class EggController extends AbstractEntityController {
+    public EggController() {
+        super(EntityEggNPC.class);
+    }
+
     @Override
     protected Entity createEntity(Location at, NPC npc) {
         WorldServer ws = ((CraftWorld) at.getWorld()).getHandle();

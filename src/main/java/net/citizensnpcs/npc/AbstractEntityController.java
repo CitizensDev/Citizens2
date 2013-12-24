@@ -1,12 +1,20 @@
 package net.citizensnpcs.npc;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.NMS;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 public abstract class AbstractEntityController implements EntityController {
     private Entity bukkitEntity;
+
+    public AbstractEntityController() {
+    }
+
+    public AbstractEntityController(Class<?> clazz) {
+        NMS.registerEntityClass(clazz);
+    }
 
     protected abstract Entity createEntity(Location at, NPC npc);
 
