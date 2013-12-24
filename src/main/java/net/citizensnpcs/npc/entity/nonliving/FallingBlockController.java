@@ -25,6 +25,10 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
 
 public class FallingBlockController extends AbstractEntityController {
+    public FallingBlockController() {
+        super(EntityFallingBlockNPC.class);
+    }
+
     @Override
     protected Entity createEntity(Location at, NPC npc) {
         WorldServer ws = ((CraftWorld) at.getWorld()).getHandle();

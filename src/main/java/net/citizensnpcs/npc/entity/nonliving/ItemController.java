@@ -26,6 +26,7 @@ import org.bukkit.util.Vector;
 
 public class ItemController extends AbstractEntityController {
     public ItemController() {
+        super(EntityItemNPC.class);
     }
 
     @Override

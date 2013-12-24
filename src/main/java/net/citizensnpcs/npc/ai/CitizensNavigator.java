@@ -107,8 +107,10 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     public void onSpawn() {
-        if (defaultParams.baseSpeed() == UNINITIALISED_SPEED)
+        if (defaultParams.baseSpeed() == UNINITIALISED_SPEED) {
             defaultParams.baseSpeed(NMS.getSpeedFor(npc));
+        }
+        NMS.setSpeed(npc.getEntity(), defaultParams.speedModifier());
         updatePathfindingRange();
     }
 

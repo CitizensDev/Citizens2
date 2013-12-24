@@ -381,6 +381,13 @@ public class NMS {
         }
     }
 
+    public static void setSpeed(org.bukkit.entity.Entity entity, float speedModifier) {
+        if (!(entity instanceof LivingEntity))
+            return;
+        EntityLiving handle = NMS.getHandle((LivingEntity) entity);
+        handle.getAttributeInstance(GenericAttributes.d).setValue(speedModifier);
+    }
+
     public static void setStepHeight(EntityLiving entity, float height) {
         entity.X = height;
     }
@@ -505,6 +512,7 @@ public class NMS {
     private static Field NETWORK_ADDRESS = getField(NetworkManager.class, "l");
     private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "k");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
+
     private static Field PATHFINDING_RANGE = getField(Navigation.class, "e");
 
     private static final Random RANDOM = Util.getFastRandom();

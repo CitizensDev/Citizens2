@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_7_R1.World;
 
 import org.bukkit.Location;
@@ -18,8 +17,8 @@ public abstract class MobEntityController extends AbstractEntityController {
     private final Constructor<?> constructor;
 
     protected MobEntityController(Class<?> clazz) {
+        super(clazz);
         this.constructor = getConstructor(clazz);
-        NMS.registerEntityClass(clazz);
     }
 
     @Override
