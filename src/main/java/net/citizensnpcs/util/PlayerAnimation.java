@@ -64,6 +64,14 @@ public enum PlayerAnimation {
                     radius);
         }
     },
+    START_USE_ITEM {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            player.e(true);
+            sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
+                    radius);
+        }
+    },
     STOP_SITTING {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
@@ -80,6 +88,14 @@ public enum PlayerAnimation {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
             player.getBukkitEntity().setSneaking(false);
+            sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
+                    radius);
+        }
+    },
+    STOP_USE_ITEM {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            player.e(false);
             sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
                     radius);
         }
