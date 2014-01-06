@@ -289,12 +289,12 @@ public class NPCCommands {
             permission = "citizens.npc.create")
     @Requirements
     public void create(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        String name = Colorizer.parseColors(args.getJoinedStrings(1));
+        String name = Colorizer.parseColors(args.getJoinedStrings(1).trim());
         if (name.length() > 16) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
             name = name.substring(0, 16);
         }
-        if (name.length() <= 0)
+        if (name.length() == 0)
             throw new CommandException();
 
         EntityType type = EntityType.PLAYER;

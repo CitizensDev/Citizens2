@@ -213,12 +213,12 @@ public class NMS {
     }
 
     public static float getSpeedFor(NPC npc) {
-        if (!npc.isSpawned())
+        if (!npc.isSpawned() || !(npc instanceof LivingEntity))
             return DEFAULT_SPEED;
         // this is correct, but too slow. TODO: investigate
-        // return (float)
-        // NMS.getHandle(npc.getBukkitEntity()).getAttributeInstance(GenericAttributes.d).getValue();
-        return DEFAULT_SPEED;
+        return (float) ((EntityLiving) NMS.getHandle(npc.getEntity())).getAttributeInstance(GenericAttributes.d)
+                .getValue();
+        // return DEFAULT_SPEED;
     }
 
     public static void initNetworkManager(NetworkManager network) {
@@ -379,13 +379,6 @@ public class NMS {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setShouldJump();
         }
-    }
-
-    public static void setSpeed(org.bukkit.entity.Entity entity, float speedModifier) {
-        if (!(entity instanceof LivingEntity))
-            return;
-        EntityLiving handle = NMS.getHandle((LivingEntity) entity);
-        handle.getAttributeInstance(GenericAttributes.d).setValue(speedModifier);
     }
 
     public static void setStepHeight(EntityLiving entity, float height) {
