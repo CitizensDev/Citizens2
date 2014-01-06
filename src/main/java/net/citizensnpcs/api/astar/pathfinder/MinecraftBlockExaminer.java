@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -62,6 +63,23 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             }
         }
         return false;
+    }
+
+    public static Location findValidLocation(Location location, int radius) {
+        Block base = location.getBlock();
+        if (canStandOn(base))
+            return location;
+        for (int y = 0; y < radius; y++) {
+            for (int x = -radius; x < radius; x++) {
+                for (int z = -radius; z < radius; z++) {
+                    Block relative = base.getRelative(x, y, z);
+                    if (canStandOn(relative)) {
+                        return relative.getLocation();
+                    }
+                }
+            }
+        }
+        return location;
     }
 
     public static boolean isLiquid(Material... materials) {

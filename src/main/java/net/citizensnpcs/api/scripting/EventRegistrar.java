@@ -40,8 +40,9 @@ public class EventRegistrar implements ContextProvider {
         }
 
         public void deregister(EventHandler handler) {
-            if (handler != null)
+            if (handler != null) {
                 HandlerList.unregisterAll(anonymousListeners.remove(handler));
+            }
         }
 
         public void on(Class<? extends Event> eventClass, EventHandler handler) {
