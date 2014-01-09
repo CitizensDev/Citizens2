@@ -180,7 +180,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         PathStrategy newStrategy;
         if (npc.isFlyable()) {
             newStrategy = new FlyingAStarNavigationStrategy(npc, target, localParams);
-        } else if (localParams.useNewPathfinder()) {
+        } else if (localParams.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
             newStrategy = new AStarNavigationStrategy(npc, target, localParams);
         } else {
             newStrategy = new MCNavigationStrategy(npc, target, localParams);

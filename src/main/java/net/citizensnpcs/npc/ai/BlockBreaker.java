@@ -82,8 +82,9 @@ public class BlockBreaker extends BehaviorGoalAdapter {
             startDigTick = currentTick;
             return BehaviorStatus.RUNNING;
         }
-        if (entity instanceof EntityPlayer)
+        if (entity instanceof EntityPlayer) {
             PlayerAnimation.ARM_SWING.play((Player) entity.getBukkitEntity());
+        }
         Block block = entity.world.getType(x, y, z);
         if (block == null) {
             return BehaviorStatus.SUCCESS;
@@ -92,7 +93,7 @@ public class BlockBreaker extends BehaviorGoalAdapter {
             float damage = getStrength(block) * (tickDifference + 1) * configuration.blockStrengthModifier();
             if (damage >= 1F) {
                 entity.world.getWorld().getBlockAt(x, y, z)
-                        .breakNaturally(CraftItemStack.asCraftMirror(getCurrentItem()));
+                .breakNaturally(CraftItemStack.asCraftMirror(getCurrentItem()));
                 return BehaviorStatus.SUCCESS;
             }
             int modifiedDamage = (int) (damage * 10.0F);
