@@ -20,14 +20,13 @@ import net.minecraft.server.v1_7_R1.PathEntity;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final boolean aggro;
     private int attackTicks;
     private CancelReason cancelReason;
-    private final EntityLiving handle;
+    private final Entity handle;
     private final NPC npc;
     private final NavigatorParameters parameters;
     private final Entity target;
@@ -36,11 +35,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
         this.npc = npc;
         this.parameters = params;
-        this.handle = ((CraftLivingEntity) npc.getEntity()).getHandle();
+        this.handle = ((CraftEntity) npc.getEntity()).getHandle();
         this.target = ((CraftEntity) target).getHandle();
         Navigation nav = NMS.getNavigation(this.handle);
         this.targetNavigator = nav != null && !params.useNewPathfinder() ? new NavigationFieldWrapper(nav)
-                : new AStarTargeter();
+        : new AStarTargeter();
         this.aggro = aggro;
     }
 
@@ -163,7 +162,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         private void setStrategy() {
             Location location = target.getBukkitEntity().getLocation(TARGET_LOCATION);
             strategy = npc.isFlyable() ? new FlyingAStarNavigationStrategy(npc, location, parameters)
-                    : new AStarNavigationStrategy(npc, location, parameters);
+            : new AStarNavigationStrategy(npc, location, parameters);
         }
 
         @Override

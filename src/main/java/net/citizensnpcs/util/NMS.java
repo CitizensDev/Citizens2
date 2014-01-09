@@ -207,7 +207,7 @@ public class NMS {
         return handle.aP;
     }
 
-    public static Navigation getNavigation(EntityLiving handle) {
+    public static Navigation getNavigation(Entity handle) {
         return handle instanceof EntityInsentient ? ((EntityInsentient) handle).getNavigation()
                 : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getNavigation() : null;
     }
@@ -249,11 +249,11 @@ public class NMS {
         ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.POSTWORLD);
     }
 
-    public static void look(EntityLiving handle, Entity target) {
+    public static void look(Entity handle, Entity target) {
         if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).x());
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).setTargetLook(target, 10F, 40);
+            ((EntityHumanNPC) handle).setTargetLook(target, 10F, 40F);
         }
     }
 
