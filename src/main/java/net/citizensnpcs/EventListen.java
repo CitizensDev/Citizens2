@@ -5,7 +5,6 @@ import java.util.Map;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.EntityTargetNPCEvent;
@@ -26,7 +25,6 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.npc.ai.BlockBreaker;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
@@ -37,12 +35,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityCombustByBlockEvent;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
@@ -54,7 +50,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -259,17 +254,6 @@ public class EventListen implements Listener {
         checkCreationEvent(event);
     }
 
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.LEFT_CLICK_BLOCK)
-            return;
-        NPC npc = ((Citizens) CitizensAPI.getPlugin()).getNPCSelector().getSelected(event.getPlayer());
-        final BlockBreaker breaker = BlockBreaker.create((LivingEntity) npc.getEntity(), event.getClickedBlock());
-        RunnableImplementation task = new RunnableImplementation(breaker);
-        int tid = Bukkit.getScheduler().scheduleSyncRepeatingTask(CitizensAPI.getPlugin(), task, 0, 1);
-        task.tid = tid;
-    }
-
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = npcRegistry.getNPC(event.getRightClicked());
@@ -408,23 +392,6 @@ public class EventListen implements Listener {
             int result = prime + ((worldName == null) ? 0 : worldName.hashCode());
             result = prime * result + x;
             return prime * result + z;
-        }
-    }
-
-    private final class RunnableImplementation implements Runnable {
-        private final BlockBreaker breaker;
-        public int tid;
-
-        private RunnableImplementation(BlockBreaker breaker) {
-            this.breaker = breaker;
-        }
-
-        @Override
-        public void run() {
-            if (breaker.run() != BehaviorStatus.RUNNING) {
-                breaker.reset();
-                Bukkit.getScheduler().cancelTask(tid);
-            }
         }
     }
 }
