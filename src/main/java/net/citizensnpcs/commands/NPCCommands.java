@@ -265,7 +265,7 @@ public class NPCCommands {
         }
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-                : new CommandSenderCreateNPCEvent(sender, copy);
+        : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
@@ -337,7 +337,7 @@ public class NPCCommands {
             spawnLoc = args.getSenderLocation();
         }
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
-                : new CommandSenderCreateNPCEvent(sender, npc);
+        : new CommandSenderCreateNPCEvent(sender, npc);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
@@ -566,11 +566,11 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "item [item]",
+            usage = "item [item] (data)",
             desc = "Sets the NPC's item",
             modifiers = { "item", },
             min = 2,
-            max = 2,
+            max = 3,
             flags = "",
             permission = "citizens.npc.item")
     @Requirements(selected = true, ownership = true, types = { EntityType.DROPPED_ITEM, EntityType.ITEM_FRAME,
@@ -587,7 +587,7 @@ public class NPCCommands {
                 ((ItemFrame) npc.getEntity()).getItem().setType(mat);
                 break;
             case FALLING_BLOCK:
-                ((FallingBlockNPC) npc.getEntity()).setType(mat);
+                ((FallingBlockNPC) npc.getEntity()).setType(mat, args.argsLength() > 2 ? args.getInteger(2) : 0);
                 break;
             default:
                 break;
@@ -969,7 +969,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         Messaging
-                .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+        .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
