@@ -2,7 +2,9 @@ package net.citizensnpcs.npc.ai;
 
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.PlayerAnimation;
+import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R1.Block;
 import net.minecraft.server.v1_7_R1.Blocks;
 import net.minecraft.server.v1_7_R1.Enchantment;
@@ -13,6 +15,7 @@ import net.minecraft.server.v1_7_R1.ItemStack;
 import net.minecraft.server.v1_7_R1.Material;
 import net.minecraft.server.v1_7_R1.MobEffectList;
 
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_7_R1.inventory.CraftItemStack;
 import org.bukkit.entity.LivingEntity;
@@ -23,7 +26,8 @@ public class BlockBreaker extends BehaviorGoalAdapter {
     private int currentDamage;
     private int currentTick;
     private final EntityLiving entity;
-    private boolean isDigging;
+    private boolean isDigging = true;
+    private final Location location;
     private int startDigTick;
     private final int x, y, z;
 
@@ -32,6 +36,7 @@ public class BlockBreaker extends BehaviorGoalAdapter {
         this.x = target.getX();
         this.y = target.getY();
         this.z = target.getZ();
+        this.location = target.getLocation();
         this.startDigTick = (int) (System.currentTimeMillis() / 50);
         this.configuration = config;
     }
@@ -73,20 +78,30 @@ public class BlockBreaker extends BehaviorGoalAdapter {
 
     @Override
     public BehaviorStatus run() {
+        if (entity.dead) {
+            return BehaviorStatus.FAILURE;
+        }
         if (!isDigging) {
-            reset();
             return BehaviorStatus.SUCCESS;
         }
         currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
         if (configuration.radiusSquared() > 0 && distanceSquared() >= configuration.radiusSquared()) {
             startDigTick = currentTick;
+            if (entity instanceof NPCHolder) {
+                NPC npc = ((NPCHolder) entity).getNPC();
+                if (!npc.getNavigator().isNavigating()) {
+                    npc.getNavigator()
+                    .setTarget(entity.world.getWorld().getBlockAt(x, y, z).getLocation().add(0, 1, 0));
+                }
+            }
             return BehaviorStatus.RUNNING;
         }
+        Util.faceLocation(entity.getBukkitEntity(), location);
         if (entity instanceof EntityPlayer) {
             PlayerAnimation.ARM_SWING.play((Player) entity.getBukkitEntity());
         }
         Block block = entity.world.getType(x, y, z);
-        if (block == null) {
+        if (block == null || block == Blocks.AIR) {
             return BehaviorStatus.SUCCESS;
         } else {
             int tickDifference = currentTick - startDigTick;
@@ -147,7 +162,7 @@ public class BlockBreaker extends BehaviorGoalAdapter {
         private Runnable callback;
         private org.bukkit.inventory.ItemStack itemStack;
         private float modifier = 1;
-        private double radius = -1;
+        private double radius = 0;
 
         public float blockStrengthModifier() {
             return modifier;
