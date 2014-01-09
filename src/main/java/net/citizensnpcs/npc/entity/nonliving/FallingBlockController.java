@@ -33,9 +33,11 @@ public class FallingBlockController extends AbstractEntityController {
     protected Entity createEntity(Location at, NPC npc) {
         WorldServer ws = ((CraftWorld) at.getWorld()).getHandle();
         Block id = Blocks.STONE;
+        int data = npc.data().get("falling-block-data", 0);
         if (npc.data().has("falling-block-id"))
             id = CraftMagicNumbers.getBlock(Material.getMaterial(npc.data().<String> get("falling-block-id")));
-        final EntityFallingBlockNPC handle = new EntityFallingBlockNPC(ws, npc, at.getX(), at.getY(), at.getZ(), id);
+        final EntityFallingBlockNPC handle = new EntityFallingBlockNPC(ws, npc, at.getX(), at.getY(), at.getZ(), id,
+                data);
         return handle.getBukkitEntity();
     }
 
@@ -56,8 +58,8 @@ public class FallingBlockController extends AbstractEntityController {
             this.npc = (CitizensNPC) npc;
         }
 
-        public EntityFallingBlockNPC(World world, NPC npc, double d0, double d1, double d2, Block block) {
-            super(world, d0, d1, d2, block);
+        public EntityFallingBlockNPC(World world, NPC npc, double d0, double d1, double d2, Block block, int data) {
+            super(world, d0, d1, d2, block, data);
             this.npc = (CitizensNPC) npc;
         }
 
@@ -129,8 +131,9 @@ public class FallingBlockController extends AbstractEntityController {
             return npc;
         }
 
-        public void setType(Material material) {
+        public void setType(Material material, int data) {
             npc.data().setPersistent("falling-block-id", material.name());
+            npc.data().setPersistent("falling-block-data", data);
             if (npc.isSpawned()) {
                 npc.despawn();
                 npc.spawn(npc.getStoredLocation());
