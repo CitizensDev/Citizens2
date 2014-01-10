@@ -9,7 +9,7 @@ import org.bukkit.entity.EntityType;
 public class SimpleNPCDataStore implements NPCDataStore {
     private final Storage root;
 
-    private SimpleNPCDataStore(Storage saves) {
+    protected SimpleNPCDataStore(Storage saves) {
         root = saves;
     }
 
