@@ -330,13 +330,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void scheduleSaveTask(int delay) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
                 storeNPCs();
                 saves.saveToDisk();
             }
-        });
+        }, delay, delay);
     }
 
     private void setupEconomy() {
@@ -418,8 +418,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         boolean async = args.hasFlag('a');
         if (async) {
             saves.saveToDisk();
-        } else
+        } else {
             saves.saveToDiskImmediate();
+        }
     }
 
     private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {

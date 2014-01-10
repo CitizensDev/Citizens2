@@ -39,7 +39,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         this.target = ((CraftEntity) target).getHandle();
         Navigation nav = NMS.getNavigation(this.handle);
         this.targetNavigator = nav != null && !params.useNewPathfinder() ? new NavigationFieldWrapper(nav)
-        : new AStarTargeter();
+                : new AStarTargeter();
         this.aggro = aggro;
     }
 
@@ -162,7 +162,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         private void setStrategy() {
             Location location = target.getBukkitEntity().getLocation(TARGET_LOCATION);
             strategy = npc.isFlyable() ? new FlyingAStarNavigationStrategy(npc, location, parameters)
-            : new AStarNavigationStrategy(npc, location, parameters);
+                    : new AStarNavigationStrategy(npc, location, parameters);
         }
 
         @Override
