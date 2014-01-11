@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
@@ -35,20 +36,20 @@ public class CitizensNPCRegistry implements NPCRegistry {
     }
 
     @Override
-    public NPC createNPC(EntityType type, int id, String name) {
+    public NPC createNPC(EntityType type, String name) {
+        return createNPC(type, UUID.randomUUID(), generateUniqueId(), name);
+    }
+
+    @Override
+    public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
         Preconditions.checkNotNull(name, "name cannot be null");
         Preconditions.checkNotNull(type, "type cannot be null");
-        CitizensNPC npc = getByType(type, id, name);
+        CitizensNPC npc = getByType(type, uuid, id, name);
         if (npc == null)
             throw new IllegalStateException("Could not create NPC.");
         npcs.put(npc.getId(), npc);
         Bukkit.getPluginManager().callEvent(new NPCCreateEvent(npc));
         return npc;
-    }
-
-    @Override
-    public NPC createNPC(EntityType type, String name) {
-        return createNPC(type, generateUniqueId(), name);
     }
 
     @Override
@@ -87,8 +88,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
         return npcs.get(id);
     }
 
-    private CitizensNPC getByType(EntityType type, int id, String name) {
-        return new CitizensNPC(id, name, EntityControllers.createForType(type), this);
+    private CitizensNPC getByType(EntityType type, UUID uuid, int id, String name) {
+        return new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this);
     }
 
     @Override
@@ -196,7 +197,6 @@ public class CitizensNPCRegistry implements NPCRegistry {
             return o1.getId() - o2.getId();
         }
     };
-
     private static boolean TROVE_EXISTS = false;
     static {
         // allow trove dependency to be optional for debugging purposes

@@ -1,6 +1,7 @@
 package net.citizensnpcs.npc;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import net.citizensnpcs.NPCNeedsRespawnEvent;
 import net.citizensnpcs.Settings.Setting;
@@ -39,10 +40,9 @@ import com.google.common.base.Throwables;
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
-    private int packetUpdateCount;
 
-    public CitizensNPC(int id, String name, EntityController entityController, NPCRegistry registry) {
-        super(id, name, registry);
+    public CitizensNPC(UUID uuid, int id, String name, EntityController entityController, NPCRegistry registry) {
+        super(uuid, id, name, registry);
         Preconditions.checkNotNull(entityController);
         this.entityController = entityController;
     }
@@ -215,12 +215,10 @@ public class CitizensNPC extends AbstractNPC {
                     NMS.trySwim(getEntity());
                 }
                 navigator.run();
-                if (++packetUpdateCount > 30) {
-                    if (!getNavigator().isNavigating()) {
-                        NMS.sendPacketNearby(getStoredLocation(),
-                                new PacketPlayOutEntityTeleport(NMS.getHandle(getEntity())));
-                    }
-                    packetUpdateCount = 0;
+
+                if (!getNavigator().isNavigating() && getEntity().getWorld().getTime() % 30 == 0) {
+                    NMS.sendPacketNearby(getStoredLocation(),
+                            new PacketPlayOutEntityTeleport(NMS.getHandle(getEntity())));
                 }
             }
         } catch (Exception ex) {
