@@ -23,9 +23,6 @@ public final class CitizensAPI {
     private CitizensAPI() {
     }
 
-    private static final CitizensAPI instance = new CitizensAPI();
-    private static ScriptCompiler scriptCompiler;
-
     /**
      * Creates a new <em>anonymous</em> {@link NPCRegistry} with its own set of
      * {@link NPC}s. This is not stored by the Citizens plugin.
@@ -91,6 +88,10 @@ public final class CitizensAPI {
      */
     public static NPCRegistry getNamedNPCRegistry(String name) {
         return getImplementation().getNamedNPCRegistry(name);
+    }
+
+    public static Iterable<NPCRegistry> getNPCRegistries() {
+        return getImplementation().getNPCRegistries();
     }
 
     /**
@@ -201,4 +202,7 @@ public final class CitizensAPI {
         scriptCompiler.interrupt();
         scriptCompiler = null;
     }
+
+    private static final CitizensAPI instance = new CitizensAPI();
+    private static ScriptCompiler scriptCompiler;
 }

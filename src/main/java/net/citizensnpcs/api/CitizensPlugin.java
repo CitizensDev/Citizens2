@@ -32,7 +32,7 @@ public interface CitizensPlugin extends Plugin {
     public NPCSelector getDefaultNPCSelector();
 
     /**
-     * 
+     *
      * @param pluginName
      *            The plugin name
      * @return A NPCRegistry previously created via
@@ -40,9 +40,11 @@ public interface CitizensPlugin extends Plugin {
      */
     public NPCRegistry getNamedNPCRegistry(String name);
 
+    public Iterable<NPCRegistry> getNPCRegistries();
+
     /**
      * Gets the <em>default</em> {@link NPCRegistry}.
-     * 
+     *
      * @return The NPC registry
      */
     public NPCRegistry getNPCRegistry();
@@ -56,14 +58,14 @@ public interface CitizensPlugin extends Plugin {
 
     /**
      * Gets the SpeechFactory.
-     * 
+     *
      * @return Citizens speech factory
      */
     public SpeechFactory getSpeechFactory();
 
     /**
      * Gets the TraitFactory.
-     * 
+     *
      * @return Citizens trait factory
      */
     public TraitFactory getTraitFactory();

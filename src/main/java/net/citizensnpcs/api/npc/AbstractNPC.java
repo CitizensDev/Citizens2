@@ -3,6 +3,7 @@ package net.citizensnpcs.api.npc;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -74,13 +75,15 @@ public abstract class AbstractNPC implements NPC {
     private final List<Runnable> runnables = Lists.newArrayList();
     private final SpeechController speechController = new SimpleSpeechController(this);
     protected final Map<Class<? extends Trait>, Trait> traits = Maps.newHashMap();
+    private UUID uuid;
 
-    protected AbstractNPC(int id, String name, NPCRegistry registry) {
+    protected AbstractNPC(UUID uuid, int id, String name, NPCRegistry registry) {
         if (name.length() > 16) {
             Messaging.severe("ID", id, "created with name length greater than 16, truncating", name, "to",
                     name.substring(0, 15));
             name = name.substring(0, 15);
         }
+        this.uuid = uuid;
         this.id = id;
         this.registry = registry;
         this.name = name;
@@ -248,6 +251,11 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public UUID getUniqueId() {
+        return uuid;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         return prime * (prime + id) + ((name == null) ? 0 : name.hashCode());
@@ -276,7 +284,7 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void load(final DataKey root) {
         metadata.loadFrom(root.getRelative("metadata"));
-        // Load traits
+        uuid = UUID.fromString(root.getString("uuid"));
 
         String traitNames = root.getString("traitnames");
         Set<DataKey> keys = Sets.newHashSet(root.getRelative("traits").getSubKeys());
@@ -334,6 +342,7 @@ public abstract class AbstractNPC implements NPC {
     public void save(DataKey root) {
         metadata.saveTo(root.getRelative("metadata"));
         root.setString("name", getFullName());
+        root.setString("uuid", uuid.toString());
 
         // Save all existing traits
         StringBuilder traitNames = new StringBuilder();

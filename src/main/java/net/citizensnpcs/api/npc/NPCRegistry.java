@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.npc;
 
+import java.util.UUID;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -7,6 +9,17 @@ import org.bukkit.entity.EntityType;
  * Controls the registration and lookup of a set of {@link NPC}s.
  */
 public interface NPCRegistry extends Iterable<NPC> {
+
+    /**
+     * Creates an despawned {@link NPC}.
+     * 
+     * @param type
+     *            {@link EntityType} to assign to the NPC
+     * @param name
+     *            Name to give the NPC
+     * @return Created NPC
+     */
+    public NPC createNPC(EntityType type, String name);
 
     /**
      * Creates an {@link NPC} with the given id. WARNING: may overwrite any
@@ -20,18 +33,7 @@ public interface NPCRegistry extends Iterable<NPC> {
      *            The NPC name
      * @return The created NPC
      */
-    public NPC createNPC(EntityType type, int id, String name);
-
-    /**
-     * Creates an despawned {@link NPC}.
-     * 
-     * @param type
-     *            {@link EntityType} to assign to the NPC
-     * @param name
-     *            Name to give the NPC
-     * @return Created NPC
-     */
-    public NPC createNPC(EntityType type, String name);
+    public NPC createNPC(EntityType type, UUID uuid, int id, String name);
 
     /**
      * Deregisters the {@link NPC} and removes all data about it from the data

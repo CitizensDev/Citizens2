@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.npc;
 
+import java.util.UUID;
+
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Storage;
@@ -51,7 +53,9 @@ public class SimpleNPCDataStore implements NPCDataStore {
                 Messaging.logTr(LOAD_UNKNOWN_NPC_TYPE, unparsedEntityType);
                 continue;
             }
-            NPC npc = registry.createNPC(type, id, key.getString("name"));
+            NPC npc = registry.createNPC(type,
+                    key.keyExists("uuid") ? UUID.fromString(key.getString("uuid")) : UUID.randomUUID(), id,
+                    key.getString("name"));
             npc.load(key);
         }
     }
