@@ -76,6 +76,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             NMS.setShouldJump(npc.getEntity());
         }
         NMS.setDestination(npc.getEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
+        params.tick();
         return false;
     }
 

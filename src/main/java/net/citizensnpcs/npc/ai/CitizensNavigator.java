@@ -121,8 +121,9 @@ public class CitizensNavigator implements Navigator, Runnable {
             return;
         updatePathfindingRange();
         boolean finished = executing.update();
-        if (!finished)
+        if (!finished) {
             return;
+        }
         if (executing.getCancelReason() != null) {
             stopNavigating(executing.getCancelReason());
         } else {
