@@ -11,6 +11,7 @@ import org.bukkit.util.Vector;
 public class Flocker implements Runnable {
     private final List<FlockBehavior> behaviors;
     private final NPCFlock flock;
+    private double maxForce = 1.5;
     private final NPC npc;
 
     public Flocker(NPC npc, NPCFlock flock, FlockBehavior... behaviors) {
@@ -28,8 +29,20 @@ public class Flocker implements Runnable {
         for (FlockBehavior behavior : behaviors) {
             base.add(behavior.getVector(npc, nearby));
         }
-        base.multiply(1.0 / (nearby.size() * 50));
+        // base.multiply(1.0 / (nearby.size() * 50));
+        base = clip(maxForce, base);
         npc.getEntity().setVelocity(npc.getEntity().getVelocity().add(base));
+    }
+
+    public void setMaxForce(double maxForce) {
+        this.maxForce = maxForce;
+    }
+
+    private static Vector clip(double max, Vector vector) {
+        if (vector.length() > max) {
+            return vector.normalize().multiply(max);
+        }
+        return vector;
     }
 
     public static double HIGH_INFLUENCE = 1.0 / 20.0;
