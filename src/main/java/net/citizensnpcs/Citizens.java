@@ -171,6 +171,37 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
+    public Iterable<NPCRegistry> getNPCRegistries() {
+        return new Iterable<NPCRegistry>() {
+            @Override
+            public Iterator<NPCRegistry> iterator() {
+                return new Iterator<NPCRegistry>() {
+                    Iterator<NPCRegistry> stored;
+
+                    @Override
+                    public boolean hasNext() {
+                        return stored == null ? true : stored.hasNext();
+                    }
+
+                    @Override
+                    public NPCRegistry next() {
+                        if (stored == null) {
+                            stored = storedRegistries.values().iterator();
+                            return npcRegistry;
+                        }
+                        return stored.next();
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
+    }
+
+    @Override
     public NPCRegistry getNPCRegistry() {
         return npcRegistry;
     }
