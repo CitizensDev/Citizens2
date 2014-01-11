@@ -28,9 +28,10 @@ public class Flocker implements Runnable {
         for (FlockBehavior behavior : behaviors) {
             base.add(behavior.getVector(npc, nearby));
         }
+        base.multiply(1.0 / (nearby.size() * 50));
         npc.getEntity().setVelocity(npc.getEntity().getVelocity().add(base));
     }
 
     public static double HIGH_INFLUENCE = 1.0 / 20.0;
-    public static double LOW_INFLUENCE = HIGH_INFLUENCE / 10;
+    public static double LOW_INFLUENCE = 1.0 / 200.0;
 }
