@@ -7,6 +7,7 @@ import java.util.List;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
+import net.citizensnpcs.api.ai.tree.ForwardingBehaviorGoalAdapter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -61,6 +62,13 @@ public class SimpleGoalController implements GoalController {
             }
 
             @Override
+            public Behavior getBehavior() {
+                return goal instanceof Behavior ? (Behavior) goal
+                        : goal instanceof ForwardingBehaviorGoalAdapter ? ((ForwardingBehaviorGoalAdapter) goal)
+                                .getWrapped() : null;
+            }
+
+            @Override
             public Goal getGoal() {
                 return goal;
             }
@@ -69,6 +77,7 @@ public class SimpleGoalController implements GoalController {
             public int getPriority() {
                 return goal.getPriority();
             }
+
         });
         hasPrioritisableGoal = true;
     }
@@ -217,7 +226,7 @@ public class SimpleGoalController implements GoalController {
                 if (unequalPriorities || j == 0) {
                     if (unequalPriorities)
                         j++; // we want the previous entry where entry.priority
-                             // == next.priority
+                    // == next.priority
                     int ran = (int) Math.floor(Math.random() * (i - j + 1) + j);
                     if (ran >= possibleGoals.size() || ran < 0) {
                         setupExecution(entry);

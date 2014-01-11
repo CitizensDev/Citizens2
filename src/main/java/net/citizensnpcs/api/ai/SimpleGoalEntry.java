@@ -1,6 +1,8 @@
 package net.citizensnpcs.api.ai;
 
 import net.citizensnpcs.api.ai.GoalController.GoalEntry;
+import net.citizensnpcs.api.ai.tree.Behavior;
+import net.citizensnpcs.api.ai.tree.ForwardingBehaviorGoalAdapter;
 
 public class SimpleGoalEntry implements GoalEntry {
     final Goal goal;
@@ -33,6 +35,13 @@ public class SimpleGoalEntry implements GoalEntry {
             return false;
         }
         return priority == other.priority;
+    }
+
+    @Override
+    public Behavior getBehavior() {
+        return goal instanceof Behavior ? (Behavior) goal
+                : goal instanceof ForwardingBehaviorGoalAdapter ? ((ForwardingBehaviorGoalAdapter) goal).getWrapped()
+                        : null;
     }
 
     @Override

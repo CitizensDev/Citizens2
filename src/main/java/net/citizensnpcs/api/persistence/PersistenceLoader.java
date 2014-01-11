@@ -87,7 +87,7 @@ public class PersistenceLoader {
             return parent;
         if (ext.charAt(0) == '.')
             return parent.isEmpty() ? ext.substring(1, ext.length()) : parent + ext;
-        return parent.isEmpty() ? ext : parent + '.' + ext;
+            return parent.isEmpty() ? ext : parent + '.' + ext;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -256,7 +256,7 @@ public class PersistenceLoader {
      * Creates an instance of the given class using the default constructor and
      * loads it using {@link #load(Object, DataKey)}. Will return null if an
      * exception occurs.
-     * 
+     *
      * @see #load(Object, DataKey)
      * @param clazz
      *            The class to create an instance from
@@ -287,7 +287,7 @@ public class PersistenceLoader {
      * {@link Persister} will be used to create the instance. This annotation
      * can be omitted if the Persister has been registered using
      * {@link #registerPersistDelegate(Class, Class)}
-     * 
+     *
      * @param instance
      *            The instance to load data into
      * @param root
@@ -297,14 +297,19 @@ public class PersistenceLoader {
     public static <T> T load(T instance, DataKey root) {
         Class<?> clazz = instance.getClass();
         Field[] fields = getFields(clazz);
-        for (Field field : fields)
+        for (Field field : fields) {
             try {
                 deserialise(new PersistField(field, instance), root);
             } catch (Exception e) {
-                if (e != loadException)
+                if (e != loadException) {
                     e.printStackTrace();
+                }
                 return null;
             }
+        }
+        if (instance instanceof Persistable) {
+            ((Persistable) instance).load(root);
+        }
         return instance;
     }
 
@@ -313,7 +318,7 @@ public class PersistenceLoader {
      * annotation with a type that has been registered using this method will
      * use the Persister by default to load and save data. The
      * {@link DelegatePersistence} annotation will be preferred if present.
-     * 
+     *
      * @param clazz
      *            The class to redirect
      * @param delegateClass
@@ -327,7 +332,7 @@ public class PersistenceLoader {
     /**
      * Scans the object for fields annotated with {@link Persist} and saves them
      * to the given {@link DataKey}.
-     * 
+     *
      * @param instance
      *            The instance to save
      * @param root
@@ -338,6 +343,9 @@ public class PersistenceLoader {
         Field[] fields = getFields(clazz);
         for (Field field : fields) {
             serialise(new PersistField(field, instance), root);
+        }
+        if (instance instanceof Persistable) {
+            ((Persistable) instance).save(root);
         }
     }
 

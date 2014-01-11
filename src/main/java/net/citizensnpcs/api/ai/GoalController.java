@@ -6,7 +6,7 @@ import net.citizensnpcs.api.ai.tree.Behavior;
 /**
  * Represents a collection of goals that are prioritised and executed, allowing
  * behaviour trees via a {@link GoalSelector}.
- * 
+ *
  * The highest priority {@link Goal} that returns true in
  * {@link Goal#shouldExecute(GoalSelector)} is executed. Any existing goals with
  * a lower priority are replaced via {@link Goal#reset()}.
@@ -14,7 +14,7 @@ import net.citizensnpcs.api.ai.tree.Behavior;
 public interface GoalController extends Runnable, Iterable<GoalEntry> {
     /**
      * Registers a {@link Behavior} with a given priority.
-     * 
+     *
      * @see #addGoal(Goal, int)
      * @param behavior
      *            The behavior
@@ -26,7 +26,7 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
     /**
      * Registers a {@link Goal} with a given priority. Priority must be greater
      * than 0.
-     * 
+     *
      * @param priority
      *            The goal priority
      * @param goal
@@ -38,7 +38,7 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
      * Registers a goal which can reprioritise itself dynamically every tick.
      * Implementation note: this may slow down individual goal controller ticks
      * as the list must be sorted every tick.
-     * 
+     *
      * @param goal
      */
     void addPrioritisableGoal(PrioritisableGoal goal);
@@ -67,7 +67,7 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
 
     /**
      * Removes the given {@link Behavior} from rotation.
-     * 
+     *
      * @param behavior
      *            The behavior to remove
      */
@@ -75,7 +75,7 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
 
     /**
      * Removes a {@link Goal} from rotation.
-     * 
+     *
      * @param goal
      *            The goal to remove
      */
@@ -84,13 +84,19 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
     /**
      * Sets whether the controller is paused. While paused, no new {@link Goal}s
      * will be selected and any executing goals will be suspended.
-     * 
+     *
      * @param paused
      *            Whether to pause execution
      */
     void setPaused(boolean paused);
 
     public static interface GoalEntry extends Comparable<GoalEntry> {
+        /**
+         * @return The {@link Behavior} held by this entry if it holds one,
+         *         otherwise null
+         */
+        Behavior getBehavior();
+
         /**
          * @return The {@link Goal} held by this entry
          */

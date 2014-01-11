@@ -33,12 +33,20 @@ public class Selector extends Composite {
         return behavior;
     }
 
+    public Function<List<Behavior>, Behavior> getSelectionFunction() {
+        return selectionFunction;
+    }
+
     @Override
     public void reset() {
         super.reset();
         if (executing != null)
             stopExecution(executing);
         executing = null;
+    }
+
+    public boolean retryChildren() {
+        return retryChildren;
     }
 
     @Override
@@ -93,7 +101,7 @@ public class Selector extends Composite {
         /**
          * Sets whether to retry child {@link Behavior}s when they return
          * {@link BehaviorStatus#FAILURE}.
-         * 
+         *
          */
         public Builder retryChildren() {
             retryChildren = true;
@@ -103,7 +111,7 @@ public class Selector extends Composite {
         /**
          * Sets whether to retry child {@link Behavior}s when they return
          * {@link BehaviorStatus#FAILURE}.
-         * 
+         *
          * @param retry
          *            Whether to retry children
          */
@@ -116,7 +124,7 @@ public class Selector extends Composite {
          * Sets the {@link Function} that selects a {@link Behavior} to execute
          * from a list of behaviors, such as a random selection or a priority
          * selection. See {@link Selectors} for some helper methods.
-         * 
+         *
          * @param function
          *            The selection function
          */
@@ -135,7 +143,6 @@ public class Selector extends Composite {
     }
 
     private static final Random RANDOM = new Random();
-
     private static final Function<List<Behavior>, Behavior> RANDOM_SELECTION = new Function<List<Behavior>, Behavior>() {
         @Override
         public Behavior apply(@Nullable List<Behavior> behaviors) {

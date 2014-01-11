@@ -41,6 +41,10 @@ public class Sequence extends Composite {
         executing = null;
     }
 
+    public boolean retryChildren() {
+        return retryChildren;
+    }
+
     @Override
     public BehaviorStatus run() {
         tickParallel();

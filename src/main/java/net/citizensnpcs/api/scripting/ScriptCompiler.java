@@ -76,7 +76,7 @@ public class ScriptCompiler {
 
     /**
      * Create a builder to compile the given files.
-     * 
+     *
      * @param files
      *            The files to compile
      * @return The {@link CompileTaskBuilder}
@@ -92,7 +92,7 @@ public class ScriptCompiler {
 
     /**
      * Create a builder to compile the given source code.
-     * 
+     *
      * @param src
      *            The source code to compile
      * @param identifier
@@ -132,7 +132,7 @@ public class ScriptCompiler {
     /**
      * Registers a global {@link ContextProvider}, which will be invoked on all
      * scripts created by this ScriptCompiler.
-     * 
+     *
      * @param provider
      *            The global provider
      */
@@ -283,7 +283,6 @@ public class ScriptCompiler {
             return identifier;
         }
 
-        @SuppressWarnings("resource")
         public Reader getReader() throws FileNotFoundException {
             return file == null ? new StringReader(src) : new FileReader(file);
         }

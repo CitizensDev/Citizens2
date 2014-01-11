@@ -15,11 +15,11 @@ public class SeparationBehavior implements FlockBehavior {
 
     @Override
     public Vector getVector(NPC npc, Collection<NPC> nearby) {
-        if (nearby.isEmpty())
-            return new Vector(0, 0, 0);
         Vector steering = new Vector(0, 0, 0);
         Vector pos = npc.getEntity().getLocation().toVector();
         for (NPC neighbor : nearby) {
+            if (!neighbor.isSpawned())
+                continue;
             Vector repulse = pos.subtract(neighbor.getEntity().getLocation().toVector()).multiply(1.0 / 3.0);
             steering = repulse.add(steering);
         }

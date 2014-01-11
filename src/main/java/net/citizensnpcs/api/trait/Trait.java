@@ -20,7 +20,7 @@ public abstract class Trait implements Listener, Runnable {
 
     /**
      * Gets the name of this trait.
-     * 
+     *
      * @return Name of this trait
      */
     public final String getName() {
@@ -48,7 +48,7 @@ public abstract class Trait implements Listener, Runnable {
 
     /**
      * Loads a trait.
-     * 
+     *
      * @param key
      *            DataKey to load from
      * @throws NPCLoadException
@@ -98,7 +98,7 @@ public abstract class Trait implements Listener, Runnable {
 
     /**
      * Saves a trait.
-     * 
+     *
      * @param key
      *            DataKey to save to
      */

@@ -1,11 +1,14 @@
 package net.citizensnpcs.api.ai.tree;
 
-
 public class ForwardingBehaviorGoalAdapter extends BehaviorGoalAdapter {
     private final Behavior behavior;
 
     public ForwardingBehaviorGoalAdapter(Behavior behavior) {
         this.behavior = behavior;
+    }
+
+    public Behavior getWrapped() {
+        return behavior;
     }
 
     @Override

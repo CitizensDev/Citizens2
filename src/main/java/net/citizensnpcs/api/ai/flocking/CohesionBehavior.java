@@ -16,11 +16,11 @@ public class CohesionBehavior implements FlockBehavior {
 
     @Override
     public Vector getVector(NPC npc, Collection<NPC> nearby) {
-        if (nearby.isEmpty())
-            return new Vector(0, 0, 0);
         Location dummy = new Location(null, 0, 0, 0);
         Vector positions = new Vector(0, 0, 0);
         for (NPC neighbor : nearby) {
+            if (!neighbor.isSpawned())
+                continue;
             positions = positions.add(neighbor.getEntity().getLocation(dummy).toVector());
         }
         Vector center = positions.multiply((double) 1 / nearby.size());
