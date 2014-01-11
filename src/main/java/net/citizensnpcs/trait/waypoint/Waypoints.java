@@ -76,7 +76,6 @@ public class Waypoints extends Trait {
         if (provider == null)
             return;
         PersistenceLoader.load(provider, key.getRelative(providerName));
-        provider.load(key.getRelative(providerName));
     }
 
     @Override
@@ -91,7 +90,6 @@ public class Waypoints extends Trait {
         if (provider == null)
             return;
         PersistenceLoader.save(provider, key.getRelative(providerName));
-        provider.save(key.getRelative(providerName));
         key.setString("provider", providerName);
     }
 
