@@ -73,6 +73,7 @@ public class WolfController extends MobEntityController {
         public void bn() {
             super.bn();
             if (npc != null) {
+                NMS.setStepHeight(this, 1);
                 npc.update();
             }
         }
@@ -82,16 +83,8 @@ public class WolfController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
-        }
-
-        @Override
-        public boolean h_() {
-            if (npc == null || !npc.isFlyable()) {
-                return super.h_();
-            } else {
-                return false;
             }
         }
 
@@ -136,6 +129,15 @@ public class WolfController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean h_() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.h_();
+            } else {
+                return false;
+            }
         }
     }
 
