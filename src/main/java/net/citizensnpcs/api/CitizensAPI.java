@@ -204,5 +204,6 @@ public final class CitizensAPI {
     }
 
     private static final CitizensAPI instance = new CitizensAPI();
+
     private static ScriptCompiler scriptCompiler;
 }
