@@ -43,6 +43,10 @@ public class Path implements Plan {
         return index >= path.length;
     }
 
+    public void run(NPC npc) {
+        path[index].run(npc);
+    }
+
     @Override
     public String toString() {
         return Arrays.toString(path);
@@ -52,19 +56,11 @@ public class Path implements Plan {
     public void update(Agent agent) {
         if (isComplete())
             return;
-        PathEntry entry = path[index];
-        if (entry.hasCallbacks()) {
-            NPC npc = (NPC) agent;
-            Block block = entry.getBlockUsingWorld(npc.getEntity().getWorld());
-            for (PathCallback callback : entry.callbacks) {
-                callback.run(npc, block);
-            }
-        }
         ++index;
     }
 
     private static class PathEntry {
-        final Iterable<PathCallback> callbacks;
+        final List<PathCallback> callbacks;
         final Vector vector;
 
         private PathEntry(Vector vector, List<PathCallback> callbacks) {
@@ -76,8 +72,14 @@ public class Path implements Plan {
             return world.getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
         }
 
-        private boolean hasCallbacks() {
-            return callbacks != null;
+        public void run(NPC npc) {
+            if (callbacks != null) {
+                Block block = getBlockUsingWorld(npc.getEntity().getWorld());
+                double distance = npc.getStoredLocation().distance(block.getLocation());
+                for (PathCallback callback : callbacks) {
+                    callback.run(npc, block, distance);
+                }
+            }
         }
 
         @Override

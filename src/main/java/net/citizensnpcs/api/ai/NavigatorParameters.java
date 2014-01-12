@@ -254,6 +254,18 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
+     * Removes a previously added run callback.
+     * 
+     * @see #addRunCallback(Runnable)
+     * @param runnable
+     *            The run callback to remove
+     */
+    public NavigatorParameters removeRunCallback(Runnable runnable) {
+        runCallbacks.remove(runnable);
+        return this;
+    }
+
+    /**
      * @return The modified movement speed as given by {@link #baseSpeed()}
      *         multiplied by {@link #speedModifier()}
      */
@@ -343,7 +355,7 @@ public class NavigatorParameters implements Cloneable {
     /**
      * FOR INTERNAL USE ONLY: ticks all {@link Runnable} callbacks.
      */
-    public void tick() {
+    public void run() {
         for (int i = 0; i < runCallbacks.size(); i++) {
             runCallbacks.get(i).run();
         }

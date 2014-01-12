@@ -8,9 +8,11 @@ import org.bukkit.util.Vector;
 public interface PathPoint {
     void addCallback(PathCallback callback);
 
+    PathPoint getParentPoint();
+
     Vector getVector();
 
     public static interface PathCallback {
-        void run(NPC npc, Block point);
+        void run(NPC npc, Block point, double radius);
     }
 }

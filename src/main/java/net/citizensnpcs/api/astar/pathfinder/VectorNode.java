@@ -103,6 +103,11 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     @Override
+    public PathPoint getParentPoint() {
+        return (PathPoint) getParent();
+    }
+
+    @Override
     public Vector getVector() {
         return location;
     }
@@ -110,8 +115,7 @@ public class VectorNode extends AStarNode implements PathPoint {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = prime + ((location == null) ? 0 : location.hashCode());
-        return result;
+        return prime + ((location == null) ? 0 : location.hashCode());
     }
 
     public float heuristicDistance(Vector goal) {
