@@ -80,7 +80,8 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
 
         NMS.setVerticalMovement(npc.getEntity(), 0.5);
         NMS.setHeadYaw(NMS.getHandle(npc.getEntity()), current.getYaw() + normalisedTargetYaw);
-        parameters.tick();
+        parameters.run();
+        plan.run(npc);
         return false;
     }
 

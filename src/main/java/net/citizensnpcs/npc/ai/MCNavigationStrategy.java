@@ -59,7 +59,7 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
             return true;
         navigation.a(parameters.avoidWater());
         navigation.a(parameters.speed());
-        parameters.tick();
+        parameters.run();
         return NMS.isNavigationFinished(navigation);
     }
 }
