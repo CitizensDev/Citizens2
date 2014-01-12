@@ -29,8 +29,9 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         this.parameters = params;
         this.npc = npc;
         Location location = Util.getEyeLocation(npc.getEntity());
-        plan = ASTAR.runFully(new VectorGoal(dest, (float) params.distanceMargin()), new VectorNode(location,
-                new ChunkBlockSource(location, params.range()), params.examiners()), 50000);
+        VectorGoal goal = new VectorGoal(dest, (float) params.pathDistanceMargin());
+        plan = ASTAR.runFully(goal, new VectorNode(goal, location, new ChunkBlockSource(location, params.range()),
+                params.examiners()), 50000);
         if (plan == null || plan.isComplete()) {
             setCancelReason(CancelReason.STUCK);
         } else {
