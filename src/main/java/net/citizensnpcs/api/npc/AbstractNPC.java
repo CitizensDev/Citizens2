@@ -20,6 +20,7 @@ import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Speech;
+import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
@@ -219,11 +220,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getName() {
-        String parsed = name;
-        for (ChatColor color : ChatColor.values())
-            if (parsed.contains("<" + color.getChar() + ">"))
-                parsed = parsed.replace("<" + color.getChar() + ">", "");
-        return parsed;
+        return Colorizer.stripColors(name);
     }
 
     @Override

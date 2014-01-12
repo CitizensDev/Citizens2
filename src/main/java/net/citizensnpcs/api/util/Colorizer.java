@@ -6,13 +6,18 @@ import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 
 public class Colorizer {
-    private static Pattern COLOR_MATCHER;
-    private static String GROUP = ChatColor.COLOR_CHAR + "$1";
-
     public static String parseColors(String parsed) {
         Matcher matcher = COLOR_MATCHER.matcher(ChatColor.translateAlternateColorCodes('&', parsed));
         return matcher.replaceAll(GROUP);
     }
+
+    public static String stripColors(String parsed) {
+        Matcher matcher = COLOR_MATCHER.matcher(parsed);
+        return matcher.replaceAll("");
+    }
+
+    private static Pattern COLOR_MATCHER;
+    private static String GROUP = ChatColor.COLOR_CHAR + "$1";
 
     static {
         String colors = "";
