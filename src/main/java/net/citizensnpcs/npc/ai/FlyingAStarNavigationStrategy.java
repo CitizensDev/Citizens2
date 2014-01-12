@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc.ai;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
@@ -36,6 +37,9 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
             setCancelReason(CancelReason.STUCK);
         } else {
             vector = plan.getCurrentVector();
+            if (Setting.DEBUG_PATHFINDING.asBoolean()) {
+                plan.debug();
+            }
         }
     }
 
@@ -46,6 +50,9 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public void stop() {
+        if (plan != null && Setting.DEBUG_PATHFINDING.asBoolean()) {
+            plan.debugEnd();
+        }
         plan = null;
     }
 

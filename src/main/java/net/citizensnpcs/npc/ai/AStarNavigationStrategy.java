@@ -15,6 +15,7 @@ import net.citizensnpcs.util.Util;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 public class AStarNavigationStrategy extends AbstractPathStrategy {
@@ -50,6 +51,9 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public void stop() {
+        if (plan != null && Setting.DEBUG_PATHFINDING.asBoolean()) {
+            plan.debugEnd();
+        }
         plan = null;
     }
 
@@ -61,9 +65,6 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         if (npc.getEntity().getLocation(NPC_LOCATION).toVector().distanceSquared(vector) <= params.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
-                if (Setting.DEBUG_PATHFINDING.asBoolean()) {
-                    plan.debugEnd();
-                }
                 return true;
             }
             vector = plan.getCurrentVector();
@@ -76,12 +77,17 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double distance = xzDistance + dY * dY;
         if (Setting.DEBUG_PATHFINDING.asBoolean()) {
             npc.getEntity().getWorld()
-                    .playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL, 0);
+            .playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL, 0);
         }
         if (distance > 0 && dY > 0 && dY < 1 && xzDistance <= 2.75) {
             NMS.setShouldJump(npc.getEntity());
         }
-        NMS.setDestination(npc.getEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
+        double destX = vector.getX(), destZ = vector.getZ();
+        if (npc.getEntity().getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ()).getType() == Material.LADDER) {
+            destX += 0.5;
+            destZ += 0.5;
+        }
+        NMS.setDestination(npc.getEntity(), destX, vector.getY(), destZ, params.speed());
         params.run();
         plan.run(npc);
         return false;
