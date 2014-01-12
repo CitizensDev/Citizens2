@@ -30,12 +30,16 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         this.destination = dest;
         this.npc = npc;
         Location location = Util.getEyeLocation(npc.getEntity());
-        plan = ASTAR.runFully(new VectorGoal(dest, (float) params.distanceMargin()), new VectorNode(location,
-                new ChunkBlockSource(location, params.range()), params.examiners()), 50000);
+        VectorGoal goal = new VectorGoal(dest, (float) params.pathDistanceMargin());
+        plan = ASTAR.runFully(goal, new VectorNode(goal, location, new ChunkBlockSource(location, params.range()),
+                params.examiners()), 50000);
         if (plan == null || plan.isComplete()) {
             setCancelReason(CancelReason.STUCK);
         } else {
             vector = plan.getCurrentVector();
+            if (Setting.DEBUG_PATHFINDING.asBoolean()) {
+                plan.debug();
+            }
         }
     }
 
@@ -57,6 +61,9 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         if (npc.getEntity().getLocation(NPC_LOCATION).toVector().distanceSquared(vector) <= params.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
+                if (Setting.DEBUG_PATHFINDING.asBoolean()) {
+                    plan.debugEnd();
+                }
                 return true;
             }
             vector = plan.getCurrentVector();
@@ -68,10 +75,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double xzDistance = dX * dX + dZ * dZ;
         double distance = xzDistance + dY * dY;
         if (Setting.DEBUG_PATHFINDING.asBoolean()) {
-            for (int i = 0; i < 3; i++) {
-                npc.getEntity().getWorld()
-                .playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL, 0);
-            }
+            npc.getEntity().getWorld()
+                    .playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL, 0);
         }
         if (distance > 0 && dY > 0 && dY < 1 && xzDistance <= 2.75) {
             NMS.setShouldJump(npc.getEntity());
