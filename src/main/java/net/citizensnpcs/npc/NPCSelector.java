@@ -48,7 +48,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         } else if (sender instanceof ConsoleCommandSender) {
             if (consoleSelectedNPC == null)
                 return null;
-            return CitizensAPI.getNPCRegistry().getByUniqueId(consoleSelectedNPC);
+            return CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(consoleSelectedNPC);
         }
         return null;
     }
@@ -57,7 +57,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         List<MetadataValue> metadata = sender.getMetadata("selected");
         if (metadata.size() == 0)
             return null;
-        return CitizensAPI.getNPCRegistry().getByUniqueId((UUID) metadata.get(0).value());
+        return CitizensAPI.getNPCRegistry().getByUniqueIdGlobal((UUID) metadata.get(0).value());
     }
 
     @EventHandler
