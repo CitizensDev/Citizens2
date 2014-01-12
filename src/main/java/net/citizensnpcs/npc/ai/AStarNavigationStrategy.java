@@ -68,15 +68,17 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double xzDistance = dX * dX + dZ * dZ;
         double distance = xzDistance + dY * dY;
         if (Setting.DEBUG_PATHFINDING.asBoolean()) {
-            for (int i = 0; i < 5; i++) {
-                npc.getEntity().getWorld().playEffect(npc.getStoredLocation(), Effect.MOBSPAWNER_FLAMES, 0);
+            for (int i = 0; i < 3; i++) {
+                npc.getEntity().getWorld()
+                .playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL, 0);
             }
         }
-        if (distance > 0 && dY > 0 && xzDistance <= 2.75) {
+        if (distance > 0 && dY > 0 && dY < 1 && xzDistance <= 2.75) {
             NMS.setShouldJump(npc.getEntity());
         }
         NMS.setDestination(npc.getEntity(), vector.getX(), vector.getY(), vector.getZ(), params.speed());
-        params.tick();
+        params.run();
+        plan.run(npc);
         return false;
     }
 
