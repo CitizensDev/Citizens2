@@ -284,7 +284,9 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void load(final DataKey root) {
         metadata.loadFrom(root.getRelative("metadata"));
-        uuid = UUID.fromString(root.getString("uuid"));
+        if (root.keyExists("uuid")) {
+            uuid = UUID.fromString(root.getString("uuid"));
+        }
 
         String traitNames = root.getString("traitnames");
         Set<DataKey> keys = Sets.newHashSet(root.getRelative("traits").getSubKeys());
