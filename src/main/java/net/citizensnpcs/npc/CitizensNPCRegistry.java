@@ -95,7 +95,12 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC getByUniqueId(UUID uuid) {
-        NPC npc = npcs.get(uuid);
+        return npcs.get(uuid);
+    }
+
+    @Override
+    public NPC getByUniqueIdGlobal(UUID uuid) {
+        NPC npc = getByUniqueId(uuid);
         if (npc != null)
             return npc;
         for (NPCRegistry registry : CitizensAPI.getNPCRegistries()) {
@@ -232,6 +237,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
             return o1.getId() - o2.getId();
         }
     };
+
     private static boolean TROVE_EXISTS = false;
     static {
         // allow trove dependency to be optional for debugging purposes
