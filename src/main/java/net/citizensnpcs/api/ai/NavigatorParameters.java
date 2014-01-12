@@ -19,6 +19,7 @@ public class NavigatorParameters implements Cloneable {
     private AttackStrategy defaultStrategy;
     private double distanceMargin = 2F;
     private List<BlockExaminer> examiners = Lists.newArrayList();
+    private double pathDistanceMargin;
     private float range;
     private List<Runnable> runCallbacks = Lists.newArrayListWithExpectedSize(3);
     private float speedModifier = 1F;
@@ -233,6 +234,28 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
+     * Gets the path distance margin.
+     *
+     * @see #pathDistanceMargin(double)
+     */
+    public double pathDistanceMargin() {
+        return pathDistanceMargin;
+    }
+
+    /**
+     * Sets the path distance margin. This is how close the pathfinder should to
+     * the target when pathfinding. If you need to set how far the NPC should
+     * get away from the target, use {@link #distanceMargin(double)}.
+     *
+     * @param distance
+     *            The distance margin
+     */
+    public NavigatorParameters pathDistanceMargin(double distance) {
+        this.pathDistanceMargin = distance;
+        return this;
+    }
+
+    /**
      * @return The pathfinding range of the navigator in blocks.
      * @see #range(float)
      */
@@ -263,6 +286,15 @@ public class NavigatorParameters implements Cloneable {
     public NavigatorParameters removeRunCallback(Runnable runnable) {
         runCallbacks.remove(runnable);
         return this;
+    }
+
+    /**
+     * FOR INTERNAL USE ONLY: ticks all {@link Runnable} callbacks.
+     */
+    public void run() {
+        for (int i = 0; i < runCallbacks.size(); i++) {
+            runCallbacks.get(i).run();
+        }
     }
 
     /**
@@ -350,15 +382,6 @@ public class NavigatorParameters implements Cloneable {
     public NavigatorParameters stuckAction(StuckAction action) {
         stuckAction = action;
         return this;
-    }
-
-    /**
-     * FOR INTERNAL USE ONLY: ticks all {@link Runnable} callbacks.
-     */
-    public void run() {
-        for (int i = 0; i < runCallbacks.size(); i++) {
-            runCallbacks.get(i).run();
-        }
     }
 
     /**

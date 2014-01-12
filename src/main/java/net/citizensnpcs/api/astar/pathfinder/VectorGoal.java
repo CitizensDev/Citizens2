@@ -6,8 +6,10 @@ import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public class VectorGoal implements AStarGoal<VectorNode> {
-    private final Vector goal;
+    final Vector goal;
     private final float leeway;
+
+    double lowest = Double.MAX_VALUE;
 
     public VectorGoal(Location dest, float range) {
         this(dest.toVector(), range);
@@ -35,6 +37,7 @@ public class VectorGoal implements AStarGoal<VectorNode> {
 
     @Override
     public boolean isFinished(VectorNode node) {
-        return node.getVector().distanceSquared(goal) <= leeway;
+        double distanceSquared = node.getVector().distanceSquared(goal);
+        return goal.equals(node.location) || distanceSquared <= leeway;
     }
 }

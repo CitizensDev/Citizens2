@@ -8,8 +8,11 @@ import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
@@ -34,6 +37,23 @@ public class Path implements Plan {
         return path.toArray(new PathEntry[path.size()]);
     }
 
+    public void debug() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            for (PathEntry entry : path) {
+                player.sendBlockChange(entry.vector.toLocation(player.getWorld()), Material.YELLOW_FLOWER, (byte) 0);
+            }
+        }
+    }
+
+    public void debugEnd() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            for (PathEntry entry : path) {
+                Block block = entry.vector.toLocation(player.getWorld()).getBlock();
+                player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
+            }
+        }
+    }
+
     public Vector getCurrentVector() {
         return path[index].vector;
     }
@@ -54,8 +74,9 @@ public class Path implements Plan {
 
     @Override
     public void update(Agent agent) {
-        if (isComplete())
+        if (isComplete()) {
             return;
+        }
         ++index;
     }
 

@@ -11,6 +11,16 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
 public class MinecraftBlockExaminer implements BlockExaminer {
+    private boolean checkGoal(PathPoint point, Material in) {
+        if (point.getGoal().equals(point.getVector())) {
+            if (!canStandIn(in) && point.getParentPoint() != null) {
+                point.setVector(point.getParentPoint().getVector());
+            }
+            return true;
+        }
+        return false;
+    }
+
     private boolean checkLadders(BlockSource source, PathPoint point, Material above, Material below, Material in) {
         if (above == Material.LADDER && in == Material.LADDER) {
             return true;
@@ -44,7 +54,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         if (!below.isBlock() || !canStandOn(below)) {
             return PassableState.UNPASSABLE;
         }
-        if ((!canStandIn(above) || !canStandIn(in)) /*&& !checkLadders(source, point, above, below, in)*/) {
+        if ((!canStandIn(above) || !canStandIn(in)) && !checkGoal(point, in) /*&& !checkLadders(source, point, above, below, in)*/) {
             return PassableState.UNPASSABLE;
         }/*
          if (in == Material.LADDER) {

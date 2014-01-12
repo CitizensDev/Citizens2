@@ -16,16 +16,18 @@ public class VectorNode extends AStarNode implements PathPoint {
     private final BlockSource blockSource;
     List<PathCallback> callbacks;
     private final BlockExaminer[] examiners;
-    final Vector location;
+    private final VectorGoal goal;
+    Vector location;
 
-    public VectorNode(Location location, BlockSource source, BlockExaminer... examiners) {
-        this(location.toVector(), source, examiners);
+    public VectorNode(VectorGoal goal, Location location, BlockSource source, BlockExaminer... examiners) {
+        this(goal, location.toVector(), source, examiners);
     }
 
-    public VectorNode(Vector location, BlockSource source, BlockExaminer... examiners) {
+    public VectorNode(VectorGoal goal, Vector location, BlockSource source, BlockExaminer... examiners) {
         this.location = location.setX(location.getBlockX()).setY(location.getBlockY()).setZ(location.getBlockZ());
         this.blockSource = source;
         this.examiners = examiners == null ? new BlockExaminer[] {} : examiners;
+        this.goal = goal;
     }
 
     @Override
@@ -76,6 +78,11 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     @Override
+    public Vector getGoal() {
+        return goal.goal;
+    }
+
+    @Override
     public Iterable<AStarNode> getNeighbours() {
         List<AStarNode> nodes = Lists.newArrayList();
         for (int x = -1; x <= 1; x++) {
@@ -99,7 +106,7 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     private VectorNode getNewNode(Vector mod) {
-        return new VectorNode(mod, blockSource, examiners);
+        return new VectorNode(goal, mod, blockSource, examiners);
     }
 
     @Override
@@ -131,6 +138,11 @@ public class VectorNode extends AStarNode implements PathPoint {
             passable = state == PassableState.PASSABLE ? true : false;
         }
         return passable;
+    }
+
+    @Override
+    public void setVector(Vector vector) {
+        this.location = vector;
     }
 
     private static final float TIEBREAKER = 1.001f;
