@@ -29,8 +29,6 @@ public class Path implements Plan {
         // possibly expose cullability in an API
         List<PathEntry> path = Lists.newArrayList();
         for (VectorNode node : unfiltered) {
-            if (node.callbacks != null)
-                continue;
             Vector vector = node.location;
             path.add(new PathEntry(vector, node.callbacks));
         }

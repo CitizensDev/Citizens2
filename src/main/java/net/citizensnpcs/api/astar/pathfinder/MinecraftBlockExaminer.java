@@ -4,6 +4,11 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
+import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.ai.event.NavigatorCallback;
+import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
+import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,25 +16,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
 public class MinecraftBlockExaminer implements BlockExaminer {
-    private boolean checkGoal(PathPoint point, Material in) {
-        if (point.getGoal().equals(point.getVector())) {
-            if (!canStandIn(in) && point.getParentPoint() != null) {
-                point.setVector(point.getParentPoint().getVector());
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkLadders(BlockSource source, PathPoint point, Material above, Material below, Material in) {
-        if (above == Material.LADDER && in == Material.LADDER) {
-            return true;
-        }
-        if (below == Material.LADDER)
-            return true;
-        return false;
-    }
-
     @Override
     public float getCost(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
@@ -54,10 +40,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         if (!below.isBlock() || !canStandOn(below)) {
             return PassableState.UNPASSABLE;
         }
-        if ((!canStandIn(above) || !canStandIn(in)) && !checkGoal(point, in) /*&& !checkLadders(source, point, above, below, in)*/) {
-            return PassableState.UNPASSABLE;
-        }/*
-         if (in == Material.LADDER) {
+        if ((above == Material.LADDER && in == Material.LADDER) || (in == Material.LADDER && below == Material.LADDER)) {
             point.addCallback(new PathCallback() {
                 boolean added = false;
 
@@ -67,24 +50,29 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                         added = true;
                         return;
                     }
-                    npc.getNavigator().getLocalParameters().addRunCallback(new Runnable() {
+                    Runnable callback = new Runnable() {
                         Location dummy = new Location(null, 0, 0, 0);
 
                         @Override
                         public void run() {
-                            System.err.println('d');
                             if (npc.getEntity().getLocation(dummy).getBlock().getType() == Material.LADDER) {
-                                npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.5));
-                            } else {
-                                npc.getNavigator().getLocalParameters().removeRunCallback(this);
+                                npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
                             }
                         }
+                    };
+                    npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
+                        @Override
+                        public void onCompletion(CancelReason cancelReason) {
+                            npc.data().set("running-ladder", false);
+                        }
                     });
+                    npc.getNavigator().getLocalParameters().addRunCallback(callback);
                     added = true;
-                    npc.data().set("running-ladder", true);
                 }
             });
-         }*/
+        } else if (!canStandIn(above) || !canStandIn(in)) {
+            return PassableState.UNPASSABLE;
+        }
         return PassableState.PASSABLE;
     }
 
@@ -114,13 +102,14 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     public static Location findValidLocation(Location location, int radius) {
         Block base = location.getBlock();
-        if (canStandOn(base))
+        if (canStandIn(base.getType()) && canStandOn(base.getRelative(BlockFace.DOWN)))
             return location;
-        for (int y = 0; y < radius; y++) {
-            for (int x = -radius; x < radius; x++) {
-                for (int z = -radius; z < radius; z++) {
+        for (int y = 0; y <= radius; y++) {
+            for (int x = -radius; x <= radius; x++) {
+                for (int z = -radius; z <= radius; z++) {
                     Block relative = base.getRelative(x, y, z);
-                    if (canStandOn(relative)) {
+                    if (canStandIn(relative.getRelative(BlockFace.UP).getType()) && canStandIn(relative.getType())
+                            && canStandOn(base.getRelative(BlockFace.DOWN))) {
                         return relative.getLocation();
                     }
                 }
@@ -131,6 +120,11 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     public static boolean isLiquid(Material... materials) {
         return contains(materials, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA);
+    }
+
+    public static boolean validPosition(Block in) {
+        return canStandIn(in.getType()) && canStandIn(in.getRelative(BlockFace.UP).getType())
+                && canStandOn(in.getRelative(BlockFace.DOWN));
     }
 
     private static final Vector DOWN = new Vector(0, -1, 0);
