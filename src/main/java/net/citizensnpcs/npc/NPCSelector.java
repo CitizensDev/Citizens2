@@ -1,6 +1,7 @@
 package net.citizensnpcs.npc;
 
 import java.util.List;
+import java.util.UUID;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -30,7 +31,7 @@ import org.bukkit.plugin.Plugin;
 import com.google.common.collect.Lists;
 
 public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelector {
-    private int consoleSelectedNPC = -1;
+    private UUID consoleSelectedNPC;
     private final Plugin plugin;
 
     public NPCSelector(Plugin plugin) {
@@ -45,9 +46,9 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         } else if (sender instanceof BlockCommandSender) {
             return getSelectedFromMetadatable(((BlockCommandSender) sender).getBlock());
         } else if (sender instanceof ConsoleCommandSender) {
-            if (consoleSelectedNPC == -1)
+            if (consoleSelectedNPC == null)
                 return null;
-            return CitizensAPI.getNPCRegistry().getById(consoleSelectedNPC);
+            return CitizensAPI.getNPCRegistry().getByUniqueId(consoleSelectedNPC);
         }
         return null;
     }
@@ -56,7 +57,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         List<MetadataValue> metadata = sender.getMetadata("selected");
         if (metadata.size() == 0)
             return null;
-        return CitizensAPI.getNPCRegistry().getById(metadata.get(0).asInt());
+        return CitizensAPI.getNPCRegistry().getByUniqueId((UUID) metadata.get(0).value());
     }
 
     @EventHandler
@@ -67,7 +68,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
             return;
         for (String value : selectors) {
             if (value.equals("console")) {
-                consoleSelectedNPC = -1;
+                consoleSelectedNPC = null;
             } else if (value.startsWith("@")) {
                 String[] parts = value.substring(1, value.length()).split(":");
                 World world = Bukkit.getWorld(parts[0]);
@@ -102,8 +103,9 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
     }
 
     private void removeMetadata(Metadatable metadatable) {
-        if (metadatable != null)
+        if (metadatable != null) {
             metadatable.removeMetadata("selected", plugin);
+        }
     }
 
     public void select(CommandSender sender, NPC npc) {
@@ -125,7 +127,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
             setMetadata(npc, block);
             selectors.add(toName(block));
         } else if (sender instanceof ConsoleCommandSender) {
-            consoleSelectedNPC = npc.getId();
+            consoleSelectedNPC = npc.getUniqueId();
             selectors.add("console");
         }
 
@@ -133,10 +135,10 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
     }
 
     private void setMetadata(NPC npc, Metadatable metadatable) {
-        if (metadatable.hasMetadata("selected"))
+        if (metadatable.hasMetadata("selected")) {
             metadatable.removeMetadata("selected", plugin);
-
-        metadatable.setMetadata("selected", new FixedMetadataValue(plugin, npc.getId()));
+        }
+        metadatable.setMetadata("selected", new FixedMetadataValue(plugin, npc.getUniqueId()));
     }
 
     private String toName(Block block) {

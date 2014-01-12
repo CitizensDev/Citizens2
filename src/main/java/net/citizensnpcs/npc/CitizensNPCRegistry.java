@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -54,7 +55,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public void deregister(NPC npc) {
-        npcs.remove(npc.getId());
+        npcs.remove(npc);
         if (saves != null) {
             saves.clearData(npc);
         }
@@ -93,6 +94,22 @@ public class CitizensNPCRegistry implements NPCRegistry {
     }
 
     @Override
+    public NPC getByUniqueId(UUID uuid) {
+        NPC npc = npcs.get(uuid);
+        if (npc != null)
+            return npc;
+        for (NPCRegistry registry : CitizensAPI.getNPCRegistries()) {
+            if (registry != this) {
+                NPC other = registry.getByUniqueId(uuid);
+                if (other != null) {
+                    return other;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public NPC getNPC(Entity entity) {
         if (entity == null)
             return null;
@@ -121,10 +138,16 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     public static class MapNPCCollection implements NPCCollection {
         private final Map<Integer, NPC> npcs = Maps.newHashMap();
+        private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
 
         @Override
         public NPC get(int id) {
             return npcs.get(id);
+        }
+
+        @Override
+        public NPC get(UUID uuid) {
+            return uniqueNPCs.get(uuid);
         }
 
         @Override
@@ -135,11 +158,13 @@ public class CitizensNPCRegistry implements NPCRegistry {
         @Override
         public void put(int id, NPC npc) {
             npcs.put(id, npc);
+            uniqueNPCs.put(npc.getUniqueId(), npc);
         }
 
         @Override
-        public void remove(int id) {
-            npcs.remove(id);
+        public void remove(NPC npc) {
+            npcs.remove(npc.getId());
+            uniqueNPCs.remove(npc.getUniqueId());
         }
 
         @Override
@@ -153,19 +178,27 @@ public class CitizensNPCRegistry implements NPCRegistry {
     public static interface NPCCollection extends Iterable<NPC> {
         public NPC get(int id);
 
+        public NPC get(UUID uuid);
+
         public void put(int id, NPC npc);
 
-        public void remove(int id);
+        public void remove(NPC npc);
 
         public Iterable<NPC> sorted();
     }
 
     public static class TroveNPCCollection implements NPCCollection {
         private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<NPC>();
+        private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
 
         @Override
         public NPC get(int id) {
             return npcs.get(id);
+        }
+
+        @Override
+        public NPC get(UUID uuid) {
+            return uniqueNPCs.get(uuid);
         }
 
         @Override
@@ -176,11 +209,13 @@ public class CitizensNPCRegistry implements NPCRegistry {
         @Override
         public void put(int id, NPC npc) {
             npcs.put(id, npc);
+            uniqueNPCs.put(npc.getUniqueId(), npc);
         }
 
         @Override
-        public void remove(int id) {
-            npcs.remove(id);
+        public void remove(NPC npc) {
+            npcs.remove(npc.getId());
+            uniqueNPCs.remove(npc.getUniqueId());
         }
 
         @Override
