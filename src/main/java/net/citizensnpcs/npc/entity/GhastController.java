@@ -105,6 +105,11 @@ public class GhastController extends MobEntityController {
         public NPC getNPC() {
             return npc;
         }
+
+        @Override
+        protected boolean isTypeNotPersistent() {
+            return npc == null ? super.isTypeNotPersistent() : false;
+        }
     }
 
     public static class GhastNPC extends CraftGhast implements NPCHolder {

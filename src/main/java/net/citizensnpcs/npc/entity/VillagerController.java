@@ -54,7 +54,7 @@ public class VillagerController extends MobEntityController {
         @Override
         public boolean a(EntityHuman entityhuman) {
             return npc == null || !blockTrades ? super.a(entityhuman) : false; // block
-                                                                               // trades
+            // trades
         }
 
         @Override
@@ -80,8 +80,9 @@ public class VillagerController extends MobEntityController {
         @Override
         public void bn() {
             super.bn();
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
+            }
         }
 
         @Override
@@ -89,16 +90,8 @@ public class VillagerController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
-        }
-
-        @Override
-        public boolean h_() {
-            if (npc == null || !npc.isFlyable()) {
-                return super.h_();
-            } else {
-                return false;
             }
         }
 
@@ -145,8 +138,22 @@ public class VillagerController extends MobEntityController {
             return npc;
         }
 
+        @Override
+        public boolean h_() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.h_();
+            } else {
+                return false;
+            }
+        }
+
         public boolean isBlockingTrades() {
             return blockTrades;
+        }
+
+        @Override
+        protected boolean isTypeNotPersistent() {
+            return npc == null ? super.isTypeNotPersistent() : false;
         }
 
         public void setBlockTrades(boolean blocked) {

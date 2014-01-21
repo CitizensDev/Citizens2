@@ -153,5 +153,10 @@ public class CowController extends MobEntityController {
                 return false;
             }
         }
+
+        @Override
+        protected boolean isTypeNotPersistent() {
+            return npc == null ? super.isTypeNotPersistent() : false;
+        }
     }
 }

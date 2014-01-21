@@ -98,15 +98,6 @@ public class SlimeController extends MobEntityController {
         }
 
         @Override
-        public boolean h_() {
-            if (npc == null || !npc.isFlyable()) {
-                return super.h_();
-            } else {
-                return false;
-            }
-        }
-
-        @Override
         public void e(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
@@ -147,6 +138,20 @@ public class SlimeController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean h_() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.h_();
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        protected boolean isTypeNotPersistent() {
+            return npc == null ? super.isTypeNotPersistent() : false;
         }
     }
 

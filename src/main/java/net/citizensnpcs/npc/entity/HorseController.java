@@ -152,6 +152,11 @@ public class HorseController extends MobEntityController {
             }
         }
 
+        @Override
+        protected boolean isTypeNotPersistent() {
+            return npc == null ? super.isTypeNotPersistent() : false;
+        }
+
         private void updateAIWithMovement() {
             NMS.updateAI(this);
             // taken from EntityLiving update method
