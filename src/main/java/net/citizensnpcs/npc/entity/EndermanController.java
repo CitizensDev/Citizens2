@@ -173,6 +173,11 @@ public class EndermanController extends MobEntityController {
         }
 
         @Override
+        protected boolean isTypeNotPersistent() {
+            return npc == null ? super.isTypeNotPersistent() : false;
+        }
+
+        @Override
         protected boolean k(double d1, double d2, double d3) {
             if (npc == null) {
                 return super.j(d1, d2, d3);

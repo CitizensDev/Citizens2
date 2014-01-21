@@ -132,6 +132,11 @@ public class BatController extends MobEntityController {
             }
         }
 
+        @Override
+        protected boolean isTypeNotPersistent() {
+            return npc == null ? super.isTypeNotPersistent() : false;
+        }
+
         public void setFlying(boolean flying) {
             a(flying);
         }

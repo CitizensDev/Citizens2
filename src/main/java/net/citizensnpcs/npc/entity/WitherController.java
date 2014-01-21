@@ -116,6 +116,11 @@ public class WitherController extends MobEntityController {
             return npc;
         }
 
+        @Override
+        protected boolean isTypeNotPersistent() {
+            return npc == null ? super.isTypeNotPersistent() : false;
+        }
+
         private void updateAIWithMovement() {
             NMS.updateAI(this);
             // taken from EntityLiving update method

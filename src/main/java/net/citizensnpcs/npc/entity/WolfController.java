@@ -139,6 +139,11 @@ public class WolfController extends MobEntityController {
                 return false;
             }
         }
+
+        @Override
+        protected boolean isTypeNotPersistent() {
+            return npc == null ? super.isTypeNotPersistent() : false;
+        }
     }
 
     public static class WolfNPC extends CraftWolf implements NPCHolder {

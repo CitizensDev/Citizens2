@@ -143,5 +143,10 @@ public class EnderDragonController extends MobEntityController {
         public NPC getNPC() {
             return npc;
         }
+
+        @Override
+        protected boolean isTypeNotPersistent() {
+            return npc == null ? super.isTypeNotPersistent() : false;
+        }
     }
 }
