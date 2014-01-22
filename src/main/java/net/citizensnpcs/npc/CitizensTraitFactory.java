@@ -113,8 +113,9 @@ public class CitizensTraitFactory implements TraitFactory {
     @Override
     public <T extends Trait> T getTrait(Class<T> clazz) {
         for (TraitInfo entry : registered.values()) {
-            if (clazz == entry.getTraitClass())
+            if (clazz == entry.getTraitClass()) {
                 return create(entry);
+            }
         }
         return null;
     }
