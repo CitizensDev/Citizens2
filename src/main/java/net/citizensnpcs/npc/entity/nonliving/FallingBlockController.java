@@ -2,7 +2,6 @@ package net.citizensnpcs.npc.entity.nonliving;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -118,7 +117,6 @@ public class FallingBlockController extends AbstractEntityController {
                     motY *= 0.98;
                     motZ *= 0.98;
                     move(motX, motY, motZ);
-                    Messaging.log(motX, motY, motZ);
                 }
             } else {
                 super.h();
