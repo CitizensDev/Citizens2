@@ -26,7 +26,6 @@ import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -76,7 +75,7 @@ public abstract class AbstractNPC implements NPC {
     private final List<Runnable> runnables = Lists.newArrayList();
     private final SpeechController speechController = new SimpleSpeechController(this);
     protected final Map<Class<? extends Trait>, Trait> traits = Maps.newHashMap();
-    private UUID uuid;
+    private final UUID uuid;
 
     protected AbstractNPC(UUID uuid, int id, String name, NPCRegistry registry) {
         if (name.length() > 16) {
@@ -129,7 +128,7 @@ public abstract class AbstractNPC implements NPC {
     public NPC clone() {
         NPC copy = registry.createNPC(getTrait(MobType.class).getType(), getFullName());
         DataKey key = new MemoryDataKey();
-        this.save(key);
+        save(key);
         copy.load(key);
 
         for (Trait trait : copy.getTraits()) {
@@ -281,9 +280,6 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void load(final DataKey root) {
         metadata.loadFrom(root.getRelative("metadata"));
-        if (root.keyExists("uuid")) {
-            uuid = UUID.fromString(root.getString("uuid"));
-        }
 
         String traitNames = root.getString("traitnames");
         Set<DataKey> keys = Sets.newHashSet(root.getRelative("traits").getSubKeys());
@@ -330,8 +326,9 @@ public abstract class AbstractNPC implements NPC {
         if (trait != null) {
             Bukkit.getPluginManager().callEvent(new NPCRemoveTraitEvent(this, trait));
             removedTraits.add(trait.getName());
-            if (trait.isRunImplemented())
+            if (trait.isRunImplemented()) {
                 runnables.remove(trait);
+            }
             HandlerList.unregisterAll(trait);
             trait.onRemove();
         }
