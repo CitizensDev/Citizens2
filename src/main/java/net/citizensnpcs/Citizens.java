@@ -2,7 +2,6 @@ package net.citizensnpcs;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -29,7 +28,6 @@ import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
-import net.citizensnpcs.api.util.DatabaseStorage;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.NBTStorage;
 import net.citizensnpcs.api.util.Storage;
@@ -89,15 +87,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private NPCDataStore createStorage(File folder) {
         Storage saves = null;
         String type = Setting.STORAGE_TYPE.asString();
-        if (type.equalsIgnoreCase("db") || type.equalsIgnoreCase("database")) {
-            try {
-                saves = new DatabaseStorage(Setting.DATABASE_DRIVER.asString(), Setting.DATABASE_URL.asString(),
-                        Setting.DATABASE_USERNAME.asString(), Setting.DATABASE_PASSWORD.asString());
-            } catch (SQLException e) {
-                e.printStackTrace();
-                Messaging.logTr(Messages.DATABASE_CONNECTION_FAILED);
-            }
-        } else if (type.equalsIgnoreCase("nbt")) {
+        if (type.equalsIgnoreCase("nbt")) {
             saves = new NBTStorage(new File(folder + File.separator + Setting.STORAGE_FILE.asString()),
                     "Citizens NPC Storage");
         }
