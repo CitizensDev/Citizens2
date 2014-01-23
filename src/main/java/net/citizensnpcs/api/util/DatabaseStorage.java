@@ -21,43 +21,43 @@ import com.google.common.collect.Maps;
  * Implements a traversable tree-view database, which can be accessed with
  * simple keys, and is dynamic, meaning that any necessary tables or columns
  * must be created when needed.
- *
+ * 
  * Keys are formatted using a general node-subnode format x.x.x...x, and will be
  * treated by this object according to a set of rules.
  * <ul>
  * <li>1. The first node is treated as the name of the initial table.
- *
+ * 
  * <li>2. The second node is treated as the primary key of the given table name,
  * and will be fetched or created from the database as necessary.
- *
+ * 
  * <p>
  * A combination of the first two rules gives us the initial starting point to
  * traverse the key. We have a table and a valid starting point to begin at.
  * </p>
- *
+ * 
  * <li>3. The last node of the key is treated as the table field to fetch or set
  * the requested value from.
- *
+ * 
  * <li>4. Any other subnodes are traversed by creating foreign keys between the
  * current table and the next table.
  * </ul>
- *
+ * 
  * <p>
  * For example, the user sets a string at the key
  * <code>npcs.Bob.location.x</code>
  * </p>
  * <ul>
  * <li>The table <code>npcs</code> is created.
- *
+ * 
  * <li>The primary key field must also be created, and as <code>Bob</code> does
  * not match any other validation patterns, it is treated as a varchar, so a
  * primary key <code>npcs_id varchar(255)</code> is created.
- *
+ * 
  * <li>The table <code>location</code> is created and a foreign key
  * <code>fk_location</code> is inserted into <code>npcs</code> which references
  * <code>location_id</code> (integer). A row is created in location and the
  * fk_location field is updated with the generated id.
- *
+ * 
  * <li>The field <code>x varchar(255)</code> is created for
  * <code>location</code> and the value inserted.
  * </ul>
@@ -120,7 +120,7 @@ public class DatabaseStorage implements Storage {
         PreparedStatement stmt = null;
         Table created = null;
         try {
-            stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS `" + name + "`(`" + pk + "` " + directType
+            stmt = conn.prepareStatement("CREATE TABLE IF NOT EXISTS `" + name + "` (`" + pk + "` " + directType
                     + primaryType + ")");
             stmt.execute();
             created = new Table().setName(name).setPrimaryKey(pk).setPrimaryKeyType(directType);
