@@ -412,8 +412,7 @@ public class DatabaseStorage implements Storage {
         @Override
         public String name() {
             Traversed t = traverse(path, true);
-            System.err.println(t);
-            return t.key != null ? t.key : t.found.name;
+            return t.key != null ? t.key : t.found != null ? t.found.name : "";
         }
 
         @Override
@@ -447,7 +446,7 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public void setInt(String key, final int value) {
-            setValue("STRING", key, value);
+            setValue("INT", key, value);
         }
 
         @Override
@@ -480,12 +479,10 @@ public class DatabaseStorage implements Storage {
                     closeQuietly(stmt);
                     t.found.addColumn(t.column);
                 }
-                queryRunner.update(conn, "UPDATE " + t.found.name + " SET " + t.column + "=? WHERE "
-                        + t.found.primaryKey + "=?", value, t.key);
+                queryRunner.update(conn, "UPDATE `" + t.found.name + "` SET `" + t.column + "`=? WHERE `"
+                        + t.found.primaryKey + "`=?", value, t.key);
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                System.out.println("UPDATE " + t.found.name + " SET " + t.column + "=? WHERE " + t.found.primaryKey
-                        + "=?" + " " + value + " " + t.key);
             }
         }
 
