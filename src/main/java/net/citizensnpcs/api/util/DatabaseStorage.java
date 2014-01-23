@@ -461,7 +461,7 @@ public class DatabaseStorage implements Storage {
 
         @Override
         public void setString(String key, final String value) {
-            setValue("VARCHAR", key, value);
+            setValue("VARCHAR(255)", key, value);
         }
 
         private void setValue(String type, String key, Object value) {
