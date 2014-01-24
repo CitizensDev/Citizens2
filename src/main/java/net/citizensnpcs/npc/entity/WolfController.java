@@ -158,5 +158,11 @@ public class WolfController extends MobEntityController {
         public NPC getNPC() {
             return npc;
         }
+
+        @Override
+        public void setSitting(boolean sitting) {
+            getHandle().setSitting(sitting);
+        }
+
     }
 }
