@@ -1160,22 +1160,13 @@ public class NPCCommands {
             ambientSound = deathSound = hurtSound = null;
         } else {
             if (args.hasValueFlag("death")) {
-                deathSound = args.getFlag("death");
-                if (deathSound.equals("d")) {
-                    deathSound = null;
-                }
+                deathSound = args.getFlag("death").equals("d") ? null : NMS.getSound(args.getFlag("death"));
             }
             if (args.hasValueFlag("ambient")) {
-                ambientSound = args.getFlag("ambient");
-                if (ambientSound.equals("d")) {
-                    ambientSound = null;
-                }
+                ambientSound = args.getFlag("ambient").equals("d") ? null : NMS.getSound(args.getFlag("ambient"));
             }
             if (args.hasValueFlag("hurt")) {
-                hurtSound = args.getFlag("hurt");
-                if (hurtSound.equals("d")) {
-                    hurtSound = null;
-                }
+                hurtSound = args.getFlag("hurt").equals("d") ? null : NMS.getSound(args.getFlag("hurt"));
             }
         }
         npc.data().setPersistent(NPC.DEATH_SOUND_METADATA, deathSound);
