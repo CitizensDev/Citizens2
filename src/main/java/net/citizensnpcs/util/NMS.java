@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.WeakHashMap;
 
+import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
@@ -37,6 +38,8 @@ import net.minecraft.server.v1_7_R1.World;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
@@ -171,7 +174,7 @@ public class NMS {
     }
 
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-            NoSuchMethodException {
+    NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -210,6 +213,17 @@ public class NMS {
     public static Navigation getNavigation(Entity handle) {
         return handle instanceof EntityInsentient ? ((EntityInsentient) handle).getNavigation()
                 : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getNavigation() : null;
+    }
+
+    public static String getSound(String flag) throws CommandException {
+        try {
+            String ret = CraftSound.getSound(Sound.valueOf(flag.toUpperCase()));
+            if (ret == null)
+                throw new CommandException(Messages.INVALID_SOUND);
+            return ret;
+        } catch (Exception e) {
+            throw new CommandException(Messages.INVALID_SOUND);
+        }
     }
 
     public static float getSpeedFor(NPC npc) {
@@ -505,9 +519,7 @@ public class NMS {
     private static Field NETWORK_ADDRESS = getField(NetworkManager.class, "l");
     private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "k");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-
     private static Field PATHFINDING_RANGE = getField(Navigation.class, "e");
-
     private static final Random RANDOM = Util.getFastRandom();
     // true field above false and three synchronised lists
 
