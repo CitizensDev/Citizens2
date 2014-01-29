@@ -72,6 +72,16 @@ public class CreeperController extends MobEntityController {
         }
 
         @Override
+        protected String aT() {
+            return npc == null ? super.aT() : npc.data().get(NPC.HURT_SOUND_METADATA, super.aT());
+        }
+
+        @Override
+        protected String aU() {
+            return npc == null ? super.aT() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.aU());
+        }
+
+        @Override
         protected void b(float f) {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f);
@@ -167,6 +177,11 @@ public class CreeperController extends MobEntityController {
 
         public void setAllowPowered(boolean allowPowered) {
             this.allowPowered = allowPowered;
+        }
+
+        @Override
+        protected String t() {
+            return npc == null ? super.aT() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
         }
     }
 }

@@ -265,7 +265,7 @@ public class NPCCommands {
         }
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-                : new CommandSenderCreateNPCEvent(sender, copy);
+        : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
@@ -337,7 +337,7 @@ public class NPCCommands {
             spawnLoc = args.getSenderLocation();
         }
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
-                : new CommandSenderCreateNPCEvent(sender, npc);
+        : new CommandSenderCreateNPCEvent(sender, npc);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
@@ -969,7 +969,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         Messaging
-                .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+        .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
@@ -1137,6 +1137,50 @@ public class NPCCommands {
         int size = Math.max(1, args.getInteger(1));
         trait.setSize(size);
         Messaging.sendTr(sender, Messages.SIZE_SET, npc.getName(), size);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "sound (--death [death sound|d]) (--ambient [ambient sound|d]) (--hurt [hurt sound|d]) (-n(one)) (-d(efault))",
+            desc = "Sets an NPC's played sounds",
+            modifiers = { "sound" },
+            flags = "dn",
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.sound")
+    @Requirements(selected = true, ownership = true, livingEntity = true, excludedTypes = { EntityType.PLAYER })
+    public void sound(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        String ambientSound = npc.data().get(NPC.AMBIENT_SOUND_METADATA);
+        String deathSound = npc.data().get(NPC.DEATH_SOUND_METADATA);
+        String hurtSound = npc.data().get(NPC.HURT_SOUND_METADATA);
+        if (args.hasFlag('n')) {
+            ambientSound = deathSound = hurtSound = "";
+        }
+        if (args.hasFlag('d')) {
+            ambientSound = deathSound = hurtSound = null;
+        } else {
+            if (args.hasValueFlag("death")) {
+                deathSound = args.getFlag("death");
+                if (deathSound.equals("d")) {
+                    deathSound = null;
+                }
+            }
+            if (args.hasValueFlag("ambient")) {
+                ambientSound = args.getFlag("ambient");
+                if (ambientSound.equals("d")) {
+                    ambientSound = null;
+                }
+            }
+            if (args.hasValueFlag("hurt")) {
+                hurtSound = args.getFlag("hurt");
+                if (hurtSound.equals("d")) {
+                    hurtSound = null;
+                }
+            }
+        }
+        npc.data().setPersistent(NPC.DEATH_SOUND_METADATA, deathSound);
+        npc.data().setPersistent(NPC.HURT_SOUND_METADATA, hurtSound);
+        npc.data().setPersistent(NPC.AMBIENT_SOUND_METADATA, ambientSound);
     }
 
     @Command(

@@ -43,6 +43,16 @@ public class GhastController extends MobEntityController {
         }
 
         @Override
+        protected String aT() {
+            return npc == null ? super.aT() : npc.data().get(NPC.HURT_SOUND_METADATA, super.aT());
+        }
+
+        @Override
+        protected String aU() {
+            return npc == null ? super.aT() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.aU());
+        }
+
+        @Override
         public boolean bL() {
             if (npc == null)
                 return super.bL();
@@ -109,6 +119,11 @@ public class GhastController extends MobEntityController {
         @Override
         protected boolean isTypeNotPersistent() {
             return npc == null ? super.isTypeNotPersistent() : false;
+        }
+
+        @Override
+        protected String t() {
+            return npc == null ? super.aT() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
         }
     }
 
