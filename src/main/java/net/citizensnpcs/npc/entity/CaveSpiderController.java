@@ -53,7 +53,6 @@ public class CaveSpiderController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-
             }
         }
 
@@ -62,6 +61,16 @@ public class CaveSpiderController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag);
             }
+        }
+
+        @Override
+        protected String aT() {
+            return npc == null ? super.aT() : npc.data().get(NPC.HURT_SOUND_METADATA, super.aT());
+        }
+
+        @Override
+        protected String aU() {
+            return npc == null ? super.aT() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.aU());
         }
 
         @Override
@@ -169,6 +178,11 @@ public class CaveSpiderController extends MobEntityController {
         @Override
         protected boolean isTypeNotPersistent() {
             return npc == null ? super.isTypeNotPersistent() : false;
+        }
+
+        @Override
+        protected String t() {
+            return npc == null ? super.aT() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
         }
     }
 }
