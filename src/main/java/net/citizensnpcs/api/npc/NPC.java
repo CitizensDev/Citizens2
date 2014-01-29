@@ -27,7 +27,7 @@ public interface NPC extends Agent, Cloneable {
      * Adds a trait to this NPC. This will use the {@link TraitFactory} defined
      * for this NPC to construct and attach a trait using
      * {@link #addTrait(Trait)}.
-     *
+     * 
      * @param trait
      *            The class of the trait to add
      */
@@ -35,7 +35,7 @@ public interface NPC extends Agent, Cloneable {
 
     /**
      * Adds a trait to this NPC.
-     *
+     * 
      * @param trait
      *            Trait to add
      */
@@ -55,14 +55,14 @@ public interface NPC extends Agent, Cloneable {
     /**
      * Despawns this NPC. This is equivalent to calling
      * {@link #despawn(DespawnReason)} with {@link DespawnReason#PLUGIN}.
-     *
+     * 
      * @return Whether this NPC was able to despawn
      */
     public boolean despawn();
 
     /**
      * Despawns this NPC.
-     *
+     * 
      * @param reason
      *            The reason for despawning, for use in {@link NPCDespawnEvent}
      * @return Whether this NPC was able to despawn
@@ -83,7 +83,7 @@ public interface NPC extends Agent, Cloneable {
     /**
      * Gets the Bukkit entity associated with this NPC. This may be
      * <code>null</code> if {@link #isSpawned()} is false.
-     *
+     * 
      * @return Entity associated with this NPC
      * @deprecated Use {@link #getEntity()} instead
      * @see #getEntity()
@@ -93,14 +93,14 @@ public interface NPC extends Agent, Cloneable {
 
     /**
      * Gets the default {@link GoalController} of this NPC.
-     *
+     * 
      * @return Default goal controller
      */
     public GoalController getDefaultGoalController();
 
     /**
      * Gets the default {@link SpeechController} of this NPC.
-     *
+     * 
      * @return Default speech controller
      */
     public SpeechController getDefaultSpeechController();
@@ -108,14 +108,14 @@ public interface NPC extends Agent, Cloneable {
     /**
      * Gets the Bukkit entity associated with this NPC. This may be
      * <code>null</code> if {@link #isSpawned()} is false.
-     *
+     * 
      * @return Entity associated with this NPC
      */
     public Entity getEntity();
 
     /**
      * Gets the full name of this NPC.
-     *
+     * 
      * @return Full name of this NPC
      */
     public String getFullName();
@@ -123,14 +123,14 @@ public interface NPC extends Agent, Cloneable {
     /**
      * Gets the unique ID of this NPC. This is not guaranteed to be globally
      * unique across server sessions.
-     *
+     * 
      * @return ID of this NPC
      */
     public int getId();
 
     /**
      * Gets the name of this NPC with color codes stripped.
-     *
+     * 
      * @return Stripped name of this NPC
      */
     public String getName();
@@ -146,7 +146,7 @@ public interface NPC extends Agent, Cloneable {
      * If the NPC is not spawned, then this method will return the last known
      * location, or null if it has never been spawned. Otherwise, it is
      * equivalent to calling <code>npc.getBukkitEntity().getLocation()</code>.
-     *
+     * 
      * @return The stored location, or <code>null</code> if none was found.
      */
     public Location getStoredLocation();
@@ -155,7 +155,7 @@ public interface NPC extends Agent, Cloneable {
      * Gets a trait from the given class. If the NPC does not currently have the
      * trait then it will be created and attached using {@link #addTrait(Class)}
      * .
-     *
+     * 
      * @param trait
      *            Trait to get
      * @return Trait with the given name
@@ -164,7 +164,7 @@ public interface NPC extends Agent, Cloneable {
 
     /**
      * Returns the currently attached {@link Trait}s
-     *
+     * 
      * @return An Iterable of the current traits
      */
     public Iterable<Trait> getTraits();
@@ -172,14 +172,14 @@ public interface NPC extends Agent, Cloneable {
     /**
      * Gets the unique id of this NPC. This is guaranteed to be unique for all
      * NPCs.
-     * 
+     *
      * @return The unique id
      */
     public UUID getUniqueId();
 
     /**
      * Checks if this NPC has the given trait.
-     *
+     * 
      * @param trait
      *            Trait to check
      * @return Whether this NPC has the given trait
@@ -188,7 +188,7 @@ public interface NPC extends Agent, Cloneable {
 
     /**
      * Returns whether this NPC is flyable or not.
-     *
+     * 
      * @return Whether this NPC is flyable
      */
     public boolean isFlyable();
@@ -196,14 +196,14 @@ public interface NPC extends Agent, Cloneable {
     /**
      * Gets whether this NPC is protected from damage, movement and other events
      * that players and mobs use to change the entity state of the NPC.
-     *
+     * 
      * @return Whether this NPC is protected
      */
     public boolean isProtected();
 
     /**
      * Gets whether this NPC is currently spawned.
-     *
+     * 
      * @return Whether this NPC is spawned
      */
     public boolean isSpawned();
@@ -212,7 +212,7 @@ public interface NPC extends Agent, Cloneable {
      * Loads the {@link NPC} from the given {@link DataKey}. This reloads all
      * traits, respawns the NPC and sets it up for execution. Should not be
      * called often.
-     *
+     * 
      * @param key
      *            The root data key
      */
@@ -220,7 +220,7 @@ public interface NPC extends Agent, Cloneable {
 
     /**
      * Removes a trait from this NPC.
-     *
+     * 
      * @param trait
      *            Trait to remove
      */
@@ -230,7 +230,7 @@ public interface NPC extends Agent, Cloneable {
      * Saves the {@link NPC} to the given {@link DataKey}. This includes all
      * metadata, traits, and spawn information that will allow it to respawn at
      * a later time via {@link #load(DataKey)}.
-     *
+     * 
      * @param key
      *            The root data key
      */
@@ -241,7 +241,7 @@ public interface NPC extends Agent, Cloneable {
      * <em>living</em> entity types, with scope for additional types in the
      * future. The NPC will respawned if currently spawned, or will remain
      * despawned otherwise.
-     *
+     * 
      * @param type
      *            The new mob type
      * @throws IllegalArgumentException
@@ -253,14 +253,14 @@ public interface NPC extends Agent, Cloneable {
      * Sets whether this NPC is <tt>flyable</tt> or not. Note that this is
      * intended for normally <em>ground-based</em> entities only - it will
      * generally have no effect on mob types that were originally flyable.
-     *
+     * 
      * @param flyable
      */
     public void setFlyable(boolean flyable);
 
     /**
      * Sets the name of this NPC.
-     *
+     * 
      * @param name
      *            Name to give this NPC
      */
@@ -271,7 +271,7 @@ public interface NPC extends Agent, Cloneable {
      * NPC as protected or not protected from damage/entity target events.
      * Equivalent to
      * <code>npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, isProtected);</code>
-     *
+     * 
      * @param isProtected
      *            Whether the NPC should be protected
      */
@@ -279,7 +279,7 @@ public interface NPC extends Agent, Cloneable {
 
     /**
      * Attempts to spawn this NPC.
-     *
+     * 
      * @param location
      *            Location to spawn this NPC
      * @return Whether this NPC was able to spawn at the location
@@ -289,7 +289,7 @@ public interface NPC extends Agent, Cloneable {
     /**
      * An alternative to {{@link #getBukkitEntity().getLocation()} that
      * teleports passengers as well.
-     *
+     * 
      * @param location
      *            The destination location
      * @param cause
@@ -297,9 +297,12 @@ public interface NPC extends Agent, Cloneable {
      */
     public void teleport(Location location, TeleportCause cause);
 
+    public static final String AMBIENT_SOUND_METADATA = "ambient-sound";
     public static final String DAMAGE_OTHERS_METADATA = "damage-others";
+    public static final String DEATH_SOUND_METADATA = "death-sound";
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
     public static final String FLYABLE_METADATA = "flyable";
+    public static final String HURT_SOUND_METADATA = "hurt-sound";
     public static final String LEASH_PROTECTED_METADATA = "protected-leash";
     public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
     public static final String SWIMMING_METADATA = "swim";
