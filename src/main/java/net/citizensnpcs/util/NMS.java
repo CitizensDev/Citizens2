@@ -39,7 +39,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.CraftSound;
+import org.bukkit.craftbukkit.v1_7_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
@@ -174,7 +174,7 @@ public class NMS {
     }
 
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-    NoSuchMethodException {
+            NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
