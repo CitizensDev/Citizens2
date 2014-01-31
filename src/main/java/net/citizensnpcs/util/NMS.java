@@ -39,8 +39,8 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_7_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftLivingEntity;
@@ -174,7 +174,7 @@ public class NMS {
     }
 
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-            NoSuchMethodException {
+    NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -287,7 +287,10 @@ public class NMS {
     }
 
     public static void openHorseScreen(Horse horse, Player equipper) {
-        ((EntityHorse) getHandle(horse)).f((EntityHuman) NMS.getHandle(equipper));
+        boolean wasTamed = horse.isTamed();
+        horse.setTamed(true);
+        ((EntityHorse) getHandle(horse)).a((EntityHuman) NMS.getHandle(equipper));
+        horse.setTamed(wasTamed);
     }
 
     public static void registerEntityClass(Class<?> clazz) {
