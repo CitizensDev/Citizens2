@@ -806,6 +806,7 @@ public class NPCCommands {
     public void name(CommandContext args, CommandSender sender, NPC npc) {
         LivingEntity entity = (LivingEntity) npc.getEntity();
         entity.setCustomNameVisible(!entity.isCustomNameVisible());
+        npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, entity.isCustomNameVisible());
         Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_TOGGLED);
     }
 
