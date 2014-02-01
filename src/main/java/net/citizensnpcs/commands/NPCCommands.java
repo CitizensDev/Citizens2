@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
@@ -687,6 +686,41 @@ public class NPCCommands {
     public void lookClose(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.sendTr(sender, npc.getTrait(LookClose.class).toggle() ? Messages.LOOKCLOSE_SET
                 : Messages.LOOKCLOSE_STOPPED, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "minecart (--item item_name(:data)) (--offset offset)",
+            desc = "Sets minecart item",
+            modifiers = { "minecart" },
+            min = 1,
+            max = 1,
+            flags = "",
+            permission = "citizens.npc.minecart")
+    @Requirements(selected = true, ownership = true, types = { EntityType.MINECART, EntityType.MINECART_CHEST,
+            EntityType.MINECART_COMMAND, EntityType.MINECART_FURNACE, EntityType.MINECART_HOPPER,
+            EntityType.MINECART_MOB_SPAWNER, EntityType.MINECART_TNT })
+    public void minecart(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (args.hasValueFlag("item")) {
+            String raw = args.getFlag("item");
+            int data = 0;
+            if (raw.contains(":")) {
+                int dataIndex = raw.indexOf(':');
+                data = Integer.parseInt(raw.substring(dataIndex + 1));
+                raw = raw.substring(0, dataIndex);
+            }
+            Material material = Material.matchMaterial(raw);
+            if (material == null)
+                throw new CommandException();
+            npc.data().setPersistent(NPC.MINECART_ITEM_METADATA, material.name());
+            npc.data().setPersistent(NPC.MINECART_ITEM_DATA_METADATA, data);
+        }
+        if (args.hasValueFlag("offset")) {
+            npc.data().setPersistent(NPC.MINECART_OFFSET_METADATA, args.getFlagInteger("offset"));
+        }
+
+        Messaging.sendTr(sender, Messages.MINECART_SET, npc.data().get(NPC.MINECART_ITEM_METADATA, ""),
+                npc.data().get(NPC.MINECART_ITEM_DATA_METADATA, 0), npc.data().get(NPC.MINECART_OFFSET_METADATA, 0));
     }
 
     @Command(
@@ -1488,11 +1522,5 @@ public class NPCCommands {
             Messaging.sendTr(sender, isVillager ? Messages.ZOMBIE_VILLAGER_SET : Messages.ZOMBIE_VILLAGER_UNSET,
                     npc.getName());
         }
-    }
-
-    public static void main(String[] args) {
-        long bits = UUID.randomUUID().getLeastSignificantBits();
-        int id = (int) (bits & 0x7FFFFFFF);
-        System.err.println(id);
     }
 }

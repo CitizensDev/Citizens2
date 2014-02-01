@@ -5,6 +5,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R1.EntityMinecartRideable;
 import net.minecraft.server.v1_7_R1.World;
@@ -87,6 +88,7 @@ public class MinecartRideableController extends MobEntityController {
         public void h() {
             if (npc != null) {
                 npc.update();
+                NMS.minecartItemLogic(this);
             } else {
                 super.h();
             }
