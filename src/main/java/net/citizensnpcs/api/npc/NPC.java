@@ -172,7 +172,7 @@ public interface NPC extends Agent, Cloneable {
     /**
      * Gets the unique id of this NPC. This is guaranteed to be unique for all
      * NPCs.
-     * 
+     *
      * @return The unique id
      */
     public UUID getUniqueId();
@@ -307,6 +307,7 @@ public interface NPC extends Agent, Cloneable {
     public static final String MINECART_ITEM_DATA_METADATA = "minecart-item-data";
     public static final String MINECART_ITEM_METADATA = "minecart-item-name";
     public static final String MINECART_OFFSET_METADATA = "minecart-item-offset";
+    public static final String NAMEPLATE_VISIBLE_METADATA = "nameplate-visible";
     public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
     public static final String SWIMMING_METADATA = "swim";
     public static final String TARGETABLE_METADATA = "protected-target";
