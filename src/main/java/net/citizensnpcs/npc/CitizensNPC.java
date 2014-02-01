@@ -220,6 +220,10 @@ public class CitizensNPC extends AbstractNPC {
                     NMS.sendPacketNearby(getStoredLocation(),
                             new PacketPlayOutEntityTeleport(NMS.getHandle(getEntity())));
                 }
+
+                if (getEntity() instanceof LivingEntity) {
+                    ((LivingEntity) getEntity()).setCustomNameVisible(data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true));
+                }
             }
         } catch (Exception ex) {
             Throwable error = Throwables.getRootCause(ex);
