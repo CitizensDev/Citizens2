@@ -13,6 +13,7 @@ import java.util.WeakHashMap;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.network.EmptyChannel;
 import net.minecraft.server.v1_7_R1.AttributeInstance;
@@ -24,6 +25,7 @@ import net.minecraft.server.v1_7_R1.EntityHorse;
 import net.minecraft.server.v1_7_R1.EntityHuman;
 import net.minecraft.server.v1_7_R1.EntityInsentient;
 import net.minecraft.server.v1_7_R1.EntityLiving;
+import net.minecraft.server.v1_7_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_7_R1.EntityPlayer;
 import net.minecraft.server.v1_7_R1.EntityTypes;
 import net.minecraft.server.v1_7_R1.GenericAttributes;
@@ -38,6 +40,7 @@ import net.minecraft.server.v1_7_R1.World;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R1.CraftSound;
@@ -276,6 +279,22 @@ public class NMS {
         handle.yaw = yaw;
         setHeadYaw(handle, yaw);
         handle.pitch = pitch;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static void minecartItemLogic(EntityMinecartAbstract minecart) {
+        NPC npc = ((NPCHolder) minecart).getNPC();
+        Material mat = Material.getMaterial(npc.data().get(NPC.MINECART_ITEM_METADATA, ""));
+        int data = npc.data().get(NPC.MINECART_ITEM_DATA_METADATA, 0);
+        int offset = npc.data().get(NPC.MINECART_OFFSET_METADATA, 0);
+        if (mat == null) {
+            minecart.a(false);
+        } else {
+            minecart.a(true);
+            minecart.k(mat.getId());
+        }
+        minecart.l(data);
+        minecart.m(offset);
     }
 
     public static float modifiedSpeed(float baseSpeed, NPC npc) {
@@ -523,6 +542,7 @@ public class NMS {
     private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "k");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(Navigation.class, "e");
+
     private static final Random RANDOM = Util.getFastRandom();
     // true field above false and three synchronised lists
 
