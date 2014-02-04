@@ -72,9 +72,12 @@ public class SimpleMetadataStore implements MetadataStore {
 
     @Override
     public void set(String key, Object data) {
-        Preconditions.checkNotNull(data, "data cannot be null");
         Preconditions.checkNotNull(key, "key cannot be null");
-        metadata.put(key, new MetadataObject(data, false));
+        if (data == null) {
+            remove(key);
+        } else {
+            metadata.put(key, new MetadataObject(data, false));
+        }
     }
 
     @Override
