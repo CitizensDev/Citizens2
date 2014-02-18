@@ -52,7 +52,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
-    private int packetUpdateCount;
     private int useListName = -1;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
@@ -258,7 +257,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private void updatePackets(boolean navigating) {
-        if (++packetUpdateCount >= 30) {
+        if (world.getWorld().getTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
             Location current = getBukkitEntity().getLocation(packetLocationCache);
             Packet[] packets = new Packet[navigating ? 6 : 7];
             if (!navigating) {
@@ -278,7 +277,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                         removeFromPlayerList ? 9999 : ping);
             }
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
-            packetUpdateCount = 0;
         }
     }
 
