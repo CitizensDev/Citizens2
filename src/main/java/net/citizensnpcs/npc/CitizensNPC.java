@@ -216,7 +216,7 @@ public class CitizensNPC extends AbstractNPC {
                     NMS.trySwim(getEntity());
                 }
                 navigator.run();
-                if (++packetUpdateCount > 30) {
+                if (++packetUpdateCount > Setting.PACKET_UPDATE_DELAY.asInt()) {
                     if (!getNavigator().isNavigating()) {
                         Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
                         NMS.sendPacketNearby(player, getStoredLocation(),
