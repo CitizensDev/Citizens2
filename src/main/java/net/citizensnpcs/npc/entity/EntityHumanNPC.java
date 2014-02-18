@@ -167,7 +167,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
 
         NMS.setStepHeight(this, 1);// stepHeight - must not stay as the default
-                                   // 0 (breaks steps).
+        // 0 (breaks steps).
 
         try {
             socket.close();
@@ -215,7 +215,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0) {
             e(0, 0); // is this necessary? it does controllable but sometimes
-                     // players sink into the ground
+            // players sink into the ground
         }
 
         if (noDamageTicks > 0) {
@@ -288,7 +288,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                 packets[5] = new Packet201PlayerInfo(getBukkitEntity().getPlayerListName(), !removeFromPlayerList,
                         removeFromPlayerList ? 9999 : ping);
             }
-            NMS.sendPacketsNearby(current, packets);
+            NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
             packetUpdateCount = 0;
         }
     }

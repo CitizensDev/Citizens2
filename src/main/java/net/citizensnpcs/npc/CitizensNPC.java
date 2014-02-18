@@ -30,6 +30,7 @@ import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
 
@@ -217,7 +218,8 @@ public class CitizensNPC extends AbstractNPC {
                 navigator.run();
                 if (++packetUpdateCount > 30) {
                     if (!getNavigator().isNavigating()) {
-                        NMS.sendPacketNearby(getStoredLocation(),
+                        Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
+                        NMS.sendPacketNearby(player, getStoredLocation(),
                                 new Packet34EntityTeleport(NMS.getHandle(getEntity())));
                     }
                     packetUpdateCount = 0;
