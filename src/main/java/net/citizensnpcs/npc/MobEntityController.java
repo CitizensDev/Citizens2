@@ -30,8 +30,9 @@ public abstract class MobEntityController extends AbstractEntityController {
         // entity.onGround isn't updated right away - we approximate here so
         // that things like pathfinding still work *immediately* after spawn.
         org.bukkit.Material beneath = at.getBlock().getRelative(BlockFace.DOWN).getType();
-        if (beneath.isBlock())
+        if (beneath.isBlock()) {
             entity.onGround = true;
+        }
         return entity.getBukkitEntity();
     }
 

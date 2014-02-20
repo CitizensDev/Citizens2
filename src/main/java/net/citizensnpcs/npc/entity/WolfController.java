@@ -83,7 +83,6 @@ public class WolfController extends MobEntityController {
         public void bn() {
             super.bn();
             if (npc != null) {
-                NMS.setStepHeight(this, 1);
                 npc.update();
             }
         }
