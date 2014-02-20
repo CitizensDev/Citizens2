@@ -161,11 +161,6 @@ public class VillagerController extends MobEntityController {
             return blockTrades;
         }
 
-        @Override
-        protected boolean isTypeNotPersistent() {
-            return npc == null ? super.isTypeNotPersistent() : false;
-        }
-
         public void setBlockTrades(boolean blocked) {
             this.blockTrades = blocked;
         }
@@ -173,6 +168,13 @@ public class VillagerController extends MobEntityController {
         @Override
         protected String t() {
             return npc == null ? super.aT() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
+        }
+
+        @Override
+        protected void w() {
+            if (npc == null) {
+                super.w();
+            }
         }
     }
 

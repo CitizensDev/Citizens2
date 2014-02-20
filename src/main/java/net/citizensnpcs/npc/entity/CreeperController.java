@@ -170,11 +170,6 @@ public class CreeperController extends MobEntityController {
             }
         }
 
-        @Override
-        protected boolean isTypeNotPersistent() {
-            return npc == null ? super.isTypeNotPersistent() : false;
-        }
-
         public void setAllowPowered(boolean allowPowered) {
             this.allowPowered = allowPowered;
         }
@@ -182,6 +177,13 @@ public class CreeperController extends MobEntityController {
         @Override
         protected String t() {
             return npc == null ? super.aT() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
+        }
+
+        @Override
+        protected void w() {
+            if (npc == null) {
+                super.w();
+            }
         }
     }
 }

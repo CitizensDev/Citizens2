@@ -149,13 +149,15 @@ public class SquidController extends MobEntityController {
         }
 
         @Override
-        protected boolean isTypeNotPersistent() {
-            return npc == null ? super.isTypeNotPersistent() : false;
+        protected String t() {
+            return npc == null ? super.aT() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
         }
 
         @Override
-        protected String t() {
-            return npc == null ? super.aT() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
+        protected void w() {
+            if (npc == null) {
+                super.w();
+            }
         }
     }
 

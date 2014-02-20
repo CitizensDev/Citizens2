@@ -120,12 +120,17 @@ public class EventListen implements Listener {
                 continue;
             if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
                 event.setCancelled(true);
-                Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
+                if (Messaging.isDebugging()) {
+                    Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
+                }
                 respawnAllFromCoord(coord);
                 return;
             }
             toRespawn.put(coord, npc);
-            Messaging.debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+            if (Messaging.isDebugging()) {
+                Messaging
+                        .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+            }
         }
     }
 
@@ -322,19 +327,25 @@ public class EventListen implements Listener {
             NPC npc = ids.get(i);
             boolean success = spawn(npc);
             if (!success) {
-                Messaging.debug("Couldn't respawn id", npc.getId(), "during chunk event at [" + coord.x + "," + coord.z
-                        + "]");
+                if (Messaging.isDebugging()) {
+                    Messaging.debug("Couldn't respawn id", npc.getId(), "during chunk event at [" + coord.x + ","
+                            + coord.z + "]");
+                }
                 continue;
             }
             ids.remove(i--);
-            Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
+            }
         }
     }
 
     private boolean spawn(NPC npc) {
         Location spawn = npc.getTrait(CurrentLocation.class).getLocation();
         if (spawn == null) {
-            Messaging.debug("Couldn't find a spawn location for despawned NPC id", npc.getId());
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Couldn't find a spawn location for despawned NPC id", npc.getId());
+            }
             return false;
         }
         return npc.spawn(spawn);
@@ -389,9 +400,7 @@ public class EventListen implements Listener {
         @Override
         public int hashCode() {
             final int prime = 31;
-            int result = prime + ((worldName == null) ? 0 : worldName.hashCode());
-            result = prime * result + x;
-            return prime * result + z;
+            return prime * (prime * (prime + ((worldName == null) ? 0 : worldName.hashCode())) + x) + z;
         }
     }
 }
