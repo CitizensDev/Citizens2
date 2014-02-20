@@ -177,7 +177,7 @@ public class NMS {
     }
 
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-    NoSuchMethodException {
+            NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -236,6 +236,10 @@ public class NMS {
         return (float) ((EntityLiving) NMS.getHandle(npc.getEntity())).getAttributeInstance(GenericAttributes.d)
                 .getValue();
         // return DEFAULT_SPEED;
+    }
+
+    public static float getStepHeight(LivingEntity entity) {
+        return NMS.getHandle(entity).X;
     }
 
     public static void initNetworkManager(NetworkManager network) {
@@ -542,7 +546,6 @@ public class NMS {
     private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "k");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(Navigation.class, "e");
-
     private static final Random RANDOM = Util.getFastRandom();
     // true field above false and three synchronised lists
 

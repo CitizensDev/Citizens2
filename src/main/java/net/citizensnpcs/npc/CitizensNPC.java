@@ -203,6 +203,9 @@ public class CitizensNPC extends AbstractNPC {
             LivingEntity entity = (LivingEntity) getEntity();
             entity.setRemoveWhenFarAway(false);
             entity.setCustomName(getFullName());
+            if (NMS.getStepHeight(entity) < 1) {
+                NMS.setStepHeight(NMS.getHandle(entity), 1);
+            }
         }
         return true;
     }
