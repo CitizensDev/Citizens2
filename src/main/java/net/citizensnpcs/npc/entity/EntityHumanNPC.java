@@ -257,7 +257,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private void updatePackets(boolean navigating) {
-        if (world.getWorld().getTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
+        if (world.getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
             Location current = getBukkitEntity().getLocation(packetLocationCache);
             Packet[] packets = new Packet[navigating ? 6 : 7];
             if (!navigating) {
