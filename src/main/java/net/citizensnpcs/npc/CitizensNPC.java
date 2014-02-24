@@ -221,7 +221,7 @@ public class CitizensNPC extends AbstractNPC {
                 navigator.run();
 
                 if (!getNavigator().isNavigating()
-                        && getEntity().getWorld().getTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
+                        && getEntity().getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
                     Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
                     NMS.sendPacketNearby(player, getStoredLocation(),
                             new PacketPlayOutEntityTeleport(NMS.getHandle(getEntity())));
