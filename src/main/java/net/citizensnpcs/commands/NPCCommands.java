@@ -1075,7 +1075,7 @@ public class NPCCommands {
         }
         Location prev = npc.isSpawned() ? npc.getEntity().getLocation() : null;
         npc.despawn(DespawnReason.PENDING_RESPAWN);
-        npc.setName(newName);
+        npc.setName(Colorizer.parseColors(newName));
         if (prev != null)
             npc.spawn(prev);
 
