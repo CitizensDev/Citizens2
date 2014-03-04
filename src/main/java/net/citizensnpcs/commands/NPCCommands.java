@@ -617,7 +617,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "list (page) ((-a) --owner (owner) --type (type) --char (char))",
+            usage = "list (page) ((-a) --owner (owner) --type (type) --char (char) --registry (name))",
             desc = "List NPCs",
             flags = "a",
             modifiers = { "list" },
@@ -626,14 +626,18 @@ public class NPCCommands {
             permission = "citizens.npc.list")
     @Requirements
     public void list(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        NPCRegistry source = args.hasValueFlag("registry") ? CitizensAPI.getNamedNPCRegistry(args.getFlag("registry"))
+                : npcRegistry;
+        if (source == null)
+            throw new CommandException();
         List<NPC> npcs = new ArrayList<NPC>();
 
         if (args.hasFlag('a')) {
-            for (NPC add : npcRegistry.sorted()) {
+            for (NPC add : source.sorted()) {
                 npcs.add(add);
             }
         } else if (args.getValueFlags().size() == 0 && sender instanceof Player) {
-            for (NPC add : npcRegistry.sorted()) {
+            for (NPC add : source.sorted()) {
                 if (!npcs.contains(add) && add.getTrait(Owner.class).isOwnedBy(sender)) {
                     npcs.add(add);
                 }
@@ -641,7 +645,7 @@ public class NPCCommands {
         } else {
             if (args.hasValueFlag("owner")) {
                 String name = args.getFlag("owner");
-                for (NPC add : npcRegistry.sorted()) {
+                for (NPC add : source.sorted()) {
                     if (!npcs.contains(add) && add.getTrait(Owner.class).isOwnedBy(name)) {
                         npcs.add(add);
                     }
@@ -654,7 +658,7 @@ public class NPCCommands {
                 if (type == null)
                     throw new CommandException(Messages.COMMAND_INVALID_MOBTYPE, type);
 
-                for (NPC add : npcRegistry) {
+                for (NPC add : source) {
                     if (!npcs.contains(add) && add.getTrait(MobType.class).getType() == type)
                         npcs.add(add);
                 }
