@@ -1068,7 +1068,7 @@ public class NPCCommands {
             permission = "citizens.npc.rename")
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
-        String newName = args.getJoinedStrings(1);
+        String newName = Colorizer.parseColors(args.getJoinedStrings(1));
         if (newName.length() > 16) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
             newName = newName.substring(0, 15);
@@ -1076,8 +1076,9 @@ public class NPCCommands {
         Location prev = npc.isSpawned() ? npc.getEntity().getLocation() : null;
         npc.despawn(DespawnReason.PENDING_RESPAWN);
         npc.setName(newName);
-        if (prev != null)
+        if (prev != null) {
             npc.spawn(prev);
+        }
 
         Messaging.sendTr(sender, Messages.NPC_RENAMED, oldName, newName);
     }
