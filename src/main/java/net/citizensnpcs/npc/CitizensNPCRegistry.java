@@ -23,7 +23,6 @@ import net.citizensnpcs.util.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -120,9 +119,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
             return null;
         if (entity instanceof NPCHolder)
             return ((NPCHolder) entity).getNPC();
-        if (!(entity instanceof LivingEntity))
-            return null;
-        Object handle = NMS.getHandle((LivingEntity) entity);
+        Object handle = NMS.getHandle(entity);
         return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
     }
 
