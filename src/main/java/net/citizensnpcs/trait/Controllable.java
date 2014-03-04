@@ -353,10 +353,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             handle.motY *= 0.98F;
         }
     }
-    
-    public static void registerControllerType(EntityType type, Class<? extends MovementController> clazz) {
-        controllerTypes.put(type, clazz);
-    }
 
     private static final Map<EntityType, Class<? extends MovementController>> controllerTypes = Maps
             .newEnumMap(EntityType.class);
