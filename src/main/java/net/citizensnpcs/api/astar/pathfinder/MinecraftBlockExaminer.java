@@ -41,39 +41,55 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             return PassableState.UNPASSABLE;
         }
         if ((above == Material.LADDER && in == Material.LADDER) || (in == Material.LADDER && below == Material.LADDER)) {
-            point.addCallback(new PathCallback() {
-                boolean added = false;
-
-                @Override
-                public void run(final NPC npc, Block point, double radius) {
-                    if (added || npc.data().<Boolean> get("running-ladder", false)) {
-                        added = true;
-                        return;
-                    }
-                    Runnable callback = new Runnable() {
-                        Location dummy = new Location(null, 0, 0, 0);
-
-                        @Override
-                        public void run() {
-                            if (npc.getEntity().getLocation(dummy).getBlock().getType() == Material.LADDER) {
-                                npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
-                            }
-                        }
-                    };
-                    npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
-                        @Override
-                        public void onCompletion(CancelReason cancelReason) {
-                            npc.data().set("running-ladder", false);
-                        }
-                    });
-                    npc.getNavigator().getLocalParameters().addRunCallback(callback);
-                    added = true;
-                }
-            });
+            point.addCallback(new LadderClimber());
         } else if (!canStandIn(above) || !canStandIn(in)) {
             return PassableState.UNPASSABLE;
         }
+        if (!canJumpOn(below)) {
+            if (point.getParentPoint() == null) {
+                return PassableState.UNPASSABLE;
+            }
+            Vector parentPos = point.getParentPoint().getVector();
+            if ((parentPos.getX() != pos.getX() || parentPos.getZ() != pos.getZ())
+                    && pos.clone().subtract(point.getParentPoint().getVector()).getY() == 1) {
+                return PassableState.UNPASSABLE;
+            }
+        }
         return PassableState.PASSABLE;
+    }
+
+    private final class LadderClimber implements PathCallback {
+        boolean added = false;
+
+        @Override
+        public void run(final NPC npc, Block point, double radius) {
+            if (added || npc.data().<Boolean> get("running-ladder", false)) {
+                added = true;
+                return;
+            }
+            Runnable callback = new Runnable() {
+                Location dummy = new Location(null, 0, 0, 0);
+
+                @Override
+                public void run() {
+                    if (npc.getEntity().getLocation(dummy).getBlock().getType() == Material.LADDER) {
+                        npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
+                    }
+                }
+            };
+            npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
+                @Override
+                public void onCompletion(CancelReason cancelReason) {
+                    npc.data().set("running-ladder", false);
+                }
+            });
+            npc.getNavigator().getLocalParameters().addRunCallback(callback);
+            added = true;
+        }
+    }
+
+    private static boolean canJumpOn(Material mat) {
+        return !NOT_JUMPABLE.contains(mat);
     }
 
     public static boolean canStandIn(Material... mat) {
@@ -128,6 +144,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     private static final Vector DOWN = new Vector(0, -1, 0);
+    private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.FENCE, Material.IRON_FENCE,
+            Material.NETHER_FENCE);
     private static final Set<Material> PASSABLE = EnumSet.of(Material.AIR, Material.DEAD_BUSH, Material.DETECTOR_RAIL,
             Material.DIODE, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.FENCE_GATE,
             Material.ITEM_FRAME, Material.LEVER, Material.LONG_GRASS, Material.CARPET, Material.MELON_STEM,

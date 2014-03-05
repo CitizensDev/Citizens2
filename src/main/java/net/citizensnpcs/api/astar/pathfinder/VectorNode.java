@@ -116,7 +116,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public Vector getVector() {
-        return location;
+        return location.clone();
     }
 
     @Override
