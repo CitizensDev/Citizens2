@@ -290,13 +290,6 @@ public class NPCCommands {
     @Requirements
     public void create(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String name = Colorizer.parseColors(args.getJoinedStrings(1).trim());
-        int nameLength = npc.getTrait(MobType.class).getType() == EntityType.PLAYER ? 16 : 64;
-        if (name.length() > nameLength) {
-            Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
-            name = name.substring(0, nameLength);
-        }
-        if (name.length() == 0)
-            throw new CommandException();
 
         EntityType type = EntityType.PLAYER;
         if (args.hasValueFlag("type")) {
@@ -308,6 +301,15 @@ public class NPCCommands {
                 throw new CommandException(Messaging.tr(Messages.NPC_CREATE_MISSING_MOBTYPE, inputType));
             }
         }
+
+        int nameLength = 64;
+        if (name.length() > nameLength) {
+            Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
+            name = name.substring(0, nameLength);
+        }
+        if (name.length() == 0)
+            throw new CommandException();
+
         if (!sender.hasPermission("citizens.npc.create.*") && !sender.hasPermission("citizens.npc.createall")
                 && !sender.hasPermission("citizens.npc.create." + type.name().toLowerCase().replace("_", "")))
             throw new NoPermissionsException();
@@ -1070,7 +1072,7 @@ public class NPCCommands {
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
         String newName = Colorizer.parseColors(args.getJoinedStrings(1));
-        int nameLength = npc.getTrait(MobType.class).getType() == EntityType.PLAYER ? 16 : 64;
+        int nameLength = 64;
         if (newName.length() > nameLength) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
             newName = newName.substring(0, nameLength);
