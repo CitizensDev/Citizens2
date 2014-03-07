@@ -145,7 +145,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     private static final Vector DOWN = new Vector(0, -1, 0);
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.FENCE, Material.IRON_FENCE,
-            Material.NETHER_FENCE);
+            Material.NETHER_FENCE, Material.COBBLE_WALL);
     private static final Set<Material> PASSABLE = EnumSet.of(Material.AIR, Material.DEAD_BUSH, Material.DETECTOR_RAIL,
             Material.DIODE, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.FENCE_GATE,
             Material.ITEM_FRAME, Material.LEVER, Material.LONG_GRASS, Material.CARPET, Material.MELON_STEM,

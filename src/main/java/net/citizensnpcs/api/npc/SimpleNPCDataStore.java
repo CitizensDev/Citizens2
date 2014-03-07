@@ -55,7 +55,7 @@ public class SimpleNPCDataStore implements NPCDataStore {
             }
             NPC npc = registry.createNPC(type,
                     !key.getString("uuid", "").isEmpty() ? UUID.fromString(key.getString("uuid")) : UUID.randomUUID(),
-                    id, key.getString("name"));
+                            id, key.getString("name"));
             npc.load(key);
         }
     }
