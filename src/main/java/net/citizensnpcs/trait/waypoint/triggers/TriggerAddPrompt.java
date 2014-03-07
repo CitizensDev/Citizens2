@@ -42,8 +42,9 @@ public class TriggerAddPrompt extends StringPrompt {
                 context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY, null);
                 Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_ADDED_SUCCESSFULLY,
                         returned.description());
-            } else
+            } else {
                 Messaging.sendErrorTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
+            }
         }
         if (context.getSessionData("said") == Boolean.TRUE)
             return "";

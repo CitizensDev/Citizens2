@@ -118,7 +118,7 @@ public class NPCCommands {
         int age = 0;
         try {
             age = args.getInteger(1);
-            if (age < -24000 || age > 0) {
+            if (age > 0) {
                 throw new CommandException(Messages.INVALID_AGE);
             }
             Messaging.sendTr(sender, Messages.AGE_SET_NORMAL, npc.getName(), age);
@@ -265,7 +265,7 @@ public class NPCCommands {
         }
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-                : new CommandSenderCreateNPCEvent(sender, copy);
+        : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
@@ -337,7 +337,7 @@ public class NPCCommands {
             spawnLoc = args.getSenderLocation();
         }
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
-                : new CommandSenderCreateNPCEvent(sender, npc);
+        : new CommandSenderCreateNPCEvent(sender, npc);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
@@ -1009,7 +1009,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         Messaging
-                .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+        .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
