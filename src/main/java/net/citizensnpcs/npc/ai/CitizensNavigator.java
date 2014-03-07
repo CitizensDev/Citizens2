@@ -255,6 +255,10 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (localParams.stationaryTicks() < 0)
             return false;
         Location current = npc.getEntity().getLocation(STATIONARY_LOCATION);
+        if (current.getY() < -5) {
+            stopNavigating(CancelReason.STUCK);
+            return true;
+        }
         if (lastX == current.getBlockX() && lastY == current.getBlockY() && lastZ == current.getBlockZ()) {
             if (++stationaryTicks >= localParams.stationaryTicks()) {
                 stopNavigating(CancelReason.STUCK);
