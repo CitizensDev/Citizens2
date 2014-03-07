@@ -24,9 +24,6 @@ public class WaypointTriggerRegistry implements Persister<WaypointTrigger> {
         PersistenceLoader.save(instance, root);
     }
 
-    private static final Map<String, Class<? extends Prompt>> triggerPrompts = Maps.newHashMap();
-    private static final Map<String, Class<? extends WaypointTrigger>> triggers = Maps.newHashMap();
-
     public static void addTrigger(String name, Class<? extends WaypointTrigger> triggerClass,
             Class<? extends WaypointTriggerPrompt> promptClass) {
         triggers.put(name, triggerClass);
@@ -48,11 +45,15 @@ public class WaypointTriggerRegistry implements Persister<WaypointTrigger> {
         }
     }
 
+    private static final Map<String, Class<? extends Prompt>> triggerPrompts = Maps.newHashMap();
+    private static final Map<String, Class<? extends WaypointTrigger>> triggers = Maps.newHashMap();
+
     static {
         addTrigger("animation", AnimationTrigger.class, AnimationTriggerPrompt.class);
         addTrigger("chat", ChatTrigger.class, ChatTriggerPrompt.class);
         addTrigger("delay", DelayTrigger.class, DelayTriggerPrompt.class);
         addTrigger("teleport", TeleportTrigger.class, TeleportTriggerPrompt.class);
+        addTrigger("speed", SpeedTrigger.class, SpeedTriggerPrompt.class);
         // addTrigger("pose", PoseTrigger.class, PoseTriggerPrompt.class);
     }
 }
