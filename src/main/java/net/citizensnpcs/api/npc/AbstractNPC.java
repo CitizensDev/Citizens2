@@ -78,11 +78,6 @@ public abstract class AbstractNPC implements NPC {
     private final UUID uuid;
 
     protected AbstractNPC(UUID uuid, int id, String name, NPCRegistry registry) {
-        if (name.length() > 16) {
-            Messaging.severe("ID", id, "created with name length greater than 16, truncating", name, "to",
-                    name.substring(0, 15));
-            name = name.substring(0, 15);
-        }
         this.uuid = uuid;
         this.id = id;
         this.registry = registry;
@@ -209,6 +204,12 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getFullName() {
+        int nameLength = 64;
+        if (name.length() > nameLength) {
+            Messaging.severe("ID", id, "created with name length greater than 64, truncating", name, "to",
+                    name.substring(0, nameLength));
+            name = name.substring(0, nameLength);
+        }
         return name;
     }
 
@@ -219,7 +220,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getName() {
-        return Colorizer.stripColors(name);
+        return Colorizer.stripColors(getFullName());
     }
 
     @Override
