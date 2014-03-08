@@ -31,6 +31,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return 0.5F; // TODO: add light level-specific costs
     }
 
+    private boolean isClimbable(Material mat) {
+        return mat == Material.LADDER || mat == Material.VINE;
+    }
+
     private boolean isDoor(Material in) {
         return DOORS.contains(in);
     }
@@ -44,7 +48,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         if (!below.isBlock() || !canStandOn(below)) {
             return PassableState.UNPASSABLE;
         }
-        if ((above == Material.LADDER && in == Material.LADDER) || (in == Material.LADDER && below == Material.LADDER)) {
+        if ((isClimbable(above) && isClimbable(in)) || (isClimbable(in) && isClimbable(below))) {
             point.addCallback(new LadderClimber());
         } else if (isDoor(in)) {
             point.addCallback(new DoorOpener());
