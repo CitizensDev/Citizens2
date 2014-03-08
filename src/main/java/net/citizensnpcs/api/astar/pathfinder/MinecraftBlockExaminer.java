@@ -31,6 +31,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return 0.5F; // TODO: add light level-specific costs
     }
 
+    private boolean isDoor(Material in) {
+        return DOORS.contains(in);
+    }
+
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
@@ -42,6 +46,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         }
         if ((above == Material.LADDER && in == Material.LADDER) || (in == Material.LADDER && below == Material.LADDER)) {
             point.addCallback(new LadderClimber());
+        } else if (isDoor(in)) {
+            point.addCallback(new DoorOpener());
         } else if (!canStandIn(above) || !canStandIn(in)) {
             return PassableState.UNPASSABLE;
         }
@@ -58,7 +64,19 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return PassableState.PASSABLE;
     }
 
-    private final class LadderClimber implements PathCallback {
+    private class DoorOpener implements PathCallback {
+        @Override
+        @SuppressWarnings("deprecation")
+        public void run(NPC npc, Block point, double radius) {
+            if (radius < 2) {
+                boolean bottom = (point.getData() & 8) == 0;
+                Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
+                set.setData((byte) ((set.getData() & 7) | 4));
+            }
+        }
+    }
+
+    private class LadderClimber implements PathCallback {
         boolean added = false;
 
         @Override
@@ -143,6 +161,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 && canStandOn(in.getRelative(BlockFace.DOWN));
     }
 
+    private static final Set<Material> DOORS = EnumSet.of(Material.IRON_DOOR, Material.IRON_DOOR_BLOCK,
+            Material.WOODEN_DOOR, Material.WOOD_DOOR);
     private static final Vector DOWN = new Vector(0, -1, 0);
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.FENCE, Material.IRON_FENCE,
             Material.NETHER_FENCE, Material.COBBLE_WALL);
