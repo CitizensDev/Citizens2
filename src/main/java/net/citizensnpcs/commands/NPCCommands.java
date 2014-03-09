@@ -329,8 +329,9 @@ public class NPCCommands {
         }
 
         // Initialize necessary traits
-        if (!Setting.SERVER_OWNS_NPCS.asBoolean())
-            npc.getTrait(Owner.class).setOwner(sender.getName());
+        if (!Setting.SERVER_OWNS_NPCS.asBoolean()) {
+            npc.getTrait(Owner.class).setOwner(sender);
+        }
         npc.getTrait(MobType.class).setType(type);
 
         Location spawnLoc = null;
