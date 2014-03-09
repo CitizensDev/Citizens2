@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import net.citizensnpcs.Settings.Setting;
@@ -35,7 +36,7 @@ import org.bukkit.plugin.Plugin;
 import com.google.common.collect.Maps;
 
 public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
-    private final Map<String, Date> cooldowns = Maps.newHashMap();
+    private final Map<UUID, Date> cooldowns = Maps.newHashMap();
     private int currentIndex;
     private String itemInHandPattern = "default";
     private final Plugin plugin;
@@ -135,12 +136,12 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
                 continue;
             Player player = (Player) search;
             // If the cooldown is not expired, do not send text
-            Date cooldown = cooldowns.get(player.getName());
+            Date cooldown = cooldowns.get(player.getUniqueId());
             if (cooldown != null) {
                 if (!new Date().after(cooldown)) {
                     return;
                 }
-                cooldowns.remove(player.getName());
+                cooldowns.remove(player.getUniqueId());
             }
             if (!sendText(player))
                 return;
@@ -152,7 +153,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
                 return;
             long millisecondsDelta = TimeUnit.MILLISECONDS.convert(secondsDelta, TimeUnit.SECONDS);
             wait.setTime(wait.getTime() + millisecondsDelta);
-            cooldowns.put(player.getName(), wait);
+            cooldowns.put(player.getUniqueId(), wait);
         }
     }
 
