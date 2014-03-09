@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.trait.trait;
 
+import java.util.UUID;
+
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
@@ -12,6 +14,7 @@ import org.bukkit.entity.Player;
  */
 public class Owner extends Trait {
     private String owner = SERVER;
+    private UUID uuid = null;
 
     public Owner() {
         super("owner");
@@ -19,7 +22,7 @@ public class Owner extends Trait {
 
     /**
      * Gets the owner.
-     * 
+     *
      * @return The owner's name
      */
     public String getOwner() {
@@ -28,14 +31,21 @@ public class Owner extends Trait {
 
     /**
      * Gets if the given {@link CommandSender} is the owner of an NPC.
-     * 
+     *
      * @param sender
      *            Sender to check
      * @return Whether the sender is the owner of an NPC
      */
     public boolean isOwnedBy(CommandSender sender) {
         if (sender instanceof Player) {
-            return owner.equalsIgnoreCase(sender.getName()) || sender.hasPermission("citizens.admin")
+            if (owner.equalsIgnoreCase(sender.getName())) {
+                if (uuid == null) {
+                    uuid = ((Player) sender).getUniqueId();
+                } else if (uuid.equals(((Player) sender).getUniqueId())) {
+                    return true;
+                }
+            }
+            return sender.hasPermission("citizens.admin")
                     || (owner.equals(SERVER) && sender.hasPermission("citizens.admin"));
         }
         return owner.equals(SERVER);
@@ -47,27 +57,48 @@ public class Owner extends Trait {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        try {
-            owner = key.getString("");
-        } catch (Exception ex) {
-            owner = SERVER;
-            throw new NPCLoadException("Invalid owner.");
+        if (key.keyExists("owner")) {
+            owner = key.getString("owner");
+            if (key.keyExists("uuid") && !key.getString("uuid").isEmpty()) {
+                uuid = UUID.fromString(key.getString("uuid"));
+            }
+        } else {
+            try {
+                owner = key.getString("");
+                uuid = null;
+            } catch (Exception ex) {
+                owner = SERVER;
+                uuid = null;
+                throw new NPCLoadException("Invalid owner.");
+            }
         }
     }
 
     @Override
     public void save(DataKey key) {
-        key.setString("", owner);
+        if (key.getString("") != null && !key.getString("").isEmpty()) {
+            key.removeKey("");
+        }
+        key.setString("owner", owner);
+        key.setString("uuid", uuid == null ? "" : uuid.toString());
+    }
+
+    public void setOwner(CommandSender sender) {
+        this.owner = sender.getName();
+        if (sender instanceof Player) {
+            this.uuid = ((Player) sender).getUniqueId();
+        }
     }
 
     /**
      * Sets the owner of an NPC.
-     * 
+     *
      * @param owner
      *            Name of the player to set as owner of an NPC
      */
     public void setOwner(String owner) {
         this.owner = owner;
+        this.uuid = null;
     }
 
     @Override
