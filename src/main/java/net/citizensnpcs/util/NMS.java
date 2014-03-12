@@ -358,7 +358,7 @@ public class NMS {
         radius *= radius;
         final org.bukkit.World world = location.getWorld();
         for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
-            if (ply == null || world != ply.getWorld() || (from != null && ply.canSee(from))) {
+            if (ply == null || world != ply.getWorld() || (from != null && !ply.canSee(from))) {
                 continue;
             }
             if (location.distanceSquared(ply.getLocation(PACKET_CACHE_LOCATION)) > radius) {
