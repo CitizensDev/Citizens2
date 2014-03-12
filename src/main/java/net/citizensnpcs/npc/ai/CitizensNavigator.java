@@ -15,13 +15,20 @@ import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
+import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
+import net.citizensnpcs.api.astar.pathfinder.BlockSource;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
+import net.citizensnpcs.api.astar.pathfinder.PathPoint;
+import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -42,6 +49,9 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     public CitizensNavigator(NPC npc) {
         this.npc = npc;
+        if (Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean()) {
+            defaultParams.examiner(new DoorExaminer());
+        }
     }
 
     @Override
@@ -270,6 +280,35 @@ public class CitizensNavigator implements Navigator, Runnable {
         lastY = current.getBlockY();
         lastZ = current.getBlockZ();
         return false;
+    }
+
+    public static class DoorExaminer implements BlockExaminer {
+        @Override
+        public float getCost(BlockSource source, PathPoint point) {
+            return 0F;
+        }
+
+        @Override
+        public PassableState isPassable(BlockSource source, PathPoint point) {
+            Material in = source.getMaterialAt(point.getVector());
+            if (MinecraftBlockExaminer.isDoor(in)) {
+                point.addCallback(new DoorOpener());
+                return PassableState.PASSABLE;
+            }
+            return PassableState.IGNORE;
+        }
+    }
+
+    private static class DoorOpener implements PathCallback {
+        @Override
+        @SuppressWarnings("deprecation")
+        public void run(NPC npc, Block point, double radius) {
+            if (radius < 2) {
+                boolean bottom = (point.getData() & 8) == 0;
+                Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
+                set.setData((byte) ((set.getData() & 7) | 4));
+            }
+        }
     }
 
     private static final Location STATIONARY_LOCATION = new Location(null, 0, 0, 0);
