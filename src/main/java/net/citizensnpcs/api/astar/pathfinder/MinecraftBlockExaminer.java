@@ -35,10 +35,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return mat == Material.LADDER || mat == Material.VINE;
     }
 
-    private boolean isDoor(Material in) {
-        return DOORS.contains(in);
-    }
-
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
@@ -50,8 +46,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         }
         if ((isClimbable(above) && isClimbable(in)) || (isClimbable(in) && isClimbable(below))) {
             point.addCallback(new LadderClimber());
-        } else if (isDoor(in)) {
-            point.addCallback(new DoorOpener());
         } else if (!canStandIn(above) || !canStandIn(in)) {
             return PassableState.UNPASSABLE;
         }
@@ -66,18 +60,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             }
         }
         return PassableState.PASSABLE;
-    }
-
-    private class DoorOpener implements PathCallback {
-        @Override
-        @SuppressWarnings("deprecation")
-        public void run(NPC npc, Block point, double radius) {
-            if (radius < 2) {
-                boolean bottom = (point.getData() & 8) == 0;
-                Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
-                set.setData((byte) ((set.getData() & 7) | 4));
-            }
-        }
     }
 
     private class LadderClimber implements PathCallback {
@@ -154,6 +136,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             }
         }
         return location;
+    }
+
+    public static boolean isDoor(Material in) {
+        return DOORS.contains(in);
     }
 
     public static boolean isLiquid(Material... materials) {
