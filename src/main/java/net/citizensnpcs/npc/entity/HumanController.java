@@ -27,7 +27,8 @@ public class HumanController extends AbstractEntityController {
     protected Entity createEntity(final Location at, final NPC npc) {
         WorldServer ws = ((CraftWorld) at.getWorld()).getHandle();
         final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, new GameProfile(UUID
-                .randomUUID().toString(), Colorizer.parseColors(npc.getFullName())), new PlayerInteractManager(ws), npc);
+                .randomUUID().toString(), Colorizer.parseColors(npc.getFullName()).substring(0, 16)),
+                new PlayerInteractManager(ws), npc);
         handle.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
