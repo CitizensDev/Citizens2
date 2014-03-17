@@ -89,6 +89,22 @@ public class TemplateCommands {
 
     @Command(
             aliases = { "template", "tpl" },
+            usage = "delete [template name]",
+            desc = "Deletes a template",
+            modifiers = { "delete" },
+            min = 2,
+            max = 2,
+            permission = "citizens.templates.delete")
+    public void delete(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        String name = args.getString(1);
+        if (Template.byName(name) == null)
+            throw new CommandException(Messages.TEMPLATE_MISSING);
+        Template.byName(name).delete();
+        Messaging.sendTr(sender, Messages.TEMPLATE_DELETED, name);
+    }
+
+    @Command(
+            aliases = { "template", "tpl" },
             usage = "list",
             desc = "Lists available templates",
             modifiers = { "list" },
