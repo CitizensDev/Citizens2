@@ -86,4 +86,19 @@ public class TemplateCommands {
         TemplateBuilder.create(name).from(npc).override(args.hasFlag('o')).buildAndSave();
         Messaging.sendTr(sender, Messages.TEMPLATE_CREATED);
     }
+
+    @Command(
+            aliases = { "template", "tpl" },
+            usage = "list",
+            desc = "Lists available templates",
+            modifiers = { "list" },
+            min = 1,
+            max = 1,
+            permission = "citizens.templates.list")
+    public void list(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        Messaging.sendTr(sender, Messages.TEMPLATE_LIST_HEADER);
+        for (Template template : Template.allTemplates()) {
+            Messaging.send(sender, "[[-]]    " + template.getName());
+        }
+    }
 }
