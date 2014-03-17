@@ -39,7 +39,17 @@ public class SheepController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+            }
+        }
 
+        @Override
+        public void a(boolean flag) {
+            float oldw = width;
+            float oldl = length;
+            super.a(flag);
+            if (oldw != width || oldl != length) {
+                this.setPosition(locX - 0.01, locY, locZ - 0.01);
+                this.setPosition(locX + 0.01, locY, locZ + 0.01);
             }
         }
 
