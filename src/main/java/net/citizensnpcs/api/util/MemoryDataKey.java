@@ -68,7 +68,7 @@ public class MemoryDataKey extends DataKey {
             return path;
         if (key.charAt(0) == '.')
             return path.isEmpty() ? key.substring(1, key.length()) : path + key;
-        return path.isEmpty() ? key : path + "." + key;
+            return path.isEmpty() ? key : path + "." + key;
     }
 
     @Override
@@ -79,10 +79,6 @@ public class MemoryDataKey extends DataKey {
     @Override
     public Object getRaw(String key) {
         return root.get(getKeyFor(key));
-    }
-
-    public Map<? extends String, ?> getRawTree() {
-        return root.getValues(true);
     }
 
     @Override

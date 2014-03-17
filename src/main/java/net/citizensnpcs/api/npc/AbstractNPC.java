@@ -280,6 +280,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void load(final DataKey root) {
+        name = root.getString("name");
         metadata.loadFrom(root.getRelative("metadata"));
 
         String traitNames = root.getString("traitnames");
