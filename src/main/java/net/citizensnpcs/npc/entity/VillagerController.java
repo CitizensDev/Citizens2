@@ -45,6 +45,17 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
+        public void a(boolean flag) {
+            float oldw = width;
+            float oldl = length;
+            super.a(flag);
+            if (oldw != width || oldl != length) {
+                this.setPosition(locX - 0.01, locY, locZ - 0.01);
+                this.setPosition(locX + 0.01, locY, locZ + 0.01);
+            }
+        }
+
+        @Override
         protected void a(double d0, boolean flag) {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag);
