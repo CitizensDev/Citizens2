@@ -12,6 +12,8 @@ import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.api.util.YamlStorage.YamlKey;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -54,7 +56,6 @@ public class Template {
 
     private static class Node {
         String headKey;
-
         Map<String, Object> map;
 
         private Node(String headKey, Map<String, Object> map) {
@@ -102,7 +103,14 @@ public class Template {
         }
     }
 
-    private static YamlStorage templates = new YamlStorage(new File(CitizensAPI.getDataFolder(), "templates.yml"));
+    public static Iterable<Template> allTemplates() {
+        return Iterables.transform(templates.getKey("").getSubKeys(), new Function<DataKey, Template>() {
+            @Override
+            public Template apply(DataKey arg0) {
+                return Template.byName(arg0.name());
+            }
+        });
+    }
 
     public static Template byName(String name) {
         if (!templates.getKey("").keyExists(name))
@@ -112,6 +120,8 @@ public class Template {
         Map<String, Object> replacements = key.getRelative("replacements").getValuesDeep();
         return new Template(name, replacements, override);
     }
+
+    private static YamlStorage templates = new YamlStorage(new File(CitizensAPI.getDataFolder(), "templates.yml"));
 
     static {
         templates.load();
