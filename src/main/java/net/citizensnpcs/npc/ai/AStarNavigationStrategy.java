@@ -68,7 +68,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             }
             vector = plan.getCurrentVector();
         }
-        net.minecraft.server.v1_7_R1.Entity handle = NMS.getHandle(npc.getEntity());
+        net.minecraft.server.v1_7_R2.Entity handle = NMS.getHandle(npc.getEntity());
         double dX = vector.getBlockX() - handle.locX;
         double dZ = vector.getBlockZ() - handle.locZ;
         double dY = vector.getY() - handle.locY;

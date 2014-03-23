@@ -2,13 +2,13 @@ package net.citizensnpcs.util;
 
 import java.util.Arrays;
 
-import net.minecraft.server.v1_7_R1.EntityPlayer;
-import net.minecraft.server.v1_7_R1.Packet;
-import net.minecraft.server.v1_7_R1.PacketPlayOutAnimation;
-import net.minecraft.server.v1_7_R1.PacketPlayOutBed;
-import net.minecraft.server.v1_7_R1.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_7_R2.EntityPlayer;
+import net.minecraft.server.v1_7_R2.Packet;
+import net.minecraft.server.v1_7_R2.PacketPlayOutAnimation;
+import net.minecraft.server.v1_7_R2.PacketPlayOutBed;
+import net.minecraft.server.v1_7_R2.PacketPlayOutEntityMetadata;
 
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public enum PlayerAnimation {

@@ -16,38 +16,38 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.network.EmptyChannel;
-import net.minecraft.server.v1_7_R1.AttributeInstance;
-import net.minecraft.server.v1_7_R1.ControllerJump;
-import net.minecraft.server.v1_7_R1.DamageSource;
-import net.minecraft.server.v1_7_R1.EnchantmentManager;
-import net.minecraft.server.v1_7_R1.Entity;
-import net.minecraft.server.v1_7_R1.EntityHorse;
-import net.minecraft.server.v1_7_R1.EntityHuman;
-import net.minecraft.server.v1_7_R1.EntityInsentient;
-import net.minecraft.server.v1_7_R1.EntityLiving;
-import net.minecraft.server.v1_7_R1.EntityMinecartAbstract;
-import net.minecraft.server.v1_7_R1.EntityPlayer;
-import net.minecraft.server.v1_7_R1.EntityTypes;
-import net.minecraft.server.v1_7_R1.GenericAttributes;
-import net.minecraft.server.v1_7_R1.MathHelper;
-import net.minecraft.server.v1_7_R1.MobEffectList;
-import net.minecraft.server.v1_7_R1.Navigation;
-import net.minecraft.server.v1_7_R1.NetworkManager;
-import net.minecraft.server.v1_7_R1.Packet;
-import net.minecraft.server.v1_7_R1.PathfinderGoalSelector;
-import net.minecraft.server.v1_7_R1.World;
+import net.minecraft.server.v1_7_R2.AttributeInstance;
+import net.minecraft.server.v1_7_R2.ControllerJump;
+import net.minecraft.server.v1_7_R2.DamageSource;
+import net.minecraft.server.v1_7_R2.EnchantmentManager;
+import net.minecraft.server.v1_7_R2.Entity;
+import net.minecraft.server.v1_7_R2.EntityHorse;
+import net.minecraft.server.v1_7_R2.EntityHuman;
+import net.minecraft.server.v1_7_R2.EntityInsentient;
+import net.minecraft.server.v1_7_R2.EntityLiving;
+import net.minecraft.server.v1_7_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_7_R2.EntityPlayer;
+import net.minecraft.server.v1_7_R2.EntityTypes;
+import net.minecraft.server.v1_7_R2.GenericAttributes;
+import net.minecraft.server.v1_7_R2.MathHelper;
+import net.minecraft.server.v1_7_R2.MobEffectList;
+import net.minecraft.server.v1_7_R2.Navigation;
+import net.minecraft.server.v1_7_R2.NetworkManager;
+import net.minecraft.server.v1_7_R2.Packet;
+import net.minecraft.server.v1_7_R2.PathfinderGoalSelector;
+import net.minecraft.server.v1_7_R2.World;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R1.CraftSound;
-import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R2.CraftSound;
+import org.bukkit.craftbukkit.v1_7_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R2.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_7_R2.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
@@ -128,13 +128,13 @@ public class NMS {
     }
 
     public static void flyingMoveLogic(EntityLiving entity, float f, float f1) {
-        if (entity.M()) {
+        if (entity.L()) {
             entity.a(f, f1, 0.02F);
             entity.move(entity.motX, entity.motY, entity.motZ);
             entity.motX *= 0.800000011920929D;
             entity.motY *= 0.800000011920929D;
             entity.motZ *= 0.800000011920929D;
-        } else if (entity.P()) {
+        } else if (entity.O()) {
             entity.a(f, f1, 0.02F);
             entity.move(entity.motX, entity.motY, entity.motZ);
             entity.motX *= 0.5D;
@@ -163,7 +163,7 @@ public class NMS {
             entity.motZ *= f2;
         }
 
-        entity.aF = entity.aG;
+        entity.aE = entity.aF;
         double d0 = entity.locX - entity.lastX;
         double d1 = entity.locZ - entity.lastZ;
         float f4 = MathHelper.sqrt(d0 * d0 + d1 * d1) * 4.0F;
@@ -172,12 +172,13 @@ public class NMS {
             f4 = 1.0F;
         }
 
-        entity.aG += (f4 - entity.aG) * 0.4F;
-        entity.aH += entity.aG;
+        entity.aF += (f4 - entity.aF) * 0.4F;
+        entity.aG += entity.aF;
     }
 
+    @SuppressWarnings("deprecation")
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-            NoSuchMethodException {
+    NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -205,12 +206,12 @@ public class NMS {
         return ((CraftLivingEntity) entity).getHandle();
     }
 
-    public static net.minecraft.server.v1_7_R1.Entity getHandle(org.bukkit.entity.Entity entity) {
+    public static net.minecraft.server.v1_7_R2.Entity getHandle(org.bukkit.entity.Entity entity) {
         return ((CraftEntity) entity).getHandle();
     }
 
     public static float getHeadYaw(EntityLiving handle) {
-        return handle.aP;
+        return handle.aO;
     }
 
     public static Navigation getNavigation(Entity handle) {
@@ -239,7 +240,7 @@ public class NMS {
     }
 
     public static float getStepHeight(LivingEntity entity) {
-        return NMS.getHandle(entity).X;
+        return NMS.getHandle(entity).W;
     }
 
     public static void initNetworkManager(NetworkManager network) {
@@ -259,7 +260,7 @@ public class NMS {
 
     public static boolean inWater(org.bukkit.entity.Entity entity) {
         Entity mcEntity = getHandle(entity);
-        return mcEntity.M() || mcEntity.P();
+        return mcEntity.L() || mcEntity.O();
     }
 
     public static boolean isNavigationFinished(Navigation navigation) {
@@ -272,7 +273,7 @@ public class NMS {
 
     public static void look(Entity handle, Entity target) {
         if (handle instanceof EntityInsentient) {
-            ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).x());
+            ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).bv());
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setTargetLook(target, 10F, 40F);
         }
@@ -405,10 +406,10 @@ public class NMS {
         while (yaw >= 180.0F) {
             yaw -= 360.0F;
         }
-        handle.aP = yaw;
+        handle.aO = yaw;
         if (!(handle instanceof EntityHuman))
-            handle.aN = yaw;
-        handle.aQ = yaw;
+            handle.aM = yaw;
+        handle.aP = yaw;
     }
 
     public static void setShouldJump(org.bukkit.entity.Entity entity) {
@@ -422,17 +423,17 @@ public class NMS {
     }
 
     public static void setStepHeight(EntityLiving entity, float height) {
-        entity.X = height;
+        entity.W = height;
     }
 
     public static void setVerticalMovement(org.bukkit.entity.Entity bukkitEntity, double d) {
         if (!bukkitEntity.getType().isAlive())
             return;
         EntityLiving handle = NMS.getHandle((LivingEntity) bukkitEntity);
-        handle.bf = (float) d;
+        handle.be = (float) d;
     }
 
-    public static boolean shouldJump(net.minecraft.server.v1_7_R1.Entity entity) {
+    public static boolean shouldJump(net.minecraft.server.v1_7_R2.Entity entity) {
         if (JUMP_FIELD == null || !(entity instanceof EntityLiving))
             return false;
         try {
@@ -538,16 +539,15 @@ public class NMS {
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
     private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
     private static Field GOAL_FIELD = getField(PathfinderGoalSelector.class, "b");
-    private static final Field JUMP_FIELD = getField(EntityLiving.class, "bd");
+    private static final Field JUMP_FIELD = getField(EntityLiving.class, "bc");
     private static Map<Class<?>, Integer> MC_ENTITY_CLASS_TO_INT = null;
     private static Map<Integer, Class<?>> MC_ENTITY_INT_TO_CLASS = null;
     private static Field NAVIGATION_WORLD_FIELD = getField(Navigation.class, "b");
-    private static Field NETWORK_ADDRESS = getField(NetworkManager.class, "l");
-    private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "k");
+    private static Field NETWORK_ADDRESS = getField(NetworkManager.class, "n");
+    private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "m");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(Navigation.class, "e");
     private static final Random RANDOM = Util.getFastRandom();
-    // true field above false and three synchronised lists
 
     static {
         try {

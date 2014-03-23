@@ -18,27 +18,27 @@ import net.citizensnpcs.util.nms.PlayerControllerJump;
 import net.citizensnpcs.util.nms.PlayerControllerLook;
 import net.citizensnpcs.util.nms.PlayerControllerMove;
 import net.citizensnpcs.util.nms.PlayerNavigation;
-import net.minecraft.server.v1_7_R1.AttributeInstance;
-import net.minecraft.server.v1_7_R1.Entity;
-import net.minecraft.server.v1_7_R1.EntityPlayer;
-import net.minecraft.server.v1_7_R1.EnumGamemode;
-import net.minecraft.server.v1_7_R1.GenericAttributes;
-import net.minecraft.server.v1_7_R1.MathHelper;
-import net.minecraft.server.v1_7_R1.MinecraftServer;
-import net.minecraft.server.v1_7_R1.Navigation;
-import net.minecraft.server.v1_7_R1.NetworkManager;
-import net.minecraft.server.v1_7_R1.Packet;
-import net.minecraft.server.v1_7_R1.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_7_R1.PacketPlayOutEntityHeadRotation;
-import net.minecraft.server.v1_7_R1.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_7_R1.PlayerInteractManager;
-import net.minecraft.server.v1_7_R1.WorldServer;
+import net.minecraft.server.v1_7_R2.AttributeInstance;
+import net.minecraft.server.v1_7_R2.Entity;
+import net.minecraft.server.v1_7_R2.EntityPlayer;
+import net.minecraft.server.v1_7_R2.EnumGamemode;
+import net.minecraft.server.v1_7_R2.GenericAttributes;
+import net.minecraft.server.v1_7_R2.MathHelper;
+import net.minecraft.server.v1_7_R2.MinecraftServer;
+import net.minecraft.server.v1_7_R2.Navigation;
+import net.minecraft.server.v1_7_R2.NetworkManager;
+import net.minecraft.server.v1_7_R2.Packet;
+import net.minecraft.server.v1_7_R2.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_7_R2.PacketPlayOutEntityHeadRotation;
+import net.minecraft.server.v1_7_R2.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_7_R2.PlayerInteractManager;
+import net.minecraft.server.v1_7_R2.WorldServer;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R2.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -80,7 +80,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public void collide(net.minecraft.server.v1_7_R1.Entity entity) {
+    public void collide(net.minecraft.server.v1_7_R2.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
@@ -205,7 +205,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
         AttributeInstance range = this.getAttributeInstance(GenericAttributes.b);
         if (range == null) {
-            range = this.bc().b(GenericAttributes.b);
+            range = this.bb().b(GenericAttributes.b);
         }
         range.setValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
         controllerJump = new PlayerControllerJump(this);
@@ -220,18 +220,18 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     private void moveOnCurrentHeading() {
         NMS.updateAI(this);
-        if (bd) {
+        if (bc) {
             if (onGround && jumpTicks == 0) {
-                bj();
+                bi();
                 jumpTicks = 10;
             }
         } else {
             jumpTicks = 0;
         }
+        bd *= 0.98F;
         be *= 0.98F;
-        bf *= 0.98F;
-        bg *= 0.9F;
-        e(be, bf); // movement method
+        bf *= 0.9F;
+        e(bd, be); // movement method
         NMS.setHeadYaw(this, yaw);
         if (jumpTicks > 0) {
             jumpTicks--;
