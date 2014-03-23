@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_7_R1.EntityWither;
-import net.minecraft.server.v1_7_R1.World;
+import net.minecraft.server.v1_7_R2.EntityWither;
+import net.minecraft.server.v1_7_R2.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftWither;
+import org.bukkit.craftbukkit.v1_7_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R2.entity.CraftWither;
 import org.bukkit.entity.Wither;
 import org.bukkit.util.Vector;
 
@@ -44,38 +44,38 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
+        protected String aS() {
+            return npc == null ? super.aS() : npc.data().get(NPC.HURT_SOUND_METADATA, super.aS());
+        }
+
+        @Override
         protected String aT() {
-            return npc == null ? super.aT() : npc.data().get(NPC.HURT_SOUND_METADATA, super.aT());
+            return npc == null ? super.aT() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.aT());
         }
 
         @Override
-        protected String aU() {
-            return npc == null ? super.aT() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.aU());
-        }
-
-        @Override
-        public boolean bL() {
-            if (npc == null)
-                return super.bL();
-            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
-            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.bL();
-            if (super.bL()) {
-                unleash(true, false); // clearLeash with client update
-            }
-            return false; // shouldLeash
-        }
-
-        @Override
-        public void bn() {
-            super.bn();
+        public void bm() {
+            super.bm();
             if (npc != null) {
                 npc.update();
             }
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_7_R1.Entity entity) {
+        public boolean bN() {
+            if (npc == null)
+                return super.bN();
+            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
+                return super.bN();
+            if (super.bN()) {
+                unleash(true, false); // clearLeash with client update
+            }
+            return false; // shouldLeash
+        }
+
+        @Override
+        public void collide(net.minecraft.server.v1_7_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -128,29 +128,29 @@ public class WitherController extends MobEntityController {
 
         @Override
         protected String t() {
-            return npc == null ? super.aT() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
+            return npc == null ? super.aS() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
         }
 
         private void updateAIWithMovement() {
             NMS.updateAI(this);
             // taken from EntityLiving update method
-            if (bd) {
+            if (bc) {
                 /* boolean inLiquid = H() || J();
                  if (inLiquid) {
                      motY += 0.04;
                  } else //(handled elsewhere)*/
                 if (onGround && jumpTicks == 0) {
-                    bj();
+                    bi();
                     jumpTicks = 10;
                 }
             } else {
                 jumpTicks = 0;
             }
+            bd *= 0.98F;
             be *= 0.98F;
-            bf *= 0.98F;
-            bg *= 0.9F;
+            bf *= 0.9F;
 
-            e(be, bf); // movement method
+            e(bd, be); // movement method
             NMS.setHeadYaw(this, yaw);
             if (jumpTicks > 0) {
                 jumpTicks--;
