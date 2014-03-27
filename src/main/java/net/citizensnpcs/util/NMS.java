@@ -46,8 +46,6 @@ import org.bukkit.craftbukkit.v1_7_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R2.CraftSound;
 import org.bukkit.craftbukkit.v1_7_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_7_R2.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_7_R2.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
@@ -203,10 +201,12 @@ public class NMS {
     }
 
     public static EntityLiving getHandle(LivingEntity entity) {
-        return ((CraftLivingEntity) entity).getHandle();
+        return (EntityLiving) getHandle((org.bukkit.entity.Entity) entity);
     }
 
-    public static net.minecraft.server.v1_7_R2.Entity getHandle(org.bukkit.entity.Entity entity) {
+    public static Entity getHandle(org.bukkit.entity.Entity entity) {
+        if (!(entity instanceof CraftEntity))
+            return null;
         return ((CraftEntity) entity).getHandle();
     }
 
@@ -231,12 +231,14 @@ public class NMS {
     }
 
     public static float getSpeedFor(NPC npc) {
-        if (!npc.isSpawned() || !(npc instanceof LivingEntity))
+        if (!npc.isSpawned() || !(npc.getEntity() instanceof LivingEntity))
             return DEFAULT_SPEED;
-        // this is correct, but too slow. TODO: investigate
-        return (float) ((EntityLiving) NMS.getHandle(npc.getEntity())).getAttributeInstance(GenericAttributes.d)
-                .getValue();
-        // return DEFAULT_SPEED;
+        EntityLiving handle = NMS.getHandle((LivingEntity) npc.getEntity());
+        if (handle == null)
+            return DEFAULT_SPEED;
+        return DEFAULT_SPEED;
+        // return (float)
+        // handle.getAttributeInstance(GenericAttributes.d).getValue();
     }
 
     public static float getStepHeight(LivingEntity entity) {
@@ -260,6 +262,8 @@ public class NMS {
 
     public static boolean inWater(org.bukkit.entity.Entity entity) {
         Entity mcEntity = getHandle(entity);
+        if (mcEntity == null)
+            return false;
         return mcEntity.L() || mcEntity.O();
     }
 
@@ -281,6 +285,8 @@ public class NMS {
 
     public static void look(org.bukkit.entity.Entity entity, float yaw, float pitch) {
         Entity handle = getHandle(entity);
+        if (handle == null)
+            return;
         handle.yaw = yaw;
         setHeadYaw(handle, yaw);
         handle.pitch = pitch;
@@ -307,13 +313,19 @@ public class NMS {
     }
 
     public static void mount(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity passenger) {
+        if (NMS.getHandle(passenger) == null)
+            return;
         NMS.getHandle(passenger).mount(NMS.getHandle(entity));
     }
 
     public static void openHorseScreen(Horse horse, Player equipper) {
+        EntityLiving handle = NMS.getHandle(horse);
+        EntityLiving equipperHandle = NMS.getHandle(equipper);
+        if (handle == null || equipperHandle == null)
+            return;
         boolean wasTamed = horse.isTamed();
         horse.setTamed(true);
-        ((EntityHorse) getHandle(horse)).a((EntityHuman) NMS.getHandle(equipper));
+        ((EntityHorse) handle).a((EntityHuman) equipperHandle);
         horse.setTamed(wasTamed);
     }
 
@@ -337,14 +349,14 @@ public class NMS {
     }
 
     public static void removeFromServerPlayerList(Player player) {
-        EntityPlayer handle = ((CraftPlayer) player).getHandle();
+        EntityPlayer handle = (EntityPlayer) NMS.getHandle(player);
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
     }
 
     public static void sendPacket(Player player, Packet packet) {
         if (packet == null)
             return;
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+        ((EntityPlayer) NMS.getHandle(player)).playerConnection.sendPacket(packet);
     }
 
     public static void sendPacketNearby(Player from, Location location, Packet packet) {
@@ -387,7 +399,9 @@ public class NMS {
     }
 
     public static void setDestination(org.bukkit.entity.Entity entity, double x, double y, double z, float speed) {
-        Entity handle = ((CraftEntity) entity).getHandle();
+        Entity handle = NMS.getHandle(entity);
+        if (handle == null)
+            return;
         if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).getControllerMove().a(x, y, z, speed);
         } else if (handle instanceof EntityHumanNPC) {
@@ -414,6 +428,8 @@ public class NMS {
 
     public static void setShouldJump(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
+        if (handle == null)
+            return;
         if (handle instanceof EntityInsentient) {
             ControllerJump controller = ((EntityInsentient) handle).getControllerJump();
             controller.a();
@@ -498,8 +514,8 @@ public class NMS {
     public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {
         if (NAVIGATION_WORLD_FIELD == null)
             return;
-        Entity en = ((CraftEntity) entity).getHandle();
-        if (!(en instanceof EntityInsentient))
+        Entity en = NMS.getHandle(entity);
+        if (en == null || !(en instanceof EntityInsentient))
             return;
         EntityInsentient handle = (EntityInsentient) en;
         World worldHandle = ((CraftWorld) world).getHandle();
@@ -513,7 +529,7 @@ public class NMS {
     public static void updatePathfindingRange(NPC npc, float pathfindingRange) {
         if (!npc.isSpawned() || !npc.getEntity().getType().isAlive())
             return;
-        EntityLiving en = ((CraftLivingEntity) npc.getEntity()).getHandle();
+        EntityLiving en = NMS.getHandle((LivingEntity) npc.getEntity());
         if (!(en instanceof EntityInsentient)) {
             if (en instanceof EntityHumanNPC) {
                 ((EntityHumanNPC) en).updatePathfindingRange(pathfindingRange);
