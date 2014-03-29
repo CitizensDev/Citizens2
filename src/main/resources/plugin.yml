@@ -281,6 +281,7 @@ permissions:
   citizens.npc.owner: {default: false}
   citizens.npc.path: {default: false}
   citizens.npc.pathfindingrange: {default: false}
+  citizens.npc.pathfindingoptions: {default: false}
   citizens.npc.playerlist: {default: false}
   citizens.npc.pose: {default: false}
   citizens.npc.power: {default: false}
@@ -294,6 +295,7 @@ permissions:
   citizens.npc.spawn: {default: false}
   citizens.npc.speak: {default: false}
   citizens.npc.speed: {default: false}
+  citizens.npc.swim: {default: false}
   citizens.npc.talk: {default: false}
   citizens.npc.targetable: {default: false}
   citizens.npc.tp: {default: false}
@@ -631,6 +633,7 @@ permissions:
       citizens.npc.owner: true
       citizens.npc.path: true
       citizens.npc.pathfindingrange: true
+      citizens.npc.pathfindingoptions: true
       citizens.npc.playerlist: true
       citizens.npc.pose: true
       citizens.npc.power: true
@@ -644,6 +647,7 @@ permissions:
       citizens.npc.spawn: true
       citizens.npc.speak: true
       citizens.npc.speed: true
+      citizens.npc.swim: true
       citizens.npc.talk: true
       citizens.npc.targetable: true
       citizens.npc.tp: true
@@ -975,6 +979,7 @@ permissions:
       citizens.npc.owner: true
       citizens.npc.path: true
       citizens.npc.pathfindingrange: true
+      citizens.npc.pathfindingoptions: true
       citizens.npc.playerlist: true
       citizens.npc.pose: true
       citizens.npc.power: true
@@ -988,6 +993,7 @@ permissions:
       citizens.npc.spawn: true
       citizens.npc.speak: true
       citizens.npc.speed: true
+      citizens.npc.swim: true
       citizens.npc.talk: true
       citizens.npc.targetable: true
       citizens.npc.tp: true
