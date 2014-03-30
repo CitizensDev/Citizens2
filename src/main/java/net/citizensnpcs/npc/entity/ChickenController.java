@@ -173,15 +173,6 @@ public class ChickenController extends MobEntityController {
         }
 
         @Override
-        public void move(double x, double y, double z) {
-            double oldx = this.locX;
-            double oldz = this.locZ;
-            super.move(x, y, z);
-            if (x != 0 || z != 0 || oldx != locX || oldz != locZ)
-                System.out.println(x + " " + z + " " + (oldx - locX) + " " + (oldz - locZ));
-        }
-
-        @Override
         protected String t() {
             return npc == null ? super.aS() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
         }
