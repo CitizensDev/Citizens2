@@ -183,6 +183,8 @@ public class Messages {
     public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.description";
     public static final String SIZE_SET = "citizens.commands.npc.size.set";
     public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";
+    public static final String SKIN_CLEARED = "citizens.commands.npc.skin.cleared";
+    public static final String SKIN_SET = "citizens.commands.npc.skin.set";
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
     public static final String SKIPPING_INVALID_ANCHOR = "citizens.notifications.skipping-invalid-anchor";
     public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
