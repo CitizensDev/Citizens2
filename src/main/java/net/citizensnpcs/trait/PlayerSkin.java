@@ -57,6 +57,10 @@ public class PlayerSkin extends Trait {
 
     private Entity prepareEntity(String name, EntityType type) {
         NPC npcEntity = npc.getOwningRegistry().createNPC(type, name);
+        npcEntity.data().set(NPC.AMBIENT_SOUND_METADATA, "");
+        npcEntity.data().set(NPC.DEFAULT_PROTECTED_METADATA, true);
+        npcEntity.data().set(NPC.DEATH_SOUND_METADATA, "");
+        npcEntity.data().set(NPC.HURT_SOUND_METADATA, "");
         npcEntity.data().set(NPC.SHOULD_SAVE_METADATA, false);
         npcEntity.spawn(npc.getStoredLocation());
         if (name.isEmpty() || !(npcEntity.getEntity() instanceof Slime)) {
