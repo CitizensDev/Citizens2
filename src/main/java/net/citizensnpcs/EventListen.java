@@ -48,6 +48,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -211,6 +212,14 @@ public class EventListen implements Listener {
                 }
             }, delay + 2);
         }
+
+        if (event instanceof PlayerDeathEvent && !npc.data().get(NPC.PLAYER_SKIN_NAME_METADATA, "").isEmpty()) {
+            String skinName = npc.data().get(NPC.PLAYER_SKIN_NAME_METADATA, "");
+            PlayerDeathEvent pde = (PlayerDeathEvent) event;
+            pde.setDeathMessage(pde.getDeathMessage().replace(" " + skinName, " " + npc.getFullName())
+                    .replace(skinName + " ", npc.getFullName() + " "));
+        }
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
