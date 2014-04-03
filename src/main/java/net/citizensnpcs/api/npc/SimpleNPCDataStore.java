@@ -82,8 +82,9 @@ public class SimpleNPCDataStore implements NPCDataStore {
 
     @Override
     public void storeAll(NPCRegistry registry) {
-        for (NPC npc : registry)
+        for (NPC npc : registry) {
             store(npc);
+        }
     }
 
     public static NPCDataStore create(Storage storage) {
