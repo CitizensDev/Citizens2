@@ -42,6 +42,7 @@ import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
+import net.citizensnpcs.trait.PlayerSkin;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.SlimeSize;
@@ -446,8 +447,8 @@ public class NPCCommands {
     public void flyable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean flyable = args.argsLength() == 2 ? args.getString(1).equals("true") : !npc.isFlyable();
         npc.setFlyable(flyable);
-        flyable = npc.isFlyable(); // may not have applied
-
+        flyable = npc.isFlyable(); // may not have applied, eg bats always
+        // flyable
         Messaging.sendTr(sender, flyable ? Messages.FLYABLE_SET : Messages.FLYABLE_UNSET);
     }
 
@@ -950,6 +951,24 @@ public class NPCCommands {
         }
         Messaging.sendTr(sender, remove ? Messages.REMOVED_FROM_PLAYERLIST : Messages.ADDED_TO_PLAYERLIST,
                 npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "skin [skin|-c]",
+            desc = "Sets a player NPC's skin",
+            flags = "c",
+            modifiers = { "skin" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.skin")
+    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
+    public void playerSkin(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (!args.hasFlag('c') && args.argsLength() == 0)
+            throw new CommandException();
+        String skin = args.hasFlag('c') ? "" : args.getString(1);
+        npc.getTrait(PlayerSkin.class).setSkinName(skin);
+        Messaging.sendTr(sender, skin.isEmpty() ? Messages.SKIN_CLEARED : Messages.SKIN_SET, npc.getFullName(), skin);
     }
 
     @Command(
