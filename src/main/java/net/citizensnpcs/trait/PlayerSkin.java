@@ -35,8 +35,9 @@ public class PlayerSkin extends Trait {
 
     public String getSkinName() {
         String skin = npc.data().get(NPC.PLAYER_SKIN_NAME_METADATA, "");
-        if (skin.isEmpty())
+        if (skin.isEmpty()) {
             skin = npc.getFullName();
+        }
         return skin;
     }
 
@@ -63,7 +64,7 @@ public class PlayerSkin extends Trait {
         npcEntity.data().set(NPC.HURT_SOUND_METADATA, "");
         npcEntity.data().set(NPC.SHOULD_SAVE_METADATA, false);
         npcEntity.spawn(npc.getStoredLocation());
-        if (name.isEmpty() || !(npcEntity.getEntity() instanceof Slime)) {
+        if (name.isEmpty()) {
             ((LivingEntity) npcEntity.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20
                     * 60 * 60 * 24 * 7, 1));
         } else {
@@ -98,6 +99,16 @@ public class PlayerSkin extends Trait {
             previous.setPassenger(nameCarrier);
 
             nameCarriers.add(nameCarrier);
+        }
+        for (Entity entity : nameCarriers) {
+            if (entity instanceof LivingEntity) {
+                LivingEntity le = (LivingEntity) entity;
+                le.setRemainingAir(20);
+                if (!le.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                    ((LivingEntity) entity).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 60
+                            * 60 * 24 * 7, 1));
+                }
+            }
         }
     }
 

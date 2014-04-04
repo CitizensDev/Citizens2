@@ -67,6 +67,14 @@ public class SkeletonController extends MobEntityController {
         }
 
         @Override
+        public void bm() {
+            super.bm();
+            if (npc != null) {
+                npc.update();
+            }
+        }
+
+        @Override
         public boolean bN() {
             if (npc == null)
                 return super.bN();
@@ -77,13 +85,6 @@ public class SkeletonController extends MobEntityController {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
-        }
-
-        @Override
-        public void bm() {
-            super.bm();
-            if (npc != null)
-                npc.update();
         }
 
         @Override
