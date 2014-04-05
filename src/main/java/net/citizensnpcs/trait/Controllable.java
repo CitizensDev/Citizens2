@@ -162,7 +162,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     @Override
     public void run() {
-        if (!enabled || !npc.isSpawned() || getHandle().passenger == null)
+        if (!enabled || !npc.isSpawned() || getHandle().passenger == null
+                || !(getHandle().passenger.getBukkitEntity() instanceof Player))
             return;
         controller.run((Player) getHandle().passenger.getBukkitEntity());
     }
