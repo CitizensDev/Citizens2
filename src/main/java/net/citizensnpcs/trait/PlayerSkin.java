@@ -104,7 +104,7 @@ public class PlayerSkin extends Trait {
             if (entity instanceof LivingEntity) {
                 LivingEntity le = (LivingEntity) entity;
                 le.setRemainingAir(20);
-                if (!le.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                if (!(le instanceof Slime) && !le.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                     ((LivingEntity) entity).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 60
                             * 60 * 24 * 7, 1));
                 }
