@@ -119,7 +119,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (cancelReason != null) {
             return true;
         }
-        if (target.getWorld().getWorld().getFullTime() % 10 == 0) {
+        if (target.world.getWorld().getFullTime() % 10 == 0) {
             setPath();
         }
         NMS.look(handle, target);
