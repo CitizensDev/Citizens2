@@ -240,15 +240,15 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void onDisable() {
         Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
         Editor.leaveAll();
-        CitizensAPI.shutdown();
 
-        // Don't bother with this part if MC versions are not compatible
         if (compatible) {
             saves.storeAll(npcRegistry);
             saves.saveToDiskImmediate();
             despawnNPCs();
             npcRegistry = null;
         }
+
+        CitizensAPI.shutdown();
     }
 
     @Override
