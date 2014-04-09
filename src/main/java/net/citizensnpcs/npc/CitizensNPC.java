@@ -119,6 +119,8 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public void save(DataKey root) {
         super.save(root);
+        if (!data().get(NPC.SHOULD_SAVE_METADATA, true))
+            return;
         navigator.save(root.getRelative("navigator"));
     }
 
