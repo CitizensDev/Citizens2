@@ -32,7 +32,7 @@ public class HumanController extends AbstractEntityController {
             parseColors = parseColors.substring(0, 16);
         }
         final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, new GameProfile(UUID
-                .randomUUID().toString(), parseColors), new PlayerInteractManager(ws), npc);
+                .nameUUIDFromBytes(parseColors.getBytes()).toString(), parseColors), new PlayerInteractManager(ws), npc);
         handle.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
