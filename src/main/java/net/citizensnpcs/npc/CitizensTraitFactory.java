@@ -26,7 +26,6 @@ import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
-import net.citizensnpcs.trait.PlayerSkin;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.Saddle;
@@ -60,7 +59,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(LookClose.class).withName("lookclose"));
         registerTrait(TraitInfo.create(OcelotModifiers.class).withName("ocelotmodifiers"));
         registerTrait(TraitInfo.create(Owner.class).withName("owner"));
-        registerTrait(TraitInfo.create(PlayerSkin.class).withName("playerskin"));
         registerTrait(TraitInfo.create(Poses.class).withName("poses"));
         registerTrait(TraitInfo.create(Powered.class).withName("powered"));
         registerTrait(TraitInfo.create(Saddle.class).withName("saddle"));

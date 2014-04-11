@@ -44,7 +44,6 @@ import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
-import net.citizensnpcs.trait.PlayerSkin;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.SlimeSize;
@@ -268,7 +267,7 @@ public class NPCCommands {
         }
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-                : new CommandSenderCreateNPCEvent(sender, copy);
+        : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
@@ -344,7 +343,7 @@ public class NPCCommands {
             spawnLoc = args.getSenderLocation();
         }
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
-                : new CommandSenderCreateNPCEvent(sender, npc);
+        : new CommandSenderCreateNPCEvent(sender, npc);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
@@ -960,24 +959,6 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin [skin|-c]",
-            desc = "Sets a player NPC's skin",
-            flags = "c",
-            modifiers = { "skin" },
-            min = 1,
-            max = 2,
-            permission = "citizens.npc.skin")
-    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
-    public void playerSkin(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        if (!args.hasFlag('c') && args.argsLength() == 0)
-            throw new CommandException();
-        String skin = args.hasFlag('c') ? "" : args.getString(1);
-        npc.getTrait(PlayerSkin.class).setSkinName(skin);
-        Messaging.sendTr(sender, skin.isEmpty() ? Messages.SKIN_CLEARED : Messages.SKIN_SET, npc.getFullName(), skin);
-    }
-
-    @Command(
-            aliases = { "npc" },
             usage = "pose (--save [name]|--assume [name]|--remove [name]) (-a)",
             desc = "Changes/Saves/Lists NPC's head pose(s)",
             flags = "a",
@@ -1037,7 +1018,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         Messaging
-                .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+        .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
