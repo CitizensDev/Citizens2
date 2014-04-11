@@ -33,6 +33,8 @@ import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.npc.entity.nonliving.FallingBlockController.FallingBlockNPC;
+import net.citizensnpcs.npc.entity.nonliving.ItemController.ItemNPC;
+import net.citizensnpcs.npc.entity.nonliving.ItemFrameController.ItemFrameNPC;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.Controllable;
@@ -584,15 +586,18 @@ public class NPCCommands {
         Material mat = Material.matchMaterial(args.getString(1));
         if (mat == null)
             throw new CommandException(Messages.UNKNOWN_MATERIAL);
+        int data = args.getInteger(2, 0);
         switch (npc.getEntity().getType()) {
             case DROPPED_ITEM:
                 ((org.bukkit.entity.Item) npc.getEntity()).getItemStack().setType(mat);
+                ((ItemNPC) npc.getEntity()).setType(mat, data);
                 break;
             case ITEM_FRAME:
                 ((ItemFrame) npc.getEntity()).getItem().setType(mat);
+                ((ItemFrameNPC) npc.getEntity()).setType(mat, data);
                 break;
             case FALLING_BLOCK:
-                ((FallingBlockNPC) npc.getEntity()).setType(mat, args.argsLength() > 2 ? args.getInteger(2) : 0);
+                ((FallingBlockNPC) npc.getEntity()).setType(mat, data);
                 break;
             default:
                 break;
