@@ -32,8 +32,13 @@ public class ItemController extends AbstractEntityController {
     @Override
     protected Entity createEntity(Location at, NPC npc) {
         WorldServer ws = ((CraftWorld) at.getWorld()).getHandle();
+        Material id = Material.STONE;
+        int data = npc.data().get(NPC.ITEM_DATA_METADATA, npc.data().get("falling-block-data", 0));
+        if (npc.data().has(NPC.ITEM_ID_METADATA)) {
+            id = Material.getMaterial(npc.data().<String> get(NPC.ITEM_ID_METADATA));
+        }
         final EntityItemNPC handle = new EntityItemNPC(ws, npc, at.getX(), at.getY(), at.getZ(),
-                CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(Material.STONE)));
+                CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(id, 1, (short) data)));
         return handle.getBukkitEntity();
     }
 
@@ -128,6 +133,15 @@ public class ItemController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        public void setType(Material material, int data) {
+            npc.data().setPersistent(NPC.ITEM_ID_METADATA, material.name());
+            npc.data().setPersistent(NPC.ITEM_DATA_METADATA, data);
+            if (npc.isSpawned()) {
+                npc.despawn();
+                npc.spawn(npc.getStoredLocation());
+            }
         }
     }
 }
