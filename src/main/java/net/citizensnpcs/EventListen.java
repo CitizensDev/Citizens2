@@ -241,7 +241,7 @@ public class EventListen implements Listener {
     @EventHandler
     public void onNPCDespawn(NPCDespawnEvent event) {
         if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL) {
-            toRespawn.remove(toCoord(event.getNPC().getEntity().getLocation()), event.getNPC());
+            toRespawn.remove(toCoord(event.getNPC().getStoredLocation()), event.getNPC());
         }
     }
 

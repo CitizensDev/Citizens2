@@ -52,12 +52,16 @@ public class CitizensNPC extends AbstractNPC {
     public boolean despawn(DespawnReason reason) {
         if (!isSpawned()) {
             Messaging.debug("Tried to despawn", getId(), "while already despawned.");
+            if (reason == DespawnReason.REMOVAL) {
+                Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this, reason));
+            }
             return false;
         }
 
         NPCDespawnEvent event = new NPCDespawnEvent(this, reason);
-        if (reason == DespawnReason.CHUNK_UNLOAD)
+        if (reason == DespawnReason.CHUNK_UNLOAD) {
             event.setCancelled(Setting.KEEP_CHUNKS_LOADED.asBoolean());
+        }
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             getEntity().getLocation().getChunk().load();
@@ -73,6 +77,7 @@ public class CitizensNPC extends AbstractNPC {
         }
         navigator.onDespawn();
         entityController.remove();
+
         return true;
     }
 
