@@ -117,7 +117,6 @@ public class YamlStorage implements FileStorage {
     }
 
     public class YamlKey extends DataKey {
-
         public YamlKey(String root) {
             super(root);
         }

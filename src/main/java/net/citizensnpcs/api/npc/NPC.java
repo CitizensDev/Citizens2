@@ -303,6 +303,8 @@ public interface NPC extends Agent, Cloneable {
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
     public static final String FLYABLE_METADATA = "flyable";
     public static final String HURT_SOUND_METADATA = "hurt-sound";
+    public static final String ITEM_DATA_METADATA = "item-type-data";
+    public static final String ITEM_ID_METADATA = "item-type-id";
     public static final String LEASH_PROTECTED_METADATA = "protected-leash";
     public static final String MINECART_ITEM_DATA_METADATA = "minecart-item-data";
     public static final String MINECART_ITEM_METADATA = "minecart-item-name";
