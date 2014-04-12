@@ -454,5 +454,5 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return false;
     }
 
-    private static final String COMPATIBLE_MC_VERSION = "1.7.5";
+    private static final String COMPATIBLE_MC_VERSION = "1.7.8";
 }
