@@ -8,13 +8,13 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_7_R2.PlayerInteractManager;
-import net.minecraft.server.v1_7_R2.WorldServer;
+import net.minecraft.server.v1_7_R3.PlayerInteractManager;
+import net.minecraft.server.v1_7_R3.WorldServer;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -32,8 +32,8 @@ public class HumanController extends AbstractEntityController {
         }
         UUID uuid = UUID.randomUUID(); // clear version
         uuid = new UUID(uuid.getMostSignificantBits() | 0x0000000000005000L, uuid.getLeastSignificantBits());
-        final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, new GameProfile(
-                uuid.toString(), parseColors), new PlayerInteractManager(ws), npc);
+        final EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, new GameProfile(uuid,
+                parseColors), new PlayerInteractManager(ws), npc);
         handle.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override

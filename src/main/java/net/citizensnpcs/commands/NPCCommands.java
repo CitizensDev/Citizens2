@@ -1302,8 +1302,9 @@ public class NPCCommands {
                     context.addRecipient(target.getEntity());
             } else {
                 Player player = Bukkit.getPlayer(args.getFlag("target"));
-                if (player != null)
+                if (player != null) {
                     context.addRecipient((Entity) player);
+                }
             }
         }
 
@@ -1440,8 +1441,9 @@ public class NPCCommands {
                 to = toNPC.getEntity();
             }
         } catch (NumberFormatException e) {
-            if (!firstWasPlayer)
+            if (!firstWasPlayer) {
                 to = Bukkit.getPlayerExact(args.getString(2));
+            }
         }
         if (from == null)
             throw new CommandException(Messages.FROM_ENTITY_NOT_FOUND);
