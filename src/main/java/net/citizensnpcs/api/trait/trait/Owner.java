@@ -30,6 +30,14 @@ public class Owner extends Trait {
     }
 
     /**
+     * @return The owner's UUID, or <code>null</code> if the owner is the server 
+     *			or a UUID has not been collected for the owner.
+     */
+    public UUID getOwnerId() {
+    	return uuid;
+    }
+
+    /**
      * Gets if the given {@link CommandSender} is the owner of an NPC.
      *
      * @param sender
@@ -97,8 +105,19 @@ public class Owner extends Trait {
      *            Name of the player to set as owner of an NPC
      */
     public void setOwner(String owner) {
-        this.owner = owner;
-        this.uuid = null;
+        setOwner(owner, null);
+    }
+
+    /**
+     * Sets the owner of an NPC.
+     * @param owner
+     *			Name of the owner
+     * @param uuid
+     *			UUID of the owner
+     */
+    public void setOwner(String owner, UUID uuid) {
+    	this.owner = owner;
+    	this.uuid = uuid;
     }
 
     @Override
