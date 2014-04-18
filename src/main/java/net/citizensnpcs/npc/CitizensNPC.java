@@ -115,8 +115,9 @@ public class CitizensNPC extends AbstractNPC {
 
         // Spawn the NPC
         CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
-        if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null)
+        if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
             spawn(spawnLocation.getLocation());
+        }
 
         navigator.load(root.getRelative("navigator"));
     }
