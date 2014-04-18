@@ -267,7 +267,7 @@ public class NPCCommands {
         }
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-        : new CommandSenderCreateNPCEvent(sender, copy);
+                : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
@@ -343,7 +343,7 @@ public class NPCCommands {
             spawnLoc = args.getSenderLocation();
         }
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
-        : new CommandSenderCreateNPCEvent(sender, npc);
+                : new CommandSenderCreateNPCEvent(sender, npc);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
@@ -1018,7 +1018,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         Messaging
-        .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+                .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
@@ -1168,6 +1168,32 @@ public class NPCCommands {
             throw new CommandException(Messages.INVALID_SKELETON_TYPE);
         npc.getTrait(NPCSkeletonType.class).setType(type);
         Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "skin (-c) [name]",
+            desc = "Sets an NPC's skin name",
+            modifiers = { "skin" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.skin")
+    @Requirements(types = EntityType.PLAYER)
+    public void skin(final CommandContext args, final CommandSender sender, final NPC npc) throws CommandException {
+        String skinName = npc.getName();
+        if (args.hasFlag('c')) {
+            npc.data().remove(NPC.PLAYER_SKIN_UUID_METADATA);
+        } else {
+            if (args.argsLength() != 2)
+                throw new CommandException();
+            npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, args.getString(1));
+            skinName = args.getString(1);
+        }
+        Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), skinName);
+        if (npc.isSpawned()) {
+            npc.despawn(DespawnReason.PENDING_RESPAWN);
+            npc.spawn(npc.getStoredLocation());
+        }
     }
 
     @Command(
