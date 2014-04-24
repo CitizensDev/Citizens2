@@ -109,14 +109,12 @@ public class HumanController extends AbstractEntityController {
             try {
                 realUUID = uuid.call();
             } catch (Exception e) {
-                e.printStackTrace();
                 return;
             }
             GameProfile skinProfile = null;
             try {
                 skinProfile = repo.fillProfileProperties(new GameProfile(UUID.fromString(realUUID), ""), true);
             } catch (Exception e) {
-                e.printStackTrace();
                 return;
             }
             if (skinProfile == null || !skinProfile.getProperties().containsKey("textures"))
