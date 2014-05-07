@@ -8,7 +8,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.DataKey;
 
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 public class WanderWaypointProvider implements WaypointProvider {
     private Goal currentGoal;
@@ -20,7 +20,7 @@ public class WanderWaypointProvider implements WaypointProvider {
     private final int yrange = DEFAULT_YRANGE;
 
     @Override
-    public WaypointEditor createEditor(Player player, CommandContext args) {
+    public WaypointEditor createEditor(CommandSender sender, CommandContext args) {
         return new WaypointEditor() {
             @Override
             public void begin() {

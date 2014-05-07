@@ -27,6 +27,7 @@ import net.citizensnpcs.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,16 +45,24 @@ public class LinearWaypointProvider implements WaypointProvider {
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
     @Override
-    public WaypointEditor createEditor(Player player, CommandContext args) {
+    public WaypointEditor createEditor(CommandSender sender, CommandContext args) {
         if (args.hasFlag('h')) {
-            waypoints.add(new Waypoint(player.getLocation()));
+            try {
+                if (args.getSenderLocation() != null) {
+                    waypoints.add(new Waypoint(args.getSenderLocation()));
+                }
+            } catch (CommandException e) {
+                Messaging.sendError(sender, e.getMessage());
+            }
             return null;
         } else if (args.hasValueFlag("at")) {
             try {
-                Location location = CommandContext.parseLocation(player.getLocation(), args.getFlag("at"));
-                waypoints.add(new Waypoint(location));
+                Location location = CommandContext.parseLocation(args.getSenderLocation(), args.getFlag("at"));
+                if (location != null) {
+                    waypoints.add(new Waypoint(location));
+                }
             } catch (CommandException e) {
-                Messaging.sendError(player, e.getMessage());
+                Messaging.sendError(sender, e.getMessage());
             }
             return null;
         } else if (args.hasFlag('c')) {
@@ -67,8 +76,11 @@ public class LinearWaypointProvider implements WaypointProvider {
         } else if (args.hasFlag('p')) {
             setPaused(!isPaused());
             return null;
+        } else if (!(sender instanceof CommandSender)) {
+            Messaging.sendErrorTr(sender, Messages.COMMAND_MUST_BE_INGAME);
+            return null;
         }
-        return new LinearWaypointEditor(player);
+        return new LinearWaypointEditor((Player) sender);
     }
 
     @Override
@@ -408,7 +420,7 @@ public class LinearWaypointProvider implements WaypointProvider {
             Location npcLoc = npc.getEntity().getLocation(cachedLocation);
             if (npcLoc.getWorld() != next.getLocation().getWorld()
                     || npcLoc.distanceSquared(next.getLocation()) < npc.getNavigator().getLocalParameters()
-                            .distanceMargin()) {
+                    .distanceMargin()) {
                 return false;
             }
             currentDestination = next;
