@@ -4,18 +4,18 @@ import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persistable;
 
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 public interface WaypointProvider extends Persistable {
     /**
-     * Creates an {@link WaypointEditor} with the given {@link Player}.
+     * Creates an {@link WaypointEditor} with the given {@link CommandSender}.
      *
-     * @param player
+     * @param sender
      *            The player to link the editor with
      * @param args
      * @return The editor
      */
-    public WaypointEditor createEditor(Player player, CommandContext args);
+    public WaypointEditor createEditor(CommandSender sender, CommandContext args);
 
     /**
      * Returns whether this provider has paused execution of waypoints.

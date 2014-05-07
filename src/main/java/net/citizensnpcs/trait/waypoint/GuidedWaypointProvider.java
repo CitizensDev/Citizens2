@@ -27,6 +27,7 @@ import net.citizensnpcs.util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,7 +51,12 @@ public class GuidedWaypointProvider implements WaypointProvider {
     private PRTree<Region3D<Waypoint>> tree = PRTree.create(new Region3D.Converter<Waypoint>(), 30);
 
     @Override
-    public WaypointEditor createEditor(final Player player, CommandContext args) {
+    public WaypointEditor createEditor(final CommandSender sender, CommandContext args) {
+        if (!(sender instanceof Player)) {
+            Messaging.sendErrorTr(sender, Messages.COMMAND_MUST_BE_INGAME);
+            return null;
+        }
+        final Player player = (Player) sender;
         return new WaypointEditor() {
             private final WaypointMarkers markers = new WaypointMarkers(player.getWorld());
             private boolean showPath;
@@ -188,13 +194,13 @@ public class GuidedWaypointProvider implements WaypointProvider {
         tree = PRTree.create(new Region3D.Converter<Waypoint>(), 30);
         tree.load(Lists.newArrayList(Iterables.transform(Iterables.<Waypoint> concat(available, helpers),
                 new Function<Waypoint, Region3D<Waypoint>>() {
-                    @Override
-                    public Region3D<Waypoint> apply(Waypoint arg0) {
-                        Location loc = arg0.getLocation();
-                        Vector root = new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-                        return new Region3D<Waypoint>(root, root, arg0);
-                    }
-                })));
+            @Override
+            public Region3D<Waypoint> apply(Waypoint arg0) {
+                Location loc = arg0.getLocation();
+                Vector root = new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+                return new Region3D<Waypoint>(root, root, arg0);
+            }
+        })));
     }
 
     @Override
