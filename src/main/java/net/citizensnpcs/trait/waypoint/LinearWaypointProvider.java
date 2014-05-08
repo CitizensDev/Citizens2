@@ -76,7 +76,7 @@ public class LinearWaypointProvider implements WaypointProvider {
         } else if (args.hasFlag('p')) {
             setPaused(!isPaused());
             return null;
-        } else if (!(sender instanceof CommandSender)) {
+        } else if (!(sender instanceof Player)) {
             Messaging.sendErrorTr(sender, Messages.COMMAND_MUST_BE_INGAME);
             return null;
         }
