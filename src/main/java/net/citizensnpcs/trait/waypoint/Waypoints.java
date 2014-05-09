@@ -14,7 +14,6 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import com.google.common.collect.Maps;
 
@@ -45,7 +44,7 @@ public class Waypoints extends Trait {
     /**
      * Returns the current {@link WaypointProvider}. May be null during
      * initialisation.
-     * 
+     *
      * @return The current provider
      */
     public WaypointProvider getCurrentProvider() {
@@ -59,7 +58,7 @@ public class Waypoints extends Trait {
         return providerName;
     }
 
-    public Editor getEditor(Player player, CommandContext args) {
+    public Editor getEditor(CommandSender player, CommandContext args) {
         return provider.createEditor(player, args);
     }
 
@@ -95,7 +94,7 @@ public class Waypoints extends Trait {
 
     /**
      * Sets the current {@link WaypointProvider} using the given name.
-     * 
+     *
      * @param name
      *            The name of the waypoint provider, registered using
      *            {@link #registerWaypointProvider(Class, String)}
@@ -119,7 +118,7 @@ public class Waypoints extends Trait {
     /**
      * Registers a {@link WaypointProvider}, which can be subsequently used by
      * NPCs.
-     * 
+     *
      * @param clazz
      *            The class of the waypoint provider
      * @param name
