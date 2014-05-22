@@ -1252,9 +1252,21 @@ public class NPCCommands {
                 hurtSound = args.getFlag("hurt").equals("d") ? null : NMS.getSound(args.getFlag("hurt"));
             }
         }
-        npc.data().setPersistent(NPC.DEATH_SOUND_METADATA, deathSound);
-        npc.data().setPersistent(NPC.HURT_SOUND_METADATA, hurtSound);
-        npc.data().setPersistent(NPC.AMBIENT_SOUND_METADATA, ambientSound);
+        if (deathSound == null) {
+            npc.data().remove(NPC.DEATH_SOUND_METADATA);
+        } else {
+            npc.data().setPersistent(NPC.DEATH_SOUND_METADATA, deathSound);
+        }
+        if (hurtSound == null) {
+            npc.data().remove(NPC.HURT_SOUND_METADATA);
+        } else {
+            npc.data().setPersistent(NPC.HURT_SOUND_METADATA, hurtSound);
+        }
+        if (ambientSound == null) {
+            npc.data().remove(ambientSound);
+        } else {
+            npc.data().setPersistent(NPC.AMBIENT_SOUND_METADATA, ambientSound);
+        }
 
         Messaging.sendTr(sender, Messages.SOUND_SET, npc.getName(), ambientSound, hurtSound, deathSound);
     }
