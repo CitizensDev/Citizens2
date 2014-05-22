@@ -159,7 +159,7 @@ public class SilverfishController extends MobEntityController {
 
         @Override
         protected String t() {
-            return npc == null ? super.aS() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.t() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
         }
 
         @Override
