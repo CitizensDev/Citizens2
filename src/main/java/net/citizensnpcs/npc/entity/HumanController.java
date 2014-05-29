@@ -23,6 +23,7 @@ import net.minecraft.util.com.mojang.authlib.properties.Property;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_7_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
 import org.bukkit.entity.Entity;
@@ -77,7 +78,7 @@ public class HumanController extends AbstractEntityController {
             skinUUID = npc.getName();
         }
         if (npc.data().has(CACHED_SKIN_UUID_METADATA) && npc.data().has(CACHED_SKIN_UUID_NAME_METADATA)
-                && skinUUID.equalsIgnoreCase(npc.data().<String> get(CACHED_SKIN_UUID_NAME_METADATA))) {
+                && ChatColor.stripColor(skinUUID).equalsIgnoreCase(ChatColor.stripColor(npc.data().<String> get(CACHED_SKIN_UUID_NAME_METADATA)))) {
             skinUUID = npc.data().get(CACHED_SKIN_UUID_METADATA);
         }
         if (UUID_CACHE.containsKey(skinUUID)) {
@@ -151,7 +152,7 @@ public class HumanController extends AbstractEntityController {
             }
             final GameProfileRepository repo = ((CraftServer) Bukkit.getServer()).getServer()
                     .getGameProfileRepository();
-            repo.findProfilesByNames(new String[] { reportedUUID }, Agent.MINECRAFT, new ProfileLookupCallback() {
+            repo.findProfilesByNames(new String[] { ChatColor.stripColor(reportedUUID) }, Agent.MINECRAFT, new ProfileLookupCallback() {
                 @Override
                 public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
                     throw new RuntimeException(arg1);
