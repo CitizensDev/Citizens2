@@ -64,7 +64,7 @@ public class CitizensNPC extends AbstractNPC {
         }
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            getEntity().getLocation().getChunk().load();
+            getEntity().getLocation().getChunk();
             Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Force loaded chunk.");
             return false;
         }
@@ -230,6 +230,9 @@ public class CitizensNPC extends AbstractNPC {
 
                 if (!getNavigator().isNavigating()
                         && getEntity().getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
+                    if (getEntity() instanceof LivingEntity) {
+                        ((LivingEntity) getEntity()).setCustomName(getFullName());
+                    }
                     Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
                     NMS.sendPacketNearby(player, getStoredLocation(),
                             new PacketPlayOutEntityTeleport(NMS.getHandle(getEntity())));
