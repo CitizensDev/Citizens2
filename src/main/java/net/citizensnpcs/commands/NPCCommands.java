@@ -1042,21 +1042,37 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "remove|rem (all)",
+            usage = "remove|rem (all|id|name)",
             desc = "Remove a NPC",
             modifiers = { "remove", "rem" },
             min = 1,
             max = 2)
     @Requirements
-    public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public void remove(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
-            if (!args.getString(1).equalsIgnoreCase("all"))
-                throw new CommandException(Messages.REMOVE_INCORRECT_SYNTAX);
-            if (!sender.hasPermission("citizens.admin.remove.all") && !sender.hasPermission("citizens.admin"))
-                throw new NoPermissionsException();
-            npcRegistry.deregisterAll();
-            Messaging.sendTr(sender, Messages.REMOVED_ALL_NPCS);
-            return;
+            if (args.getString(1).equalsIgnoreCase("all")) {
+                if (!sender.hasPermission("citizens.admin.remove.all") && !sender.hasPermission("citizens.admin"))
+                    throw new NoPermissionsException();
+                npcRegistry.deregisterAll();
+                Messaging.sendTr(sender, Messages.REMOVED_ALL_NPCS);
+                return;
+            } else {
+                 NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
+                    @Override
+                    public void run(NPC npc) throws CommandException {
+                        if (npc == null)
+                            throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
+                        if (!(sender instanceof ConsoleCommandSender) && !npc.getTrait(Owner.class).isOwnedBy(sender))
+                            throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
+                        if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
+                            throw new NoPermissionsException();
+                        npc.destroy();
+                        Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
+                    }
+                };
+                NPCCommandSelector.startWithCallback(callback, npcRegistry, sender, args, args.getString(1));
+                return;
+            }
         }
         if (npc == null)
             throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
