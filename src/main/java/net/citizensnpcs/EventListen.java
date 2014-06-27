@@ -129,7 +129,7 @@ public class EventListen implements Listener {
             toRespawn.put(coord, npc);
             if (Messaging.isDebugging()) {
                 Messaging
-                .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+                        .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
             }
         }
     }

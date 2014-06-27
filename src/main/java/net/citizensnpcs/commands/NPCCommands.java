@@ -79,6 +79,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -267,7 +270,7 @@ public class NPCCommands {
         }
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-                : new CommandSenderCreateNPCEvent(sender, copy);
+        : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
@@ -343,7 +346,7 @@ public class NPCCommands {
             spawnLoc = args.getSenderLocation();
         }
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
-                : new CommandSenderCreateNPCEvent(sender, npc);
+        : new CommandSenderCreateNPCEvent(sender, npc);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
@@ -1018,7 +1021,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         Messaging
-                .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+        .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
@@ -1109,7 +1112,40 @@ public class NPCCommands {
         } else {
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1));
         }
+    }
 
+    @Command(
+            aliases = { "npc" },
+            usage = "scoreboard [objective] [criteria] --team [team] --score [score] --display [slot]",
+            desc = "Sets an NPC's scoreboard",
+            modifiers = { "scoreboard" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.scoreboard")
+    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
+    public void scoreboard(CommandContext args, CommandSender sender, NPC npc) {
+        Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+        String objective = args.getString(0);
+        String criteria = args.getString(1);
+        Objective obj = main.getObjective(objective);
+        if (obj == null) {
+            Bukkit.getScoreboardManager().getMainScoreboard().registerNewObjective(objective, criteria);
+        }
+        Player entity = (Player) npc.getEntity();
+        if (args.hasValueFlag("team")) {
+            String team = args.getFlag("team");
+            if (main.getPlayerTeam(entity) != null)
+                main.getPlayerTeam(entity).removePlayer(entity);
+            if (main.getTeam(team) == null)
+                main.registerNewTeam(team);
+            main.getTeam(team).addPlayer(entity);
+        }
+        if (args.hasValueFlag("display")) {
+            obj.setDisplaySlot(Util.matchEnum(DisplaySlot.values(), args.getFlag("display")));
+        }
+        if (args.hasValueFlag("score")) {
+            obj.getScore(entity).setScore(args.getFlagInteger("score"));
+        }
     }
 
     @Command(

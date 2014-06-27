@@ -23,235 +23,238 @@ import org.bukkit.craftbukkit.v1_7_R3.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
-    private final boolean aggro;
-    private int attackTicks;
-    private CancelReason cancelReason;
-    private final Entity handle;
-    private final NPC npc;
-    private final NavigatorParameters parameters;
-    private final Entity target;
-    private final TargetNavigator targetNavigator;
+	private final boolean aggro;
+	private int attackTicks;
+	private CancelReason cancelReason;
+	private final Entity handle;
+	private final NPC npc;
+	private final NavigatorParameters parameters;
+	private final Entity target;
+	private final TargetNavigator targetNavigator;
 
-    public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
-        this.npc = npc;
-        this.parameters = params;
-        this.handle = ((CraftEntity) npc.getEntity()).getHandle();
-        this.target = ((CraftEntity) target).getHandle();
-        Navigation nav = NMS.getNavigation(this.handle);
-        this.targetNavigator = nav != null && !params.useNewPathfinder() ? new NavigationFieldWrapper(nav)
-                : new AStarTargeter();
-        this.aggro = aggro;
-    }
+	public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro,
+			NavigatorParameters params) {
+		this.npc = npc;
+		this.parameters = params;
+		this.handle = ((CraftEntity) npc.getEntity()).getHandle();
+		this.target = ((CraftEntity) target).getHandle();
+		Navigation nav = NMS.getNavigation(this.handle);
+		this.targetNavigator = nav != null && !params.useNewPathfinder() ? new NavigationFieldWrapper(
+				nav) : new AStarTargeter();
+				this.aggro = aggro;
+	}
 
-    private boolean canAttack() {
-        return attackTicks == 0
-                && (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
-                && closeEnough(distanceSquared()) && hasLineOfSight();
-    }
+	private boolean canAttack() {
+		return attackTicks == 0
+				&& (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
+				&& closeEnough(distanceSquared()) && hasLineOfSight();
+	}
 
-    @Override
-    public void clearCancelReason() {
-        cancelReason = null;
-    }
+	@Override
+	public void clearCancelReason() {
+		cancelReason = null;
+	}
 
-    private boolean closeEnough(double distance) {
-        return distance <= parameters.attackRange();
-    }
+	private boolean closeEnough(double distance) {
+		return distance <= parameters.attackRange();
+	}
 
-    private double distanceSquared() {
-        return handle.getBukkitEntity().getLocation(HANDLE_LOCATION)
-                .distanceSquared(target.getBukkitEntity().getLocation(TARGET_LOCATION));
-    }
+	private double distanceSquared() {
+		return handle.getBukkitEntity().getLocation(HANDLE_LOCATION)
+				.distanceSquared(target.getBukkitEntity().getLocation(TARGET_LOCATION));
+	}
 
-    @Override
-    public CancelReason getCancelReason() {
-        return cancelReason;
-    }
+	@Override
+	public CancelReason getCancelReason() {
+		return cancelReason;
+	}
 
-    @Override
-    public LivingEntity getTarget() {
-        return (LivingEntity) target.getBukkitEntity();
-    }
+	@Override
+	public LivingEntity getTarget() {
+		return (LivingEntity) target.getBukkitEntity();
+	}
 
-    @Override
-    public Location getTargetAsLocation() {
-        return getTarget().getLocation();
-    }
+	@Override
+	public Location getTargetAsLocation() {
+		return getTarget().getLocation();
+	}
 
-    @Override
-    public TargetType getTargetType() {
-        return TargetType.ENTITY;
-    }
+	@Override
+	public TargetType getTargetType() {
+		return TargetType.ENTITY;
+	}
 
-    private boolean hasLineOfSight() {
-        return ((LivingEntity) handle.getBukkitEntity()).hasLineOfSight(target.getBukkitEntity());
-    }
+	private boolean hasLineOfSight() {
+		return ((LivingEntity) handle.getBukkitEntity()).hasLineOfSight(target.getBukkitEntity());
+	}
 
-    @Override
-    public boolean isAggressive() {
-        return aggro;
-    }
+	@Override
+	public boolean isAggressive() {
+		return aggro;
+	}
 
-    private void setPath() {
-        targetNavigator.setPath();
-    }
+	private void setPath() {
+		targetNavigator.setPath();
+	}
 
-    @Override
-    public void stop() {
-        targetNavigator.stop();
-    }
+	@Override
+	public void stop() {
+		targetNavigator.stop();
+	}
 
-    @Override
-    public String toString() {
-        return "MCTargetStrategy [target=" + target + "]";
-    }
+	@Override
+	public String toString() {
+		return "MCTargetStrategy [target=" + target + "]";
+	}
 
-    @Override
-    public boolean update() {
-        if (target == null || !target.getBukkitEntity().isValid()) {
-            cancelReason = CancelReason.TARGET_DIED;
-            return true;
-        }
-        if (target.world != handle.world) {
-            cancelReason = CancelReason.TARGET_MOVED_WORLD;
-            return true;
-        }
-        if (cancelReason != null) {
-            return true;
-        }
-        if (target.world.getWorld().getFullTime() % 10 == 0) {
-            setPath();
-        }
-        NMS.look(handle, target);
-        if (aggro && canAttack()) {
-            AttackStrategy strategy = parameters.attackStrategy();
-            if (strategy != null && strategy.handle((LivingEntity) handle.getBukkitEntity(), getTarget())) {
-            } else if (strategy != parameters.defaultAttackStrategy()) {
-                parameters.defaultAttackStrategy().handle((LivingEntity) handle.getBukkitEntity(), getTarget());
-            }
-            attackTicks = ATTACK_DELAY_TICKS;
-        }
-        if (attackTicks > 0) {
-            attackTicks--;
-        }
+	@Override
+	public boolean update() {
+		if (target == null || !target.getBukkitEntity().isValid()) {
+			cancelReason = CancelReason.TARGET_DIED;
+			return true;
+		}
+		if (target.world != handle.world) {
+			cancelReason = CancelReason.TARGET_MOVED_WORLD;
+			return true;
+		}
+		if (cancelReason != null) {
+			return true;
+		}
+		if (target.world.getWorld().getFullTime() % 10 == 0) {
+			setPath();
+		}
+		NMS.look(handle, target);
+		if (aggro && canAttack()) {
+			AttackStrategy strategy = parameters.attackStrategy();
+			if (strategy != null && strategy.handle((LivingEntity) handle.getBukkitEntity(), getTarget())) {
+			} else
+				if (strategy != parameters.defaultAttackStrategy()) {
+					parameters.defaultAttackStrategy().handle((LivingEntity) handle.getBukkitEntity(),
+							getTarget());
+				}
+			attackTicks = ATTACK_DELAY_TICKS;
+		}
+		if (attackTicks > 0) {
+			attackTicks--;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    private class AStarTargeter implements TargetNavigator {
-        private int failureTimes = 0;
-        private PathStrategy strategy;
+	private class AStarTargeter implements TargetNavigator {
+		private int failureTimes = 0;
+		private PathStrategy strategy;
 
-        public AStarTargeter() {
-            setStrategy();
-        }
+		public AStarTargeter() {
+			setStrategy();
+		}
 
-        @Override
-        public void setPath() {
-            setStrategy();
-            strategy.update();
-            CancelReason subReason = strategy.getCancelReason();
-            if (subReason == CancelReason.STUCK) {
-                if (failureTimes++ > 10) {
-                    cancelReason = strategy.getCancelReason();
-                }
-            } else {
-                failureTimes = 0;
-                cancelReason = strategy.getCancelReason();
-            }
-        }
+		@Override
+		public void setPath() {
+			setStrategy();
+			strategy.update();
+			CancelReason subReason = strategy.getCancelReason();
+			if (subReason == CancelReason.STUCK) {
+				if (failureTimes++ > 10) {
+					cancelReason = strategy.getCancelReason();
+				}
+			} else {
+				failureTimes = 0;
+				cancelReason = strategy.getCancelReason();
+			}
+		}
 
-        private void setStrategy() {
-            Location location = target.getBukkitEntity().getLocation(TARGET_LOCATION);
-            strategy = npc.isFlyable() ? new FlyingAStarNavigationStrategy(npc, location, parameters)
-                    : new AStarNavigationStrategy(npc, location, parameters);
-        }
+		private void setStrategy() {
+			Location location = target.getBukkitEntity().getLocation(TARGET_LOCATION);
+			strategy = npc.isFlyable() ? new FlyingAStarNavigationStrategy(npc, location, parameters)
+			: new AStarNavigationStrategy(npc, location, parameters);
+		}
 
-        @Override
-        public void stop() {
-            strategy.stop();
-        }
-    }
+		@Override
+		public void stop() {
+			strategy.stop();
+		}
+	}
 
-    private class NavigationFieldWrapper implements TargetNavigator {
-        boolean j = true, k, l, m;
-        private final Navigation navigation;
-        float range;
+	private class NavigationFieldWrapper implements TargetNavigator {
+		boolean j = true, k, l, m;
+		private final Navigation navigation;
+		float range;
 
-        private NavigationFieldWrapper(Navigation navigation) {
-            this.navigation = navigation;
-            this.k = navigation.c();
-            this.l = navigation.a();
-            try {
-                if (navigation instanceof PlayerNavigation) {
-                    if (P_NAV_E != null)
-                        range = (float) ((AttributeInstance) P_NAV_E.get(navigation)).getValue();
-                    if (P_NAV_J != null)
-                        j = P_NAV_J.getBoolean(navigation);
-                    if (P_NAV_M != null)
-                        m = P_NAV_M.getBoolean(navigation);
-                } else {
-                    if (E_NAV_E != null)
-                        range = (float) ((AttributeInstance) E_NAV_E.get(navigation)).getValue();
-                    if (E_NAV_J != null)
-                        j = E_NAV_J.getBoolean(navigation);
-                    if (E_NAV_M != null)
-                        m = E_NAV_M.getBoolean(navigation);
-                }
-            } catch (Exception ex) {
-                range = parameters.range();
-            }
-        }
+		private NavigationFieldWrapper(Navigation navigation) {
+			this.navigation = navigation;
+			this.k = navigation.c();
+			this.l = navigation.a();
+			try {
+				if (navigation instanceof PlayerNavigation) {
+					if (P_NAV_E != null)
+						range = (float) ((AttributeInstance) P_NAV_E.get(navigation)).getValue();
+					if (P_NAV_J != null)
+						j = P_NAV_J.getBoolean(navigation);
+					if (P_NAV_M != null)
+						m = P_NAV_M.getBoolean(navigation);
+				} else {
+					if (E_NAV_E != null)
+						range = (float) ((AttributeInstance) E_NAV_E.get(navigation)).getValue();
+					if (E_NAV_J != null)
+						j = E_NAV_J.getBoolean(navigation);
+					if (E_NAV_M != null)
+						m = E_NAV_M.getBoolean(navigation);
+				}
+			} catch (Exception ex) {
+				range = parameters.range();
+			}
+		}
 
-        public PathEntity findPath(Entity from, Entity to) {
-            return handle.world.findPath(from, to, range, j, k, l, m);
-        }
+		public PathEntity findPath(Entity from, Entity to) {
+			return handle.world.findPath(from, to, range, j, k, l, m);
+		}
 
-        @Override
-        public void setPath() {
-            navigation.a(parameters.avoidWater());
-            navigation.a(findPath(handle, target), parameters.speed());
-        }
+		@Override
+		public void setPath() {
+			navigation.a(parameters.avoidWater());
+			navigation.a(findPath(handle, target), parameters.speed());
+		}
 
-        @Override
-        public void stop() {
-            NMS.stopNavigation(navigation);
-        }
-    }
+		@Override
+		public void stop() {
+			NMS.stopNavigation(navigation);
+		}
+	}
 
-    private static interface TargetNavigator {
-        void setPath();
+	private static interface TargetNavigator {
+		void setPath();
 
-        void stop();
-    }
+		void stop();
+	}
 
-    private static final int ATTACK_DELAY_TICKS = 20;
-    static final AttackStrategy DEFAULT_ATTACK_STRATEGY = new AttackStrategy() {
-        @Override
-        public boolean handle(LivingEntity attacker, LivingEntity bukkitTarget) {
-            EntityLiving handle = NMS.getHandle(attacker);
-            EntityLiving target = NMS.getHandle(bukkitTarget);
-            if (handle instanceof EntityPlayer) {
-                EntityPlayer humanHandle = (EntityPlayer) handle;
-                humanHandle.attack(target);
-                PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
-            } else {
-                NMS.attack(handle, target);
-            }
-            return false;
-        }
-    };
-    private static Field E_NAV_E, E_NAV_J, E_NAV_M;
-    private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
-    private static Field P_NAV_E, P_NAV_J, P_NAV_M;
-    private static final Location TARGET_LOCATION = new Location(null, 0, 0, 0);
+	private static final int ATTACK_DELAY_TICKS = 20;
+	static final AttackStrategy DEFAULT_ATTACK_STRATEGY = new AttackStrategy() {
+		@Override
+		public boolean handle(LivingEntity attacker, LivingEntity bukkitTarget) {
+			EntityLiving handle = NMS.getHandle(attacker);
+			EntityLiving target = NMS.getHandle(bukkitTarget);
+			if (handle instanceof EntityPlayer) {
+				EntityPlayer humanHandle = (EntityPlayer) handle;
+				humanHandle.attack(target);
+				PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
+			} else {
+				NMS.attack(handle, target);
+			}
+			return false;
+		}
+	};
+	private static Field E_NAV_E, E_NAV_J, E_NAV_M;
+	private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
+	private static Field P_NAV_E, P_NAV_J, P_NAV_M;
+	private static final Location TARGET_LOCATION = new Location(null, 0, 0, 0);
 
-    static {
-        E_NAV_E = NMS.getField(Navigation.class, "e");
-        E_NAV_J = NMS.getField(Navigation.class, "j");
-        E_NAV_M = NMS.getField(Navigation.class, "m");
-        P_NAV_E = NMS.getField(PlayerNavigation.class, "e");
-        P_NAV_J = NMS.getField(PlayerNavigation.class, "j");
-        P_NAV_M = NMS.getField(PlayerNavigation.class, "m");
-    }
+	static {
+		E_NAV_E = NMS.getField(Navigation.class, "e");
+		E_NAV_J = NMS.getField(Navigation.class, "j");
+		E_NAV_M = NMS.getField(Navigation.class, "m");
+		P_NAV_E = NMS.getField(PlayerNavigation.class, "e");
+		P_NAV_J = NMS.getField(PlayerNavigation.class, "j");
+		P_NAV_M = NMS.getField(PlayerNavigation.class, "m");
+	}
 }
