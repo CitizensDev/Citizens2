@@ -1135,8 +1135,8 @@ public class NPCCommands {
             usage = "scoreboard [objective] [criteria] --team [team] --score [score] --display [slot]",
             desc = "Sets an NPC's scoreboard",
             modifiers = { "scoreboard" },
-            min = 1,
-            max = 2,
+            min = 3,
+            max = 3,
             permission = "citizens.npc.scoreboard")
     @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
     public void scoreboard(CommandContext args, CommandSender sender, NPC npc) {
