@@ -1227,7 +1227,7 @@ public class NPCCommands {
             trait.describe(sender);
             return;
         }
-        int size = Math.max(1, args.getInteger(1));
+        int size = Math.max(-2, args.getInteger(1));
         trait.setSize(size);
         Messaging.sendTr(sender, Messages.SIZE_SET, npc.getName(), size);
     }
