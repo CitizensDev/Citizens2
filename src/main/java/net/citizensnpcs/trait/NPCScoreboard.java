@@ -76,7 +76,7 @@ public class NPCScoreboard extends Trait {
             objectives.add(objective);
         }
         Team playerTeam = objectives.iterator().next().getScoreboard().getPlayerTeam((Player) npc.getEntity());
-        if (team == null) {
+        if (team == null && playerTeam != null) {
             team = playerTeam.getName();
         }
         if (scoreboard == null) {
@@ -100,7 +100,10 @@ public class NPCScoreboard extends Trait {
             }
         }
         if (npc.getEntity() instanceof Player && team == null) {
-            team = objectives.iterator().next().getScoreboard().getPlayerTeam((Player) npc.getEntity()).getName();
+            Team playerTeam = objectives.iterator().next().getScoreboard().getPlayerTeam((Player) npc.getEntity());
+            if (playerTeam != null) {
+                team = playerTeam.getName();
+            }
         }
         if (team != null) {
             root.setString("team", team);
