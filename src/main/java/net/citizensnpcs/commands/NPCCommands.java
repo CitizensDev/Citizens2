@@ -270,7 +270,7 @@ public class NPCCommands {
         }
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-        : new CommandSenderCreateNPCEvent(sender, copy);
+                : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
@@ -346,7 +346,7 @@ public class NPCCommands {
             spawnLoc = args.getSenderLocation();
         }
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
-        : new CommandSenderCreateNPCEvent(sender, npc);
+                : new CommandSenderCreateNPCEvent(sender, npc);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
@@ -1021,7 +1021,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         Messaging
-        .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+                .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
@@ -1043,13 +1043,8 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), profession);
     }
 
-    @Command(
-            aliases = { "npc" },
-            usage = "remove|rem (all|id|name)",
-            desc = "Remove a NPC",
-            modifiers = { "remove", "rem" },
-            min = 1,
-            max = 2)
+    @Command(aliases = { "npc" }, usage = "remove|rem (all|id|name)", desc = "Remove a NPC", modifiers = { "remove",
+            "rem" }, min = 1, max = 2)
     @Requirements
     public void remove(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
@@ -1060,7 +1055,7 @@ public class NPCCommands {
                 Messaging.sendTr(sender, Messages.REMOVED_ALL_NPCS);
                 return;
             } else {
-                 NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
+                NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
                     @Override
                     public void run(NPC npc) throws CommandException {
                         if (npc == null)
@@ -1141,11 +1136,11 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
     public void scoreboard(CommandContext args, CommandSender sender, NPC npc) {
         Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
-        String objective = args.getString(0);
-        String criteria = args.getString(1);
+        String objective = args.getString(1);
+        String criteria = args.getString(2);
         Objective obj = main.getObjective(objective);
         if (obj == null) {
-            Bukkit.getScoreboardManager().getMainScoreboard().registerNewObjective(objective, criteria);
+            obj = Bukkit.getScoreboardManager().getMainScoreboard().registerNewObjective(objective, criteria);
         }
         Player entity = (Player) npc.getEntity();
         if (args.hasValueFlag("team")) {
