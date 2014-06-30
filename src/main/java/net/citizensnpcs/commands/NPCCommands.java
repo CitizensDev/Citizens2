@@ -42,6 +42,7 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.NPCScoreboard;
 import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
@@ -79,6 +80,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -270,7 +272,7 @@ public class NPCCommands {
         }
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-                : new CommandSenderCreateNPCEvent(sender, copy);
+        : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
@@ -346,7 +348,7 @@ public class NPCCommands {
             spawnLoc = args.getSenderLocation();
         }
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
-                : new CommandSenderCreateNPCEvent(sender, npc);
+        : new CommandSenderCreateNPCEvent(sender, npc);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
@@ -1021,7 +1023,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         Messaging
-                .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+        .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
@@ -1044,7 +1046,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, usage = "remove|rem (all|id|name)", desc = "Remove a NPC", modifiers = { "remove",
-            "rem" }, min = 1, max = 2)
+    "rem" }, min = 1, max = 2)
     @Requirements
     public void remove(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
@@ -1135,16 +1137,22 @@ public class NPCCommands {
             permission = "citizens.npc.scoreboard")
     @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
     public void scoreboard(CommandContext args, CommandSender sender, NPC npc) {
-        Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
-        String objective = args.getString(1);
-        String criteria = args.getString(2);
+        Iterable<MetadataValue> itr = npc.getEntity().getMetadata("citizens.scoreboard");
+        Scoreboard main;
+        if (!itr.iterator().hasNext()) {
+            main = Bukkit.getScoreboardManager().getNewScoreboard();
+        } else {
+            main = (Scoreboard) itr.iterator().next().value();
+        }
+        String objective = Colorizer.parseColors(args.getString(1));
+        String criteria = Colorizer.parseColors(args.getString(2));
         Objective obj = main.getObjective(objective);
         if (obj == null) {
-            obj = Bukkit.getScoreboardManager().getMainScoreboard().registerNewObjective(objective, criteria);
+            obj = main.registerNewObjective(objective, criteria);
         }
         Player entity = (Player) npc.getEntity();
         if (args.hasValueFlag("team")) {
-            String team = args.getFlag("team");
+            String team = Colorizer.parseColors(args.getFlag("team"));
             if (main.getPlayerTeam(entity) != null)
                 main.getPlayerTeam(entity).removePlayer(entity);
             if (main.getTeam(team) == null)
@@ -1157,6 +1165,7 @@ public class NPCCommands {
         if (args.hasValueFlag("score")) {
             obj.getScore(entity).setScore(args.getFlagInteger("score"));
         }
+        npc.getTrait(NPCScoreboard.class).persistObjective(obj);
     }
 
     @Command(
