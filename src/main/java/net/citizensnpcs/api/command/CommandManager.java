@@ -98,6 +98,7 @@ public class CommandManager {
             page = args.length == 3 ? Integer.parseInt(args[2]) : page;
         } catch (NumberFormatException e) {
             sendSpecificHelp(sender, args[0], args[2]);
+            return;
         }
         sendHelp(sender, args[0], page);
     }

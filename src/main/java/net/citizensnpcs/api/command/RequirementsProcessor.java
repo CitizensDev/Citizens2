@@ -37,8 +37,9 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
             npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
             if (methodArgs.length >= 3)
                 methodArgs[2] = npc;
-            if (npc == null)
+            if (npc == null) {
                 error += ' ' + Messaging.tr(CommandMessages.ID_NOT_FOUND, context.getFlagInteger("id"));
+            }
         }
         if (requirements.selected() && npc == null) {
             throw new RequirementMissingException(error);
