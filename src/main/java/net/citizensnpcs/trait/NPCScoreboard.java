@@ -14,8 +14,10 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import com.google.common.collect.Sets;
+
 public class NPCScoreboard extends Trait {
-    private Set<Objective> objectives;
+    private final Set<Objective> objectives = Sets.newHashSet();
     private Scoreboard scoreboard;
     private String team;
 
