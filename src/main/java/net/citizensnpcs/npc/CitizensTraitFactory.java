@@ -24,7 +24,6 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.NPCScoreboard;
 import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
@@ -64,7 +63,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Powered.class).withName("powered"));
         registerTrait(TraitInfo.create(Saddle.class).withName("saddle"));
         registerTrait(TraitInfo.create(Sheared.class).withName("sheared"));
-        registerTrait(TraitInfo.create(NPCScoreboard.class).withName("npcscoreboard"));
         registerTrait(TraitInfo.create(NPCSkeletonType.class).withName("skeletontype"));
         registerTrait(TraitInfo.create(SlimeSize.class).withName("slimesize"));
         registerTrait(TraitInfo.create(Spawned.class).withName("spawned"));

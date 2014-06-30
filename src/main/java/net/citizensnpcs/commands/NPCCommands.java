@@ -42,7 +42,6 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.NPCScoreboard;
 import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
@@ -80,11 +79,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -1126,48 +1120,6 @@ public class NPCCommands {
         } else {
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1));
         }
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "scoreboard [objective] [criteria] --team [team] --score [score] --display [slot]",
-            desc = "Sets an NPC's scoreboard",
-            modifiers = { "scoreboard" },
-            min = 3,
-            max = 3,
-            permission = "citizens.npc.scoreboard")
-    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
-    public void scoreboard(CommandContext args, CommandSender sender, NPC npc) {
-        Iterable<MetadataValue> itr = npc.getEntity().getMetadata("citizens.scoreboard");
-        Scoreboard main;
-        if (!itr.iterator().hasNext()) {
-            main = Bukkit.getScoreboardManager().getNewScoreboard();
-            npc.getEntity().setMetadata("citizens.scoreboard", new FixedMetadataValue(CitizensAPI.getPlugin(), main));
-        } else {
-            main = (Scoreboard) itr.iterator().next().value();
-        }
-        String objective = Colorizer.parseColors(args.getString(1));
-        String criteria = Colorizer.parseColors(args.getString(2));
-        Objective obj = main.getObjective(objective);
-        if (obj == null) {
-            obj = main.registerNewObjective(objective, criteria);
-        }
-        Player entity = (Player) npc.getEntity();
-        if (args.hasValueFlag("team")) {
-            String team = Colorizer.parseColors(args.getFlag("team"));
-            if (main.getPlayerTeam(entity) != null)
-                main.getPlayerTeam(entity).removePlayer(entity);
-            if (main.getTeam(team) == null)
-                main.registerNewTeam(team);
-            main.getTeam(team).addPlayer(entity);
-        }
-        if (args.hasValueFlag("display")) {
-            obj.setDisplaySlot(Util.matchEnum(DisplaySlot.values(), args.getFlag("display")));
-        }
-        if (args.hasValueFlag("score")) {
-            obj.getScore(entity).setScore(args.getFlagInteger("score"));
-        }
-        npc.getTrait(NPCScoreboard.class).persistObjective(obj);
     }
 
     @Command(
