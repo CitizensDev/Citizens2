@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_7_R3.EntityBat;
-import net.minecraft.server.v1_7_R3.World;
+import net.minecraft.server.v1_7_R4.EntityBat;
+import net.minecraft.server.v1_7_R4.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftBat;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftBat;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
 import org.bukkit.entity.Bat;
 import org.bukkit.util.Vector;
 
@@ -58,20 +58,20 @@ public class BatController extends MobEntityController {
         }
 
         @Override
-        protected String aS() {
-            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.aS() : npc.data().get(
-                    NPC.HURT_SOUND_METADATA, super.aS());
-        }
-
-        @Override
         protected String aT() {
-            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.aT() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.aT());
+            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.aT() : npc.data().get(
+                    NPC.HURT_SOUND_METADATA, super.aT());
         }
 
         @Override
-        public void bm() {
+        protected String aU() {
+            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.aU() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.aU());
+        }
+
+        @Override
+        public void bn() {
             if (npc == null) {
-                super.bm();
+                super.bn();
             } else {
                 NMS.updateAI(this);
                 npc.update();
@@ -93,7 +93,7 @@ public class BatController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_7_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_7_R4.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -144,7 +144,7 @@ public class BatController extends MobEntityController {
         }
 
         public void setFlying(boolean flying) {
-            setStartled(flying);
+            setAsleep(flying);
         }
 
         @Override

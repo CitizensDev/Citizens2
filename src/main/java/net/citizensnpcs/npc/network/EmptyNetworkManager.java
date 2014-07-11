@@ -3,7 +3,7 @@ package net.citizensnpcs.npc.network;
 import java.io.IOException;
 
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_7_R3.NetworkManager;
+import net.minecraft.server.v1_7_R4.NetworkManager;
 
 public class EmptyNetworkManager extends NetworkManager {
     public EmptyNetworkManager(boolean flag) throws IOException {

@@ -6,13 +6,13 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_7_R3.EntitySmallFireball;
-import net.minecraft.server.v1_7_R3.World;
+import net.minecraft.server.v1_7_R4.EntitySmallFireball;
+import net.minecraft.server.v1_7_R4.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftSmallFireball;
+import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftSmallFireball;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.util.Vector;
 
@@ -39,7 +39,7 @@ public class SmallFireballController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_7_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_7_R4.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
