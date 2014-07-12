@@ -1,20 +1,20 @@
 package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_7_R3.AttributeInstance;
-import net.minecraft.server.v1_7_R3.Block;
-import net.minecraft.server.v1_7_R3.Blocks;
-import net.minecraft.server.v1_7_R3.Entity;
-import net.minecraft.server.v1_7_R3.EntityChicken;
-import net.minecraft.server.v1_7_R3.EntityInsentient;
-import net.minecraft.server.v1_7_R3.GenericAttributes;
-import net.minecraft.server.v1_7_R3.Material;
-import net.minecraft.server.v1_7_R3.MathHelper;
-import net.minecraft.server.v1_7_R3.Navigation;
-import net.minecraft.server.v1_7_R3.PathEntity;
-import net.minecraft.server.v1_7_R3.PathPoint;
-import net.minecraft.server.v1_7_R3.Vec3D;
-import net.minecraft.server.v1_7_R3.World;
+import net.minecraft.server.v1_7_R4.AttributeInstance;
+import net.minecraft.server.v1_7_R4.Block;
+import net.minecraft.server.v1_7_R4.Blocks;
+import net.minecraft.server.v1_7_R4.Entity;
+import net.minecraft.server.v1_7_R4.EntityChicken;
+import net.minecraft.server.v1_7_R4.EntityInsentient;
+import net.minecraft.server.v1_7_R4.GenericAttributes;
+import net.minecraft.server.v1_7_R4.Material;
+import net.minecraft.server.v1_7_R4.MathHelper;
+import net.minecraft.server.v1_7_R4.Navigation;
+import net.minecraft.server.v1_7_R4.PathEntity;
+import net.minecraft.server.v1_7_R4.PathPoint;
+import net.minecraft.server.v1_7_R4.Vec3D;
+import net.minecraft.server.v1_7_R4.World;
 
 public class PlayerNavigation extends Navigation {
 
@@ -100,7 +100,7 @@ public class PlayerNavigation extends Navigation {
                             return false;
                         }
 
-                        if (material == Material.WATER && !this.a.L()) {
+                        if (material == Material.WATER && !this.a.M()) {
                             return false;
                         }
 
@@ -341,7 +341,7 @@ public class PlayerNavigation extends Navigation {
     }
 
     private int k() {
-        if (this.a.L() && this.m) {
+        if (this.a.M() && this.m) {
             int i = (int) this.a.boundingBox.b;
             Block block = this.b.getType(MathHelper.floor(this.a.locX), i, MathHelper.floor(this.a.locZ));
             int j = 0;
@@ -363,11 +363,11 @@ public class PlayerNavigation extends Navigation {
     }
 
     private boolean l() {
-        return this.a.onGround || this.m && this.m() || this.a.al() && this.a.vehicle instanceof EntityChicken;
+        return this.a.onGround || this.m && this.m() || this.a.am() && this.a.vehicle instanceof EntityChicken;
     }
 
     private boolean m() {
-        return this.a.L() || this.a.O();
+        return this.a.M() || this.a.P();
     }
 
     private void n() {

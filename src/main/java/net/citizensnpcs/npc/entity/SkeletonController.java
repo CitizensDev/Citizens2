@@ -7,13 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_7_R3.EntitySkeleton;
-import net.minecraft.server.v1_7_R3.World;
+import net.minecraft.server.v1_7_R4.EntitySkeleton;
+import net.minecraft.server.v1_7_R4.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftSkeleton;
+import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftSkeleton;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.util.Vector;
 
@@ -50,13 +50,13 @@ public class SkeletonController extends MobEntityController {
         }
 
         @Override
-        protected String aS() {
-            return npc == null ? super.aS() : npc.data().get(NPC.HURT_SOUND_METADATA, super.aS());
+        protected String aT() {
+            return npc == null ? super.aT() : npc.data().get(NPC.HURT_SOUND_METADATA, super.aT());
         }
 
         @Override
-        protected String aT() {
-            return npc == null ? super.aT() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.aT());
+        protected String aU() {
+            return npc == null ? super.aU() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.aU());
         }
 
         @Override
@@ -67,8 +67,8 @@ public class SkeletonController extends MobEntityController {
         }
 
         @Override
-        public void bm() {
-            super.bm();
+        public void bn() {
+            super.bn();
             if (npc != null) {
                 npc.update();
             }
@@ -88,7 +88,7 @@ public class SkeletonController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_7_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_7_R4.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
