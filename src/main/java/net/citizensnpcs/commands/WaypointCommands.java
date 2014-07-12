@@ -20,7 +20,7 @@ public class WaypointCommands {
     // TODO: refactor into a policy style system
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
-            usage = "disableteleporting",
+            usage = "disableteleport",
             desc = "Disables teleportation when stuck (temporary command)",
             modifiers = { "disableteleport" },
             min = 1,
