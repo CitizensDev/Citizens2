@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.trait.trait;
 
+import java.util.Map;
+
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
@@ -11,6 +13,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+
+import com.google.common.collect.Maps;
 
 /**
  * Represents an NPC's equipment. This only is applicable to human and enderman
@@ -24,8 +28,15 @@ public class Equipment extends Trait {
     }
 
     /**
+     * @see #get(int)
+     */
+    public ItemStack get(EquipmentSlot slot) {
+        return get(slot.getIndex());
+    }
+
+    /**
      * Get an NPC's equipment from the given slot.
-     * 
+     *
      * @param slot
      *            Slot where the armor is located (0, 1, 2, 3, or 4)
      * @return ItemStack from the given armor slot
@@ -41,11 +52,26 @@ public class Equipment extends Trait {
 
     /**
      * Get all of an NPC's equipment.
-     * 
+     *
      * @return An array of an NPC's equipment
      */
     public ItemStack[] getEquipment() {
         return equipment;
+    }
+
+    /**
+     * Get all of the equipment as a {@link Map}.
+     *
+     * @return A mapping of slot to item
+     */
+    public Map<EquipmentSlot, ItemStack> getEquipmentBySlot() {
+        Map<EquipmentSlot, ItemStack> map = Maps.newEnumMap(EquipmentSlot.class);
+        map.put(EquipmentSlot.HAND, equipment[0]);
+        map.put(EquipmentSlot.HELMET, equipment[1]);
+        map.put(EquipmentSlot.CHESTPLATE, equipment[2]);
+        map.put(EquipmentSlot.LEGGINGS, equipment[3]);
+        map.put(EquipmentSlot.BOOTS, equipment[4]);
+        return map;
     }
 
     private EntityEquipment getEquipmentFromEntity(LivingEntity entity) {
@@ -111,8 +137,15 @@ public class Equipment extends Trait {
     }
 
     /**
+     * @see #set(int, ItemStack)
+     */
+    public void set(EquipmentSlot slot, ItemStack item) {
+        set(slot.getIndex(), item);
+    }
+
+    /**
      * Set the armor from the given slot as the given item.
-     * 
+     *
      * @param slot
      *            Slot of the armor (must be between 0 and 4)
      * @param item
@@ -158,6 +191,23 @@ public class Equipment extends Trait {
     public String toString() {
         return "{hand=" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2] + ",leggings="
                 + equipment[3] + ",boots=" + equipment[4] + "}";
+    }
+
+    public enum EquipmentSlot {
+        BOOTS(4),
+        CHESTPLATE(2),
+        HAND(0),
+        HELMET(1),
+        LEGGINGS(3);
+        private int index;
+
+        EquipmentSlot(int index) {
+            this.index = index;
+        }
+
+        int getIndex() {
+            return index;
+        }
     }
 
     private static class PlayerEquipmentWrapper implements EntityEquipment {
