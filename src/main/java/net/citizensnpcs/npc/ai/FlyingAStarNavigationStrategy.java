@@ -5,7 +5,9 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.AStarMachine;
+import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
+import net.citizensnpcs.api.astar.pathfinder.FlyingBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
@@ -31,6 +33,16 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         this.npc = npc;
         Location location = Util.getEyeLocation(npc.getEntity());
         VectorGoal goal = new VectorGoal(dest, (float) params.pathDistanceMargin());
+        boolean found = false;
+        for (BlockExaminer examiner : params.examiners()) {
+            if (examiner instanceof FlyingBlockExaminer) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            params.examiner(new FlyingBlockExaminer());
+        }
         plan = ASTAR.runFully(goal, new VectorNode(goal, location, new ChunkBlockSource(location, params.range()),
                 params.examiners()), 50000);
         if (plan == null || plan.isComplete()) {
