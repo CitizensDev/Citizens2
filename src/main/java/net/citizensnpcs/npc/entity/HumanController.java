@@ -22,8 +22,8 @@ import net.minecraft.util.com.mojang.authlib.minecraft.MinecraftSessionService;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 import org.bukkit.entity.Entity;
@@ -77,8 +77,10 @@ public class HumanController extends AbstractEntityController {
         if (skinUUID == null) {
             skinUUID = npc.getName();
         }
-        if (npc.data().has(CACHED_SKIN_UUID_METADATA) && npc.data().has(CACHED_SKIN_UUID_NAME_METADATA)
-                && ChatColor.stripColor(skinUUID).equalsIgnoreCase(ChatColor.stripColor(npc.data().<String> get(CACHED_SKIN_UUID_NAME_METADATA)))) {
+        if (npc.data().has(CACHED_SKIN_UUID_METADATA)
+                && npc.data().has(CACHED_SKIN_UUID_NAME_METADATA)
+                && ChatColor.stripColor(skinUUID).equalsIgnoreCase(
+                        ChatColor.stripColor(npc.data().<String> get(CACHED_SKIN_UUID_NAME_METADATA)))) {
             skinUUID = npc.data().get(CACHED_SKIN_UUID_METADATA);
         }
         if (UUID_CACHE.containsKey(skinUUID)) {
@@ -89,7 +91,8 @@ public class HumanController extends AbstractEntityController {
             profile.getProperties().put("textures", cached);
         } else {
             Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(),
-                    new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().av(), npc));
+                    new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().av(), npc),
+                    Math.ceil(Math.min(0, 40 * Math.random())));
         }
     }
 
@@ -152,20 +155,21 @@ public class HumanController extends AbstractEntityController {
             }
             final GameProfileRepository repo = ((CraftServer) Bukkit.getServer()).getServer()
                     .getGameProfileRepository();
-            repo.findProfilesByNames(new String[] { ChatColor.stripColor(reportedUUID) }, Agent.MINECRAFT, new ProfileLookupCallback() {
-                @Override
-                public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
-                    throw new RuntimeException(arg1);
-                }
+            repo.findProfilesByNames(new String[] { ChatColor.stripColor(reportedUUID) }, Agent.MINECRAFT,
+                    new ProfileLookupCallback() {
+                        @Override
+                        public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
+                            throw new RuntimeException(arg1);
+                        }
 
-                @Override
-                public void onProfileLookupSucceeded(final GameProfile profile) {
-                    UUID_CACHE.put(reportedUUID, profile.getId().toString());
-                    npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
-                    npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
-                }
-            });
-            return npc.data().get(CACHED_SKIN_UUID_METADATA);
+                        @Override
+                        public void onProfileLookupSucceeded(final GameProfile profile) {
+                            UUID_CACHE.put(reportedUUID, profile.getId().toString());
+                            npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
+                            npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
+                        }
+                    });
+            return npc.data().get(CACHED_SKIN_UUID_METADATA, reportedUUID);
         }
     }
 
