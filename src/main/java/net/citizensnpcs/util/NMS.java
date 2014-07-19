@@ -176,7 +176,7 @@ public class NMS {
 
     @SuppressWarnings("deprecation")
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-    NoSuchMethodException {
+            NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -264,7 +264,7 @@ public class NMS {
         Entity mcEntity = getHandle(entity);
         if (mcEntity == null)
             return false;
-        return mcEntity.L() || mcEntity.P();
+        return mcEntity.M() || mcEntity.P();
     }
 
     public static boolean isNavigationFinished(Navigation navigation) {
