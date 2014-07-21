@@ -61,6 +61,13 @@ public class Inventory extends Trait {
     }
 
     @Override
+    public void run() {
+        if (npc.getEntity() instanceof Player) {
+            contents = ((Player) npc.getEntity()).getInventory().getContents();
+        }
+    }
+
+    @Override
     public void save(DataKey key) {
         int slot = 0;
         for (ItemStack item : contents) {
