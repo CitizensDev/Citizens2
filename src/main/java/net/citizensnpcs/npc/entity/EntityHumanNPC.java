@@ -7,6 +7,7 @@ import java.util.List;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.network.EmptyNetHandler;
@@ -292,6 +293,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
             this.cserver = (CraftServer) Bukkit.getServer();
+            npc.getTrait(Inventory.class);
         }
 
         @Override
