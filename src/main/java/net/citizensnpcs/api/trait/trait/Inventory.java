@@ -7,6 +7,8 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 
+import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -22,7 +24,7 @@ public class Inventory extends Trait {
 
     /**
      * Gets the contents of an NPC's inventory.
-     * 
+     *
      * @return ItemStack array of an NPC's inventory contents
      */
     public ItemStack[] getContents() {
@@ -32,6 +34,23 @@ public class Inventory extends Trait {
     @Override
     public void load(DataKey key) throws NPCLoadException {
         contents = parseContents(key);
+    }
+
+    @Override
+    public void onSpawn() {
+        switch (npc.getEntity().getType()) {
+            case PLAYER:
+                ((Player) npc.getEntity()).getInventory().setContents(contents);
+                break;
+            case MINECART:
+                if (npc.getEntity() instanceof StorageMinecart) {
+                    ((StorageMinecart) npc.getEntity()).getInventory().setContents(
+                            Arrays.copyOf(contents, contents.length * 2));
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
@@ -56,7 +75,7 @@ public class Inventory extends Trait {
 
     /**
      * Sets the contents of an NPC's inventory.
-     * 
+     *
      * @param contents
      *            ItemStack array to set as the contents of an NPC's inventory
      */
