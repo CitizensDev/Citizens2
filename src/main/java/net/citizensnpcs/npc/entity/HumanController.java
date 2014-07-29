@@ -119,7 +119,7 @@ public class HumanController extends AbstractEntityController {
                 skinProfile = repo.fillProfileProperties(new GameProfile(UUID.fromString(realUUID), ""), true);
             } catch (Exception e) {
                 if (e.getMessage().contains("too many requests")) {
-                    Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), this, 200);
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(CitizensAPI.getPlugin(), this, 200);
                 }
                 return;
             }
