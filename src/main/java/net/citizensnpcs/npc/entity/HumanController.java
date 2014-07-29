@@ -90,9 +90,8 @@ public class HumanController extends AbstractEntityController {
         if (cached != null) {
             profile.getProperties().put("textures", cached);
         } else {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(CitizensAPI.getPlugin(),
-                    new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().av(), npc),
-                    (int) Math.ceil(Math.min(1, 40 * Math.random())));
+            Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(),
+                    new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().av(), npc));
         }
     }
 
@@ -119,6 +118,9 @@ public class HumanController extends AbstractEntityController {
             try {
                 skinProfile = repo.fillProfileProperties(new GameProfile(UUID.fromString(realUUID), ""), true);
             } catch (Exception e) {
+                if (e.getMessage().contains("too many requests")) {
+                    Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), this, 200);
+                }
                 return;
             }
             if (skinProfile == null || !skinProfile.getProperties().containsKey("textures"))
@@ -157,18 +159,18 @@ public class HumanController extends AbstractEntityController {
                     .getGameProfileRepository();
             repo.findProfilesByNames(new String[] { ChatColor.stripColor(reportedUUID) }, Agent.MINECRAFT,
                     new ProfileLookupCallback() {
-                @Override
-                public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
-                    throw new RuntimeException(arg1);
-                }
+                        @Override
+                        public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
+                            throw new RuntimeException(arg1);
+                        }
 
-                @Override
-                public void onProfileLookupSucceeded(final GameProfile profile) {
-                    UUID_CACHE.put(reportedUUID, profile.getId().toString());
-                    npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
-                    npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
-                }
-            });
+                        @Override
+                        public void onProfileLookupSucceeded(final GameProfile profile) {
+                            UUID_CACHE.put(reportedUUID, profile.getId().toString());
+                            npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
+                            npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
+                        }
+                    });
             return npc.data().get(CACHED_SKIN_UUID_METADATA, reportedUUID);
         }
     }
