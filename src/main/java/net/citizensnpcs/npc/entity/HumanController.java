@@ -1,5 +1,7 @@
 package net.citizensnpcs.npc.entity;
 
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -17,9 +19,14 @@ import net.minecraft.util.com.google.common.collect.Iterables;
 import net.minecraft.util.com.mojang.authlib.Agent;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.GameProfileRepository;
+import net.minecraft.util.com.mojang.authlib.HttpAuthenticationService;
 import net.minecraft.util.com.mojang.authlib.ProfileLookupCallback;
 import net.minecraft.util.com.mojang.authlib.minecraft.MinecraftSessionService;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
+import net.minecraft.util.com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import net.minecraft.util.com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
+import net.minecraft.util.com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
+import net.minecraft.util.com.mojang.util.UUIDTypeAdapter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -106,6 +113,27 @@ public class HumanController extends AbstractEntityController {
             this.npc = npc;
         }
 
+        /*
+         * Yggdrasil's default implementation of this method silently fails instead of throwing an Exception like it should.
+         */
+        private GameProfile fillProfileProperties(YggdrasilAuthenticationService auth, GameProfile profile,
+                boolean requireSecure) throws Exception {
+            URL url = HttpAuthenticationService.constantURL(new StringBuilder()
+                    .append("https://sessionserver.mojang.com/session/minecraft/profile/")
+                    .append(UUIDTypeAdapter.fromUUID(profile.getId())).toString());
+            url = HttpAuthenticationService.concatenateURL(url,
+                    new StringBuilder().append("unsigned=").append(!requireSecure).toString());
+            MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse) MAKE_REQUEST.invoke(url,
+                    null, MinecraftProfilePropertiesResponse.class);
+            if (response == null) {
+                return profile;
+            }
+            GameProfile result = new GameProfile(response.getId(), response.getName());
+            result.getProperties().putAll(response.getProperties());
+            profile.getProperties().putAll(response.getProperties());
+            return result;
+        }
+
         @Override
         public void run() {
             String realUUID;
@@ -116,7 +144,9 @@ public class HumanController extends AbstractEntityController {
             }
             GameProfile skinProfile = null;
             try {
-                skinProfile = repo.fillProfileProperties(new GameProfile(UUID.fromString(realUUID), ""), true);
+                skinProfile = fillProfileProperties(
+                        ((YggdrasilMinecraftSessionService) repo).getAuthenticationService(),
+                        new GameProfile(UUID.fromString(realUUID), ""), true);
             } catch (Exception e) {
                 if (e.getMessage().contains("too many requests")) {
                     Bukkit.getScheduler().runTaskLaterAsynchronously(CitizensAPI.getPlugin(), this, 200);
@@ -139,6 +169,18 @@ public class HumanController extends AbstractEntityController {
                 });
             }
         }
+
+        private static Method MAKE_REQUEST;
+
+        static {
+            try {
+                MAKE_REQUEST = YggdrasilAuthenticationService.class.getDeclaredMethod("makeRequest", URL.class,
+                        Object.class, Class.class);
+                MAKE_REQUEST.setAccessible(true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     public static class UUIDFetcher implements Callable<String> {
@@ -159,18 +201,18 @@ public class HumanController extends AbstractEntityController {
                     .getGameProfileRepository();
             repo.findProfilesByNames(new String[] { ChatColor.stripColor(reportedUUID) }, Agent.MINECRAFT,
                     new ProfileLookupCallback() {
-                        @Override
-                        public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
-                            throw new RuntimeException(arg1);
-                        }
+                @Override
+                public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
+                    throw new RuntimeException(arg1);
+                }
 
-                        @Override
-                        public void onProfileLookupSucceeded(final GameProfile profile) {
-                            UUID_CACHE.put(reportedUUID, profile.getId().toString());
-                            npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
-                            npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
-                        }
-                    });
+                @Override
+                public void onProfileLookupSucceeded(final GameProfile profile) {
+                    UUID_CACHE.put(reportedUUID, profile.getId().toString());
+                    npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
+                    npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
+                }
+            });
             return npc.data().get(CACHED_SKIN_UUID_METADATA, reportedUUID);
         }
     }
