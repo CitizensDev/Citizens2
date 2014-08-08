@@ -4,7 +4,9 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.Callable;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -41,6 +43,10 @@ import com.google.common.collect.Maps;
 public class HumanController extends AbstractEntityController {
     public HumanController() {
         super();
+        if (SKIN_THREAD == null) {
+            Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), SKIN_THREAD = new SkinThread(),
+                    10, 100);
+        }
     }
 
     @Override
@@ -97,8 +103,8 @@ public class HumanController extends AbstractEntityController {
         if (cached != null) {
             profile.getProperties().put("textures", cached);
         } else {
-            Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(),
-                    new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().av(), npc));
+            SKIN_THREAD.addRunnable(new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().av(),
+                    npc));
         }
     }
 
@@ -119,8 +125,8 @@ public class HumanController extends AbstractEntityController {
         private GameProfile fillProfileProperties(YggdrasilAuthenticationService auth, GameProfile profile,
                 boolean requireSecure) throws Exception {
             URL url = HttpAuthenticationService.constantURL(new StringBuilder()
-            .append("https://sessionserver.mojang.com/session/minecraft/profile/")
-            .append(UUIDTypeAdapter.fromUUID(profile.getId())).toString());
+                    .append("https://sessionserver.mojang.com/session/minecraft/profile/")
+                    .append(UUIDTypeAdapter.fromUUID(profile.getId())).toString());
             url = HttpAuthenticationService.concatenateURL(url,
                     new StringBuilder().append("unsigned=").append(!requireSecure).toString());
             MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse) MAKE_REQUEST.invoke(
@@ -148,8 +154,8 @@ public class HumanController extends AbstractEntityController {
                         ((YggdrasilMinecraftSessionService) repo).getAuthenticationService(),
                         new GameProfile(UUID.fromString(realUUID), ""), true);
             } catch (Exception e) {
-                if (e.getMessage().contains("too many requests")) {
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(CitizensAPI.getPlugin(), this, 200);
+                if (e.getMessage() != null && e.getMessage().contains("too many requests")) {
+                    SKIN_THREAD.addRunnable(this);
                 }
                 return;
             }
@@ -158,29 +164,36 @@ public class HumanController extends AbstractEntityController {
             Property textures = Iterables.getFirst(skinProfile.getProperties().get("textures"), null);
             if (textures.getValue() != null && textures.getSignature() != null) {
                 TEXTURE_CACHE.put(realUUID, new Property("textures", textures.getValue(), textures.getSignature()));
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), new Callable<Void>() {
                     @Override
-                    public void run() {
+                    public Void call() {
                         if (npc.isSpawned()) {
                             npc.despawn(DespawnReason.PENDING_RESPAWN);
                             npc.spawn(npc.getStoredLocation());
                         }
+                        return null;
                     }
                 });
             }
         }
+    }
 
-        private static Method MAKE_REQUEST;
+    public static class SkinThread implements Runnable {
+        private final BlockingDeque<Runnable> tasks = new LinkedBlockingDeque<Runnable>();
 
-        static {
-            try {
-                MAKE_REQUEST = YggdrasilAuthenticationService.class.getDeclaredMethod("makeRequest", URL.class,
-                        Object.class, Class.class);
-                MAKE_REQUEST.setAccessible(true);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        public void addRunnable(Runnable r) {
+            tasks.offer(r);
         }
+
+        @Override
+        public void run() {
+            Runnable r = tasks.pollFirst();
+            if (r == null) {
+                return;
+            }
+            r.run();
+        }
+
     }
 
     public static class UUIDFetcher implements Callable<String> {
@@ -201,24 +214,35 @@ public class HumanController extends AbstractEntityController {
                     .getGameProfileRepository();
             repo.findProfilesByNames(new String[] { ChatColor.stripColor(reportedUUID) }, Agent.MINECRAFT,
                     new ProfileLookupCallback() {
-                        @Override
-                        public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
-                            throw new RuntimeException(arg1);
-                        }
+                @Override
+                public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
+                    throw new RuntimeException(arg1);
+                }
 
-                        @Override
-                        public void onProfileLookupSucceeded(final GameProfile profile) {
-                            UUID_CACHE.put(reportedUUID, profile.getId().toString());
-                            npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
-                            npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
-                        }
-                    });
+                @Override
+                public void onProfileLookupSucceeded(final GameProfile profile) {
+                    UUID_CACHE.put(reportedUUID, profile.getId().toString());
+                    npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
+                    npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
+                }
+            });
             return npc.data().get(CACHED_SKIN_UUID_METADATA, reportedUUID);
         }
     }
 
     private static final String CACHED_SKIN_UUID_METADATA = "cached-skin-uuid";
     private static final String CACHED_SKIN_UUID_NAME_METADATA = "cached-skin-uuid-name";
+    private static Method MAKE_REQUEST;
+    private static SkinThread SKIN_THREAD;
     private static final Map<String, Property> TEXTURE_CACHE = Maps.newConcurrentMap();
     private static final Map<String, String> UUID_CACHE = Maps.newConcurrentMap();
+    static {
+        try {
+            MAKE_REQUEST = YggdrasilAuthenticationService.class.getDeclaredMethod("makeRequest", URL.class,
+                    Object.class, Class.class);
+            MAKE_REQUEST.setAccessible(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }
