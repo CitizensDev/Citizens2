@@ -125,8 +125,8 @@ public class HumanController extends AbstractEntityController {
         private GameProfile fillProfileProperties(YggdrasilAuthenticationService auth, GameProfile profile,
                 boolean requireSecure) throws Exception {
             URL url = HttpAuthenticationService.constantURL(new StringBuilder()
-                    .append("https://sessionserver.mojang.com/session/minecraft/profile/")
-                    .append(UUIDTypeAdapter.fromUUID(profile.getId())).toString());
+            .append("https://sessionserver.mojang.com/session/minecraft/profile/")
+            .append(UUIDTypeAdapter.fromUUID(profile.getId())).toString());
             url = HttpAuthenticationService.concatenateURL(url,
                     new StringBuilder().append("unsigned=").append(!requireSecure).toString());
             MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse) MAKE_REQUEST.invoke(
@@ -156,6 +156,7 @@ public class HumanController extends AbstractEntityController {
             } catch (Exception e) {
                 if (e.getMessage() != null && e.getMessage().contains("too many requests")) {
                     SKIN_THREAD.addRunnable(this);
+                    SKIN_THREAD.delay();
                 }
                 return;
             }
@@ -179,14 +180,23 @@ public class HumanController extends AbstractEntityController {
     }
 
     public static class SkinThread implements Runnable {
+        private volatile int delay = 0;
         private final BlockingDeque<Runnable> tasks = new LinkedBlockingDeque<Runnable>();
 
         public void addRunnable(Runnable r) {
             tasks.offer(r);
         }
 
+        public void delay() {
+            delay = 12;
+        }
+
         @Override
         public void run() {
+            if (delay != 0) {
+                delay--;
+                return;
+            }
             Runnable r = tasks.pollFirst();
             if (r == null) {
                 return;
@@ -214,18 +224,18 @@ public class HumanController extends AbstractEntityController {
                     .getGameProfileRepository();
             repo.findProfilesByNames(new String[] { ChatColor.stripColor(reportedUUID) }, Agent.MINECRAFT,
                     new ProfileLookupCallback() {
-                @Override
-                public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
-                    throw new RuntimeException(arg1);
-                }
+                        @Override
+                        public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
+                            throw new RuntimeException(arg1);
+                        }
 
-                @Override
-                public void onProfileLookupSucceeded(final GameProfile profile) {
-                    UUID_CACHE.put(reportedUUID, profile.getId().toString());
-                    npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
-                    npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
-                }
-            });
+                        @Override
+                        public void onProfileLookupSucceeded(final GameProfile profile) {
+                            UUID_CACHE.put(reportedUUID, profile.getId().toString());
+                            npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
+                            npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
+                        }
+                    });
             return npc.data().get(CACHED_SKIN_UUID_METADATA, reportedUUID);
         }
     }
