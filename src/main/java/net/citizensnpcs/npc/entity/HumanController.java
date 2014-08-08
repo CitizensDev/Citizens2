@@ -140,7 +140,6 @@ public class HumanController extends AbstractEntityController {
             try {
                 realUUID = uuid.call();
             } catch (Exception e) {
-                e.printStackTrace();
                 return;
             }
             GameProfile skinProfile = null;
@@ -151,8 +150,6 @@ public class HumanController extends AbstractEntityController {
             } catch (Exception e) {
                 if (e.getMessage().contains("too many requests")) {
                     Bukkit.getScheduler().runTaskLaterAsynchronously(CitizensAPI.getPlugin(), this, 200);
-                } else {
-                    e.printStackTrace();
                 }
                 return;
             }
