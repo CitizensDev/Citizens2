@@ -88,6 +88,9 @@ public class Inventory extends Trait {
      */
     public void setContents(ItemStack[] contents) {
         this.contents = contents;
+        if (npc.getEntity() instanceof Player) {
+            ((Player) npc.getEntity()).getInventory().setContents(contents);
+        }
     }
 
     @Override
