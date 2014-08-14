@@ -169,16 +169,21 @@ public class HumanController extends AbstractEntityController {
                             ((YggdrasilMinecraftSessionService) repo).getAuthenticationService(),
                             new GameProfile(UUID.fromString(realUUID), ""), true);
                 } catch (Exception e) {
-                    if (e.getMessage() != null && e.getMessage().contains("too many requests")) {
+                    if (e.getMessage() != null && e.getMessage().contains("too many requests")
+                            || (e.getCause() != null && e.getCause().getMessage() != null
+                            && e.getCause().getMessage().contains("too many requests"))) {
                         if (Messaging.isDebugging()) {
-                            Messaging.debug("Request overload ('" + e.getMessage() + "') for " + npc.getId());
+                            Messaging.debug("Request overload ('" +
+                                    (e.getCause() == null ? e.getMessage(): e.getCause().getMessage()) + "') for " + npc.getId());
                         }
                         SKIN_THREAD.delay();
                         SKIN_THREAD.addRunnable(this);
                     }
                     else {
                         if (Messaging.isDebugging()) {
-                            Messaging.debug("Failed to load skin ('" + e.getClass().getSimpleName() + ":" + e.getMessage() + "') for " + npc.getId());
+                            e.printStackTrace();
+                            Messaging.debug("Failed to load skin ('" +
+                                    e.getClass().getSimpleName() + ":" + e.getMessage() + "') for " + npc.getId());
                         }
                     }
                     return;
