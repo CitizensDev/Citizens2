@@ -2,14 +2,18 @@ package net.citizensnpcs.util;
 
 import java.util.Arrays;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.minecraft.server.v1_7_R4.EntityPlayer;
 import net.minecraft.server.v1_7_R4.Packet;
 import net.minecraft.server.v1_7_R4.PacketPlayOutAnimation;
 import net.minecraft.server.v1_7_R4.PacketPlayOutBed;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityMetadata;
 
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public enum PlayerAnimation {
     ARM_SWING {
@@ -44,8 +48,19 @@ public enum PlayerAnimation {
     },
     SIT {
         @Override
-        protected void playAnimation(EntityPlayer player, int radius) {
-            player.mount(player);
+        protected void playAnimation(final EntityPlayer player, int radius) {
+            player.getBukkitEntity().setMetadata("citizens.sitting",
+                    new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+            Bukkit.getScheduler().runTaskTimer(CitizensAPI.getPlugin(), new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (player.dead || !player.getBukkitEntity().getMetadata("citizens.sitting").get(0).asBoolean()) {
+                        cancel();
+                        return;
+                    }
+                    player.mount(player);
+                }
+            }, 0, 1);
         }
     },
     SLEEP {
@@ -75,6 +90,8 @@ public enum PlayerAnimation {
     STOP_SITTING {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
+            player.getBukkitEntity().setMetadata("citizens.sitting",
+                    new FixedMetadataValue(CitizensAPI.getPlugin(), false));
             player.mount(null);
         }
     },
