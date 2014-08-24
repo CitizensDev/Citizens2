@@ -165,8 +165,8 @@ public class CitizensNPC extends AbstractNPC {
             Messaging.debug("Tried to spawn", getId(), "while already spawned.");
             return false;
         }
-
         at = at.clone();
+        getTrait(CurrentLocation.class).setLocation(at);
         entityController.spawn(at, this);
         net.minecraft.server.v1_7_R4.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
