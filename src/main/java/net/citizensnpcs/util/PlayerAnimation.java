@@ -58,7 +58,9 @@ public enum PlayerAnimation {
                         cancel();
                         return;
                     }
-                    player.mount(player);
+                    if (player.passenger != player) {
+                        player.mount(player);
+                    }
                 }
             }, 0, 1);
         }
