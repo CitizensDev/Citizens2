@@ -274,8 +274,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             int useListName = removeFromPlayerList ? 0 : 1;
             if (useListName != this.useListName || this.useListName == -1) {
                 this.useListName = useListName;
-                packets[5] = new PacketPlayOutPlayerInfo(getBukkitEntity().getPlayerListName(), !removeFromPlayerList,
-                        removeFromPlayerList ? 9999 : ping);
+                //packets[5] = new PacketPlayOutPlayerInfo(getBukkitEntity().getPlayerListName(), !removeFromPlayerList,
+                //        removeFromPlayerList ? 9999 : ping);
             }
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
