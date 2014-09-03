@@ -96,6 +96,16 @@ public class GuidedWaypointProvider implements WaypointProvider {
                             togglePath();
                         }
                     });
+                } else if (event.getMessage().equalsIgnoreCase("clear")) {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                        @Override
+                        public void run() {
+                            available.clear();
+                            helpers.clear();
+                            if (showPath)
+                                markers.destroyWaypointMarkers();
+                        }
+                    });
                 }
             }
 
