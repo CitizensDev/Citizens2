@@ -32,6 +32,7 @@ import net.minecraft.server.v1_7_R4.Packet;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_7_R4.PacketPlayOutPlayerInfo;
+//import net.minecraft.server.v1_7_R4.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_7_R4.PlayerInteractManager;
 import net.minecraft.server.v1_7_R4.WorldServer;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
@@ -40,6 +41,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -259,7 +261,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     private void updatePackets(boolean navigating) {
         if (world.getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
-            Location current = getBukkitEntity().getLocation(packetLocationCache);
+        	Location current = getBukkitEntity().getLocation(packetLocationCache);
             Packet[] packets = new Packet[navigating ? 6 : 7];
             if (!navigating) {
                 packets[6] = new PacketPlayOutEntityHeadRotation(this,
@@ -269,14 +271,20 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                 packets[i] = new PacketPlayOutEntityEquipment(getId(), i, getEquipment(i));
             }
             boolean removeFromPlayerList = Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean();
-            NMS.addOrRemoveFromPlayerList(getBukkitEntity(),
-                    npc.data().get("removefromplayerlist", removeFromPlayerList));
+            removeFromPlayerList =  npc.data().get("removefromplayerlist");
+            
             int useListName = removeFromPlayerList ? 0 : 1;
             if (useListName != this.useListName || this.useListName == -1) {
                 this.useListName = useListName;
-                //packets[5] = new PacketPlayOutPlayerInfo(getBukkitEntity().getPlayerListName(), !removeFromPlayerList,
-                //        removeFromPlayerList ? 9999 : ping);
             }
+            if (removeFromPlayerList){
+                packets[5] = PacketPlayOutPlayerInfo.removePlayer(getBukkitEntity().getHandle());
+            } else {
+            	
+            	packets[5]  = PacketPlayOutPlayerInfo.addPlayer(getBukkitEntity().getHandle());
+            }
+            NMS.addOrRemoveFromPlayerList(getBukkitEntity(),
+                    npc.data().get("removefromplayerlist", removeFromPlayerList));
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }
