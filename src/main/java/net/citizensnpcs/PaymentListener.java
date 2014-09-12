@@ -22,12 +22,11 @@ public class PaymentListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
-        String name = event.getCreator().getName();
-        boolean hasAccount = provider.hasAccount(name);
+        boolean hasAccount = provider.hasAccount(event.getCreator());
         if (!hasAccount || event.getCreator().hasPermission("citizens.npc.ignore-cost"))
             return;
         double cost = Setting.NPC_COST.asDouble();
-        EconomyResponse response = provider.withdrawPlayer(name, cost);
+        EconomyResponse response = provider.withdrawPlayer(event.getCreator(), cost);
         if (!response.transactionSuccess()) {
             event.setCancelled(true);
             event.setCancelReason(response.errorMessage);

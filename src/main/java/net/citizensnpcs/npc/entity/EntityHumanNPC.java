@@ -31,7 +31,6 @@ import net.minecraft.server.v1_7_R4.NetworkManager;
 import net.minecraft.server.v1_7_R4.Packet;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityHeadRotation;
-import net.minecraft.server.v1_7_R4.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_7_R4.PlayerInteractManager;
 import net.minecraft.server.v1_7_R4.WorldServer;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
@@ -274,8 +273,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             int useListName = removeFromPlayerList ? 0 : 1;
             if (useListName != this.useListName || this.useListName == -1) {
                 this.useListName = useListName;
-                //packets[5] = new PacketPlayOutPlayerInfo(getBukkitEntity().getPlayerListName(), !removeFromPlayerList,
-                //        removeFromPlayerList ? 9999 : ping);
+                // packets[5] = new
+                // PacketPlayOutPlayerInfo(getBukkitEntity().getPlayerListName(),
+                // !removeFromPlayerList,
+                // removeFromPlayerList ? 9999 : ping);
             }
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
