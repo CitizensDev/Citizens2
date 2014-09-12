@@ -3,6 +3,7 @@ package net.citizensnpcs.util;
 import java.util.Arrays;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.minecraft.server.v1_7_R4.EntityPlayer;
 import net.minecraft.server.v1_7_R4.Packet;
 import net.minecraft.server.v1_7_R4.PacketPlayOutAnimation;
@@ -55,6 +56,10 @@ public enum PlayerAnimation {
                 @Override
                 public void run() {
                     if (player.dead || !player.getBukkitEntity().getMetadata("citizens.sitting").get(0).asBoolean()) {
+                        cancel();
+                        return;
+                    }
+                    if (player instanceof NPCHolder && !((NPCHolder) player).getNPC().isSpawned()) {
                         cancel();
                         return;
                     }
