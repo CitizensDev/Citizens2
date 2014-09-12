@@ -204,7 +204,7 @@ public class HumanController extends AbstractEntityController {
             Iterator<Runnable> itr = tasks.iterator();
             while (itr.hasNext()) {
                 if (((SkinFetcher) itr.next()).npc.getUniqueId().equals(((SkinFetcher) r).npc.getUniqueId())) {
-                    return;
+                    itr.remove();
                 }
             }
             tasks.offer(r);
