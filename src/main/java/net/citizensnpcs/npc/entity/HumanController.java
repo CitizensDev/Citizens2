@@ -88,6 +88,9 @@ public class HumanController extends AbstractEntityController {
     }
 
     private void updateSkin(final NPC npc, final WorldServer nmsWorld, GameProfile profile) {
+        if (Messaging.isDebugging()) {
+            Messaging.debug("UpdateSkin called for " + npc.getId());
+        }
         String skinUUID = npc.data().get(NPC.PLAYER_SKIN_UUID_METADATA);
         if (skinUUID == null) {
             skinUUID = npc.getName();
@@ -104,6 +107,9 @@ public class HumanController extends AbstractEntityController {
         } else {
             SKIN_THREAD.addRunnable(new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().av(),
                     npc));
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Delaying skin load for " + npc.getId());
+            }
         }
     }
 
@@ -156,15 +162,34 @@ public class HumanController extends AbstractEntityController {
                 }
                 skinProfile = new GameProfile(UUID.fromString(realUUID), "");
                 skinProfile.getProperties().put("textures", cached);
+                if (Messaging.isDebugging()) {
+                    Messaging.debug("Using cached skin for " + npc.getId());
+                }
             } else {
                 try {
+                    if (Messaging.isDebugging()) {
+                        Messaging.debug("Trying to load skin for " + npc.getId());
+                    }
                     skinProfile = fillProfileProperties(
                             ((YggdrasilMinecraftSessionService) repo).getAuthenticationService(),
                             new GameProfile(UUID.fromString(realUUID), ""), true);
                 } catch (Exception e) {
-                    if (e.getMessage() != null && e.getMessage().contains("too many requests")) {
+                    if (e.getMessage() != null && e.getMessage().contains("too many requests")
+                            || (e.getCause() != null && e.getCause().getMessage() != null
+                            && e.getCause().getMessage().contains("too many requests"))) {
+                        if (Messaging.isDebugging()) {
+                            Messaging.debug("Request overload ('" +
+                                    (e.getCause() == null ? e.getMessage(): e.getCause().getMessage()) + "') for " + npc.getId());
+                        }
                         SKIN_THREAD.delay();
                         SKIN_THREAD.addRunnable(this);
+                    }
+                    else {
+                        if (Messaging.isDebugging()) {
+                            e.printStackTrace();
+                            Messaging.debug("Failed to load skin ('" +
+                                    e.getClass().getSimpleName() + ":" + e.getMessage() + "') for " + npc.getId());
+                        }
                     }
                     return;
                 }
@@ -184,6 +209,9 @@ public class HumanController extends AbstractEntityController {
             Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), new Callable<Void>() {
                 @Override
                 public Void call() {
+                    if (Messaging.isDebugging()) {
+                        Messaging.debug("Reloading skin for " + npc.getId());
+                    }
                     if (npc.isSpawned()) {
                         npc.despawn(DespawnReason.PENDING_RESPAWN);
                         npc.spawn(npc.getStoredLocation());
