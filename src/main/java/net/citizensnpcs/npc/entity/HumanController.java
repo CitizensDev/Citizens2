@@ -152,7 +152,7 @@ public class HumanController extends AbstractEntityController {
             if (cached != null) {
                 if (Messaging.isDebugging()) {
                     Messaging
-                    .debug("Using cached skin texture for NPC " + npc.getName() + " UUID " + npc.getUniqueId());
+                            .debug("Using cached skin texture for NPC " + npc.getName() + " UUID " + npc.getUniqueId());
                 }
                 skinProfile = new GameProfile(UUID.fromString(realUUID), "");
                 skinProfile.getProperties().put("textures", cached);
@@ -162,7 +162,9 @@ public class HumanController extends AbstractEntityController {
                             ((YggdrasilMinecraftSessionService) repo).getAuthenticationService(),
                             new GameProfile(UUID.fromString(realUUID), ""), true);
                 } catch (Exception e) {
-                    if (e.getMessage() != null && e.getMessage().contains("too many requests")) {
+                    if ((e.getMessage() != null && e.getMessage().contains("too many requests"))
+                            || (e.getCause() != null && e.getCause().getMessage() != null && e.getCause().getMessage()
+                                    .contains("too many requests"))) {
                         SKIN_THREAD.delay();
                         SKIN_THREAD.addRunnable(this);
                     }
@@ -202,7 +204,7 @@ public class HumanController extends AbstractEntityController {
             Iterator<Runnable> itr = tasks.iterator();
             while (itr.hasNext()) {
                 if (((SkinFetcher) itr.next()).npc.getUniqueId().equals(((SkinFetcher) r).npc.getUniqueId())) {
-                    itr.remove();
+                    return;
                 }
             }
             tasks.offer(r);
