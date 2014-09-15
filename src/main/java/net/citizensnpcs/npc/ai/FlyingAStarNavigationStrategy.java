@@ -17,6 +17,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R4.MathHelper;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
 public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
@@ -95,11 +96,13 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         float targetYaw = (float) (Math.atan2(motZ, motX) * 180.0D / Math.PI) - 90.0F;
         float normalisedTargetYaw = MathHelper.g(targetYaw - current.getYaw());
 
-        velocity.setX(motX).setY(motY).setZ(motZ);
+        velocity.setX(motX).setY(motY).setZ(motZ).multiply(parameters.speed());
         npc.getEntity().setVelocity(velocity);
 
         NMS.setVerticalMovement(npc.getEntity(), 0.5);
-        NMS.setHeadYaw(NMS.getHandle(npc.getEntity()), current.getYaw() + normalisedTargetYaw);
+        if (npc.getEntity().getType() != EntityType.ENDER_DRAGON) {
+            NMS.setHeadYaw(NMS.getHandle(npc.getEntity()), current.getYaw() + normalisedTargetYaw);
+        }
         parameters.run();
         plan.run(npc);
         return false;
