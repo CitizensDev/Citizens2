@@ -1,6 +1,9 @@
 package net.citizensnpcs.npc.entity;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.net.Socket;
 import java.util.List;
 
@@ -31,6 +34,7 @@ import net.minecraft.server.v1_7_R4.NetworkManager;
 import net.minecraft.server.v1_7_R4.Packet;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityHeadRotation;
+import net.minecraft.server.v1_7_R4.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_7_R4.PlayerInteractManager;
 import net.minecraft.server.v1_7_R4.WorldServer;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
@@ -39,6 +43,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -153,9 +158,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // gravity. also works around an entity.onGround not updating issue
             // (onGround is normally updated by the client)
         }
-        if (!npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())) {
-            i();// TODO
-        }
+        
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
         if (navigating) {
@@ -258,7 +261,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     private void updatePackets(boolean navigating) {
         if (world.getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
-            Location current = getBukkitEntity().getLocation(packetLocationCache);
+        	Location current = getBukkitEntity().getLocation(packetLocationCache);
             Packet[] packets = new Packet[navigating ? 6 : 7];
             if (!navigating) {
                 packets[6] = new PacketPlayOutEntityHeadRotation(this,
@@ -267,17 +270,52 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             for (int i = 0; i < 5; i++) {
                 packets[i] = new PacketPlayOutEntityEquipment(getId(), i, getEquipment(i));
             }
-            boolean removeFromPlayerList = Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean();
-            NMS.addOrRemoveFromPlayerList(getBukkitEntity(),
-                    npc.data().get("removefromplayerlist", removeFromPlayerList));
+            
+            boolean removeFromPlayerList =  npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
+            NMS.addOrRemoveFromPlayerList(getBukkitEntity(),removeFromPlayerList);
             int useListName = removeFromPlayerList ? 0 : 1;
             if (useListName != this.useListName || this.useListName == -1) {
                 this.useListName = useListName;
-                // packets[5] = new
-                // PacketPlayOutPlayerInfo(getBukkitEntity().getPlayerListName(),
-                // !removeFromPlayerList,
-                // removeFromPlayerList ? 9999 : ping);
             }
+            boolean error = false;//Set to true if we cant get the protocol hack methods
+        	//probably means that a server is using an older version of spigot / bukkit
+            try {
+            	 
+            	 Class<?> c = PacketPlayOutPlayerInfo.class;
+         	    Object t = c.newInstance();
+
+         	    Method m = c.getDeclaredMethod("addPlayer", new Class[]{EntityPlayer.class});
+         	   if (removeFromPlayerList){
+         		  m = c.getDeclaredMethod("removePlayer", new Class[]{EntityPlayer.class});         	   
+         	   }
+         		
+         		    m.setAccessible(true);
+         		   packets[5] = (Packet)m.invoke(t, getBukkitEntity().getHandle());
+         		} catch (Exception e) {
+					error = true;
+					//Don't print a stack trace here, It will give an error if we are
+					//pre 1.8
+              
+         		}
+            if (error) {
+            	//Pre protocol hack methods
+            	try {
+         	   packets[5] = PacketPlayOutPlayerInfo.class.getConstructor(String.class,boolean.class,int.class).newInstance(getBukkitEntity().getPlayerListName(),!removeFromPlayerList,removeFromPlayerList ? 9999 : ping);
+         	    
+         		} catch (Exception e) {
+					e.printStackTrace();
+         		}
+            }
+            	/*try {
+            		packets[5] = PacketPlayOutPlayerInfo.class.getConstructor(String.class,boolean.class,int.class).newInstance(getBukkitEntity().getPlayerListName(),!removeFromPlayerList,removeFromPlayerList ? 9999 : ping);
+                  } catch (Exception e1) {
+                	  System.out.print("Citizens: Unable to toggle player list :"+e1.getMessage());
+                	 
+                  }*/
+            
+            
+            
+            
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }
@@ -335,3 +373,4 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private static final float EPSILON = 0.005F;
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }
+
