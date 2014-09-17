@@ -305,17 +305,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
          		} catch (Exception e) {
 					e.printStackTrace();
          		}
-            }
-            	/*try {
-            		packets[5] = PacketPlayOutPlayerInfo.class.getConstructor(String.class,boolean.class,int.class).newInstance(getBukkitEntity().getPlayerListName(),!removeFromPlayerList,removeFromPlayerList ? 9999 : ping);
-                  } catch (Exception e1) {
-                	  System.out.print("Citizens: Unable to toggle player list :"+e1.getMessage());
-                	 
-                  }*/
-            
-            
-            
-            
+            }         
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }
