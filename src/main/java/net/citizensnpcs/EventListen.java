@@ -144,6 +144,7 @@ public class EventListen implements Listener {
      */
     @EventHandler
     public void onEntityCombust(EntityCombustEvent event) {
+		if(!(event.getEntity() instanceof NPC)) return;
         NPC npc = npcRegistry.getNPC(event.getEntity());
         if (npc == null)
             return;
@@ -159,6 +160,7 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
+		if(!(event.getEntity() instanceof NPC)) return;
         NPC npc = npcRegistry.getNPC(event.getEntity());
         if (npc == null) {
             if (event instanceof EntityDamageByEntityEvent) {
@@ -192,6 +194,7 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
+		if(!(event.getEntity() instanceof NPC)) return;
         final NPC npc = npcRegistry.getNPC(event.getEntity());
         if (npc == null) {
             return;
@@ -355,6 +358,9 @@ public class EventListen implements Listener {
 
     private void storeForRespawn(NPC npc) {
         toRespawn.put(toCoord(npc.getEntity().getLocation()), npc);
+    }
+	private void storeForRespawn(NPC npc, Location loc) {
+        toRespawn.put(toCoord(loc), npc);
     }
 
     private ChunkCoord toCoord(Chunk chunk) {
