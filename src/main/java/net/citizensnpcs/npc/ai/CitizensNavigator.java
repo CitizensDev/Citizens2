@@ -14,6 +14,7 @@ import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
+import net.citizensnpcs.api.ai.event.NavigationStuckEvent;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.BlockSource;
@@ -226,6 +227,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         if (reason == CancelReason.STUCK && localParams.stuckAction() != null) {
             StuckAction action = localParams.stuckAction();
+            NavigationStuckEvent event = new NavigationStuckEvent(this, action);
+            Bukkit.getPluginManager().callEvent(event);
+            action = event.getAction();
             boolean shouldContinue = action.run(npc, this);
             if (shouldContinue) {
                 stationaryTicks = 0;
