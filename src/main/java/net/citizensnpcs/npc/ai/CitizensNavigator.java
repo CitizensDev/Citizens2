@@ -225,12 +225,12 @@ public class CitizensNavigator implements Navigator, Runnable {
             stopNavigating();
             return;
         }
-        if (reason == CancelReason.STUCK && localParams.stuckAction() != null) {
+        if (reason == CancelReason.STUCK) {
             StuckAction action = localParams.stuckAction();
             NavigationStuckEvent event = new NavigationStuckEvent(this, action);
             Bukkit.getPluginManager().callEvent(event);
             action = event.getAction();
-            boolean shouldContinue = action.run(npc, this);
+            boolean shouldContinue = action != null ? action.run(npc, this): false;
             if (shouldContinue) {
                 stationaryTicks = 0;
                 executing.clearCancelReason();
