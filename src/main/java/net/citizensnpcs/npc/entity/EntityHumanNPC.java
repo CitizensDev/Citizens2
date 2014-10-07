@@ -134,6 +134,23 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return controllerJump;
     }
 
+    private Packet getListPacket(boolean removeFromPlayerList) {
+        if (PLAYER_INFO_CONSTRUCTOR != null) {
+            try {
+                return PLAYER_INFO_CONSTRUCTOR.newInstance(getBukkitEntity().getPlayerListName(),
+                        !removeFromPlayerList, removeFromPlayerList ? 9999 : ping);
+            } catch (Exception e) {
+            }
+        } else {
+            try {
+                return (Packet) (removeFromPlayerList ? PLAYER_INFO_REMOVE_METHOD.invoke(null, getBukkitEntity()
+                        .getHandle()) : PLAYER_INFO_ADD_METHOD.invoke(null, getBukkitEntity().getHandle()));
+            } catch (Exception e) {
+            }
+        }
+        return null;
+    }
+
     public Navigation getNavigation() {
         return navigation;
     }
@@ -260,9 +277,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private void updatePackets(boolean navigating) {
         if (world.getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
             Location current = getBukkitEntity().getLocation(packetLocationCache);
-            Packet[] packets = new Packet[navigating ? 6 : 7];
+            Packet[] packets = new Packet[navigating ? 5 : 6];
             if (!navigating) {
-                packets[6] = new PacketPlayOutEntityHeadRotation(this,
+                packets[5] = new PacketPlayOutEntityHeadRotation(this,
                         (byte) MathHelper.d(NMS.getHeadYaw(this) * 256.0F / 360.0F));
             }
             for (int i = 0; i < 5; i++) {
@@ -276,20 +293,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             if (useListName != this.useListName || this.useListName == -1) {
                 this.useListName = useListName;
             }
-            if (PLAYER_INFO_CONSTRUCTOR != null) {
-                try {
-                    packets[5] = PLAYER_INFO_CONSTRUCTOR.newInstance(getBukkitEntity().getPlayerListName(),
-                            !removeFromPlayerList, removeFromPlayerList ? 9999 : ping);
-                } catch (Exception e) {
-                }
-            } else {
-                try {
-                    packets[5] = (Packet) (removeFromPlayerList ? PLAYER_INFO_REMOVE_METHOD.invoke(null,
-                            getBukkitEntity().getHandle()) : PLAYER_INFO_ADD_METHOD.invoke(null, getBukkitEntity()
-                            .getHandle()));
-                } catch (Exception e) {
-                }
-            }
+            NMS.sendToOnline(getListPacket(removeFromPlayerList));
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }
