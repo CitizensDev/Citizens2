@@ -71,7 +71,7 @@ public class NBTStorage implements FileStorage {
     }
 
     @Override
-    public DataKey getKey(String root) {
+    public NBTKey getKey(String root) {
         return new NBTKey(root);
     }
 
@@ -133,7 +133,7 @@ public class NBTStorage implements FileStorage {
                 return parent;
             if (sub.charAt(0) == '.')
                 return parent.isEmpty() ? sub.substring(1, sub.length()) : parent + sub;
-            return parent.isEmpty() ? sub : parent + "." + sub;
+                return parent.isEmpty() ? sub : parent + "." + sub;
         }
 
         @Override
@@ -181,7 +181,7 @@ public class NBTStorage implements FileStorage {
             Map<String, Tag> map = root;
             for (int i = 0; i < parts.length - 1; ++i) {
                 if (!map.containsKey(parts[i]) || !(map.get(parts[i]) instanceof CompoundTag))
-                    return null;
+                    return Collections.emptyMap();
                 map = ((CompoundTag) map.get(parts[i])).getValue();
             }
             return map;

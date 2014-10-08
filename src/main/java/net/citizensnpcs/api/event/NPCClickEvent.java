@@ -11,7 +11,6 @@ import org.bukkit.event.HandlerList;
  */
 public abstract class NPCClickEvent extends NPCEvent implements Cancellable {
     private boolean cancelled = false;
-
     private final Player clicker;
 
     protected NPCClickEvent(NPC npc, Player clicker) {
@@ -21,7 +20,7 @@ public abstract class NPCClickEvent extends NPCEvent implements Cancellable {
 
     /**
      * Gets the player that clicked the NPC.
-     * 
+     *
      * @return Player that clicked the NPC
      */
     public Player getClicker() {
@@ -43,9 +42,9 @@ public abstract class NPCClickEvent extends NPCEvent implements Cancellable {
         this.cancelled = cancelled;
     }
 
-    private static final HandlerList handlers = new HandlerList();
-
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    private static final HandlerList handlers = new HandlerList();
 }
