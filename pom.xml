@@ -64,6 +64,14 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>net.lastabyss</groupId>
+			<artifactId>carbon</artifactId>
+			<version>${craftbukkit.version}</version>
+			<type>jar</type>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/Carbon.jar</systemPath>
+		</dependency>
+		<dependency>
 			<groupId>net.sf.trove4j</groupId>
 			<artifactId>trove4j</artifactId>
 			<version>3.0.3</version>

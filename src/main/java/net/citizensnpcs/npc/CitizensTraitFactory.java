@@ -28,6 +28,7 @@ import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.Sheared;
 import net.citizensnpcs.trait.SlimeSize;
@@ -48,6 +49,7 @@ public class CitizensTraitFactory implements TraitFactory {
     private final Map<String, TraitInfo> registered = Maps.newHashMap();
 
     public CitizensTraitFactory() {
+    	registerTrait(TraitInfo.create(RabbitType.class).withName("rabbittype"));
         registerTrait(TraitInfo.create(Age.class).withName("age"));
         registerTrait(TraitInfo.create(Anchors.class).withName("anchors"));
         registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));
