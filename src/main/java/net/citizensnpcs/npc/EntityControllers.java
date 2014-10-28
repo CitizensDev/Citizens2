@@ -92,7 +92,7 @@ public class EntityControllers {
 
     static {
     	
-    	if (Bukkit.getPluginManager().getPlugin("carbon") != null)
+    	if (Bukkit.getPluginManager().getPlugin("Carbon") != null)
     		TYPES.put(Util.matchEntityType("Rabbit"), RabbitController.class);
         TYPES.put(EntityType.ARROW, ArrowController.class);
         TYPES.put(EntityType.BAT, BatController.class);

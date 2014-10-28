@@ -52,7 +52,7 @@ public class CitizensTraitFactory implements TraitFactory {
 
     public CitizensTraitFactory() {
     	
-    	if (Bukkit.getPluginManager().getPlugin("carbon") != null)
+    	if (Bukkit.getPluginManager().getPlugin("Carbon") != null)
     		registerTrait(TraitInfo.create(RabbitType.class).withName("rabbittype"));
         registerTrait(TraitInfo.create(Age.class).withName("age"));
         registerTrait(TraitInfo.create(Anchors.class).withName("anchors"));

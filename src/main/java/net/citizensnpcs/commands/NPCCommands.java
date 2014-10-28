@@ -1189,7 +1189,7 @@ public class NPCCommands {
             "rabbit" }, min = 2, max = 2, permission = "citizens.npc.rabbit")
     @Requirements(selected = true, ownership = true)
     public void rabbitType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-    	if (Bukkit.getPluginManager().getPlugin("carbon") == null)
+    	if (Bukkit.getPluginManager().getPlugin("Carbon") == null)
     		throw new RequirementMissingException(Messaging.tr(CommandMessages.UNKNOWN_COMMAND));
     	if (!(npc.getEntity().getType().name().equals("Rabbit")))
     		throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, npc.getEntity().getType().name().toLowerCase()));
