@@ -61,6 +61,7 @@ import net.citizensnpcs.npc.entity.nonliving.ThrownPotionController;
 import net.citizensnpcs.npc.entity.nonliving.WitherSkullController;
 import net.citizensnpcs.util.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 
 import com.google.common.base.Throwables;
@@ -90,7 +91,9 @@ public class EntityControllers {
     private static final Map<EntityType, Class<? extends EntityController>> TYPES = Maps.newEnumMap(EntityType.class);
 
     static {
-    	TYPES.put(Util.matchEntityType("Rabbit"), RabbitController.class);
+    	
+    	if (Bukkit.getPluginManager().getPlugin("carbon") != null)
+    		TYPES.put(Util.matchEntityType("Rabbit"), RabbitController.class);
         TYPES.put(EntityType.ARROW, ArrowController.class);
         TYPES.put(EntityType.BAT, BatController.class);
         TYPES.put(EntityType.BLAZE, BlazeController.class);

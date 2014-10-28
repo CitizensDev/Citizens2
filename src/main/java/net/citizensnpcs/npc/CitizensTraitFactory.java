@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
+
 import net.citizensnpcs.Metrics;
 import net.citizensnpcs.Metrics.Graph;
 import net.citizensnpcs.api.CitizensAPI;
@@ -49,7 +51,9 @@ public class CitizensTraitFactory implements TraitFactory {
     private final Map<String, TraitInfo> registered = Maps.newHashMap();
 
     public CitizensTraitFactory() {
-    	registerTrait(TraitInfo.create(RabbitType.class).withName("rabbittype"));
+    	
+    	if (Bukkit.getPluginManager().getPlugin("carbon") != null)
+    		registerTrait(TraitInfo.create(RabbitType.class).withName("rabbittype"));
         registerTrait(TraitInfo.create(Age.class).withName("age"));
         registerTrait(TraitInfo.create(Anchors.class).withName("anchors"));
         registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));

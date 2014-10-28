@@ -1184,10 +1184,13 @@ public class NPCCommands {
         npc.getTrait(NPCSkeletonType.class).setType(type);
         Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
     }
+    
     @Command(aliases = { "npc" }, usage = "rabbittype [type]", desc = "Sets the NPC's rabbit type", modifiers = {
             "rabbit" }, min = 2, max = 2, permission = "citizens.npc.rabbit")
     @Requirements(selected = true, ownership = true)
     public void rabbitType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    	if (Bukkit.getPluginManager().getPlugin("carbon") == null)
+    		throw new RequirementMissingException(Messaging.tr(CommandMessages.UNKNOWN_COMMAND));
     	if (!(npc.getEntity().getType().name().equals("Rabbit")))
     		throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, npc.getEntity().getType().name().toLowerCase()));
     	RabbitTypes type;
