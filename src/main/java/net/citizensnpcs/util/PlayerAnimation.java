@@ -52,10 +52,11 @@ public enum PlayerAnimation {
         protected void playAnimation(final EntityPlayer player, int radius) {
             player.getBukkitEntity().setMetadata("citizens.sitting",
                     new FixedMetadataValue(CitizensAPI.getPlugin(), true));
-            Bukkit.getScheduler().runTaskTimer(CitizensAPI.getPlugin(), new BukkitRunnable() {
+            new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if (player.dead || !player.getBukkitEntity().getMetadata("citizens.sitting").get(0).asBoolean()) {
+                    if (player.dead || !player.valid ||
+                            !player.getBukkitEntity().getMetadata("citizens.sitting").get(0).asBoolean()) {
                         cancel();
                         return;
                     }
@@ -67,7 +68,7 @@ public enum PlayerAnimation {
                         player.mount(player);
                     }
                 }
-            }, 0, 1);
+            }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
         }
     },
     SLEEP {
