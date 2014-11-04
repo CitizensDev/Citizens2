@@ -5,3 +5,5 @@
 Citizens.jar
 *.lnk
 *.iml
+/.idea
+dependency-reduced-pom.xml
