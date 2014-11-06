@@ -230,7 +230,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             NavigationStuckEvent event = new NavigationStuckEvent(this, action);
             Bukkit.getPluginManager().callEvent(event);
             action = event.getAction();
-            boolean shouldContinue = action != null ? action.run(npc, this): false;
+            boolean shouldContinue = action != null ? action.run(npc, this) : false;
             if (shouldContinue) {
                 stationaryTicks = 0;
                 executing.clearCancelReason();

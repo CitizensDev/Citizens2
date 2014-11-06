@@ -89,9 +89,9 @@ public class BlockBreaker extends BehaviorGoalAdapter {
             startDigTick = currentTick;
             if (entity instanceof NPCHolder) {
                 NPC npc = ((NPCHolder) entity).getNPC();
-                if (!npc.getNavigator().isNavigating()) {
+                if (npc != null && !npc.getNavigator().isNavigating()) {
                     npc.getNavigator()
-                    .setTarget(entity.world.getWorld().getBlockAt(x, y, z).getLocation().add(0, 1, 0));
+                            .setTarget(entity.world.getWorld().getBlockAt(x, y, z).getLocation().add(0, 1, 0));
                 }
             }
             return BehaviorStatus.RUNNING;
@@ -108,7 +108,7 @@ public class BlockBreaker extends BehaviorGoalAdapter {
             float damage = getStrength(block) * (tickDifference + 1) * configuration.blockStrengthModifier();
             if (damage >= 1F) {
                 entity.world.getWorld().getBlockAt(x, y, z)
-                .breakNaturally(CraftItemStack.asCraftMirror(getCurrentItem()));
+                        .breakNaturally(CraftItemStack.asCraftMirror(getCurrentItem()));
                 return BehaviorStatus.SUCCESS;
             }
             int modifiedDamage = (int) (damage * 10.0F);
