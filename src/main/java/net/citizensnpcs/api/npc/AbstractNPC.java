@@ -390,15 +390,13 @@ public abstract class AbstractNPC implements NPC {
         data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, isProtected);
     }
 
-    private void teleport(final Entity entity, Location location, boolean loaded, int delay) {
-        if (!loaded)
-            location.getBlock().getChunk();
+    private void teleport(final Entity entity, Location location, int delay) {
         final Entity passenger = entity.getPassenger();
         entity.eject();
         entity.teleport(location);
         if (passenger == null)
             return;
-        teleport(passenger, location, true, delay++);
+        teleport(passenger, location, delay++);
         Runnable task = new Runnable() {
             @Override
             public void run() {
@@ -420,7 +418,8 @@ public abstract class AbstractNPC implements NPC {
         while (entity.getVehicle() != null) {
             entity = entity.getVehicle();
         }
-        teleport(entity, location, false, 5);
+        location.getBlock().getChunk();
+        teleport(entity, location, 5);
     }
 
     public void update() {

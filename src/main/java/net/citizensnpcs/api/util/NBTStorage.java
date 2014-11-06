@@ -133,7 +133,7 @@ public class NBTStorage implements FileStorage {
                 return parent;
             if (sub.charAt(0) == '.')
                 return parent.isEmpty() ? sub.substring(1, sub.length()) : parent + sub;
-                return parent.isEmpty() ? sub : parent + "." + sub;
+            return parent.isEmpty() ? sub : parent + "." + sub;
         }
 
         @Override
