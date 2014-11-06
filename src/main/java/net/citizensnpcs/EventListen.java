@@ -25,7 +25,6 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
@@ -129,7 +128,7 @@ public class EventListen implements Listener {
             toRespawn.put(coord, npc);
             if (Messaging.isDebugging()) {
                 Messaging
-                        .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+                .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
             }
         }
     }
@@ -249,7 +248,7 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        if (!(event.getPlayer() instanceof NPCHolder))
+        if (npcRegistry.getNPC(event.getPlayer()) == null)
             return;
         NMS.removeFromServerPlayerList(event.getPlayer());
         // on teleport, player NPCs are added to the server player list. this is

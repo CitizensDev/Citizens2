@@ -42,6 +42,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -293,7 +294,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             if (useListName != this.useListName || this.useListName == -1) {
                 this.useListName = useListName;
             }
-            NMS.sendToOnline(getListPacket(removeFromPlayerList));
+            boolean sendListPacket = true;
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.getName().equalsIgnoreCase(getName())) {
+                    sendListPacket = false;
+                    break;
+                }
+            }
+            if (sendListPacket) {
+                NMS.sendToOnline(getListPacket(removeFromPlayerList));
+            }
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }

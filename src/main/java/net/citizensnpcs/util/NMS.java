@@ -176,7 +176,7 @@ public class NMS {
 
     @SuppressWarnings("deprecation")
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-            NoSuchMethodException {
+    NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -295,6 +295,8 @@ public class NMS {
     @SuppressWarnings("deprecation")
     public static void minecartItemLogic(EntityMinecartAbstract minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
+        if (npc == null)
+            return;
         Material mat = Material.getMaterial(npc.data().get(NPC.MINECART_ITEM_METADATA, ""));
         int data = npc.data().get(NPC.MINECART_ITEM_DATA_METADATA, 0);
         int offset = npc.data().get(NPC.MINECART_OFFSET_METADATA, 0);
