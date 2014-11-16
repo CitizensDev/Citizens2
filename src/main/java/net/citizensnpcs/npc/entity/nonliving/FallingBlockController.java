@@ -9,6 +9,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R4.Block;
 import net.minecraft.server.v1_7_R4.Blocks;
 import net.minecraft.server.v1_7_R4.EntityFallingBlock;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.World;
 import net.minecraft.server.v1_7_R4.WorldServer;
 
@@ -63,6 +64,11 @@ public class FallingBlockController extends AbstractEntityController {
         public EntityFallingBlockNPC(World world, NPC npc, double d0, double d1, double d2, Block block, int data) {
             super(world, d0, d1, d2, block, data);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override

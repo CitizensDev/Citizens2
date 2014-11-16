@@ -7,6 +7,7 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R4.EntityTNTPrimed;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.World;
 
 import org.bukkit.Bukkit;
@@ -31,6 +32,11 @@ public class TNTPrimedController extends MobEntityController {
 
         public EntityTNTPrimedNPC(World world) {
             this(world, null);
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         public EntityTNTPrimedNPC(World world, NPC npc) {

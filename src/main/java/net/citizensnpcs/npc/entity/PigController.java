@@ -9,6 +9,7 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R4.EntityLightning;
 import net.minecraft.server.v1_7_R4.EntityPig;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.World;
 
 import org.bukkit.Bukkit;
@@ -63,8 +64,9 @@ public class PigController extends MobEntityController {
 
         @Override
         public void a(EntityLightning entitylightning) {
-            if (npc == null)
+            if (npc == null) {
                 super.a(entitylightning);
+            }
         }
 
         @Override
@@ -85,6 +87,13 @@ public class PigController extends MobEntityController {
         }
 
         @Override
+        public void bn() {
+            super.bn();
+            if (npc != null)
+                npc.update();
+        }
+
+        @Override
         public boolean bN() {
             if (npc == null)
                 return super.bN();
@@ -98,19 +107,18 @@ public class PigController extends MobEntityController {
         }
 
         @Override
-        public void bn() {
-            super.bn();
-            if (npc != null)
-                npc.update();
-        }
-
-        @Override
         public void collide(net.minecraft.server.v1_7_R4.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -167,7 +175,8 @@ public class PigController extends MobEntityController {
 
         @Override
         protected String t() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.t() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.t() : npc.data().get(
+                    NPC.AMBIENT_SOUND_METADATA, super.t());
         }
 
         @Override

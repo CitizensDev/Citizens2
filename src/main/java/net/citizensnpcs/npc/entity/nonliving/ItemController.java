@@ -9,6 +9,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R4.EntityHuman;
 import net.minecraft.server.v1_7_R4.EntityItem;
 import net.minecraft.server.v1_7_R4.ItemStack;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.World;
 import net.minecraft.server.v1_7_R4.WorldServer;
 
@@ -49,6 +50,11 @@ public class ItemController extends AbstractEntityController {
 
     public static class EntityItemNPC extends EntityItem implements NPCHolder {
         private final CitizensNPC npc;
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
+        }
 
         public EntityItemNPC(World world) {
             super(world);

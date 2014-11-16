@@ -8,6 +8,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R4.EntitySlime;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.World;
 
 import org.bukkit.Bukkit;
@@ -69,6 +70,13 @@ public class SlimeController extends MobEntityController {
         }
 
         @Override
+        public void bn() {
+            super.bn();
+            if (npc != null)
+                npc.update();
+        }
+
+        @Override
         public boolean bN() {
             if (npc == null)
                 return super.bN();
@@ -79,13 +87,6 @@ public class SlimeController extends MobEntityController {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
-        }
-
-        @Override
-        public void bn() {
-            super.bn();
-            if (npc != null)
-                npc.update();
         }
 
         @Override
@@ -105,6 +106,11 @@ public class SlimeController extends MobEntityController {
             super.collide(entity);
             if (npc != null)
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -161,7 +167,8 @@ public class SlimeController extends MobEntityController {
 
         @Override
         protected String t() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.t() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.t() : npc.data().get(
+                    NPC.AMBIENT_SOUND_METADATA, super.t());
         }
 
         @Override

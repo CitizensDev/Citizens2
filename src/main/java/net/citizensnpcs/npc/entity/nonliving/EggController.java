@@ -7,6 +7,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R4.EntityEgg;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.World;
 import net.minecraft.server.v1_7_R4.WorldServer;
 
@@ -61,6 +62,11 @@ public class EggController extends AbstractEntityController {
         public EntityEggNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         public EntityEggNPC(World world, NPC npc, double d0, double d1, double d2) {
