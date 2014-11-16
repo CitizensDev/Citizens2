@@ -259,7 +259,6 @@ public class HumanController extends AbstractEntityController {
                     new ProfileLookupCallback() {
                         @Override
                         public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
-                            throw new RuntimeException(arg1);
                         }
 
                         @Override
