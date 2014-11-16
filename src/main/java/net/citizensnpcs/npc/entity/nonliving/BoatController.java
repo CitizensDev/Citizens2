@@ -7,6 +7,7 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R4.EntityBoat;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.World;
 
 import org.bukkit.Bukkit;
@@ -45,6 +46,11 @@ public class BoatController extends MobEntityController {
 
         public EntityBoatNPC(World world) {
             this(world, null);
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         public EntityBoatNPC(World world, NPC npc) {

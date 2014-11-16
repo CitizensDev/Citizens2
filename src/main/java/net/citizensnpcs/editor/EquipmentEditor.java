@@ -38,8 +38,9 @@ public class EquipmentEditor extends Editor {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_AIR && Editor.hasEditor(event.getPlayer()))
+        if (event.getAction() == Action.RIGHT_CLICK_AIR && Editor.hasEditor(event.getPlayer())) {
             event.setUseItemInHand(Result.DENY);
+        }
     }
 
     @EventHandler

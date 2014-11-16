@@ -7,12 +7,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R4.EntitySnowball;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftSnowball;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftSnowball;
 import org.bukkit.entity.Snowball;
 import org.bukkit.util.Vector;
 
@@ -45,6 +46,11 @@ public class SnowballController extends MobEntityController {
 
         public EntitySnowballNPC(World world) {
             this(world, null);
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         public EntitySnowballNPC(World world, NPC npc) {

@@ -9,6 +9,7 @@ import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_7_R4.EntityHorse;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.World;
 
 import org.bukkit.Bukkit;
@@ -111,6 +112,11 @@ public class HorseController extends MobEntityController {
         }
 
         @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
+        }
+
+        @Override
         public void e() {
             if (npc == null) {
                 super.e();
@@ -175,7 +181,8 @@ public class HorseController extends MobEntityController {
 
         @Override
         protected String t() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.t() : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.t());
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.t() : npc.data().get(
+                    NPC.AMBIENT_SOUND_METADATA, super.t());
         }
 
         private void updateAIWithMovement() {
