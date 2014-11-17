@@ -277,6 +277,15 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     private void updatePackets(boolean navigating) {
         if (world.getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
+            // set skin flag byte to all visible (DataWatcher API is lacking so
+            // catch the NPE as a sign that this is a MC 1.7 server without the
+            // skin flag)
+            try {
+                datawatcher.watch(10, Byte.valueOf((byte) 127));
+            } catch (NullPointerException e) {
+                datawatcher.a(10, Byte.valueOf((byte) 127));
+            }
+
             Location current = getBukkitEntity().getLocation(packetLocationCache);
             Packet[] packets = new Packet[navigating ? 5 : 6];
             if (!navigating) {
