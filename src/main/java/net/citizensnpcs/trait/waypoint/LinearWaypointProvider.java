@@ -247,9 +247,8 @@ public class LinearWaypointProvider implements WaypointProvider {
 
         @EventHandler(ignoreCancelled = true)
         public void onPlayerInteract(PlayerInteractEvent event) {
-            if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL)
-                return;
-            if (event.getPlayer().getWorld() != npc.getEntity().getWorld())
+            if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL || !npc.isSpawned()
+                    || event.getPlayer().getWorld() != npc.getEntity().getWorld())
                 return;
             if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
                 if (event.getClickedBlock() == null)

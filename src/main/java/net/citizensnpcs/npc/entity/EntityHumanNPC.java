@@ -56,7 +56,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
-    private int useListName = -1;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
             PlayerInteractManager playerInteractManager, NPC npc) {
@@ -135,17 +134,18 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return controllerJump;
     }
 
-    private Packet getListPacket(boolean removeFromPlayerList) {
+    private Packet getListPacket(Player player, boolean removeFromPlayerList) {
         if (PLAYER_INFO_CONSTRUCTOR != null) {
             try {
-                return PLAYER_INFO_CONSTRUCTOR.newInstance(getBukkitEntity().getPlayerListName(),
-                        !removeFromPlayerList, removeFromPlayerList ? 9999 : ping);
+                return PLAYER_INFO_CONSTRUCTOR.newInstance(player.getPlayerListName(), !removeFromPlayerList,
+                        removeFromPlayerList ? 9999 : ping);
             } catch (Exception e) {
             }
         } else {
             try {
-                return (Packet) (removeFromPlayerList ? PLAYER_INFO_REMOVE_METHOD.invoke(null, getBukkitEntity()
-                        .getHandle()) : PLAYER_INFO_ADD_METHOD.invoke(null, getBukkitEntity().getHandle()));
+                return (Packet) (removeFromPlayerList ? PLAYER_INFO_REMOVE_METHOD.invoke(null,
+                        ((CraftPlayer) player).getHandle()) : PLAYER_INFO_ADD_METHOD.invoke(null,
+                                ((CraftPlayer) player).getHandle()));
             } catch (Exception e) {
             }
         }
@@ -299,19 +299,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
                     Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
             NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
-            int useListName = removeFromPlayerList ? 0 : 1;
-            if (useListName != this.useListName || this.useListName == -1) {
-                this.useListName = useListName;
-            }
-            boolean sendListPacket = true;
+            Player otherOnline = null;
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getName().equalsIgnoreCase(getName())) {
-                    sendListPacket = false;
+                if (player.getName().equalsIgnoreCase(getName()) && !(player instanceof NPCHolder)) {
+                    otherOnline = player;
                     break;
                 }
             }
-            if (sendListPacket) {
-                NMS.sendToOnline(getListPacket(removeFromPlayerList));
+            NMS.sendToOnline(getListPacket(getBukkitEntity(), true));
+            if (otherOnline != null) {
+                NMS.sendToOnline(getListPacket(otherOnline, false));
             }
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
