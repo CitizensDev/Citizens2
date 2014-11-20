@@ -36,6 +36,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     @Persist
     private boolean enabled = true;
     private EntityType explicitType;
+    @Persist("owner_required")
+    private boolean ownerRequired;
 
     public Controllable() {
         super("controllable");
@@ -58,8 +60,9 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             explicitType = null;
         } else if (args.hasValueFlag("explicittype"))
             explicitType = Util.matchEntityType(args.getFlag("explicittype"));
-        if (npc.isSpawned())
+        if (npc.isSpawned()) {
             loadController();
+        }
     }
 
     private void enterOrLeaveVehicle(Player player) {
@@ -70,9 +73,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             }
             return;
         }
-        if (npc.getTrait(Owner.class).isOwnedBy(handle.getBukkitEntity())) {
-            handle.setPassengerOf(getHandle());
+        if (ownerRequired && !npc.getTrait(Owner.class).isOwnedBy(handle.getBukkitEntity())) {
+            return;
         }
+        handle.setPassengerOf(getHandle());
     }
 
     private net.minecraft.server.v1_7_R4.Entity getHandle() {
@@ -193,6 +197,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             handle.yaw = (float) -Math.toDegrees(Math.atan((handle.locX - tX) / (handle.locZ - tZ)));
         }
         NMS.setHeadYaw(handle, handle.yaw);
+    }
+
+    public void setOwnerRequired(boolean ownerRequired) {
+        this.ownerRequired = ownerRequired;
     }
 
     @Override
@@ -360,7 +368,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     private static final Map<EntityType, Class<? extends MovementController>> controllerTypes = Maps
             .newEnumMap(EntityType.class);
-
     static {
         controllerTypes.put(EntityType.BAT, PlayerInputAirController.class);
         controllerTypes.put(EntityType.BLAZE, PlayerInputAirController.class);
