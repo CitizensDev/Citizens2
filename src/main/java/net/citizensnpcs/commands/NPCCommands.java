@@ -216,12 +216,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "controllable|control (-m,-y,-n)",
+            usage = "controllable|control (-m(ount),-y,-n,-o)",
             desc = "Toggles whether the NPC can be ridden and controlled",
             modifiers = { "controllable", "control" },
             min = 1,
             max = 1,
-            flags = "myn")
+            flags = "myno")
     public void controllable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if ((npc.isSpawned() && !sender.hasPermission("citizens.npc.controllable."
                 + npc.getEntity().getType().name().toLowerCase().replace("_", "")))
@@ -237,6 +237,7 @@ public class NPCCommands {
         } else if (args.hasFlag('n')) {
             enabled = trait.setEnabled(false);
         }
+        trait.setOwnerRequired(args.hasFlag('o'));
         String key = enabled ? Messages.CONTROLLABLE_SET : Messages.CONTROLLABLE_REMOVED;
         Messaging.sendTr(sender, key, npc.getName());
         if (enabled && args.hasFlag('m') && sender instanceof Player) {
