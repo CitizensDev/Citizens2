@@ -223,31 +223,31 @@ public class CitizensNPC extends AbstractNPC {
     public void update() {
         try {
             super.update();
-            if (isSpawned()) {
-                if (data().get(NPC.SWIMMING_METADATA, true)) {
-                    NMS.trySwim(getEntity());
-                }
-                navigator.run();
+            if (!isSpawned())
+                return;
+            if (data().get(NPC.SWIMMING_METADATA, true)) {
+                NMS.trySwim(getEntity());
+            }
+            navigator.run();
 
-                if (!getNavigator().isNavigating()
-                        && getEntity().getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
-                    if (getEntity() instanceof LivingEntity) {
-                        ((LivingEntity) getEntity()).setCustomName(getFullName());
-                    }
-                    Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
-                    NMS.sendPacketNearby(player, getStoredLocation(),
-                            new PacketPlayOutEntityTeleport(NMS.getHandle(getEntity())));
-                }
-
+            if (!getNavigator().isNavigating()
+                    && getEntity().getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
                 if (getEntity() instanceof LivingEntity) {
-                    ((LivingEntity) getEntity()).setCustomNameVisible(data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true));
-                    try {
-                        ((CraftLivingEntity) getEntity()).getHandle().getDataWatcher()
-                                .watch(3, data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true) ? 1 : 0);
-                    } catch (NullPointerException e) {
-                        ((CraftLivingEntity) getEntity()).getHandle().getDataWatcher()
-                                .a(3, data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true) ? 1 : 0);
-                    }
+                    ((LivingEntity) getEntity()).setCustomName(getFullName());
+                }
+                Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
+                NMS.sendPacketNearby(player, getStoredLocation(),
+                        new PacketPlayOutEntityTeleport(NMS.getHandle(getEntity())));
+            }
+
+            if (getEntity() instanceof LivingEntity) {
+                boolean nameplateVisible = data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true);
+                ((LivingEntity) getEntity()).setCustomNameVisible(nameplateVisible);
+                Byte toByte = Byte.valueOf((byte) (nameplateVisible ? 1 : 0));
+                try {
+                    ((CraftLivingEntity) getEntity()).getHandle().getDataWatcher().watch(3, toByte);
+                } catch (NullPointerException e) {
+                    ((CraftLivingEntity) getEntity()).getHandle().getDataWatcher().a(3, toByte);
                 }
             }
         } catch (Exception ex) {
