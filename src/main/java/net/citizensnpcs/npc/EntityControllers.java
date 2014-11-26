@@ -20,6 +20,7 @@ import net.citizensnpcs.npc.entity.MushroomCowController;
 import net.citizensnpcs.npc.entity.OcelotController;
 import net.citizensnpcs.npc.entity.PigController;
 import net.citizensnpcs.npc.entity.PigZombieController;
+import net.citizensnpcs.npc.entity.RabbitController;
 import net.citizensnpcs.npc.entity.SheepController;
 import net.citizensnpcs.npc.entity.SilverfishController;
 import net.citizensnpcs.npc.entity.SkeletonController;
@@ -58,7 +59,9 @@ import net.citizensnpcs.npc.entity.nonliving.TNTPrimedController;
 import net.citizensnpcs.npc.entity.nonliving.ThrownExpBottleController;
 import net.citizensnpcs.npc.entity.nonliving.ThrownPotionController;
 import net.citizensnpcs.npc.entity.nonliving.WitherSkullController;
+import net.citizensnpcs.util.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 
 import com.google.common.base.Throwables;
@@ -88,6 +91,9 @@ public class EntityControllers {
     private static final Map<EntityType, Class<? extends EntityController>> TYPES = Maps.newEnumMap(EntityType.class);
 
     static {
+    	
+    	if (Bukkit.getPluginManager().getPlugin("Carbon") != null)
+    		TYPES.put(Util.matchEntityType("Rabbit"), RabbitController.class);
         TYPES.put(EntityType.ARROW, ArrowController.class);
         TYPES.put(EntityType.BAT, BatController.class);
         TYPES.put(EntityType.BLAZE, BlazeController.class);

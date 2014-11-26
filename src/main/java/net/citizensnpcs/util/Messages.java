@@ -100,6 +100,7 @@ public class Messages {
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
     public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
+	public static final String INVALID_RABBIT_TYPE = "citizens.commands.npc.rabbittype.invalid-type";
     public static final String INVALID_SOUND = "citizens.commands.npc.sound.invalid-sound";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
     public static final String INVALID_TRIGGER_TELEPORT_FORMAT = "citizens.editors.waypoints.triggers.teleport.invalid-format";
@@ -183,6 +184,7 @@ public class Messages {
     public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.description";
     public static final String SIZE_SET = "citizens.commands.npc.size.set";
     public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";
+    public static final String RABBIT_TYPE_SET = "citizens.commands.npc.rabbittype.set";
     public static final String SKIN_CLEARED = "citizens.commands.npc.skin.cleared";
     public static final String SKIN_SET = "citizens.commands.npc.skin.set";
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";

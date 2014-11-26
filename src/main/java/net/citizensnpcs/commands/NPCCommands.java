@@ -15,6 +15,7 @@ import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
+import net.citizensnpcs.api.command.exception.RequirementMissingException;
 import net.citizensnpcs.api.command.exception.ServerCommandException;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
@@ -46,6 +47,8 @@ import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.RabbitType;
+import net.citizensnpcs.trait.RabbitType.RabbitTypes;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WolfModifiers;
@@ -1181,6 +1184,24 @@ public class NPCCommands {
             throw new CommandException(Messages.INVALID_SKELETON_TYPE);
         npc.getTrait(NPCSkeletonType.class).setType(type);
         Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
+    }
+    
+    @Command(aliases = { "npc" }, usage = "rabbittype [type]", desc = "Sets the NPC's rabbit type", modifiers = {
+            "rabbit" }, min = 2, max = 2, permission = "citizens.npc.rabbit")
+    @Requirements(selected = true, ownership = true)
+    public void rabbitType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    	if (Bukkit.getPluginManager().getPlugin("Carbon") == null)
+    		throw new RequirementMissingException(Messaging.tr(CommandMessages.UNKNOWN_COMMAND));
+    	if (!(npc.getEntity().getType().name().equals("Rabbit")))
+    		throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, npc.getEntity().getType().name().toLowerCase()));
+    	RabbitTypes type;
+    	try {
+    	type = RabbitTypes.valueOf(args.getString(1).toUpperCase());
+    	} catch (IllegalArgumentException ex) {
+            throw new CommandException(Messages.INVALID_RABBIT_TYPE);
+    	}
+        npc.getTrait(RabbitType.class).setType(type);
+        Messaging.sendTr(sender, Messages.RABBIT_TYPE_SET, npc.getName(), type);
     }
 
     @Command(

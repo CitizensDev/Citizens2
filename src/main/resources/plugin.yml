@@ -1,6 +1,6 @@
 name: Citizens
 authors: [aPunch, fullwall]
-softdepend: [Vault]
+softdepend: [Vault, Carbon]
 version: ${project.version} (build ${BUILD_NUMBER})
 main: net.citizensnpcs.Citizens
 website: http://www.citizensnpcs.co
