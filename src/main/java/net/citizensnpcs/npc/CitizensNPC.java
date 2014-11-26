@@ -28,6 +28,7 @@ import net.minecraft.server.v1_7_R4.PacketPlayOutEntityTeleport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -240,6 +241,13 @@ public class CitizensNPC extends AbstractNPC {
 
                 if (getEntity() instanceof LivingEntity) {
                     ((LivingEntity) getEntity()).setCustomNameVisible(data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true));
+                    try {
+                        ((CraftLivingEntity) getEntity()).getHandle().getDataWatcher()
+                                .watch(3, data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true) ? 1 : 0);
+                    } catch (NullPointerException e) {
+                        ((CraftLivingEntity) getEntity()).getHandle().getDataWatcher()
+                                .a(3, data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true) ? 1 : 0);
+                    }
                 }
             }
         } catch (Exception ex) {
