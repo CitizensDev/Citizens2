@@ -1,9 +1,11 @@
 package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_7_R4.Entity;
-import net.minecraft.server.v1_7_R4.EntityLiving;
-import net.minecraft.server.v1_7_R4.MathHelper;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.MathHelper;
+
+import org.bukkit.craftbukkit.v1_8_R1.TrigMath;
 
 public class PlayerControllerLook {
     private final EntityHumanNPC a;
@@ -26,25 +28,25 @@ public class PlayerControllerLook {
             double d1 = this.f - (this.a.locY + this.a.getHeadHeight());
             double d2 = this.g - this.a.locZ;
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-            float f = (float) (Math.atan2(d2, d0) * 180.0D / 3.1415927410125732D) - 90.0F;
-            float f1 = (float) (-(Math.atan2(d1, d3) * 180.0D / 3.1415927410125732D));
 
-            this.a.pitch = this.a(this.a.pitch, f1, this.c);
-            this.a.aP = this.a(this.a.aP, f, this.b);
+            float f = (float) (TrigMath.atan2(d2, d0) * 180.0D / 3.141592741012573D) - 90.0F;
+            float f1 = (float) (-(TrigMath.atan2(d1, d3) * 180.0D / 3.141592741012573D));
+
+            this.a.pitch = a(this.a.pitch, f1, this.c);
+            this.a.aI = a(this.a.aI, f, this.b);
         } else {
-            this.a.aP = this.a(this.a.aP, this.a.aN, 10.0F);
+            this.a.aI = a(this.a.aI, this.a.aG, 10.0F);
         }
 
-        float f2 = MathHelper.g(this.a.aP - this.a.aN);
+        float f2 = MathHelper.g(this.a.aI - this.a.aG);
 
-        if (!this.a.isNavigating()) {
+        if (!this.a.getNavigation().m()) {
             if (f2 < -75.0F) {
-                this.a.aP = this.a.aN - 75.0F;
+                this.a.aI = (this.a.aG - 75.0F);
             }
 
-            if (f2 > 75.0F) {
-                this.a.aP = this.a.aN + 75.0F;
-            }
+            if (f2 > 75.0F)
+                this.a.aI = (this.a.aG + 75.0F);
         }
     }
 
@@ -59,10 +61,10 @@ public class PlayerControllerLook {
 
     public void a(Entity entity, float f, float f1) {
         this.e = entity.locX;
-        if (entity instanceof EntityLiving) {
-            this.f = entity.locY + entity.getHeadHeight();
-        } else {
-            this.f = (entity.boundingBox.b + entity.boundingBox.e) / 2.0D;
+        if ((entity instanceof EntityLiving))
+            this.f = (entity.locY + entity.getHeadHeight());
+        else {
+            this.f = ((entity.getBoundingBox().b + entity.getBoundingBox().e) / 2.0D);
         }
 
         this.g = entity.locZ;
@@ -83,5 +85,21 @@ public class PlayerControllerLook {
         }
 
         return f + f3;
+    }
+
+    public boolean b() {
+        return this.d;
+    }
+
+    public double e() {
+        return this.e;
+    }
+
+    public double f() {
+        return this.f;
+    }
+
+    public double g() {
+        return this.g;
     }
 }
