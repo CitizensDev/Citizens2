@@ -21,31 +21,35 @@ import net.citizensnpcs.util.nms.PlayerControllerJump;
 import net.citizensnpcs.util.nms.PlayerControllerLook;
 import net.citizensnpcs.util.nms.PlayerControllerMove;
 import net.citizensnpcs.util.nms.PlayerNavigation;
-import net.minecraft.server.v1_7_R4.AttributeInstance;
-import net.minecraft.server.v1_7_R4.Entity;
-import net.minecraft.server.v1_7_R4.EntityPlayer;
-import net.minecraft.server.v1_7_R4.EnumGamemode;
-import net.minecraft.server.v1_7_R4.GenericAttributes;
-import net.minecraft.server.v1_7_R4.MathHelper;
-import net.minecraft.server.v1_7_R4.MinecraftServer;
-import net.minecraft.server.v1_7_R4.Navigation;
-import net.minecraft.server.v1_7_R4.NetworkManager;
-import net.minecraft.server.v1_7_R4.Packet;
-import net.minecraft.server.v1_7_R4.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_7_R4.PacketPlayOutEntityHeadRotation;
-import net.minecraft.server.v1_7_R4.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_7_R4.PlayerInteractManager;
-import net.minecraft.server.v1_7_R4.WorldServer;
-import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.minecraft.server.v1_8_R1.AttributeInstance;
+import net.minecraft.server.v1_8_R1.Block;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EnumGamemode;
+import net.minecraft.server.v1_8_R1.EnumProtocolDirection;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
+import net.minecraft.server.v1_8_R1.MathHelper;
+import net.minecraft.server.v1_8_R1.MinecraftServer;
+import net.minecraft.server.v1_8_R1.NavigationAbstract;
+import net.minecraft.server.v1_8_R1.NetworkManager;
+import net.minecraft.server.v1_8_R1.Packet;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityHeadRotation;
+import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R1.PlayerInteractManager;
+import net.minecraft.server.v1_8_R1.WorldServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
+
+import com.mojang.authlib.GameProfile;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private PlayerControllerJump controllerJump;
@@ -69,21 +73,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    protected void a(double d0, boolean flag) {
+    protected void a(double d0, boolean flag, Block block, BlockPosition blockposition) {
         if (npc == null || !npc.isFlyable()) {
-            super.a(d0, flag);
+            super.a(d0, flag, block, blockposition);
         }
     }
 
     @Override
-    protected void b(float f) {
-        if (npc == null || !npc.isFlyable()) {
-            super.b(f);
-        }
-    }
-
-    @Override
-    public void collide(net.minecraft.server.v1_7_R4.Entity entity) {
+    public void collide(net.minecraft.server.v1_8_R1.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
@@ -96,8 +93,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     public void e(float f, float f1) {
         if (npc == null || !npc.isFlyable()) {
             super.e(f, f1);
-        } else {
-            NMS.flyingMoveLogic(this, f, f1);
         }
     }
 
@@ -124,6 +119,15 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
+    public void g(float f, float f1) {
+        if (npc == null || !npc.isFlyable()) {
+            super.g(f, f1);
+        } else {
+            NMS.flyingMoveLogic(this, f, f1);
+        }
+    }
+
+    @Override
     public CraftPlayer getBukkitEntity() {
         if (npc != null && bukkitEntity == null)
             bukkitEntity = new PlayerNPC(this);
@@ -132,6 +136,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     public PlayerControllerJump getControllerJump() {
         return controllerJump;
+    }
+
+    public PlayerControllerMove getControllerMove() {
+        return controllerMove;
     }
 
     private Packet getListPacket(Player player, boolean removeFromPlayerList) {
@@ -152,7 +160,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return null;
     }
 
-    public Navigation getNavigation() {
+    public NavigationAbstract getNavigation() {
         return navigation;
     }
 
@@ -161,53 +169,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return npc;
     }
 
-    @Override
-    public void h() {
-        super.h();
-        if (npc == null)
-            return;
-        boolean navigating = npc.getNavigator().isNavigating();
-        updatePackets(navigating);
-        if (gravity && !navigating && getBukkitEntity() != null
-                && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION)) && !NMS.inWater(getBukkitEntity())) {
-            move(0, -0.2, 0);
-            // gravity. also works around an entity.onGround not updating issue
-            // (onGround is normally updated by the client)
-        }
-
-        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
-            motX = motY = motZ = 0;
-        if (navigating) {
-            if (!NMS.isNavigationFinished(navigation)) {
-                NMS.updateNavigation(navigation);
-            }
-            moveOnCurrentHeading();
-        } else if (motX != 0 || motZ != 0 || motY != 0) {
-            e(0, 0); // is this necessary? it does controllable but sometimes
-            // players sink into the ground
-        }
-
-        if (noDamageTicks > 0) {
-            --noDamageTicks;
-        }
-
-        npc.update();
-    }
-
-    @Override
-    public boolean h_() {
-        if (npc == null || !npc.isFlyable()) {
-            return super.h_();
-        } else {
-            return false;
-        }
-    }
-
     private void initialise(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
         NetworkManager conn = null;
         try {
-            conn = new EmptyNetworkManager(false);
+            conn = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
             playerConnection = new EmptyNetHandler(minecraftServer, conn, this);
             conn.a(playerConnection);
         } catch (IOException e) {
@@ -237,24 +203,66 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return npc.getNavigator().isNavigating();
     }
 
+    @Override
+    public boolean j_() {
+        if (npc == null || !npc.isFlyable()) {
+            return super.j_();
+        } else {
+            return false;
+        }
+    }
+
     private void moveOnCurrentHeading() {
         NMS.updateAI(this);
-        if (bc) {
+        if (aW) {
             if (onGround && jumpTicks == 0) {
-                bj();
+                bE();
                 jumpTicks = 10;
             }
         } else {
             jumpTicks = 0;
         }
-        bd *= 0.98F;
-        be *= 0.98F;
-        bf *= 0.9F;
-        e(bd, be); // movement method
+        aX *= 0.98F;
+        aY *= 0.98F;
+        aZ *= 0.9F;
+        g(aX, aY); // movement method
         NMS.setHeadYaw(this, yaw);
         if (jumpTicks > 0) {
             jumpTicks--;
         }
+    }
+
+    @Override
+    public void s_() {
+        super.s_();
+        if (npc == null)
+            return;
+        boolean navigating = npc.getNavigator().isNavigating();
+        updatePackets(navigating);
+        if (gravity && !navigating && getBukkitEntity() != null
+                && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION)) && !NMS.inWater(getBukkitEntity())) {
+            move(0, -0.2, 0);
+            // gravity. also works around an entity.onGround not updating issue
+            // (onGround is normally updated by the client)
+        }
+
+        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
+            motX = motY = motZ = 0;
+        if (navigating) {
+            if (!NMS.isNavigationFinished(navigation)) {
+                NMS.updateNavigation(navigation);
+            }
+            moveOnCurrentHeading();
+        } else if (motX != 0 || motZ != 0 || motY != 0) {
+            e(0, 0); // is this necessary? it does controllable but sometimes
+            // players sink into the ground
+        }
+
+        if (noDamageTicks > 0) {
+            --noDamageTicks;
+        }
+
+        npc.update();
     }
 
     public void setMoveDestination(double x, double y, double z, double speed) {
@@ -383,6 +391,5 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             PLAYER_INFO_REMOVE_METHOD.setAccessible(true);
         } catch (Exception e) {
         }
-
     }
 }

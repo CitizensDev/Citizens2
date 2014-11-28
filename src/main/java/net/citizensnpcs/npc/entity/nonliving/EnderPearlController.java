@@ -6,14 +6,15 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_7_R4.EntityEnderPearl;
-import net.minecraft.server.v1_7_R4.NBTTagCompound;
-import net.minecraft.server.v1_7_R4.World;
+import net.minecraft.server.v1_8_R1.EntityEnderPearl;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.NBTTagCompound;
+import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEnderPearl;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEnderPearl;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.util.Vector;
 
@@ -45,27 +46,31 @@ public class EnderPearlController extends MobEntityController {
         private final CitizensNPC npc;
 
         public EntityEnderPearlNPC(World world) {
-            this(world, null);
+            this(world, null, null);
         }
 
-        @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
+        public EntityEnderPearlNPC(World world, EntityLiving living) {
+            this(world, living, null);
         }
 
-        public EntityEnderPearlNPC(World world, NPC npc) {
-            super(world);
+        public EntityEnderPearlNPC(World world, EntityLiving living, NPC npc) {
+            super(world, null);
             this.npc = (CitizensNPC) npc;
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_7_R4.Entity entity) {
+        public void collide(net.minecraft.server.v1_8_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -104,11 +109,11 @@ public class EnderPearlController extends MobEntityController {
         }
 
         @Override
-        public void h() {
+        public void s_() {
             if (npc != null) {
                 npc.update();
             } else {
-                super.h();
+                super.s_();
             }
         }
     }

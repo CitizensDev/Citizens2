@@ -7,14 +7,14 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_7_R4.EntityBat;
-import net.minecraft.server.v1_7_R4.NBTTagCompound;
-import net.minecraft.server.v1_7_R4.World;
+import net.minecraft.server.v1_8_R1.EntityBat;
+import net.minecraft.server.v1_8_R1.NBTTagCompound;
+import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftBat;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftBat;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
 import org.bukkit.entity.Bat;
 import org.bukkit.util.Vector;
 
@@ -59,43 +59,33 @@ public class BatController extends MobEntityController {
         }
 
         @Override
-        protected String aT() {
-            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.aT() : npc.data().get(
-                    NPC.HURT_SOUND_METADATA, super.aT());
+        protected String bn() {
+            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bn() : npc.data().get(
+                    NPC.HURT_SOUND_METADATA, super.bn());
         }
 
         @Override
-        protected String aU() {
-            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.aU() : npc.data().get(
-                    NPC.DEATH_SOUND_METADATA, super.aU());
+        protected String bo() {
+            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bo() : npc.data().get(
+                    NPC.DEATH_SOUND_METADATA, super.bo());
         }
 
         @Override
-        public void bn() {
+        public boolean cb() {
             if (npc == null) {
-                super.bn();
-            } else {
-                NMS.updateAI(this);
-                npc.update();
-            }
-        }
-
-        @Override
-        public boolean bN() {
-            if (npc == null) {
-                return super.bN();
+                return super.cb();
             }
             boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.bN();
-            if (super.bN()) {
+                return super.cb();
+            if (super.cb()) {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_7_R4.Entity entity) {
+        public void collide(net.minecraft.server.v1_8_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -106,6 +96,21 @@ public class BatController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        protected void D() {
+            if (npc == null) {
+                super.D();
+            }
+        }
+
+        @Override
+        public void E() {
+            super.E();
+            if (npc != null) {
+                npc.update();
+            }
         }
 
         @Override
@@ -142,29 +147,14 @@ public class BatController extends MobEntityController {
             return npc;
         }
 
-        @Override
-        public void h() {
-            super.h();
-            if (npc != null) {
-                npc.update();
-            }
-        }
-
         public void setFlying(boolean flying) {
             setAsleep(flying);
         }
 
         @Override
-        protected String t() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.t() : npc.data().get(
-                    NPC.AMBIENT_SOUND_METADATA, super.t());
-        }
-
-        @Override
-        protected void w() {
-            if (npc == null) {
-                super.w();
-            }
+        protected String z() {
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
+                    NPC.AMBIENT_SOUND_METADATA, super.z());
         }
     }
 }

@@ -1,10 +1,10 @@
 package net.citizensnpcs.npc.network;
 
-import net.minecraft.server.v1_7_R4.EntityPlayer;
-import net.minecraft.server.v1_7_R4.MinecraftServer;
-import net.minecraft.server.v1_7_R4.NetworkManager;
-import net.minecraft.server.v1_7_R4.Packet;
-import net.minecraft.server.v1_7_R4.PlayerConnection;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.MinecraftServer;
+import net.minecraft.server.v1_8_R1.NetworkManager;
+import net.minecraft.server.v1_8_R1.Packet;
+import net.minecraft.server.v1_8_R1.PlayerConnection;
 
 public class EmptyNetHandler extends PlayerConnection {
     public EmptyNetHandler(MinecraftServer minecraftServer, NetworkManager networkManager, EntityPlayer entityPlayer) {

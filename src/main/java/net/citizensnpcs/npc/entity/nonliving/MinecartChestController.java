@@ -7,14 +7,14 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_7_R4.EntityMinecartChest;
-import net.minecraft.server.v1_7_R4.NBTTagCompound;
-import net.minecraft.server.v1_7_R4.World;
+import net.minecraft.server.v1_8_R1.EntityMinecartChest;
+import net.minecraft.server.v1_8_R1.NBTTagCompound;
+import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftMinecartChest;
+import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftMinecartChest;
 import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
 
@@ -41,7 +41,7 @@ public class MinecartChestController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_7_R4.Entity entity) {
+        public void collide(net.minecraft.server.v1_8_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -91,12 +91,12 @@ public class MinecartChestController extends MobEntityController {
         }
 
         @Override
-        public void h() {
+        public void s_() {
             if (npc != null) {
                 npc.update();
                 NMS.minecartItemLogic(this);
             } else {
-                super.h();
+                super.s_();
             }
         }
     }

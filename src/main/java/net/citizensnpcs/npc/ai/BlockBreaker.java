@@ -5,19 +5,20 @@ import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_7_R4.Block;
-import net.minecraft.server.v1_7_R4.Blocks;
-import net.minecraft.server.v1_7_R4.Enchantment;
-import net.minecraft.server.v1_7_R4.EnchantmentManager;
-import net.minecraft.server.v1_7_R4.EntityLiving;
-import net.minecraft.server.v1_7_R4.EntityPlayer;
-import net.minecraft.server.v1_7_R4.ItemStack;
-import net.minecraft.server.v1_7_R4.Material;
-import net.minecraft.server.v1_7_R4.MobEffectList;
+import net.minecraft.server.v1_8_R1.Block;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.Blocks;
+import net.minecraft.server.v1_8_R1.Enchantment;
+import net.minecraft.server.v1_8_R1.EnchantmentManager;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.ItemStack;
+import net.minecraft.server.v1_8_R1.Material;
+import net.minecraft.server.v1_8_R1.MobEffectList;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -45,12 +46,12 @@ public class BlockBreaker extends BehaviorGoalAdapter {
         return Math.pow(entity.locX - x, 2) + Math.pow(entity.locY - y, 2) + Math.pow(entity.locZ - z, 2);
     }
 
-    private net.minecraft.server.v1_7_R4.ItemStack getCurrentItem() {
+    private net.minecraft.server.v1_8_R1.ItemStack getCurrentItem() {
         return configuration.item() != null ? CraftItemStack.asNMSCopy(configuration.item()) : entity.getEquipment(0);
     }
 
     private float getStrength(Block block) {
-        float base = block.f(null, 0, 0, 0);
+        float base = block.g(null, new BlockPosition(0, 0, 0));
         return base < 0.0F ? 0.0F : (!isDestroyable(block) ? 1.0F / base / 100.0F : strengthMod(block) / base / 30.0F);
     }
 
@@ -100,7 +101,7 @@ public class BlockBreaker extends BehaviorGoalAdapter {
         if (entity instanceof EntityPlayer) {
             PlayerAnimation.ARM_SWING.play((Player) entity.getBukkitEntity());
         }
-        Block block = entity.world.getType(x, y, z);
+        Block block = entity.world.getType(new BlockPosition(x, y, z)).getBlock();
         if (block == null || block == Blocks.AIR) {
             return BehaviorStatus.SUCCESS;
         } else {
@@ -121,12 +122,12 @@ public class BlockBreaker extends BehaviorGoalAdapter {
     }
 
     private void setBlockDamage(int modifiedDamage) {
-        entity.world.d(entity.getId(), x, y, z, modifiedDamage);
+        entity.world.c(entity.getId(), new BlockPosition(x, y, z), modifiedDamage);
     }
 
     @Override
     public boolean shouldExecute() {
-        return entity.world.getType(x, y, z) != Blocks.AIR;
+        return entity.world.getType(new BlockPosition(x, y, z)).getBlock() != Blocks.AIR;
     }
 
     private float strengthMod(Block block) {
@@ -149,7 +150,7 @@ public class BlockBreaker extends BehaviorGoalAdapter {
         if (entity.hasEffect(MobEffectList.SLOWER_DIG)) {
             strength *= 1.0F - (entity.getEffect(MobEffectList.SLOWER_DIG).getAmplifier() + 1) * 0.2F;
         }
-        if (entity.a(Material.WATER) && !EnchantmentManager.hasWaterWorkerEnchantment(entity)) {
+        if (entity.a(Material.WATER) && !EnchantmentManager.j(entity)) {
             strength /= 5.0F;
         }
         if (!entity.onGround) {
