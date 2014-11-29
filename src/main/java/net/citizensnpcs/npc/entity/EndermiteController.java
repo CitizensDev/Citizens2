@@ -7,39 +7,62 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R1.EntityWither;
+import net.minecraft.server.v1_8_R1.Block;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.EntityEndermite;
 import net.minecraft.server.v1_8_R1.NBTTagCompound;
 import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEndermite;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftWither;
-import org.bukkit.entity.Wither;
+import org.bukkit.entity.Endermite;
 import org.bukkit.util.Vector;
 
-public class WitherController extends MobEntityController {
-    public WitherController() {
-        super(EntityWitherNPC.class);
+public class EndermiteController extends MobEntityController {
+    public EndermiteController() {
+        super(EntityEndermiteNPC.class);
     }
 
     @Override
-    public Wither getBukkitEntity() {
-        return (Wither) super.getBukkitEntity();
+    public Endermite getBukkitEntity() {
+        return (Endermite) super.getBukkitEntity();
     }
 
-    public static class EntityWitherNPC extends EntityWither implements NPCHolder {
+    public static class EndermiteNPC extends CraftEndermite implements NPCHolder {
         private final CitizensNPC npc;
 
-        public EntityWitherNPC(World world) {
+        public EndermiteNPC(EntityEndermiteNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class EntityEndermiteNPC extends EntityEndermite implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public EntityEndermiteNPC(World world) {
             this(world, null);
         }
 
-        public EntityWitherNPC(World world, NPC npc) {
+        public EntityEndermiteNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+            }
+        }
+
+        @Override
+        protected void a(double d0, boolean flag, Block block, BlockPosition blockposition) {
+            if (npc == null || !npc.isFlyable()) {
+                super.a(d0, flag, block, blockposition);
             }
         }
 
@@ -90,8 +113,14 @@ public class WitherController extends MobEntityController {
         @Override
         public void doTick() {
             super.doTick();
-            if (npc != null) {
+            if (npc != null)
                 npc.update();
+        }
+
+        @Override
+        public void e(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.e(f, f1);
             }
         }
 
@@ -118,9 +147,18 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
+        public void g(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.g(f, f1);
+            } else {
+                NMS.flyingMoveLogic(this, f, f1);
+            }
+        }
+
+        @Override
         public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null)
-                bukkitEntity = new WitherNPC(this);
+                bukkitEntity = new EndermiteNPC(this);
             return super.getBukkitEntity();
         }
 
@@ -130,23 +168,18 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
-        protected String z() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
-                    NPC.AMBIENT_SOUND_METADATA, super.z());
-        }
-    }
-
-    public static class WitherNPC extends CraftWither implements NPCHolder {
-        private final CitizensNPC npc;
-
-        public WitherNPC(EntityWitherNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
+        public boolean j_() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.j_();
+            } else {
+                return false;
+            }
         }
 
         @Override
-        public NPC getNPC() {
-            return npc;
+        protected String z() {
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
+                    NPC.AMBIENT_SOUND_METADATA, super.z());
         }
     }
 }

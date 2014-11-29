@@ -64,10 +64,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
             PlayerInteractManager playerInteractManager, NPC npc) {
         super(minecraftServer, world, gameProfile, playerInteractManager);
-        playerInteractManager.setGameMode(EnumGamemode.SURVIVAL);
 
         this.npc = (CitizensNPC) npc;
         if (npc != null) {
+            playerInteractManager.setGameMode(EnumGamemode.SURVIVAL);
             initialise(minecraftServer);
         }
     }
@@ -103,8 +103,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             return;
         }
         if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-            if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+            if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
                 super.g(x, y, z);
+            }
             return;
         }
         Vector vector = new Vector(x, y, z);
@@ -129,8 +130,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     @Override
     public CraftPlayer getBukkitEntity() {
-        if (npc != null && bukkitEntity == null)
+        if (npc != null && bukkitEntity == null) {
             bukkitEntity = new PlayerNPC(this);
+        }
         return super.getBukkitEntity();
     }
 
@@ -153,7 +155,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             try {
                 return (Packet) (removeFromPlayerList ? PLAYER_INFO_REMOVE_METHOD.invoke(null,
                         ((CraftPlayer) player).getHandle()) : PLAYER_INFO_ADD_METHOD.invoke(null,
-                                ((CraftPlayer) player).getHandle()));
+                        ((CraftPlayer) player).getHandle()));
             } catch (Exception e) {
             }
         }
@@ -176,15 +178,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             conn = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
             playerConnection = new EmptyNetHandler(minecraftServer, conn, this);
             conn.a(playerConnection);
-        } catch (IOException e) {
-            // swallow
-        }
-
-        NMS.setStepHeight(this, 1); // the default (0) breaks step climbing
-
-        try {
             socket.close();
-        } catch (IOException ex) {
+        } catch (IOException e) {
             // swallow
         }
 
@@ -193,10 +188,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             range = this.getAttributeMap().b(GenericAttributes.b);
         }
         range.setValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
+
         controllerJump = new PlayerControllerJump(this);
         controllerLook = new PlayerControllerLook(this);
         controllerMove = new PlayerControllerMove(this);
         navigation = new PlayerNavigation(this, world);
+        NMS.setStepHeight(this, 1); // the default (0) breaks step climbing
     }
 
     public boolean isNavigating() {
@@ -246,15 +243,17 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // (onGround is normally updated by the client)
         }
 
-        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
+        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
             motX = motY = motZ = 0;
+        }
         if (navigating) {
             if (!NMS.isNavigationFinished(navigation)) {
                 NMS.updateNavigation(navigation);
             }
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0) {
-            e(0, 0); // is this necessary? it does controllable but sometimes
+            g(0, 0); // is this necessary? it does controllable but
+            // sometimes
             // players sink into the ground
         }
 

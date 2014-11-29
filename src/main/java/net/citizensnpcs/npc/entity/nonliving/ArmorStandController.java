@@ -6,37 +6,58 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R1.EntityFishingHook;
+import net.minecraft.server.v1_8_R1.EntityArmorStand;
+import net.minecraft.server.v1_8_R1.EntityHuman;
 import net.minecraft.server.v1_8_R1.NBTTagCompound;
+import net.minecraft.server.v1_8_R1.Vec3D;
 import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftFish;
-import org.bukkit.entity.Fish;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.util.Vector;
 
-public class FishingHookController extends MobEntityController {
-    public FishingHookController() {
-        super(EntityFishingHookNPC.class);
+public class ArmorStandController extends MobEntityController {
+    public ArmorStandController() {
+        super(EntityArmorStandNPC.class);
     }
 
     @Override
-    public Fish getBukkitEntity() {
-        return (Fish) super.getBukkitEntity();
+    public ArmorStand getBukkitEntity() {
+        return (ArmorStand) super.getBukkitEntity();
     }
 
-    public static class EntityFishingHookNPC extends EntityFishingHook implements NPCHolder {
+    public static class ArmorStandNPC extends CraftArmorStand implements NPCHolder {
         private final CitizensNPC npc;
 
-        public EntityFishingHookNPC(World world) {
+        public ArmorStandNPC(EntityArmorStandNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class EntityArmorStandNPC extends EntityArmorStand implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public EntityArmorStandNPC(World world) {
             this(world, null);
         }
 
-        public EntityFishingHookNPC(World world, NPC npc) {
+        public EntityArmorStandNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean a(EntityHuman paramEntityHuman, Vec3D paramVec3D) {
+            return true;
         }
 
         @Override
@@ -79,7 +100,7 @@ public class FishingHookController extends MobEntityController {
         @Override
         public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null) {
-                bukkitEntity = new FishingHookNPC(this);
+                bukkitEntity = new ArmorStandNPC(this);
             }
             return super.getBukkitEntity();
         }
@@ -91,25 +112,10 @@ public class FishingHookController extends MobEntityController {
 
         @Override
         public void s_() {
+            super.s_();
             if (npc != null) {
                 npc.update();
-            } else {
-                super.s_();
             }
-        }
-    }
-
-    public static class FishingHookNPC extends CraftFish implements NPCHolder {
-        private final CitizensNPC npc;
-
-        public FishingHookNPC(EntityFishingHookNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }
