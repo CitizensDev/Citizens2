@@ -296,7 +296,7 @@ public class NPCCommands {
 
         EntityType type = EntityType.PLAYER;
         if (args.hasValueFlag("type")) {
-            String inputType = args.getFlag("type");
+            String inputType = args.getFlag("type").toUpperCase();
             type = Util.matchEntityType(inputType);
             if (type == null) {
                 throw new CommandException(Messaging.tr(Messages.NPC_CREATE_INVALID_MOBTYPE, inputType));
