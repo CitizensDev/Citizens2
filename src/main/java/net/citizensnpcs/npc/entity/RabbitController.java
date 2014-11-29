@@ -7,39 +7,60 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R1.EntityWither;
+import net.minecraft.server.v1_8_R1.Block;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.EntityRabbit;
 import net.minecraft.server.v1_8_R1.NBTTagCompound;
 import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftWither;
-import org.bukkit.entity.Wither;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftRabbit;
+import org.bukkit.entity.Rabbit;
 import org.bukkit.util.Vector;
 
-public class WitherController extends MobEntityController {
-    public WitherController() {
-        super(EntityWitherNPC.class);
+public class RabbitController extends MobEntityController {
+    public RabbitController() {
+        super(EntityRabbitNPC.class);
     }
 
     @Override
-    public Wither getBukkitEntity() {
-        return (Wither) super.getBukkitEntity();
+    public Rabbit getBukkitEntity() {
+        return (Rabbit) super.getBukkitEntity();
     }
 
-    public static class EntityWitherNPC extends EntityWither implements NPCHolder {
+    public static class EntityRabbitNPC extends EntityRabbit implements NPCHolder {
         private final CitizensNPC npc;
 
-        public EntityWitherNPC(World world) {
+        public EntityRabbitNPC(World world) {
             this(world, null);
         }
 
-        public EntityWitherNPC(World world, NPC npc) {
+        public EntityRabbitNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+
+            }
+        }
+
+        @Override
+        public void a(boolean flag) {
+            float oldw = width;
+            float oldl = length;
+            super.a(flag);
+            if (oldw != width || oldl != length) {
+                this.setPosition(locX - 0.01, locY, locZ - 0.01);
+                this.setPosition(locX + 0.01, locY, locZ + 0.01);
+            }
+        }
+
+        @Override
+        protected void a(double d0, boolean flag, Block block, BlockPosition blockposition) {
+            if (npc == null || !npc.isFlyable()) {
+                super.a(d0, flag, block, blockposition);
             }
         }
 
@@ -71,8 +92,9 @@ public class WitherController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override
@@ -92,6 +114,13 @@ public class WitherController extends MobEntityController {
             super.doTick();
             if (npc != null) {
                 npc.update();
+            }
+        }
+
+        @Override
+        public void e(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.e(f, f1);
             }
         }
 
@@ -118,9 +147,18 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
+        public void g(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.g(f, f1);
+            } else {
+                NMS.flyingMoveLogic(this, f, f1);
+            }
+        }
+
+        @Override
         public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null)
-                bukkitEntity = new WitherNPC(this);
+                bukkitEntity = new RabbitNPC(this);
             return super.getBukkitEntity();
         }
 
@@ -130,16 +168,25 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
+        public boolean j_() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.j_();
+            } else {
+                return false;
+            }
+        }
+
+        @Override
         protected String z() {
             return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
                     NPC.AMBIENT_SOUND_METADATA, super.z());
         }
     }
 
-    public static class WitherNPC extends CraftWither implements NPCHolder {
+    public static class RabbitNPC extends CraftRabbit implements NPCHolder {
         private final CitizensNPC npc;
 
-        public WitherNPC(EntityWitherNPC entity) {
+        public RabbitNPC(EntityRabbitNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
         }

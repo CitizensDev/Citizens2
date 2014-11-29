@@ -45,7 +45,6 @@ public class EndermanController extends MobEntityController {
     }
 
     public static class EntityEndermanNPC extends EntityEnderman implements NPCHolder {
-        private int jumpTicks;
         private final CitizensNPC npc;
 
         public EntityEndermanNPC(World world) {
