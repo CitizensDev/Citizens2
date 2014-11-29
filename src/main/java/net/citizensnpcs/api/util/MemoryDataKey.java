@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 
@@ -100,7 +98,7 @@ public class MemoryDataKey extends DataKey {
         Set<String> keys = head.getKeys(false);
         return Iterables.transform(keys, new Function<String, DataKey>() {
             @Override
-            public DataKey apply(@Nullable String input) {
+            public DataKey apply(String input) {
                 return new MemoryDataKey(root, getKeyFor(input));
             }
         });

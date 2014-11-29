@@ -91,7 +91,14 @@ public class NBTStorage implements FileStorage {
             ex.printStackTrace();
             return false;
         } finally {
-            Closeables.closeQuietly(stream);
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
+            catch (Exception e) {
+                e.getCause(); // Do nothing
+            }
         }
         return true;
     }
@@ -114,7 +121,14 @@ public class NBTStorage implements FileStorage {
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
-            Closeables.closeQuietly(stream);
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
+            catch (Exception e) {
+                e.getCause(); // Do nothing
+            }
         }
     }
 

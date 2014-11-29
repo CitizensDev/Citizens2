@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Nullable;
-
 import com.google.common.base.Function;
 
 /**
@@ -112,7 +110,7 @@ public class Selector extends Composite {
          * Sets whether to retry child {@link Behavior}s when they return
          * {@link BehaviorStatus#FAILURE}.
          *
-         * @param retry
+         * @param b
          *            Whether to retry children
          */
         public Builder retryChildren(boolean b) {
@@ -145,7 +143,7 @@ public class Selector extends Composite {
     private static final Random RANDOM = new Random();
     private static final Function<List<Behavior>, Behavior> RANDOM_SELECTION = new Function<List<Behavior>, Behavior>() {
         @Override
-        public Behavior apply(@Nullable List<Behavior> behaviors) {
+        public Behavior apply(List<Behavior> behaviors) {
             return behaviors.get(RANDOM.nextInt(behaviors.size()));
         }
     };

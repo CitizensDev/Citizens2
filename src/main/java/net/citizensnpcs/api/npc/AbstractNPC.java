@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.SimpleGoalController;
@@ -287,7 +285,7 @@ public abstract class AbstractNPC implements NPC {
         Set<DataKey> keys = Sets.newHashSet(root.getRelative("traits").getSubKeys());
         Iterables.addAll(keys, Iterables.transform(Splitter.on(',').split(traitNames), new Function<String, DataKey>() {
             @Override
-            public DataKey apply(@Nullable String input) {
+            public DataKey apply(String input) {
                 return root.getRelative("traits." + input);
             }
         }));
