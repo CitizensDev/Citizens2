@@ -6,21 +6,22 @@ import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_7_R4.Block;
-import net.minecraft.server.v1_7_R4.Blocks;
-import net.minecraft.server.v1_7_R4.EntityFallingBlock;
-import net.minecraft.server.v1_7_R4.NBTTagCompound;
-import net.minecraft.server.v1_7_R4.World;
-import net.minecraft.server.v1_7_R4.WorldServer;
+import net.minecraft.server.v1_8_R1.Block;
+import net.minecraft.server.v1_8_R1.Blocks;
+import net.minecraft.server.v1_8_R1.EntityFallingBlock;
+import net.minecraft.server.v1_8_R1.IBlockData;
+import net.minecraft.server.v1_8_R1.NBTTagCompound;
+import net.minecraft.server.v1_8_R1.World;
+import net.minecraft.server.v1_8_R1.WorldServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftFallingSand;
-import org.bukkit.craftbukkit.v1_7_R4.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftFallingSand;
+import org.bukkit.craftbukkit.v1_8_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
@@ -39,8 +40,8 @@ public class FallingBlockController extends AbstractEntityController {
             id = CraftMagicNumbers.getBlock(Material.getMaterial(npc.data().<String> get(NPC.ITEM_ID_METADATA,
                     npc.data().<String> get("falling-block-id"))));
         }
-        final EntityFallingBlockNPC handle = new EntityFallingBlockNPC(ws, npc, at.getX(), at.getY(), at.getZ(), id,
-                data);
+        final EntityFallingBlockNPC handle = new EntityFallingBlockNPC(ws, npc, at.getX(), at.getY(), at.getZ(),
+                id.fromLegacyData(data));
         return handle.getBukkitEntity();
     }
 
@@ -61,24 +62,24 @@ public class FallingBlockController extends AbstractEntityController {
             this.npc = (CitizensNPC) npc;
         }
 
-        public EntityFallingBlockNPC(World world, NPC npc, double d0, double d1, double d2, Block block, int data) {
-            super(world, d0, d1, d2, block, data);
+        public EntityFallingBlockNPC(World world, NPC npc, double d0, double d1, double d2, IBlockData data) {
+            super(world, d0, d1, d2, data);
             this.npc = (CitizensNPC) npc;
         }
 
         @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
-        }
-
-        @Override
-        public void collide(net.minecraft.server.v1_7_R4.Entity entity) {
+        public void collide(net.minecraft.server.v1_8_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -117,7 +118,7 @@ public class FallingBlockController extends AbstractEntityController {
         }
 
         @Override
-        public void h() {
+        public void s_() {
             if (npc != null) {
                 npc.update();
                 if (Math.abs(motX) > EPSILON || Math.abs(motY) > EPSILON || Math.abs(motZ) > EPSILON) {
@@ -127,7 +128,7 @@ public class FallingBlockController extends AbstractEntityController {
                     move(motX, motY, motZ);
                 }
             } else {
-                super.h();
+                super.s_();
             }
         }
 

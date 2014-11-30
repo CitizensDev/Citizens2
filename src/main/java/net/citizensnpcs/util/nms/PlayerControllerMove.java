@@ -2,17 +2,19 @@ package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_7_R4.AttributeInstance;
-import net.minecraft.server.v1_7_R4.GenericAttributes;
-import net.minecraft.server.v1_7_R4.MathHelper;
+import net.minecraft.server.v1_8_R1.AttributeInstance;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
+import net.minecraft.server.v1_8_R1.MathHelper;
+
+import org.bukkit.craftbukkit.v1_8_R1.TrigMath;
 
 public class PlayerControllerMove {
-    private final EntityHumanNPC a;
-    private double b;
-    private double c;
-    private double d;
-    private double e;
-    private boolean f;
+    protected EntityHumanNPC a;
+    protected double b;
+    protected double c;
+    protected double d;
+    protected double e;
+    protected boolean f;
 
     public PlayerControllerMove(EntityHumanNPC entityinsentient) {
         this.a = entityinsentient;
@@ -33,7 +35,7 @@ public class PlayerControllerMove {
         this.f = true;
     }
 
-    private float a(float f, float f1, float f2) {
+    protected float a(float f, float f1, float f2) {
         float f3 = MathHelper.g(f1 - f);
 
         if (f3 > f2) {
@@ -44,7 +46,15 @@ public class PlayerControllerMove {
             f3 = -f2;
         }
 
-        return f + f3;
+        float f4 = f + f3;
+
+        if (f4 < 0.0F)
+            f4 += 360.0F;
+        else if (f4 > 360.0F) {
+            f4 -= 360.0F;
+        }
+
+        return f4;
     }
 
     public double b() {
@@ -52,28 +62,40 @@ public class PlayerControllerMove {
     }
 
     public void c() {
-        this.a.be = 0;
+        this.a.aY = 0F;
         if (this.f) {
             this.f = false;
-            int i = MathHelper.floor(this.a.boundingBox.b + 0.5D);
+            int i = MathHelper.floor(this.a.getBoundingBox().b + 0.5D);
             double d0 = this.b - this.a.locX;
             double d1 = this.d - this.a.locZ;
             double d2 = this.c - i;
             double d3 = d0 * d0 + d2 * d2 + d1 * d1;
-            if (d3 >= 2.500000277905201E-7D) {
-                float f = (float) (Math.atan2(d1, d0) * 180.0D / Math.PI) - 90.0F;
 
-                this.a.yaw = this.a(this.a.yaw, f, 30.0F);
+            if (d3 >= 2.500000277905201E-007D) {
+                float f = (float) (TrigMath.atan2(d1, d0) * 180.0D / 3.141592741012573D) - 90.0F;
+
+                this.a.yaw = a(this.a.yaw, f, 30.0F);
                 NMS.setHeadYaw(a, this.a.yaw);
                 AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.d);
                 speed.setValue(0.1D * this.e);
                 float movement = (float) (this.e * speed.getValue()) * 10;
-                this.a.i(movement);
-                this.a.be = movement;
-                if (d2 > 0.0D && d0 * d0 + d1 * d1 < 1.0D) {
+                this.a.j(movement);
+                this.a.aY = movement;
+                if ((d2 > 0.0D) && (d0 * d0 + d1 * d1 < 1.0D))
                     this.a.getControllerJump().a();
-                }
             }
         }
+    }
+
+    public double d() {
+        return this.b;
+    }
+
+    public double e() {
+        return this.c;
+    }
+
+    public double f() {
+        return this.d;
     }
 }

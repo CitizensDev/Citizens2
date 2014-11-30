@@ -1,7 +1,5 @@
 package net.citizensnpcs.npc.ai;
 
-import java.lang.reflect.Field;
-
 import net.citizensnpcs.api.ai.AttackStrategy;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -10,16 +8,13 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.citizensnpcs.util.nms.PlayerNavigation;
-import net.minecraft.server.v1_7_R4.AttributeInstance;
-import net.minecraft.server.v1_7_R4.Entity;
-import net.minecraft.server.v1_7_R4.EntityLiving;
-import net.minecraft.server.v1_7_R4.EntityPlayer;
-import net.minecraft.server.v1_7_R4.Navigation;
-import net.minecraft.server.v1_7_R4.PathEntity;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.NavigationAbstract;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
@@ -37,7 +32,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         this.parameters = params;
         this.handle = ((CraftEntity) npc.getEntity()).getHandle();
         this.target = ((CraftEntity) target).getHandle();
-        Navigation nav = NMS.getNavigation(this.handle);
+        NavigationAbstract nav = NMS.getNavigation(this.handle);
         this.targetNavigator = nav != null && !params.useNewPathfinder() ? new NavigationFieldWrapper(nav)
                 : new AStarTargeter();
         this.aggro = aggro;
@@ -45,8 +40,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
     private boolean canAttack() {
         return attackTicks == 0
-                && (handle.boundingBox.e > target.boundingBox.b && handle.boundingBox.b < target.boundingBox.e)
-                && closeEnough(distanceSquared()) && hasLineOfSight();
+                && (handle.getBoundingBox().e > target.getBoundingBox().b && handle.getBoundingBox().b < target
+                        .getBoundingBox().e) && closeEnough(distanceSquared()) && hasLineOfSight();
     }
 
     @Override
@@ -174,43 +169,15 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     private class NavigationFieldWrapper implements TargetNavigator {
-        boolean j = true, k, l, m;
-        private final Navigation navigation;
-        float range;
+        private final NavigationAbstract navigation;
 
-        private NavigationFieldWrapper(Navigation navigation) {
+        private NavigationFieldWrapper(NavigationAbstract navigation) {
             this.navigation = navigation;
-            this.k = navigation.c();
-            this.l = navigation.a();
-            try {
-                if (navigation instanceof PlayerNavigation) {
-                    if (P_NAV_E != null)
-                        range = (float) ((AttributeInstance) P_NAV_E.get(navigation)).getValue();
-                    if (P_NAV_J != null)
-                        j = P_NAV_J.getBoolean(navigation);
-                    if (P_NAV_M != null)
-                        m = P_NAV_M.getBoolean(navigation);
-                } else {
-                    if (E_NAV_E != null)
-                        range = (float) ((AttributeInstance) E_NAV_E.get(navigation)).getValue();
-                    if (E_NAV_J != null)
-                        j = E_NAV_J.getBoolean(navigation);
-                    if (E_NAV_M != null)
-                        m = E_NAV_M.getBoolean(navigation);
-                }
-            } catch (Exception ex) {
-                range = parameters.range();
-            }
-        }
-
-        public PathEntity findPath(Entity from, Entity to) {
-            return handle.world.findPath(from, to, range, j, k, l, m);
         }
 
         @Override
         public void setPath() {
-            navigation.a(parameters.avoidWater());
-            navigation.a(findPath(handle, target), parameters.speed());
+            navigation.a(target, parameters.speed());
         }
 
         @Override
@@ -241,17 +208,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             return false;
         }
     };
-    private static Field E_NAV_E, E_NAV_J, E_NAV_M;
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
-    private static Field P_NAV_E, P_NAV_J, P_NAV_M;
     private static final Location TARGET_LOCATION = new Location(null, 0, 0, 0);
-
-    static {
-        E_NAV_E = NMS.getField(Navigation.class, "e");
-        E_NAV_J = NMS.getField(Navigation.class, "j");
-        E_NAV_M = NMS.getField(Navigation.class, "m");
-        P_NAV_E = NMS.getField(PlayerNavigation.class, "e");
-        P_NAV_J = NMS.getField(PlayerNavigation.class, "j");
-        P_NAV_M = NMS.getField(PlayerNavigation.class, "m");
-    }
 }

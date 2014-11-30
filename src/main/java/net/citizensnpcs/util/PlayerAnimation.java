@@ -4,14 +4,14 @@ import java.util.Arrays;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.minecraft.server.v1_7_R4.EntityPlayer;
-import net.minecraft.server.v1_7_R4.Packet;
-import net.minecraft.server.v1_7_R4.PacketPlayOutAnimation;
-import net.minecraft.server.v1_7_R4.PacketPlayOutBed;
-import net.minecraft.server.v1_7_R4.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.Packet;
+import net.minecraft.server.v1_8_R1.PacketPlayOutAnimation;
+import net.minecraft.server.v1_8_R1.PacketPlayOutBed;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityMetadata;
 
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -55,8 +55,8 @@ public enum PlayerAnimation {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if (player.dead || !player.valid ||
-                            !player.getBukkitEntity().getMetadata("citizens.sitting").get(0).asBoolean()) {
+                    if (player.dead || !player.valid
+                            || !player.getBukkitEntity().getMetadata("citizens.sitting").get(0).asBoolean()) {
                         cancel();
                         return;
                     }
@@ -74,8 +74,8 @@ public enum PlayerAnimation {
     SLEEP {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            PacketPlayOutBed packet = new PacketPlayOutBed(player, (int) player.locX, (int) player.locY,
-                    (int) player.locZ);
+            PacketPlayOutBed packet = new PacketPlayOutBed(player, new BlockPosition((int) player.locX,
+                    (int) player.locY, (int) player.locZ));
             sendPacketNearby(packet, player, radius);
         }
     },
@@ -90,7 +90,7 @@ public enum PlayerAnimation {
     START_USE_ITEM {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            player.e(true);
+            player.f(true);
             sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
                     radius);
         }
@@ -120,7 +120,7 @@ public enum PlayerAnimation {
     STOP_USE_ITEM {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            player.e(false);
+            player.f(false);
             sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
                     radius);
         }

@@ -123,8 +123,8 @@ public class Util {
     public static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
         toMatch = toMatch.toLowerCase().replace('-', '_').replace(' ', '_');
         for (T check : values) {
-            if (toMatch.equals(check.name().toLowerCase()) || toMatch.equals("item")
-                    && check == EntityType.DROPPED_ITEM) {
+            if (toMatch.equals(check.name().toLowerCase())
+                    || (toMatch.equals("item") && check == EntityType.DROPPED_ITEM)) {
                 return check; // check for an exact match first
             }
         }
