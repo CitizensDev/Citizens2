@@ -17,6 +17,8 @@ import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.util.NMS;
+import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
+import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R1.PlayerInteractManager;
 import net.minecraft.server.v1_8_R1.WorldServer;
 
@@ -81,6 +83,7 @@ public class HumanController extends AbstractEntityController {
                         npc.data().get("removefromplayerlist", removeFromPlayerList));
             }
         }, 1);
+        NMS.sendToOnline(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, handle));
         handle.getBukkitEntity().setSleepingIgnored(true);
         return handle.getBukkitEntity();
     }
