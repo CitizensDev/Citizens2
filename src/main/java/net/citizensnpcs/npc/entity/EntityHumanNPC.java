@@ -299,7 +299,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                     break;
                 }
             }
-            // NMS.sendToOnline(getListPacket(getBukkitEntity(), true));
+            NMS.sendToOnline(getListPacket(getBukkitEntity(), true));
             if (otherOnline != null) {
                 NMS.sendToOnline(getListPacket(otherOnline, false));
             }
