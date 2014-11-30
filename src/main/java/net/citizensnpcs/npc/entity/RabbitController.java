@@ -9,39 +9,51 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R1.Block;
 import net.minecraft.server.v1_8_R1.BlockPosition;
-import net.minecraft.server.v1_8_R1.EntityIronGolem;
+import net.minecraft.server.v1_8_R1.EntityRabbit;
 import net.minecraft.server.v1_8_R1.NBTTagCompound;
 import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftIronGolem;
-import org.bukkit.entity.IronGolem;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftRabbit;
+import org.bukkit.entity.Rabbit;
 import org.bukkit.util.Vector;
 
-public class IronGolemController extends MobEntityController {
-    public IronGolemController() {
-        super(EntityIronGolemNPC.class);
+public class RabbitController extends MobEntityController {
+    public RabbitController() {
+        super(EntityRabbitNPC.class);
     }
 
     @Override
-    public IronGolem getBukkitEntity() {
-        return (IronGolem) super.getBukkitEntity();
+    public Rabbit getBukkitEntity() {
+        return (Rabbit) super.getBukkitEntity();
     }
 
-    public static class EntityIronGolemNPC extends EntityIronGolem implements NPCHolder {
+    public static class EntityRabbitNPC extends EntityRabbit implements NPCHolder {
         private final CitizensNPC npc;
 
-        public EntityIronGolemNPC(World world) {
+        public EntityRabbitNPC(World world) {
             this(world, null);
         }
 
-        public EntityIronGolemNPC(World world, NPC npc) {
+        public EntityRabbitNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
+
+            }
+        }
+
+        @Override
+        public void a(boolean flag) {
+            float oldw = width;
+            float oldl = length;
+            super.a(flag);
+            if (oldw != width || oldl != length) {
+                this.setPosition(locX - 0.01, locY, locZ - 0.01);
+                this.setPosition(locX + 0.01, locY, locZ + 0.01);
             }
         }
 
@@ -80,8 +92,9 @@ public class IronGolemController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override
@@ -90,10 +103,18 @@ public class IronGolemController extends MobEntityController {
         }
 
         @Override
+        protected void D() {
+            if (npc == null) {
+                super.D();
+            }
+        }
+
+        @Override
         public void doTick() {
             super.doTick();
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
+            }
         }
 
         @Override
@@ -137,7 +158,7 @@ public class IronGolemController extends MobEntityController {
         @Override
         public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null)
-                bukkitEntity = new IronGolemNPC(this);
+                bukkitEntity = new RabbitNPC(this);
             return super.getBukkitEntity();
         }
 
@@ -160,19 +181,12 @@ public class IronGolemController extends MobEntityController {
             return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
                     NPC.AMBIENT_SOUND_METADATA, super.z());
         }
-
-        @Override
-        protected void D() {
-            if (npc == null) {
-                super.D();
-            }
-        }
     }
 
-    public static class IronGolemNPC extends CraftIronGolem implements NPCHolder {
+    public static class RabbitNPC extends CraftRabbit implements NPCHolder {
         private final CitizensNPC npc;
 
-        public IronGolemNPC(EntityIronGolemNPC entity) {
+        public RabbitNPC(EntityRabbitNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
         }

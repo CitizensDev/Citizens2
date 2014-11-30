@@ -10,8 +10,10 @@ import net.citizensnpcs.npc.entity.CowController;
 import net.citizensnpcs.npc.entity.CreeperController;
 import net.citizensnpcs.npc.entity.EnderDragonController;
 import net.citizensnpcs.npc.entity.EndermanController;
+import net.citizensnpcs.npc.entity.EndermiteController;
 import net.citizensnpcs.npc.entity.GhastController;
 import net.citizensnpcs.npc.entity.GiantController;
+import net.citizensnpcs.npc.entity.GuardianController;
 import net.citizensnpcs.npc.entity.HorseController;
 import net.citizensnpcs.npc.entity.HumanController;
 import net.citizensnpcs.npc.entity.IronGolemController;
@@ -20,6 +22,7 @@ import net.citizensnpcs.npc.entity.MushroomCowController;
 import net.citizensnpcs.npc.entity.OcelotController;
 import net.citizensnpcs.npc.entity.PigController;
 import net.citizensnpcs.npc.entity.PigZombieController;
+import net.citizensnpcs.npc.entity.RabbitController;
 import net.citizensnpcs.npc.entity.SheepController;
 import net.citizensnpcs.npc.entity.SilverfishController;
 import net.citizensnpcs.npc.entity.SkeletonController;
@@ -32,6 +35,7 @@ import net.citizensnpcs.npc.entity.WitchController;
 import net.citizensnpcs.npc.entity.WitherController;
 import net.citizensnpcs.npc.entity.WolfController;
 import net.citizensnpcs.npc.entity.ZombieController;
+import net.citizensnpcs.npc.entity.nonliving.ArmorStandController;
 import net.citizensnpcs.npc.entity.nonliving.ArrowController;
 import net.citizensnpcs.npc.entity.nonliving.BoatController;
 import net.citizensnpcs.npc.entity.nonliving.EggController;
@@ -89,6 +93,7 @@ public class EntityControllers {
 
     static {
         TYPES.put(EntityType.ARROW, ArrowController.class);
+        TYPES.put(EntityType.ARMOR_STAND, ArmorStandController.class);
         TYPES.put(EntityType.BAT, BatController.class);
         TYPES.put(EntityType.BLAZE, BlazeController.class);
         TYPES.put(EntityType.BOAT, BoatController.class);
@@ -103,12 +108,14 @@ public class EntityControllers {
         TYPES.put(EntityType.ENDER_PEARL, EnderPearlController.class);
         TYPES.put(EntityType.ENDER_SIGNAL, EnderSignalController.class);
         TYPES.put(EntityType.ENDERMAN, EndermanController.class);
+        TYPES.put(EntityType.ENDERMITE, EndermiteController.class);
         TYPES.put(EntityType.FALLING_BLOCK, FallingBlockController.class);
         TYPES.put(EntityType.FIREWORK, FireworkController.class);
         TYPES.put(EntityType.FIREBALL, LargeFireballController.class);
         TYPES.put(EntityType.FISHING_HOOK, FishingHookController.class);
         TYPES.put(EntityType.GHAST, GhastController.class);
         TYPES.put(EntityType.GIANT, GiantController.class);
+        TYPES.put(EntityType.GUARDIAN, GuardianController.class);
         TYPES.put(EntityType.HORSE, HorseController.class);
         TYPES.put(EntityType.IRON_GOLEM, IronGolemController.class);
         TYPES.put(EntityType.ITEM_FRAME, ItemFrameController.class);
@@ -126,6 +133,7 @@ public class EntityControllers {
         TYPES.put(EntityType.PIG, PigController.class);
         TYPES.put(EntityType.PIG_ZOMBIE, PigZombieController.class);
         TYPES.put(EntityType.PLAYER, HumanController.class);
+        TYPES.put(EntityType.RABBIT, RabbitController.class);
         TYPES.put(EntityType.SHEEP, SheepController.class);
         TYPES.put(EntityType.SILVERFISH, SilverfishController.class);
         TYPES.put(EntityType.SKELETON, SkeletonController.class);

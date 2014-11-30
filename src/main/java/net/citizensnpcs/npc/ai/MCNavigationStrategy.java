@@ -5,14 +5,14 @@ import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_7_R4.EntityLiving;
-import net.minecraft.server.v1_7_R4.Navigation;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.NavigationAbstract;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity;
 
 public class MCNavigationStrategy extends AbstractPathStrategy {
-    private final Navigation navigation;
+    private final NavigationAbstract navigation;
     private final NavigatorParameters parameters;
     private final Location target;
 
@@ -26,7 +26,6 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         // navigation won't execute, and calling entity.move doesn't
         // entirely fix the problem.
         navigation = NMS.getNavigation(handle);
-        navigation.a(parameters.avoidWater());
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), parameters.speed());
         if (NMS.isNavigationFinished(navigation)) {
             setCancelReason(CancelReason.STUCK);
@@ -57,7 +56,6 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
     public boolean update() {
         if (getCancelReason() != null)
             return true;
-        navigation.a(parameters.avoidWater());
         navigation.a(parameters.speed());
         parameters.run();
         return NMS.isNavigationFinished(navigation);
