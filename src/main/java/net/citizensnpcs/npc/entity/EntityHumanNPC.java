@@ -1,8 +1,6 @@
 package net.citizensnpcs.npc.entity;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.List;
 
@@ -27,6 +25,7 @@ import net.minecraft.server.v1_8_R1.BlockPosition;
 import net.minecraft.server.v1_8_R1.Entity;
 import net.minecraft.server.v1_8_R1.EntityPlayer;
 import net.minecraft.server.v1_8_R1.EnumGamemode;
+import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
 import net.minecraft.server.v1_8_R1.EnumProtocolDirection;
 import net.minecraft.server.v1_8_R1.GenericAttributes;
 import net.minecraft.server.v1_8_R1.MathHelper;
@@ -145,21 +144,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private Packet getListPacket(Player player, boolean removeFromPlayerList) {
-        if (PLAYER_INFO_CONSTRUCTOR != null) {
-            try {
-                return PLAYER_INFO_CONSTRUCTOR.newInstance(player.getPlayerListName(), !removeFromPlayerList,
-                        removeFromPlayerList ? 9999 : ping);
-            } catch (Exception e) {
-            }
-        } else {
-            try {
-                return (Packet) (removeFromPlayerList ? PLAYER_INFO_REMOVE_METHOD.invoke(null,
-                        ((CraftPlayer) player).getHandle()) : PLAYER_INFO_ADD_METHOD.invoke(null,
-                        ((CraftPlayer) player).getHandle()));
-            } catch (Exception e) {
-            }
-        }
-        return null;
+        return new PacketPlayOutPlayerInfo(removeFromPlayerList ? EnumPlayerInfoAction.REMOVE_PLAYER
+                : EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) player).getHandle());
     }
 
     public NavigationAbstract getNavigation() {
@@ -313,7 +299,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                     break;
                 }
             }
-            NMS.sendToOnline(getListPacket(getBukkitEntity(), true));
+            // NMS.sendToOnline(getListPacket(getBukkitEntity(), true));
             if (otherOnline != null) {
                 NMS.sendToOnline(getListPacket(otherOnline, false));
             }
@@ -373,22 +359,4 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     private static final float EPSILON = 0.005F;
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
-    private static Method PLAYER_INFO_ADD_METHOD;
-    private static Constructor<PacketPlayOutPlayerInfo> PLAYER_INFO_CONSTRUCTOR;
-    private static Method PLAYER_INFO_REMOVE_METHOD;
-
-    static {
-        try {
-            PLAYER_INFO_CONSTRUCTOR = PacketPlayOutPlayerInfo.class.getConstructor(String.class, boolean.class,
-                    int.class);
-        } catch (Exception e) {
-        }
-        try {
-            PLAYER_INFO_ADD_METHOD = PacketPlayOutPlayerInfo.class.getMethod("addPlayer", EntityPlayer.class);
-            PLAYER_INFO_REMOVE_METHOD = PacketPlayOutPlayerInfo.class.getMethod("removePlayer", EntityPlayer.class);
-            PLAYER_INFO_ADD_METHOD.setAccessible(true);
-            PLAYER_INFO_REMOVE_METHOD.setAccessible(true);
-        } catch (Exception e) {
-        }
-    }
 }
