@@ -6,13 +6,13 @@
 
 	<groupId>net.citizensnpcs</groupId>
 	<artifactId>citizens</artifactId>
-	<version>2.0.13-SNAPSHOT</version>
+	<version>2.0.14-SNAPSHOT</version>
 	<name>Citizens</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<craftbukkit.version>1.7.10-R0.1-SNAPSHOT</craftbukkit.version>
-		<citizensapi.version>2.0.13-SNAPSHOT</citizensapi.version>
+		<craftbukkit.version>1.8-R0.1-SNAPSHOT</craftbukkit.version>
+		<citizensapi.version>2.0.14-SNAPSHOT</citizensapi.version>
 		<vault.version>1.4.1</vault.version>
 		<powermock.version>1.4.12</powermock.version>
 		<build.number>Unknown</build.number>
@@ -42,7 +42,7 @@
 	</pluginRepositories>
 
 	<dependencies>
-		<!--<dependency>
+		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>${craftbukkit.version}</version>
@@ -55,7 +55,7 @@
 			<version>${craftbukkit.version}</version>
 			<type>jar</type>
 			<scope>provided</scope>
-		</dependency>-->
+		</dependency>
 		<dependency>
 			<groupId>net.citizensnpcs</groupId>
 			<artifactId>citizensapi</artifactId>
