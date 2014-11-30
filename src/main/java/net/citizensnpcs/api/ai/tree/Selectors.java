@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
@@ -23,7 +21,7 @@ public class Selectors {
         }
 
         @Override
-        public Behavior apply(@Nullable List<Behavior> input) {
+        public Behavior apply(List<Behavior> input) {
             Collections.sort(input, comparator);
             return input.get(input.size() - 1);
         }

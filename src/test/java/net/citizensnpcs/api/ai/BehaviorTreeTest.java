@@ -5,8 +5,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
@@ -31,7 +29,7 @@ public class BehaviorTreeTest {
             int idx;
 
             @Override
-            public Behavior apply(@Nullable List<Behavior> input) {
+            public Behavior apply(List<Behavior> input) {
                 Behavior b = input.get(idx++);
                 if (idx >= input.size())
                     idx = 0;

@@ -204,7 +204,14 @@ public class Translator {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            Closeables.closeQuietly(out);
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            }
+            catch (Exception e) {
+                e.getCause(); // Do nothing
+            }
         }
     }
 
@@ -291,7 +298,14 @@ public class Translator {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            Closeables.closeQuietly(stream);
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
+            catch (Exception e) {
+                e.getCause(); // Do nothing
+            }
         }
     }
 

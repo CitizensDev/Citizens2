@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
@@ -63,7 +61,7 @@ public class TargetNearbyEntityGoal extends BehaviorGoalAdapter {
             npc.getNavigator().setTarget(target, aggressive);
             npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override
-                public void onCompletion(@Nullable CancelReason cancelReason) {
+                public void onCompletion(CancelReason cancelReason) {
                     reason = cancelReason;
                     finished = true;
                 }

@@ -4,3 +4,5 @@
 .project
 CitizensAPI.jar
 *.lnk
+.idea/
+*.iml
