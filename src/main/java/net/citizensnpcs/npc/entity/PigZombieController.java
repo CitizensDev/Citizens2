@@ -118,8 +118,9 @@ public class PigZombieController extends MobEntityController {
                 return;
             }
             if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
                     super.g(x, y, z);
+                }
                 return;
             }
             Vector vector = new Vector(x, y, z);
