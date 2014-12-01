@@ -212,17 +212,18 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return enabled;
     }
 
-    private double updateHorizontalSpeed(net.minecraft.server.v1_8_R1.Entity handle, double speed, float speedMod) {
+    private double updateHorizontalSpeed(net.minecraft.server.v1_8_R1.Entity handle,
+            net.minecraft.server.v1_8_R1.Entity passenger, double speed, float speedMod) {
         double oldSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
-        double horizontal = ((EntityLiving) handle.passenger).aY;
+        double horizontal = ((EntityLiving) passenger).aY;
         if (horizontal > 0.0D) {
-            double dXcos = -Math.sin(handle.passenger.yaw * Math.PI / 180.0F);
-            double dXsin = Math.cos(handle.passenger.yaw * Math.PI / 180.0F);
+            double dXcos = -Math.sin(passenger.yaw * Math.PI / 180.0F);
+            double dXsin = Math.cos(passenger.yaw * Math.PI / 180.0F);
             handle.motX += dXcos * speed * 0.5;
             handle.motZ += dXsin * speed * 0.5;
         }
-        handle.motX += handle.passenger.motX * speedMod;
-        handle.motZ += handle.passenger.motZ * speedMod;
+        handle.motX += passenger.motX * speedMod;
+        handle.motZ += passenger.motZ * speedMod;
 
         double newSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
         if (newSpeed > 0.35D) {
@@ -259,12 +260,13 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         @Override
         public void run(Player rider) {
             net.minecraft.server.v1_8_R1.Entity handle = getHandle();
+            net.minecraft.server.v1_8_R1.Entity passenger = ((CraftPlayer) rider).getHandle();
             boolean onGround = handle.onGround;
             float speedMod = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
-            this.speed = updateHorizontalSpeed(handle, speed, speedMod);
+            speed = updateHorizontalSpeed(handle, passenger, speed, speedMod);
 
-            boolean shouldJump = NMS.shouldJump(handle.passenger);
+            boolean shouldJump = NMS.shouldJump(passenger);
             if (shouldJump) {
                 if (handle.onGround && jumpTicks == 0) {
                     getHandle().motY = JUMP_VELOCITY;
@@ -353,8 +355,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                 return;
             }
             net.minecraft.server.v1_8_R1.Entity handle = getHandle();
-            this.speed = updateHorizontalSpeed(handle, this.speed, 1F);
-            boolean shouldJump = NMS.shouldJump(handle.passenger);
+            net.minecraft.server.v1_8_R1.Entity passenger = ((CraftPlayer) rider).getHandle();
+
+            speed = updateHorizontalSpeed(handle, passenger, speed, 1F);
+            boolean shouldJump = NMS.shouldJump(passenger);
             if (shouldJump) {
                 handle.motY = 0.3F;
             }
