@@ -29,6 +29,7 @@ import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Iterables;
@@ -66,7 +67,7 @@ public class HumanController extends AbstractEntityController {
         if (uuid.version() == 4) { // clear version
             long msb = uuid.getMostSignificantBits();
             msb &= ~0x0000000000004000L;
-            msb |= 0x0000000000002000L;
+            msb |=  0x0000000000002000L;
             uuid = new UUID(msb, uuid.getLeastSignificantBits());
         }
 
@@ -86,6 +87,16 @@ public class HumanController extends AbstractEntityController {
         }, 1);
         handle.getBukkitEntity().setSleepingIgnored(true);
         NMS.sendToOnline(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, handle));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                // Double check that we're still spawned and haven't changed type.
+                if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
+                    NMS.sendToOnline(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER,
+                            ((CraftPlayer) getBukkitEntity()).getHandle()));
+                }
+            }
+        }, 60);
         return handle.getBukkitEntity();
     }
 

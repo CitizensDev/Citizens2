@@ -29,8 +29,7 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
-import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R1.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -50,10 +49,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -277,11 +273,53 @@ public class EventListen implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(final PlayerJoinEvent event) {
         for (NPC npc : getAllNPCs()) {
             if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                NMS.sendToOnline(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) npc
+                ((CraftPlayer)event.getPlayer()).getHandle().playerConnection.sendPacket(
+                        new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) npc
                         .getEntity()).getHandle()));
+            }
+        }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                for (NPC npc : getAllNPCs()) {
+                    if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
+                        ((CraftPlayer)event.getPlayer()).getHandle().playerConnection.sendPacket(
+                                new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) npc
+                                .getEntity()).getHandle()));
+                    }
+                }
+            }
+        }, 60);
+    }
+
+    @EventHandler
+    public void onPlayerWalks(final PlayerMoveEvent event) {
+        if (event.getFrom().getY() > 255 || event.getFrom().getY() < 0
+                || event.getTo().getY() > 255 || event.getTo().getY() < 0) {
+            return; // Don't fire if players go outside the world, as that would be more difficult to handle.
+        }
+        Location from = event.getFrom().getBlock().getLocation();
+        Location to = event.getTo().getBlock().getLocation();
+        if (from.equals(to)) {
+            return; // Don't fire on every movement, just full block+.
+        }
+        int maxRad = 50 * 50; // TODO: Adjust me to perfection
+        for (final NPC npc: getAllNPCs()) {
+            if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
+                if (npc.getEntity().getLocation().distanceSquared(to) < maxRad &&
+                        npc.getEntity().getLocation().distanceSquared(from) > maxRad) {
+                    // TODO: Replicate this with packets!
+                    npc.despawn();
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                        @Override
+                        public void run() {
+                            npc.spawn(npc.getStoredLocation());
+                        }
+                    }, 1);
+                }
             }
         }
     }
