@@ -107,8 +107,11 @@ public class BatController extends MobEntityController {
 
         @Override
         public void E() {
-            super.E();
-            if (npc != null) {
+            if (npc == null) {
+                super.E();
+            }
+            else {
+                NMS.updateAI(this);
                 npc.update();
             }
         }
