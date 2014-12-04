@@ -35,7 +35,6 @@ import net.minecraft.server.v1_8_R1.NetworkManager;
 import net.minecraft.server.v1_8_R1.Packet;
 import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_8_R1.PacketPlayOutEntityHeadRotation;
-import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R1.PlayerInteractManager;
 import net.minecraft.server.v1_8_R1.WorldServer;
 
@@ -141,11 +140,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     public PlayerControllerMove getControllerMove() {
         return controllerMove;
-    }
-
-    private Packet getListPacket(Player player, boolean removeFromPlayerList) {
-        return new PacketPlayOutPlayerInfo(removeFromPlayerList ? EnumPlayerInfoAction.REMOVE_PLAYER
-                : EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) player).getHandle());
     }
 
     public NavigationAbstract getNavigation() {
