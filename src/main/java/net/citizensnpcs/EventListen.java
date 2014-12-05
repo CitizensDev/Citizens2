@@ -306,19 +306,53 @@ public class EventListen implements Listener {
         if (from.equals(to)) {
             return; // Don't fire on every movement, just full block+.
         }
+        if (!from.getWorld().getName().equalsIgnoreCase(to.getWorld().getName())) {
+            return; // Ignore cross-world movement for now.
+        }
         int maxRad = 50 * 50; // TODO: Adjust me to perfection
         for (final NPC npc: getAllNPCs()) {
             if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                if (npc.getEntity().getLocation().distanceSquared(to) < maxRad &&
-                        npc.getEntity().getLocation().distanceSquared(from) > maxRad) {
-                    // TODO: Replicate this with packets!
-                    npc.despawn();
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            npc.spawn(npc.getStoredLocation());
-                        }
-                    }, 1);
+                if (from.getWorld().getName().equalsIgnoreCase(npc.getEntity().getLocation().getWorld().getName())
+                        && npc.getEntity().getLocation().distanceSquared(to) < maxRad
+                        && npc.getEntity().getLocation().distanceSquared(from) > maxRad) {
+                    showNPCReset(event.getPlayer(), npc);
+                }
+            }
+        }
+    }
+
+    public void showNPCReset(final Player player, final NPC npc) {
+        // TODO: Replicate this with packets!
+        npc.despawn();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                npc.spawn(npc.getStoredLocation());
+            }
+        }, 1);
+    }
+
+    @EventHandler
+    public void onPlayerTeleports(PlayerTeleportEvent event) {
+        if (event.getFrom().getY() > 255 || event.getFrom().getY() < 0
+                || event.getTo().getY() > 255 || event.getTo().getY() < 0) {
+            return; // Don't fire if players go outside the world, as that would be more difficult to handle.
+        }
+        Location from = event.getFrom().getBlock().getLocation();
+        Location to = event.getTo().getBlock().getLocation();
+        if (from.equals(to)) {
+            return; // Don't fire on every movement, just full block+.
+        }
+        int maxRad = 50 * 50; // TODO: Adjust me to perfection
+        for (final NPC npc: getAllNPCs()) {
+            if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
+                // if to.world=npc.world and in-range, and if (from.world = npc.world and out-of-range, or from a different world)
+                if ((to.getWorld().getName().equalsIgnoreCase(npc.getEntity().getLocation().getWorld().getName())
+                        && npc.getEntity().getLocation().distanceSquared(to) < maxRad)
+                        && ((from.getWorld().getName().equalsIgnoreCase(npc.getEntity().getLocation().getWorld().getName())
+                        && npc.getEntity().getLocation().distanceSquared(from) > maxRad)
+                || !from.getWorld().getName().equalsIgnoreCase(to.getWorld().getName()))) {
+                    showNPCReset(event.getPlayer(), npc);
                 }
             }
         }
