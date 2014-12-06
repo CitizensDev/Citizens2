@@ -295,18 +295,19 @@ public class EventListen implements Listener {
         }, 60);
     }
 
+    Location roundLocation(Location input) {
+        return new Location(input.getWorld(), Math.floor(input.getX()),
+                Math.floor(input.getY()), Math.floor(input.getZ()));
+    }
+
     @EventHandler
     public void onPlayerWalks(final PlayerMoveEvent event) {
-        if (event.getFrom().getY() > 255 || event.getFrom().getY() < 0
-                || event.getTo().getY() > 255 || event.getTo().getY() < 0) {
-            return; // Don't fire if players go outside the world, as that would be more difficult to handle.
-        }
-        Location from = event.getFrom().getBlock().getLocation();
-        Location to = event.getTo().getBlock().getLocation();
+        Location from = roundLocation(event.getFrom());
+        Location to = roundLocation(event.getTo());
         if (from.equals(to)) {
             return; // Don't fire on every movement, just full block+.
         }
-        if (!from.getWorld().getName().equalsIgnoreCase(to.getWorld().getName())) {
+        if (from.getWorld() != to.getWorld()) {
             return; // Ignore cross-world movement for now.
         }
         int maxRad = 50 * 50; // TODO: Adjust me to perfection
