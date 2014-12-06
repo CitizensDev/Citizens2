@@ -322,14 +322,30 @@ public class EventListen implements Listener {
     }
 
     public void showNPCReset(final Player player, final NPC npc) {
-        // TODO: Replicate this with packets!
-        npc.despawn();
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket
+                (new PacketPlayOutEntityDestroy(npc.getEntity().getEntityId()));
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                npc.spawn(npc.getStoredLocation());
+                if (player.isOnline() && player.isValid()
+                        && npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
+                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutPlayerInfo
+                            (EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) npc.getEntity()).getHandle()));
+                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedEntitySpawn
+                            (((CraftPlayer) npc.getEntity()).getHandle()));
+                }
             }
         }, 1);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                if (player.isOnline() && player.isValid()
+                        && npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
+                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutPlayerInfo
+                            (EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) npc.getEntity()).getHandle()));
+                }
+            }
+        }, 61);
     }
 
     @EventHandler
@@ -347,11 +363,12 @@ public class EventListen implements Listener {
         for (final NPC npc: getAllNPCs()) {
             if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
                 // if to.world=npc.world and in-range, and if (from.world = npc.world and out-of-range, or from a different world)
-                if ((to.getWorld().getName().equalsIgnoreCase(npc.getEntity().getLocation().getWorld().getName())
-                        && npc.getEntity().getLocation().distanceSquared(to) < maxRad)
-                        && ((from.getWorld().getName().equalsIgnoreCase(npc.getEntity().getLocation().getWorld().getName())
-                        && npc.getEntity().getLocation().distanceSquared(from) > maxRad)
-                || !from.getWorld().getName().equalsIgnoreCase(to.getWorld().getName()))) {
+                Location npcPos = npc.getEntity().getLocation();
+                if ((to.getWorld() == npcPos.getWorld()
+                        && npcPos.distanceSquared(to) < maxRad)
+                        && ((from.getWorld() == npcPos.getWorld()
+                        && npcPos.distanceSquared(from) > maxRad)
+                        || from.getWorld() != to.getWorld())) {
                     showNPCReset(event.getPlayer(), npc);
                 }
             }
