@@ -16,27 +16,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.network.EmptyChannel;
-import net.minecraft.server.v1_8_R1.AttributeInstance;
-import net.minecraft.server.v1_8_R1.Block;
-import net.minecraft.server.v1_8_R1.BlockPosition;
-import net.minecraft.server.v1_8_R1.ControllerJump;
-import net.minecraft.server.v1_8_R1.DamageSource;
-import net.minecraft.server.v1_8_R1.EnchantmentManager;
-import net.minecraft.server.v1_8_R1.Entity;
-import net.minecraft.server.v1_8_R1.EntityHorse;
-import net.minecraft.server.v1_8_R1.EntityHuman;
-import net.minecraft.server.v1_8_R1.EntityInsentient;
-import net.minecraft.server.v1_8_R1.EntityLiving;
-import net.minecraft.server.v1_8_R1.EntityMinecartAbstract;
-import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.EntityTypes;
-import net.minecraft.server.v1_8_R1.GenericAttributes;
-import net.minecraft.server.v1_8_R1.MathHelper;
-import net.minecraft.server.v1_8_R1.NavigationAbstract;
-import net.minecraft.server.v1_8_R1.NetworkManager;
-import net.minecraft.server.v1_8_R1.Packet;
-import net.minecraft.server.v1_8_R1.PathfinderGoalSelector;
-import net.minecraft.server.v1_8_R1.World;
+import net.minecraft.server.v1_8_R1.*;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -47,6 +27,7 @@ import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
@@ -517,6 +498,12 @@ public class NMS {
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_UPDATING_NAVIGATION_WORLD, e.getMessage());
         }
+    }
+
+    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player player, NPC npc) {
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(
+                new PacketPlayOutPlayerInfo(showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER:
+                        EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) npc.getEntity()).getHandle()));
     }
 
     public static void updatePathfindingRange(NPC npc, float pathfindingRange) {
