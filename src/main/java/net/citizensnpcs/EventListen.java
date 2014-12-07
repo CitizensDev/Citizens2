@@ -276,9 +276,7 @@ public class EventListen implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
         for (NPC npc : getAllNPCs()) {
             if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                ((CraftPlayer)event.getPlayer()).getHandle().playerConnection.sendPacket(
-                        new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) npc
-                        .getEntity()).getHandle()));
+                NMS.sendPlayerlistPacket(true, event.getPlayer(), npc);
             }
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
@@ -286,9 +284,7 @@ public class EventListen implements Listener {
             public void run() {
                 for (NPC npc : getAllNPCs()) {
                     if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                        ((CraftPlayer)event.getPlayer()).getHandle().playerConnection.sendPacket(
-                                new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) npc
-                                .getEntity()).getHandle()));
+                        NMS.sendPlayerlistPacket(false, event.getPlayer(), npc);
                     }
                 }
             }
