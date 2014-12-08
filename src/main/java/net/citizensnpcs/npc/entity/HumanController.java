@@ -17,8 +17,6 @@ import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
-import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R1.PlayerInteractManager;
 import net.minecraft.server.v1_8_R1.WorldServer;
 
@@ -27,7 +25,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -67,7 +64,7 @@ public class HumanController extends AbstractEntityController {
         if (uuid.version() == 4) { // clear version
             long msb = uuid.getMostSignificantBits();
             msb &= ~0x0000000000004000L;
-            msb |=  0x0000000000002000L;
+            msb |= 0x0000000000002000L;
             uuid = new UUID(msb, uuid.getLeastSignificantBits());
         }
 
@@ -90,7 +87,8 @@ public class HumanController extends AbstractEntityController {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                // Double check that we're still spawned and haven't changed type.
+                // Double check that we're still spawned and haven't changed
+                // type.
                 if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
                     NMS.sendPlayerlistPacket(false, null, npc);
                 }
@@ -106,7 +104,7 @@ public class HumanController extends AbstractEntityController {
 
     @Override
     public void remove() {
-        NMS.sendPlayerlistPacket(false, null, (CraftPlayer)getBukkitEntity());
+        NMS.sendPlayerlistPacket(false, null, getBukkitEntity());
         super.remove();
     }
 
