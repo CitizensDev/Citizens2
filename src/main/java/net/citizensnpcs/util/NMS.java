@@ -500,10 +500,23 @@ public class NMS {
         }
     }
 
+    /**
+     * Send a PlayerInfo packet (adds or removes the NPC to or from the tab list) to the player.
+     * @param player The player to send the packet to, or null for all players.
+     */
     public static void sendPlayerlistPacket(boolean showInPlayerlist, Player player, NPC npc) {
-        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(
-                new PacketPlayOutPlayerInfo(showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER:
-                        EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) npc.getEntity()).getHandle()));
+        sendPlayerlistPacket(showInPlayerlist, player, (CraftPlayer)npc.getEntity());
+    }
+
+    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player player, CraftPlayer npc) {
+        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER:
+                EnumPlayerInfoAction.REMOVE_PLAYER, npc.getHandle());
+        if (player == null) {
+            sendToOnline(packet);
+        }
+        else {
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+        }
     }
 
     public static void updatePathfindingRange(NPC npc, float pathfindingRange) {
