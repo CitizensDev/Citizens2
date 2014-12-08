@@ -29,12 +29,10 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R1.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -49,7 +47,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -291,56 +294,15 @@ public class EventListen implements Listener {
         }, 60);
     }
 
-    Location roundLocation(Location input) {
-        return new Location(input.getWorld(), Math.floor(input.getX()),
-                Math.floor(input.getY()), Math.floor(input.getZ()));
-    }
-
-    @EventHandler
-    public void onPlayerWalks(final PlayerMoveEvent event) {
-        Location from = roundLocation(event.getFrom());
-        Location to = roundLocation(event.getTo());
-        if (from.equals(to)) {
-            return; // Don't fire on every movement, just full block+.
-        }
-        if (from.getWorld() != to.getWorld()) {
-            return; // Ignore cross-world movement for now.
-        }
-        int maxRad = 50 * 50; // TODO: Adjust me to perfection
-        for (final NPC npc: getAllNPCs()) {
-            if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                if (from.getWorld().getName().equalsIgnoreCase(npc.getEntity().getLocation().getWorld().getName())
-                        && npc.getEntity().getLocation().distanceSquared(to) < maxRad
-                        && npc.getEntity().getLocation().distanceSquared(from) > maxRad) {
-                    showNPCReset(event.getPlayer(), npc);
-                }
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Editor.leave(event.getPlayer());
+        if (event.getPlayer().isInsideVehicle()) {
+            NPC npc = npcRegistry.getNPC(event.getPlayer().getVehicle());
+            if (npc != null) {
+                event.getPlayer().leaveVehicle();
             }
         }
-    }
-
-    public void showNPCReset(final Player player, final NPC npc) {
-        ((CraftPlayer)player).getHandle().playerConnection.sendPacket
-                (new PacketPlayOutEntityDestroy(npc.getEntity().getEntityId()));
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                if (player.isOnline() && player.isValid()
-                        && npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                    NMS.sendPlayerlistPacket(true, player, npc);
-                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedEntitySpawn
-                            (((CraftPlayer) npc.getEntity()).getHandle()));
-                }
-            }
-        }, 1);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                if (player.isOnline() && player.isValid()
-                        && npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                    NMS.sendPlayerlistPacket(false, player, npc);
-                }
-            }
-        }, 61);
     }
 
     @EventHandler
@@ -351,28 +313,38 @@ public class EventListen implements Listener {
             return; // Don't fire on every movement, just full block+.
         }
         int maxRad = 50 * 50; // TODO: Adjust me to perfection
-        for (final NPC npc: getAllNPCs()) {
+        Location npcPos = new Location(null, 0, 0, 0);
+        for (final NPC npc : getAllNPCs()) {
             if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                // if to.world=npc.world and in-range, and if (from.world = npc.world and out-of-range, or from a different world)
-                Location npcPos = npc.getEntity().getLocation();
-                if ((to.getWorld() == npcPos.getWorld()
-                        && npcPos.distanceSquared(to) < maxRad)
-                        && ((from.getWorld() == npcPos.getWorld()
-                        && npcPos.distanceSquared(from) > maxRad)
-                        || from.getWorld() != to.getWorld())) {
-                    showNPCReset(event.getPlayer(), npc);
+                npc.getEntity().getLocation(npcPos);
+                if ((to.getWorld() == npcPos.getWorld() && npcPos.distanceSquared(to) < maxRad)
+                        && ((from.getWorld() == npcPos.getWorld() && npcPos.distanceSquared(from) > maxRad) || from
+                                .getWorld() != to.getWorld())) {
+                    NMS.showNPCReset(event.getPlayer(), npc);
                 }
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Editor.leave(event.getPlayer());
-        if (event.getPlayer().isInsideVehicle()) {
-            NPC npc = npcRegistry.getNPC(event.getPlayer().getVehicle());
-            if (npc != null) {
-                event.getPlayer().leaveVehicle();
+    @EventHandler
+    public void onPlayerWalks(final PlayerMoveEvent event) {
+        Location from = roundLocation(event.getFrom());
+        Location to = roundLocation(event.getTo());
+        if (from.equals(to)) {
+            return;
+        }
+        if (from.getWorld() != to.getWorld()) {
+            return; // Ignore cross-world movement
+        }
+        int maxRad = 50 * 50; // TODO: Adjust me to perfection
+        Location loc = new Location(null, 0, 0, 0);
+        for (final NPC npc : getAllNPCs()) {
+            if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
+                npc.getEntity().getLocation(loc);
+                if (from.getWorld() == loc.getWorld() && loc.distanceSquared(to) < maxRad
+                        && loc.distanceSquared(from) > maxRad) {
+                    NMS.showNPCReset(event.getPlayer(), npc);
+                }
             }
         }
     }
@@ -433,6 +405,13 @@ public class EventListen implements Listener {
                 Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
             }
         }
+    }
+
+    private Location roundLocation(Location input) {
+        input.setX(input.getBlockX());
+        input.setY(input.getBlockY());
+        input.setZ(input.getBlockZ());
+        return input;
     }
 
     private boolean spawn(NPC npc) {

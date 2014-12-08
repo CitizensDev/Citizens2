@@ -10,13 +10,38 @@ import java.util.Map;
 import java.util.Random;
 import java.util.WeakHashMap;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.network.EmptyChannel;
-import net.minecraft.server.v1_8_R1.*;
+import net.minecraft.server.v1_8_R1.AttributeInstance;
+import net.minecraft.server.v1_8_R1.Block;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.ControllerJump;
+import net.minecraft.server.v1_8_R1.DamageSource;
+import net.minecraft.server.v1_8_R1.EnchantmentManager;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityHorse;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityInsentient;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.EntityMinecartAbstract;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EntityTypes;
+import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
+import net.minecraft.server.v1_8_R1.MathHelper;
+import net.minecraft.server.v1_8_R1.NavigationAbstract;
+import net.minecraft.server.v1_8_R1.NetworkManager;
+import net.minecraft.server.v1_8_R1.Packet;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_8_R1.World;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -327,6 +352,11 @@ public class NMS {
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
     }
 
+    private static void sendDestroyPacket(final Player player, final NPC npc) {
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(npc.getEntity()
+                .getEntityId()));
+    }
+
     public static void sendPacket(Player player, Packet packet) {
         if (packet == null)
             return;
@@ -359,6 +389,32 @@ public class NMS {
 
     public static void sendPacketsNearby(Player from, Location location, Packet... packets) {
         NMS.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
+    }
+
+    /**
+     * Send a PlayerInfo packet (adds or removes the NPC to or from the tab
+     * list) to the player.
+     *
+     * @param player
+     *            The player to send the packet to, or null for all players.
+     */
+    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player player, NPC npc) {
+        sendPlayerlistPacket(showInPlayerlist, player, (CraftPlayer) npc.getEntity());
+    }
+
+    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player player, Player npc) {
+        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER
+                : EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) npc).getHandle());
+        if (player == null) {
+            sendToOnline(packet);
+        } else {
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+        }
+    }
+
+    private static void sendSpawnPacket(final Player player, final NPC npc) {
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedEntitySpawn(
+                ((CraftPlayer) npc.getEntity()).getHandle()));
     }
 
     public static void sendToOnline(Packet... packets) {
@@ -436,6 +492,29 @@ public class NMS {
         return false;
     }
 
+    public static void showNPCReset(final Player player, final NPC npc) {
+        sendDestroyPacket(player, npc);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                if (player.isOnline() && player.isValid() && npc.isSpawned()
+                        && npc.getEntity().getType() == EntityType.PLAYER) {
+                    sendPlayerlistPacket(true, player, npc);
+                    sendSpawnPacket(player, npc);
+                }
+            }
+        }, 1);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                if (player.isOnline() && player.isValid() && npc.isSpawned()
+                        && npc.getEntity().getType() == EntityType.PLAYER) {
+                    sendPlayerlistPacket(false, player, npc);
+                }
+            }
+        }, 61);
+    }
+
     public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
             Class<? extends Entity> clazz, EntityType type) {
         World handle = ((CraftWorld) world).getHandle();
@@ -497,25 +576,6 @@ public class NMS {
             NAVIGATION_WORLD_FIELD.set(handle.getNavigation(), worldHandle);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_UPDATING_NAVIGATION_WORLD, e.getMessage());
-        }
-    }
-
-    /**
-     * Send a PlayerInfo packet (adds or removes the NPC to or from the tab list) to the player.
-     * @param player The player to send the packet to, or null for all players.
-     */
-    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player player, NPC npc) {
-        sendPlayerlistPacket(showInPlayerlist, player, (CraftPlayer)npc.getEntity());
-    }
-
-    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player player, CraftPlayer npc) {
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER:
-                EnumPlayerInfoAction.REMOVE_PLAYER, npc.getHandle());
-        if (player == null) {
-            sendToOnline(packet);
-        }
-        else {
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
         }
     }
 
