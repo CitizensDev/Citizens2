@@ -326,8 +326,7 @@ public class EventListen implements Listener {
             public void run() {
                 if (player.isOnline() && player.isValid()
                         && npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutPlayerInfo
-                            (EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) npc.getEntity()).getHandle()));
+                    NMS.sendPlayerlistPacket(true, player, npc);
                     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedEntitySpawn
                             (((CraftPlayer) npc.getEntity()).getHandle()));
                 }
@@ -338,8 +337,7 @@ public class EventListen implements Listener {
             public void run() {
                 if (player.isOnline() && player.isValid()
                         && npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutPlayerInfo
-                            (EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) npc.getEntity()).getHandle()));
+                    NMS.sendPlayerlistPacket(false, player, npc);
                 }
             }
         }, 61);
@@ -347,12 +345,8 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onPlayerTeleports(PlayerTeleportEvent event) {
-        if (event.getFrom().getY() > 255 || event.getFrom().getY() < 0
-                || event.getTo().getY() > 255 || event.getTo().getY() < 0) {
-            return; // Don't fire if players go outside the world, as that would be more difficult to handle.
-        }
-        Location from = event.getFrom().getBlock().getLocation();
-        Location to = event.getTo().getBlock().getLocation();
+        Location from = roundLocation(event.getFrom());
+        Location to = roundLocation(event.getTo());
         if (from.equals(to)) {
             return; // Don't fire on every movement, just full block+.
         }

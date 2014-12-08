@@ -86,14 +86,13 @@ public class HumanController extends AbstractEntityController {
             }
         }, 1);
         handle.getBukkitEntity().setSleepingIgnored(true);
-        NMS.sendToOnline(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, handle));
+        NMS.sendPlayerlistPacket(true, null, handle.getBukkitEntity());
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
                 // Double check that we're still spawned and haven't changed type.
                 if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                    NMS.sendToOnline(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER,
-                            ((CraftPlayer) getBukkitEntity()).getHandle()));
+                    NMS.sendPlayerlistPacket(false, null, npc);
                 }
             }
         }, 60);
@@ -107,8 +106,7 @@ public class HumanController extends AbstractEntityController {
 
     @Override
     public void remove() {
-        NMS.sendToOnline(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER,
-                ((CraftPlayer) getBukkitEntity()).getHandle()));
+        NMS.sendPlayerlistPacket(false, null, (CraftPlayer)getBukkitEntity());
         super.remove();
     }
 
