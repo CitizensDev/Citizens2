@@ -9,6 +9,8 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R1.Block;
 import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.ControllerMove;
+import net.minecraft.server.v1_8_R1.EntityHuman;
 import net.minecraft.server.v1_8_R1.EntitySlime;
 import net.minecraft.server.v1_8_R1.NBTTagCompound;
 import net.minecraft.server.v1_8_R1.World;
@@ -44,6 +46,7 @@ public class SlimeController extends MobEntityController {
             if (npc != null) {
                 setSize(3);
                 NMS.clearGoals(goalSelector, targetSelector);
+                this.moveController = new ControllerMove(this);
             }
         }
 
@@ -78,12 +81,25 @@ public class SlimeController extends MobEntityController {
         }
 
         @Override
+        public void cf() {
+
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_8_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
+        }
+
+        @Override
+        public void d(EntityHuman human) {
+            if (npc == null) {
+                super.d(human);
+            }
         }
 
         @Override
@@ -101,8 +117,9 @@ public class SlimeController extends MobEntityController {
         @Override
         public void doTick() {
             super.doTick();
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
+            }
         }
 
         @Override
