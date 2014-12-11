@@ -93,7 +93,7 @@ public class HumanController extends AbstractEntityController {
                     NMS.sendPlayerlistPacket(false, null, npc);
                 }
             }
-        }, 60);
+        }, 2);
         return handle.getBukkitEntity();
     }
 
