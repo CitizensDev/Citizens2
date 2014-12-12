@@ -512,7 +512,7 @@ public class NMS {
                     sendPlayerlistPacket(false, player, npc);
                 }
             }
-        }, 61);
+        }, 2);
     }
 
     public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,

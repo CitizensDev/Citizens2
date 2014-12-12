@@ -408,10 +408,8 @@ public class EventListen implements Listener {
     }
 
     private Location roundLocation(Location input) {
-        input.setX(input.getBlockX());
-        input.setY(input.getBlockY());
-        input.setZ(input.getBlockZ());
-        return input;
+        return new Location(input.getWorld(), Math.floor(input.getX()),
+                Math.floor(input.getY()), Math.floor(input.getZ()));
     }
 
     private boolean spawn(NPC npc) {
