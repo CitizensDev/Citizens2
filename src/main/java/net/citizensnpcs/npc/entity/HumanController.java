@@ -173,7 +173,7 @@ public class HumanController extends AbstractEntityController {
             if (cached != null) {
                 if (Messaging.isDebugging()) {
                     Messaging
-                            .debug("Using cached skin texture for NPC " + npc.getName() + " UUID " + npc.getUniqueId());
+                    .debug("Using cached skin texture for NPC " + npc.getName() + " UUID " + npc.getUniqueId());
                 }
                 skinProfile = new GameProfile(UUID.fromString(realUUID), "");
                 skinProfile.getProperties().put("textures", cached);
@@ -185,7 +185,7 @@ public class HumanController extends AbstractEntityController {
                 } catch (Exception e) {
                     if ((e.getMessage() != null && e.getMessage().contains("too many requests"))
                             || (e.getCause() != null && e.getCause().getMessage() != null && e.getCause().getMessage()
-                                    .contains("too many requests"))) {
+                            .contains("too many requests"))) {
                         SKIN_THREAD.delay();
                         SKIN_THREAD.addRunnable(this);
                     }
@@ -219,6 +219,7 @@ public class HumanController extends AbstractEntityController {
 
     public static class SkinThread implements Runnable {
         private volatile int delay = 0;
+        private volatile int retryTimes = 0;
         private final BlockingDeque<Runnable> tasks = new LinkedBlockingDeque<Runnable>();
 
         public void addRunnable(Runnable r) {
@@ -232,13 +233,18 @@ public class HumanController extends AbstractEntityController {
         }
 
         public void delay() {
-            delay = 120; // need to wait a minute before Mojang accepts API
-            // calls again
+            delay = Setting.NPC_SKIN_RETRY_DELAY.asInt();
+            // need to wait before Mojang accepts API calls again
+            retryTimes++;
+            if (Setting.MAX_NPC_SKIN_RETRIES.asInt() >= 0 && retryTimes > Setting.MAX_NPC_SKIN_RETRIES.asInt()) {
+                tasks.clear();
+                retryTimes = 0;
+            }
         }
 
         @Override
         public void run() {
-            if (delay != 0) {
+            if (delay > 0) {
                 delay--;
                 return;
             }
@@ -275,21 +281,21 @@ public class HumanController extends AbstractEntityController {
                     .getGameProfileRepository();
             repo.findProfilesByNames(new String[] { ChatColor.stripColor(reportedUUID) }, Agent.MINECRAFT,
                     new ProfileLookupCallback() {
-                        @Override
-                        public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
-                        }
+                @Override
+                public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
+                }
 
-                        @Override
-                        public void onProfileLookupSucceeded(final GameProfile profile) {
-                            UUID_CACHE.put(reportedUUID, profile.getId().toString());
-                            if (Messaging.isDebugging()) {
-                                Messaging.debug("Fetched UUID " + profile.getId() + " for NPC " + npc.getName()
+                @Override
+                public void onProfileLookupSucceeded(final GameProfile profile) {
+                    UUID_CACHE.put(reportedUUID, profile.getId().toString());
+                    if (Messaging.isDebugging()) {
+                        Messaging.debug("Fetched UUID " + profile.getId() + " for NPC " + npc.getName()
                                 + " UUID " + npc.getUniqueId());
-                            }
-                            npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
-                            npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
-                        }
-                    });
+                    }
+                    npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
+                    npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
+                }
+            });
             return npc.data().get(CACHED_SKIN_UUID_METADATA, reportedUUID);
         }
     }
