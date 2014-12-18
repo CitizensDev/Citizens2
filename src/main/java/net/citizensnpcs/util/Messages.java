@@ -30,6 +30,7 @@ public class Messages {
     public static final String CITIZENS_SAVED = "citizens.notifications.saved";
     public static final String CITIZENS_SAVING = "citizens.notifications.saving";
     public static final String COLLAR_COLOUR_NOT_RECOGNISED = "citizens.commands.npc.wolf.unknown-collar-color";
+	public static final String COLLAR_COLOUR_NOT_SUPPORTED  = "citizens.commands.npc.wolf.collar-color-unsupported";
     public static final String COMMAND_AGE_HELP = "citizens.commands.npc.age.help";
     public static final String COMMAND_HELP_HEADER = "citizens.commands.help.header";
     public static final String COMMAND_INVALID_MOBTYPE = "citizens.commands.invalid-mobtype";
