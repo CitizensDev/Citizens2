@@ -258,6 +258,7 @@ public class Messages {
     public static final String WAYPOINT_TRIGGER_REMOVE_PROMPT = "citizens.editors.waypoints.triggers.remove.prompt";
     public static final String WAYPOINT_TRIGGER_REMOVE_REMOVED = "citizens.editors.waypoints.triggers.remove.removed";
     public static final String WAYPOINT_TRIGGER_TELEPORT_PROMPT = "citizens.editors.waypoints.triggers.teleport.prompt";
+    public static final String WOLF_TRAIT_UPDATED="citizens.commands.wolf.traits-updated";
     public static final String WORLD_NOT_FOUND = "citizens.commands.errors.missing-world";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
     public static final String ZOMBIE_BABY_SET = "citizens.commands.npc.zombiemod.baby-set";

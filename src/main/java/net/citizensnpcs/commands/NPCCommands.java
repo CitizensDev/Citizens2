@@ -1593,6 +1593,7 @@ public class NPCCommands {
                 throw new CommandException(Messages.COLLAR_COLOUR_NOT_RECOGNISED);
             trait.setCollarColor(color);
         }
+        Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), args.hasFlag('a'), args.hasFlag('s'), args.hasFlag('t'),trait.getCollarColor().name());
     }
 
     @Command(
