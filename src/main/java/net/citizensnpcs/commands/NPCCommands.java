@@ -1586,11 +1586,15 @@ public class NPCCommands {
             try {
                 color = DyeColor.valueOf(unparsed.toUpperCase().replace(' ', '_'));
             } catch (IllegalArgumentException e) {
+            	try {
                 int rgb = Integer.parseInt(unparsed.replace("#", ""), 16);
                 color = DyeColor.getByColor(org.bukkit.Color.fromRGB(rgb));
+            	} catch (NumberFormatException ex) {
+            		throw new CommandException(Messages.COLLAR_COLOUR_NOT_RECOGNISED,unparsed);
+            	}   
             }
             if (color == null)
-                throw new CommandException(Messages.COLLAR_COLOUR_NOT_RECOGNISED);
+                throw new CommandException(Messages.COLLAR_COLOUR_NOT_SUPPORTED,unparsed);
             trait.setCollarColor(color);
         }
         Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), args.hasFlag('a'), args.hasFlag('s'), args.hasFlag('t'),trait.getCollarColor().name());
