@@ -1083,7 +1083,7 @@ public class NPCCommands {
         npc.destroy();
         Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
     }
-    
+
     @Command(
             aliases = { "npc" },
             usage = "rabbittype [type]",
@@ -1102,7 +1102,7 @@ public class NPCCommands {
     	npc.getTrait(RabbitType.class).setType(type);
     	Messaging.sendTr(sender, Messages.RABBIT_TYPE_SET, npc.getName(), type.name());
     }
-    
+
     @Command(
             aliases = { "npc" },
             usage = "rename [name]",
