@@ -21,17 +21,14 @@ public class RabbitType extends Trait {
         rabbit = npc.getEntity() instanceof Rabbit ? (Rabbit) npc.getEntity() : null;
     }
 
-    @Override
-    public void run() {
+    public void setType(RabbitTypes type) {
+    	
+        this.type = type;
         if (rabbit != null) {
         	((EntityRabbit)((CraftRabbit)rabbit).getHandle()).r(type.type);
         }
     }
-
-    public void setType(RabbitTypes type) {
-    	
-        this.type = type;
-    }
+    
     public enum RabbitTypes {
     	
     	BROWN(0),
