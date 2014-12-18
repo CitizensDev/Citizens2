@@ -19,18 +19,17 @@ public class RabbitType extends Trait {
     @Override
     public void onSpawn() {
         rabbit = npc.getEntity() instanceof Rabbit ? (Rabbit) npc.getEntity() : null;
+        setType(type);
     }
 
-    public void setType(RabbitTypes type) {
-    	
+    public void setType(RabbitTypes type) {    	
         this.type = type;
-        if (rabbit != null) {
+        if (rabbit != null && rabbit.isValid()) {
         	((EntityRabbit)((CraftRabbit)rabbit).getHandle()).r(type.type);
         }
     }
     
-    public enum RabbitTypes {
-    	
+    public enum RabbitTypes {    	
     	BROWN(0),
     	WHITE(1),
         BLACK(2),
