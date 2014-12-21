@@ -79,7 +79,8 @@ public class NMS {
     }
 
     public static void attack(EntityLiving handle, Entity target) {
-        float f = (float) handle.getAttributeInstance(GenericAttributes.e).getValue();
+        AttributeInstance attackDamage = handle.getAttributeInstance(GenericAttributes.e);
+        float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
         int i = 0;
 
         if (target instanceof EntityLiving) {

@@ -177,7 +177,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         @Override
         public void setPath() {
-            navigation.a(target, parameters.speed());
+            navigation.a(target, 1f);
         }
 
         @Override
