@@ -54,4 +54,8 @@ public class WolfModifiers extends Trait {
             wolf.setTamed(tamed);
         }
     }
+
+	public DyeColor getCollarColor() {
+		return collarColor;
+	}
 }
