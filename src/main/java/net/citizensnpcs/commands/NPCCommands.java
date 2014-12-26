@@ -46,6 +46,8 @@ import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.RabbitType;
+import net.citizensnpcs.trait.RabbitType.RabbitTypes;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WolfModifiers;
@@ -56,6 +58,7 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
@@ -1039,7 +1042,7 @@ public class NPCCommands {
         String profession = args.getString(1);
         Profession parsed = Util.matchEnum(Profession.values(), profession.toUpperCase());
         if (parsed == null) {
-            throw new CommandException(Messages.INVALID_PROFESSION);
+            throw new CommandException(Messages.INVALID_PROFESSION,args.getString(1),StringUtils.join(Profession.values(), ","));
         }
         npc.getTrait(VillagerProfession.class).setProfession(parsed);
         Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), profession);
@@ -1082,6 +1085,25 @@ public class NPCCommands {
             throw new NoPermissionsException();
         npc.destroy();
         Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "rabbittype [type]",
+            desc = "Set the Type of a Rabbit NPC",
+            modifiers = { "rabbittype","rbtype" },
+            min = 2,
+            permission = "citizens.npc.rabbittype")
+    @Requirements(selected = true, ownership = true, types = { EntityType.RABBIT })
+    public void rabbitType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    	RabbitTypes type;
+    	try {
+    		type = RabbitTypes.valueOf(args.getString(1).toUpperCase());
+    	} catch (IllegalArgumentException ex) {
+    		throw new CommandException(Messages.INVALID_RABBIT_TYPE,StringUtils.join(RabbitTypes.values(), ","));
+    	}
+    	npc.getTrait(RabbitType.class).setType(type);
+    	Messaging.sendTr(sender, Messages.RABBIT_TYPE_SET, npc.getName(), type.name());
     }
 
     @Command(
@@ -1178,9 +1200,12 @@ public class NPCCommands {
             "skeletontype", "sktype" }, min = 2, max = 2, permission = "citizens.npc.skeletontype")
     @Requirements(selected = true, ownership = true, types = EntityType.SKELETON)
     public void skeletonType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        SkeletonType type = SkeletonType.valueOf(args.getString(1).toUpperCase());
-        if (type == null)
-            throw new CommandException(Messages.INVALID_SKELETON_TYPE);
+    	SkeletonType type;
+    	try {
+    		type = SkeletonType.valueOf(args.getString(1).toUpperCase());
+    	} catch (IllegalArgumentException ex) {
+    		throw new CommandException(Messages.INVALID_SKELETON_TYPE,StringUtils.join(SkeletonType.values(), ","));
+    	}
         npc.getTrait(NPCSkeletonType.class).setType(type);
         Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
     }
@@ -1563,13 +1588,18 @@ public class NPCCommands {
             try {
                 color = DyeColor.valueOf(unparsed.toUpperCase().replace(' ', '_'));
             } catch (IllegalArgumentException e) {
+            	try {
                 int rgb = Integer.parseInt(unparsed.replace("#", ""), 16);
                 color = DyeColor.getByColor(org.bukkit.Color.fromRGB(rgb));
+            	} catch (NumberFormatException ex) {
+            		throw new CommandException(Messages.COLLAR_COLOUR_NOT_RECOGNISED,unparsed);
+            	}   
             }
             if (color == null)
-                throw new CommandException(Messages.COLLAR_COLOUR_NOT_RECOGNISED);
+                throw new CommandException(Messages.COLLAR_COLOUR_NOT_SUPPORTED,unparsed);
             trait.setCollarColor(color);
         }
+        Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), args.hasFlag('a'), args.hasFlag('s'), args.hasFlag('t'),trait.getCollarColor().name());
     }
 
     @Command(

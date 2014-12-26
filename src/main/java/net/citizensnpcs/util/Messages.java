@@ -30,6 +30,7 @@ public class Messages {
     public static final String CITIZENS_SAVED = "citizens.notifications.saved";
     public static final String CITIZENS_SAVING = "citizens.notifications.saving";
     public static final String COLLAR_COLOUR_NOT_RECOGNISED = "citizens.commands.npc.wolf.unknown-collar-color";
+	public static final String COLLAR_COLOUR_NOT_SUPPORTED  = "citizens.commands.npc.wolf.collar-color-unsupported";
     public static final String COMMAND_AGE_HELP = "citizens.commands.npc.age.help";
     public static final String COMMAND_HELP_HEADER = "citizens.commands.help.header";
     public static final String COMMAND_INVALID_MOBTYPE = "citizens.commands.invalid-mobtype";
@@ -99,6 +100,7 @@ public class Messages {
     public static final String INVALID_OCELOT_TYPE = "citizens.commands.npc.ocelot.invalid-type";
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
+    public static final String INVALID_RABBIT_TYPE = "citizens.commands.npc.rabbittype.invalid-type";
     public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
     public static final String INVALID_SOUND = "citizens.commands.npc.sound.invalid-sound";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
@@ -166,6 +168,7 @@ public class Messages {
     public static final String POWERED_SET = "citizens.commands.npc.powered.set";
     public static final String POWERED_STOPPED = "citizens.commands.npc.powered.stopped";
     public static final String PROFESSION_SET = "citizens.commands.npc.profession.set";
+    public static final String RABBIT_TYPE_SET = "citizens.commands.npc.rabbittype.type-set";
     public static final String REMOVE_INCORRECT_SYNTAX = "citizens.commands.npc.remove.incorrect-syntax";
     public static final String REMOVED_ALL_NPCS = "citizens.commands.npc.remove.removed-all";
     public static final String REMOVED_FROM_PLAYERLIST = "citizens.commands.npc.playerlist.removed";
@@ -256,6 +259,7 @@ public class Messages {
     public static final String WAYPOINT_TRIGGER_REMOVE_PROMPT = "citizens.editors.waypoints.triggers.remove.prompt";
     public static final String WAYPOINT_TRIGGER_REMOVE_REMOVED = "citizens.editors.waypoints.triggers.remove.removed";
     public static final String WAYPOINT_TRIGGER_TELEPORT_PROMPT = "citizens.editors.waypoints.triggers.teleport.prompt";
+    public static final String WOLF_TRAIT_UPDATED="citizens.commands.wolf.traits-updated";
     public static final String WORLD_NOT_FOUND = "citizens.commands.errors.missing-world";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
     public static final String ZOMBIE_BABY_SET = "citizens.commands.npc.zombiemod.baby-set";
