@@ -204,16 +204,18 @@ public class HumanController extends AbstractEntityController {
                 }
                 TEXTURE_CACHE.put(realUUID, new Property("textures", textures.getValue(), textures.getSignature()));
             }
-            Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), new Callable<Void>() {
-                @Override
-                public Void call() {
-                    if (npc.isSpawned()) {
-                        npc.despawn(DespawnReason.PENDING_RESPAWN);
-                        npc.spawn(npc.getStoredLocation());
+            if (CitizensAPI.getPlugin().isEnabled()) {
+                Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), new Callable<Void>() {
+                    @Override
+                    public Void call() {
+                        if (npc.isSpawned()) {
+                            npc.despawn(DespawnReason.PENDING_RESPAWN);
+                            npc.spawn(npc.getStoredLocation());
+                        }
+                        return null;
                     }
-                    return null;
-                }
-            });
+                });
+            }
         }
     }
 
