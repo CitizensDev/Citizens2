@@ -25,7 +25,6 @@ import net.minecraft.server.v1_8_R1.BlockPosition;
 import net.minecraft.server.v1_8_R1.Entity;
 import net.minecraft.server.v1_8_R1.EntityPlayer;
 import net.minecraft.server.v1_8_R1.EnumGamemode;
-import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
 import net.minecraft.server.v1_8_R1.EnumProtocolDirection;
 import net.minecraft.server.v1_8_R1.GenericAttributes;
 import net.minecraft.server.v1_8_R1.MathHelper;
@@ -232,8 +231,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             }
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0) {
-            g(0, 0); // is this necessary? it does controllable but
-            // sometimes
+            g(0, 0); // is this necessary? it does controllable but sometimes
             // players sink into the ground
         }
 

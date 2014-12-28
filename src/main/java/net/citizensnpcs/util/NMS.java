@@ -495,12 +495,12 @@ public class NMS {
 
     public static void showNPCReset(final Player player, final NPC npc) {
         sendDestroyPacket(player, npc);
+        sendPlayerlistPacket(true, player, npc);
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
                 if (player.isOnline() && player.isValid() && npc.isSpawned()
                         && npc.getEntity().getType() == EntityType.PLAYER) {
-                    sendPlayerlistPacket(true, player, npc);
                     sendSpawnPacket(player, npc);
                 }
             }
@@ -513,7 +513,7 @@ public class NMS {
                     sendPlayerlistPacket(false, player, npc);
                 }
             }
-        }, 2);
+        }, 10);
     }
 
     public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
