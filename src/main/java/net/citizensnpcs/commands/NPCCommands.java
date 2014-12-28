@@ -845,8 +845,6 @@ public class NPCCommands {
             String message = "     <e>- <a>" + trait.getName();
             Messaging.send(sender, message);
         }
-
-        npc.getNavigator().setTarget((Entity) sender, true);
     }
 
     @Command(
