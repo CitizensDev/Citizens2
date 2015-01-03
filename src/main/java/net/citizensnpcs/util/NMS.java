@@ -8,15 +8,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.WeakHashMap;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.network.EmptyChannel;
+import net.citizensnpcs.util.nms.PlayerlistTrackerEntry;
 import net.minecraft.server.v1_8_R1.AttributeInstance;
 import net.minecraft.server.v1_8_R1.Block;
 import net.minecraft.server.v1_8_R1.BlockPosition;
@@ -30,6 +31,8 @@ import net.minecraft.server.v1_8_R1.EntityInsentient;
 import net.minecraft.server.v1_8_R1.EntityLiving;
 import net.minecraft.server.v1_8_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EntityTracker;
+import net.minecraft.server.v1_8_R1.EntityTrackerEntry;
 import net.minecraft.server.v1_8_R1.EntityTypes;
 import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
 import net.minecraft.server.v1_8_R1.GenericAttributes;
@@ -37,11 +40,10 @@ import net.minecraft.server.v1_8_R1.MathHelper;
 import net.minecraft.server.v1_8_R1.NavigationAbstract;
 import net.minecraft.server.v1_8_R1.NetworkManager;
 import net.minecraft.server.v1_8_R1.Packet;
-import net.minecraft.server.v1_8_R1.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_8_R1.World;
+import net.minecraft.server.v1_8_R1.WorldServer;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -353,9 +355,25 @@ public class NMS {
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
     }
 
-    private static void sendDestroyPacket(final Player player, final NPC npc) {
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(npc.getEntity()
-                .getEntityId()));
+    @SuppressWarnings("rawtypes")
+    public static void replaceTrackerEntry(Player player) {
+        WorldServer server = (WorldServer) NMS.getHandle(player).getWorld();
+        EntityTrackerEntry entry = (EntityTrackerEntry) server.getTracker().trackedEntities.get(player.getEntityId());
+        if (entry == null)
+            return;
+        PlayerlistTrackerEntry replace = new PlayerlistTrackerEntry(entry);
+        server.getTracker().trackedEntities.a(player.getEntityId(), replace);
+        if (TRACKED_ENTITY_SET != null) {
+            try {
+                Set set = (Set) TRACKED_ENTITY_SET.get(server.getTracker());
+                set.remove(entry);
+                set.add(replace);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void sendPacket(Player player, Packet packet) {
@@ -411,11 +429,6 @@ public class NMS {
         } else {
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
         }
-    }
-
-    private static void sendSpawnPacket(final Player player, final NPC npc) {
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedEntitySpawn(
-                ((CraftPlayer) npc.getEntity()).getHandle()));
     }
 
     public static void sendToOnline(Packet... packets) {
@@ -491,29 +504,6 @@ public class NMS {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public static void showNPCReset(final Player player, final NPC npc) {
-        sendDestroyPacket(player, npc);
-        sendPlayerlistPacket(true, player, npc);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                if (player.isOnline() && player.isValid() && npc.isSpawned()
-                        && npc.getEntity().getType() == EntityType.PLAYER) {
-                    sendSpawnPacket(player, npc);
-                }
-            }
-        }, 1);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                if (player.isOnline() && player.isValid() && npc.isSpawned()
-                        && npc.getEntity().getType() == EntityType.PLAYER) {
-                    sendPlayerlistPacket(false, player, npc);
-                }
-            }
-        }, 10);
     }
 
     public static org.bukkit.entity.Entity spawnCustomEntity(org.bukkit.World world, Location at,
@@ -605,6 +595,7 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 1F;
+
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
@@ -619,6 +610,7 @@ public class NMS {
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "a");
     private static final Random RANDOM = Util.getFastRandom();
+    private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
 
     static {
         try {

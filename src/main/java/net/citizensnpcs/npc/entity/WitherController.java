@@ -81,17 +81,9 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
-        protected void D() {
+        protected void E() {
             if (npc == null) {
-                super.D();
-            }
-        }
-
-        @Override
-        public void doTick() {
-            super.doTick();
-            if (npc != null) {
-                npc.update();
+                super.E();
             }
         }
 
@@ -127,6 +119,16 @@ public class WitherController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public void m() {
+            if (npc == null) {
+                super.m();
+            } else {
+                NMS.updateAI(this);
+                npc.update();
+            }
         }
 
         @Override

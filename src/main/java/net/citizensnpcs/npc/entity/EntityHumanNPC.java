@@ -291,9 +291,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                     break;
                 }
             }
-            // NMS.sendToOnline(getListPacket(getBukkitEntity(), true));
+            NMS.sendPlayerlistPacket(true, getBukkitEntity(), npc);
             if (otherOnline != null) {
-                // NMS.sendToOnline(getListPacket(otherOnline, false));
+                NMS.sendPlayerlistPacket(false, otherOnline, npc);
             }
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }

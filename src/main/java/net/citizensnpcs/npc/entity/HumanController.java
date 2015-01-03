@@ -26,7 +26,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Iterables;
@@ -83,15 +82,6 @@ public class HumanController extends AbstractEntityController {
             }
         }, 1);
         handle.getBukkitEntity().setSleepingIgnored(true);
-        NMS.sendPlayerlistPacket(true, null, handle.getBukkitEntity());
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                    NMS.sendPlayerlistPacket(false, null, npc);
-                }
-            }
-        }, 2);
         return handle.getBukkitEntity();
     }
 
