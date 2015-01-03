@@ -49,10 +49,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -275,30 +272,6 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(rightClickEvent);
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerJoin(final PlayerJoinEvent event) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                for (NPC npc : getAllNPCs()) {
-                    if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                        NMS.sendPlayerlistPacket(true, event.getPlayer(), npc);
-                    }
-                }
-            }
-        }, 10);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                for (NPC npc : getAllNPCs()) {
-                    if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                        NMS.sendPlayerlistPacket(false, event.getPlayer(), npc);
-                    }
-                }
-            }
-        }, 60);
-    }
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Editor.leave(event.getPlayer());
@@ -306,50 +279,6 @@ public class EventListen implements Listener {
             NPC npc = npcRegistry.getNPC(event.getPlayer().getVehicle());
             if (npc != null) {
                 event.getPlayer().leaveVehicle();
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerTeleports(PlayerTeleportEvent event) {
-        Location from = roundLocation(event.getFrom());
-        Location to = roundLocation(event.getTo());
-        if (from.equals(to)) {
-            return; // Don't fire on every movement, just full block+.
-        }
-        int maxRad = 50 * 50; // TODO: Adjust me to perfection
-        Location npcPos = new Location(null, 0, 0, 0);
-        for (final NPC npc : getAllNPCs()) {
-            if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                npc.getEntity().getLocation(npcPos);
-                if ((to.getWorld() == npcPos.getWorld() && npcPos.distanceSquared(to) < maxRad)
-                        && ((from.getWorld() == npcPos.getWorld() && npcPos.distanceSquared(from) > maxRad) || from
-                                .getWorld() != to.getWorld())) {
-                    NMS.showNPCReset(event.getPlayer(), npc);
-                }
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerWalks(final PlayerMoveEvent event) {
-        Location from = roundLocation(event.getFrom());
-        Location to = roundLocation(event.getTo());
-        if (from.equals(to)) {
-            return;
-        }
-        if (from.getWorld() != to.getWorld()) {
-            return; // Ignore cross-world movement
-        }
-        int maxRad = 50 * 50; // TODO: Adjust me to perfection
-        Location loc = new Location(null, 0, 0, 0);
-        for (final NPC npc : getAllNPCs()) {
-            if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                npc.getEntity().getLocation(loc);
-                if (from.getWorld() == loc.getWorld() && loc.distanceSquared(to) < maxRad
-                        && loc.distanceSquared(from) > maxRad) {
-                    NMS.showNPCReset(event.getPlayer(), npc);
-                }
             }
         }
     }
