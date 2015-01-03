@@ -143,7 +143,7 @@ public class NMS {
                 c1 = entity.world.getType(
                         new BlockPosition(MathHelper.floor(entity.locX),
                                 MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
-                        .getBlock().frictionFactor * 0.91F;
+                                .getBlock().frictionFactor * 0.91F;
             }
 
             float f2 = 0.1627714F / (c1 * c1 * c1);
@@ -154,7 +154,7 @@ public class NMS {
                 c1 = entity.world.getType(
                         new BlockPosition(MathHelper.floor(entity.locX),
                                 MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
-                        .getBlock().frictionFactor * 0.91F;
+                                .getBlock().frictionFactor * 0.91F;
             }
 
             entity.move(entity.motX, entity.motY, entity.motZ);
@@ -176,7 +176,7 @@ public class NMS {
 
     @SuppressWarnings("deprecation")
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-    NoSuchMethodException {
+            NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
