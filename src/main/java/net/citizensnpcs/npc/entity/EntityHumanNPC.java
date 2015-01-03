@@ -41,7 +41,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -284,17 +283,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
                     Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
             NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
-            Player otherOnline = null;
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getName().equalsIgnoreCase(getName()) && !(player instanceof NPCHolder)) {
-                    otherOnline = player;
-                    break;
-                }
-            }
-            NMS.sendPlayerlistPacket(false, getBukkitEntity(), npc);
-            if (otherOnline != null) {
-                NMS.sendPlayerlistPacket(true, otherOnline, npc);
-            }
+            NMS.sendPlayerlistPacket(false, getBukkitEntity());
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }

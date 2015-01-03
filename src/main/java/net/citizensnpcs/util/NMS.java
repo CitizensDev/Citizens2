@@ -145,7 +145,7 @@ public class NMS {
                 c1 = entity.world.getType(
                         new BlockPosition(MathHelper.floor(entity.locX),
                                 MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
-                                .getBlock().frictionFactor * 0.91F;
+                        .getBlock().frictionFactor * 0.91F;
             }
 
             float f2 = 0.1627714F / (c1 * c1 * c1);
@@ -156,7 +156,7 @@ public class NMS {
                 c1 = entity.world.getType(
                         new BlockPosition(MathHelper.floor(entity.locX),
                                 MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
-                                .getBlock().frictionFactor * 0.91F;
+                        .getBlock().frictionFactor * 0.91F;
             }
 
             entity.move(entity.motX, entity.motY, entity.motZ);
@@ -178,7 +178,7 @@ public class NMS {
 
     @SuppressWarnings("deprecation")
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-            NoSuchMethodException {
+    NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -410,25 +410,10 @@ public class NMS {
         NMS.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
-    /**
-     * Send a PlayerInfo packet (adds or removes the NPC to or from the tab
-     * list) to the player.
-     *
-     * @param player
-     *            The player to send the packet to, or null for all players.
-     */
-    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player player, NPC npc) {
-        sendPlayerlistPacket(showInPlayerlist, player, (CraftPlayer) npc.getEntity());
-    }
-
-    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player player, Player npc) {
+    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player npc) {
         PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER
                 : EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) npc).getHandle());
-        if (player == null) {
-            sendToOnline(packet);
-        } else {
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
-        }
+        sendToOnline(packet);
     }
 
     public static void sendToOnline(Packet... packets) {
