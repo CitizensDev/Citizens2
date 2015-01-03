@@ -277,11 +277,16 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
-        for (NPC npc : getAllNPCs()) {
-            if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-                NMS.sendPlayerlistPacket(true, event.getPlayer(), npc);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                for (NPC npc : getAllNPCs()) {
+                    if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
+                        NMS.sendPlayerlistPacket(true, event.getPlayer(), npc);
+                    }
+                }
             }
-        }
+        }, 10);
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
