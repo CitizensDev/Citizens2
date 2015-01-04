@@ -81,6 +81,13 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
+        protected void D() {
+            if (npc == null) {
+                super.D();
+            }
+        }
+
+        @Override
         protected void E() {
             if (npc == null) {
                 super.E();

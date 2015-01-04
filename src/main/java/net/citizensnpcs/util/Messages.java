@@ -14,6 +14,7 @@ public class Messages {
     public static final String ANCHOR_ALREADY_EXISTS = "citizens.commands.npc.anchor.already-exists";
     public static final String ANCHOR_MISSING = "citizens.commands.npc.anchor.missing";
     public static final String ANCHOR_REMOVED = "citizens.commands.npc.anchor.removed";
+    public static final String ANIMATION_ADDED = "citizens.editors.waypoints.triggers.animation.added";
     public static final String ANIMATION_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.animation.prompt";
     public static final String AVAILABLE_WAYPOINT_PROVIDERS = "citizens.waypoints.available-providers-header";
     public static final String BEHAVIOUR_HELP = "citizens.commands.npc.behaviour.help";
@@ -30,7 +31,7 @@ public class Messages {
     public static final String CITIZENS_SAVED = "citizens.notifications.saved";
     public static final String CITIZENS_SAVING = "citizens.notifications.saving";
     public static final String COLLAR_COLOUR_NOT_RECOGNISED = "citizens.commands.npc.wolf.unknown-collar-color";
-	public static final String COLLAR_COLOUR_NOT_SUPPORTED  = "citizens.commands.npc.wolf.collar-color-unsupported";
+    public static final String COLLAR_COLOUR_NOT_SUPPORTED = "citizens.commands.npc.wolf.collar-color-unsupported";
     public static final String COMMAND_AGE_HELP = "citizens.commands.npc.age.help";
     public static final String COMMAND_HELP_HEADER = "citizens.commands.help.header";
     public static final String COMMAND_INVALID_MOBTYPE = "citizens.commands.invalid-mobtype";
@@ -259,7 +260,7 @@ public class Messages {
     public static final String WAYPOINT_TRIGGER_REMOVE_PROMPT = "citizens.editors.waypoints.triggers.remove.prompt";
     public static final String WAYPOINT_TRIGGER_REMOVE_REMOVED = "citizens.editors.waypoints.triggers.remove.removed";
     public static final String WAYPOINT_TRIGGER_TELEPORT_PROMPT = "citizens.editors.waypoints.triggers.teleport.prompt";
-    public static final String WOLF_TRAIT_UPDATED="citizens.commands.wolf.traits-updated";
+    public static final String WOLF_TRAIT_UPDATED = "citizens.commands.wolf.traits-updated";
     public static final String WORLD_NOT_FOUND = "citizens.commands.errors.missing-world";
     public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
     public static final String ZOMBIE_BABY_SET = "citizens.commands.npc.zombiemod.baby-set";

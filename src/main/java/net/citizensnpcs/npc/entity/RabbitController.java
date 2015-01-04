@@ -125,6 +125,13 @@ public class RabbitController extends MobEntityController {
         }
 
         @Override
+        public void E() {
+            if (npc == null) {
+                super.E();
+            }
+        }
+
+        @Override
         public void g(double x, double y, double z) {
             if (npc == null) {
                 super.g(x, y, z);
