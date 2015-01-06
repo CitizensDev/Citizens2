@@ -130,7 +130,7 @@ public class ItemStorage {
             return null;
         }
         Material material = Material.matchMaterial(raw);
-        if (material == null) {
+        if (material == null || material == Material.AIR) {
             return null;
         }
         ItemStack res = new ItemStack(material, root.getInt("amount"), (short) (root.getInt("durability",
@@ -153,8 +153,9 @@ public class ItemStorage {
     }
 
     public static void saveItem(DataKey key, ItemStack item) {
-        if (item == null)
-            return;
+        if (item == null) {
+            item = new ItemStack(Material.AIR);
+        }
         migrateForSave(key);
         key.setString("type", item.getType().name());
         key.setInt("amount", item.getAmount());

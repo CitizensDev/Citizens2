@@ -39,8 +39,9 @@ public class LocationPersister implements Persister<Location> {
 
         @Override
         public World getWorld() {
-            if (super.getWorld() == null)
+            if (super.getWorld() == null) {
                 super.setWorld(Bukkit.getWorld(worldName));
+            }
             return super.getWorld();
         }
     }
