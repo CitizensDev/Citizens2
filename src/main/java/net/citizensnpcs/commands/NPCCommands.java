@@ -1229,7 +1229,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-c,b) [name]",
+            usage = "skin (-c -p) [name]",
             desc = "Sets an NPC's skin name, Use -p to save a skin snapshot that won't change",
             modifiers = { "skin" },
             min = 1,
