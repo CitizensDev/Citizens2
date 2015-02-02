@@ -311,8 +311,11 @@ public interface NPC extends Agent, Cloneable {
     public static final String MINECART_OFFSET_METADATA = "minecart-item-offset";
     public static final String NAMEPLATE_VISIBLE_METADATA = "nameplate-visible";
     public static final String PLAYER_SKIN_UUID_METADATA = "player-skin-name";
+    public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA = "player-skin-textures";
+    public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA = "player-skin-signature";
     public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
     public static final String SHOULD_SAVE_METADATA = "should-save";
     public static final String SWIMMING_METADATA = "swim";
     public static final String TARGETABLE_METADATA = "protected-target";
+	
 }
