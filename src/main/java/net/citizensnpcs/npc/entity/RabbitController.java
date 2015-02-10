@@ -126,7 +126,7 @@ public class RabbitController extends MobEntityController {
 
         @Override
         public void E() {
-            if (npc == null) {
+            if (npc == null || !npc.isFlyable()) {
                 super.E();
             }
         }
