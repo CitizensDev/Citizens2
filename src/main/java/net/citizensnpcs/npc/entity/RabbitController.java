@@ -75,6 +75,15 @@ public class RabbitController extends MobEntityController {
         }
 
         @Override
+        public void r(int i) {
+            if (npc != null) {
+                this.datawatcher.watch(18, (byte) i);
+                return;
+            }
+            super.r(i);
+        }
+
+        @Override
         public boolean cb() {
             if (npc == null)
                 return super.cb();
@@ -126,7 +135,7 @@ public class RabbitController extends MobEntityController {
 
         @Override
         public void E() {
-            if (npc == null) {
+            if (npc == null || !npc.isFlyable()) {
                 super.E();
             }
         }
