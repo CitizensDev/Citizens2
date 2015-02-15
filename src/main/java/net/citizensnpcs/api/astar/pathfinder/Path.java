@@ -2,6 +2,7 @@ package net.citizensnpcs.api.astar.pathfinder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 
 import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.astar.Plan;
@@ -15,6 +16,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class Path implements Plan {
@@ -78,7 +80,7 @@ public class Path implements Plan {
         ++index;
     }
 
-    private static class PathEntry {
+    private class PathEntry {
         final List<PathCallback> callbacks;
         final Vector vector;
 
@@ -91,12 +93,26 @@ public class Path implements Plan {
             return world.getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
         }
 
-        public void run(NPC npc) {
+        public void run(final NPC npc) {
             if (callbacks != null) {
                 Block block = getBlockUsingWorld(npc.getEntity().getWorld());
-                double distance = npc.getStoredLocation().distance(block.getLocation());
                 for (PathCallback callback : callbacks) {
-                    callback.run(npc, block, distance);
+                    ListIterator<Block> vec = Lists.transform(Arrays.asList(path), new Function<PathEntry, Block>() {
+                        @Override
+                        public Block apply(PathEntry input) {
+                            return npc
+                                    .getEntity()
+                                    .getWorld()
+                                    .getBlockAt(input.vector.getBlockX(), input.vector.getBlockY(),
+                                            input.vector.getBlockZ());
+                        }
+                    }).listIterator();
+                    if (index > 0) {
+                        while (index != vec.nextIndex()) {
+                            vec.next();
+                        }
+                    }
+                    callback.run(npc, block, vec);
                 }
             }
         }

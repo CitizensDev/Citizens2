@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
+import java.util.ListIterator;
+
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.block.Block;
@@ -17,6 +19,6 @@ public interface PathPoint {
     void setVector(Vector vector);
 
     public static interface PathCallback {
-        void run(NPC npc, Block point, double radius);
+        void run(NPC npc, Block point, ListIterator<Block> path);
     }
 }

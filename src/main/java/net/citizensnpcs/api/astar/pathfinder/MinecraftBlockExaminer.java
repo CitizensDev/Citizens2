@@ -2,6 +2,7 @@ package net.citizensnpcs.api.astar.pathfinder;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.ListIterator;
 import java.util.Set;
 
 import net.citizensnpcs.api.ai.event.CancelReason;
@@ -64,9 +65,11 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     private class LadderClimber implements PathCallback {
         boolean added = false;
+        ListIterator<Block> current;
 
         @Override
-        public void run(final NPC npc, Block point, double radius) {
+        public void run(final NPC npc, Block point, ListIterator<Block> path) {
+            current = path;
             if (added || npc.data().<Boolean> get("running-ladder", false)) {
                 added = true;
                 return;
@@ -76,7 +79,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
                 @Override
                 public void run() {
-                    if (npc.getEntity().getLocation(dummy).getBlock().getType() == Material.LADDER) {
+                    if (npc.getEntity().getLocation(dummy).getBlock().getType() == Material.LADDER
+                            && current.next().getY() > current.previous().getY()) {
                         npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
                     }
                 }
