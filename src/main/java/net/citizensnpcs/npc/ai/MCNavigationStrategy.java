@@ -15,12 +15,13 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
     private final NavigationAbstract navigation;
     private final NavigatorParameters parameters;
     private final Location target;
+    private final EntityLiving handle;
 
     MCNavigationStrategy(final NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
         this.target = dest;
         this.parameters = params;
-        EntityLiving handle = ((CraftLivingEntity) npc.getEntity()).getHandle();
+        handle = ((CraftLivingEntity) npc.getEntity()).getHandle();
         handle.onGround = true;
         // not sure of a better way around this - if onGround is false, then
         // navigation won't execute, and calling entity.move doesn't
@@ -58,6 +59,17 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
             return true;
         navigation.a(parameters.speed());
         parameters.run();
+        if (distanceSquared() < parameters.distanceMargin()) {
+            stop();
+            return true;
+        }
         return NMS.isNavigationFinished(navigation);
     }
+    
+    private double distanceSquared() {
+        return handle.getBukkitEntity().getLocation(HANDLE_LOCATION)
+                .distanceSquared(target);
+    }
+
+    private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
 }
