@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
@@ -22,6 +23,7 @@ import net.citizensnpcs.util.nms.PlayerNavigation;
 import net.minecraft.server.v1_8_R1.AttributeInstance;
 import net.minecraft.server.v1_8_R1.Block;
 import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.DamageSource;
 import net.minecraft.server.v1_8_R1.Entity;
 import net.minecraft.server.v1_8_R1.EntityPlayer;
 import net.minecraft.server.v1_8_R1.EnumGamemode;
@@ -83,6 +85,23 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (npc != null) {
             Util.callCollisionEvent(npc, entity.getBukkitEntity());
         }
+    }
+    
+    @Override
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        // knock back velocity is cancelled and sent to client for handling when
+        // the entity is a player. there is no client so make this happen manually.
+        boolean damaged = super.damageEntity(damagesource, f);
+        if (damaged && velocityChanged) {
+            velocityChanged = false;
+            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    EntityHumanNPC.this.velocityChanged = true;
+                }
+            });
+        }
+        return damaged;
     }
 
     @Override
