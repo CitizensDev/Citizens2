@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
@@ -22,6 +23,7 @@ import net.citizensnpcs.util.nms.PlayerNavigation;
 import net.minecraft.server.v1_8_R1.AttributeInstance;
 import net.minecraft.server.v1_8_R1.Block;
 import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.DamageSource;
 import net.minecraft.server.v1_8_R1.Entity;
 import net.minecraft.server.v1_8_R1.EntityPlayer;
 import net.minecraft.server.v1_8_R1.EnumGamemode;
@@ -83,6 +85,22 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         if (npc != null) {
             Util.callCollisionEvent(npc, entity.getBukkitEntity());
         }
+    }
+    
+    @Override
+    public void die(DamageSource damagesource) {
+        // players that die are not normally removed from the world. when the
+        // NPC dies, we are done with the instance and it should be removed.
+        if (dead) {
+            return;
+        }
+        super.die(damagesource);
+        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                world.removeEntity(EntityHumanNPC.this);
+            }
+        }, 35); // give enough time for death and smoke animation
     }
 
     @Override
