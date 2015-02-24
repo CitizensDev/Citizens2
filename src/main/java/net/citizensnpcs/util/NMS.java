@@ -342,7 +342,6 @@ public class NMS {
             if (!ENTITY_CLASS_TO_INT.containsKey(search))
                 continue;
             int code = ENTITY_CLASS_TO_INT.get(search);
-            ENTITY_INT_TO_CLASS.put(code, clazz);
             ENTITY_CLASS_TO_INT.put(clazz, code);
             ENTITY_CLASS_TO_NAME.put(clazz, ENTITY_CLASS_TO_NAME.get(search));
             return;
