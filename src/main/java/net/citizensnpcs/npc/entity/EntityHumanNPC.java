@@ -88,6 +88,23 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
     
     @Override
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        // knock back velocity is cancelled and sent to client for handling when
+        // the entity is a player. there is no client so make this happen manually.
+        boolean damaged = super.damageEntity(damagesource, f);
+        if (damaged && velocityChanged) {
+            velocityChanged = false;
+            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    EntityHumanNPC.this.velocityChanged = true;
+                }
+            });
+        }
+        return damaged;
+    }
+    
+    @Override
     public void die(DamageSource damagesource) {
         // players that die are not normally removed from the world. when the
         // NPC dies, we are done with the instance and it should be removed.
