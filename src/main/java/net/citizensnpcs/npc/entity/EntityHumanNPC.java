@@ -86,7 +86,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             Util.callCollisionEvent(npc, entity.getBukkitEntity());
         }
     }
-    
+
     @Override
     public void die(DamageSource damagesource) {
         // players that die are not normally removed from the world. when the
@@ -101,6 +101,23 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                 world.removeEntity(EntityHumanNPC.this);
             }
         }, 35); // give enough time for death and smoke animation
+    }
+    
+    @Override
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        // knock back velocity is cancelled and sent to client for handling when
+        // the entity is a player. there is no client so make this happen manually.
+        boolean damaged = super.damageEntity(damagesource, f);
+        if (damaged && velocityChanged) {
+            velocityChanged = false;
+            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    EntityHumanNPC.this.velocityChanged = true;
+                }
+            });
+        }
+        return damaged;
     }
 
     @Override
