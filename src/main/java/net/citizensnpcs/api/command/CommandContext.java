@@ -225,7 +225,7 @@ public class CommandContext {
         if (sender == null)
             return location;
         if (sender instanceof Player)
-            location = ((Player) sender).getTargetBlock(null, 50).getLocation();
+            location = ((Player) sender).getTargetBlock((java.util.Set<org.bukkit.Material>)null, 50).getLocation();
         else if (sender instanceof BlockCommandSender)
             location = ((BlockCommandSender) sender).getBlock().getLocation();
         return location;
