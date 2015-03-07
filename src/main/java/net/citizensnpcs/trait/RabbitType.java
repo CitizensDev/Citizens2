@@ -1,11 +1,10 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftRabbit;
-import org.bukkit.entity.Rabbit;
-
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
-import net.minecraft.server.v1_8_R1.EntityRabbit;
+
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftRabbit;
+import org.bukkit.entity.Rabbit;
 
 public class RabbitType extends Trait {
     private Rabbit rabbit;
@@ -22,24 +21,25 @@ public class RabbitType extends Trait {
         setType(type);
     }
 
-    public void setType(RabbitTypes type) {    	
+    public void setType(RabbitTypes type) {
         this.type = type;
         if (rabbit != null && rabbit.isValid()) {
-        	((EntityRabbit)((CraftRabbit)rabbit).getHandle()).r(type.type);
+            ((CraftRabbit) rabbit).getHandle().setRabbitType(type.type);
         }
     }
-    
-    public enum RabbitTypes {    	
-    	BROWN(0),
-    	WHITE(1),
+
+    public enum RabbitTypes {
         BLACK(2),
         BLACKANDWHITE(3),
+        BROWN(0),
         GOLD(4),
+        KILLER(99),
         SALTANDPEPPER(5),
-        KILLER(99);
+        WHITE(1);
         public int type;
-    	RabbitTypes (int type) {
-    		this.type = type;
-    	}
+
+        RabbitTypes(int type) {
+            this.type = type;
+        }
     }
 }

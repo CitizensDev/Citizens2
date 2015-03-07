@@ -2,11 +2,11 @@ package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R1.AttributeInstance;
-import net.minecraft.server.v1_8_R1.GenericAttributes;
-import net.minecraft.server.v1_8_R1.MathHelper;
+import net.minecraft.server.v1_8_R2.AttributeInstance;
+import net.minecraft.server.v1_8_R2.GenericAttributes;
+import net.minecraft.server.v1_8_R2.MathHelper;
 
-import org.bukkit.craftbukkit.v1_8_R1.TrigMath;
+import org.bukkit.craftbukkit.v1_8_R2.TrigMath;
 
 public class PlayerControllerMove {
     protected EntityHumanNPC a;
@@ -62,7 +62,7 @@ public class PlayerControllerMove {
     }
 
     public void c() {
-        this.a.aY = 0F;
+        this.a.ba = 0F;
         if (this.f) {
             this.f = false;
             int i = MathHelper.floor(this.a.getBoundingBox().b + 0.5D);
@@ -79,8 +79,7 @@ public class PlayerControllerMove {
                 AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.d);
                 speed.setValue(0.1D * this.e);
                 float movement = (float) (this.e * speed.getValue()) * 10;
-                this.a.j(movement);
-                this.a.aY = movement;
+                this.a.ba = movement;
                 if ((d2 > 0.0D) && (d0 * d0 + d1 * d1 < 1.0D))
                     this.a.getControllerJump().a();
             }

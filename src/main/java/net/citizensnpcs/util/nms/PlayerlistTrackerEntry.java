@@ -3,11 +3,10 @@ package net.citizensnpcs.util.nms;
 import java.lang.reflect.Field;
 
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R1.Entity;
-import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.EntityTrackerEntry;
-import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
-import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R2.Entity;
+import net.minecraft.server.v1_8_R2.EntityPlayer;
+import net.minecraft.server.v1_8_R2.EntityTrackerEntry;
+import net.minecraft.server.v1_8_R2.PacketPlayOutPlayerInfo;
 
 import org.bukkit.entity.Player;
 
@@ -31,7 +30,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                         return;
                     }
                     entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
-                            EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) this.tracker));
+                            PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) this.tracker));
                 }
             }
         }

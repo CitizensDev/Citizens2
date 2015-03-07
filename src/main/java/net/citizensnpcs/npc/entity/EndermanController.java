@@ -7,16 +7,16 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R1.Block;
-import net.minecraft.server.v1_8_R1.BlockPosition;
-import net.minecraft.server.v1_8_R1.EntityEnderman;
-import net.minecraft.server.v1_8_R1.NBTTagCompound;
-import net.minecraft.server.v1_8_R1.World;
+import net.minecraft.server.v1_8_R2.Block;
+import net.minecraft.server.v1_8_R2.BlockPosition;
+import net.minecraft.server.v1_8_R2.EntityEnderman;
+import net.minecraft.server.v1_8_R2.NBTTagCompound;
+import net.minecraft.server.v1_8_R2.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEnderman;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEnderman;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
 import org.bukkit.entity.Enderman;
 import org.bukkit.util.Vector;
 
@@ -67,30 +67,30 @@ public class EndermanController extends MobEntityController {
         }
 
         @Override
-        protected String bn() {
-            return npc == null ? super.bn() : npc.data().get(NPC.HURT_SOUND_METADATA, super.bn());
-        }
-
-        @Override
         protected String bo() {
-            return npc == null ? super.bo() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.bo());
+            return npc == null ? super.bo() : npc.data().get(NPC.HURT_SOUND_METADATA, super.bo());
         }
 
         @Override
-        public boolean cb() {
+        protected String bp() {
+            return npc == null ? super.bp() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.bp());
+        }
+
+        @Override
+        public boolean cc() {
             if (npc == null)
-                return super.cb();
+                return super.cc();
             boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.cb();
-            if (super.cb()) {
+                return super.cc();
+            if (super.cc()) {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_8_R1.Entity entity) {
+        public void collide(net.minecraft.server.v1_8_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -111,17 +111,17 @@ public class EndermanController extends MobEntityController {
         }
 
         @Override
-        public void doTick() {
-            super.doTick();
-            if (npc != null)
-                npc.update();
-        }
-
-        @Override
         public void e(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
             }
+        }
+
+        @Override
+        public void E() {
+            super.E();
+            if (npc != null)
+                npc.update();
         }
 
         @Override
@@ -168,20 +168,20 @@ public class EndermanController extends MobEntityController {
         }
 
         @Override
-        public boolean j_() {
-            if (npc == null || !npc.isFlyable()) {
-                return super.j_();
-            } else {
-                return false;
-            }
-        }
-
-        @Override
         protected boolean k(double d1, double d2, double d3) {
             if (npc == null) {
                 return super.j(d1, d2, d3);
             }
             return false;
+        }
+
+        @Override
+        public boolean k_() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.k_();
+            } else {
+                return false;
+            }
         }
 
         @Override
