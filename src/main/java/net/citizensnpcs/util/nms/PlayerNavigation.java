@@ -1,24 +1,24 @@
 package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_8_R1.AttributeInstance;
-import net.minecraft.server.v1_8_R1.Block;
-import net.minecraft.server.v1_8_R1.BlockPosition;
-import net.minecraft.server.v1_8_R1.Blocks;
-import net.minecraft.server.v1_8_R1.ChunkCache;
-import net.minecraft.server.v1_8_R1.Entity;
-import net.minecraft.server.v1_8_R1.EntityChicken;
-import net.minecraft.server.v1_8_R1.EntityInsentient;
-import net.minecraft.server.v1_8_R1.GenericAttributes;
-import net.minecraft.server.v1_8_R1.Material;
-import net.minecraft.server.v1_8_R1.MathHelper;
-import net.minecraft.server.v1_8_R1.NavigationAbstract;
-import net.minecraft.server.v1_8_R1.PathEntity;
-import net.minecraft.server.v1_8_R1.PathPoint;
-import net.minecraft.server.v1_8_R1.Pathfinder;
-import net.minecraft.server.v1_8_R1.PathfinderNormal;
-import net.minecraft.server.v1_8_R1.Vec3D;
-import net.minecraft.server.v1_8_R1.World;
+import net.minecraft.server.v1_8_R2.AttributeInstance;
+import net.minecraft.server.v1_8_R2.Block;
+import net.minecraft.server.v1_8_R2.BlockPosition;
+import net.minecraft.server.v1_8_R2.Blocks;
+import net.minecraft.server.v1_8_R2.ChunkCache;
+import net.minecraft.server.v1_8_R2.Entity;
+import net.minecraft.server.v1_8_R2.EntityChicken;
+import net.minecraft.server.v1_8_R2.EntityInsentient;
+import net.minecraft.server.v1_8_R2.GenericAttributes;
+import net.minecraft.server.v1_8_R2.Material;
+import net.minecraft.server.v1_8_R2.MathHelper;
+import net.minecraft.server.v1_8_R2.NavigationAbstract;
+import net.minecraft.server.v1_8_R2.PathEntity;
+import net.minecraft.server.v1_8_R2.PathPoint;
+import net.minecraft.server.v1_8_R2.Pathfinder;
+import net.minecraft.server.v1_8_R2.PathfinderNormal;
+import net.minecraft.server.v1_8_R2.Vec3D;
+import net.minecraft.server.v1_8_R2.World;
 
 public class PlayerNavigation extends NavigationAbstract {
     private final AttributeInstance a;
@@ -245,19 +245,17 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     protected boolean b() {
-        return (this.b.onGround) || ((h()) && (o())) || ((this.b.av()) && ((this.b.vehicle instanceof EntityChicken)));
+        return (this.b.onGround) || ((h()) && (o())) || ((this.b.au()) && ((this.b.vehicle instanceof EntityChicken)));
     }
 
     public void b(boolean paramBoolean) {
         this.aa.b(paramBoolean);
     }
 
-    @SuppressWarnings("unchecked")
     private boolean b(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5, int paramInt6,
             Vec3D paramVec3D, double paramDouble1, double paramDouble2) {
-        for (BlockPosition localBlockPosition : (Iterable<BlockPosition>) BlockPosition.a(new BlockPosition(paramInt1,
-                paramInt2, paramInt3), new BlockPosition(paramInt1 + paramInt4 - 1, paramInt2 + paramInt5 - 1,
-                        paramInt3 + paramInt6 - 1))) {
+        for (BlockPosition localBlockPosition : BlockPosition.a(new BlockPosition(paramInt1, paramInt2, paramInt3),
+                new BlockPosition(paramInt1 + paramInt4 - 1, paramInt2 + paramInt5 - 1, paramInt3 + paramInt6 - 1))) {
             double d1 = localBlockPosition.getX() + 0.5D - paramVec3D.a;
             double d2 = localBlockPosition.getZ() + 0.5D - paramVec3D.c;
             if (d1 * paramDouble1 + d2 * paramDouble2 < 0.0D) {
