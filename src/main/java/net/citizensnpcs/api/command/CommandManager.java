@@ -282,8 +282,7 @@ public class CommandManager {
         for (CommandInfo info : getCommands(baseCommand)) {
             Command command = info.getCommandAnnotation();
             if (processed.contains(info)
-                    || (!sender.hasPermission("citizens.admin") && !sender.hasPermission("citizens."
-                            + command.permission())))
+                    || (!sender.hasPermission("citizens.admin") && !sender.hasPermission(command.permission())))
                 continue;
             lines.add(format(command, baseCommand));
             if (command.modifiers().length > 1) {
