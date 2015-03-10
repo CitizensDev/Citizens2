@@ -2,6 +2,7 @@ package net.citizensnpcs.util.nms;
 
 import java.lang.reflect.Field;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R2.Entity;
 import net.minecraft.server.v1_8_R2.EntityPlayer;
@@ -9,6 +10,7 @@ import net.minecraft.server.v1_8_R2.EntityTrackerEntry;
 import net.minecraft.server.v1_8_R2.PacketPlayOutPlayerInfo;
 
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     public PlayerlistTrackerEntry(Entity entity, int i, int j, boolean flag) {
@@ -20,7 +22,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     @Override
-    public void updatePlayer(EntityPlayer entityplayer) {
+    public void updatePlayer(final EntityPlayer entityplayer) {
         if (entityplayer != this.tracker && c(entityplayer)) {
             if (!this.trackedPlayers.contains(entityplayer)
                     && ((entityplayer.u().getPlayerChunkMap().a(entityplayer, this.tracker.ae, this.tracker.ag)) || (this.tracker.attachedToPlayer))) {
@@ -31,6 +33,13 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                     }
                     entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
                             PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) this.tracker));
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
+                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, (EntityPlayer) tracker));
+                        }
+                    }.runTaskLater(CitizensAPI.getPlugin(), 2);
                 }
             }
         }
