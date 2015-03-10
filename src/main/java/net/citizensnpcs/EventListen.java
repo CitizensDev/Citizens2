@@ -286,8 +286,10 @@ public class EventListen implements Listener {
                 final Player player = event.getPlayer();
                 if (player == null || !player.isValid())
                     return;
-                for (Entity entity : player.getNearbyEntities(200, 200, 200)) {
-                    if (entity instanceof Player && npcRegistry.isNPC(entity)) {
+                Location location = player.getLocation().getBlock().getLocation();
+                for (NPC npc : getAllNPCs()) {
+                    Entity entity = npc.getEntity();
+                    if (entity instanceof Player && entity.getLocation().distanceSquared(location) < 200*200) {
                         final EntityPlayer entitynpc = ((CraftPlayer) entity).getHandle();
                         NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
                                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entitynpc));
