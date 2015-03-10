@@ -283,12 +283,9 @@ public class EventListen implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Messaging.send(Bukkit.getConsoleSender(), "TEST ENTITIES");
                 Player player = event.getPlayer();
                 for (Entity entity : player.getNearbyEntities(72, 72, 72)) {
-                    Messaging.send(Bukkit.getConsoleSender(), "TEST ENTITY");
                     if (entity instanceof Player && npcRegistry.isNPC(entity)) {
-                        Messaging.send(Bukkit.getConsoleSender(), "YUP");
                         final EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
                         final EntityPlayer entitynpc = ((CraftPlayer) entity).getHandle();
                         entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
