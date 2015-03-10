@@ -30,9 +30,13 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 
+import net.minecraft.server.v1_8_R2.EntityPlayer;
+import net.minecraft.server.v1_8_R2.PacketPlayOutPlayerInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -49,6 +53,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -60,6 +65,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
@@ -270,6 +276,34 @@ public class EventListen implements Listener {
         Player player = event.getPlayer();
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
         Bukkit.getPluginManager().callEvent(rightClickEvent);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerJoin(final PlayerJoinEvent event) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                final Player player = event.getPlayer();
+                if (player == null || !player.isValid())
+                    return;
+                for (Entity entity : player.getNearbyEntities(200, 200, 200)) {
+                    if (entity instanceof Player && npcRegistry.isNPC(entity)) {
+                        final EntityPlayer entitynpc = ((CraftPlayer) entity).getHandle();
+                        NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entitynpc));
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                if (!player.isValid())
+                                    return;
+                                NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entitynpc));
+                            }
+                        }.runTaskLater(CitizensAPI.getPlugin(), 2);
+                    }
+                }
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), 30);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
