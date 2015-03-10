@@ -5,8 +5,6 @@ import net.minecraft.server.v1_8_R2.Entity;
 import net.minecraft.server.v1_8_R2.EntityLiving;
 import net.minecraft.server.v1_8_R2.MathHelper;
 
-import org.bukkit.craftbukkit.v1_8_R2.TrigMath;
-
 public class PlayerControllerLook {
     private final EntityHumanNPC a;
     private float b;
@@ -29,24 +27,24 @@ public class PlayerControllerLook {
             double d2 = this.g - this.a.locZ;
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
 
-            float f = (float) (TrigMath.atan2(d2, d0) * 180.0D / 3.141592741012573D) - 90.0F;
-            float f1 = (float) (-(TrigMath.atan2(d1, d3) * 180.0D / 3.141592741012573D));
+            float f = (float) (MathHelper.b(d2, d0) * 180.0D / 3.141592741012573D) - 90.0F;
+            float f1 = (float) (-(MathHelper.b(d1, d3) * 180.0D / 3.141592741012573D));
 
             this.a.pitch = a(this.a.pitch, f1, this.c);
-            this.a.aI = a(this.a.aI, f, this.b);
+            this.a.aK = a(this.a.aK, f, this.b);
         } else {
-            this.a.aI = a(this.a.aI, this.a.aG, 10.0F);
+            this.a.aK = a(this.a.aK, this.a.aI, 10.0F);
         }
 
-        float f2 = MathHelper.g(this.a.aI - this.a.aG);
+        float f2 = MathHelper.g(this.a.aK - this.a.aI);
 
         if (!this.a.getNavigation().m()) {
             if (f2 < -75.0F) {
-                this.a.aI = (this.a.aG - 75.0F);
+                this.a.aK = (this.a.aI - 75.0F);
             }
 
             if (f2 > 75.0F)
-                this.a.aI = (this.a.aG + 75.0F);
+                this.a.aK = (this.a.aI + 75.0F);
         }
     }
 

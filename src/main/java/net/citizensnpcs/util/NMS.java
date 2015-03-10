@@ -172,7 +172,7 @@ public class NMS {
                     f5 = entity.world.getType(
                             new BlockPosition(MathHelper.floor(entity.locX),
                                     MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
-                            .getBlock().frictionFactor * 0.91F;
+                                    .getBlock().frictionFactor * 0.91F;
                 }
 
                 float f6 = 0.1627714F / (f5 * f5 * f5);
@@ -189,7 +189,7 @@ public class NMS {
                     f5 = entity.world.getType(
                             new BlockPosition(MathHelper.floor(entity.locX),
                                     MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
-                            .getBlock().frictionFactor * 0.91F;
+                                    .getBlock().frictionFactor * 0.91F;
                 }
 
                 if (entity.k_()) {
@@ -245,7 +245,7 @@ public class NMS {
 
     @SuppressWarnings("deprecation")
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-    NoSuchMethodException {
+            NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -356,9 +356,21 @@ public class NMS {
         Entity handle = getHandle(entity);
         if (handle == null)
             return;
+        yaw = clampYaw(yaw);
         handle.yaw = yaw;
         setHeadYaw(handle, yaw);
         handle.pitch = pitch;
+    }
+
+    public static float clampYaw(float yaw) {
+        while (yaw < -180.0F) {
+            yaw += 360.0F;
+        }
+
+        while (yaw >= 180.0F) {
+            yaw -= 360.0F;
+        }
+        return yaw;
     }
 
     @SuppressWarnings("deprecation")
@@ -504,13 +516,7 @@ public class NMS {
         if (!(en instanceof EntityLiving))
             return;
         EntityLiving handle = (EntityLiving) en;
-        while (yaw < -180.0F) {
-            yaw += 360.0F;
-        }
-
-        while (yaw >= 180.0F) {
-            yaw -= 360.0F;
-        }
+        yaw = clampYaw(yaw);
         handle.aK = yaw;
         if (!(handle instanceof EntityHuman))
             handle.aI = yaw;
