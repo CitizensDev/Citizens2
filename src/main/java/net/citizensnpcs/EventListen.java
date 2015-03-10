@@ -283,24 +283,27 @@ public class EventListen implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Player player = event.getPlayer();
+                final Player player = event.getPlayer();
+                if (player == null || !player.isValid())
+                    return;
                 for (Entity entity : player.getNearbyEntities(72, 72, 72)) {
                     if (entity instanceof Player && npcRegistry.isNPC(entity)) {
-                        final EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
                         final EntityPlayer entitynpc = ((CraftPlayer) entity).getHandle();
-                        entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
+                        NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
                                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entitynpc));
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
+                                if (!player.isValid())
+                                    return;
+                                NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
                                         PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entitynpc));
                             }
                         }.runTaskLater(CitizensAPI.getPlugin(), 2);
                     }
                 }
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), 30);
+        }.runTaskLater(CitizensAPI.getPlugin(), 40);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
