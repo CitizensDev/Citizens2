@@ -197,9 +197,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // swallow
         }
 
-        AttributeInstance range = this.getAttributeInstance(GenericAttributes.b);
+        AttributeInstance range = getAttributeInstance(GenericAttributes.b);
         if (range == null) {
-            range = this.getAttributeMap().b(GenericAttributes.b);
+            range = getAttributeMap().b(GenericAttributes.b);
         }
         range.setValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
 
