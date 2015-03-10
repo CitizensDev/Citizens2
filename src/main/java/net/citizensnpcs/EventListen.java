@@ -286,7 +286,7 @@ public class EventListen implements Listener {
                 final Player player = event.getPlayer();
                 if (player == null || !player.isValid())
                     return;
-                for (Entity entity : player.getNearbyEntities(72, 72, 72)) {
+                for (Entity entity : player.getNearbyEntities(200, 200, 200)) {
                     if (entity instanceof Player && npcRegistry.isNPC(entity)) {
                         final EntityPlayer entitynpc = ((CraftPlayer) entity).getHandle();
                         NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
@@ -303,7 +303,7 @@ public class EventListen implements Listener {
                     }
                 }
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), 40);
+        }.runTaskLater(CitizensAPI.getPlugin(), 30);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
