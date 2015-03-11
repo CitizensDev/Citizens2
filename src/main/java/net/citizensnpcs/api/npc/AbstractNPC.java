@@ -171,7 +171,7 @@ public abstract class AbstractNPC implements NPC {
         } else if (!name.equals(other.name)) {
             return false;
         }
-        return true;
+        return registry.equals(other.registry);
     }
 
     @Override
