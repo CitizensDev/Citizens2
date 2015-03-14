@@ -1,5 +1,6 @@
 package net.citizensnpcs;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -279,31 +280,38 @@ public class EventListen implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerJoin(final PlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        final Player player = event.getPlayer();
+        Location location = player.getLocation().getBlock().getLocation();
+        final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
+        for (NPC npc : getAllNPCs()) {
+            Entity npcEntity = npc.getEntity();
+            if (npcEntity instanceof Player && player.canSee((Player) npcEntity)) {
+                nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
+            }
+        }
         new BukkitRunnable() {
             @Override
             public void run() {
-                final Player player = event.getPlayer();
-                if (player == null || !player.isValid())
+                if (!player.isValid())
                     return;
-                for (Entity entity : player.getNearbyEntities(200, 200, 200)) {
-                    if (entity instanceof Player && npcRegistry.isNPC(entity)) {
-                        final EntityPlayer entitynpc = ((CraftPlayer) entity).getHandle();
-                        NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entitynpc));
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (!player.isValid())
-                                    return;
-                                NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entitynpc));
-                            }
-                        }.runTaskLater(CitizensAPI.getPlugin(), 2);
-                    }
+                for (EntityPlayer nearbyNPC : nearbyNPCs) {
+                    NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                            PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
                 }
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!player.isValid())
+                            return;
+                        for (EntityPlayer nearbyNPC : nearbyNPCs) {
+                            NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
+                        }
+                    }
+                }.runTaskLater(CitizensAPI.getPlugin(), 2);
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), 30);
+        }.runTaskLater(CitizensAPI.getPlugin(), 40);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
