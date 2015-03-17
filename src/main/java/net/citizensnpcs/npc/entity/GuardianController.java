@@ -177,6 +177,13 @@ public class GuardianController extends MobEntityController {
         }
 
         @Override
+        public void m() {
+            if (npc == null) {
+                super.m();
+            }
+        }
+
+        @Override
         protected String z() {
             return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
                     NPC.AMBIENT_SOUND_METADATA, super.z());

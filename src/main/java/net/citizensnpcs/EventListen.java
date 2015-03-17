@@ -30,9 +30,9 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-
 import net.minecraft.server.v1_8_R2.EntityPlayer;
 import net.minecraft.server.v1_8_R2.PacketPlayOutPlayerInfo;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -61,12 +61,12 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
@@ -135,7 +135,7 @@ public class EventListen implements Listener {
             toRespawn.put(coord, npc);
             if (Messaging.isDebugging()) {
                 Messaging
-                        .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+                .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
             }
         }
     }
@@ -282,7 +282,6 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        Location location = player.getLocation().getBlock().getLocation();
         final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
         for (NPC npc : getAllNPCs()) {
             Entity npcEntity = npc.getEntity();
@@ -381,11 +380,6 @@ public class EventListen implements Listener {
                 Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
             }
         }
-    }
-
-    private Location roundLocation(Location input) {
-        return new Location(input.getWorld(), Math.floor(input.getX()), Math.floor(input.getY()), Math.floor(input
-                .getZ()));
     }
 
     private boolean spawn(NPC npc) {

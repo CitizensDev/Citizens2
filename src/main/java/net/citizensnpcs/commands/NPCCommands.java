@@ -272,7 +272,7 @@ public class NPCCommands {
         }
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-        : new CommandSenderCreateNPCEvent(sender, copy);
+                : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
@@ -348,7 +348,7 @@ public class NPCCommands {
             spawnLoc = args.getSenderLocation();
         }
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
-        : new CommandSenderCreateNPCEvent(sender, npc);
+                : new CommandSenderCreateNPCEvent(sender, npc);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
@@ -1025,7 +1025,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         Messaging
-        .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+                .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
@@ -1063,7 +1063,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, usage = "remove|rem (all|id|name)", desc = "Remove a NPC", modifiers = { "remove",
-    "rem" }, min = 1, max = 2)
+            "rem" }, min = 1, max = 2)
     @Requirements
     public void remove(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {

@@ -112,6 +112,17 @@ public class NMS {
         getHandle(entity).world = ((CraftWorld) world).getHandle();
     }
 
+    public static float clampYaw(float yaw) {
+        while (yaw < -180.0F) {
+            yaw += 360.0F;
+        }
+
+        while (yaw >= 180.0F) {
+            yaw -= 360.0F;
+        }
+        return yaw;
+    }
+
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
         if (GOAL_FIELD == null || goalSelectors == null)
             return;
@@ -280,7 +291,7 @@ public class NMS {
     }
 
     public static float getHeadYaw(EntityLiving handle) {
-        return handle.aI;
+        return handle.aK;
     }
 
     public static NavigationAbstract getNavigation(Entity handle) {
@@ -360,17 +371,6 @@ public class NMS {
         handle.yaw = yaw;
         setHeadYaw(handle, yaw);
         handle.pitch = pitch;
-    }
-
-    public static float clampYaw(float yaw) {
-        while (yaw < -180.0F) {
-            yaw += 360.0F;
-        }
-
-        while (yaw >= 180.0F) {
-            yaw -= 360.0F;
-        }
-        return yaw;
     }
 
     @SuppressWarnings("deprecation")
