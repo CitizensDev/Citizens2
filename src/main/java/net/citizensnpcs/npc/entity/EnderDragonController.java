@@ -79,6 +79,7 @@ public class EnderDragonController extends MobEntityController {
             }
             return false; // shouldLeash
         }
+
         @Override
         public void collide(net.minecraft.server.v1_8_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
@@ -94,18 +95,9 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
-        public void m() {
-            if (npc != null) {
-                npc.update();
-                if (motX != 0 || motY != 0 || motZ != 0) {
-                    motX *= 0.98;
-                    motY *= 0.98;
-                    motZ *= 0.98;
-                    yaw = getCorrectYaw(locX + motX, locZ + motZ);
-                    setPosition(locX + motX, locY + motY, locZ + motZ);
-                }
-            } else {
-                super.m();
+        protected void D() {
+            if (npc == null) {
+                super.D();
             }
         }
 
@@ -153,16 +145,25 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
-        protected String z() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
-                    NPC.AMBIENT_SOUND_METADATA, super.z());
+        public void m() {
+            if (npc != null) {
+                npc.update();
+                if (motX != 0 || motY != 0 || motZ != 0) {
+                    motX *= 0.98;
+                    motY *= 0.98;
+                    motZ *= 0.98;
+                    yaw = getCorrectYaw(locX + motX, locZ + motZ);
+                    setPosition(locX + motX, locY + motY, locZ + motZ);
+                }
+            } else {
+                super.m();
+            }
         }
 
         @Override
-        protected void D() {
-            if (npc == null) {
-                super.D();
-            }
+        protected String z() {
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
+                    NPC.AMBIENT_SOUND_METADATA, super.z());
         }
     }
 }

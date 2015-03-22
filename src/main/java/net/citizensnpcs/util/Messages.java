@@ -102,6 +102,7 @@ public class Messages {
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
     public static final String INVALID_RABBIT_TYPE = "citizens.commands.npc.rabbittype.invalid-type";
+    public static final String INVALID_SHEEP_COLOR = "citizens.commands.npc.sheep.invalid-color";
     public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
     public static final String INVALID_SOUND = "citizens.commands.npc.sound.invalid-sound";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
@@ -184,6 +185,7 @@ public class Messages {
     public static final String SELECTION_PROMPT_INVALID_CHOICE = "citizens.conversations.selection.invalid-choice";
     public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";
     public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
+    public static final String SHEEP_COLOR_SET = "citizens.commands.npc.sheep.color-set";
     public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.description";
     public static final String SIZE_SET = "citizens.commands.npc.size.set";
     public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";
