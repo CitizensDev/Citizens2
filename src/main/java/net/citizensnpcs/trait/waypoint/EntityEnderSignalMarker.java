@@ -21,4 +21,8 @@ public class EntityEnderSignalMarker extends EntityEnderSignal {
     @Override
     public void h() {
     }
+
+    @Override
+    public void t_() {
+    }
 }
