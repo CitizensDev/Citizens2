@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 
 public class SheepTrait extends Trait {
     @Persist("color")
-    private DyeColor color;
+    private DyeColor color = DyeColor.WHITE;
     @Persist("sheared")
-    private boolean sheared;
+    private boolean sheared = false;
 
     public SheepTrait() {
         super("sheeptrait");

@@ -1200,10 +1200,12 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.sheep")
     @Requirements(selected = true, ownership = true, types = { EntityType.SHEEP })
-    public void sheep(CommandContext args, CommandSender sender, NPC npc) {
+    public void sheep(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         SheepTrait trait = npc.getTrait(SheepTrait.class);
+        boolean hasArg = false;
         if (args.hasValueFlag("sheared")) {
             trait.setSheared(Boolean.valueOf(args.getFlag("sheared")));
+            hasArg = true;
         }
         if (args.hasValueFlag("color")) {
             DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("color"));
@@ -1213,6 +1215,10 @@ public class NPCCommands {
             } else {
                 Messaging.sendErrorTr(sender, Messages.INVALID_SHEEP_COLOR, Util.listValuesPretty(DyeColor.values()));
             }
+            hasArg = true;
+        }
+        if (!hasArg) {
+            throw new CommandException();
         }
     }
 
