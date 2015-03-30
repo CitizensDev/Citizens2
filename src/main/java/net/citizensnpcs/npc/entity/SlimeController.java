@@ -7,16 +7,18 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R1.Block;
-import net.minecraft.server.v1_8_R1.BlockPosition;
-import net.minecraft.server.v1_8_R1.EntitySlime;
-import net.minecraft.server.v1_8_R1.NBTTagCompound;
-import net.minecraft.server.v1_8_R1.World;
+import net.minecraft.server.v1_8_R2.Block;
+import net.minecraft.server.v1_8_R2.BlockPosition;
+import net.minecraft.server.v1_8_R2.ControllerMove;
+import net.minecraft.server.v1_8_R2.EntityHuman;
+import net.minecraft.server.v1_8_R2.EntitySlime;
+import net.minecraft.server.v1_8_R2.NBTTagCompound;
+import net.minecraft.server.v1_8_R2.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftSlime;
+import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftSlime;
 import org.bukkit.entity.Slime;
 import org.bukkit.util.Vector;
 
@@ -44,6 +46,7 @@ public class SlimeController extends MobEntityController {
             if (npc != null) {
                 setSize(3);
                 NMS.clearGoals(goalSelector, targetSelector);
+                this.moveController = new ControllerMove(this);
             }
         }
 
@@ -55,35 +58,50 @@ public class SlimeController extends MobEntityController {
         }
 
         @Override
-        protected String bn() {
-            return npc == null ? super.bn() : npc.data().get(NPC.HURT_SOUND_METADATA, super.bn());
-        }
-
-        @Override
         protected String bo() {
-            return npc == null ? super.bo() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.bo());
+            return npc == null ? super.bo() : npc.data().get(NPC.HURT_SOUND_METADATA, super.bo());
         }
 
         @Override
-        public boolean cb() {
+        protected String bp() {
+            return npc == null ? super.bp() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.bp());
+        }
+
+        @Override
+        public boolean cc() {
             if (npc == null)
-                return super.cb();
+                return super.cc();
             boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.cb();
-            if (super.cb()) {
+                return super.cc();
+            if (super.cc()) {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_8_R1.Entity entity) {
+        public void ch() {
+            if (npc == null) {
+                super.ch();
+            }
+        }
+
+        @Override
+        public void collide(net.minecraft.server.v1_8_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
+        }
+
+        @Override
+        public void d(EntityHuman human) {
+            if (npc == null) {
+                super.d(human);
+            }
         }
 
         @Override
@@ -99,16 +117,17 @@ public class SlimeController extends MobEntityController {
         }
 
         @Override
-        public void doTick() {
-            super.doTick();
-            if (npc != null)
-                npc.update();
-        }
-
-        @Override
         public void e(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
+            }
+        }
+
+        @Override
+        public void E() {
+            super.E();
+            if (npc != null) {
+                npc.update();
             }
         }
 
@@ -156,9 +175,9 @@ public class SlimeController extends MobEntityController {
         }
 
         @Override
-        public boolean j_() {
+        public boolean k_() {
             if (npc == null || !npc.isFlyable()) {
-                return super.j_();
+                return super.k_();
             } else {
                 return false;
             }

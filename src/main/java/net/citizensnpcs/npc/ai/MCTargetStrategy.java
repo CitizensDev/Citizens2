@@ -8,13 +8,13 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.minecraft.server.v1_8_R1.Entity;
-import net.minecraft.server.v1_8_R1.EntityLiving;
-import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.NavigationAbstract;
+import net.minecraft.server.v1_8_R2.Entity;
+import net.minecraft.server.v1_8_R2.EntityLiving;
+import net.minecraft.server.v1_8_R2.EntityPlayer;
+import net.minecraft.server.v1_8_R2.NavigationAbstract;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
@@ -34,7 +34,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         this.target = ((CraftEntity) target).getHandle();
         NavigationAbstract nav = NMS.getNavigation(this.handle);
         this.targetNavigator = nav != null && !params.useNewPathfinder() ? new NavigationFieldWrapper(nav)
-                : new AStarTargeter();
+        : new AStarTargeter();
         this.aggro = aggro;
     }
 
@@ -114,7 +114,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (cancelReason != null) {
             return true;
         }
-        if (target.world.getWorld().getFullTime() % 10 == 0) {
+        if (!aggro && distanceSquared() < parameters.distanceMargin()) {
+            stop();
+        } else if (target.world.getWorld().getFullTime() % 10 == 0) {
             setPath();
         }
         NMS.look(handle, target);
@@ -159,7 +161,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         private void setStrategy() {
             Location location = target.getBukkitEntity().getLocation(TARGET_LOCATION);
             strategy = npc.isFlyable() ? new FlyingAStarNavigationStrategy(npc, location, parameters)
-                    : new AStarNavigationStrategy(npc, location, parameters);
+            : new AStarNavigationStrategy(npc, location, parameters);
         }
 
         @Override

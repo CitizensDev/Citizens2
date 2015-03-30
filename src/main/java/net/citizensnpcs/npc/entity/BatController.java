@@ -7,14 +7,14 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R1.EntityBat;
-import net.minecraft.server.v1_8_R1.NBTTagCompound;
-import net.minecraft.server.v1_8_R1.World;
+import net.minecraft.server.v1_8_R2.EntityBat;
+import net.minecraft.server.v1_8_R2.NBTTagCompound;
+import net.minecraft.server.v1_8_R2.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftBat;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftBat;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
 import org.bukkit.entity.Bat;
 import org.bukkit.util.Vector;
 
@@ -59,38 +59,39 @@ public class BatController extends MobEntityController {
         }
 
         @Override
-        protected String bn() {
-            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bn() : npc.data().get(
-                    NPC.HURT_SOUND_METADATA, super.bn());
-        }
-
-        @Override
         protected String bo() {
-            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bo() : npc.data().get(
-                    NPC.DEATH_SOUND_METADATA, super.bo());
+            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bo() : npc.data().get(
+                    NPC.HURT_SOUND_METADATA, super.bo());
         }
 
         @Override
-        public boolean cb() {
+        protected String bp() {
+            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bp() : npc.data().get(
+                    NPC.DEATH_SOUND_METADATA, super.bp());
+        }
+
+        @Override
+        public boolean cc() {
             if (npc == null) {
-                return super.cb();
+                return super.cc();
             }
             boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.cb();
-            if (super.cb()) {
+                return super.cc();
+            if (super.cc()) {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_8_R1.Entity entity) {
+        public void collide(net.minecraft.server.v1_8_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override
@@ -107,8 +108,10 @@ public class BatController extends MobEntityController {
 
         @Override
         public void E() {
-            super.E();
-            if (npc != null) {
+            if (npc == null) {
+                super.E();
+            } else {
+                NMS.updateAI(this);
                 npc.update();
             }
         }

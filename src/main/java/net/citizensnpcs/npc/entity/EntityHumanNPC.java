@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.List;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
@@ -19,31 +20,29 @@ import net.citizensnpcs.util.nms.PlayerControllerJump;
 import net.citizensnpcs.util.nms.PlayerControllerLook;
 import net.citizensnpcs.util.nms.PlayerControllerMove;
 import net.citizensnpcs.util.nms.PlayerNavigation;
-import net.minecraft.server.v1_8_R1.AttributeInstance;
-import net.minecraft.server.v1_8_R1.Block;
-import net.minecraft.server.v1_8_R1.BlockPosition;
-import net.minecraft.server.v1_8_R1.Entity;
-import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.EnumGamemode;
-import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
-import net.minecraft.server.v1_8_R1.EnumProtocolDirection;
-import net.minecraft.server.v1_8_R1.GenericAttributes;
-import net.minecraft.server.v1_8_R1.MathHelper;
-import net.minecraft.server.v1_8_R1.MinecraftServer;
-import net.minecraft.server.v1_8_R1.NavigationAbstract;
-import net.minecraft.server.v1_8_R1.NetworkManager;
-import net.minecraft.server.v1_8_R1.Packet;
-import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_8_R1.PacketPlayOutEntityHeadRotation;
-import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_8_R1.PlayerInteractManager;
-import net.minecraft.server.v1_8_R1.WorldServer;
+import net.minecraft.server.v1_8_R2.AttributeInstance;
+import net.minecraft.server.v1_8_R2.Block;
+import net.minecraft.server.v1_8_R2.BlockPosition;
+import net.minecraft.server.v1_8_R2.DamageSource;
+import net.minecraft.server.v1_8_R2.Entity;
+import net.minecraft.server.v1_8_R2.EntityPlayer;
+import net.minecraft.server.v1_8_R2.EnumProtocolDirection;
+import net.minecraft.server.v1_8_R2.GenericAttributes;
+import net.minecraft.server.v1_8_R2.MathHelper;
+import net.minecraft.server.v1_8_R2.MinecraftServer;
+import net.minecraft.server.v1_8_R2.NavigationAbstract;
+import net.minecraft.server.v1_8_R2.NetworkManager;
+import net.minecraft.server.v1_8_R2.Packet;
+import net.minecraft.server.v1_8_R2.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_8_R2.PacketPlayOutEntityHeadRotation;
+import net.minecraft.server.v1_8_R2.PlayerInteractManager;
+import net.minecraft.server.v1_8_R2.WorldServer;
+import net.minecraft.server.v1_8_R2.WorldSettings.EnumGamemode;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
-import org.bukkit.entity.Player;
+import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -79,13 +78,47 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public void collide(net.minecraft.server.v1_8_R1.Entity entity) {
+    public void collide(net.minecraft.server.v1_8_R2.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
         if (npc != null) {
             Util.callCollisionEvent(npc, entity.getBukkitEntity());
         }
+    }
+
+    @Override
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        // knock back velocity is cancelled and sent to client for handling when
+        // the entity is a player. there is no client so make this happen
+        // manually.
+        boolean damaged = super.damageEntity(damagesource, f);
+        if (damaged && velocityChanged) {
+            velocityChanged = false;
+            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    EntityHumanNPC.this.velocityChanged = true;
+                }
+            });
+        }
+        return damaged;
+    }
+
+    @Override
+    public void die(DamageSource damagesource) {
+        // players that die are not normally removed from the world. when the
+        // NPC dies, we are done with the instance and it should be removed.
+        if (dead) {
+            return;
+        }
+        super.die(damagesource);
+        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                world.removeEntity(EntityHumanNPC.this);
+            }
+        }, 35); // give enough time for death and smoke animation
     }
 
     @Override
@@ -143,11 +176,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return controllerMove;
     }
 
-    private Packet getListPacket(Player player, boolean removeFromPlayerList) {
-        return new PacketPlayOutPlayerInfo(removeFromPlayerList ? EnumPlayerInfoAction.REMOVE_PLAYER
-                : EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) player).getHandle());
-    }
-
     public NavigationAbstract getNavigation() {
         return navigation;
     }
@@ -169,9 +197,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             // swallow
         }
 
-        AttributeInstance range = this.getAttributeInstance(GenericAttributes.b);
+        AttributeInstance range = getAttributeInstance(GenericAttributes.b);
         if (range == null) {
-            range = this.getAttributeMap().b(GenericAttributes.b);
+            range = getAttributeMap().b(GenericAttributes.b);
         }
         range.setValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
 
@@ -187,9 +215,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     @Override
-    public boolean j_() {
+    public boolean k_() {
         if (npc == null || !npc.isFlyable()) {
-            return super.j_();
+            return super.k_();
         } else {
             return false;
         }
@@ -197,27 +225,39 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
 
     private void moveOnCurrentHeading() {
         NMS.updateAI(this);
-        if (aW) {
+        if (aY) {
             if (onGround && jumpTicks == 0) {
-                bE();
+                bF();
                 jumpTicks = 10;
             }
         } else {
             jumpTicks = 0;
         }
-        aX *= 0.98F;
-        aY *= 0.98F;
-        aZ *= 0.9F;
-        g(aX, aY); // movement method
+        aZ *= 0.98F;
+        ba *= 0.98F;
+        bb *= 0.9F;
+        g(aZ, ba); // movement method
         NMS.setHeadYaw(this, yaw);
         if (jumpTicks > 0) {
             jumpTicks--;
         }
     }
 
+    public void setMoveDestination(double x, double y, double z, double speed) {
+        controllerMove.a(x, y, z, speed);
+    }
+
+    public void setShouldJump() {
+        controllerJump.a();
+    }
+
+    public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
+        controllerLook.a(target, yawOffset, renderOffset);
+    }
+
     @Override
-    public void s_() {
-        super.s_();
+    public void t_() {
+        super.t_();
         if (npc == null)
             return;
         boolean navigating = npc.getNavigator().isNavigating();
@@ -238,8 +278,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             }
             moveOnCurrentHeading();
         } else if (motX != 0 || motZ != 0 || motY != 0) {
-            g(0, 0); // is this necessary? it does controllable but
-            // sometimes
+            g(0, 0); // is this necessary? it does controllable but sometimes
             // players sink into the ground
         }
 
@@ -248,18 +287,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         }
 
         npc.update();
-    }
-
-    public void setMoveDestination(double x, double y, double z, double speed) {
-        controllerMove.a(x, y, z, speed);
-    }
-
-    public void setShouldJump() {
-        controllerJump.a();
-    }
-
-    public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
-        controllerLook.a(target, yawOffset, renderOffset);
     }
 
     public void updateAI() {
@@ -280,7 +307,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             }
 
             Location current = getBukkitEntity().getLocation(packetLocationCache);
-            Packet[] packets = new Packet[navigating ? 5 : 6];
+            Packet<?>[] packets = new Packet[navigating ? 5 : 6];
             if (!navigating) {
                 packets[5] = new PacketPlayOutEntityHeadRotation(this,
                         (byte) MathHelper.d(NMS.getHeadYaw(this) * 256.0F / 360.0F));
@@ -292,17 +319,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
             boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
                     Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
             NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
-            Player otherOnline = null;
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getName().equalsIgnoreCase(getName()) && !(player instanceof NPCHolder)) {
-                    otherOnline = player;
-                    break;
-                }
-            }
-            NMS.sendToOnline(getListPacket(getBukkitEntity(), true));
-            if (otherOnline != null) {
-                NMS.sendToOnline(getListPacket(otherOnline, false));
-            }
+            NMS.sendPlayerlistPacket(false, getBukkitEntity());
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }

@@ -22,7 +22,7 @@ public class AnimationTrigger implements WaypointTrigger {
     }
 
     public AnimationTrigger(Collection<PlayerAnimation> collection) {
-        animations = Lists.newArrayList(animations);
+        animations = Lists.newArrayList(collection);
     }
 
     @Override

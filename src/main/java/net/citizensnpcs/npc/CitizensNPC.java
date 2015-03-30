@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -23,12 +24,15 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R1.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_8_R2.Packet;
+import net.minecraft.server.v1_8_R2.PacketPlayOutEntityTeleport;
 
+import net.minecraft.server.v1_8_R2.PacketPlayOutPlayerInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -38,6 +42,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
@@ -169,7 +174,7 @@ public class CitizensNPC extends AbstractNPC {
         at = at.clone();
         getTrait(CurrentLocation.class).setLocation(at);
         entityController.spawn(at, this);
-        net.minecraft.server.v1_8_R1.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
+        net.minecraft.server.v1_8_R2.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
         mcEntity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         if (!couldSpawn) {
@@ -214,6 +219,24 @@ public class CitizensNPC extends AbstractNPC {
             entity.setCustomName(getFullName());
             if (NMS.getStepHeight(entity) < 1) {
                 NMS.setStepHeight(NMS.getHandle(entity), 1);
+            }
+            if (getEntity() instanceof Player) {
+                final CraftPlayer player = (CraftPlayer) getEntity();
+                NMS.replaceTrackerEntry(player);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        NMS.sendPacketsNearby(player, player.getLocation(), Arrays.asList((Packet) new PacketPlayOutPlayerInfo(
+                                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, player.getHandle())), 200.0);
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                NMS.sendPacketsNearby(player, player.getLocation(), Arrays.asList((Packet) new PacketPlayOutPlayerInfo(
+                                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, player.getHandle())), 200.0);
+                            }
+                        }.runTaskLater(CitizensAPI.getPlugin(), 2);
+                    }
+                }.runTaskLater(CitizensAPI.getPlugin(), 2);
             }
         }
         return true;

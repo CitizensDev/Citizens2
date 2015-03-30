@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.citizensnpcs.api.command.exception.CommandException;
@@ -16,37 +17,44 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.network.EmptyChannel;
-import net.minecraft.server.v1_8_R1.AttributeInstance;
-import net.minecraft.server.v1_8_R1.Block;
-import net.minecraft.server.v1_8_R1.BlockPosition;
-import net.minecraft.server.v1_8_R1.ControllerJump;
-import net.minecraft.server.v1_8_R1.DamageSource;
-import net.minecraft.server.v1_8_R1.EnchantmentManager;
-import net.minecraft.server.v1_8_R1.Entity;
-import net.minecraft.server.v1_8_R1.EntityHorse;
-import net.minecraft.server.v1_8_R1.EntityHuman;
-import net.minecraft.server.v1_8_R1.EntityInsentient;
-import net.minecraft.server.v1_8_R1.EntityLiving;
-import net.minecraft.server.v1_8_R1.EntityMinecartAbstract;
-import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.EntityTypes;
-import net.minecraft.server.v1_8_R1.GenericAttributes;
-import net.minecraft.server.v1_8_R1.MathHelper;
-import net.minecraft.server.v1_8_R1.NavigationAbstract;
-import net.minecraft.server.v1_8_R1.NetworkManager;
-import net.minecraft.server.v1_8_R1.Packet;
-import net.minecraft.server.v1_8_R1.PathfinderGoalSelector;
-import net.minecraft.server.v1_8_R1.World;
+import net.citizensnpcs.util.nms.PlayerlistTrackerEntry;
+import net.minecraft.server.v1_8_R2.AttributeInstance;
+import net.minecraft.server.v1_8_R2.Block;
+import net.minecraft.server.v1_8_R2.BlockPosition;
+import net.minecraft.server.v1_8_R2.ControllerJump;
+import net.minecraft.server.v1_8_R2.DamageSource;
+import net.minecraft.server.v1_8_R2.EnchantmentManager;
+import net.minecraft.server.v1_8_R2.Entity;
+import net.minecraft.server.v1_8_R2.EntityHorse;
+import net.minecraft.server.v1_8_R2.EntityHuman;
+import net.minecraft.server.v1_8_R2.EntityInsentient;
+import net.minecraft.server.v1_8_R2.EntityLiving;
+import net.minecraft.server.v1_8_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_8_R2.EntityPlayer;
+import net.minecraft.server.v1_8_R2.EntityTracker;
+import net.minecraft.server.v1_8_R2.EntityTrackerEntry;
+import net.minecraft.server.v1_8_R2.EntityTypes;
+import net.minecraft.server.v1_8_R2.GenericAttributes;
+import net.minecraft.server.v1_8_R2.MathHelper;
+import net.minecraft.server.v1_8_R2.NavigationAbstract;
+import net.minecraft.server.v1_8_R2.NetworkManager;
+import net.minecraft.server.v1_8_R2.Packet;
+import net.minecraft.server.v1_8_R2.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R2.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
+import net.minecraft.server.v1_8_R2.PathfinderGoalSelector;
+import net.minecraft.server.v1_8_R2.World;
+import net.minecraft.server.v1_8_R2.WorldServer;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R1.CraftSound;
-import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R2.CraftSound;
+import org.bukkit.craftbukkit.v1_8_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
@@ -62,7 +70,7 @@ public class NMS {
     public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
         if (entity == null)
             return;
-        Entity handle = getHandle(entity);
+        EntityHuman handle = (EntityHuman) getHandle(entity);
         if (handle.world == null)
             return;
         if (remove) {
@@ -73,11 +81,12 @@ public class NMS {
     }
 
     public static void attack(EntityLiving handle, Entity target) {
-        float f = (float) handle.getAttributeInstance(GenericAttributes.e).getValue();
+        AttributeInstance attackDamage = handle.getAttributeInstance(GenericAttributes.e);
+        float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
         int i = 0;
 
         if (target instanceof EntityLiving) {
-            f += EnchantmentManager.a(handle.bz(), ((EntityLiving) target).getMonsterType());
+            f += EnchantmentManager.a(handle.bA(), ((EntityLiving) target).getMonsterType());
             i += EnchantmentManager.a(handle);
         }
 
@@ -103,6 +112,17 @@ public class NMS {
         getHandle(entity).world = ((CraftWorld) world).getHandle();
     }
 
+    public static float clampYaw(float yaw) {
+        while (yaw < -180.0F) {
+            yaw += 360.0F;
+        }
+
+        while (yaw >= 180.0F) {
+            yaw -= 360.0F;
+        }
+        return yaw;
+    }
+
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
         if (GOAL_FIELD == null || goalSelectors == null)
             return;
@@ -117,59 +137,126 @@ public class NMS {
     }
 
     public static void flyingMoveLogic(EntityLiving entity, float f, float f1) {
-        if (entity.V()) {
-            entity.a(f, f1, 0.02F);
-            entity.move(entity.motX, entity.motY, entity.motZ);
+        if (entity.bM()) {
+            if (entity.V()) {
+                double d0 = entity.locY;
+                float f3 = 0.8F;
+                float f4 = 0.02F;
+                float f2 = EnchantmentManager.b(entity);
+                if (f2 > 3.0F) {
+                    f2 = 3.0F;
+                }
 
-            entity.motX *= 0.800000011920929D;
-            entity.motY *= 0.800000011920929D;
-            entity.motZ *= 0.800000011920929D;
-        } else if (entity.ab()) {
-            entity.a(f, f1, 0.02F);
-            entity.move(entity.motX, entity.motY, entity.motZ);
-            entity.motX *= 0.5D;
-            entity.motY *= 0.5D;
-            entity.motZ *= 0.5D;
-        } else {
-            float c1 = 0.91F;
-            if (entity.onGround) {
-                c1 = entity.world.getType(
-                        new BlockPosition(MathHelper.floor(entity.locX),
-                                MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
-                        .getBlock().frictionFactor * 0.91F;
+                if (!entity.onGround) {
+                    f2 *= 0.5F;
+                }
+
+                if (f2 > 0.0F) {
+                    f3 += (0.5460001F - f3) * f2 / 3.0F;
+                    f4 += (entity.bI() * 1.0F - f4) * f2 / 3.0F;
+                }
+
+                entity.a(f, f1, f4);
+                entity.move(entity.motX, entity.motY, entity.motZ);
+                entity.motX *= f3;
+                entity.motY *= 0.800000011920929D;
+                entity.motZ *= f3;
+                entity.motY -= 0.02D;
+                if ((entity.positionChanged)
+                        && (entity.c(entity.motX, entity.motY + 0.6000000238418579D - entity.locY + d0, entity.motZ)))
+                    entity.motY = 0.300000011920929D;
+            } else if (entity.ab()) {
+                double d0 = entity.locY;
+                entity.a(f, f1, 0.02F);
+                entity.move(entity.motX, entity.motY, entity.motZ);
+                entity.motX *= 0.5D;
+                entity.motY *= 0.5D;
+                entity.motZ *= 0.5D;
+                entity.motY -= 0.02D;
+                if ((entity.positionChanged)
+                        && (entity.c(entity.motX, entity.motY + 0.6000000238418579D - entity.locY + d0, entity.motZ)))
+                    entity.motY = 0.300000011920929D;
+            } else {
+                float f5 = 0.91F;
+
+                if (entity.onGround) {
+                    f5 = entity.world.getType(
+                            new BlockPosition(MathHelper.floor(entity.locX),
+                                    MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
+                                    .getBlock().frictionFactor * 0.91F;
+                }
+
+                float f6 = 0.1627714F / (f5 * f5 * f5);
+                float f3;
+                if (entity.onGround)
+                    f3 = entity.bI() * f6;
+                else {
+                    f3 = entity.aM;
+                }
+
+                entity.a(f, f1, f3);
+                f5 = 0.91F;
+                if (entity.onGround) {
+                    f5 = entity.world.getType(
+                            new BlockPosition(MathHelper.floor(entity.locX),
+                                    MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
+                                    .getBlock().frictionFactor * 0.91F;
+                }
+
+                if (entity.k_()) {
+                    float f4 = 0.15F;
+                    entity.motX = MathHelper.a(entity.motX, -f4, f4);
+                    entity.motZ = MathHelper.a(entity.motZ, -f4, f4);
+                    entity.fallDistance = 0.0F;
+                    if (entity.motY < -0.15D) {
+                        entity.motY = -0.15D;
+                    }
+
+                    boolean flag = (entity.isSneaking()) && ((entity instanceof EntityHuman));
+
+                    if ((flag) && (entity.motY < 0.0D)) {
+                        entity.motY = 0.0D;
+                    }
+                }
+
+                entity.move(entity.motX, entity.motY, entity.motZ);
+                if ((entity.positionChanged) && (entity.k_())) {
+                    entity.motY = 0.2D;
+                }
+
+                if ((entity.world.isClientSide)
+                        && ((!entity.world.isLoaded(new BlockPosition((int) entity.locX, 0, (int) entity.locZ))) || (!entity.world
+                                .getChunkAtWorldCoords(new BlockPosition((int) entity.locX, 0, (int) entity.locZ)).o()))) {
+                    if (entity.locY > 0.0D)
+                        entity.motY = -0.1D;
+                    else
+                        entity.motY = 0.0D;
+                } else {
+                    entity.motY -= 0.08D;
+                }
+
+                entity.motY *= 0.9800000190734863D;
+                entity.motX *= f5;
+                entity.motZ *= f5;
             }
-
-            float f2 = 0.1627714F / (c1 * c1 * c1);
-            entity.a(f, f1, entity.onGround ? 0.1F * f2 : 0.02F);
-
-            c1 = 0.91F;
-            if (entity.onGround) {
-                c1 = entity.world.getType(
-                        new BlockPosition(MathHelper.floor(entity.locX),
-                                MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
-                        .getBlock().frictionFactor * 0.91F;
-            }
-
-            entity.move(entity.motX, entity.motY, entity.motZ);
-
-            entity.motX *= c1;
-            entity.motY *= c1;
-            entity.motZ *= c1;
         }
-        entity.ay = entity.az;
-        double d1 = entity.locX - entity.lastX;
-        double d2 = entity.locZ - entity.lastZ;
-        float f3 = MathHelper.sqrt(d1 * d1 + d2 * d2) * 4.0F;
-        if (f3 > 1.0F) {
-            f3 = 1.0F;
+
+        entity.aA = entity.aB;
+        double d0 = entity.locX - entity.lastX;
+        double d1 = entity.locZ - entity.lastZ;
+
+        float f2 = MathHelper.sqrt(d0 * d0 + d1 * d1) * 4.0F;
+        if (f2 > 1.0F) {
+            f2 = 1.0F;
         }
-        entity.az += (f3 - entity.az) * 0.4F;
-        entity.aA += entity.az;
+
+        entity.aB += (f2 - entity.aB) * 0.4F;
+        entity.aC += entity.aB;
     }
 
     @SuppressWarnings("deprecation")
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-    NoSuchMethodException {
+            NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -204,7 +291,7 @@ public class NMS {
     }
 
     public static float getHeadYaw(EntityLiving handle) {
-        return handle.aI;
+        return handle.aK;
     }
 
     public static NavigationAbstract getNavigation(Entity handle) {
@@ -270,7 +357,7 @@ public class NMS {
 
     public static void look(Entity handle, Entity target) {
         if (handle instanceof EntityInsentient) {
-            ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).bP());
+            ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).bQ());
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setTargetLook(target, 10F, 40F);
         }
@@ -280,6 +367,7 @@ public class NMS {
         Entity handle = getHandle(entity);
         if (handle == null)
             return;
+        yaw = clampYaw(yaw);
         handle.yaw = yaw;
         setHeadYaw(handle, yaw);
         handle.pitch = pitch;
@@ -295,9 +383,9 @@ public class NMS {
         int offset = npc.data().get(NPC.MINECART_OFFSET_METADATA, 0);
         minecart.a(mat != null);
         if (mat != null) {
-            minecart.a(Block.getById(mat.getId()).fromLegacyData(data));
+            minecart.setDisplayBlock(Block.getById(mat.getId()).fromLegacyData(data));
         }
-        minecart.l(offset);
+        minecart.SetDisplayBlockOffset(offset);
     }
 
     public static float modifiedSpeed(float baseSpeed, NPC npc) {
@@ -322,10 +410,6 @@ public class NMS {
     }
 
     public static void registerEntityClass(Class<?> clazz) {
-        if (ENTITY_CLASS_TO_INT == null) {
-            ENTITY_CLASS_TO_INT = MC_ENTITY_CLASS_TO_INT;
-            ENTITY_INT_TO_CLASS = MC_ENTITY_INT_TO_CLASS;
-        }
         if (ENTITY_CLASS_TO_INT == null || ENTITY_CLASS_TO_INT.containsKey(clazz))
             return;
         Class<?> search = clazz;
@@ -333,17 +417,37 @@ public class NMS {
             if (!ENTITY_CLASS_TO_INT.containsKey(search))
                 continue;
             int code = ENTITY_CLASS_TO_INT.get(search);
-            ENTITY_INT_TO_CLASS.put(code, clazz);
             ENTITY_CLASS_TO_INT.put(clazz, code);
             ENTITY_CLASS_TO_NAME.put(clazz, ENTITY_CLASS_TO_NAME.get(search));
             return;
         }
-        throw new IllegalArgumentException("unable to find valid entity superclass");
+        throw new IllegalArgumentException("unable to find valid entity superclass for class " + clazz.toString());
     }
 
     public static void removeFromServerPlayerList(Player player) {
         EntityPlayer handle = (EntityPlayer) NMS.getHandle(player);
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static void replaceTrackerEntry(Player player) {
+        WorldServer server = (WorldServer) NMS.getHandle(player).getWorld();
+        EntityTrackerEntry entry = server.getTracker().trackedEntities.get(player.getEntityId());
+        if (entry == null)
+            return;
+        PlayerlistTrackerEntry replace = new PlayerlistTrackerEntry(entry);
+        server.getTracker().trackedEntities.a(player.getEntityId(), replace);
+        if (TRACKED_ENTITY_SET != null) {
+            try {
+                Set set = (Set) TRACKED_ENTITY_SET.get(server.getTracker());
+                set.remove(entry);
+                set.add(replace);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void sendPacket(Player player, Packet packet) {
@@ -380,6 +484,12 @@ public class NMS {
         NMS.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
+    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player npc) {
+        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER
+                : EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) npc).getHandle());
+        sendToOnline(packet);
+    }
+
     public static void sendToOnline(Packet... packets) {
         Validate.notNull(packets, "packets cannot be null");
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -406,17 +516,11 @@ public class NMS {
         if (!(en instanceof EntityLiving))
             return;
         EntityLiving handle = (EntityLiving) en;
-        while (yaw < -180.0F) {
-            yaw += 360.0F;
-        }
-
-        while (yaw >= 180.0F) {
-            yaw -= 360.0F;
-        }
-        handle.aI = yaw;
+        yaw = clampYaw(yaw);
+        handle.aK = yaw;
         if (!(handle instanceof EntityHuman))
-            handle.aG = yaw;
-        handle.aJ = yaw;
+            handle.aI = yaw;
+        handle.aL = yaw;
     }
 
     public static void setShouldJump(org.bukkit.entity.Entity entity) {
@@ -439,10 +543,10 @@ public class NMS {
         if (!bukkitEntity.getType().isAlive())
             return;
         EntityLiving handle = NMS.getHandle((LivingEntity) bukkitEntity);
-        handle.aY = (float) d;
+        handle.ba = (float) d;
     }
 
-    public static boolean shouldJump(net.minecraft.server.v1_8_R1.Entity entity) {
+    public static boolean shouldJump(net.minecraft.server.v1_8_R2.Entity entity) {
         if (JUMP_FIELD == null || !(entity instanceof EntityLiving))
             return false;
         try {
@@ -544,38 +648,28 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 1F;
+
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
-    private static Map<Integer, Class<?>> ENTITY_INT_TO_CLASS;
     private static Field GOAL_FIELD = getField(PathfinderGoalSelector.class, "b");
-    private static final Field JUMP_FIELD = getField(EntityLiving.class, "aW");
-    private static Map<Class<?>, Integer> MC_ENTITY_CLASS_TO_INT = null;
-    private static Map<Integer, Class<?>> MC_ENTITY_INT_TO_CLASS = null;
+    private static final Field JUMP_FIELD = getField(EntityLiving.class, "aY");
     private static Field NAVIGATION_WORLD_FIELD = getField(NavigationAbstract.class, "c");
-    private static Field NETWORK_ADDRESS = getField(NetworkManager.class, "j");
-    private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "i");
+    private static Field NETWORK_ADDRESS = getField(NetworkManager.class, "l");
+    private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "k");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "a");
     private static final Random RANDOM = Util.getFastRandom();
+    private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
 
     static {
         try {
-            Field field = getField(EntityTypes.class, "e");
-            ENTITY_INT_TO_CLASS = (Map<Integer, Class<?>>) field.get(null);
-            field = getField(EntityTypes.class, "f");
+            Field field = getField(EntityTypes.class, "f");
             ENTITY_CLASS_TO_INT = (Map<Class<?>, Integer>) field.get(null);
             field = getField(EntityTypes.class, "c");
             ENTITY_CLASS_TO_NAME = (Map<Class<?>, String>) field.get(null);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
-            try {
-                Field field = getField(Class.forName("ns"), "d");
-                MC_ENTITY_INT_TO_CLASS = (Map<Integer, Class<?>>) field.get(null);
-                field = getField(Class.forName("ns"), "e");
-                MC_ENTITY_CLASS_TO_INT = (Map<Class<?>, Integer>) field.get(null);
-            } catch (Exception e2) {
-            }
         }
     }
 }
