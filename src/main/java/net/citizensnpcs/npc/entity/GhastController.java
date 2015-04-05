@@ -1,5 +1,12 @@
 package net.citizensnpcs.npc.entity;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftGhast;
+import org.bukkit.entity.Ghast;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -10,13 +17,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R2.EntityGhast;
 import net.minecraft.server.v1_8_R2.NBTTagCompound;
 import net.minecraft.server.v1_8_R2.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftGhast;
-import org.bukkit.entity.Ghast;
-import org.bukkit.util.Vector;
 
 public class GhastController extends MobEntityController {
     public GhastController() {
@@ -41,6 +41,11 @@ public class GhastController extends MobEntityController {
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
             }
+        }
+
+        @Override
+        public boolean bM() {
+            return npc != null;
         }
 
         @Override
@@ -88,6 +93,14 @@ public class GhastController extends MobEntityController {
         }
 
         @Override
+        public void E() {
+            if (npc != null) {
+                npc.update();
+            }
+            super.E();
+        }
+
+        @Override
         public void g(double x, double y, double z) {
             if (npc == null) {
                 super.g(x, y, z);
@@ -123,8 +136,8 @@ public class GhastController extends MobEntityController {
 
         @Override
         protected String z() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
-                    NPC.AMBIENT_SOUND_METADATA, super.z());
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z()
+                    : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.z());
         }
     }
 
