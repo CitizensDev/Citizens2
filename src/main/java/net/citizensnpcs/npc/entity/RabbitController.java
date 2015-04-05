@@ -1,5 +1,12 @@
 package net.citizensnpcs.npc.entity;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftRabbit;
+import org.bukkit.entity.Rabbit;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -12,13 +19,6 @@ import net.minecraft.server.v1_8_R2.BlockPosition;
 import net.minecraft.server.v1_8_R2.EntityRabbit;
 import net.minecraft.server.v1_8_R2.NBTTagCompound;
 import net.minecraft.server.v1_8_R2.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftRabbit;
-import org.bukkit.entity.Rabbit;
-import org.bukkit.util.Vector;
 
 public class RabbitController extends MobEntityController {
     public RabbitController() {
@@ -118,9 +118,11 @@ public class RabbitController extends MobEntityController {
 
         @Override
         public void E() {
-            if (npc != null || !npc.isFlyable()) {
+            if (npc != null) {
                 npc.update();
             }
+            super.E();
+
         }
 
         @Override
@@ -186,8 +188,8 @@ public class RabbitController extends MobEntityController {
 
         @Override
         protected String z() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
-                    NPC.AMBIENT_SOUND_METADATA, super.z());
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z()
+                    : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.z());
         }
     }
 
