@@ -292,25 +292,37 @@ public class EventListen implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
+                sendToPlayer(player, nearbyNPCs);
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), 40);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                sendToPlayer(player, nearbyNPCs);
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), 80);
+    }
+
+    void sendToPlayer(final Player player, final List<EntityPlayer> nearbyNPCs) {
+        if (!player.isValid())
+            return;
+        for (EntityPlayer nearbyNPC : nearbyNPCs) {
+            if (nearbyNPC.isAlive())
+                NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
+        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
                 if (!player.isValid())
                     return;
                 for (EntityPlayer nearbyNPC : nearbyNPCs) {
-                    NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                            PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
+                    if (nearbyNPC.isAlive())
+                        NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
                 }
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!player.isValid())
-                            return;
-                        for (EntityPlayer nearbyNPC : nearbyNPCs) {
-                            NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
-                        }
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 2);
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), 40);
+        }.runTaskLater(CitizensAPI.getPlugin(), 2);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
