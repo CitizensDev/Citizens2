@@ -666,7 +666,7 @@ public class NMS {
         try {
             Field field = getField(EntityTypes.class, "f");
             ENTITY_CLASS_TO_INT = (Map<Class<?>, Integer>) field.get(null);
-            field = getField(EntityTypes.class, "c");
+            field = getField(EntityTypes.class, "d");
             ENTITY_CLASS_TO_NAME = (Map<Class<?>, String>) field.get(null);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
