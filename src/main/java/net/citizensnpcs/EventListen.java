@@ -52,10 +52,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -279,16 +276,30 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(rightClickEvent);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerJoin(final PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        recalculatePlayer(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        recalculatePlayer(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
+        recalculatePlayer(event.getPlayer());
+    }
+
+    public void recalculatePlayer(final Player player) {
         new BukkitRunnable() {
             @Override
             public void run() {
-            final Player player = event.getPlayer();
             final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
             for (NPC npc : getAllNPCs()) {
                 Entity npcEntity = npc.getEntity();
-                if (npcEntity instanceof Player && player.canSee((Player) npcEntity)) {
+                if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
+                        && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
                     nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
                 }
             }
