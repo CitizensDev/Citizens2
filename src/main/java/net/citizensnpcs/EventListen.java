@@ -299,6 +299,7 @@ public class EventListen implements Listener {
             for (NPC npc : getAllNPCs()) {
                 Entity npcEntity = npc.getEntity();
                 if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
+                        && player.getWorld().equals(npcEntity.getWorld())
                         && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
                     nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
                 }
