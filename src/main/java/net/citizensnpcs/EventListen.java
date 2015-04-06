@@ -280,27 +280,33 @@ public class EventListen implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        final Player player = event.getPlayer();
-        final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
-        for (NPC npc : getAllNPCs()) {
-            Entity npcEntity = npc.getEntity();
-            if (npcEntity instanceof Player && player.canSee((Player) npcEntity)) {
-                nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
-            }
-        }
+    public void onPlayerJoin(final PlayerJoinEvent event) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                sendToPlayer(player, nearbyNPCs);
+            final Player player = event.getPlayer();
+            final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
+            for (NPC npc : getAllNPCs()) {
+                Entity npcEntity = npc.getEntity();
+                if (npcEntity instanceof Player && player.canSee((Player) npcEntity)) {
+                    nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
+                }
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), 40);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                sendToPlayer(player, nearbyNPCs);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    sendToPlayer(player, nearbyNPCs);
+                }
+            }.runTaskLater(CitizensAPI.getPlugin(), 30);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    sendToPlayer(player, nearbyNPCs);
+                }
+            }.runTaskLater(CitizensAPI.getPlugin(), 70);
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), 80);
+        }.runTaskLater(CitizensAPI.getPlugin(), 10);
+
     }
 
     void sendToPlayer(final Player player, final List<EntityPlayer> nearbyNPCs) {
