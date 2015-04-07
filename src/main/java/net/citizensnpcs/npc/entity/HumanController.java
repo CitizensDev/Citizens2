@@ -109,7 +109,7 @@ public class HumanController extends AbstractEntityController {
             skinUUID = npc.data().get(CACHED_SKIN_UUID_METADATA);
         }
         if (npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES)&&npc.data().<String>get(PLAYER_SKIN_TEXTURE_PROPERTIES).equals("cache")) {
-    		SKIN_THREAD.addRunnable(new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().aB(),
+    		SKIN_THREAD.addRunnable(new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().aC(),
                     npc));
     		return;
     	}
