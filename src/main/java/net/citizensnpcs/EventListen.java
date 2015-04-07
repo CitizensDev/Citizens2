@@ -52,10 +52,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -279,15 +276,58 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(rightClickEvent);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        final Player player = event.getPlayer();
-        final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
-        for (NPC npc : getAllNPCs()) {
-            Entity npcEntity = npc.getEntity();
-            if (npcEntity instanceof Player && player.canSee((Player) npcEntity)) {
-                nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
+        recalculatePlayer(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        recalculatePlayer(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
+        recalculatePlayer(event.getPlayer());
+    }
+
+    public void recalculatePlayer(final Player player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+            final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
+            for (NPC npc : getAllNPCs()) {
+                Entity npcEntity = npc.getEntity();
+                if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
+                        && player.getWorld().equals(npcEntity.getWorld())
+                        && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
+                    nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
+                }
             }
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    sendToPlayer(player, nearbyNPCs);
+                }
+            }.runTaskLater(CitizensAPI.getPlugin(), 30);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    sendToPlayer(player, nearbyNPCs);
+                }
+            }.runTaskLater(CitizensAPI.getPlugin(), 70);
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), 10);
+
+    }
+
+    void sendToPlayer(final Player player, final List<EntityPlayer> nearbyNPCs) {
+        if (!player.isValid())
+            return;
+        for (EntityPlayer nearbyNPC : nearbyNPCs) {
+            if (nearbyNPC.isAlive())
+                NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
         }
         new BukkitRunnable() {
             @Override
@@ -295,22 +335,12 @@ public class EventListen implements Listener {
                 if (!player.isValid())
                     return;
                 for (EntityPlayer nearbyNPC : nearbyNPCs) {
-                    NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                            PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
+                    if (nearbyNPC.isAlive())
+                        NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
                 }
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!player.isValid())
-                            return;
-                        for (EntityPlayer nearbyNPC : nearbyNPCs) {
-                            NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
-                        }
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 2);
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), 40);
+        }.runTaskLater(CitizensAPI.getPlugin(), 2);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
