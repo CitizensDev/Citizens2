@@ -1238,11 +1238,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-c) [name]",
-            desc = "Sets an NPC's skin name",
+            usage = "skin (-c -p) [name]",
+            desc = "Sets an NPC's skin name, Use -p to save a skin snapshot that won't change",
             modifiers = { "skin" },
             min = 1,
             max = 2,
+            flags = "cp",
             permission = "citizens.npc.skin")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
     public void skin(final CommandContext args, final CommandSender sender, final NPC npc) throws CommandException {
@@ -1253,6 +1254,9 @@ public class NPCCommands {
             if (args.argsLength() != 2)
                 throw new CommandException();
             npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, args.getString(1));
+            if (args.hasFlag('p')) {
+                npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA, "cache");
+            }
             skinName = args.getString(1);
         }
         Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), skinName);
