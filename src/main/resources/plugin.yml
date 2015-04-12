@@ -292,6 +292,7 @@ permissions:
   citizens.npc.select: {default: false}
   citizens.npc.size: {default: false}
   citizens.npc.skeletontype: {default: false}
+  citizens.npc.sound: {default: false}
   citizens.npc.spawn: {default: false}
   citizens.npc.speak: {default: false}
   citizens.npc.speed: {default: false}
@@ -645,6 +646,7 @@ permissions:
       citizens.npc.size: true
       citizens.npc.skeletontype: true
       citizens.npc.skin: true
+      citizens.npc.sound: true
       citizens.npc.spawn: true
       citizens.npc.speak: true
       citizens.npc.speed: true
@@ -992,6 +994,7 @@ permissions:
       citizens.npc.size: true
       citizens.npc.skeletontype: true
       citizens.npc.skin: true
+      citizens.npc.sound: true
       citizens.npc.spawn: true
       citizens.npc.speak: true
       citizens.npc.speed: true
