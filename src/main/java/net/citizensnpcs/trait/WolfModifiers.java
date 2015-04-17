@@ -51,6 +51,9 @@ public class WolfModifiers extends Trait {
             wolf.setCollarColor(collarColor);
             wolf.setSitting(sitting);
             wolf.setAngry(angry);
+            if (angry) {
+                wolf.setTarget(wolf);
+            }
             wolf.setTamed(tamed);
         }
     }
