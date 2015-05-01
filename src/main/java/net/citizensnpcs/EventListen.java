@@ -110,7 +110,7 @@ public class EventListen implements Listener {
         respawnAllFromCoord(toCoord(event.getChunk()));
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
         Location loc = new Location(null, 0, 0, 0);
