@@ -291,6 +291,11 @@ public class EventListen implements Listener {
         recalculatePlayer(event.getPlayer());
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        recalculatePlayer(event.getPlayer());
+    }
+
     public void recalculatePlayer(final Player player) {
         new BukkitRunnable() {
             @Override
