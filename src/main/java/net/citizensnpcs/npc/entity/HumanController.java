@@ -17,14 +17,14 @@ import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R2.PlayerInteractManager;
-import net.minecraft.server.v1_8_R2.WorldServer;
+import net.minecraft.server.v1_8_R3.PlayerInteractManager;
+import net.minecraft.server.v1_8_R3.WorldServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -109,7 +109,7 @@ public class HumanController extends AbstractEntityController {
             skinUUID = npc.data().get(CACHED_SKIN_UUID_METADATA);
         }
         if (npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES)&&npc.data().<String>get(PLAYER_SKIN_TEXTURE_PROPERTIES).equals("cache")) {
-    		SKIN_THREAD.addRunnable(new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().aC(),
+    		SKIN_THREAD.addRunnable(new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().aD(),
                     npc));
     		return;
     	}
@@ -120,7 +120,7 @@ public class HumanController extends AbstractEntityController {
         if (cached != null) {
             profile.getProperties().put("textures", cached);
         } else {
-            SKIN_THREAD.addRunnable(new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().aC(),
+            SKIN_THREAD.addRunnable(new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().aD(),
                     npc));
         }
     }

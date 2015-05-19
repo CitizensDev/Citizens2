@@ -11,7 +11,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<craftbukkit.version>1.8.3-R0.1-SNAPSHOT</craftbukkit.version>
+		<craftbukkit.version>1.8.4-R0.1-SNAPSHOT</craftbukkit.version>
 		<citizensapi.version>2.0.15-SNAPSHOT</citizensapi.version>
 		<vault.version>1.4.1</vault.version>
 		<powermock.version>1.4.12</powermock.version>
