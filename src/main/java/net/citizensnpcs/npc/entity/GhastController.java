@@ -1,9 +1,9 @@
 package net.citizensnpcs.npc.entity;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftGhast;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftGhast;
 import org.bukkit.entity.Ghast;
 import org.bukkit.util.Vector;
 
@@ -14,9 +14,9 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R2.EntityGhast;
-import net.minecraft.server.v1_8_R2.NBTTagCompound;
-import net.minecraft.server.v1_8_R2.World;
+import net.minecraft.server.v1_8_R3.EntityGhast;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.server.v1_8_R3.World;
 
 public class GhastController extends MobEntityController {
     public GhastController() {
@@ -72,7 +72,7 @@ public class GhastController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_8_R2.Entity entity) {
+        public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);

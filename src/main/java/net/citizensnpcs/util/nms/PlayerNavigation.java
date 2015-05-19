@@ -1,24 +1,24 @@
 package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_8_R2.AttributeInstance;
-import net.minecraft.server.v1_8_R2.Block;
-import net.minecraft.server.v1_8_R2.BlockPosition;
-import net.minecraft.server.v1_8_R2.Blocks;
-import net.minecraft.server.v1_8_R2.ChunkCache;
-import net.minecraft.server.v1_8_R2.Entity;
-import net.minecraft.server.v1_8_R2.EntityChicken;
-import net.minecraft.server.v1_8_R2.EntityInsentient;
-import net.minecraft.server.v1_8_R2.GenericAttributes;
-import net.minecraft.server.v1_8_R2.Material;
-import net.minecraft.server.v1_8_R2.MathHelper;
-import net.minecraft.server.v1_8_R2.NavigationAbstract;
-import net.minecraft.server.v1_8_R2.PathEntity;
-import net.minecraft.server.v1_8_R2.PathPoint;
-import net.minecraft.server.v1_8_R2.Pathfinder;
-import net.minecraft.server.v1_8_R2.PathfinderNormal;
-import net.minecraft.server.v1_8_R2.Vec3D;
-import net.minecraft.server.v1_8_R2.World;
+import net.minecraft.server.v1_8_R3.AttributeInstance;
+import net.minecraft.server.v1_8_R3.Block;
+import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.Blocks;
+import net.minecraft.server.v1_8_R3.ChunkCache;
+import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.EntityChicken;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
+import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.Material;
+import net.minecraft.server.v1_8_R3.MathHelper;
+import net.minecraft.server.v1_8_R3.NavigationAbstract;
+import net.minecraft.server.v1_8_R3.PathEntity;
+import net.minecraft.server.v1_8_R3.PathPoint;
+import net.minecraft.server.v1_8_R3.Pathfinder;
+import net.minecraft.server.v1_8_R3.PathfinderNormal;
+import net.minecraft.server.v1_8_R3.Vec3D;
+import net.minecraft.server.v1_8_R3.World;
 
 public class PlayerNavigation extends NavigationAbstract {
     private final AttributeInstance a;
@@ -38,7 +38,7 @@ public class PlayerNavigation extends NavigationAbstract {
         super(getDummyInsentient(entityinsentient), world);
         this.b = entityinsentient;
         this.c = world;
-        this.a = entityinsentient.getAttributeInstance(GenericAttributes.b);
+        this.a = entityinsentient.getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
         this.a.setValue(24);
         this.j = a();
     }
