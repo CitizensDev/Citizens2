@@ -656,7 +656,7 @@ public class NMS {
     private static final Field JUMP_FIELD = getField(EntityLiving.class, "aY");
     private static Field NAVIGATION_WORLD_FIELD = getField(NavigationAbstract.class, "c");
     private static Field NETWORK_ADDRESS = getField(NetworkManager.class, "l");
-    private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "k");
+    private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "channel");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "a");
     private static final Random RANDOM = Util.getFastRandom();
