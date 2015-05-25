@@ -4,10 +4,10 @@ import java.lang.reflect.Field;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R2.Entity;
-import net.minecraft.server.v1_8_R2.EntityPlayer;
-import net.minecraft.server.v1_8_R2.EntityTrackerEntry;
-import net.minecraft.server.v1_8_R2.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.EntityTrackerEntry;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;

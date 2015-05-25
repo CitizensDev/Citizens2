@@ -2,11 +2,11 @@ package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R2.AttributeInstance;
-import net.minecraft.server.v1_8_R2.GenericAttributes;
-import net.minecraft.server.v1_8_R2.MathHelper;
+import net.minecraft.server.v1_8_R3.AttributeInstance;
+import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.MathHelper;
 
-import org.bukkit.craftbukkit.v1_8_R2.TrigMath;
+import org.bukkit.craftbukkit.v1_8_R3.TrigMath;
 
 public class PlayerControllerMove {
     protected EntityHumanNPC a;
@@ -76,7 +76,7 @@ public class PlayerControllerMove {
 
                 this.a.yaw = a(this.a.yaw, f, 30.0F);
                 NMS.setHeadYaw(a, this.a.yaw);
-                AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.d);
+                AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
                 speed.setValue(0.1D * this.e);
                 float movement = (float) (this.e * speed.getValue()) * 10;
                 this.a.ba = movement;

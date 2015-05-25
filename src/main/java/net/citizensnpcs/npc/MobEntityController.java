@@ -4,11 +4,11 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.v1_8_R2.World;
+import net.minecraft.server.v1_8_R3.World;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_8_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 
 import com.google.common.collect.Maps;
@@ -23,7 +23,7 @@ public abstract class MobEntityController extends AbstractEntityController {
 
     @Override
     protected Entity createEntity(Location at, NPC npc) {
-        net.minecraft.server.v1_8_R2.Entity entity = createEntityFromClass(((CraftWorld) at.getWorld()).getHandle(),
+        net.minecraft.server.v1_8_R3.Entity entity = createEntityFromClass(((CraftWorld) at.getWorld()).getHandle(),
                 npc);
         entity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
 
@@ -36,9 +36,9 @@ public abstract class MobEntityController extends AbstractEntityController {
         return entity.getBukkitEntity();
     }
 
-    private net.minecraft.server.v1_8_R2.Entity createEntityFromClass(Object... args) {
+    private net.minecraft.server.v1_8_R3.Entity createEntityFromClass(Object... args) {
         try {
-            return (net.minecraft.server.v1_8_R2.Entity) constructor.newInstance(args);
+            return (net.minecraft.server.v1_8_R3.Entity) constructor.newInstance(args);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;

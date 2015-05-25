@@ -6,15 +6,15 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R2.EntityItemFrame;
-import net.minecraft.server.v1_8_R2.NBTTagCompound;
-import net.minecraft.server.v1_8_R2.World;
+import net.minecraft.server.v1_8_R3.EntityItemFrame;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.server.v1_8_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftItemFrame;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftItemFrame;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.util.Vector;
 
@@ -41,7 +41,7 @@ public class ItemFrameController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_8_R2.Entity entity) {
+        public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
