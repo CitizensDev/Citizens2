@@ -236,6 +236,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     };
 
     private static boolean TROVE_EXISTS = false;
+
     static {
         // allow trove dependency to be optional for debugging purposes
         try {

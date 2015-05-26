@@ -95,8 +95,8 @@ public class NMS {
         if (!flag)
             return;
         if (i > 0) {
-            target.g(-Math.sin(handle.yaw * Math.PI / 180.0F) * i * 0.5F, 0.1D, Math.cos(handle.yaw * Math.PI / 180.0F)
-                    * i * 0.5F);
+            target.g(-Math.sin(handle.yaw * Math.PI / 180.0F) * i * 0.5F, 0.1D,
+                    Math.cos(handle.yaw * Math.PI / 180.0F) * i * 0.5F);
             handle.motX *= 0.6D;
             handle.motZ *= 0.6D;
         }
@@ -180,10 +180,10 @@ public class NMS {
                 float f5 = 0.91F;
 
                 if (entity.onGround) {
-                    f5 = entity.world.getType(
-                            new BlockPosition(MathHelper.floor(entity.locX),
+                    f5 = entity.world
+                            .getType(new BlockPosition(MathHelper.floor(entity.locX),
                                     MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
-                                    .getBlock().frictionFactor * 0.91F;
+                            .getBlock().frictionFactor * 0.91F;
                 }
 
                 float f6 = 0.1627714F / (f5 * f5 * f5);
@@ -197,10 +197,10 @@ public class NMS {
                 entity.a(f, f1, f3);
                 f5 = 0.91F;
                 if (entity.onGround) {
-                    f5 = entity.world.getType(
-                            new BlockPosition(MathHelper.floor(entity.locX),
+                    f5 = entity.world
+                            .getType(new BlockPosition(MathHelper.floor(entity.locX),
                                     MathHelper.floor(entity.getBoundingBox().b) - 1, MathHelper.floor(entity.locZ)))
-                                    .getBlock().frictionFactor * 0.91F;
+                            .getBlock().frictionFactor * 0.91F;
                 }
 
                 if (entity.k_()) {
@@ -224,9 +224,11 @@ public class NMS {
                     entity.motY = 0.2D;
                 }
 
-                if ((entity.world.isClientSide)
-                        && ((!entity.world.isLoaded(new BlockPosition((int) entity.locX, 0, (int) entity.locZ))) || (!entity.world
-                                .getChunkAtWorldCoords(new BlockPosition((int) entity.locX, 0, (int) entity.locZ)).o()))) {
+                if ((entity.world.isClientSide) && ((!entity.world
+                        .isLoaded(new BlockPosition((int) entity.locX, 0, (int) entity.locZ)))
+                        || (!entity.world
+                                .getChunkAtWorldCoords(new BlockPosition((int) entity.locX, 0, (int) entity.locZ))
+                                .o()))) {
                     if (entity.locY > 0.0D)
                         entity.motY = -0.1D;
                     else
@@ -255,8 +257,8 @@ public class NMS {
     }
 
     @SuppressWarnings("deprecation")
-    private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type) throws SecurityException,
-            NoSuchMethodException {
+    private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type)
+            throws SecurityException, NoSuchMethodException {
         Constructor<?> constructor = ENTITY_CONSTRUCTOR_CACHE.get(clazz);
         if (constructor == null) {
             constructor = clazz.getConstructor(World.class);
@@ -485,8 +487,9 @@ public class NMS {
     }
 
     public static void sendPlayerlistPacket(boolean showInPlayerlist, Player npc) {
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER
-                : EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) npc).getHandle());
+        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(
+                showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER : EnumPlayerInfoAction.REMOVE_PLAYER,
+                ((CraftPlayer) npc).getHandle());
         sendToOnline(packet);
     }
 

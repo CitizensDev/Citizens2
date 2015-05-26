@@ -61,8 +61,8 @@ public class PlayerNavigation extends NavigationAbstract {
         BlockPosition localBlockPosition = new BlockPosition(this.b);
         int k = (int) (f1 + 8.0F);
 
-        ChunkCache localChunkCache = new ChunkCache(this.c, localBlockPosition.a(-k, -k, -k), localBlockPosition.a(k,
-                k, k), 0);
+        ChunkCache localChunkCache = new ChunkCache(this.c, localBlockPosition.a(-k, -k, -k),
+                localBlockPosition.a(k, k, k), 0);
         PathEntity localPathEntity = this.j.a(localChunkCache, this.b, paramBlockPosition, f1);
         this.c.methodProfiler.b();
         return localPathEntity;
@@ -95,8 +95,8 @@ public class PlayerNavigation extends NavigationAbstract {
         BlockPosition localBlockPosition = new BlockPosition(this.b).up();
         int k = (int) (f1 + 16.0F);
 
-        ChunkCache localChunkCache = new ChunkCache(this.c, localBlockPosition.a(-k, -k, -k), localBlockPosition.a(k,
-                k, k), 0);
+        ChunkCache localChunkCache = new ChunkCache(this.c, localBlockPosition.a(-k, -k, -k),
+                localBlockPosition.a(k, k, k), 0);
         PathEntity localPathEntity = this.j.a(localChunkCache, this.b, paramEntity, f1);
         this.c.methodProfiler.b();
         return localPathEntity;
@@ -411,13 +411,14 @@ public class PlayerNavigation extends NavigationAbstract {
         }
 
         int i = (int) this.b.getBoundingBox().b;
-        Block localBlock = this.c.getType(
-                new BlockPosition(MathHelper.floor(this.b.locX), i, MathHelper.floor(this.b.locZ))).getBlock();
+        Block localBlock = this.c
+                .getType(new BlockPosition(MathHelper.floor(this.b.locX), i, MathHelper.floor(this.b.locZ))).getBlock();
         int j = 0;
         while ((localBlock == Blocks.FLOWING_WATER) || (localBlock == Blocks.WATER)) {
             i++;
-            localBlock = this.c.getType(
-                    new BlockPosition(MathHelper.floor(this.b.locX), i, MathHelper.floor(this.b.locZ))).getBlock();
+            localBlock = this.c
+                    .getType(new BlockPosition(MathHelper.floor(this.b.locX), i, MathHelper.floor(this.b.locZ)))
+                    .getBlock();
             j++;
             if (j > 16) {
                 return (int) this.b.getBoundingBox().b;

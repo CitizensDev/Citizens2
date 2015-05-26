@@ -157,8 +157,8 @@ public class SquidController extends MobEntityController {
 
         @Override
         protected String z() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
-                    NPC.AMBIENT_SOUND_METADATA, super.z());
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z()
+                    : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.z());
         }
     }
 

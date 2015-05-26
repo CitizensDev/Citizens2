@@ -131,8 +131,8 @@ public class EventListen implements Listener {
             }
             toRespawn.put(coord, npc);
             if (Messaging.isDebugging()) {
-                Messaging
-                .debug("Despawned id", npc.getId(), "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+                Messaging.debug("Despawned id", npc.getId(),
+                        "due to chunk unload at [" + coord.x + "," + coord.z + "]");
             }
         }
     }
@@ -228,8 +228,8 @@ public class EventListen implements Listener {
         NPC npc = npcRegistry.getNPC(event.getTarget());
         if (npc == null)
             return;
-        event.setCancelled(!npc.data().get(NPC.TARGETABLE_METADATA,
-                !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)));
+        event.setCancelled(
+                !npc.data().get(NPC.TARGETABLE_METADATA, !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)));
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
 
@@ -300,27 +300,27 @@ public class EventListen implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-            final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
-            for (NPC npc : getAllNPCs()) {
-                Entity npcEntity = npc.getEntity();
-                if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
-                        && player.getWorld().equals(npcEntity.getWorld())
-                        && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
-                    nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
+                final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
+                for (NPC npc : getAllNPCs()) {
+                    Entity npcEntity = npc.getEntity();
+                    if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
+                            && player.getWorld().equals(npcEntity.getWorld())
+                            && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
+                        nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
+                    }
                 }
-            }
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    sendToPlayer(player, nearbyNPCs);
-                }
-            }.runTaskLater(CitizensAPI.getPlugin(), 30);
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    sendToPlayer(player, nearbyNPCs);
-                }
-            }.runTaskLater(CitizensAPI.getPlugin(), 70);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        sendToPlayer(player, nearbyNPCs);
+                    }
+                }.runTaskLater(CitizensAPI.getPlugin(), 30);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        sendToPlayer(player, nearbyNPCs);
+                    }
+                }.runTaskLater(CitizensAPI.getPlugin(), 70);
             }
         }.runTaskLater(CitizensAPI.getPlugin(), 10);
 
@@ -405,8 +405,8 @@ public class EventListen implements Listener {
             boolean success = spawn(npc);
             if (!success) {
                 if (Messaging.isDebugging()) {
-                    Messaging.debug("Couldn't respawn id", npc.getId(), "during chunk event at [" + coord.x + ","
-                            + coord.z + "]");
+                    Messaging.debug("Couldn't respawn id", npc.getId(),
+                            "during chunk event at [" + coord.x + "," + coord.z + "]");
                 }
                 continue;
             }

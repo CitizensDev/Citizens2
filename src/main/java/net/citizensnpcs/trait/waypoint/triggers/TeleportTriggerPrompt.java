@@ -29,7 +29,8 @@ public class TeleportTriggerPrompt extends RegexPrompt implements WaypointTrigge
             return (Prompt) context.getSessionData("previous");
         if (input.equalsIgnoreCase("here")) {
             Player player = (Player) context.getForWhom();
-            context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY, new TeleportTrigger(player.getLocation()));
+            context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY,
+                    new TeleportTrigger(player.getLocation()));
             return (Prompt) context.getSessionData(WaypointTriggerPrompt.RETURN_PROMPT_KEY);
         }
         String[] parts = Iterables.toArray(Splitter.on(':').split(input), String.class);

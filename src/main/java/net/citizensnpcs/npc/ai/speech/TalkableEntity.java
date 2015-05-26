@@ -31,8 +31,7 @@ public class TalkableEntity implements Talkable {
     /**
      * Used to compare a LivingEntity to this TalkableEntity
      *
-     * @return 0 if the Entities are the same, 1 if they are not, -1 if the
-     *         object compared is not a valid LivingEntity
+     * @return 0 if the Entities are the same, 1 if they are not, -1 if the object compared is not a valid LivingEntity
      */
     @Override
     public int compareTo(Object o) {
@@ -40,8 +39,7 @@ public class TalkableEntity implements Talkable {
         if (!(o instanceof Entity)) {
             return -1;
             // If NPC and matches, return 0
-        } else if (CitizensAPI.getNPCRegistry().isNPC((Entity) o)
-                && CitizensAPI.getNPCRegistry().isNPC(entity)
+        } else if (CitizensAPI.getNPCRegistry().isNPC((Entity) o) && CitizensAPI.getNPCRegistry().isNPC(entity)
                 && CitizensAPI.getNPCRegistry().getNPC((Entity) o).getUniqueId()
                         .equals(CitizensAPI.getNPCRegistry().getNPC(entity).getUniqueId())) {
             return 0;

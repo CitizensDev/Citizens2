@@ -74,8 +74,8 @@ public enum PlayerAnimation {
     SLEEP {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            PacketPlayOutBed packet = new PacketPlayOutBed(player, new BlockPosition((int) player.locX,
-                    (int) player.locY, (int) player.locZ));
+            PacketPlayOutBed packet = new PacketPlayOutBed(player,
+                    new BlockPosition((int) player.locX, (int) player.locY, (int) player.locZ));
             sendPacketNearby(packet, player, radius);
         }
     },

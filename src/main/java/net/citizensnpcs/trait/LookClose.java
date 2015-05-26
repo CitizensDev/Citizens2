@@ -30,8 +30,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     private boolean canSeeTarget() {
-        return realisticLooking && npc.getEntity() instanceof LivingEntity ? ((LivingEntity) npc.getEntity())
-                .hasLineOfSight(lookingAt) : true;
+        return realisticLooking && npc.getEntity() instanceof LivingEntity
+                ? ((LivingEntity) npc.getEntity()).hasLineOfSight(lookingAt) : true;
     }
 
     @Override

@@ -65,10 +65,9 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         }
         return NMS.isNavigationFinished(navigation);
     }
-    
+
     private double distanceSquared() {
-        return handle.getBukkitEntity().getLocation(HANDLE_LOCATION)
-                .distanceSquared(target);
+        return handle.getBukkitEntity().getLocation(HANDLE_LOCATION).distanceSquared(target);
     }
 
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);

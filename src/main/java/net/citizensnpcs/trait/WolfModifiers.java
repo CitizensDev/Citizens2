@@ -58,7 +58,7 @@ public class WolfModifiers extends Trait {
         }
     }
 
-	public DyeColor getCollarColor() {
-		return collarColor;
-	}
+    public DyeColor getCollarColor() {
+        return collarColor;
+    }
 }

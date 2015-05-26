@@ -274,8 +274,8 @@ public class LinearWaypointProvider implements WaypointProvider {
                     markers.createWaypointMarker(element);
                 }
                 editingSlot = Math.min(editingSlot + 1, waypoints.size());
-                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at),
-                        editingSlot + 1, waypoints.size());
+                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at), editingSlot + 1,
+                        waypoints.size());
             } else if (waypoints.size() > 0) {
                 event.setCancelled(true);
                 normaliseEditingSlot();
@@ -297,8 +297,8 @@ public class LinearWaypointProvider implements WaypointProvider {
             if (!event.getRightClicked().hasMetadata("waypointindex"))
                 return;
             editingSlot = event.getRightClicked().getMetadata("waypointindex").get(0).asInt();
-            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot, formatLoc(waypoints
-                    .get(editingSlot).getLocation()));
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
+                    formatLoc(waypoints.get(editingSlot).getLocation()));
         }
 
         @EventHandler
@@ -318,8 +318,8 @@ public class LinearWaypointProvider implements WaypointProvider {
                 editingSlot += diff > 0 ? 1 : -1;
             }
             normaliseEditingSlot();
-            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot, formatLoc(waypoints
-                    .get(editingSlot).getLocation()));
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
+                    formatLoc(waypoints.get(editingSlot).getLocation()));
         }
 
         private void onWaypointsModified() {
@@ -417,9 +417,8 @@ public class LinearWaypointProvider implements WaypointProvider {
             this.selector = selector;
             Waypoint next = itr.next();
             Location npcLoc = npc.getEntity().getLocation(cachedLocation);
-            if (npcLoc.getWorld() != next.getLocation().getWorld()
-                    || npcLoc.distanceSquared(next.getLocation()) < npc.getNavigator().getLocalParameters()
-                    .distanceMargin()) {
+            if (npcLoc.getWorld() != next.getLocation().getWorld() || npcLoc.distanceSquared(next.getLocation()) < npc
+                    .getNavigator().getLocalParameters().distanceMargin()) {
                 return false;
             }
             currentDestination = next;
@@ -427,10 +426,8 @@ public class LinearWaypointProvider implements WaypointProvider {
             getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(@Nullable CancelReason cancelReason) {
-                    if (npc.isSpawned()
-                            && currentDestination != null
-                            && Util.locationWithinRange(npc.getEntity().getLocation(),
-                                    currentDestination.getLocation(), 4)) {
+                    if (npc.isSpawned() && currentDestination != null && Util
+                            .locationWithinRange(npc.getEntity().getLocation(), currentDestination.getLocation(), 4)) {
                         currentDestination.onReach(npc);
                     }
                     selector.finish();

@@ -111,9 +111,8 @@ public class GuidedWaypointProvider implements WaypointProvider {
 
             @EventHandler(ignoreCancelled = true)
             public void onPlayerInteract(PlayerInteractEvent event) {
-                if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL 
-                        || event.getAction() == Action.RIGHT_CLICK_AIR
-                        || event.getAction() == Action.RIGHT_CLICK_BLOCK
+                if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL
+                        || event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK
                         || event.getClickedBlock() == null)
                     return;
                 if (event.getPlayer().getWorld() != npc.getEntity().getWorld())
@@ -206,13 +205,13 @@ public class GuidedWaypointProvider implements WaypointProvider {
         tree = PRTree.create(new Region3D.Converter<Waypoint>(), 30);
         tree.load(Lists.newArrayList(Iterables.transform(Iterables.<Waypoint> concat(available, helpers),
                 new Function<Waypoint, Region3D<Waypoint>>() {
-            @Override
-            public Region3D<Waypoint> apply(Waypoint arg0) {
-                Location loc = arg0.getLocation();
-                Vector root = new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-                return new Region3D<Waypoint>(root, root, arg0);
-            }
-        })));
+                    @Override
+                    public Region3D<Waypoint> apply(Waypoint arg0) {
+                        Location loc = arg0.getLocation();
+                        Vector root = new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+                        return new Region3D<Waypoint>(root, root, arg0);
+                    }
+                })));
     }
 
     @Override
@@ -337,10 +336,10 @@ public class GuidedWaypointProvider implements WaypointProvider {
 
         @Override
         public Iterable<AStarNode> getNeighbours() {
-            List<DistanceResult<Region3D<Waypoint>>> res = tree.nearestNeighbour(Region3D
-                    .<Waypoint> distanceCalculator(), Region3D.<Waypoint> alwaysAcceptNodeFilter(), 15,
-                    new SimplePointND(waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(), waypoint
-                            .getLocation().getBlockZ()));
+            List<DistanceResult<Region3D<Waypoint>>> res = tree.nearestNeighbour(
+                    Region3D.<Waypoint> distanceCalculator(), Region3D.<Waypoint> alwaysAcceptNodeFilter(), 15,
+                    new SimplePointND(waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
+                            waypoint.getLocation().getBlockZ()));
             return Iterables.transform(res, new Function<DistanceResult<Region3D<Waypoint>>, AStarNode>() {
                 @Override
                 public AStarNode apply(DistanceResult<Region3D<Waypoint>> arg0) {

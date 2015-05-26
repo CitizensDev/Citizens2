@@ -227,8 +227,8 @@ public class NPCCommands {
             max = 1,
             flags = "myno")
     public void controllable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        if ((npc.isSpawned() && !sender.hasPermission("citizens.npc.controllable."
-                + npc.getEntity().getType().name().toLowerCase().replace("_", "")))
+        if ((npc.isSpawned() && !sender.hasPermission(
+                "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase().replace("_", "")))
                 || !sender.hasPermission("citizens.npc.controllable"))
             throw new NoPermissionsException();
         if (!npc.hasTrait(Controllable.class)) {
@@ -272,7 +272,7 @@ public class NPCCommands {
         }
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-        : new CommandSenderCreateNPCEvent(sender, copy);
+                : new CommandSenderCreateNPCEvent(sender, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
@@ -348,7 +348,7 @@ public class NPCCommands {
             spawnLoc = args.getSenderLocation();
         }
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
-        : new CommandSenderCreateNPCEvent(sender, npc);
+                : new CommandSenderCreateNPCEvent(sender, npc);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
@@ -448,8 +448,11 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "citizens.npc.flyable")
-    @Requirements(selected = true, ownership = true, excludedTypes = { EntityType.BAT, EntityType.BLAZE,
-            EntityType.ENDER_DRAGON, EntityType.GHAST, EntityType.WITHER })
+    @Requirements(
+            selected = true,
+            ownership = true,
+            excludedTypes = { EntityType.BAT, EntityType.BLAZE, EntityType.ENDER_DRAGON, EntityType.GHAST,
+                    EntityType.WITHER })
     public void flyable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean flyable = args.argsLength() == 2 ? args.getString(1).equals("true") : !npc.isFlyable();
         npc.setFlyable(flyable);
@@ -470,8 +473,8 @@ public class NPCCommands {
     public void gamemode(CommandContext args, CommandSender sender, NPC npc) {
         Player player = (Player) npc.getEntity();
         if (args.argsLength() == 1) {
-            Messaging.sendTr(sender, Messages.GAMEMODE_DESCRIBE, npc.getName(), player.getGameMode().name()
-                    .toLowerCase());
+            Messaging.sendTr(sender, Messages.GAMEMODE_DESCRIBE, npc.getName(),
+                    player.getGameMode().name().toLowerCase());
             return;
         }
         GameMode mode = null;
@@ -584,8 +587,10 @@ public class NPCCommands {
             max = 3,
             flags = "",
             permission = "citizens.npc.item")
-    @Requirements(selected = true, ownership = true, types = { EntityType.DROPPED_ITEM, EntityType.ITEM_FRAME,
-            EntityType.FALLING_BLOCK })
+    @Requirements(
+            selected = true,
+            ownership = true,
+            types = { EntityType.DROPPED_ITEM, EntityType.ITEM_FRAME, EntityType.FALLING_BLOCK })
     public void item(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Material mat = Material.matchMaterial(args.getString(1));
         if (mat == null)
@@ -702,8 +707,9 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.lookclose")
     public void lookClose(CommandContext args, CommandSender sender, NPC npc) {
-        Messaging.sendTr(sender, npc.getTrait(LookClose.class).toggle() ? Messages.LOOKCLOSE_SET
-                : Messages.LOOKCLOSE_STOPPED, npc.getName());
+        Messaging.sendTr(sender,
+                npc.getTrait(LookClose.class).toggle() ? Messages.LOOKCLOSE_SET : Messages.LOOKCLOSE_STOPPED,
+                npc.getName());
     }
 
     @Command(
@@ -715,9 +721,12 @@ public class NPCCommands {
             max = 1,
             flags = "",
             permission = "citizens.npc.minecart")
-    @Requirements(selected = true, ownership = true, types = { EntityType.MINECART, EntityType.MINECART_CHEST,
-            EntityType.MINECART_COMMAND, EntityType.MINECART_FURNACE, EntityType.MINECART_HOPPER,
-            EntityType.MINECART_MOB_SPAWNER, EntityType.MINECART_TNT })
+    @Requirements(
+            selected = true,
+            ownership = true,
+            types = { EntityType.MINECART, EntityType.MINECART_CHEST, EntityType.MINECART_COMMAND,
+                    EntityType.MINECART_FURNACE, EntityType.MINECART_HOPPER, EntityType.MINECART_MOB_SPAWNER,
+                    EntityType.MINECART_TNT })
     public void minecart(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("item")) {
             String raw = args.getFlag("item");
@@ -906,8 +915,8 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.passive")
     public void passive(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        boolean passive = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("set")) : npc.data().get(
-                NPC.DAMAGE_OTHERS_METADATA, true);
+        boolean passive = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("set"))
+                : npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true);
         npc.data().setPersistent(NPC.DAMAGE_OTHERS_METADATA, !passive);
         Messaging.sendTr(sender, passive ? Messages.PASSIVE_SET : Messages.PASSIVE_UNSET, npc.getName());
     }
@@ -932,8 +941,14 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = { "npc" }, usage = "pathrange [range]", desc = "Sets an NPC's pathfinding range", modifiers = {
-            "pathrange", "pathfindingrange", "prange" }, min = 2, max = 2, permission = "citizens.npc.pathfindingrange")
+    @Command(
+            aliases = { "npc" },
+            usage = "pathrange [range]",
+            desc = "Sets an NPC's pathfinding range",
+            modifiers = { "pathrange", "pathfindingrange", "prange" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.pathfindingrange")
     public void pathfindingRange(CommandContext args, CommandSender sender, NPC npc) {
         double range = Math.max(1, args.getDouble(1));
         npc.getNavigator().getDefaultParameters().range((float) range);
@@ -1024,8 +1039,8 @@ public class NPCCommands {
             permission = "citizens.npc.power")
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
-        Messaging
-        .sendTr(sender, npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+        Messaging.sendTr(sender,
+                npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
@@ -1041,15 +1056,20 @@ public class NPCCommands {
         String profession = args.getString(1);
         Profession parsed = Util.matchEnum(Profession.values(), profession.toUpperCase());
         if (parsed == null) {
-            throw new CommandException(Messages.INVALID_PROFESSION, args.getString(1), StringUtils.join(
-                    Profession.values(), ","));
+            throw new CommandException(Messages.INVALID_PROFESSION, args.getString(1),
+                    StringUtils.join(Profession.values(), ","));
         }
         npc.getTrait(VillagerProfession.class).setProfession(parsed);
         Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), profession);
     }
 
-    @Command(aliases = { "npc" }, usage = "rabbittype [type]", desc = "Set the Type of a Rabbit NPC", modifiers = {
-            "rabbittype", "rbtype" }, min = 2, permission = "citizens.npc.rabbittype")
+    @Command(
+            aliases = { "npc" },
+            usage = "rabbittype [type]",
+            desc = "Set the Type of a Rabbit NPC",
+            modifiers = { "rabbittype", "rbtype" },
+            min = 2,
+            permission = "citizens.npc.rabbittype")
     @Requirements(selected = true, ownership = true, types = { EntityType.RABBIT })
     public void rabbitType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         RabbitTypes type;
@@ -1062,8 +1082,13 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.RABBIT_TYPE_SET, npc.getName(), type.name());
     }
 
-    @Command(aliases = { "npc" }, usage = "remove|rem (all|id|name)", desc = "Remove a NPC", modifiers = { "remove",
-    "rem" }, min = 1, max = 2)
+    @Command(
+            aliases = { "npc" },
+            usage = "remove|rem (all|id|name)",
+            desc = "Remove a NPC",
+            modifiers = { "remove", "rem" },
+            min = 1,
+            max = 2)
     @Requirements
     public void remove(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         if (args.argsLength() == 2) {
@@ -1222,8 +1247,14 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = { "npc" }, usage = "skeletontype [type]", desc = "Sets the NPC's skeleton type", modifiers = {
-            "skeletontype", "sktype" }, min = 2, max = 2, permission = "citizens.npc.skeletontype")
+    @Command(
+            aliases = { "npc" },
+            usage = "skeletontype [type]",
+            desc = "Sets the NPC's skeleton type",
+            modifiers = { "skeletontype", "sktype" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.skeletontype")
     @Requirements(selected = true, ownership = true, types = EntityType.SKELETON)
     public void skeletonType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         SkeletonType type;
@@ -1450,8 +1481,8 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.swim")
     public void swim(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        boolean swim = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("set")) : !npc.data().get(
-                NPC.SWIMMING_METADATA, true);
+        boolean swim = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("set"))
+                : !npc.data().get(NPC.SWIMMING_METADATA, true);
         npc.data().setPersistent(NPC.SWIMMING_METADATA, swim);
         Messaging.sendTr(sender, swim ? Messages.SWIMMING_SET : Messages.SWIMMING_UNSET, npc.getName());
     }
@@ -1493,8 +1524,14 @@ public class NPCCommands {
         Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());
     }
 
-    @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport a NPC to your location", modifiers = { "tphere",
-            "tph", "move" }, min = 1, max = 1, permission = "citizens.npc.tphere")
+    @Command(
+            aliases = { "npc" },
+            usage = "tphere",
+            desc = "Teleport a NPC to your location",
+            modifiers = { "tphere", "tph", "move" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.tphere")
     public void tphere(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.getSenderLocation() == null)
             throw new ServerCommandException();

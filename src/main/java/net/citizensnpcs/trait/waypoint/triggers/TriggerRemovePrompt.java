@@ -32,8 +32,8 @@ public class TriggerRemovePrompt extends StringPrompt {
         try {
             index = Math.max(0, Integer.parseInt(input) - 1);
         } catch (NumberFormatException e) {
-            Messaging
-                    .sendErrorTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_REMOVE_INVALID_NUMBER);
+            Messaging.sendErrorTr((CommandSender) context.getForWhom(),
+                    Messages.WAYPOINT_TRIGGER_REMOVE_INVALID_NUMBER);
             return this;
         }
         List<WaypointTrigger> triggers = editor.getCurrentWaypoint().getTriggers();
