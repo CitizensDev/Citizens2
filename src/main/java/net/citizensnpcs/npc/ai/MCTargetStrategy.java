@@ -34,14 +34,15 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         this.target = ((CraftEntity) target).getHandle();
         NavigationAbstract nav = NMS.getNavigation(this.handle);
         this.targetNavigator = nav != null && !params.useNewPathfinder() ? new NavigationFieldWrapper(nav)
-        : new AStarTargeter();
+                : new AStarTargeter();
         this.aggro = aggro;
     }
 
     private boolean canAttack() {
         return attackTicks == 0
-                && (handle.getBoundingBox().e > target.getBoundingBox().b && handle.getBoundingBox().b < target
-                        .getBoundingBox().e) && closeEnough(distanceSquared()) && hasLineOfSight();
+                && (handle.getBoundingBox().e > target.getBoundingBox().b
+                        && handle.getBoundingBox().b < target.getBoundingBox().e)
+                && closeEnough(distanceSquared()) && hasLineOfSight();
     }
 
     @Override
@@ -161,7 +162,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         private void setStrategy() {
             Location location = target.getBukkitEntity().getLocation(TARGET_LOCATION);
             strategy = npc.isFlyable() ? new FlyingAStarNavigationStrategy(npc, location, parameters)
-            : new AStarNavigationStrategy(npc, location, parameters);
+                    : new AStarNavigationStrategy(npc, location, parameters);
         }
 
         @Override

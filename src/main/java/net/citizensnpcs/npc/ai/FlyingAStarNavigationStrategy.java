@@ -44,8 +44,9 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         if (!found) {
             params.examiner(new FlyingBlockExaminer());
         }
-        plan = ASTAR.runFully(goal, new VectorNode(goal, location, new ChunkBlockSource(location, params.range()),
-                params.examiners()), 50000);
+        plan = ASTAR.runFully(goal,
+                new VectorNode(goal, location, new ChunkBlockSource(location, params.range()), params.examiners()),
+                50000);
         if (plan == null || plan.isComplete()) {
             setCancelReason(CancelReason.STUCK);
         } else {

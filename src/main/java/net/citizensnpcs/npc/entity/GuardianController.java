@@ -1,5 +1,12 @@
 package net.citizensnpcs.npc.entity;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftGuardian;
+import org.bukkit.entity.Guardian;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -12,13 +19,6 @@ import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.EntityGuardian;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftGuardian;
-import org.bukkit.entity.Guardian;
-import org.bukkit.util.Vector;
 
 public class GuardianController extends MobEntityController {
     public GuardianController() {
@@ -42,18 +42,6 @@ public class GuardianController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-
-            }
-        }
-
-        @Override
-        public void setElder(boolean flag) {
-            float oldw = width;
-            float oldl = length;
-            super.setElder(flag);
-            if (oldw != width || oldl != length) {
-                this.setPosition(locX - 0.01, locY, locZ - 0.01);
-                this.setPosition(locX + 0.01, locY, locZ + 0.01);
             }
         }
 
@@ -117,14 +105,6 @@ public class GuardianController extends MobEntityController {
         }
 
         @Override
-        public void E() {
-            super.E();
-            if (npc != null) {
-                npc.update();
-            }
-        }
-
-        @Override
         public void g(double x, double y, double z) {
             if (npc == null) {
                 super.g(x, y, z);
@@ -180,13 +160,26 @@ public class GuardianController extends MobEntityController {
         public void m() {
             if (npc == null) {
                 super.m();
+            } else {
+                npc.update();
+            }
+        }
+
+        @Override
+        public void setElder(boolean flag) {
+            float oldw = width;
+            float oldl = length;
+            super.setElder(flag);
+            if (oldw != width || oldl != length) {
+                this.setPosition(locX - 0.01, locY, locZ - 0.01);
+                this.setPosition(locX + 0.01, locY, locZ + 0.01);
             }
         }
 
         @Override
         protected String z() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
-                    NPC.AMBIENT_SOUND_METADATA, super.z());
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z()
+                    : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.z());
         }
     }
 

@@ -32,8 +32,9 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         this.npc = npc;
         Location location = Util.getEyeLocation(npc.getEntity());
         VectorGoal goal = new VectorGoal(dest, (float) params.pathDistanceMargin());
-        plan = ASTAR.runFully(goal, new VectorNode(goal, location, new ChunkBlockSource(location, params.range()),
-                params.examiners()), 50000);
+        plan = ASTAR.runFully(goal,
+                new VectorNode(goal, location, new ChunkBlockSource(location, params.range()), params.examiners()),
+                50000);
         if (plan == null || plan.isComplete()) {
             setCancelReason(CancelReason.STUCK);
         } else {
@@ -76,8 +77,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double xzDistance = dX * dX + dZ * dZ;
         double distance = xzDistance + dY * dY;
         if (Setting.DEBUG_PATHFINDING.asBoolean()) {
-            npc.getEntity().getWorld()
-                    .playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL, 0);
+            npc.getEntity().getWorld().playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL,
+                    0);
         }
         if (distance > 0 && dY > 0 && dY < 1 && xzDistance <= 2.75) {
             NMS.setShouldJump(npc.getEntity());

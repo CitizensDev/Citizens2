@@ -372,6 +372,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     private static final Map<EntityType, Class<? extends MovementController>> controllerTypes = Maps
             .newEnumMap(EntityType.class);
+
     static {
         controllerTypes.put(EntityType.BAT, PlayerInputAirController.class);
         controllerTypes.put(EntityType.BLAZE, PlayerInputAirController.class);

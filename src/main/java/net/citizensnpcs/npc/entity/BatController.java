@@ -60,14 +60,14 @@ public class BatController extends MobEntityController {
 
         @Override
         protected String bo() {
-            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bo() : npc.data().get(
-                    NPC.HURT_SOUND_METADATA, super.bo());
+            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bo()
+                    : npc.data().get(NPC.HURT_SOUND_METADATA, super.bo());
         }
 
         @Override
         protected String bp() {
-            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bp() : npc.data().get(
-                    NPC.DEATH_SOUND_METADATA, super.bp());
+            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bp()
+                    : npc.data().get(NPC.DEATH_SOUND_METADATA, super.bp());
         }
 
         @Override
@@ -156,8 +156,8 @@ public class BatController extends MobEntityController {
 
         @Override
         protected String z() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z() : npc.data().get(
-                    NPC.AMBIENT_SOUND_METADATA, super.z());
+            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z()
+                    : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.z());
         }
     }
 }

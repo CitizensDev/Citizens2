@@ -25,7 +25,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     public void updatePlayer(final EntityPlayer entityplayer) {
         if (entityplayer != this.tracker && c(entityplayer)) {
             if (!this.trackedPlayers.contains(entityplayer)
-                    && ((entityplayer.u().getPlayerChunkMap().a(entityplayer, this.tracker.ae, this.tracker.ag)) || (this.tracker.attachedToPlayer))) {
+                    && ((entityplayer.u().getPlayerChunkMap().a(entityplayer, this.tracker.ae, this.tracker.ag))
+                            || (this.tracker.attachedToPlayer))) {
                 if ((this.tracker instanceof EntityPlayer)) {
                     Player player = ((EntityPlayer) this.tracker).getBukkitEntity();
                     if (!entityplayer.getBukkitEntity().canSee(player)) {
@@ -37,7 +38,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                         @Override
                         public void run() {
                             entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
-                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, (EntityPlayer) tracker));
+                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
+                                    (EntityPlayer) tracker));
                         }
                     }.runTaskLater(CitizensAPI.getPlugin(), 2);
                 }

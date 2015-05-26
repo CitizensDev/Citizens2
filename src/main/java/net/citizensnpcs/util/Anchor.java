@@ -26,8 +26,8 @@ public class Anchor {
     public Anchor(String name, Location location) {
         this.location = location;
         this.name = name;
-        this.unloaded_value = location.getWorld().getName() + ';'
-                + location.getX() + ';' + location.getY() + ';' + location.getZ();
+        this.unloaded_value = location.getWorld().getName() + ';' + location.getX() + ';' + location.getY() + ';'
+                + location.getZ();
     }
 
     public boolean isLoaded() {
@@ -37,8 +37,8 @@ public class Anchor {
     public boolean load() {
         try {
             String[] parts = getUnloadedValue();
-            this.location = new Location(Bukkit.getWorld(parts[0]),
-                    Double.valueOf(parts[1]), Double.valueOf(parts[2]), Double.valueOf(parts[3]));
+            this.location = new Location(Bukkit.getWorld(parts[0]), Double.valueOf(parts[1]), Double.valueOf(parts[2]),
+                    Double.valueOf(parts[3]));
         } catch (Exception e) {
             // Still not able to be loaded
         }
@@ -67,8 +67,8 @@ public class Anchor {
     }
 
     /**
-     * Returns a String[] of the 'world_name, x, y, z' information needed to create the Location
-     * that is associated with the Anchor, in that order.
+     * Returns a String[] of the 'world_name, x, y, z' information needed to create the Location that is associated with
+     * the Anchor, in that order.
      *
      * @return a String array of the anchor's location data
      */
@@ -89,7 +89,8 @@ public class Anchor {
     @Override
     public String toString() {
         String[] parts = getUnloadedValue();
-        return  "Anchor{Name='" + name + "';World='" + parts[0] + "';Location='" + parts[1] + ',' + parts[2] + ',' + parts[3] + "';}";
+        return "Anchor{Name='" + name + "';World='" + parts[0] + "';Location='" + parts[1] + ',' + parts[2] + ','
+                + parts[3] + "';}";
     }
 
 }

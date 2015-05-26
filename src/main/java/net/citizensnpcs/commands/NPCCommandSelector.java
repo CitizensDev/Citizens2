@@ -104,10 +104,8 @@ public class NPCCommandSelector extends NumericPrompt {
             }
             for (NPC test : npcRegistry) {
                 if (test.getName().equalsIgnoreCase(name)) {
-                    if (range > 0
-                            && test.isSpawned()
-                            && !Util.locationWithinRange(args.getSenderLocation(), test.getEntity().getLocation(),
-                                    range))
+                    if (range > 0 && test.isSpawned() && !Util.locationWithinRange(args.getSenderLocation(),
+                            test.getEntity().getLocation(), range))
                         continue;
                     possible.add(test);
                 }

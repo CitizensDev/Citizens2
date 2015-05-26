@@ -27,8 +27,8 @@ public class SheepEquipper implements Equipper {
                 return;
             DyeColor color = dye.getColor();
             toEquip.getTrait(WoolColor.class).setColor(color);
-            Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED, toEquip.getName(), color.name()
-                    .toLowerCase().replace("_", " "));
+            Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED, toEquip.getName(),
+                    color.name().toLowerCase().replace("_", " "));
 
             hand.setAmount(hand.getAmount() - 1);
         } else {

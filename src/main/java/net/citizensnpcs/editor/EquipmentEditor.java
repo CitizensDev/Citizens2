@@ -57,6 +57,7 @@ public class EquipmentEditor extends Editor {
     }
 
     private static final Map<EntityType, Equipper> EQUIPPERS = Maps.newEnumMap(EntityType.class);
+
     static {
         EQUIPPERS.put(EntityType.PIG, new PigEquipper());
         EQUIPPERS.put(EntityType.SHEEP, new SheepEquipper());

@@ -42,8 +42,7 @@ public class Waypoints extends Trait {
     }
 
     /**
-     * Returns the current {@link WaypointProvider}. May be null during
-     * initialisation.
+     * Returns the current {@link WaypointProvider}. May be null during initialisation.
      *
      * @return The current provider
      */
@@ -96,8 +95,7 @@ public class Waypoints extends Trait {
      * Sets the current {@link WaypointProvider} using the given name.
      *
      * @param name
-     *            The name of the waypoint provider, registered using
-     *            {@link #registerWaypointProvider(Class, String)}
+     *            The name of the waypoint provider, registered using {@link #registerWaypointProvider(Class, String)}
      * @return Whether the operation succeeded
      */
     public boolean setWaypointProvider(String name) {
@@ -116,8 +114,7 @@ public class Waypoints extends Trait {
     }
 
     /**
-     * Registers a {@link WaypointProvider}, which can be subsequently used by
-     * NPCs.
+     * Registers a {@link WaypointProvider}, which can be subsequently used by NPCs.
      *
      * @param clazz
      *            The class of the waypoint provider

@@ -20,10 +20,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>
- * Very fast pseudo random number generator. See <a href=
- * "http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html"
- * >this page</a> for a description. This RNG has a period of about 2^160, which
- * is not as long as the {@link MersenneTwisterRNG} but it is faster.
+ * Very fast pseudo random number generator. See
+ * <a href= "http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html" >this page</a> for a
+ * description. This RNG has a period of about 2^160, which is not as long as the {@link MersenneTwisterRNG} but it is
+ * faster.
  * </p>
  * 
  * <p>
@@ -103,8 +103,8 @@ public class XORShiftRNG extends Random {
     private static final long serialVersionUID = -1843001897066722618L;
 
     /**
-     * Take four bytes from the specified position in the specified block and
-     * convert them into a 32-bit int, using the big-endian convention.
+     * Take four bytes from the specified position in the specified block and convert them into a 32-bit int, using the
+     * big-endian convention.
      * 
      * @param bytes
      *            The data to read from.
@@ -118,8 +118,8 @@ public class XORShiftRNG extends Random {
     }
 
     /**
-     * Convert an array of bytes into an array of ints. 4 bytes from the input
-     * data map to a single int in the output data.
+     * Convert an array of bytes into an array of ints. 4 bytes from the input data map to a single int in the output
+     * data.
      * 
      * @param bytes
      *            The data to read from.

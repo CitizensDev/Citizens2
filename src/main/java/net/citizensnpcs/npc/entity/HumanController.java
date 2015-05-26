@@ -97,31 +97,32 @@ public class HumanController extends AbstractEntityController {
     }
 
     private void updateSkin(final NPC npc, final WorldServer nmsWorld, GameProfile profile) {
-    	
+
         String skinUUID = npc.data().get(NPC.PLAYER_SKIN_UUID_METADATA);
         if (skinUUID == null) {
             skinUUID = npc.getName();
         }
-        if (npc.data().has(CACHED_SKIN_UUID_METADATA)
-                && npc.data().has(CACHED_SKIN_UUID_NAME_METADATA)
+        if (npc.data().has(CACHED_SKIN_UUID_METADATA) && npc.data().has(CACHED_SKIN_UUID_NAME_METADATA)
                 && ChatColor.stripColor(skinUUID).equalsIgnoreCase(
                         ChatColor.stripColor(npc.data().<String> get(CACHED_SKIN_UUID_NAME_METADATA)))) {
             skinUUID = npc.data().get(CACHED_SKIN_UUID_METADATA);
         }
-        if (npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES)&&npc.data().<String>get(PLAYER_SKIN_TEXTURE_PROPERTIES).equals("cache")) {
-    		SKIN_THREAD.addRunnable(new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().aD(),
-                    npc));
-    		return;
-    	}
+        if (npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES)
+                && npc.data().<String> get(PLAYER_SKIN_TEXTURE_PROPERTIES).equals("cache")) {
+            SKIN_THREAD.addRunnable(
+                    new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().aD(), npc));
+            return;
+        }
         Property cached = TEXTURE_CACHE.get(skinUUID);
-        if (npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES)&&npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN)) {
-        	cached = new Property("textures",npc.data().<String>get(PLAYER_SKIN_TEXTURE_PROPERTIES),npc.data().<String>get(PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN));
+        if (npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES) && npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN)) {
+            cached = new Property("textures", npc.data().<String> get(PLAYER_SKIN_TEXTURE_PROPERTIES),
+                    npc.data().<String> get(PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN));
         }
         if (cached != null) {
             profile.getProperties().put("textures", cached);
         } else {
-            SKIN_THREAD.addRunnable(new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().aD(),
-                    npc));
+            SKIN_THREAD.addRunnable(
+                    new SkinFetcher(new UUIDFetcher(skinUUID, npc), nmsWorld.getMinecraftServer().aD(), npc));
         }
     }
 
@@ -141,13 +142,13 @@ public class HumanController extends AbstractEntityController {
          */
         private GameProfile fillProfileProperties(YggdrasilAuthenticationService auth, GameProfile profile,
                 boolean requireSecure) throws Exception {
-            URL url = HttpAuthenticationService.constantURL(new StringBuilder()
-            .append("https://sessionserver.mojang.com/session/minecraft/profile/")
-            .append(UUIDTypeAdapter.fromUUID(profile.getId())).toString());
+            URL url = HttpAuthenticationService.constantURL(
+                    new StringBuilder().append("https://sessionserver.mojang.com/session/minecraft/profile/")
+                            .append(UUIDTypeAdapter.fromUUID(profile.getId())).toString());
             url = HttpAuthenticationService.concatenateURL(url,
                     new StringBuilder().append("unsigned=").append(!requireSecure).toString());
-            MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse) MAKE_REQUEST.invoke(
-                    auth, url, null, MinecraftProfilePropertiesResponse.class);
+            MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse) MAKE_REQUEST.invoke(auth,
+                    url, null, MinecraftProfilePropertiesResponse.class);
             if (response == null) {
                 return profile;
             }
@@ -167,10 +168,11 @@ public class HumanController extends AbstractEntityController {
             }
             GameProfile skinProfile = null;
             Property cached = TEXTURE_CACHE.get(realUUID);
-            if (cached != null && !(npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES)&&npc.data().<String>get(PLAYER_SKIN_TEXTURE_PROPERTIES).equals("cache"))) {
+            if (cached != null && !(npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES)
+                    && npc.data().<String> get(PLAYER_SKIN_TEXTURE_PROPERTIES).equals("cache"))) {
                 if (Messaging.isDebugging()) {
                     Messaging
-                    .debug("Using cached skin texture for NPC " + npc.getName() + " UUID " + npc.getUniqueId());
+                            .debug("Using cached skin texture for NPC " + npc.getName() + " UUID " + npc.getUniqueId());
                 }
                 skinProfile = new GameProfile(UUID.fromString(realUUID), "");
                 skinProfile.getProperties().put("textures", cached);
@@ -181,8 +183,8 @@ public class HumanController extends AbstractEntityController {
                             new GameProfile(UUID.fromString(realUUID), ""), true);
                 } catch (Exception e) {
                     if ((e.getMessage() != null && e.getMessage().contains("too many requests"))
-                            || (e.getCause() != null && e.getCause().getMessage() != null && e.getCause().getMessage()
-                            .contains("too many requests"))) {
+                            || (e.getCause() != null && e.getCause().getMessage() != null
+                                    && e.getCause().getMessage().contains("too many requests"))) {
                         SKIN_THREAD.delay();
                         SKIN_THREAD.addRunnable(this);
                     }
@@ -194,13 +196,14 @@ public class HumanController extends AbstractEntityController {
                 Property textures = Iterables.getFirst(skinProfile.getProperties().get("textures"), null);
                 if (textures.getValue() == null || textures.getSignature() == null)
                     return;
-                if (npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES)&&npc.data().<String>get(PLAYER_SKIN_TEXTURE_PROPERTIES).equals("cache")) {
-                	npc.data().setPersistent(PLAYER_SKIN_TEXTURE_PROPERTIES, textures.getValue());
-                	npc.data().setPersistent(PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN, textures.getSignature());
+                if (npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES)
+                        && npc.data().<String> get(PLAYER_SKIN_TEXTURE_PROPERTIES).equals("cache")) {
+                    npc.data().setPersistent(PLAYER_SKIN_TEXTURE_PROPERTIES, textures.getValue());
+                    npc.data().setPersistent(PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN, textures.getSignature());
                 }
                 if (Messaging.isDebugging()) {
-                    Messaging.debug("Fetched skin texture for UUID " + realUUID + " for NPC " + npc.getName()
-                            + " UUID " + npc.getUniqueId());
+                    Messaging.debug("Fetched skin texture for UUID " + realUUID + " for NPC " + npc.getName() + " UUID "
+                            + npc.getUniqueId());
                 }
                 TEXTURE_CACHE.put(realUUID, new Property("textures", textures.getValue(), textures.getSignature()));
             }
@@ -282,21 +285,21 @@ public class HumanController extends AbstractEntityController {
                     .getGameProfileRepository();
             repo.findProfilesByNames(new String[] { ChatColor.stripColor(reportedUUID) }, Agent.MINECRAFT,
                     new ProfileLookupCallback() {
-                @Override
-                public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
-                }
+                        @Override
+                        public void onProfileLookupFailed(GameProfile arg0, Exception arg1) {
+                        }
 
-                @Override
-                public void onProfileLookupSucceeded(final GameProfile profile) {
-                    UUID_CACHE.put(reportedUUID, profile.getId().toString());
-                    if (Messaging.isDebugging()) {
-                        Messaging.debug("Fetched UUID " + profile.getId() + " for NPC " + npc.getName()
-                                + " UUID " + npc.getUniqueId());
-                    }
-                    npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
-                    npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
-                }
-            });
+                        @Override
+                        public void onProfileLookupSucceeded(final GameProfile profile) {
+                            UUID_CACHE.put(reportedUUID, profile.getId().toString());
+                            if (Messaging.isDebugging()) {
+                                Messaging.debug("Fetched UUID " + profile.getId() + " for NPC " + npc.getName()
+                                        + " UUID " + npc.getUniqueId());
+                            }
+                            npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, profile.getId().toString());
+                            npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, profile.getName());
+                        }
+                    });
             return npc.data().get(CACHED_SKIN_UUID_METADATA, reportedUUID);
         }
     }
@@ -309,6 +312,7 @@ public class HumanController extends AbstractEntityController {
     private static SkinThread SKIN_THREAD;
     private static final Map<String, Property> TEXTURE_CACHE = Maps.newConcurrentMap();
     private static final Map<String, String> UUID_CACHE = Maps.newConcurrentMap();
+
     static {
         try {
             MAKE_REQUEST = YggdrasilAuthenticationService.class.getDeclaredMethod("makeRequest", URL.class,
