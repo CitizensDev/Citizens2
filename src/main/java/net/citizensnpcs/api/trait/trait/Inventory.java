@@ -7,6 +7,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +20,7 @@ public class Inventory extends Trait {
 
     public Inventory() {
         super("inventory");
-        contents = new ItemStack[36];
+        contents = new ItemStack[72];
     }
 
     /**
@@ -38,23 +39,11 @@ public class Inventory extends Trait {
 
     @Override
     public void onSpawn() {
-        switch (npc.getEntity().getType()) {
-            case PLAYER:
-                ((Player) npc.getEntity()).getInventory().setContents(contents);
-                break;
-            case MINECART:
-                if (npc.getEntity() instanceof StorageMinecart) {
-                    ((StorageMinecart) npc.getEntity()).getInventory().setContents(
-                            Arrays.copyOf(contents, contents.length * 2));
-                }
-                break;
-            default:
-                break;
-        }
+        setContents(contents);
     }
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
-        ItemStack[] contents = new ItemStack[36];
+        ItemStack[] contents = new ItemStack[72];
         for (DataKey slotKey : key.getIntegerSubKeys())
             contents[Integer.parseInt(slotKey.name())] = ItemStorage.loadItemStack(slotKey);
         return contents;
@@ -87,9 +76,18 @@ public class Inventory extends Trait {
      *            ItemStack array to set as the contents of an NPC's inventory
      */
     public void setContents(ItemStack[] contents) {
-        this.contents = contents;
+        this.contents = Arrays.copyOf(contents, 72);
         if (npc.getEntity() instanceof Player) {
-            ((Player) npc.getEntity()).getInventory().setContents(contents);
+            ((Player) npc.getEntity()).getInventory().setContents(Arrays.copyOf(this.contents, 36));
+        }
+        else if (npc.getEntity() instanceof StorageMinecart) {
+            ((StorageMinecart) npc.getEntity()).getInventory().setContents(this.contents);
+        }
+        else if (npc.getEntity() instanceof Horse) {
+            ((Horse) npc.getEntity()).getInventory().setContents(
+                    Arrays.copyOf(this.contents, ((Horse) npc.getEntity()).getInventory().getSize()));
+            ((Horse) npc.getEntity()).getInventory().setSaddle(this.contents[0]);
+            ((Horse) npc.getEntity()).getInventory().setArmor(this.contents[1]);
         }
     }
 
