@@ -171,12 +171,18 @@ public class CitizensNPC extends AbstractNPC {
             Messaging.debug("Tried to spawn", getId(), "while already spawned.");
             return false;
         }
+        data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+
         at = at.clone();
         getTrait(CurrentLocation.class).setLocation(at);
+
         entityController.spawn(at, this);
+
         net.minecraft.server.v1_8_R3.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
+
         mcEntity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
+
         if (!couldSpawn) {
             Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.",
                     Util.isLoaded(at) ? "Util.isLoaded true" : "Util.isLoaded false");
@@ -187,8 +193,10 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         NMS.setHeadYaw(mcEntity, at.getYaw());
+
         NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at);
         Bukkit.getPluginManager().callEvent(spawnEvent);
+
         if (spawnEvent.isCancelled()) {
             entityController.remove();
             Messaging.debug("Couldn't spawn", getId(), "due to event cancellation.");
@@ -202,8 +210,10 @@ public class CitizensNPC extends AbstractNPC {
         getTrait(Spawned.class).setSpawned(true);
 
         navigator.onSpawn();
+
         // Modify NPC using traits after the entity has been created
         Collection<Trait> onSpawn = traits.values();
+
         // work around traits modifying the map during this iteration.
         for (Trait trait : onSpawn.toArray(new Trait[onSpawn.size()])) {
             try {
@@ -213,13 +223,16 @@ public class CitizensNPC extends AbstractNPC {
                 ex.printStackTrace();
             }
         }
+
         if (getEntity() instanceof LivingEntity) {
             LivingEntity entity = (LivingEntity) getEntity();
             entity.setRemoveWhenFarAway(false);
             entity.setCustomName(getFullName());
+
             if (NMS.getStepHeight(entity) < 1) {
                 NMS.setStepHeight(NMS.getHandle(entity), 1);
             }
+
             if (getEntity() instanceof Player) {
                 final CraftPlayer player = (CraftPlayer) getEntity();
                 NMS.replaceTrackerEntry(player);
