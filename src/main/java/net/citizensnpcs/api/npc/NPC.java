@@ -2,6 +2,12 @@ package net.citizensnpcs.api.npc;
 
 import java.util.UUID;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.speech.SpeechController;
@@ -12,21 +18,14 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.util.DataKey;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-
 /**
  * Represents an NPC with optional {@link Trait}s.
  */
 public interface NPC extends Agent, Cloneable {
 
     /**
-     * Adds a trait to this NPC. This will use the {@link TraitFactory} defined
-     * for this NPC to construct and attach a trait using
-     * {@link #addTrait(Trait)}.
+     * Adds a trait to this NPC. This will use the {@link TraitFactory} defined for this NPC to construct and attach a
+     * trait using {@link #addTrait(Trait)}.
      *
      * @param trait
      *            The class of the trait to add
@@ -42,8 +41,7 @@ public interface NPC extends Agent, Cloneable {
     public void addTrait(Trait trait);
 
     /**
-     * @return A clone of the NPC. May not be an exact copy depending on the
-     *         {@link Trait}s installed.
+     * @return A clone of the NPC. May not be an exact copy depending on the {@link Trait}s installed.
      */
     public NPC clone();
 
@@ -53,8 +51,8 @@ public interface NPC extends Agent, Cloneable {
     public MetadataStore data();
 
     /**
-     * Despawns this NPC. This is equivalent to calling
-     * {@link #despawn(DespawnReason)} with {@link DespawnReason#PLUGIN}.
+     * Despawns this NPC. This is equivalent to calling {@link #despawn(DespawnReason)} with
+     * {@link DespawnReason#PLUGIN}.
      *
      * @return Whether this NPC was able to despawn
      */
@@ -70,8 +68,7 @@ public interface NPC extends Agent, Cloneable {
     boolean despawn(DespawnReason reason);
 
     /**
-     * Permanently removes this NPC and all data about it from the registry it's
-     * attached to.
+     * Permanently removes this NPC and all data about it from the registry it's attached to.
      */
     public void destroy();
 
@@ -81,8 +78,7 @@ public interface NPC extends Agent, Cloneable {
     public void faceLocation(Location location);
 
     /**
-     * Gets the Bukkit entity associated with this NPC. This may be
-     * <code>null</code> if {@link #isSpawned()} is false.
+     * Gets the Bukkit entity associated with this NPC. This may be <code>null</code> if {@link #isSpawned()} is false.
      *
      * @return Entity associated with this NPC
      * @deprecated Use {@link #getEntity()} instead
@@ -106,8 +102,7 @@ public interface NPC extends Agent, Cloneable {
     public SpeechController getDefaultSpeechController();
 
     /**
-     * Gets the Bukkit entity associated with this NPC. This may be
-     * <code>null</code> if {@link #isSpawned()} is false.
+     * Gets the Bukkit entity associated with this NPC. This may be <code>null</code> if {@link #isSpawned()} is false.
      *
      * @return Entity associated with this NPC
      */
@@ -121,8 +116,7 @@ public interface NPC extends Agent, Cloneable {
     public String getFullName();
 
     /**
-     * Gets the unique ID of this NPC. This is not guaranteed to be globally
-     * unique across server sessions.
+     * Gets the unique ID of this NPC. This is not guaranteed to be globally unique across server sessions.
      *
      * @return ID of this NPC
      */
@@ -143,18 +137,16 @@ public interface NPC extends Agent, Cloneable {
     public NPCRegistry getOwningRegistry();
 
     /**
-     * If the NPC is not spawned, then this method will return the last known
-     * location, or null if it has never been spawned. Otherwise, it is
-     * equivalent to calling <code>npc.getBukkitEntity().getLocation()</code>.
+     * If the NPC is not spawned, then this method will return the last known location, or null if it has never been
+     * spawned. Otherwise, it is equivalent to calling <code>npc.getBukkitEntity().getLocation()</code>.
      *
      * @return The stored location, or <code>null</code> if none was found.
      */
     public Location getStoredLocation();
 
     /**
-     * Gets a trait from the given class. If the NPC does not currently have the
-     * trait then it will be created and attached using {@link #addTrait(Class)}
-     * .
+     * Gets a trait from the given class. If the NPC does not currently have the trait then it will be created and
+     * attached using {@link #addTrait(Class)} .
      *
      * @param trait
      *            Trait to get
@@ -170,8 +162,7 @@ public interface NPC extends Agent, Cloneable {
     public Iterable<Trait> getTraits();
 
     /**
-     * Gets the unique id of this NPC. This is guaranteed to be unique for all
-     * NPCs.
+     * Gets the unique id of this NPC. This is guaranteed to be unique for all NPCs.
      *
      * @return The unique id
      */
@@ -194,8 +185,8 @@ public interface NPC extends Agent, Cloneable {
     public boolean isFlyable();
 
     /**
-     * Gets whether this NPC is protected from damage, movement and other events
-     * that players and mobs use to change the entity state of the NPC.
+     * Gets whether this NPC is protected from damage, movement and other events that players and mobs use to change the
+     * entity state of the NPC.
      *
      * @return Whether this NPC is protected
      */
@@ -209,9 +200,8 @@ public interface NPC extends Agent, Cloneable {
     public boolean isSpawned();
 
     /**
-     * Loads the {@link NPC} from the given {@link DataKey}. This reloads all
-     * traits, respawns the NPC and sets it up for execution. Should not be
-     * called often.
+     * Loads the {@link NPC} from the given {@link DataKey}. This reloads all traits, respawns the NPC and sets it up
+     * for execution. Should not be called often.
      *
      * @param key
      *            The root data key
@@ -227,9 +217,8 @@ public interface NPC extends Agent, Cloneable {
     public void removeTrait(Class<? extends Trait> trait);
 
     /**
-     * Saves the {@link NPC} to the given {@link DataKey}. This includes all
-     * metadata, traits, and spawn information that will allow it to respawn at
-     * a later time via {@link #load(DataKey)}.
+     * Saves the {@link NPC} to the given {@link DataKey}. This includes all metadata, traits, and spawn information
+     * that will allow it to respawn at a later time via {@link #load(DataKey)}.
      *
      * @param key
      *            The root data key
@@ -237,10 +226,8 @@ public interface NPC extends Agent, Cloneable {
     public void save(DataKey key);
 
     /**
-     * Sets the {@link EntityType} of this NPC. Currently only accepts
-     * <em>living</em> entity types, with scope for additional types in the
-     * future. The NPC will respawned if currently spawned, or will remain
-     * despawned otherwise.
+     * Sets the {@link EntityType} of this NPC. Currently only accepts <em>living</em> entity types, with scope for
+     * additional types in the future. The NPC will respawned if currently spawned, or will remain despawned otherwise.
      *
      * @param type
      *            The new mob type
@@ -250,9 +237,8 @@ public interface NPC extends Agent, Cloneable {
     public void setBukkitEntityType(EntityType type);
 
     /**
-     * Sets whether this NPC is <tt>flyable</tt> or not. Note that this is
-     * intended for normally <em>ground-based</em> entities only - it will
-     * generally have no effect on mob types that were originally flyable.
+     * Sets whether this NPC is <tt>flyable</tt> or not. Note that this is intended for normally <em>ground-based</em>
+     * entities only - it will generally have no effect on mob types that were originally flyable.
      *
      * @param flyable
      */
@@ -267,9 +253,8 @@ public interface NPC extends Agent, Cloneable {
     public void setName(String name);
 
     /**
-     * A helper method for using {@link #DEFAULT_PROTECTED_METADATA} to set the
-     * NPC as protected or not protected from damage/entity target events.
-     * Equivalent to
+     * A helper method for using {@link #DEFAULT_PROTECTED_METADATA} to set the NPC as protected or not protected from
+     * damage/entity target events. Equivalent to
      * <code>npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, isProtected);</code>
      *
      * @param isProtected
@@ -287,8 +272,7 @@ public interface NPC extends Agent, Cloneable {
     public boolean spawn(Location location);
 
     /**
-     * An alternative to {{@link #getBukkitEntity().getLocation()} that
-     * teleports passengers as well.
+     * An alternative to {{@link #getBukkitEntity().getLocation()} that teleports passengers as well.
      *
      * @param location
      *            The destination location
@@ -310,12 +294,13 @@ public interface NPC extends Agent, Cloneable {
     public static final String MINECART_ITEM_METADATA = "minecart-item-name";
     public static final String MINECART_OFFSET_METADATA = "minecart-item-offset";
     public static final String NAMEPLATE_VISIBLE_METADATA = "nameplate-visible";
-    public static final String PLAYER_SKIN_UUID_METADATA = "player-skin-name";
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA = "player-skin-textures";
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA = "player-skin-signature";
+    public static final String PLAYER_SKIN_UUID_METADATA = "player-skin-name";
     public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
+    public static final String SCOREBOARD_FAKE_TEAM_NAME_METADATA = "fake-scoreboard-team-name";
     public static final String SHOULD_SAVE_METADATA = "should-save";
     public static final String SWIMMING_METADATA = "swim";
     public static final String TARGETABLE_METADATA = "protected-target";
-	
+
 }

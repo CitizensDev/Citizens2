@@ -5,6 +5,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.metadata.FixedMetadataValue;
+
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.SimpleGoalController;
@@ -22,22 +38,6 @@ import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.metadata.FixedMetadataValue;
-
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
@@ -202,7 +202,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getFullName() {
-        int nameLength = getTrait(MobType.class).getType() == EntityType.PLAYER ? 16 : 64;
+        int nameLength = getTrait(MobType.class).getType() == EntityType.PLAYER ? 46 : 64;
         if (name.length() > nameLength) {
             Messaging.severe("ID", id, "created with name length greater than " + nameLength + ", truncating", name,
                     "to", name.substring(0, nameLength));
