@@ -8,17 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingDeque;
-
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.DespawnReason;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.Colorizer;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.npc.AbstractEntityController;
-import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R3.PlayerInteractManager;
-import net.minecraft.server.v1_8_R3.WorldServer;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,6 +17,8 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -41,6 +33,17 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import com.mojang.util.UUIDTypeAdapter;
+
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.npc.AbstractEntityController;
+import net.citizensnpcs.util.NMS;
+import net.minecraft.server.v1_8_R3.PlayerInteractManager;
+import net.minecraft.server.v1_8_R3.WorldServer;
 
 public class HumanController extends AbstractEntityController {
     public HumanController() {
@@ -59,6 +62,37 @@ public class HumanController extends AbstractEntityController {
             coloredName = coloredName.substring(0, 16);
         }
 
+        String name, prefix = null, suffix = null;
+        if (coloredName.length() > 16) {
+            prefix = coloredName.substring(0, 16);
+            if (coloredName.length() > 30) {
+                int len = 30;
+                name = coloredName.substring(16, 30);
+                if (NON_ALPHABET_MATCHER.matcher(name).matches()) {
+                    if (coloredName.length() >= 32) {
+                        len = 32;
+                        name = coloredName.substring(16, 32);
+                    } else if (coloredName.length() == 31) {
+                        len = 31;
+                        name = coloredName.substring(16, 31);
+                    }
+                } else {
+                    name = ChatColor.RESET + name;
+                }
+                suffix = coloredName.substring(len);
+            } else {
+                name = coloredName.substring(16);
+                if (!NON_ALPHABET_MATCHER.matcher(name).matches()) {
+                    name = ChatColor.RESET + name;
+                }
+                if (name.length() > 16) {
+                    suffix = name.substring(16);
+                    name = name.substring(0, 16);
+                }
+            }
+        }
+        final String prefixCapture = prefix, suffixCapture = suffix, coloredNameCapture = coloredName;
+
         UUID uuid = npc.getUniqueId();
         if (uuid.version() == 4) { // clear version
             long msb = uuid.getMostSignificantBits();
@@ -76,12 +110,32 @@ public class HumanController extends AbstractEntityController {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
+                if (!getBukkitEntity().isValid())
+                    return;
                 boolean removeFromPlayerList = Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean();
                 NMS.addOrRemoveFromPlayerList(getBukkitEntity(),
                         npc.data().get("removefromplayerlist", removeFromPlayerList));
+
+                if (prefixCapture != null) {
+                    Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+                    String teamName = UUID.randomUUID().toString();
+
+                    Team team = scoreboard.getTeam(teamName);
+                    if (team == null) {
+                        team = scoreboard.registerNewTeam(teamName);
+                        team.setPrefix(prefixCapture);
+                        if (suffixCapture != null) {
+                            team.setSuffix(suffixCapture);
+                        }
+                    }
+                    team.addPlayer(handle.getBukkitEntity());
+
+                    handle.getNPC().data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
+                }
             }
         }, 1);
         handle.getBukkitEntity().setSleepingIgnored(true);
+
         return handle.getBukkitEntity();
     }
 
@@ -306,9 +360,10 @@ public class HumanController extends AbstractEntityController {
 
     private static final String CACHED_SKIN_UUID_METADATA = "cached-skin-uuid";
     private static final String CACHED_SKIN_UUID_NAME_METADATA = "cached-skin-uuid-name";
+    private static Method MAKE_REQUEST;
+    private static Pattern NON_ALPHABET_MATCHER = Pattern.compile(".*[^A-Za-z0-9_].*");
     private static final String PLAYER_SKIN_TEXTURE_PROPERTIES = "player-skin-textures";
     private static final String PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN = "player-skin-signature";
-    private static Method MAKE_REQUEST;
     private static SkinThread SKIN_THREAD;
     private static final Map<String, Property> TEXTURE_CACHE = Maps.newConcurrentMap();
     private static final Map<String, String> UUID_CACHE = Maps.newConcurrentMap();

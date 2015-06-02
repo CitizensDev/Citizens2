@@ -4,6 +4,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityCombustByBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Team;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
@@ -32,38 +70,6 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityCombustByBlockEvent;
-import org.bukkit.event.entity.EntityCombustByEntityEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.*;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.ListMultimap;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
@@ -203,6 +209,16 @@ public class EventListen implements Listener {
         final Location location = npc.getEntity().getLocation();
         npc.despawn(DespawnReason.DEATH);
 
+        if (npc.data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
+            String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+            Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
+            if (team != null) {
+                team.unregister();
+            }
+
+            npc.data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+        }
+
         if (npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1) >= 0) {
             int delay = npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1);
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
@@ -259,6 +275,11 @@ public class EventListen implements Listener {
         // undesirable as player NPCs are not real players and confuse plugins.
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
+        recalculatePlayer(event.getPlayer());
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
         checkCreationEvent(event);
@@ -281,73 +302,6 @@ public class EventListen implements Listener {
         recalculatePlayer(event.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
-        recalculatePlayer(event.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
-        recalculatePlayer(event.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
-        recalculatePlayer(event.getPlayer());
-    }
-
-    public void recalculatePlayer(final Player player) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
-                for (NPC npc : getAllNPCs()) {
-                    Entity npcEntity = npc.getEntity();
-                    if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
-                            && player.getWorld().equals(npcEntity.getWorld())
-                            && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
-                        nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
-                    }
-                }
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        sendToPlayer(player, nearbyNPCs);
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 30);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        sendToPlayer(player, nearbyNPCs);
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 70);
-            }
-        }.runTaskLater(CitizensAPI.getPlugin(), 10);
-
-    }
-
-    void sendToPlayer(final Player player, final List<EntityPlayer> nearbyNPCs) {
-        if (!player.isValid())
-            return;
-        for (EntityPlayer nearbyNPC : nearbyNPCs) {
-            if (nearbyNPC.isAlive())
-                NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
-        }
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!player.isValid())
-                    return;
-                for (EntityPlayer nearbyNPC : nearbyNPCs) {
-                    if (nearbyNPC.isAlive())
-                        NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
-                }
-            }
-        }.runTaskLater(CitizensAPI.getPlugin(), 2);
-    }
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Editor.leave(event.getPlayer());
@@ -357,6 +311,16 @@ public class EventListen implements Listener {
                 event.getPlayer().leaveVehicle();
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        recalculatePlayer(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        recalculatePlayer(event.getPlayer());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -398,6 +362,36 @@ public class EventListen implements Listener {
         }
     }
 
+    public void recalculatePlayer(final Player player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
+                for (NPC npc : getAllNPCs()) {
+                    Entity npcEntity = npc.getEntity();
+                    if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
+                            && player.getWorld().equals(npcEntity.getWorld())
+                            && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
+                        nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
+                    }
+                }
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        sendToPlayer(player, nearbyNPCs);
+                    }
+                }.runTaskLater(CitizensAPI.getPlugin(), 30);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        sendToPlayer(player, nearbyNPCs);
+                    }
+                }.runTaskLater(CitizensAPI.getPlugin(), 70);
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), 10);
+
+    }
+
     private void respawnAllFromCoord(ChunkCoord coord) {
         List<NPC> ids = toRespawn.get(coord);
         for (int i = 0; i < ids.size(); i++) {
@@ -415,6 +409,28 @@ public class EventListen implements Listener {
                 Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
             }
         }
+    }
+
+    void sendToPlayer(final Player player, final List<EntityPlayer> nearbyNPCs) {
+        if (!player.isValid())
+            return;
+        for (EntityPlayer nearbyNPC : nearbyNPCs) {
+            if (nearbyNPC.isAlive())
+                NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
+        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!player.isValid())
+                    return;
+                for (EntityPlayer nearbyNPC : nearbyNPCs) {
+                    if (nearbyNPC.isAlive())
+                        NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
+                }
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), 2);
     }
 
     private boolean spawn(NPC npc) {
