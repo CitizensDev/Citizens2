@@ -118,7 +118,7 @@ public class HumanController extends AbstractEntityController {
 
                 if (prefixCapture != null) {
                     Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-                    String teamName = UUID.randomUUID().toString();
+                    String teamName = UUID.randomUUID().toString().substring(0,16);
 
                     Team team = scoreboard.getTeam(teamName);
                     if (team == null) {
