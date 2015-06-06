@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import net.citizensnpcs.api.ai.GoalController;
@@ -76,16 +75,6 @@ public interface NPC extends Agent, Cloneable {
      * Faces a given {@link Location} if the NPC is spawned.
      */
     public void faceLocation(Location location);
-
-    /**
-     * Gets the Bukkit entity associated with this NPC. This may be <code>null</code> if {@link #isSpawned()} is false.
-     *
-     * @return Entity associated with this NPC
-     * @deprecated Use {@link #getEntity()} instead
-     * @see #getEntity()
-     */
-    @Deprecated
-    public LivingEntity getBukkitEntity();
 
     /**
      * Gets the default {@link GoalController} of this NPC.

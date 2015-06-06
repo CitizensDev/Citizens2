@@ -175,16 +175,6 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    @Deprecated
-    public LivingEntity getBukkitEntity() {
-        Entity entity = getEntity();
-        if (entity == null || entity instanceof LivingEntity) {
-            return (LivingEntity) entity;
-        }
-        throw new IllegalStateException("getBukkitEntity() called on a non-living NPC");
-    }
-
-    @Override
     public GoalController getDefaultGoalController() {
         return goalController;
     }
