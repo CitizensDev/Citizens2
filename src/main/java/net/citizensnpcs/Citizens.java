@@ -258,7 +258,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         config = new Settings(getDataFolder());
         // Disable if the server is not using the compatible Minecraft version
         String mcVersion = Util.getMinecraftVersion();
-        compatible = mcVersion.startsWith(COMPATIBLE_MC_VERSION);
+        for (String version : COMPATIBLE_MC_VERSIONS) {
+            compatible |= mcVersion.startsWith(version);
+        }
         if (Setting.CHECK_MINECRAFT_VERSION.asBoolean() && !compatible) {
             Messaging.severeTr(Messages.CITIZENS_INCOMPATIBLE, getDescription().getVersion(), mcVersion);
             getServer().getPluginManager().disablePlugin(this);
@@ -454,5 +456,5 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return false;
     }
 
-    private static final String COMPATIBLE_MC_VERSION = "1.8.6";
+    private static final String[] COMPATIBLE_MC_VERSIONS = { "1.8.5", "1.8.6", "1.8.7" };
 }
