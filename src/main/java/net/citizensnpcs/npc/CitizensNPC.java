@@ -237,7 +237,6 @@ public class CitizensNPC extends AbstractNPC {
                 final CraftPlayer player = (CraftPlayer) getEntity();
                 NMS.replaceTrackerEntry(player);
                 new BukkitRunnable() {
-
                     @Override
                     public void run() {
                         NMS.sendPacketsNearby(player, player.getLocation(),

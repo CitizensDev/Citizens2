@@ -2,15 +2,15 @@ package net.citizensnpcs.util.nms;
 
 import java.lang.reflect.Field;
 
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.EntityTrackerEntry;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
-
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     public PlayerlistTrackerEntry(Entity entity, int i, int j, boolean flag) {
