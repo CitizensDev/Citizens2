@@ -27,8 +27,6 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
 
-import net.citizensnpcs.api.util.Messaging;
-
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -36,10 +34,11 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
+import net.citizensnpcs.api.util.Messaging;
+
 /**
- * Compiles files into {@link ScriptFactory}s. Intended for use as a separate
- * thread - {@link ScriptCompiler#run()} will block while waiting for new tasks
- * to compile.
+ * Compiles files into {@link ScriptFactory}s. Intended for use as a separate thread - {@link ScriptCompiler#run()} will
+ * block while waiting for new tasks to compile.
  */
 public class ScriptCompiler {
     private final WeakReference<ClassLoader> classLoader;
@@ -130,8 +129,7 @@ public class ScriptCompiler {
     }
 
     /**
-     * Registers a global {@link ContextProvider}, which will be invoked on all
-     * scripts created by this ScriptCompiler.
+     * Registers a global {@link ContextProvider}, which will be invoked on all scripts created by this ScriptCompiler.
      *
      * @param provider
      *            The global provider
@@ -292,6 +290,7 @@ public class ScriptCompiler {
 
     private static boolean CLASSLOADER_OVERRIDE_ENABLED;
     private static Method GET_APPLICATION_CLASS_LOADER, GET_GLOBAL, INIT_APPLICATION_CLASS_LOADER;
+
     static {
         try {
             Class<?> CONTEXT_FACTORY = Class.forName("sun.org.mozilla.javascript.internal.ContextFactory");
@@ -304,7 +303,7 @@ public class ScriptCompiler {
             INIT_APPLICATION_CLASS_LOADER.setAccessible(true);
             CLASSLOADER_OVERRIDE_ENABLED = true;
         } catch (Exception e) {
-            Messaging.severe("Unable to find Rhino classes - javascript scripts won't see non-CraftBukkit classes");
+            Messaging.debug("Unable to find Rhino classes - javascript scripts won't see non-CraftBukkit classes");
         }
     }
 }
