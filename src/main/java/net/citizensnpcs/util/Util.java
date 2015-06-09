@@ -2,13 +2,10 @@ package net.citizensnpcs.util;
 
 import java.util.Random;
 
-import net.citizensnpcs.api.event.NPCCollisionEvent;
-import net.citizensnpcs.api.event.NPCPushEvent;
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -17,6 +14,10 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+
+import net.citizensnpcs.api.event.NPCCollisionEvent;
+import net.citizensnpcs.api.event.NPCPushEvent;
+import net.citizensnpcs.api.npc.NPC;
 
 public class Util {
     // Static class for small (emphasis small) utility methods
@@ -73,14 +74,9 @@ public class Util {
         return new XORShiftRNG();
     }
 
-    public static String getMinecraftVersion() {
-        String raw = Bukkit.getVersion();
-        int start = raw.indexOf("MC:");
-        if (start == -1)
-            return raw;
-        start += 4;
-        int end = raw.indexOf(')', start);
-        return raw.substring(start, end);
+    public static String getMinecraftRevision() {
+        String raw = CraftServer.class.getPackage().getName();
+        return raw.substring(raw.lastIndexOf('.') + 2);
     }
 
     public static boolean isAlwaysFlyable(EntityType type) {
