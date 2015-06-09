@@ -19,6 +19,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Guardian;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.Horse.Variant;
@@ -507,6 +508,23 @@ public class NPCCommands {
         boolean enabled = npc.getTrait(Gravity.class).toggle();
         String key = !enabled ? Messages.GRAVITY_ENABLED : Messages.GRAVITY_DISABLED;
         Messaging.sendTr(sender, key, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "guardian --elder [true|false]",
+            desc = "Changes guardian modifiers",
+            modifiers = { "guardian" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.guardian")
+    @Requirements(selected = true, ownership = true, types = { EntityType.GUARDIAN })
+    public void guardian(CommandContext args, CommandSender sender, NPC npc) {
+        Guardian guardian = (Guardian) npc.getEntity();
+        if (args.hasValueFlag("elder")) {
+            guardian.setElder(args.getFlag("elder", "false").equals("true") ? true : false);
+            Messaging.sendTr(sender, guardian.isElder() ? Messages.ELDER_SET : Messages.ELDER_UNSET, npc.getName());
+        }
     }
 
     @Command(
