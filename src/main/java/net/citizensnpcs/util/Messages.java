@@ -52,6 +52,8 @@ public class Messages {
     public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.waypoints.current-provider";
     public static final String DATABASE_CONNECTION_FAILED = "citizens.notifications.database-connection-failed";
     public static final String DELAY_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.delay.prompt";
+    public static final String ELDER_SET = "citizens.commands.npc.guardian.elder-set";
+    public static final String ELDER_UNSET = "citizens.commands.npc.guardian.elder-unset";
     public static final String ENTITY_TYPE_SET = "citizens.commands.npc.type.set";
     public static final String EQUIPMENT_EDITOR_ALL_ITEMS_REMOVED = "citizens.editors.equipment.all-items-removed";
     public static final String EQUIPMENT_EDITOR_BEGIN = "citizens.editors.equipment.begin";
