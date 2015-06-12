@@ -8,8 +8,8 @@ import java.util.Random;
 import com.google.common.base.Function;
 
 /**
- * A selector of sub-goals, that chooses a single {@link Behavior} to execute
- * from a list. The default selection function is a random selection.
+ * A selector of sub-goals, that chooses a single {@link Behavior} to execute from a list. The default selection
+ * function is a random selection.
  */
 public class Selector extends Composite {
     private Behavior executing;
@@ -24,11 +24,7 @@ public class Selector extends Composite {
     }
 
     public Behavior getNextBehavior() {
-        Behavior behavior = null;
-        while ((behavior = selectionFunction.apply(getBehaviors())) instanceof ParallelBehavior) {
-            addParallel(behavior);
-        }
-        return behavior;
+        return selectionFunction.apply(getBehaviors());
     }
 
     public Function<List<Behavior>, Behavior> getSelectionFunction() {
@@ -52,16 +48,19 @@ public class Selector extends Composite {
         tickParallel();
         BehaviorStatus status = null;
         if (executing == null) {
-            executing = getNextBehavior();
-            if (executing == null)
+            if ((executing = getNextBehavior()) == null) {
                 return BehaviorStatus.FAILURE;
+            }
+
             if (executing.shouldExecute()) {
                 prepareForExecution(executing);
-            } else
+            } else {
                 status = BehaviorStatus.FAILURE;
+            }
         }
-        if (status == null)
+        if (status == null) {
             status = executing.run();
+        }
         if (status == BehaviorStatus.FAILURE) {
             if (retryChildren) {
                 stopExecution(executing);
@@ -97,8 +96,7 @@ public class Selector extends Composite {
         }
 
         /**
-         * Sets whether to retry child {@link Behavior}s when they return
-         * {@link BehaviorStatus#FAILURE}.
+         * Sets whether to retry child {@link Behavior}s when they return {@link BehaviorStatus#FAILURE}.
          *
          */
         public Builder retryChildren() {
@@ -107,8 +105,7 @@ public class Selector extends Composite {
         }
 
         /**
-         * Sets whether to retry child {@link Behavior}s when they return
-         * {@link BehaviorStatus#FAILURE}.
+         * Sets whether to retry child {@link Behavior}s when they return {@link BehaviorStatus#FAILURE}.
          *
          * @param b
          *            Whether to retry children
@@ -119,9 +116,8 @@ public class Selector extends Composite {
         }
 
         /**
-         * Sets the {@link Function} that selects a {@link Behavior} to execute
-         * from a list of behaviors, such as a random selection or a priority
-         * selection. See {@link Selectors} for some helper methods.
+         * Sets the {@link Function} that selects a {@link Behavior} to execute from a list of behaviors, such as a
+         * random selection or a priority selection. See {@link Selectors} for some helper methods.
          *
          * @param function
          *            The selection function

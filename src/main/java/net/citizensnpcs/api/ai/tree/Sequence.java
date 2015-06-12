@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class Sequence extends Composite {
+    private final boolean continueRunning;
     private Behavior executing;
-    private int executingIndex;
-    private final boolean retryChildren;
+    private int executingIndex = -1;
 
     private Sequence(boolean retryChildren, Behavior... behaviors) {
         this(retryChildren, Arrays.asList(behaviors));
@@ -15,14 +15,15 @@ public class Sequence extends Composite {
 
     private Sequence(boolean retryChildren, Collection<Behavior> behaviors) {
         super(behaviors);
-        this.retryChildren = retryChildren;
+        this.continueRunning = retryChildren;
     }
 
     private BehaviorStatus getContinuationStatus() {
         resetCurrent();
-        if (retryChildren) {
-            if (++executingIndex >= getBehaviors().size())
+        if (continueRunning) {
+            if (++executingIndex >= getBehaviors().size()) {
                 return BehaviorStatus.FAILURE;
+            }
             return BehaviorStatus.RUNNING;
         } else {
             return BehaviorStatus.FAILURE;
@@ -42,7 +43,7 @@ public class Sequence extends Composite {
     }
 
     public boolean retryChildren() {
-        return retryChildren;
+        return continueRunning;
     }
 
     @Override
@@ -63,11 +64,10 @@ public class Sequence extends Composite {
             case FAILURE:
                 return getContinuationStatus();
             case RESET_AND_REMOVE:
-                behaviors.remove(executingIndex);
+                behaviors.remove(executingIndex--);
                 return selectNext(behaviors);
             case SUCCESS:
                 resetCurrent();
-                executingIndex++;
                 return selectNext(behaviors);
             default:
                 throw new IllegalStateException();
@@ -75,15 +75,10 @@ public class Sequence extends Composite {
     }
 
     private BehaviorStatus selectNext(List<Behavior> behaviors) {
-        if (executingIndex >= behaviors.size()) {
+        if (++executingIndex >= behaviors.size()) {
             return BehaviorStatus.SUCCESS;
         }
-        while ((executing = behaviors.get(executingIndex)) instanceof ParallelBehavior) {
-            addParallel(executing);
-            if (++executingIndex >= behaviors.size()) {
-                return BehaviorStatus.SUCCESS;
-            }
-        }
+        executing = behaviors.get(executingIndex);
         if (!executing.shouldExecute()) {
             return getContinuationStatus();
         }
@@ -94,7 +89,7 @@ public class Sequence extends Composite {
     @Override
     public String toString() {
         return "Sequence [executing=" + executing + ", executingIndex=" + executingIndex + ", retryChildren="
-                + retryChildren + ", getBehaviors()=" + getBehaviors() + "]";
+                + continueRunning + ", getBehaviors()=" + getBehaviors() + "]";
     }
 
     public static Sequence createRetryingSequence(Behavior... behaviors) {

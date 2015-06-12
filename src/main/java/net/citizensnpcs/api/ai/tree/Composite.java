@@ -4,20 +4,22 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import net.citizensnpcs.api.CitizensAPI;
+import java.util.Set;
 
 import org.bukkit.event.HandlerList;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import net.citizensnpcs.api.CitizensAPI;
 
 /**
- * The base class for composite {@link Behavior}s, which handle the transition
- * between multiple sub-behaviors.
+ * The base class for composite {@link Behavior}s, which handle the transition between multiple sub-behaviors.
  */
 public abstract class Composite extends BehaviorGoalAdapter {
     private final List<Behavior> behaviors;
-    private final Collection<Behavior> parallelExecuting = Lists.newArrayListWithCapacity(0);
+    private final List<Behavior> parallel = Lists.newArrayListWithCapacity(0);
+    private final Set<Behavior> parallelExecuting = Sets.newHashSetWithExpectedSize(0);
 
     public Composite(Behavior... behaviors) {
         this(Arrays.asList(behaviors));
@@ -25,22 +27,21 @@ public abstract class Composite extends BehaviorGoalAdapter {
 
     public Composite(Collection<Behavior> behaviors) {
         this.behaviors = Lists.newArrayList(behaviors);
-        boolean foundNonParallel = false;
-        for (Behavior behavior : behaviors) {
-            if (!(behavior instanceof ParallelBehavior)) {
-                foundNonParallel = true;
-                break;
+        Iterator<Behavior> itr = this.behaviors.iterator();
+        while (itr.hasNext()) {
+            Behavior b = itr.next();
+            if (b instanceof ParallelBehavior) {
+                parallel.add(b);
+                itr.remove();
             }
         }
-        if (!foundNonParallel)
-            throw new IllegalStateException("must have at least one non-parallel node");
     }
 
     public void addBehavior(Behavior behavior) {
         behaviors.add(behavior);
     }
 
-    protected void addParallel(Behavior behavior) {
+    private void tryAddParallel(Behavior behavior) {
         if (behavior.shouldExecute() && !parallelExecuting.contains(behavior)) {
             parallelExecuting.add(behavior);
             prepareForExecution(behavior);
@@ -64,8 +65,9 @@ public abstract class Composite extends BehaviorGoalAdapter {
     @Override
     public void reset() {
         if (parallelExecuting.size() > 0) {
-            for (Behavior behavior : parallelExecuting)
+            for (Behavior behavior : parallelExecuting) {
                 behavior.reset();
+            }
             parallelExecuting.clear();
         }
     }
@@ -83,6 +85,9 @@ public abstract class Composite extends BehaviorGoalAdapter {
     }
 
     protected void tickParallel() {
+        for (Behavior b : parallel) {
+            tryAddParallel(b);
+        }
         Iterator<Behavior> itr = parallelExecuting.iterator();
         while (itr.hasNext()) {
             Behavior behavior = itr.next();
