@@ -1,20 +1,19 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.ListIterator;
 import java.util.Set;
-
-import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.api.ai.event.NavigatorCallback;
-import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
-import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
+
+import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.ai.event.NavigatorCallback;
+import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
+import net.citizensnpcs.api.npc.NPC;
 
 public class MinecraftBlockExaminer implements BlockExaminer {
     @Override
@@ -101,7 +100,11 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     public static boolean canStandIn(Material... mat) {
-        return PASSABLE.containsAll(Arrays.asList(mat));
+        boolean passable = true;
+        for (Material m : mat) {
+            passable &= !m.isSolid();
+        }
+        return passable;
     }
 
     public static boolean canStandOn(Block block) {
@@ -111,7 +114,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     public static boolean canStandOn(Material mat) {
-        return !UNWALKABLE.contains(mat) && !PASSABLE.contains(mat);
+        return !UNWALKABLE.contains(mat) && mat.isSolid();
     }
 
     private static boolean contains(Material[] search, Material... find) {
@@ -156,19 +159,12 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     private static final Set<Material> DOORS = EnumSet.of(Material.IRON_DOOR, Material.IRON_DOOR_BLOCK,
-            Material.WOODEN_DOOR, Material.WOOD_DOOR);
+            Material.WOODEN_DOOR, Material.WOOD_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR,
+            Material.ACACIA_DOOR, Material.DARK_OAK_DOOR);
     private static final Vector DOWN = new Vector(0, -1, 0);
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.FENCE, Material.IRON_FENCE,
-            Material.NETHER_FENCE, Material.COBBLE_WALL);
-    private static final Set<Material> PASSABLE = EnumSet.of(Material.AIR, Material.CARROT, Material.DEAD_BUSH,
-            Material.DETECTOR_RAIL, Material.DIODE, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON,
-            Material.FENCE_GATE, Material.ITEM_FRAME, Material.LEVER, Material.LONG_GRASS, Material.CARPET,
-            Material.MELON_STEM, Material.NETHER_FENCE, Material.PUMPKIN_STEM, Material.POWERED_RAIL, Material.RAILS,
-            Material.RED_ROSE, Material.RED_MUSHROOM, Material.REDSTONE, Material.REDSTONE_TORCH_OFF,
-            Material.REDSTONE_TORCH_OFF, Material.REDSTONE_WIRE, Material.SIGN, Material.SIGN_POST, Material.SOIL,
-            Material.SNOW, Material.DOUBLE_PLANT, Material.STRING, Material.STONE_BUTTON, Material.SUGAR_CANE_BLOCK,
-            Material.TRIPWIRE, Material.VINE, Material.WALL_SIGN, Material.WHEAT, Material.WATER, Material.WEB,
-            Material.WOOD_BUTTON, Material.WOODEN_DOOR, Material.STATIONARY_WATER);
+            Material.NETHER_FENCE, Material.COBBLE_WALL, Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
+            Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
     private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.STATIONARY_LAVA,
             Material.CACTUS);
     private static final Vector UP = new Vector(0, 1, 0);
