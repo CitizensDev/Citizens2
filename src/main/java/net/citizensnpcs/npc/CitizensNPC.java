@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -28,6 +29,8 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
+import net.citizensnpcs.api.npc.BlockBreaker;
+import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
@@ -35,6 +38,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.npc.ai.CitizensBlockBreaker;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
@@ -92,6 +96,11 @@ public class CitizensNPC extends AbstractNPC {
         if (!isSpawned())
             return;
         Util.faceLocation(getEntity(), location);
+    }
+
+    @Override
+    public BlockBreaker getBlockBreaker(Block targetBlock, BlockBreakerConfiguration config) {
+        return new CitizensBlockBreaker(getEntity(), targetBlock, config);
     }
 
     @Override

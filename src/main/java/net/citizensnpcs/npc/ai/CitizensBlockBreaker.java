@@ -1,7 +1,12 @@
 package net.citizensnpcs.npc.ai;
 
-import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.entity.Player;
+
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
+import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
@@ -10,30 +15,26 @@ import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.Blocks;
 import net.minecraft.server.v1_8_R3.Enchantment;
 import net.minecraft.server.v1_8_R3.EnchantmentManager;
+import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.ItemStack;
 import net.minecraft.server.v1_8_R3.Material;
 import net.minecraft.server.v1_8_R3.MobEffectList;
 
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
-public class BlockBreaker extends BehaviorGoalAdapter {
-    private final Configuration configuration;
+public class CitizensBlockBreaker extends BlockBreaker {
+    private final BlockBreakerConfiguration configuration;
     private int currentDamage;
     private int currentTick;
-    private final EntityLiving entity;
+    private final Entity entity;
     private boolean isDigging = true;
     private final Location location;
     private int startDigTick;
     private final int x, y, z;
 
-    private BlockBreaker(LivingEntity entity, org.bukkit.block.Block target, Configuration config) {
-        this.entity = ((CraftLivingEntity) entity).getHandle();
+    public CitizensBlockBreaker(org.bukkit.entity.Entity entity, org.bukkit.block.Block target,
+            BlockBreakerConfiguration config) {
+        this.entity = ((CraftEntity) entity).getHandle();
         this.x = target.getX();
         this.y = target.getY();
         this.z = target.getZ();
@@ -47,7 +48,8 @@ public class BlockBreaker extends BehaviorGoalAdapter {
     }
 
     private net.minecraft.server.v1_8_R3.ItemStack getCurrentItem() {
-        return configuration.item() != null ? CraftItemStack.asNMSCopy(configuration.item()) : entity.getEquipment(0);
+        return configuration.item() != null ? CraftItemStack.asNMSCopy(configuration.item())
+                : entity instanceof EntityLiving ? ((EntityLiving) entity).getEquipment(0) : null;
     }
 
     private float getStrength(Block block) {
@@ -62,10 +64,6 @@ public class BlockBreaker extends BehaviorGoalAdapter {
             ItemStack current = getCurrentItem();
             return current != null ? current.b(block) : false;
         }
-    }
-
-    public boolean isFinished() {
-        return !isDigging;
     }
 
     @Override
@@ -144,72 +142,21 @@ public class BlockBreaker extends BehaviorGoalAdapter {
                 strength += levelSquared;
             }
         }
-        if (entity.hasEffect(MobEffectList.FASTER_DIG)) {
-            strength *= 1.0F + (entity.getEffect(MobEffectList.FASTER_DIG).getAmplifier() + 1) * 0.2F;
-        }
-        if (entity.hasEffect(MobEffectList.SLOWER_DIG)) {
-            strength *= 1.0F - (entity.getEffect(MobEffectList.SLOWER_DIG).getAmplifier() + 1) * 0.2F;
-        }
-        if (entity.a(Material.WATER) && !EnchantmentManager.j(entity)) {
-            strength /= 5.0F;
+        if (entity instanceof EntityLiving) {
+            EntityLiving living = (EntityLiving) entity;
+            if (living.hasEffect(MobEffectList.FASTER_DIG)) {
+                strength *= 1.0F + (living.getEffect(MobEffectList.FASTER_DIG).getAmplifier() + 1) * 0.2F;
+            }
+            if (living.hasEffect(MobEffectList.SLOWER_DIG)) {
+                strength *= 1.0F - (living.getEffect(MobEffectList.SLOWER_DIG).getAmplifier() + 1) * 0.2F;
+            }
+            if (entity.a(Material.WATER) && !EnchantmentManager.j(living)) {
+                strength /= 5.0F;
+            }
         }
         if (!entity.onGround) {
             strength /= 5.0F;
         }
         return strength;
     }
-
-    public static class Configuration {
-        private Runnable callback;
-        private org.bukkit.inventory.ItemStack itemStack;
-        private float modifier = 1;
-        private double radius = 0;
-
-        public float blockStrengthModifier() {
-            return modifier;
-        }
-
-        public Configuration blockStrengthModifier(float modifier) {
-            this.modifier = modifier;
-            return this;
-        }
-
-        private Runnable callback() {
-            return callback;
-        }
-
-        public Configuration callback(Runnable callback) {
-            this.callback = callback;
-            return this;
-        }
-
-        private org.bukkit.inventory.ItemStack item() {
-            return itemStack;
-        }
-
-        public Configuration item(org.bukkit.inventory.ItemStack stack) {
-            itemStack = stack;
-            return this;
-        }
-
-        public Configuration radius(double radius) {
-            this.radius = radius;
-            return this;
-        }
-
-        private double radiusSquared() {
-            return Math.pow(radius, 2);
-        }
-    }
-
-    public static BlockBreaker create(LivingEntity entity, org.bukkit.block.Block target) {
-        return createWithConfiguration(entity, target, EMPTY);
-    }
-
-    public static BlockBreaker createWithConfiguration(LivingEntity entity, org.bukkit.block.Block target,
-            Configuration config) {
-        return new BlockBreaker(entity, target, config);
-    }
-
-    private static final Configuration EMPTY = new Configuration();
 }
