@@ -3,6 +3,7 @@ package net.citizensnpcs.api.npc;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -13,6 +14,7 @@ import net.citizensnpcs.api.ai.speech.SpeechController;
 import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
+import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.util.DataKey;
@@ -21,7 +23,6 @@ import net.citizensnpcs.api.util.DataKey;
  * Represents an NPC with optional {@link Trait}s.
  */
 public interface NPC extends Agent, Cloneable {
-
     /**
      * Adds a trait to this NPC. This will use the {@link TraitFactory} defined for this NPC to construct and attach a
      * trait using {@link #addTrait(Trait)}.
@@ -76,6 +77,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public void faceLocation(Location location);
 
+    public BlockBreaker getBlockBreaker(Block targetBlock, BlockBreakerConfiguration config);
+
     /**
      * Gets the default {@link GoalController} of this NPC.
      *
@@ -123,6 +126,9 @@ public interface NPC extends Agent, Cloneable {
      */
     public Navigator getNavigator();
 
+    /**
+     * @return The {@link NPCRegistry} that created this NPC.
+     */
     public NPCRegistry getOwningRegistry();
 
     /**
