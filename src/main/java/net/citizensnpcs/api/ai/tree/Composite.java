@@ -41,13 +41,6 @@ public abstract class Composite extends BehaviorGoalAdapter {
         behaviors.add(behavior);
     }
 
-    private void tryAddParallel(Behavior behavior) {
-        if (behavior.shouldExecute() && !parallelExecuting.contains(behavior)) {
-            parallelExecuting.add(behavior);
-            prepareForExecution(behavior);
-        }
-    }
-
     public List<Behavior> getBehaviors() {
         return behaviors;
     }
@@ -66,7 +59,7 @@ public abstract class Composite extends BehaviorGoalAdapter {
     public void reset() {
         if (parallelExecuting.size() > 0) {
             for (Behavior behavior : parallelExecuting) {
-                behavior.reset();
+                stopExecution(behavior);
             }
             parallelExecuting.clear();
         }
@@ -103,6 +96,13 @@ public abstract class Composite extends BehaviorGoalAdapter {
                 default:
                     break;
             }
+        }
+    }
+
+    private void tryAddParallel(Behavior behavior) {
+        if (behavior.shouldExecute() && !parallelExecuting.contains(behavior)) {
+            parallelExecuting.add(behavior);
+            prepareForExecution(behavior);
         }
     }
 }

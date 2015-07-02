@@ -2,15 +2,15 @@ package net.citizensnpcs.api.ai.goals;
 
 import java.util.Random;
 
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.event.EventHandler;
+
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
-
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.event.EventHandler;
 
 public class WanderGoal extends BehaviorGoalAdapter {
     private boolean forceFinish;

@@ -4,16 +4,16 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.tree.Behavior;
-import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
-import net.citizensnpcs.api.ai.tree.ForwardingBehaviorGoalAdapter;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.tree.Behavior;
+import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
+import net.citizensnpcs.api.ai.tree.ForwardingBehaviorGoalAdapter;
 
 public class SimpleGoalController implements GoalController {
     private final List<Goal> executingGoals = Lists.newArrayList();
@@ -45,8 +45,9 @@ public class SimpleGoalController implements GoalController {
     }
 
     private void addGoalToExecution(Goal goal) {
-        if (CitizensAPI.hasImplementation())
+        if (CitizensAPI.hasImplementation()) {
             Bukkit.getPluginManager().registerEvents(goal, CitizensAPI.getPlugin());
+        }
         executingGoals.add(goal);
         goal.run(selector);
     }
@@ -64,8 +65,8 @@ public class SimpleGoalController implements GoalController {
             @Override
             public Behavior getBehavior() {
                 return goal instanceof Behavior ? (Behavior) goal
-                        : goal instanceof ForwardingBehaviorGoalAdapter ? ((ForwardingBehaviorGoalAdapter) goal)
-                                .getWrapped() : null;
+                        : goal instanceof ForwardingBehaviorGoalAdapter
+                                ? ((ForwardingBehaviorGoalAdapter) goal).getWrapped() : null;
             }
 
             @Override
@@ -255,8 +256,9 @@ public class SimpleGoalController implements GoalController {
         public void finishAndRemove() {
             Goal toRemove = executingRootGoal;
             finish();
-            if (toRemove != null)
+            if (toRemove != null) {
                 removeGoal(toRemove);
+            }
         }
 
         @Override
