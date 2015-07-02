@@ -1,14 +1,13 @@
 package net.citizensnpcs.trait.waypoint;
 
-import net.citizensnpcs.api.CitizensAPI;
+import org.bukkit.command.CommandSender;
+
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.goals.WanderGoal;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.DataKey;
-
-import org.bukkit.command.CommandSender;
 
 public class WanderWaypointProvider implements WaypointProvider {
     private Goal currentGoal;
@@ -53,7 +52,6 @@ public class WanderWaypointProvider implements WaypointProvider {
         this.npc = npc;
         if (currentGoal == null) {
             currentGoal = WanderGoal.createWithNPCAndRange(npc, xrange, yrange);
-            CitizensAPI.registerEvents(currentGoal);
         }
         npc.getDefaultGoalController().addGoal(currentGoal, 1);
     }
