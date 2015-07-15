@@ -1,5 +1,8 @@
 package net.citizensnpcs.npc.ai;
 
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
+
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
@@ -8,19 +11,18 @@ import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.NavigationAbstract;
 
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
-
 public class MCNavigationStrategy extends AbstractPathStrategy {
+    private final EntityLiving handle;
+    private float lastSpeed;
     private final NavigationAbstract navigation;
     private final NavigatorParameters parameters;
     private final Location target;
-    private final EntityLiving handle;
 
     MCNavigationStrategy(final NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
         this.target = dest;
         this.parameters = params;
+        this.lastSpeed = parameters.speed();
         handle = ((CraftLivingEntity) npc.getEntity()).getHandle();
         handle.onGround = true;
         // not sure of a better way around this - if onGround is false, then
@@ -31,6 +33,10 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         if (NMS.isNavigationFinished(navigation)) {
             setCancelReason(CancelReason.STUCK);
         }
+    }
+
+    private double distanceSquared() {
+        return handle.getBukkitEntity().getLocation(HANDLE_LOCATION).distanceSquared(target);
     }
 
     @Override
@@ -57,17 +63,16 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
     public boolean update() {
         if (getCancelReason() != null)
             return true;
-        navigation.a(parameters.speed());
+        if (parameters.speed() != lastSpeed) {
+            navigation.a(target.getX(), target.getY(), target.getZ(), parameters.speed());
+            lastSpeed = parameters.speed();
+        }
         parameters.run();
         if (distanceSquared() < parameters.distanceMargin()) {
             stop();
             return true;
         }
         return NMS.isNavigationFinished(navigation);
-    }
-
-    private double distanceSquared() {
-        return handle.getBukkitEntity().getLocation(HANDLE_LOCATION).distanceSquared(target);
     }
 
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
