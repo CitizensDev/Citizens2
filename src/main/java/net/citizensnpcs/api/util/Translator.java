@@ -23,8 +23,9 @@ import java.util.ResourceBundle;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
+import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.Resources;
 
 public class Translator {
     private final Locale defaultLocale;
@@ -145,22 +146,15 @@ public class Translator {
             File file = new File(rootFolder, fileName);
             if (file.exists())
                 return;
-            final InputStream stream = Translator.class.getResourceAsStream('/' + fileName);
-            if (stream == null)
-                return;
-            InputSupplier<InputStream> in = new InputSupplier<InputStream>() {
-                @Override
-                public InputStream getInput() throws IOException {
-                    return stream;
-                }
-            };
             try {
                 rootFolder.mkdirs();
                 File to = File.createTempFile(fileName, null, rootFolder);
                 to.deleteOnExit();
-                Files.copy(in, to);
-                if (!file.exists())
+                Resources.asByteSource(Resources.getResource(Translator.class, '/' + fileName))
+                        .copyTo(Files.asByteSink(to, FileWriteMode.APPEND));
+                if (!file.exists()) {
                     to.renameTo(file);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -172,10 +166,6 @@ public class Translator {
 
         String getName();
     }
-
-    private static ResourceBundle defaultBundle;
-    private static Translator instance;
-    public static final String PREFIX = "messages";
 
     private static void addTranslation(TranslationProvider from, File to) {
         Properties props = new Properties();
@@ -208,8 +198,7 @@ public class Translator {
                 if (out != null) {
                     out.close();
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.getCause(); // Do nothing
             }
         }
@@ -302,8 +291,7 @@ public class Translator {
                 if (stream != null) {
                     stream.close();
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.getCause(); // Do nothing
             }
         }
@@ -314,11 +302,17 @@ public class Translator {
     }
 
     public static String translate(String key, Locale preferredLocale, Object... msg) {
-        return Colorizer.parseColors(msg.length == 0 ? instance.translate(key, preferredLocale) : instance.format(key,
-                preferredLocale, msg));
+        return Colorizer.parseColors(msg.length == 0 ? instance.translate(key, preferredLocale)
+                : instance.format(key, preferredLocale, msg));
     }
 
     public static String translate(String key, Object... msg) {
         return translate(key, instance.defaultLocale, msg);
     }
+
+    private static ResourceBundle defaultBundle;
+
+    private static Translator instance;
+
+    public static final String PREFIX = "messages";
 }

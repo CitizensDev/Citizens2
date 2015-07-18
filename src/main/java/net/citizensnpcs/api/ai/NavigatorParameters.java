@@ -3,12 +3,12 @@ package net.citizensnpcs.api.ai;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.AStarMachine;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
-
-import com.google.common.collect.Lists;
 
 public class NavigatorParameters implements Cloneable {
     private double attackRange;
@@ -28,8 +28,7 @@ public class NavigatorParameters implements Cloneable {
     private boolean useNewPathfinder;
 
     /**
-     * Adds a {@link Runnable} callback that will be called every tick while the
-     * path is running.
+     * Adds a {@link Runnable} callback that will be called every tick while the path is running.
      *
      * @param callback
      *            The callback to add
@@ -40,9 +39,8 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Adds a {@link NavigatorCallback} that will be removed
-     * <em>immediately</em> after being called.
-     * 
+     * Adds a {@link NavigatorCallback} that will be removed <em>immediately</em> after being called.
+     *
      * @param callback
      *            The callback
      */
@@ -61,9 +59,8 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * @return The {@link AttackStrategy} currently in use or the
-     *         {@link #defaultAttackStrategy()} if not configured (may return
-     *         null)
+     * @return The {@link AttackStrategy} currently in use or the {@link #defaultAttackStrategy()} if not configured
+     *         (may return null)
      */
     public AttackStrategy attackStrategy() {
         return attackStrategy == null ? defaultStrategy : attackStrategy;
@@ -71,7 +68,7 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * Sets the {@link AttackStrategy} for use when attacking entity targets.
-     * 
+     *
      * @param strategy
      *            The strategy to use
      */
@@ -88,7 +85,7 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * Sets whether to avoid water while pathfinding
-     * 
+     *
      * @param avoidWater
      *            Whether to avoid water
      */
@@ -105,10 +102,9 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Sets the base movement speed of the {@link Navigator}. Note that this is
-     * mob-specific and may not always be sane. Using {@link #speedModifier()}
-     * is preferred.
-     * 
+     * Sets the base movement speed of the {@link Navigator}. Note that this is mob-specific and may not always be sane.
+     * Using {@link #speedModifier()} is preferred.
+     *
      * @see #speedModifier()
      * @param speed
      *            The new movement speed
@@ -154,9 +150,9 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Returns the configured <em>default</em> attack strategy, which tries to
-     * perform the most Minecraft-like attack on the target.
-     * 
+     * Returns the configured <em>default</em> attack strategy, which tries to perform the most Minecraft-like attack on
+     * the target.
+     *
      * @return The default strategy
      */
     public AttackStrategy defaultAttackStrategy() {
@@ -165,7 +161,7 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * Sets the default {@link AttackStrategy}.
-     * 
+     *
      * @param defaultStrategy
      *            The new default strategy
      * @see #defaultAttackStrategy()
@@ -176,14 +172,12 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Returns the distance margin or leeway that the {@link Navigator} will be
-     * able to stop from the target destination. The margin will be measured
-     * against the block distance squared.
-     * 
-     * For example: if the distance margin were 2, then the {@link Navigator}
-     * could stop moving towards the target when it is 2 blocks squared away
-     * from it.
-     * 
+     * Returns the distance margin or leeway that the {@link Navigator} will be able to stop from the target
+     * destination. The margin will be measured against the block distance squared.
+     *
+     * For example: if the distance margin were 2, then the {@link Navigator} could stop moving towards the target when
+     * it is 2 blocks squared away from it.
+     *
      * @return The distance margin
      */
     public double distanceMargin() {
@@ -192,7 +186,7 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * Sets the distance margin.
-     * 
+     *
      * @see #distanceMargin()
      * @param newMargin
      *            The new distance margin
@@ -204,7 +198,7 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * Adds the given {@link BlockExaminer}.
-     * 
+     *
      * @param examiner
      *            The BlockExaminer to add
      */
@@ -215,7 +209,7 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * Gets a copy of all current {@link BlockExaminer}s.
-     * 
+     *
      * @return An array of all current examiners
      */
     public BlockExaminer[] examiners() {
@@ -224,7 +218,7 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * Modifieds the given speed value based on the current parameters.
-     * 
+     *
      * @param toModify
      *            The speed value to modify
      * @return The modified speed
@@ -235,7 +229,7 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * Gets the path distance margin.
-     * 
+     *
      * @see #pathDistanceMargin(double)
      */
     public double pathDistanceMargin() {
@@ -243,10 +237,9 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Sets the path distance margin. This is how close the pathfinder should to
-     * the target when pathfinding. If you need to set how far the NPC should
-     * get away from the target, use {@link #distanceMargin(double)}.
-     * 
+     * Sets the path distance margin. This is how close the pathfinder should to the target when pathfinding. If you
+     * need to set how far the NPC should get away from the target, use {@link #distanceMargin(double)}.
+     *
      * @param distance
      *            The distance margin
      */
@@ -264,10 +257,9 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Sets the pathfinding range in blocks. The pathfinding range determines
-     * how far away the {@link Navigator} will attempt to pathfind before giving
-     * up to save computation.
-     * 
+     * Sets the pathfinding range in blocks. The pathfinding range determines how far away the {@link Navigator} will
+     * attempt to pathfind before giving up to save computation.
+     *
      * @param range
      *            The new range
      */
@@ -298,18 +290,16 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * @return The modified movement speed as given by {@link #baseSpeed()}
-     *         multiplied by {@link #speedModifier()}
+     * @return The modified movement speed as given by {@link #baseSpeed()} multiplied by {@link #speedModifier()}
      */
     public float speed() {
         return modifiedSpeed(baseSpeed);
     }
 
     /**
-     * Sets the base movement speed of the {@link Navigator}. Note that this is
-     * mob-specific and may not always be sane. Using {@link #speedModifier()}
-     * is preferred.
-     * 
+     * Sets the base movement speed of the {@link Navigator}. Note that this is mob-specific and may not always be sane.
+     * Using {@link #speedModifier()} is preferred.
+     *
      * @see #speedModifier()
      * @param speed
      *            The new movement speed
@@ -330,10 +320,9 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Sets the movement speed modifier of the {@link Navigator}. This is a
-     * percentage modifier that alters the movement speed returned in
-     * {@link #speed()}.
-     * 
+     * Sets the movement speed modifier of the {@link Navigator}. This is a percentage modifier that alters the movement
+     * speed returned in {@link #speed()}.
+     *
      * @param percent
      *            The new speed modifier
      */
@@ -351,9 +340,8 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Sets the number of stationary ticks before navigation is cancelled with a
-     * {@link CancelReason} of STUCK.
-     * 
+     * Sets the number of stationary ticks before navigation is cancelled with a {@link CancelReason} of STUCK.
+     *
      * @param ticks
      *            The new number of stationary ticks
      */
@@ -363,9 +351,9 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Gets the {@link StuckAction} of these parameters. This will be run when
-     * the navigation is stuck and must either be fixed up or cancelled.
-     * 
+     * Gets the {@link StuckAction} of these parameters. This will be run when the navigation is stuck and must either
+     * be fixed up or cancelled.
+     *
      * @return The current stuck action
      */
     public StuckAction stuckAction() {
@@ -374,7 +362,7 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * Sets the {@link StuckAction} of the parameters.
-     * 
+     *
      * @param action
      *            The new stuck action
      * @see #stuckAction()
@@ -393,15 +381,12 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Sets whether or not to use an A* pathfinder defined in
-     * {@link AStarMachine} for pathfinding.
+     * Sets whether or not to use an A* pathfinder defined in {@link AStarMachine} for pathfinding.
      *
-     * If this is set to false, then the Minecraft pathfinder will be used,
-     * which may or may not be more consistent.
+     * If this is set to false, then the Minecraft pathfinder will be used, which may or may not be more consistent.
      *
-     * Note that certain API features will not be possible if this is set to
-     * false - this includes {@link #examiner(BlockExaminer)} and
-     * {@link #distanceMargin(double)}.
+     * Note that certain API features will not be possible if this is set to false - this includes
+     * {@link #examiner(BlockExaminer)} and {@link #distanceMargin(double)}.
      *
      * @param use
      *            Whether to use the A* pathfinder
