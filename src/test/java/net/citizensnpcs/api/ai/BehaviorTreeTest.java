@@ -5,26 +5,24 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import com.google.common.base.Function;
+
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.ai.tree.Selector;
 import net.citizensnpcs.api.ai.tree.Sequence;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-
 public class BehaviorTreeTest {
     private GoalController test;
 
     @Test
     public void failureSelector() {
-        final CountedBehavior goal = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.SUCCESS));
-        CountedBehavior goal2 = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.FAILURE));
+        final CountedBehavior goal = new CountedBehavior(BehaviorStatus.SUCCESS);
+        CountedBehavior goal2 = new CountedBehavior(BehaviorStatus.FAILURE);
         Selector p = Selector.selecting(goal2, goal).selectionFunction(new Function<List<Behavior>, Behavior>() {
             int idx;
 
@@ -48,10 +46,11 @@ public class BehaviorTreeTest {
 
     @Test
     public void failureSequence() {
-        CountedBehavior goal = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.FAILURE));
-        CountedBehavior goal2 = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.SUCCESS));
+        CountedBehavior goal = new CountedBehavior(BehaviorStatus.FAILURE);
+        CountedBehavior goal2 = new CountedBehavior(BehaviorStatus.SUCCESS);
         Sequence p = Sequence.createRetryingSequence(goal, goal2);
         test.addGoal(p, 1);
+        test.run();
         test.run();
         assertThat("Reset count", goal.resetCount, is(1));
         assertThat("Run count", goal.runCount, is(1));
@@ -68,7 +67,7 @@ public class BehaviorTreeTest {
 
     @Test
     public void singleSelector() {
-        CountedBehavior goal = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.SUCCESS));
+        CountedBehavior goal = new CountedBehavior(BehaviorStatus.SUCCESS);
         Selector p = Selector.selecting(goal).build();
         test.addGoal(p, 1);
         test.run();
@@ -79,7 +78,7 @@ public class BehaviorTreeTest {
 
     @Test
     public void singleSequence() {
-        CountedBehavior goal = new CountedBehavior(Suppliers.ofInstance(BehaviorStatus.SUCCESS));
+        CountedBehavior goal = new CountedBehavior(BehaviorStatus.SUCCESS);
         Sequence p = Sequence.createSequence(goal);
         test.addGoal(p, 1);
         test.run();
@@ -91,11 +90,11 @@ public class BehaviorTreeTest {
     private static class CountedBehavior extends BehaviorGoalAdapter {
         public int loggingTag = 0;
         private int resetCount;
-        private final Supplier<BehaviorStatus> ret;
+        private final BehaviorStatus ret;
         private int runCount;
         private int shouldExecuteCount;
 
-        private CountedBehavior(Supplier<BehaviorStatus> ret) {
+        private CountedBehavior(BehaviorStatus ret) {
             this.ret = ret;
         }
 
@@ -109,9 +108,9 @@ public class BehaviorTreeTest {
         @Override
         public BehaviorStatus run() {
             if (loggingTag > 0)
-                System.err.println(loggingTag + ": run " + ret.get());
+                System.err.println(loggingTag + ": run " + ret);
             runCount++;
-            return ret.get();
+            return ret;
         }
 
         @Override

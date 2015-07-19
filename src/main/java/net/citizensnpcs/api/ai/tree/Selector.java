@@ -34,8 +34,9 @@ public class Selector extends Composite {
     @Override
     public void reset() {
         super.reset();
-        if (executing != null)
+        if (executing != null) {
             stopExecution(executing);
+        }
         executing = null;
     }
 
