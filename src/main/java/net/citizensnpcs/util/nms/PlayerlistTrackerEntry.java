@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.Entity;
@@ -34,14 +35,17 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                     }
                     entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
                             PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) this.tracker));
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
-                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-                                    (EntityPlayer) tracker));
-                        }
-                    }.runTaskLater(CitizensAPI.getPlugin(), 2);
+
+                    if (Setting.DISABLE_TABLIST.asBoolean()) {
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
+                                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
+                                        (EntityPlayer) tracker));
+                            }
+                        }.runTaskLater(CitizensAPI.getPlugin(), 2);
+                    }
                 }
             }
         }

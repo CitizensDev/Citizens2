@@ -1,12 +1,16 @@
 package net.citizensnpcs;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -34,6 +38,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
 
@@ -41,9 +46,13 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
+import net.citizensnpcs.api.event.CitizensSerialiseMetaEvent;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.EntityTargetNPCEvent;
@@ -62,6 +71,7 @@ import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.Controllable;
@@ -250,6 +260,57 @@ public class EventListen implements Listener {
     }
 
     @EventHandler
+    public void onMetaDeserialise(CitizensDeserialiseMetaEvent event) {
+        if (event.getKey().keyExists("skull")) {
+            String owner = event.getKey().getString("skull.owner", "");
+            UUID uuid = event.getKey().keyExists("skull.uuid") ? UUID.fromString(event.getKey().getString("skull.uuid"))
+                    : null;
+            GameProfile profile = new GameProfile(uuid, owner);
+            for (DataKey sub : event.getKey().getRelative("skull.properties").getSubKeys()) {
+                String propertyName = sub.name();
+                for (DataKey property : sub.getIntegerSubKeys()) {
+                    profile.getProperties().put(propertyName,
+                            new Property(property.getString("name"), property.getString("value"),
+                                    property.keyExists("signature") ? property.getString("signature") : null));
+                }
+            }
+            SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
+            NMS.setProfile(meta, profile);
+            event.getItemStack().setItemMeta(meta);
+        }
+    }
+
+    @EventHandler
+    public void onMetaSerialise(CitizensSerialiseMetaEvent event) {
+        if (event.getMeta() instanceof SkullMeta) {
+            SkullMeta meta = (SkullMeta) event.getMeta();
+            GameProfile profile = NMS.getProfile(meta);
+            if (profile == null)
+                return;
+            if (profile.getName() != null) {
+                event.getKey().setString("skull.owner", profile.getName());
+            }
+            if (profile.getId() != null) {
+                event.getKey().setString("skull.uuid", profile.getId().toString());
+            }
+            if (profile.getProperties() != null) {
+                for (Entry<String, Collection<Property>> entry : profile.getProperties().asMap().entrySet()) {
+                    DataKey relative = event.getKey().getRelative("skull.properties." + entry.getKey());
+                    int i = 0;
+                    for (Property value : entry.getValue()) {
+                        relative.getRelative(i).setString("name", value.getName());
+                        if (value.getSignature() != null) {
+                            relative.getRelative(i).setString("signature", value.getSignature());
+                        }
+                        relative.getRelative(i).setString("value", value.getValue());
+                        i++;
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onNeedsRespawn(NPCNeedsRespawnEvent event) {
         ChunkCoord coord = toCoord(event.getSpawnLocation());
         if (toRespawn.containsEntry(coord, event.getNPC()))
@@ -419,18 +480,20 @@ public class EventListen implements Listener {
                 NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
                         PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
         }
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!player.isValid())
-                    return;
-                for (EntityPlayer nearbyNPC : nearbyNPCs) {
-                    if (nearbyNPC.isAlive())
-                        NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
+        if (Setting.DISABLE_TABLIST.asBoolean()) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (!player.isValid())
+                        return;
+                    for (EntityPlayer nearbyNPC : nearbyNPCs) {
+                        if (nearbyNPC.isAlive())
+                            NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
+                    }
                 }
-            }
-        }.runTaskLater(CitizensAPI.getPlugin(), 2);
+            }.runTaskLater(CitizensAPI.getPlugin(), 2);
+        }
     }
 
     private boolean spawn(NPC npc) {

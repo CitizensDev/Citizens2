@@ -67,6 +67,7 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
             navigation.a(target.getX(), target.getY(), target.getZ(), parameters.speed());
             lastSpeed = parameters.speed();
         }
+        navigation.a(parameters.speed());
         parameters.run();
         if (distanceSquared() < parameters.distanceMargin()) {
             stop();

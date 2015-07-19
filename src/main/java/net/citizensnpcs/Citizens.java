@@ -105,7 +105,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             try {
                 npc.despawn(DespawnReason.REMOVAL);
                 for (Trait trait : npc.getTraits()) {
-                    trait.onRemove();
+                    trait.onDespawn();
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
