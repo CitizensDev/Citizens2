@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
-
-import com.google.common.collect.Lists;
 
 public class Settings {
     private final Storage config;
@@ -83,6 +83,7 @@ public class Settings {
                 value = list;
             }
         },
+        DISABLE_TABLIST("npc.tablist.disable", true),
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<e>"),
         KEEP_CHUNKS_LOADED("npc.chunks.always-keep-loaded", false),
         LOCALE("general.translation.locale", ""),

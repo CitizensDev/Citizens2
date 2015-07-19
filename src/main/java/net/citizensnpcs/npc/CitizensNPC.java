@@ -252,16 +252,18 @@ public class CitizensNPC extends AbstractNPC {
                                 Arrays.asList((Packet) new PacketPlayOutPlayerInfo(
                                         PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, player.getHandle())),
                                 200.0);
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                NMS.sendPacketsNearby(player, player.getLocation(),
-                                        Arrays.asList((Packet) new PacketPlayOutPlayerInfo(
-                                                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-                                                player.getHandle())),
-                                        200.0);
-                            }
-                        }.runTaskLater(CitizensAPI.getPlugin(), 2);
+                        if (Setting.DISABLE_TABLIST.asBoolean()) {
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    NMS.sendPacketsNearby(player, player.getLocation(),
+                                            Arrays.asList((Packet) new PacketPlayOutPlayerInfo(
+                                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
+                                                    player.getHandle())),
+                                            200.0);
+                                }
+                            }.runTaskLater(CitizensAPI.getPlugin(), 2);
+                        }
                     }
                 }.runTaskLater(CitizensAPI.getPlugin(), 2);
             }

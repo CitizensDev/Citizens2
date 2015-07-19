@@ -11,6 +11,26 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.PluginLoadOrder;
+
+import com.mojang.authlib.GameProfile;
+
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
@@ -44,22 +64,6 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
 import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
 import net.minecraft.server.v1_8_R3.World;
 import net.minecraft.server.v1_8_R3.WorldServer;
-
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginLoadOrder;
 
 @SuppressWarnings("unchecked")
 public class NMS {
@@ -301,6 +305,22 @@ public class NMS {
                 : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getNavigation() : null;
     }
 
+    public static GameProfile getProfile(SkullMeta meta) {
+        if (SKULL_PROFILE_FIELD == null) {
+            try {
+                SKULL_PROFILE_FIELD = meta.getClass().getDeclaredField("profile");
+                SKULL_PROFILE_FIELD.setAccessible(true);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        try {
+            return (GameProfile) SKULL_PROFILE_FIELD.get(meta);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static String getSound(String flag) throws CommandException {
         try {
             String ret = CraftSound.getSound(Sound.valueOf(flag.toUpperCase()));
@@ -487,6 +507,8 @@ public class NMS {
     }
 
     public static void sendPlayerlistPacket(boolean showInPlayerlist, Player npc) {
+        if (!showInPlayerlist && !Setting.DISABLE_TABLIST.asBoolean())
+            return;
         PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(
                 showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER : EnumPlayerInfoAction.REMOVE_PLAYER,
                 ((CraftPlayer) npc).getHandle());
@@ -524,6 +546,21 @@ public class NMS {
         if (!(handle instanceof EntityHuman))
             handle.aI = yaw;
         handle.aL = yaw;
+    }
+
+    public static void setProfile(SkullMeta meta, GameProfile profile) {
+        if (SKULL_PROFILE_FIELD == null) {
+            try {
+                SKULL_PROFILE_FIELD = meta.getClass().getDeclaredField("profile");
+                SKULL_PROFILE_FIELD.setAccessible(true);
+            } catch (Exception e) {
+                return;
+            }
+        }
+        try {
+            SKULL_PROFILE_FIELD.set(meta, profile);
+        } catch (Exception e) {
+        }
     }
 
     public static void setShouldJump(org.bukkit.entity.Entity entity) {
@@ -663,6 +700,8 @@ public class NMS {
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "a");
     private static final Random RANDOM = Util.getFastRandom();
+    private static Field SKULL_PROFILE_FIELD;
+
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
 
     static {
