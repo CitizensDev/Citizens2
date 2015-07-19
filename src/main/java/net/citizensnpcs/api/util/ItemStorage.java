@@ -9,6 +9,7 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -21,6 +22,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.google.common.collect.Lists;
+
+import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
+import net.citizensnpcs.api.event.CitizensSerialiseMetaEvent;
 
 public class ItemStorage {
     private static Iterable<Color> deserialiseColors(DataKey key) {
@@ -59,6 +63,12 @@ public class ItemStorage {
     }
 
     private static void deserialiseMeta(DataKey root, ItemStack res) {
+        if (root.keyExists("flags")) {
+            ItemMeta meta = ensureMeta(res);
+            for (DataKey key : root.getRelative("flags").getIntegerSubKeys()) {
+                meta.addItemFlags(ItemFlag.valueOf(key.getString("")));
+            }
+        }
         if (root.keyExists("lore")) {
             ItemMeta meta = ensureMeta(res);
             List<String> lore = Lists.newArrayList();
@@ -101,7 +111,9 @@ public class ItemStorage {
         }
         if (root.keyExists("skull")) {
             SkullMeta meta = ensureMeta(res);
-            meta.setOwner(root.getString("skull.owner"));
+            if (root.keyExists("skull.owner") && !root.getString("skull.owner").isEmpty()) {
+                meta.setOwner(root.getString("skull.owner", ""));
+            }
             res.setItemMeta(meta);
         }
         if (root.keyExists("potion")) {
@@ -115,12 +127,15 @@ public class ItemStorage {
             }
             res.setItemMeta(meta);
         }
+
+        Bukkit.getPluginManager().callEvent(new CitizensDeserialiseMetaEvent(root, res));
     }
 
     @SuppressWarnings("unchecked")
     private static <T extends ItemMeta> T ensureMeta(ItemStack stack) {
-        if (!stack.hasItemMeta())
+        if (!stack.hasItemMeta()) {
             stack.setItemMeta(Bukkit.getServer().getItemFactory().getItemMeta(stack.getType()));
+        }
         return (T) stack.getItemMeta();
     }
 
@@ -133,8 +148,8 @@ public class ItemStorage {
         if (material == null || material == Material.AIR) {
             return null;
         }
-        ItemStack res = new ItemStack(material, root.getInt("amount"), (short) (root.getInt("durability",
-                root.getInt("data", 0))));
+        ItemStack res = new ItemStack(material, root.getInt("amount"),
+                (short) (root.getInt("durability", root.getInt("data", 0))));
         if (root.keyExists("mdata") && res.getData() != null) {
             res.getData().setData((byte) root.getInt("mdata"));
         }
@@ -195,6 +210,13 @@ public class ItemStorage {
     }
 
     private static void serialiseMeta(DataKey key, ItemMeta meta) {
+        key.removeKey("flags");
+        int j = 0;
+        for (ItemFlag flag : ItemFlag.values()) {
+            if (meta.hasItemFlag(flag)) {
+                key.setString("flags." + j++, flag.name());
+            }
+        }
         if (meta.hasLore()) {
             List<String> lore = meta.getLore();
             DataKey root = key.getRelative("lore");
@@ -223,8 +245,9 @@ public class ItemStorage {
         if (meta instanceof SkullMeta) {
             SkullMeta skull = (SkullMeta) meta;
             key.setString("skull.owner", skull.getOwner());
-        } else
+        } else {
             key.removeKey("skull");
+        }
 
         if (meta instanceof FireworkMeta) {
             FireworkMeta firework = (FireworkMeta) meta;
@@ -262,7 +285,10 @@ public class ItemStorage {
                 sub.setInt("duration", effect.getDuration());
                 sub.setString("type", effect.getType().getName());
             }
-        } else
+        } else {
             key.removeKey("potion");
+        }
+
+        Bukkit.getPluginManager().callEvent(new CitizensSerialiseMetaEvent(key, meta));
     }
 }

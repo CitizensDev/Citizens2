@@ -321,7 +321,7 @@ public abstract class AbstractNPC implements NPC {
                 runnables.remove(trait);
             }
             HandlerList.unregisterAll(trait);
-            trait.onRemove();
+            trait.onDespawn();
         }
     }
 

@@ -262,7 +262,11 @@ public class YamlStorage implements FileStorage {
 
         @Override
         public boolean keyExists(String key) {
-            return config.get(createRelativeKey(key)) != null;
+            Object value = config.get(createRelativeKey(key));
+            if (value == null) {
+                return false;
+            }
+            return true;
         }
 
         @Override
