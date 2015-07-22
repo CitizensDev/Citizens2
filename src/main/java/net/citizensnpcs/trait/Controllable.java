@@ -3,6 +3,18 @@ package net.citizensnpcs.trait;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.util.Vector;
+
+import com.google.common.collect.Maps;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.command.CommandConfigurable;
 import net.citizensnpcs.api.command.CommandContext;
@@ -17,18 +29,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.EntityEnderDragon;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
-
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.util.Vector;
-
-import com.google.common.collect.Maps;
 
 //TODO: reduce reliance on CitizensNPC
 public class Controllable extends Trait implements Toggleable, CommandConfigurable {
@@ -219,20 +219,13 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         if (horizontal > 0.0D) {
             double dXcos = -Math.sin(passenger.yaw * Math.PI / 180.0F);
             double dXsin = Math.cos(passenger.yaw * Math.PI / 180.0F);
-            handle.motX += dXcos * speed * 0.5;
-            handle.motZ += dXsin * speed * 0.5;
+            handle.motX += dXcos * speed * speedMod * 0.5;
+            handle.motZ += dXsin * speed * speedMod * 0.5;
         }
         handle.motX += passenger.motX * speedMod;
         handle.motZ += passenger.motZ * speedMod;
 
         double newSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
-        if (newSpeed > 0.35D) {
-            double movementFactor = 0.35D / newSpeed;
-            handle.motX *= movementFactor;
-            handle.motZ *= movementFactor;
-            newSpeed = 0.35D;
-        }
-
         if (newSpeed > oldSpeed && speed < 0.35D) {
             return (float) Math.min(0.35D, (speed + ((0.35D - speed) / 35.0D)));
         } else {
