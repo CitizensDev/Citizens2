@@ -1159,7 +1159,7 @@ public class NPCCommands {
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
         String newName = Colorizer.parseColors(args.getJoinedStrings(1));
-        int nameLength = npc.getTrait(MobType.class).getType() == EntityType.PLAYER ? 16 : 64;
+        int nameLength = npc.getTrait(MobType.class).getType() == EntityType.PLAYER ? 46 : 64;
         if (newName.length() > nameLength) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
             newName = newName.substring(0, nameLength);
