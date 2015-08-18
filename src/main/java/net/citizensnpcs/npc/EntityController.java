@@ -10,5 +10,5 @@ public interface EntityController {
 
     void remove();
 
-    void spawn(Location at, NPC npc);
+    boolean spawn(Location at, NPC npc);
 }

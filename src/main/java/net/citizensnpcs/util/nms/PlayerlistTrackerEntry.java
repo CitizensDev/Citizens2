@@ -1,17 +1,14 @@
 package net.citizensnpcs.util.nms;
 
-import java.lang.reflect.Field;
-
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.Settings;
+import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.EntityTrackerEntry;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import org.bukkit.entity.Player;
+
+import java.lang.reflect.Field;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     public PlayerlistTrackerEntry(Entity entity, int i, int j, boolean flag) {
@@ -24,27 +21,32 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
+
+        // prevent updates to NPC "viewers"
+        if (entityplayer instanceof EntityHumanNPC)
+            return;
+
         if (entityplayer != this.tracker && c(entityplayer)) {
+
             if (!this.trackedPlayers.contains(entityplayer)
                     && ((entityplayer.u().getPlayerChunkMap().a(entityplayer, this.tracker.ae, this.tracker.ag))
                             || (this.tracker.attachedToPlayer))) {
-                if ((this.tracker instanceof EntityPlayer)) {
-                    Player player = ((EntityPlayer) this.tracker).getBukkitEntity();
-                    if (!entityplayer.getBukkitEntity().canSee(player)) {
-                        return;
-                    }
-                    entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
-                            PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) this.tracker));
 
-                    if (Setting.DISABLE_TABLIST.asBoolean()) {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(
-                                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-                                        (EntityPlayer) tracker));
-                            }
-                        }.runTaskLater(CitizensAPI.getPlugin(), 2);
+                if ((this.tracker instanceof EntityHumanNPC)) {
+
+                    EntityHumanNPC humanNPC = (EntityHumanNPC)this.tracker;
+
+                    Player player = humanNPC.getBukkitEntity();
+                    if (!entityplayer.getBukkitEntity().canSee(player))
+                        return;
+
+                    humanNPC.packetTracker.sendAddPacket(entityplayer);
+
+                    if (Settings.Setting.DISABLE_TABLIST.asBoolean() ||
+                            humanNPC.getNPC().data().get("removefromplayerlist",
+                                    Settings.Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())) {
+
+                       humanNPC.packetTracker.scheduleRemovePacket(entityplayer);
                     }
                 }
             }

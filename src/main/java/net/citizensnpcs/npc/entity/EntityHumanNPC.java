@@ -58,6 +58,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
+    public final EntityHumanPacketTracker packetTracker = new EntityHumanPacketTracker(this);
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
             PlayerInteractManager playerInteractManager, NPC npc) {
@@ -296,6 +297,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private void updatePackets(boolean navigating) {
+
         if (world.getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
             // set skin flag byte to all visible (DataWatcher API is lacking so
             // catch the NPE as a sign that this is a MC 1.7 server without the
@@ -316,10 +318,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                 packets[i] = new PacketPlayOutEntityEquipment(getId(), i, getEquipment(i));
             }
 
-            boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
-                    Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-            NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
-            NMS.sendPlayerlistPacket(false, getBukkitEntity());
+            //boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
+            //        Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
+            //NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
+            //NMS.sendPlayerlistPacket(false, getBukkitEntity());
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }
