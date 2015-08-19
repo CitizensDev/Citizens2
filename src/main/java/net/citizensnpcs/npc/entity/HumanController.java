@@ -142,6 +142,7 @@ public class HumanController extends AbstractEntityController {
     @Override
     public void remove() {
         EntityHumanNPC handle = (EntityHumanNPC)((CraftPlayer)getBukkitEntity()).getHandle();
+        handle.world.removeEntity(handle);
         handle.packetTracker.sendRemovePacket();
         super.remove();
     }
