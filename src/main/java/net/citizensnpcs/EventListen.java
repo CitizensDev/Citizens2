@@ -86,6 +86,8 @@ public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
     private final Map<String, NPCRegistry> registries;
     private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create();
+    private final Map<UUID, PlayerYaw> unturnedPlayers =
+            new HashMap<UUID, PlayerYaw>(Bukkit.getMaxPlayers() / 2);
 
     EventListen(Map<String, NPCRegistry> registries) {
         this.registries = registries;
@@ -373,6 +375,7 @@ public class EventListen implements Listener {
                 event.getPlayer().leaveVehicle();
             }
         }
+        unturnedPlayers.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -427,7 +430,7 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent event) {
 
-        PlayerYaw playerYaw = UNTURNED_PLAYERS.get(event.getPlayer().getUniqueId());
+        PlayerYaw playerYaw = unturnedPlayers.get(event.getPlayer().getUniqueId());
         if (playerYaw == null)
             return;
 
@@ -438,7 +441,7 @@ public class EventListen implements Listener {
         playerYaw.hasMoved = true;
 
         if (hasTurned)
-            UNTURNED_PLAYERS.remove(event.getPlayer().getUniqueId());
+            unturnedPlayers.remove(event.getPlayer().getUniqueId());
 
         recalculatePlayer(event.getPlayer(), 10, false);
     }
@@ -446,7 +449,7 @@ public class EventListen implements Listener {
     public void recalculatePlayer(final Player player, long delay, boolean isInitial) {
 
         if (isInitial) {
-            UNTURNED_PLAYERS.put(player.getUniqueId(), new PlayerYaw(player));
+            unturnedPlayers.put(player.getUniqueId(), new PlayerYaw(player));
         }
 
         new BukkitRunnable() {
@@ -579,6 +582,4 @@ public class EventListen implements Listener {
     }
 
     private static final Location YAW_LOCATION = new Location(null, 0, 0, 0);
-    private static final Map<UUID, PlayerYaw> UNTURNED_PLAYERS =
-            new HashMap<UUID, PlayerYaw>(Bukkit.getMaxPlayers() / 2);
 }
