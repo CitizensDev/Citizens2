@@ -2,11 +2,10 @@ package net.citizensnpcs;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
@@ -340,8 +339,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
-        recalculatePlayer(event.getPlayer());
-        UNMOVED_PLAYERS.add(event.getPlayer().getUniqueId());
+        recalculatePlayer(event.getPlayer(), true);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -363,8 +361,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        recalculatePlayer(event.getPlayer());
-        UNMOVED_PLAYERS.add(event.getPlayer().getUniqueId());
+        recalculatePlayer(event.getPlayer(), true);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -380,14 +377,12 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        recalculatePlayer(event.getPlayer());
-        UNMOVED_PLAYERS.add(event.getPlayer().getUniqueId());
+        recalculatePlayer(event.getPlayer(), true);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        recalculatePlayer(event.getPlayer());
-        UNMOVED_PLAYERS.add(event.getPlayer().getUniqueId());
+        recalculatePlayer(event.getPlayer(), true);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -432,22 +427,27 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent event) {
 
-        if (!UNMOVED_PLAYERS.contains(event.getPlayer().getUniqueId()))
+        PlayerYaw playerYaw = UNTURNED_PLAYERS.get(event.getPlayer().getUniqueId());
+        if (playerYaw == null || !playerYaw.hasTurned(event.getPlayer()))
             return;
 
-        UNMOVED_PLAYERS.remove(event.getPlayer().getUniqueId());
+        UNTURNED_PLAYERS.remove(event.getPlayer().getUniqueId());
 
         new BukkitRunnable() {
             @Override
             public void run() {
 
-                recalculatePlayer(event.getPlayer());
+                recalculatePlayer(event.getPlayer(), false);
 
             }
         }.runTaskLater(CitizensAPI.getPlugin(), 10);
     }
 
-    public void recalculatePlayer(final Player player) {
+    public void recalculatePlayer(final Player player, boolean isInitial) {
+
+        if (isInitial) {
+            UNTURNED_PLAYERS.put(player.getUniqueId(), new PlayerYaw(player));
+        }
 
         new BukkitRunnable() {
 
@@ -564,6 +564,20 @@ public class EventListen implements Listener {
         }
     }
 
-    private static final Set<UUID> UNMOVED_PLAYERS =
-            new HashSet<UUID>(Bukkit.getMaxPlayers() / 2);
+    private class PlayerYaw {
+        float initialYaw;
+
+        PlayerYaw(Player player) {
+            this.initialYaw = player.getLocation(YAW_LOCATION).getYaw();
+        }
+
+        boolean hasTurned(Player player) {
+            float current = player.getLocation(YAW_LOCATION).getYaw();
+            return Math.abs(current - this.initialYaw) >= 90;
+        }
+    }
+
+    private static final Location YAW_LOCATION = new Location(null, 0, 0, 0);
+    private static final Map<UUID, PlayerYaw> UNTURNED_PLAYERS =
+            new HashMap<UUID, PlayerYaw>(Bukkit.getMaxPlayers() / 2);
 }
