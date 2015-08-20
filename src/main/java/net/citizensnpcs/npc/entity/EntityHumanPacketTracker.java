@@ -1,9 +1,12 @@
 package net.citizensnpcs.npc.entity;
 
+import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.npc.skin.NPCSkin;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -11,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,22 +41,31 @@ public class EntityHumanPacketTracker {
     }
 
     // send PacketPlayOutPlayerInfo (PACKET_ADD) packet to a player
-    public void sendAddPacket(EntityPlayer entityPlayer) {
+    public void addViewer(final EntityPlayer entityPlayer) {
 
         CraftPlayer player = entityPlayer.getBukkitEntity();
 
-        Entry entry = getEntry(player.getUniqueId());
+        Entry entry = entries.get(player.getUniqueId());
+        if (entry != null)
+            return;
 
-        Bukkit.getScheduler().cancelTask(entry.scheduledRemoval);
+        entry = new Entry(player.getUniqueId());
+        entries.put(player.getUniqueId(), entry);
 
         NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entity));
 
-        entry.isAdded = true;
+        final Entry finalEntry = entry;
+        entry.skinTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                sendSkin(entityPlayer, finalEntry);
+            }
+        }, 1);
     }
 
     // send PacketPlayOutPlayerInfo (PLAYER_ADD) to all players within a radius
-    public void sendAddPacketNearby(double radius) {
+    public void addNearbyViewers(double radius) {
 
         radius *= radius;
 
@@ -68,33 +81,8 @@ public class EntityHumanPacketTracker {
             if (location.distanceSquared(player.getLocation(CACHE_LOCATION)) > radius)
                 continue;
 
-            Entry entry = getEntry(player.getUniqueId());
-
-            Bukkit.getScheduler().cancelTask(entry.scheduledRemoval);
-
-            NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entity));
-
-            entry.isAdded = true;
+            addViewer(((CraftPlayer) player).getHandle());
         }
-    }
-
-    // Send PacketPlayOutPlayerInfo (PLAYER_REMOVE) to a player.
-    // Does not send packet unless the player has already received PLAYER_ADD
-    public void sendRemovePacket(EntityPlayer entityPlayer) {
-
-        CraftPlayer player = entityPlayer.getBukkitEntity();
-
-        Entry entry = getEntry(player.getUniqueId());
-        if (!entry.isAdded)
-            return;
-
-        Bukkit.getScheduler().cancelTask(entry.scheduledRemoval);
-
-        NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
-
-        entry.isAdded = false;
     }
 
     // Send PacketPlayOutPlayerInfo (PLAYER_REMOVE) to all players.
@@ -104,50 +92,70 @@ public class EntityHumanPacketTracker {
 
         for (Player player : players) {
 
-            Entry entry = getEntry(player.getUniqueId());
+            Entry entry = entries.get(player.getUniqueId());
+            if (entry != null)
+                entry.cancelTasks();
 
-            Bukkit.getScheduler().cancelTask(entry.scheduledRemoval);
-
-            NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
-
-            entry.isAdded = false;
+            sendRemovePacket(((CraftPlayer) player).getHandle(), true);
         }
     }
 
+    // send skin packets
+    private void sendSkin(final EntityPlayer entityPlayer, final Entry entry) {
+
+        WorldServer nmsWorld = (WorldServer) entity.world;
+        new NPCSkin(entity.getNPC()).setSkin(nmsWorld, entity.getProfile(),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        scheduleRemovePacket(entityPlayer, entry);
+                    }
+                });
+    }
+
+    // Send PacketPlayOutPlayerInfo (PLAYER_REMOVE) to a player.
+    private void sendRemovePacket(EntityPlayer entityPlayer, boolean forceRemove) {
+
+        CraftPlayer player = entityPlayer.getBukkitEntity();
+
+        if (forceRemove || Settings.Setting.DISABLE_TABLIST.asBoolean() ||
+                entity.getNPC().data().get("removefromplayerlist",
+                        Settings.Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())) {
+
+            NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
+                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
+        }
+
+        entries.remove(player.getUniqueId());
+    }
+
     // Schedule a PacketPlayOutPlayerInfo (PLAYER_REMOVE) to be sent to a player.
-    public void scheduleRemovePacket(final EntityPlayer entityPlayer) {
-
-        Player player = entityPlayer.getBukkitEntity();
-        Entry entry = getEntry(player.getUniqueId());
-
-        Bukkit.getScheduler().cancelTask(entry.scheduledRemoval);
+    private void scheduleRemovePacket(final EntityPlayer entityPlayer, final Entry entry) {
 
         entry.scheduledRemoval = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
                 new Runnable() {
                     @Override
                     public void run() {
-                        sendRemovePacket(entityPlayer);
+                        sendRemovePacket(entityPlayer, false);
                     }
-                }, 10);
-    }
-
-    private Entry getEntry(UUID playerId) {
-        Entry entry = entries.get(playerId);
-        if (entry == null) {
-            entry = new Entry(playerId);
-            entries.put(playerId, entry);
-        }
-        return entry;
+                }, 1);
     }
 
     private class Entry {
         UUID playerId;
-        boolean isAdded; // indicates the Player Add packet has been sent and remove packet not sent.
+        BukkitTask skinTask;
         int scheduledRemoval;
 
         Entry(UUID playerId) {
             this.playerId = playerId;
+        }
+
+        void cancelTasks() {
+
+            if (skinTask != null)
+                skinTask.cancel();
+
+            Bukkit.getScheduler().cancelTask(scheduledRemoval);
         }
     }
 
@@ -158,14 +166,16 @@ public class EntityHumanPacketTracker {
 
             // remove players that log out from tracker instances
             for (EntityHumanPacketTracker tracker : TRACKERS.keySet()) {
-                tracker.entries.remove(event.getPlayer().getUniqueId());
+                Entry entry = tracker.entries.remove(event.getPlayer().getUniqueId());
+                if (entry != null)
+                    entry.cancelTasks();
             }
         }
     }
 
-    private static Location CACHE_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final Map<EntityHumanPacketTracker, Void> TRACKERS =
-            new WeakHashMap<EntityHumanPacketTracker, Void>(Bukkit.getMaxPlayers());
+            new WeakHashMap<EntityHumanPacketTracker, Void>(Bukkit.getMaxPlayers() / 2);
 
     private static PlayerListener LISTENER;
 }

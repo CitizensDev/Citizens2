@@ -5,6 +5,7 @@ import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.util.Messaging;
 import org.bukkit.Bukkit;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -14,25 +15,37 @@ class SkinThread implements Runnable {
     private volatile int retryTimes = 0;
     private final BlockingDeque<SkinEntry> skinEntries = new LinkedBlockingDeque<SkinEntry>();
 
-    public void retrieveSkin(String skinName, NPCSkin fetcher, MinecraftSessionService repo) {
+    public void retrieveSkin(String skinName, NPCSkin fetcher, MinecraftSessionService repo,
+                             final @Nullable SkinRetrieved onRetrieve) {
 
         if (!Bukkit.isPrimaryThread())
             throw new IllegalStateException("SkinThread.retrieveSkin must be invoked from the main thread.");
 
         SkinEntry entry = getSkinEntry(skinName, repo);
-        if (!entry.isValidSkin)
+        if (!entry.isValidSkin) {
+            if (onRetrieve != null)
+                onRetrieve.onRetrieve(Skin.FetchResult.INVALID_SKIN);
             return;
+        }
 
         if (entry.skin.hasSkinData()) {
             try {
-                entry.skin.fetchAndRespawn(fetcher.getNPC(), SkinThread.this, null);
+                entry.skin.fetchAndRespawn(fetcher.getNPC(), SkinThread.this,
+                        onRetrieve == null
+                                ? null
+                        : new Skin.SkinFetchCallback() {
+                            @Override
+                            public void onFetch(Skin.FetchResult result) {
+                                onRetrieve.onRetrieve(result);
+                            }
+                        });
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        entry.fetchers.offer(fetcher);
+        entry.fetchers.offer(new FetcherEntry(fetcher, onRetrieve));
     }
 
     public void delay() {
@@ -94,10 +107,45 @@ class SkinThread implements Runnable {
         return entry;
     }
 
+    public interface SkinRetrieved {
+        void onRetrieve(Skin.FetchResult result);
+    }
+
+    private class FetcherEntry {
+        final NPCSkin fetcher;
+        final SkinRetrieved onRetrieve;
+
+        FetcherEntry(NPCSkin fetcher, SkinRetrieved onRetrieve) {
+            this.fetcher = fetcher;
+            this.onRetrieve = onRetrieve;
+        }
+
+        void retrieved(Skin.FetchResult result) {
+
+            if (onRetrieve == null)
+                return;
+
+            onRetrieve.onRetrieve(result);
+        }
+
+        @Nullable
+        Skin.SkinFetchCallback fetchCallback() {
+            if (onRetrieve == null)
+                return null;
+
+            return new Skin.SkinFetchCallback() {
+                @Override
+                public void onFetch(Skin.FetchResult result) {
+                    onRetrieve.onRetrieve(result);
+                }
+            };
+        }
+    }
+
     private class SkinEntry {
         final String skinName;
         final Skin skin;
-        BlockingDeque<NPCSkin> fetchers = new LinkedBlockingDeque<NPCSkin>();
+        BlockingDeque<FetcherEntry> fetchers = new LinkedBlockingDeque<FetcherEntry>();
         boolean isValidSkin = true;
 
         SkinEntry(Skin skin) {
@@ -110,11 +158,13 @@ class SkinThread implements Runnable {
             if (fetchers.isEmpty() || !isValidSkin)
                 return;
 
-            final NPCSkin firstSkin = fetchers.poll();
+            final FetcherEntry firstSkin = fetchers.poll();
 
-            skin.fetchAndRespawn(firstSkin.getNPC(), SkinThread.this, new Skin.SkinFetchCallback() {
+            skin.fetchAndRespawn(firstSkin.fetcher.getNPC(), SkinThread.this, new Skin.SkinFetchCallback() {
                 @Override
                 public void onFetch(Skin.FetchResult result) {
+
+                    firstSkin.retrieved(result);
 
                     if (result == Skin.FetchResult.INVALID_SKIN) {
                         isValidSkin = false;
@@ -127,9 +177,9 @@ class SkinThread implements Runnable {
                     }
 
                     while (!fetchers.isEmpty()) {
-                        NPCSkin humanSkin = fetchers.poll();
+                        FetcherEntry entry = fetchers.poll();
 
-                        skin.fetchAndRespawn(humanSkin.getNPC(), SkinThread.this, null);
+                        skin.fetchAndRespawn(entry.fetcher.getNPC(), SkinThread.this, entry.fetchCallback());
 
                         try {
                             Thread.sleep(50 * 10);

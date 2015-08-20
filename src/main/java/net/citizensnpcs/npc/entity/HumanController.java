@@ -37,7 +37,7 @@ public class HumanController extends AbstractEntityController {
 
         EntityHumanNPC human = (EntityHumanNPC)entity;
 
-        human.packetTracker.sendAddPacketNearby(200.0);
+        human.packetTracker.addNearbyViewers(200.0);
 
         return true;
     }
@@ -90,8 +90,7 @@ public class HumanController extends AbstractEntityController {
         }
 
         final GameProfile profile = new GameProfile(uuid, coloredName);
-
-        new NPCSkin(npc).setSkin(getSkinName(npc), nmsWorld, profile);
+        new NPCSkin(npc).setSkinFromCache(profile);
 
         final EntityHumanNPC handle = new EntityHumanNPC(nmsWorld.getServer().getServer(), nmsWorld, profile,
                 new PlayerInteractManager(nmsWorld), npc);
@@ -108,7 +107,7 @@ public class HumanController extends AbstractEntityController {
 
                 // set skin again in case the entity was in a currently loading chunk
                 // when first set.
-                new NPCSkin(npc).setSkin(getSkinName(npc), nmsWorld, profile);
+                //handle.packetTracker.setSkin(getSkinName(npc), nmsWorld, profile);
 
                 if (prefixCapture != null) {
                     Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
@@ -145,14 +144,6 @@ public class HumanController extends AbstractEntityController {
         handle.world.removeEntity(handle);
         handle.packetTracker.sendRemovePacket();
         super.remove();
-    }
-
-    private static String getSkinName(NPC npc) {
-        String skinName = npc.data().get(NPC.PLAYER_SKIN_UUID_METADATA);
-        if (skinName == null) {
-            skinName = ChatColor.stripColor(npc.getName());
-        }
-        return skinName;
     }
 
     private static Pattern NON_ALPHABET_MATCHER = Pattern.compile(".*[^A-Za-z0-9_].*");

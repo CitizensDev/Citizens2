@@ -7,6 +7,9 @@ import net.citizensnpcs.api.npc.MetadataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
+import javax.annotation.Nullable;
 
 // used to set NPC skin
 public class NPCSkin {
@@ -27,13 +30,16 @@ public class NPCSkin {
         return npc;
     }
 
-    public void setSkin(String skinName, final WorldServer nmsWorld, GameProfile profile) {
+    public boolean setSkinFromCache(GameProfile profile) {
+
+        String skinName = getSkinName(npc);
 
         // check if skin is globally cached
         Skin skin = Skin.getFromCache(skinName);
         if (skin != null && skin.hasSkinData()) {
+
             skin.fillProfile(npc, profile);
-            return;
+            return true;
         }
         else {
 
@@ -43,13 +49,34 @@ public class NPCSkin {
                     && npc.data().has(PLAYER_SKIN_TEXTURE_PROPERTIES)) {
 
                 if (!npc.data().get(PLAYER_SKIN_TEXTURE_PROPERTIES).equals("cache")) {
+
                     setSkinFromMeta(profile, npc.data());
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
+    }
 
-        SKIN_THREAD.retrieveSkin(skinName, this, nmsWorld.getMinecraftServer().aD());
+    public void setSkin(final WorldServer nmsWorld, GameProfile profile,
+                        @Nullable final Runnable onFinish) {
+
+        if (setSkinFromCache(profile)) {
+            if (onFinish != null)
+                onFinish.run();
+            return;
+        }
+
+        SKIN_THREAD.retrieveSkin(getSkinName(npc), this, nmsWorld.getMinecraftServer().aD(),
+                (onFinish == null)
+                        ? null
+                        : new SkinThread.SkinRetrieved() {
+
+                    @Override
+                    public void onRetrieve(Skin.FetchResult result) {
+                        onFinish.run();
+                    }
+                });
     }
 
     private static void setSkinFromMeta(GameProfile profile, MetadataStore meta) {
@@ -59,6 +86,14 @@ public class NPCSkin {
                 meta.<String> get(PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN));
 
         profile.getProperties().put("textures", property);
+    }
+
+    private static String getSkinName(NPC npc) {
+        String skinName = npc.data().get(NPC.PLAYER_SKIN_UUID_METADATA);
+        if (skinName == null) {
+            skinName = ChatColor.stripColor(npc.getName());
+        }
+        return skinName;
     }
 
     static final String PLAYER_SKIN_TEXTURE_PROPERTIES = "player-skin-textures";

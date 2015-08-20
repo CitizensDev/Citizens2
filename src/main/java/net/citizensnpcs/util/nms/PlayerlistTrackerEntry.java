@@ -2,6 +2,7 @@ package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.Settings;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
+import net.citizensnpcs.npc.entity.EntityHumanPacketTracker;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
@@ -40,14 +41,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                     if (!entityplayer.getBukkitEntity().canSee(player))
                         return;
 
-                    humanNPC.packetTracker.sendAddPacket(entityplayer);
-
-                    if (Settings.Setting.DISABLE_TABLIST.asBoolean() ||
-                            humanNPC.getNPC().data().get("removefromplayerlist",
-                                    Settings.Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())) {
-
-                       humanNPC.packetTracker.scheduleRemovePacket(entityplayer);
-                    }
+                    humanNPC.packetTracker.addViewer(entityplayer);
                 }
             }
         }

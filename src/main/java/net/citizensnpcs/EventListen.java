@@ -2,9 +2,11 @@ package net.citizensnpcs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
@@ -31,6 +33,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -79,8 +82,6 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
@@ -340,6 +341,7 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         recalculatePlayer(event.getPlayer());
+        UNMOVED_PLAYERS.add(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -362,6 +364,7 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         recalculatePlayer(event.getPlayer());
+        UNMOVED_PLAYERS.add(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -378,11 +381,13 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         recalculatePlayer(event.getPlayer());
+        UNMOVED_PLAYERS.add(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         recalculatePlayer(event.getPlayer());
+        UNMOVED_PLAYERS.add(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -424,24 +429,56 @@ public class EventListen implements Listener {
         }
     }
 
-    public void recalculatePlayer(final Player player) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerMove(final PlayerMoveEvent event) {
+
+        if (!UNMOVED_PLAYERS.contains(event.getPlayer().getUniqueId()))
+            return;
+
+        UNMOVED_PLAYERS.remove(event.getPlayer().getUniqueId());
+
         new BukkitRunnable() {
             @Override
             public void run() {
-                //final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
-                for (NPC npc : getAllNPCs()) {
-                    Entity npcEntity = npc.getEntity();
-                    if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
-                            && player.getWorld().equals(npcEntity.getWorld())
-                            && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
 
-                        CraftPlayer craftPlayer = ((CraftPlayer) npcEntity);
-                        EntityHumanNPC humanNPC = (EntityHumanNPC)craftPlayer.getHandle();
-                        humanNPC.packetTracker.sendAddPacket(((CraftPlayer)player).getHandle());
-                    }
+                recalculatePlayer(event.getPlayer());
+
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), 10);
+    }
+
+    public void recalculatePlayer(final Player player) {
+
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+
+                List<EntityHumanNPC> nearbyNPCs = getNearbyPlayerNPCs(player);
+                for (EntityHumanNPC npc : nearbyNPCs) {
+                     npc.packetTracker.addViewer(((CraftPlayer) player).getHandle());
                 }
             }
         }.runTaskLater(CitizensAPI.getPlugin(), 10);
+    }
+
+    private List<EntityHumanNPC> getNearbyPlayerNPCs(Player player) {
+
+        List<EntityHumanNPC> results = new ArrayList<EntityHumanNPC>();
+
+        for (NPC npc : getAllNPCs()) {
+
+            Entity npcEntity = npc.getEntity();
+            if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
+                    && player.getWorld().equals(npcEntity.getWorld())
+                    && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
+
+                CraftPlayer craftPlayer = ((CraftPlayer) npcEntity);
+                EntityHumanNPC humanNPC = (EntityHumanNPC)craftPlayer.getHandle();
+                results.add(humanNPC);
+            }
+        }
+        return results;
     }
 
     private void respawnAllFromCoord(ChunkCoord coord) {
@@ -526,4 +563,7 @@ public class EventListen implements Listener {
             return prime * (prime * (prime + ((worldName == null) ? 0 : worldName.hashCode())) + x) + z;
         }
     }
+
+    private static final Set<UUID> UNMOVED_PLAYERS =
+            new HashSet<UUID>(Bukkit.getMaxPlayers() / 2);
 }
