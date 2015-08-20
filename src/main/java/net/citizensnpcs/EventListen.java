@@ -2,11 +2,13 @@ package net.citizensnpcs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -30,6 +32,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -78,13 +81,13 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
     private final Map<String, NPCRegistry> registries;
     private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create();
+    private final Map<UUID, PlayerYaw> unturnedPlayers =
+            new HashMap<UUID, PlayerYaw>(Bukkit.getMaxPlayers() / 2);
 
     EventListen(Map<String, NPCRegistry> registries) {
         this.registries = registries;
@@ -338,7 +341,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
-        recalculatePlayer(event.getPlayer());
+        recalculatePlayer(event.getPlayer(), 20, true);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -360,7 +363,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        recalculatePlayer(event.getPlayer());
+        recalculatePlayer(event.getPlayer(), 20, true);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -372,16 +375,17 @@ public class EventListen implements Listener {
                 event.getPlayer().leaveVehicle();
             }
         }
+        unturnedPlayers.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        recalculatePlayer(event.getPlayer());
+        recalculatePlayer(event.getPlayer(), 15, true);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        recalculatePlayer(event.getPlayer());
+        recalculatePlayer(event.getPlayer(), 15, true);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -423,34 +427,61 @@ public class EventListen implements Listener {
         }
     }
 
-    public void recalculatePlayer(final Player player) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerMove(final PlayerMoveEvent event) {
+
+        PlayerYaw playerYaw = unturnedPlayers.get(event.getPlayer().getUniqueId());
+        if (playerYaw == null)
+            return;
+
+        boolean hasTurned = playerYaw.hasTurned(event.getPlayer());
+        if (playerYaw.hasMoved && !hasTurned)
+            return;
+
+        playerYaw.hasMoved = true;
+
+        if (hasTurned)
+            unturnedPlayers.remove(event.getPlayer().getUniqueId());
+
+        recalculatePlayer(event.getPlayer(), 10, false);
+    }
+
+    public void recalculatePlayer(final Player player, long delay, boolean isInitial) {
+
+        if (isInitial) {
+            unturnedPlayers.put(player.getUniqueId(), new PlayerYaw(player));
+        }
+
         new BukkitRunnable() {
+
             @Override
             public void run() {
-                final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
-                for (NPC npc : getAllNPCs()) {
-                    Entity npcEntity = npc.getEntity();
-                    if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
-                            && player.getWorld().equals(npcEntity.getWorld())
-                            && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
-                        nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
-                    }
-                }
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        sendToPlayer(player, nearbyNPCs);
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 30);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        sendToPlayer(player, nearbyNPCs);
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 70);
-            }
-        }.runTaskLater(CitizensAPI.getPlugin(), 10);
 
+                List<EntityHumanNPC> nearbyNPCs = getNearbyPlayerNPCs(player);
+                for (EntityHumanNPC npc : nearbyNPCs) {
+                     npc.packetTracker.addViewer(((CraftPlayer) player).getHandle());
+                }
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), delay);
+    }
+
+    private List<EntityHumanNPC> getNearbyPlayerNPCs(Player player) {
+
+        List<EntityHumanNPC> results = new ArrayList<EntityHumanNPC>();
+
+        for (NPC npc : getAllNPCs()) {
+
+            Entity npcEntity = npc.getEntity();
+            if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
+                    && player.getWorld().equals(npcEntity.getWorld())
+                    && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
+
+                CraftPlayer craftPlayer = ((CraftPlayer) npcEntity);
+                EntityHumanNPC humanNPC = (EntityHumanNPC)craftPlayer.getHandle();
+                results.add(humanNPC);
+            }
+        }
+        return results;
     }
 
     private void respawnAllFromCoord(ChunkCoord coord) {
@@ -469,30 +500,6 @@ public class EventListen implements Listener {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
             }
-        }
-    }
-
-    void sendToPlayer(final Player player, final List<EntityPlayer> nearbyNPCs) {
-        if (!player.isValid())
-            return;
-        for (EntityPlayer nearbyNPC : nearbyNPCs) {
-            if (nearbyNPC.isAlive())
-                NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
-        }
-        if (Setting.DISABLE_TABLIST.asBoolean()) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (!player.isValid())
-                        return;
-                    for (EntityPlayer nearbyNPC : nearbyNPCs) {
-                        if (nearbyNPC.isAlive())
-                            NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
-                    }
-                }
-            }.runTaskLater(CitizensAPI.getPlugin(), 2);
         }
     }
 
@@ -559,4 +566,20 @@ public class EventListen implements Listener {
             return prime * (prime * (prime + ((worldName == null) ? 0 : worldName.hashCode())) + x) + z;
         }
     }
+
+    private class PlayerYaw {
+        float initialYaw;
+        boolean hasMoved;
+
+        PlayerYaw(Player player) {
+            this.initialYaw = player.getLocation(YAW_LOCATION).getYaw();
+        }
+
+        boolean hasTurned(Player player) {
+            float current = player.getLocation(YAW_LOCATION).getYaw();
+            return Math.abs(current - this.initialYaw) >= 90;
+        }
+    }
+
+    private static final Location YAW_LOCATION = new Location(null, 0, 0, 0);
 }
