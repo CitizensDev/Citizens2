@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -427,30 +428,20 @@ public class EventListen implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
+                //final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
                 for (NPC npc : getAllNPCs()) {
                     Entity npcEntity = npc.getEntity();
                     if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
                             && player.getWorld().equals(npcEntity.getWorld())
                             && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
-                        nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
+
+                        CraftPlayer craftPlayer = ((CraftPlayer) npcEntity);
+                        EntityHumanNPC humanNPC = (EntityHumanNPC)craftPlayer.getHandle();
+                        humanNPC.packetTracker.sendAddPacket(((CraftPlayer)player).getHandle());
                     }
                 }
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        sendToPlayer(player, nearbyNPCs);
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 30);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        sendToPlayer(player, nearbyNPCs);
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 70);
             }
         }.runTaskLater(CitizensAPI.getPlugin(), 10);
-
     }
 
     private void respawnAllFromCoord(ChunkCoord coord) {
@@ -469,30 +460,6 @@ public class EventListen implements Listener {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
             }
-        }
-    }
-
-    void sendToPlayer(final Player player, final List<EntityPlayer> nearbyNPCs) {
-        if (!player.isValid())
-            return;
-        for (EntityPlayer nearbyNPC : nearbyNPCs) {
-            if (nearbyNPC.isAlive())
-                NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
-        }
-        if (Setting.DISABLE_TABLIST.asBoolean()) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (!player.isValid())
-                        return;
-                    for (EntityPlayer nearbyNPC : nearbyNPCs) {
-                        if (nearbyNPC.isAlive())
-                            NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
-                    }
-                }
-            }.runTaskLater(CitizensAPI.getPlugin(), 2);
         }
     }
 
