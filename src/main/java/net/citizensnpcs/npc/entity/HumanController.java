@@ -105,10 +105,6 @@ public class HumanController extends AbstractEntityController {
                 if (getBukkitEntity() == null || !getBukkitEntity().isValid())
                     return;
 
-                // set skin again in case the entity was in a currently loading chunk
-                // when first set.
-                //handle.packetTracker.setSkin(getSkinName(npc), nmsWorld, profile);
-
                 if (prefixCapture != null) {
                     Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
                     String teamName = UUID.randomUUID().toString().substring(0, 16);

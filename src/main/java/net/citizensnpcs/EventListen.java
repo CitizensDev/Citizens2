@@ -339,7 +339,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
-        recalculatePlayer(event.getPlayer(), true);
+        recalculatePlayer(event.getPlayer(), 20, true);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -361,7 +361,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        recalculatePlayer(event.getPlayer(), true);
+        recalculatePlayer(event.getPlayer(), 20, true);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -377,12 +377,12 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        recalculatePlayer(event.getPlayer(), true);
+        recalculatePlayer(event.getPlayer(), 15, true);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        recalculatePlayer(event.getPlayer(), true);
+        recalculatePlayer(event.getPlayer(), 15, true);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -428,22 +428,22 @@ public class EventListen implements Listener {
     public void onPlayerMove(final PlayerMoveEvent event) {
 
         PlayerYaw playerYaw = UNTURNED_PLAYERS.get(event.getPlayer().getUniqueId());
-        if (playerYaw == null || !playerYaw.hasTurned(event.getPlayer()))
+        if (playerYaw == null)
             return;
 
-        UNTURNED_PLAYERS.remove(event.getPlayer().getUniqueId());
+        boolean hasTurned = playerYaw.hasTurned(event.getPlayer());
+        if (playerYaw.hasMoved && !hasTurned)
+            return;
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
+        playerYaw.hasMoved = true;
 
-                recalculatePlayer(event.getPlayer(), false);
+        if (hasTurned)
+            UNTURNED_PLAYERS.remove(event.getPlayer().getUniqueId());
 
-            }
-        }.runTaskLater(CitizensAPI.getPlugin(), 10);
+        recalculatePlayer(event.getPlayer(), 10, false);
     }
 
-    public void recalculatePlayer(final Player player, boolean isInitial) {
+    public void recalculatePlayer(final Player player, long delay, boolean isInitial) {
 
         if (isInitial) {
             UNTURNED_PLAYERS.put(player.getUniqueId(), new PlayerYaw(player));
@@ -459,7 +459,7 @@ public class EventListen implements Listener {
                      npc.packetTracker.addViewer(((CraftPlayer) player).getHandle());
                 }
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), 10);
+        }.runTaskLater(CitizensAPI.getPlugin(), delay);
     }
 
     private List<EntityHumanNPC> getNearbyPlayerNPCs(Player player) {
@@ -566,6 +566,7 @@ public class EventListen implements Listener {
 
     private class PlayerYaw {
         float initialYaw;
+        boolean hasMoved;
 
         PlayerYaw(Player player) {
             this.initialYaw = player.getLocation(YAW_LOCATION).getYaw();
