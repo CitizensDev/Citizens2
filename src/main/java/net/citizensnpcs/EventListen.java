@@ -2,45 +2,11 @@ package net.citizensnpcs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityCombustByBlockEvent;
-import org.bukkit.event.entity.EntityCombustByEntityEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
@@ -74,17 +40,53 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityCombustByBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Team;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
     private final Map<String, NPCRegistry> registries;
     private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create();
+    private final Map<UUID, SkinUpdateTracker> skinUpdateTrackers =
+            new HashMap<UUID, SkinUpdateTracker>(Bukkit.getMaxPlayers() / 2);
 
     EventListen(Map<String, NPCRegistry> registries) {
         this.registries = registries;
@@ -338,7 +340,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
-        recalculatePlayer(event.getPlayer());
+        recalculatePlayer(event.getPlayer(), 20, true);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -360,7 +362,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        recalculatePlayer(event.getPlayer());
+        recalculatePlayer(event.getPlayer(), 20, true);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -372,16 +374,17 @@ public class EventListen implements Listener {
                 event.getPlayer().leaveVehicle();
             }
         }
+        skinUpdateTrackers.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        recalculatePlayer(event.getPlayer());
+        recalculatePlayer(event.getPlayer(), 15, true);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        recalculatePlayer(event.getPlayer());
+        recalculatePlayer(event.getPlayer(), 15, true);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -423,34 +426,68 @@ public class EventListen implements Listener {
         }
     }
 
-    public void recalculatePlayer(final Player player) {
+    // recalculate player NPCs the first time a player moves and every time
+    // a player moves a certain distance from their last position.
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerMove(final PlayerMoveEvent event) {
+
+        SkinUpdateTracker updateTracker = skinUpdateTrackers.get(event.getPlayer().getUniqueId());
+        if (updateTracker == null)
+            return;
+
+        if (!updateTracker.shouldUpdate(event.getPlayer()))
+            return;
+
+        recalculatePlayer(event.getPlayer(), 10, false);
+    }
+
+    public void recalculatePlayer(final Player player, long delay, final boolean isInitial) {
+
+        if (isInitial) {
+            skinUpdateTrackers.put(player.getUniqueId(), new SkinUpdateTracker(player));
+        }
+
         new BukkitRunnable() {
+
             @Override
             public void run() {
-                final List<EntityPlayer> nearbyNPCs = new ArrayList<EntityPlayer>();
-                for (NPC npc : getAllNPCs()) {
-                    Entity npcEntity = npc.getEntity();
-                    if (npcEntity instanceof Player && player.canSee((Player) npcEntity)
-                            && player.getWorld().equals(npcEntity.getWorld())
-                            && player.getLocation().distanceSquared(npcEntity.getLocation()) < 100 * 100) {
-                        nearbyNPCs.add(((CraftPlayer) npcEntity).getHandle());
-                    }
-                }
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        sendToPlayer(player, nearbyNPCs);
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 30);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        sendToPlayer(player, nearbyNPCs);
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 70);
-            }
-        }.runTaskLater(CitizensAPI.getPlugin(), 10);
 
+                List<SkinnableEntity> nearbyNPCs = getNearbySkinnableNPCs(player);
+                for (SkinnableEntity npc : nearbyNPCs) {
+                     npc.getSkinTracker().updateViewer(player);
+                }
+
+                if (!nearbyNPCs.isEmpty() && isInitial) {
+                    // one more time to help when resource pack load times
+                    // prevent immediate skin loading
+                    recalculatePlayer(player, 40, false);
+                }
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), delay);
+    }
+
+    private List<SkinnableEntity> getNearbySkinnableNPCs(Player player) {
+
+        List<SkinnableEntity> results = new ArrayList<SkinnableEntity>();
+
+        double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
+        viewDistance *= viewDistance;
+
+        for (NPC npc : getAllNPCs()) {
+
+            Entity npcEntity = npc.getEntity();
+            if (npcEntity instanceof Player
+                    && player.canSee((Player) npcEntity)
+                    && player.getWorld().equals(npcEntity.getWorld())
+                    && player.getLocation(CACHE_LOCATION)
+                        .distanceSquared(npc.getStoredLocation()) < viewDistance) {
+
+                SkinnableEntity skinnable = NMS.getSkinnableNPC(npcEntity);
+
+                results.add(skinnable);
+            }
+        }
+        return results;
     }
 
     private void respawnAllFromCoord(ChunkCoord coord) {
@@ -469,30 +506,6 @@ public class EventListen implements Listener {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
             }
-        }
-    }
-
-    void sendToPlayer(final Player player, final List<EntityPlayer> nearbyNPCs) {
-        if (!player.isValid())
-            return;
-        for (EntityPlayer nearbyNPC : nearbyNPCs) {
-            if (nearbyNPC.isAlive())
-                NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, nearbyNPC));
-        }
-        if (Setting.DISABLE_TABLIST.asBoolean()) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (!player.isValid())
-                        return;
-                    for (EntityPlayer nearbyNPC : nearbyNPCs) {
-                        if (nearbyNPC.isAlive())
-                            NMS.sendPacket(player, new PacketPlayOutPlayerInfo(
-                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nearbyNPC));
-                    }
-                }
-            }.runTaskLater(CitizensAPI.getPlugin(), 2);
         }
     }
 
@@ -559,4 +572,62 @@ public class EventListen implements Listener {
             return prime * (prime * (prime + ((worldName == null) ? 0 : worldName.hashCode())) + x) + z;
         }
     }
+
+    private class SkinUpdateTracker {
+        float initialYaw;
+        final Location location = new Location(null, 0, 0, 0);
+        boolean hasMoved;
+        int rotationCount;
+
+        SkinUpdateTracker(Player player) {
+            reset(player);
+        }
+
+        boolean shouldUpdate(Player player) {
+
+            // check if this is the first time the player has moved
+            if (!hasMoved) {
+                hasMoved = true;
+                reset(player);
+                return true;
+            }
+
+            Location currentLoc = player.getLocation(YAW_LOCATION);
+            float currentYaw = currentLoc.getYaw();
+
+            float rotationDegrees = Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
+
+            boolean hasRotated =
+                Math.abs(NMS.clampYaw(currentYaw - this.initialYaw)) < rotationDegrees;
+
+            // update the first 2 times the player rotates. helps load skins around player
+            // after the player logs/teleports.
+            if (hasRotated && rotationCount < 2) {
+                rotationCount++;
+                reset(player);
+                return true;
+            }
+
+            // update every time a player moves a certain distance
+            double distance = currentLoc.distanceSquared(this.location);
+            if (distance > MOVEMENT_SKIN_UPDATE_DISTANCE) {
+                reset(player);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        // resets initial yaw and location to the players
+        // current location and yaw.
+        void reset(Player player) {
+            player.getLocation(location);
+            this.initialYaw = location.getYaw();
+        }
+    }
+
+    private static final Location YAW_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
+    private static final int MOVEMENT_SKIN_UPDATE_DISTANCE = 50 * 50;
 }

@@ -2,7 +2,9 @@ package net.citizensnpcs.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.SocketAddress;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +13,15 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import com.google.common.base.Preconditions;
+import com.mojang.authlib.GameProfileRepository;
+import com.mojang.authlib.HttpAuthenticationService;
+import com.mojang.authlib.minecraft.MinecraftSessionService;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
+import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
+import com.mojang.util.UUIDTypeAdapter;
+import net.citizensnpcs.npc.skin.SkinnableEntity;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,12 +36,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 
 import com.mojang.authlib.GameProfile;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
@@ -60,28 +71,119 @@ import net.minecraft.server.v1_8_R3.NavigationAbstract;
 import net.minecraft.server.v1_8_R3.NetworkManager;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
 import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
 import net.minecraft.server.v1_8_R3.World;
 import net.minecraft.server.v1_8_R3.WorldServer;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("unchecked")
 public class NMS {
+
     private NMS() {
         // util class
     }
 
-    public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
-        if (entity == null)
-            return;
-        EntityHuman handle = (EntityHuman) getHandle(entity);
-        if (handle.world == null)
-            return;
-        if (remove) {
-            handle.world.players.remove(handle);
-        } else if (!handle.world.players.contains(handle)) {
-            handle.world.players.add(handle);
+    public static GameProfileRepository getGameProfileRepository() {
+        return ((CraftServer) Bukkit.getServer()).getServer()
+                .getGameProfileRepository();
+    }
+
+    public static boolean addToWorld(org.bukkit.World world,
+                                     org.bukkit.entity.Entity entity,
+                                     CreatureSpawnEvent.SpawnReason reason) {
+        Preconditions.checkNotNull(world);
+        Preconditions.checkNotNull(entity);
+        Preconditions.checkNotNull(reason);
+
+        Entity nmsEntity = ((CraftEntity)entity).getHandle();
+        return ((CraftWorld)world).getHandle().addEntity(nmsEntity, reason);
+    }
+
+    public static void removeFromWorld(org.bukkit.entity.Entity entity) {
+        Preconditions.checkNotNull(entity);
+
+        Entity nmsEntity = ((CraftEntity)entity).getHandle();
+        nmsEntity.world.removeEntity(nmsEntity);
+    }
+
+    @Nullable
+    public static SkinnableEntity getSkinnableNPC(org.bukkit.entity.Entity entity) {
+        Preconditions.checkNotNull(entity);
+
+        Entity nmsEntity = ((CraftEntity) entity).getHandle();
+        if (nmsEntity instanceof SkinnableEntity) {
+            return (SkinnableEntity)nmsEntity;
         }
+        return null;
+    }
+
+    public static void sendPlayerListAdd(Player recipient, Player listPlayer) {
+        Preconditions.checkNotNull(recipient);
+        Preconditions.checkNotNull(listPlayer);
+
+        EntityPlayer entity = ((CraftPlayer)listPlayer).getHandle();
+
+        sendPacket(recipient, new PacketPlayOutPlayerInfo(
+                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entity));
+    }
+
+    public static void sendPlayerListRemove(Player recipient, Player listPlayer) {
+        Preconditions.checkNotNull(recipient);
+        Preconditions.checkNotNull(listPlayer);
+
+        EntityPlayer entity = ((CraftPlayer)listPlayer).getHandle();
+
+        sendPacket(recipient, new PacketPlayOutPlayerInfo(
+                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
+    }
+
+    public static void sendPlayerListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs) {
+        Preconditions.checkNotNull(recipient);
+        Preconditions.checkNotNull(skinnableNPCs);
+
+        EntityPlayer[] entities = new EntityPlayer[skinnableNPCs.size()];
+        int i=0;
+        for (SkinnableEntity skinnable : skinnableNPCs) {
+            entities[i] = (EntityPlayer)skinnable;
+            i++;
+        }
+
+        sendPacket(recipient, new PacketPlayOutPlayerInfo(
+                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entities));
+    }
+
+    /*
+     * Yggdrasil's default implementation of this method silently fails instead of throwing
+     * an Exception like it should.
+     */
+    public static GameProfile fillProfileProperties(GameProfile profile,
+                                              boolean requireSecure) throws Exception {
+
+        if (Bukkit.isPrimaryThread())
+            throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
+
+        MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer().aD();
+
+        YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
+                .getAuthenticationService();
+
+        URL url = HttpAuthenticationService.constantURL(
+                "https://sessionserver.mojang.com/session/minecraft/profile/" +
+                        UUIDTypeAdapter.fromUUID(profile.getId()));
+
+        url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
+
+        MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse)
+                MAKE_REQUEST.invoke(auth, url, null, MinecraftProfilePropertiesResponse.class);
+        if (response == null)
+            return profile;
+
+        GameProfile result = new GameProfile(response.getId(), response.getName());
+        result.getProperties().putAll(response.getProperties());
+        profile.getProperties().putAll(response.getProperties());
+
+        return result;
     }
 
     public static void attack(EntityLiving handle, Entity target) {
@@ -506,15 +608,6 @@ public class NMS {
         NMS.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
-    public static void sendPlayerlistPacket(boolean showInPlayerlist, Player npc) {
-        if (!showInPlayerlist && !Setting.DISABLE_TABLIST.asBoolean())
-            return;
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(
-                showInPlayerlist ? EnumPlayerInfoAction.ADD_PLAYER : EnumPlayerInfoAction.REMOVE_PLAYER,
-                ((CraftPlayer) npc).getHandle());
-        sendToOnline(packet);
-    }
-
     public static void sendToOnline(Packet... packets) {
         Validate.notNull(packets, "packets cannot be null");
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -703,6 +796,7 @@ public class NMS {
     private static Field SKULL_PROFILE_FIELD;
 
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
+    private static Method MAKE_REQUEST;
 
     static {
         try {
@@ -712,6 +806,14 @@ public class NMS {
             ENTITY_CLASS_TO_NAME = (Map<Class<?>, String>) field.get(null);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
+        }
+
+        try {
+            MAKE_REQUEST = YggdrasilAuthenticationService.class.getDeclaredMethod("makeRequest", URL.class,
+                    Object.class, Class.class);
+            MAKE_REQUEST.setAccessible(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
