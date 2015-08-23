@@ -236,7 +236,12 @@ public class CitizensNPC extends AbstractNPC {
         if (getEntity() instanceof LivingEntity) {
             LivingEntity entity = (LivingEntity) getEntity();
             entity.setRemoveWhenFarAway(false);
-            entity.setCustomName(getFullName());
+
+            if (!data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true)) {
+                entity.setCustomName("");
+            } else {
+                entity.setCustomName(getFullName());
+            }
 
             if (NMS.getStepHeight(entity) < 1) {
                 NMS.setStepHeight(NMS.getHandle(entity), 1);
@@ -285,7 +290,11 @@ public class CitizensNPC extends AbstractNPC {
             if (!getNavigator().isNavigating()
                     && getEntity().getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
                 if (getEntity() instanceof LivingEntity) {
-                    ((LivingEntity) getEntity()).setCustomName(getFullName());
+                    if (!getEntity().isCustomNameVisible()) {
+                        getEntity().setCustomName("");
+                    } else {
+                        getEntity().setCustomName(getFullName());
+                    }
                 }
                 Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
                 NMS.sendPacketNearby(player, getStoredLocation(),
