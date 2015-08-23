@@ -1,5 +1,12 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftMinecartChest;
+import org.bukkit.entity.Minecart;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -7,16 +14,10 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_8_R3.DamageSource;
 import net.minecraft.server.v1_8_R3.EntityMinecartChest;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftMinecartChest;
-import org.bukkit.entity.Minecart;
-import org.bukkit.util.Vector;
 
 public class MinecartChestController extends MobEntityController {
     public MinecartChestController() {
@@ -53,6 +54,13 @@ public class MinecartChestController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public boolean damageEntity(DamageSource damagesource, float f) {
+            if (npc == null || !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+                return super.damageEntity(damagesource, f);
+            return false;
         }
 
         @Override

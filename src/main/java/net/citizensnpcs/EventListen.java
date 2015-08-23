@@ -33,6 +33,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -382,6 +383,15 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         recalculatePlayer(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onVehicleDestroy(VehicleDestroyEvent event) {
+        NPC npc = npcRegistry.getNPC(event.getVehicle());
+        if (npc == null) {
+            return;
+        }
+        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
     }
 
     @EventHandler(ignoreCancelled = true)
