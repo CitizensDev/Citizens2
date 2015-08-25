@@ -117,7 +117,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
         if (!aggro && distanceSquared() < parameters.distanceMargin()) {
             stop();
-        } else if (target.world.getWorld().getFullTime() % 40 == 0) {
+        } else if (target.world.getWorld().getFullTime() % 60 == 0) {
             setPath();
         }
 
