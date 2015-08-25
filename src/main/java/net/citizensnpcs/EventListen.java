@@ -72,6 +72,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -217,8 +218,8 @@ public class EventListen implements Listener {
         if (npc == null) {
             return;
         }
-        Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         final Location location = npc.getEntity().getLocation();
+        Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);
 
         if (npc.data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
@@ -236,7 +237,7 @@ public class EventListen implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    if (!npc.isSpawned()) {
+                    if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
                         npc.spawn(location);
                     }
                 }
@@ -385,6 +386,15 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         recalculatePlayer(event.getPlayer(), 15, true);
+    }
+
+    @EventHandler
+    public void onVehicleDestroy(VehicleDestroyEvent event) {
+        NPC npc = npcRegistry.getNPC(event.getVehicle());
+        if (npc == null) {
+            return;
+        }
+        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
     }
 
     @EventHandler(ignoreCancelled = true)

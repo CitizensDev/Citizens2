@@ -25,7 +25,6 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 public class HumanController extends AbstractEntityController {
-
     public HumanController() {
         super();
     }
@@ -77,8 +76,8 @@ public class HumanController extends AbstractEntityController {
             uuid = new UUID(msb, uuid.getLeastSignificantBits());
         }
 
-        final GameProfile profile = new GameProfile(uuid, coloredName);
-
+        GameProfile profile = new GameProfile(uuid, coloredName);
+        
         final EntityHumanNPC handle = new EntityHumanNPC(nmsWorld.getServer().getServer(), nmsWorld, profile,
                 new PlayerInteractManager(nmsWorld), npc);
 

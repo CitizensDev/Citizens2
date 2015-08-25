@@ -43,8 +43,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scoreboard.NameTagVisibility;
 
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
@@ -65,7 +66,6 @@ public class CitizensNPC extends AbstractNPC {
             }
             return false;
         }
-
         NPCDespawnEvent event = new NPCDespawnEvent(this, reason);
         if (reason == DespawnReason.CHUNK_UNLOAD) {
             event.setCancelled(Setting.KEEP_CHUNKS_LOADED.asBoolean());
@@ -186,7 +186,7 @@ public class CitizensNPC extends AbstractNPC {
         entityController.spawn(at, this);
 
         net.minecraft.server.v1_8_R3.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
-        boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
 
         // send skin packets, if applicable, before other NMS packets are sent
         SkinnableEntity skinnable = NMS.getSkinnableNPC(getEntity());
@@ -255,7 +255,6 @@ public class CitizensNPC extends AbstractNPC {
         if (getEntity() instanceof LivingEntity) {
             LivingEntity entity = (LivingEntity) getEntity();
             entity.setRemoveWhenFarAway(false);
-            entity.setCustomName(getFullName());
 
             if (NMS.getStepHeight(entity) < 1) {
                 NMS.setStepHeight(NMS.getHandle(entity), 1);
@@ -284,7 +283,21 @@ public class CitizensNPC extends AbstractNPC {
             if (!getNavigator().isNavigating()
                     && getEntity().getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
                 if (getEntity() instanceof LivingEntity) {
-                    ((LivingEntity) getEntity()).setCustomName(getFullName());
+                    if (!getEntity().isCustomNameVisible()) {
+                        if (getEntity() instanceof Player && data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
+                            String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+                            Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)
+                                    .setNameTagVisibility(NameTagVisibility.NEVER);
+                        }
+                        getEntity().setCustomName("");
+                    } else {
+                        if (getEntity() instanceof Player && data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
+                            String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+                            Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)
+                                    .setNameTagVisibility(NameTagVisibility.ALWAYS);
+                        }
+                        getEntity().setCustomName(getFullName());
+                    }
                 }
                 Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
                 NMS.sendPacketNearby(player, getStoredLocation(),
