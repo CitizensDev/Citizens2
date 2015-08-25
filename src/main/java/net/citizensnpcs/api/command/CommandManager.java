@@ -15,15 +15,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.citizensnpcs.api.command.exception.CommandException;
-import net.citizensnpcs.api.command.exception.CommandUsageException;
-import net.citizensnpcs.api.command.exception.NoPermissionsException;
-import net.citizensnpcs.api.command.exception.ServerCommandException;
-import net.citizensnpcs.api.command.exception.UnhandledCommandException;
-import net.citizensnpcs.api.command.exception.WrappedCommandException;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.Paginator;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -35,6 +26,15 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.command.exception.CommandUsageException;
+import net.citizensnpcs.api.command.exception.NoPermissionsException;
+import net.citizensnpcs.api.command.exception.ServerCommandException;
+import net.citizensnpcs.api.command.exception.UnhandledCommandException;
+import net.citizensnpcs.api.command.exception.WrappedCommandException;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.Paginator;
 
 public class CommandManager {
     private final Map<Class<? extends Annotation>, CommandAnnotationProcessor> annotationProcessors = Maps.newHashMap();
@@ -56,16 +56,14 @@ public class CommandManager {
     }
 
     /**
-     * 
-     * Attempt to execute a command using the root {@link Command} given. A list
-     * of method arguments may be used when calling the command handler method.
-     * 
-     * A command handler method should follow the form
-     * <code>command(CommandContext args, CommandSender sender)</code> where
-     * {@link CommandSender} can be replaced with {@link Player} to only accept
-     * players. The method parameters must include the method args given, if
-     * any.
-     * 
+     *
+     * Attempt to execute a command using the root {@link Command} given. A list of method arguments may be used when
+     * calling the command handler method.
+     *
+     * A command handler method should follow the form <code>command(CommandContext args, CommandSender sender)</code>
+     * where {@link CommandSender} can be replaced with {@link Player} to only accept players. The method parameters
+     * must include the method args given, if any.
+     *
      * @param command
      *            The command to execute
      * @param args
@@ -73,8 +71,7 @@ public class CommandManager {
      * @param sender
      *            The sender of the command
      * @param methodArgs
-     *            The method arguments to be used when calling the command
-     *            handler
+     *            The method arguments to be used when calling the command handler
      * @throws CommandException
      *             Any exceptions caused from execution of the command
      */
@@ -110,8 +107,9 @@ public class CommandManager {
         boolean help = modifier.toLowerCase().equals("help");
 
         Method method = commands.get(cmdName + " " + modifier.toLowerCase());
-        if (method == null && !help)
+        if (method == null && !help) {
             method = commands.get(cmdName + " *");
+        }
 
         if (method == null && help) {
             executeHelp(args, sender);
@@ -164,10 +162,9 @@ public class CommandManager {
     }
 
     /**
-     * A safe version of <code>execute</code> which catches and logs all errors
-     * that occur. Returns whether the command handler should print usage or
-     * not.
-     * 
+     * A safe version of <code>execute</code> which catches and logs all errors that occur. Returns whether the command
+     * handler should print usage or not.
+     *
      * @see #execute(Command, String[], CommandSender, Object...)
      * @return Whether further usage should be printed
      */
@@ -201,9 +198,8 @@ public class CommandManager {
     }
 
     /**
-     * Searches for the closest modifier using Levenshtein distance to the given
-     * top level command and modifier.
-     * 
+     * Searches for the closest modifier using Levenshtein distance to the given top level command and modifier.
+     *
      * @param command
      *            The top level command
      * @param modifier
@@ -229,9 +225,8 @@ public class CommandManager {
     }
 
     /**
-     * Gets the {@link CommandInfo} for the given top level command and
-     * modifier, or null if not found.
-     * 
+     * Gets the {@link CommandInfo} for the given top level command and modifier, or null if not found.
+     *
      * @param rootCommand
      *            The top level command
      * @param modifier
@@ -252,11 +247,10 @@ public class CommandManager {
     }
 
     /**
-     * Gets all modified and root commands from the given root level command.
-     * For example, if <code>/npc look</code> and <code>/npc jump</code> were
-     * defined, calling <code>getCommands("npc")</code> would return
-     * {@link CommandInfo}s for both commands.
-     * 
+     * Gets all modified and root commands from the given root level command. For example, if <code>/npc look</code> and
+     * <code>/npc jump</code> were defined, calling <code>getCommands("npc")</code> would return {@link CommandInfo}s
+     * for both commands.
+     *
      * @param command
      *            The root level command
      * @return The list of {@link CommandInfo}s
@@ -297,9 +291,9 @@ public class CommandManager {
     }
 
     /**
-     * Checks to see whether there is a command handler for the given command at
-     * the root level. This will check aliases as well.
-     * 
+     * Checks to see whether there is a command handler for the given command at the root level. This will check aliases
+     * as well.
+     *
      * @param cmd
      *            The command to check
      * @param modifier
@@ -326,12 +320,10 @@ public class CommandManager {
     }
 
     /**
-     * Register a class that contains commands (methods annotated with
-     * {@link Command}). If no dependency {@link Injector} is specified, then
-     * only static methods of the class will be registered. Otherwise, new
-     * instances the command class will be created and instance methods will be
-     * called.
-     * 
+     * Register a class that contains commands (methods annotated with {@link Command}). If no dependency
+     * {@link Injector} is specified, then only static methods of the class will be registered. Otherwise, new instances
+     * the command class will be created and instance methods will be called.
+     *
      * @see #setInjector(Injector)
      * @param clazz
      *            The class to scan
@@ -341,16 +333,13 @@ public class CommandManager {
     }
 
     /**
-     * Registers an {@link CommandAnnotationProcessor} that can process
-     * annotations before a command is executed.
-     * 
-     * Methods with the {@link Command} annotation will have the rest of their
-     * annotations scanned and stored if there is a matching
-     * {@link CommandAnnotationProcessor}. Annotations that do not have a
-     * processor are discarded. The scanning method uses annotations from the
-     * declaring class as a base before narrowing using the method's
+     * Registers an {@link CommandAnnotationProcessor} that can process annotations before a command is executed.
+     *
+     * Methods with the {@link Command} annotation will have the rest of their annotations scanned and stored if there
+     * is a matching {@link CommandAnnotationProcessor}. Annotations that do not have a processor are discarded. The
+     * scanning method uses annotations from the declaring class as a base before narrowing using the method's
      * annotations.
-     * 
+     *
      * @param processor
      *            The annotation processor
      */
@@ -423,8 +412,8 @@ public class CommandManager {
     private void sendHelp(CommandSender sender, String name, int page) throws CommandException {
         if (name.equalsIgnoreCase("npc"))
             name = "NPC";
-        Paginator paginator = new Paginator().header(capitalize(name) + " "
-                + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER));
+        Paginator paginator = new Paginator()
+                .header(capitalize(name) + " " + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER));
         for (String line : getLines(sender, name.toLowerCase()))
             paginator.addLine(line);
         if (!paginator.sendPage(sender, page))
@@ -484,8 +473,8 @@ public class CommandManager {
 
     private static String capitalize(Object string) {
         String capitalize = string.toString();
-        return capitalize.length() == 0 ? "" : Character.toUpperCase(capitalize.charAt(0))
-                + capitalize.substring(1, capitalize.length());
+        return capitalize.length() == 0 ? ""
+                : Character.toUpperCase(capitalize.charAt(0)) + capitalize.substring(1, capitalize.length());
     }
 
     private static String format(Command command, String alias) {

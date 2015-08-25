@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import net.citizensnpcs.api.command.exception.CommandException;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -37,6 +35,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import net.citizensnpcs.api.command.exception.CommandException;
 
 public class CommandContext {
     protected String[] args;
@@ -225,7 +225,7 @@ public class CommandContext {
         if (sender == null)
             return location;
         if (sender instanceof Player)
-            location = ((Player) sender).getTargetBlock((java.util.Set<org.bukkit.Material>)null, 50).getLocation();
+            location = ((Player) sender).getTargetBlock((java.util.Set<org.bukkit.Material>) null, 50).getLocation();
         else if (sender instanceof BlockCommandSender)
             location = ((BlockCommandSender) sender).getBlock().getLocation();
         return location;
