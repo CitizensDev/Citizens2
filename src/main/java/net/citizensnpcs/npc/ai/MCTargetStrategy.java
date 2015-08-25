@@ -1,5 +1,9 @@
 package net.citizensnpcs.npc.ai;
 
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.entity.LivingEntity;
+
 import net.citizensnpcs.api.ai.AttackStrategy;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -12,10 +16,6 @@ import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.NavigationAbstract;
-
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.entity.LivingEntity;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final boolean aggro;
@@ -117,9 +117,10 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
         if (!aggro && distanceSquared() < parameters.distanceMargin()) {
             stop();
-        } else if (target.world.getWorld().getFullTime() % 10 == 0) {
+        } else if (target.world.getWorld().getFullTime() % 60 == 0) {
             setPath();
         }
+
         NMS.look(handle, target);
         if (aggro && canAttack()) {
             AttackStrategy strategy = parameters.attackStrategy();

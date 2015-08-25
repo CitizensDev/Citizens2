@@ -2,6 +2,13 @@ package net.citizensnpcs.commands;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandConfigurable;
@@ -16,13 +23,6 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-
 @Requirements(selected = true, ownership = true)
 public class TraitCommands {
     @Command(
@@ -30,12 +30,12 @@ public class TraitCommands {
             usage = "add [trait name]...",
             desc = "Adds traits to the NPC",
             modifiers = { "add", "a" },
-            min = 1,
+            min = 2,
             permission = "citizens.npc.trait")
     public void add(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         List<String> added = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
-        for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
+        for (String traitName : Splitter.on(',').split(args.getJoinedStrings(1))) {
             if (!sender.hasPermission("citizens.npc.trait." + traitName)
                     && !sender.hasPermission("citizens.npc.trait.*")) {
                 failed.add(String.format("%s: No permission", traitName));
