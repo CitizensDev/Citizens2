@@ -216,8 +216,8 @@ public class EventListen implements Listener {
         if (npc == null) {
             return;
         }
-        Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         final Location location = npc.getEntity().getLocation();
+        Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);
 
         if (npc.data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
@@ -235,7 +235,7 @@ public class EventListen implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    if (!npc.isSpawned()) {
+                    if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
                         npc.spawn(location);
                     }
                 }
