@@ -291,7 +291,7 @@ public class CitizensNPC extends AbstractNPC {
                     && getEntity().getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
                 if (getEntity() instanceof LivingEntity) {
                     if (!getEntity().isCustomNameVisible()) {
-                        getEntity().setCustomName("");
+                        getEntity().setCustomName("&2");
                     } else {
                         getEntity().setCustomName(getFullName());
                     }
