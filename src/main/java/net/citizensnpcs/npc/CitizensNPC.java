@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.NameTagVisibility;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -67,7 +68,6 @@ public class CitizensNPC extends AbstractNPC {
             }
             return false;
         }
-
         NPCDespawnEvent event = new NPCDespawnEvent(this, reason);
         if (reason == DespawnReason.CHUNK_UNLOAD) {
             event.setCancelled(Setting.KEEP_CHUNKS_LOADED.asBoolean());
@@ -237,12 +237,6 @@ public class CitizensNPC extends AbstractNPC {
             LivingEntity entity = (LivingEntity) getEntity();
             entity.setRemoveWhenFarAway(false);
 
-            if (!data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true)) {
-                entity.setCustomName("");
-            } else {
-                entity.setCustomName(getFullName());
-            }
-
             if (NMS.getStepHeight(entity) < 1) {
                 NMS.setStepHeight(NMS.getHandle(entity), 1);
             }
@@ -291,8 +285,18 @@ public class CitizensNPC extends AbstractNPC {
                     && getEntity().getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
                 if (getEntity() instanceof LivingEntity) {
                     if (!getEntity().isCustomNameVisible()) {
-                        getEntity().setCustomName("&2");
+                        if (getEntity() instanceof Player && data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
+                            String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+                            Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)
+                                    .setNameTagVisibility(NameTagVisibility.NEVER);
+                        }
+                        getEntity().setCustomName("");
                     } else {
+                        if (getEntity() instanceof Player && data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
+                            String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+                            Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)
+                                    .setNameTagVisibility(NameTagVisibility.ALWAYS);
+                        }
                         getEntity().setCustomName(getFullName());
                     }
                 }
