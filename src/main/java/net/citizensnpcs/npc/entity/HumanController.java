@@ -100,7 +100,6 @@ public class HumanController extends AbstractEntityController {
             msb |= 0x0000000000002000L;
             uuid = new UUID(msb, uuid.getLeastSignificantBits());
         }
-
         GameProfile profile = new GameProfile(uuid, coloredName);
         updateSkin(npc, nmsWorld, profile);
 
@@ -118,7 +117,7 @@ public class HumanController extends AbstractEntityController {
 
                 if (prefixCapture != null) {
                     Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-                    String teamName = UUID.randomUUID().toString().substring(0,16);
+                    String teamName = UUID.randomUUID().toString().substring(0, 16);
 
                     Team team = scoreboard.getTeam(teamName);
                     if (team == null) {
