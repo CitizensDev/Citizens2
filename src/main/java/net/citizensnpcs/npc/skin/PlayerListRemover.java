@@ -35,10 +35,10 @@ public class PlayerListRemover {
 
     /**
      * Send a remove packet to the specified player for the specified
-     * human NPC entity.
+     * skinnable entity.
      *
-     * @param player   The player to send the packet to.
-     * @param entity   The entity to remove.
+     * @param player  The player to send the packet to.
+     * @param entity  The entity to remove.
      */
     public void sendPacket(Player player, SkinnableEntity entity) {
         Preconditions.checkNotNull(player);
@@ -58,6 +58,8 @@ public class PlayerListRemover {
         Preconditions.checkNotNull(player);
 
         PlayerEntry entry = pending.remove(player.getUniqueId());
+        if (entry == null)
+            return;
 
         for (SkinnableEntity entity : entry.toRemove) {
             entity.getSkinTracker().notifyRemovePacketCancelled(player.getUniqueId());
@@ -66,10 +68,10 @@ public class PlayerListRemover {
 
     /**
      * Cancel packets pending to be sent to the specified player
-     * for the specified skinnable NPC.
+     * for the specified skinnable entity.
      *
      * @param player     The player.
-     * @param skinnable  The skinnable NPC.
+     * @param skinnable  The skinnable entity.
      */
     public void cancelPackets(Player player, SkinnableEntity skinnable) {
         Preconditions.checkNotNull(player);
@@ -129,14 +131,13 @@ public class PlayerListRemover {
                 Iterator<SkinnableEntity> skinIterator = entry.toRemove.iterator();
                 while (skinIterator.hasNext()) {
 
+                    if (i >= maxPacketEntries)
+                        break;
+
                     SkinnableEntity skinnable = skinIterator.next();
                     skinnableList.add(skinnable);
 
                     skinIterator.remove();
-
-                    if (i > maxPacketEntries)
-                        break;
-
                     i++;
                 }
 

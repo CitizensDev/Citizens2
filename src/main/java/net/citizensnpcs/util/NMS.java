@@ -12,8 +12,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
+import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.HttpAuthenticationService;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -21,26 +23,6 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import com.mojang.util.UUIDTypeAdapter;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.PluginLoadOrder;
-
-import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
@@ -48,6 +30,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.network.EmptyChannel;
+import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.nms.PlayerlistTrackerEntry;
 import net.minecraft.server.v1_8_R3.AttributeInstance;
 import net.minecraft.server.v1_8_R3.Block;
@@ -75,7 +58,23 @@ import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
 import net.minecraft.server.v1_8_R3.World;
 import net.minecraft.server.v1_8_R3.WorldServer;
 
-import javax.annotation.Nullable;
+import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.PluginLoadOrder;
 
 @SuppressWarnings("unchecked")
 public class NMS {
@@ -108,7 +107,7 @@ public class NMS {
     }
 
     @Nullable
-    public static SkinnableEntity getSkinnableNPC(org.bukkit.entity.Entity entity) {
+    public static SkinnableEntity getSkinnable(org.bukkit.entity.Entity entity) {
         Preconditions.checkNotNull(entity);
 
         Entity nmsEntity = ((CraftEntity) entity).getHandle();
@@ -138,7 +137,8 @@ public class NMS {
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
     }
 
-    public static void sendPlayerListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs) {
+    public static void sendPlayerListRemove(Player recipient,
+                                            Collection<? extends SkinnableEntity> skinnableNPCs) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(skinnableNPCs);
 

@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  * Handles and synchronizes add and remove packets for Player type NPC's
@@ -36,7 +37,7 @@ public class SkinPacketTracker {
     /**
      * Constructor.
      *
-     * @param entity  The human NPC entity the instance belongs to.
+     * @param entity  The skinnable entity the instance belongs to.
      */
     public SkinPacketTracker(SkinnableEntity entity) {
         Preconditions.checkNotNull(entity);
@@ -58,48 +59,6 @@ public class SkinPacketTracker {
     }
 
     /**
-     * Notify that the NPC skin has been changed.
-     */
-    public void notifySkinChange() {
-        this.skin = Skin.get(entity);
-        skin.applyAndRespawn(entity);
-    }
-
-    /**
-     * Notify the tracker that a remove packet has been sent to the
-     * specified player.
-     *
-     * @param playerId  The ID of the player.
-     */
-    void notifyRemovePacketSent(UUID playerId) {
-
-        PlayerEntry entry = inProgress.get(playerId);
-        if (entry == null)
-            return;
-
-        if (entry.removeCount == 0)
-            return;
-
-        entry.removeCount -= 1;
-        if (entry.removeCount == 0) {
-            inProgress.remove(playerId);
-        }
-        else {
-            scheduleRemovePacket(entry);
-        }
-    }
-
-    /**
-     * Notify the tracker that a remove packet has been sent to the
-     * specified player.
-     *
-     * @param playerId  The ID of the player.
-     */
-    void notifyRemovePacketCancelled(UUID playerId) {
-        inProgress.remove(playerId);
-    }
-
-    /**
      * Send skin related packets to a player.
      *
      * @param player  The player.
@@ -107,19 +66,21 @@ public class SkinPacketTracker {
     public void updateViewer(final Player player) {
         Preconditions.checkNotNull(player);
 
-        if (player.hasMetadata("NPC"))
+        if (isRemoved || player.hasMetadata("NPC"))
             return;
 
-        if (isRemoved || inProgress.containsKey(player.getUniqueId()))
-            return;
-
-        PlayerEntry entry = new PlayerEntry(player);
-        inProgress.put(player.getUniqueId(), entry);
+        PlayerEntry entry = inProgress.get(player.getUniqueId());
+        if (entry != null) {
+            entry.cancel();
+        }
+        else {
+            entry = new PlayerEntry(player);
+        }
 
         PLAYER_LIST_REMOVER.cancelPackets(player, entity);
 
+        inProgress.put(player.getUniqueId(), entry);
         skin.apply(entity);
-
         NMS.sendPlayerListAdd(player, entity.getBukkitEntity());
 
         scheduleRemovePacket(entry, 2);
@@ -175,6 +136,48 @@ public class SkinPacketTracker {
         }
     }
 
+    /**
+     * Notify that the NPC skin has been changed.
+     */
+    public void notifySkinChange() {
+        this.skin = Skin.get(entity);
+        skin.applyAndRespawn(entity);
+    }
+
+    /**
+     * Notify the tracker that a remove packet has been sent to the
+     * specified player.
+     *
+     * @param playerId  The ID of the player.
+     */
+    void notifyRemovePacketSent(UUID playerId) {
+
+        PlayerEntry entry = inProgress.get(playerId);
+        if (entry == null)
+            return;
+
+        if (entry.removeCount == 0)
+            return;
+
+        entry.removeCount -= 1;
+        if (entry.removeCount == 0) {
+            inProgress.remove(playerId);
+        }
+        else {
+            scheduleRemovePacket(entry);
+        }
+    }
+
+    /**
+     * Notify the tracker that a remove packet has been sent to the
+     * specified player.
+     *
+     * @param playerId  The ID of the player.
+     */
+    void notifyRemovePacketCancelled(UUID playerId) {
+        inProgress.remove(playerId);
+    }
+
     private void scheduleRemovePacket(PlayerEntry entry, int count) {
 
         if (!shouldRemoveFromPlayerList())
@@ -189,7 +192,7 @@ public class SkinPacketTracker {
         if (isRemoved)
             return;
 
-        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
+        entry.removeTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
                 new Runnable() {
 
                     @Override
@@ -214,8 +217,18 @@ public class SkinPacketTracker {
     private class PlayerEntry {
         Player player;
         int removeCount;
+        BukkitTask removeTask;
+
         PlayerEntry (Player player) {
             this.player = player;
+        }
+
+        // cancel previous packet tasks so they do not interfere with
+        // new tasks
+        void cancel() {
+            if (removeTask != null)
+                removeTask.cancel();
+            removeCount = 0;
         }
     }
 
