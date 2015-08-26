@@ -453,6 +453,9 @@ public class EventListen implements Listener {
 
     public void recalculatePlayer(final Player player, long delay, final boolean isInitial) {
 
+        if (player.hasMetadata("NPC"))
+            return;
+
         if (isInitial) {
             skinUpdateTrackers.put(player.getUniqueId(), new SkinUpdateTracker(player));
         }
@@ -492,7 +495,7 @@ public class EventListen implements Listener {
                     && player.getLocation(CACHE_LOCATION)
                         .distanceSquared(npc.getStoredLocation()) < viewDistance) {
 
-                SkinnableEntity skinnable = NMS.getSkinnableNPC(npcEntity);
+                SkinnableEntity skinnable = NMS.getSkinnable(npcEntity);
 
                 results.add(skinnable);
             }
@@ -605,17 +608,20 @@ public class EventListen implements Listener {
             Location currentLoc = player.getLocation(YAW_LOCATION);
             float currentYaw = currentLoc.getYaw();
 
-            float rotationDegrees = Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
+            if (rotationCount < 2) {
 
-            boolean hasRotated =
-                Math.abs(NMS.clampYaw(currentYaw - this.initialYaw)) < rotationDegrees;
+                float rotationDegrees = Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
 
-            // update the first 2 times the player rotates. helps load skins around player
-            // after the player logs/teleports.
-            if (hasRotated && rotationCount < 2) {
-                rotationCount++;
-                reset(player);
-                return true;
+                boolean hasRotated =
+                        Math.abs(NMS.clampYaw(currentYaw - this.initialYaw)) < rotationDegrees;
+
+                // update the first 2 times the player rotates. helps load skins around player
+                // after the player logs/teleports.
+                if (hasRotated) {
+                    rotationCount++;
+                    reset(player);
+                    return true;
+                }
             }
 
             // update every time a player moves a certain distance

@@ -3,7 +3,7 @@ package net.citizensnpcs.npc.profile;
 /**
  * Interface for a subscriber of the results of a profile fetch.
  */
-public interface ProfileFetchSubscriber {
+public interface ProfileFetchHandler {
 
     /**
      * Invoked when a result for a profile is ready.

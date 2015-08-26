@@ -15,8 +15,8 @@ import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.profile.ProfileFetchResult;
-import net.citizensnpcs.npc.profile.ProfileFetchSubscriber;
-import net.citizensnpcs.npc.profile.ProfileFetchThread;
+import net.citizensnpcs.npc.profile.ProfileFetchHandler;
+import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.profile.ProfileRequest;
 
 /**
@@ -28,15 +28,15 @@ public class Skin {
     private volatile Property skinData;
     private volatile UUID skinId;
     private volatile boolean isValid = true;
-    private final Map<SkinnableEntity, Void> pending = new WeakHashMap<SkinnableEntity, Void>(30);
+    private final Map<SkinnableEntity, Void> pending = new WeakHashMap<SkinnableEntity, Void>(15);
 
     /**
-     * Get a skin for a human NPC entity.
+     * Get a skin for a skinnable entity.
      *
      * <p>If a Skin instance does not exist, a new one is created and the
      * skin data is automatically fetched.</p>
      *
-     * @param entity  The human NPC entity.
+     * @param entity  The skinnable entity.
      */
     public static Skin get(SkinnableEntity entity) {
         Preconditions.checkNotNull(entity);
@@ -65,13 +65,13 @@ public class Skin {
         this.skinName = skinName.toLowerCase();
 
         synchronized (CACHE) {
-            if (CACHE.containsKey(skinName))
+            if (CACHE.containsKey(this.skinName))
                 throw new IllegalArgumentException("There is already a skin named " + skinName);
 
-            CACHE.put(skinName, this);
+            CACHE.put(this.skinName, this);
         }
 
-        ProfileFetchThread.get().fetch(skinName, new ProfileFetchSubscriber() {
+        ProfileFetcher.fetch(this.skinName, new ProfileFetchHandler() {
 
             @Override
             public void onResult(ProfileRequest request) {
@@ -82,11 +82,8 @@ public class Skin {
                 }
 
                 if (request.getResult() == ProfileFetchResult.SUCCESS) {
-
                     GameProfile profile = request.getProfile();
-
-                    skinId = profile.getId();
-                    skinData = Iterables.getFirst(profile.getProperties().get("textures"), null);
+                    setData(profile);
                 }
             }
         });
@@ -125,47 +122,15 @@ public class Skin {
     }
 
     /**
-     * Set skin data.
-     *
-     * @param profile  The profile that contains the skin data. If set to null,
-     *                 it's assumed that the skin is not valid.
-     *
-     * @throws IllegalStateException if not invoked from the main thread.
-     * @throws IllegalArgumentException if the profile name does not match the skin data.
-     */
-    public void setData(@Nullable GameProfile profile) {
-
-        if (profile == null) {
-            isValid = false;
-            return;
-        }
-
-        if (!profile.getName().toLowerCase().equals(skinName)) {
-            throw new IllegalArgumentException(
-                    "GameProfile name (" + profile.getName() + ") and "
-                            + "skin name (" + skinName + ") do not match.");
-        }
-
-        skinId = profile.getId();
-        skinData = Iterables.getFirst(profile.getProperties().get("textures"), null);
-
-        for (SkinnableEntity entity : pending.keySet()) {
-            applyAndRespawn(entity);
-        }
-    }
-
-    /**
-     * Apply the skin data to the specified human NPC entity.
+     * Apply the skin data to the specified skinnable entity.
      *
      * <p>If invoked before the skin data is ready, the skin is retrieved
      * and the skin is automatically applied to the entity at a later time.</p>
      *
-     * @param entity  The human NPC entity.
+     * @param entity  The skinnable entity.
      *
      * @return  True if the skin data was available and applied, false if
      * the data is being retrieved.
-     *
-     * @throws IllegalStateException if not invoked from the main thread.
      */
     public boolean apply(SkinnableEntity entity) {
         Preconditions.checkNotNull(entity);
@@ -173,7 +138,6 @@ public class Skin {
         NPC npc = entity.getNPC();
 
         if (!hasSkinData()) {
-            pending.put(entity, null);
 
             // Use npc cached skin if available.
             // If npc requires latest skin, cache is used for faster
@@ -202,9 +166,7 @@ public class Skin {
                 }
             }
 
-            // get latest skin
-            fetchSkinFor(entity);
-
+            pending.put(entity, null);
             return false;
         }
 
@@ -233,20 +195,25 @@ public class Skin {
         }
     }
 
-    private void fetchSkinFor(final SkinnableEntity entity) {
+    private void setData(@Nullable GameProfile profile) {
 
-        ProfileFetchThread.get().fetch(skinName, new ProfileFetchSubscriber() {
+        if (profile == null) {
+            isValid = false;
+            return;
+        }
 
-            @Override
-            public void onResult(ProfileRequest request) {
+        if (!profile.getName().toLowerCase().equals(skinName)) {
+            throw new IllegalArgumentException(
+                    "GameProfile name (" + profile.getName() + ") and "
+                            + "skin name (" + skinName + ") do not match.");
+        }
 
-                if (request.getResult() != ProfileFetchResult.SUCCESS)
-                    return;
+        skinId = profile.getId();
+        skinData = Iterables.getFirst(profile.getProperties().get("textures"), null);
 
-                double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
-                entity.getSkinTracker().updateNearbyViewers(viewDistance);
-            }
-        });
+        for (SkinnableEntity entity : pending.keySet()) {
+            applyAndRespawn(entity);
+        }
     }
 
     private static void setNPCSkinData(SkinnableEntity entity,

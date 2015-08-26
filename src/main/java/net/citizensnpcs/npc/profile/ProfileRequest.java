@@ -1,13 +1,15 @@
 package net.citizensnpcs.npc.profile;
 
-import com.google.common.base.Preconditions;
-import com.mojang.authlib.GameProfile;
-import net.citizensnpcs.api.CitizensAPI;
-import org.bukkit.Bukkit;
-
-import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import javax.annotation.Nullable;
+
+import com.google.common.base.Preconditions;
+import com.mojang.authlib.GameProfile;
+
+import net.citizensnpcs.api.CitizensAPI;
+
+import org.bukkit.Bukkit;
 
 /**
  * Stores basic information about a single profile used to request
@@ -18,24 +20,24 @@ import java.util.Deque;
 public class ProfileRequest {
 
     private final String playerName;
-    private Deque<ProfileFetchSubscriber> subscribers;
+    private Deque<ProfileFetchHandler> handlers;
     private GameProfile profile;
-    private ProfileFetchResult result = ProfileFetchResult.PENDING;
+    private volatile ProfileFetchResult result = ProfileFetchResult.PENDING;
 
     /**
      * Constructor.
      *
      * @param playerName  The name of the player whose profile is being requested.
-     * @param subscriber  Optional subscriber to be notified when a result is available
-     *                    for the profile. Subscriber always invoked from the main thread.
+     * @param handler     Optional handler to handle the result for the profile.
+     *                    Handler always invoked from the main thread.
      */
-    ProfileRequest(String playerName, @Nullable ProfileFetchSubscriber subscriber) {
+    ProfileRequest(String playerName, @Nullable ProfileFetchHandler handler) {
         Preconditions.checkNotNull(playerName);
 
         this.playerName = playerName;
 
-        if (subscriber != null)
-            addSubscriber(subscriber);
+        if (handler != null)
+            addHandler(handler);
     }
 
     /**
@@ -64,19 +66,24 @@ public class ProfileRequest {
     }
 
     /**
-     * Add a result subscriber to be notified when a result is available.
+     * Add one time result handler.
      *
-     * <p>Subscriber is always invoked from the main thread.</p>
+     * <p>Handler is always invoked from the main thread.</p>
      *
-     * @param subscriber  The subscriber.
+     * @param handler  The result handler.
      */
-    public void addSubscriber(ProfileFetchSubscriber subscriber) {
-        Preconditions.checkNotNull(subscriber);
+    public void addHandler(ProfileFetchHandler handler) {
+        Preconditions.checkNotNull(handler);
 
-        if (subscribers == null)
-            subscribers = new ArrayDeque<ProfileFetchSubscriber>();
+        if (result != ProfileFetchResult.PENDING) {
+            handler.onResult(this);
+            return;
+        }
 
-        subscribers.addLast(subscriber);
+        if (handlers == null)
+            handlers = new ArrayDeque<ProfileFetchHandler>();
+
+        handlers.addLast(handler);
     }
 
     /**
@@ -96,14 +103,14 @@ public class ProfileRequest {
                 ProfileRequest.this.profile = profile;
                 ProfileRequest.this.result = result;
 
-                if (subscribers == null)
+                if (handlers == null)
                     return;
 
-                while (!subscribers.isEmpty()) {
-                    subscribers.removeFirst().onResult(ProfileRequest.this);
+                while (!handlers.isEmpty()) {
+                    handlers.removeFirst().onResult(ProfileRequest.this);
                 }
 
-                subscribers = null;
+                handlers = null;
             }
         });
     }

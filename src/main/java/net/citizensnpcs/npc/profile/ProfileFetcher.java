@@ -1,29 +1,53 @@
 package net.citizensnpcs.npc.profile;
 
+import java.util.Collection;
+import javax.annotation.Nullable;
+
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.ProfileLookupCallback;
+
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.NMS;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
+import org.bukkit.Bukkit;
 
 /**
  * Fetches game profiles that include skin data from Mojang servers.
  *
  * @see ProfileFetchThread
  */
-class ProfileFetcher {
+public class ProfileFetcher {
+
+    /**
+     * Fetch a profile.
+     *
+     * @param name     The name of the player the profile belongs to.
+     * @param handler  Optional handler to handle the result.
+     *                 Handler always invoked from the main thread.
+     */
+    public static void fetch(String name, @Nullable ProfileFetchHandler handler) {
+        Preconditions.checkNotNull(name);
+
+        if (PROFILE_THREAD == null) {
+            PROFILE_THREAD = new ProfileFetchThread();
+            Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), PROFILE_THREAD,
+                    11, 20);
+        }
+        PROFILE_THREAD.fetch(name, handler);
+    }
+
+    ProfileFetcher() {}
 
     /**
      * Fetch one or more profiles.
      *
      * @param requests  The profile requests.
      */
-    public void fetch(final Collection<ProfileRequest> requests) {
+    void fetchRequests(final Collection<ProfileRequest> requests) {
         Preconditions.checkNotNull(requests);
 
         final GameProfileRepository repo = NMS.getGameProfileRepository();
@@ -43,7 +67,7 @@ class ProfileFetcher {
                     public void onProfileLookupFailed(GameProfile profile, Exception e) {
 
                         if (Messaging.isDebugging()) {
-                            Messaging.debug("Profile lookup for skin '" +
+                            Messaging.debug("Profile lookup for player '" +
                                     profile.getName() + "' failed: " + getExceptionMsg(e));
                         }
 
@@ -77,7 +101,7 @@ class ProfileFetcher {
                         } catch (Exception e) {
 
                             if (Messaging.isDebugging()) {
-                                Messaging.debug("Profile lookup for skin '" +
+                                Messaging.debug("Profile lookup for player '" +
                                         profile.getName() + "' failed: " + getExceptionMsg(e));
                             }
 
@@ -125,4 +149,6 @@ class ProfileFetcher {
         return (message != null && message.contains("too many requests"))
                 || (cause != null && cause.contains("too many requests"));
     }
+
+    private static ProfileFetchThread PROFILE_THREAD;
 }

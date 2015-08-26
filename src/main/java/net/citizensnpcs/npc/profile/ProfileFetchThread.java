@@ -1,9 +1,9 @@
 package net.citizensnpcs.npc.profile;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -19,63 +19,52 @@ import org.bukkit.Bukkit;
  *
  * <p>Maintains a cache of profiles so that no profile is ever requested more than once
  * during a single server session.</p>
+ *
+ * @see ProfileFetcher
  */
-public class ProfileFetchThread implements Runnable {
+class ProfileFetchThread implements Runnable {
 
     private final ProfileFetcher profileFetcher = new ProfileFetcher();
-    private final Deque<ProfileRequest> queue = new LinkedList<ProfileRequest>();
+    private final Deque<ProfileRequest> queue = new ArrayDeque<ProfileRequest>();
     private final Map<String, ProfileRequest> requested = new HashMap<String, ProfileRequest>(35);
-    private final Object sync = new Object();
-
-    /**
-     * Get the singleton instance.
-     */
-    public static ProfileFetchThread get() {
-        if (PROFILE_THREAD == null) {
-            PROFILE_THREAD = new ProfileFetchThread();
-            Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), PROFILE_THREAD,
-                    11, 20);
-        }
-        return PROFILE_THREAD;
-    }
+    private final Object sync = new Object(); // sync for queue & requested fields
 
     ProfileFetchThread() {}
 
     /**
      * Fetch a profile.
      *
-     * @param name        The name of the player the profile belongs to.
-     * @param subscriber  Optional subscriber to be notified when a result is available.
-     *                    Subscriber always invoked from the main thread.
+     * @param name     The name of the player the profile belongs to.
+     * @param handler  Optional handler to handle result fetch result.
+     *                 Handler always invoked from the main thread.
+     *
+     * @see ProfileFetcher#fetch
      */
-    public void fetch(String name, @Nullable ProfileFetchSubscriber subscriber) {
+    void fetch(String name, @Nullable ProfileFetchHandler handler) {
         Preconditions.checkNotNull(name);
 
-        ProfileRequest request = requested.get(name);
-
-        if (request != null) {
-
-            if (subscriber != null) {
-
-                if (request.getResult() == ProfileFetchResult.PENDING) {
-                    request.addSubscriber(subscriber);
-                }
-                else {
-                    subscriber.onResult(request);
-                }
-            }
-
-            return;
-        }
-
-        request = new ProfileRequest(name, subscriber);
+        name = name.toLowerCase();
+        ProfileRequest request;
 
         synchronized (sync) {
-            queue.add(request);
+            request = requested.get(name);
+            if (request == null) {
+                request = new ProfileRequest(name, handler);
+                queue.add(request);
+                requested.put(name, request);
+                return;
+            }
         }
 
-        requested.put(name, request);
+        if (handler != null) {
 
+            if (request.getResult() == ProfileFetchResult.PENDING) {
+                addHandler(request, handler);
+            }
+            else {
+                sendResult(handler, request);
+            }
+        }
     }
 
     @Override
@@ -89,11 +78,38 @@ public class ProfileFetchThread implements Runnable {
                 return;
 
             requests = new ArrayList<ProfileRequest>(queue);
+
             queue.clear();
         }
 
-        profileFetcher.fetch(requests);
+        profileFetcher.fetchRequests(requests);
     }
 
-    private static ProfileFetchThread PROFILE_THREAD;
+    private static void sendResult(final ProfileFetchHandler handler,
+                                   final ProfileRequest request) {
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        handler.onResult(request);
+                    }
+                }, 1);
+    }
+
+    private static void addHandler(final ProfileRequest request,
+                                   final ProfileFetchHandler handler) {
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        request.addHandler(handler);
+                    }
+                }, 1);
+    }
 }

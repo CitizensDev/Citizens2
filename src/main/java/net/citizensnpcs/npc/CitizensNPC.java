@@ -189,7 +189,7 @@ public class CitizensNPC extends AbstractNPC {
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
 
         // send skin packets, if applicable, before other NMS packets are sent
-        SkinnableEntity skinnable = NMS.getSkinnableNPC(getEntity());
+        SkinnableEntity skinnable = NMS.getSkinnable(getEntity());
         if (skinnable != null) {
             final double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
             skinnable.getSkinTracker().updateNearbyViewers(viewDistance);
@@ -200,7 +200,7 @@ public class CitizensNPC extends AbstractNPC {
                     if (getEntity() == null || !getEntity().isValid())
                         return;
 
-                    SkinnableEntity npc = NMS.getSkinnableNPC(getEntity());
+                    SkinnableEntity npc = NMS.getSkinnable(getEntity());
                     if (npc == null)
                         return;
 
