@@ -1,28 +1,13 @@
 package net.citizensnpcs.npc;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.NameTagVisibility;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
 import net.citizensnpcs.NPCNeedsRespawnEvent;
+import net.citizensnpcs.Settings;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
@@ -41,13 +26,26 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.CitizensBlockBreaker;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
+import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityTeleport;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scoreboard.NameTagVisibility;
 
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
@@ -190,6 +188,27 @@ public class CitizensNPC extends AbstractNPC {
         net.minecraft.server.v1_8_R3.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
 
+        // send skin packets, if applicable, before other NMS packets are sent
+        SkinnableEntity skinnable = NMS.getSkinnable(getEntity());
+        if (skinnable != null) {
+            final double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
+            skinnable.getSkinTracker().updateNearbyViewers(viewDistance);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+
+                    if (getEntity() == null || !getEntity().isValid())
+                        return;
+
+                    SkinnableEntity npc = NMS.getSkinnable(getEntity());
+                    if (npc == null)
+                        return;
+
+                    npc.getSkinTracker().updateNearbyViewers(viewDistance);
+                }
+            }, 20);
+        }
+
         mcEntity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
 
         if (!couldSpawn) {
@@ -244,29 +263,9 @@ public class CitizensNPC extends AbstractNPC {
             if (getEntity() instanceof Player) {
                 final CraftPlayer player = (CraftPlayer) getEntity();
                 NMS.replaceTrackerEntry(player);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        NMS.sendPacketsNearby(player, player.getLocation(),
-                                Arrays.asList((Packet) new PacketPlayOutPlayerInfo(
-                                        PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, player.getHandle())),
-                                200.0);
-                        if (Setting.DISABLE_TABLIST.asBoolean()) {
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    NMS.sendPacketsNearby(player, player.getLocation(),
-                                            Arrays.asList((Packet) new PacketPlayOutPlayerInfo(
-                                                    PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-                                                    player.getHandle())),
-                                            200.0);
-                                }
-                            }.runTaskLater(CitizensAPI.getPlugin(), 2);
-                        }
-                    }
-                }.runTaskLater(CitizensAPI.getPlugin(), 2);
             }
         }
+
         return true;
     }
 
