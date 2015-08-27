@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+import com.mojang.authlib.GameProfile;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCPushEvent;
+import net.citizensnpcs.api.npc.MetadataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -14,6 +18,8 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.network.EmptyNetHandler;
 import net.citizensnpcs.npc.network.EmptyNetworkManager;
 import net.citizensnpcs.npc.network.EmptySocket;
+import net.citizensnpcs.npc.skin.SkinPacketTracker;
+import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.citizensnpcs.util.nms.PlayerControllerJump;
@@ -40,16 +46,16 @@ import net.minecraft.server.v1_8_R3.WorldServer;
 import net.minecraft.server.v1_8_R3.WorldSettings.EnumGamemode;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import com.mojang.authlib.GameProfile;
-
-public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
+public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
     private PlayerControllerJump controllerJump;
     private PlayerControllerLook controllerLook;
     private PlayerControllerMove controllerMove;
@@ -58,15 +64,20 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
+    private final SkinPacketTracker skinTracker;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
-            PlayerInteractManager playerInteractManager, NPC npc) {
+                          PlayerInteractManager playerInteractManager, NPC npc) {
         super(minecraftServer, world, gameProfile, playerInteractManager);
 
         this.npc = (CitizensNPC) npc;
         if (npc != null) {
+            skinTracker = new SkinPacketTracker(this);
             playerInteractManager.setGameMode(EnumGamemode.SURVIVAL);
             initialise(minecraftServer);
+        }
+        else {
+            skinTracker = null;
         }
     }
 
@@ -185,6 +196,31 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         return npc;
     }
 
+    @Override
+    public SkinPacketTracker getSkinTracker() {
+        return skinTracker;
+    }
+
+    @Override
+    public String getSkinName() {
+
+        MetadataStore meta = npc.data();
+
+        String skinName = meta.get(NPC.PLAYER_SKIN_UUID_METADATA);
+        if (skinName == null) {
+            skinName = ChatColor.stripColor(getName());
+        }
+        return skinName.toLowerCase();
+    }
+
+    @Override
+    public void setSkinName(String name) {
+        Preconditions.checkNotNull(name);
+
+        npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, name.toLowerCase());
+        skinTracker.notifySkinChange();
+    }
+
     private void initialise(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
         NetworkManager conn = null;
@@ -296,6 +332,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
     }
 
     private void updatePackets(boolean navigating) {
+
         if (world.getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
             // set skin flag byte to all visible (DataWatcher API is lacking so
             // catch the NPE as a sign that this is a MC 1.7 server without the
@@ -316,10 +353,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
                 packets[i] = new PacketPlayOutEntityEquipment(getId(), i, getEquipment(i));
             }
 
-            boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
-                    Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-            NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
-            NMS.sendPlayerlistPacket(false, getBukkitEntity());
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }
@@ -328,7 +361,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         this.navigation.setRange(pathfindingRange);
     }
 
-    public static class PlayerNPC extends CraftPlayer implements NPCHolder {
+    public static class PlayerNPC extends CraftPlayer implements NPCHolder, SkinnableEntity {
         private final CraftServer cserver;
         private final CitizensNPC npc;
 
@@ -371,6 +404,26 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder {
         @Override
         public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
             cserver.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
+        }
+
+        @Override
+        public SkinPacketTracker getSkinTracker() {
+            return ((SkinnableEntity)this.entity).getSkinTracker();
+        }
+
+        @Override
+        public Player getBukkitEntity() {
+            return this;
+        }
+
+        @Override
+        public String getSkinName() {
+            return ((SkinnableEntity)this.entity).getSkinName();
+        }
+
+        @Override
+        public void setSkinName(String name) {
+            ((SkinnableEntity)this.entity).setSkinName(name);
         }
     }
 

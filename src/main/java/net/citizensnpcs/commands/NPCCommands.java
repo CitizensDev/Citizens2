@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import net.citizensnpcs.npc.skin.SkinnableEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -987,11 +988,13 @@ public class NPCCommands {
         boolean remove = !npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
         if (args.hasFlag('a')) {
             remove = false;
-        } else if (args.hasFlag('r'))
+        } else if (args.hasFlag('r')) {
             remove = true;
+        }
         npc.data().setPersistent("removefromplayerlist", remove);
         if (npc.isSpawned()) {
-            NMS.addOrRemoveFromPlayerList(npc.getEntity(), remove);
+            npc.despawn(DespawnReason.PENDING_RESPAWN);
+            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
         }
         Messaging.sendTr(sender, remove ? Messages.REMOVED_FROM_PLAYERLIST : Messages.ADDED_TO_PLAYERLIST,
                 npc.getName());
@@ -1310,8 +1313,11 @@ public class NPCCommands {
         }
         Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), skinName);
         if (npc.isSpawned()) {
-            npc.despawn(DespawnReason.PENDING_RESPAWN);
-            npc.spawn(npc.getStoredLocation());
+
+            SkinnableEntity skinnable = NMS.getSkinnable(npc.getEntity());
+            if (skinnable != null) {
+                skinnable.setSkinName(skinName);
+            }
         }
     }
 
