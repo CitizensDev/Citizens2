@@ -196,7 +196,6 @@ public class CitizensNPC extends AbstractNPC {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-
                     if (getEntity() == null || !getEntity().isValid())
                         return;
 
