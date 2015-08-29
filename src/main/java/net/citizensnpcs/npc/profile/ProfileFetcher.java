@@ -1,10 +1,10 @@
 package net.citizensnpcs.npc.profile;
 
 import java.util.Collection;
-
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.Agent;
@@ -109,10 +109,16 @@ public class ProfileFetcher {
         Preconditions.checkNotNull(name);
 
         if (PROFILE_THREAD == null) {
-            PROFILE_THREAD = new ProfileFetchThread();
-            Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), PROFILE_THREAD, 11, 20);
+            initThread();
         }
         PROFILE_THREAD.fetch(name, handler);
+    }
+
+    /**
+     * Clear all queued and cached requests.
+     */
+    public static void reset() {
+        initThread();
     }
 
     @Nullable
@@ -149,5 +155,15 @@ public class ProfileFetcher {
                 || (cause != null && cause.contains("too many requests"));
     }
 
+    private static void initThread() {
+        if (THREAD_TASK != null)
+            THREAD_TASK.cancel();
+
+        PROFILE_THREAD = new ProfileFetchThread();
+        THREAD_TASK = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                CitizensAPI.getPlugin(), PROFILE_THREAD, 21, 20);
+    }
+
     private static ProfileFetchThread PROFILE_THREAD;
+    private static BukkitTask THREAD_TASK;
 }

@@ -55,6 +55,8 @@ import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.ai.speech.Chat;
 import net.citizensnpcs.npc.ai.speech.CitizensSpeechFactory;
+import net.citizensnpcs.npc.profile.ProfileFetcher;
+import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
@@ -340,6 +342,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Editor.leaveAll();
         config.reload();
         despawnNPCs();
+        ProfileFetcher.reset();
+        Skin.clearCache();
         saves.loadInto(npcRegistry);
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
