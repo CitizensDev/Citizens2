@@ -9,50 +9,34 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import com.google.common.base.Preconditions;
 
 import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 /**
  * Sends remove packets in batch per player.
  *
- * <p>Collects entities to remove and sends them all to the
- * player in a single packet.</p>
+ * <p>
+ * Collects entities to remove and sends them all to the player in a single packet.
+ * </p>
  */
 public class PlayerListRemover {
-
-    private final Map<UUID, PlayerEntry> pending =
-            new HashMap<UUID, PlayerEntry>(Bukkit.getMaxPlayers() / 2);
+    private final Map<UUID, PlayerEntry> pending = new HashMap<UUID, PlayerEntry>(Bukkit.getMaxPlayers() / 2);
 
     PlayerListRemover() {
         Bukkit.getScheduler().runTaskTimer(CitizensAPI.getPlugin(), new Sender(), 2, 2);
     }
 
     /**
-     * Send a remove packet to the specified player for the specified
-     * skinnable entity.
-     *
-     * @param player  The player to send the packet to.
-     * @param entity  The entity to remove.
-     */
-    public void sendPacket(Player player, SkinnableEntity entity) {
-        Preconditions.checkNotNull(player);
-        Preconditions.checkNotNull(entity);
-
-        PlayerEntry entry = getEntry(player);
-
-        entry.toRemove.add(entity);
-    }
-
-    /**
      * Cancel packets pending to be sent to the specified player.
      *
-     * @param player  The player.
+     * @param player
+     *            The player.
      */
     public void cancelPackets(Player player) {
         Preconditions.checkNotNull(player);
@@ -67,11 +51,12 @@ public class PlayerListRemover {
     }
 
     /**
-     * Cancel packets pending to be sent to the specified player
-     * for the specified skinnable entity.
+     * Cancel packets pending to be sent to the specified player for the specified skinnable entity.
      *
-     * @param player     The player.
-     * @param skinnable  The skinnable entity.
+     * @param player
+     *            The player.
+     * @param skinnable
+     *            The skinnable entity.
      */
     public void cancelPackets(Player player, SkinnableEntity skinnable) {
         Preconditions.checkNotNull(player);
@@ -100,6 +85,23 @@ public class PlayerListRemover {
         return entry;
     }
 
+    /**
+     * Send a remove packet to the specified player for the specified skinnable entity.
+     *
+     * @param player
+     *            The player to send the packet to.
+     * @param entity
+     *            The entity to remove.
+     */
+    public void sendPacket(Player player, SkinnableEntity entity) {
+        Preconditions.checkNotNull(player);
+        Preconditions.checkNotNull(entity);
+
+        PlayerEntry entry = getEntry(player);
+
+        entry.toRemove.add(entity);
+    }
+
     private class PlayerEntry {
         Player player;
         Set<SkinnableEntity> toRemove = new HashSet<SkinnableEntity>(25);
@@ -110,7 +112,6 @@ public class PlayerListRemover {
     }
 
     private class Sender implements Runnable {
-
         @Override
         public void run() {
 
@@ -127,7 +128,7 @@ public class PlayerListRemover {
 
                 List<SkinnableEntity> skinnableList = new ArrayList<SkinnableEntity>(listSize);
 
-                int i =0;
+                int i = 0;
                 Iterator<SkinnableEntity> skinIterator = entry.toRemove.iterator();
                 while (skinIterator.hasNext()) {
 

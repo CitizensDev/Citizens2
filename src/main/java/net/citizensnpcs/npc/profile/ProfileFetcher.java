@@ -1,7 +1,10 @@
 package net.citizensnpcs.npc.profile;
 
 import java.util.Collection;
+
 import javax.annotation.Nullable;
+
+import org.bukkit.Bukkit;
 
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.Agent;
@@ -13,39 +16,20 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.NMS;
 
-import org.bukkit.Bukkit;
-
 /**
  * Fetches game profiles that include skin data from Mojang servers.
  *
  * @see ProfileFetchThread
  */
 public class ProfileFetcher {
-
-    /**
-     * Fetch a profile.
-     *
-     * @param name     The name of the player the profile belongs to.
-     * @param handler  Optional handler to handle the result.
-     *                 Handler always invoked from the main thread.
-     */
-    public static void fetch(String name, @Nullable ProfileFetchHandler handler) {
-        Preconditions.checkNotNull(name);
-
-        if (PROFILE_THREAD == null) {
-            PROFILE_THREAD = new ProfileFetchThread();
-            Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), PROFILE_THREAD,
-                    11, 20);
-        }
-        PROFILE_THREAD.fetch(name, handler);
+    ProfileFetcher() {
     }
-
-    ProfileFetcher() {}
 
     /**
      * Fetch one or more profiles.
      *
-     * @param requests  The profile requests.
+     * @param requests
+     *            The profile requests.
      */
     void fetchRequests(final Collection<ProfileRequest> requests) {
         Preconditions.checkNotNull(requests);
@@ -54,70 +38,85 @@ public class ProfileFetcher {
 
         String[] playerNames = new String[requests.size()];
 
-        int i=0;
+        int i = 0;
         for (ProfileRequest request : requests) {
             playerNames[i] = request.getPlayerName();
             i++;
         }
 
-        repo.findProfilesByNames(playerNames, Agent.MINECRAFT,
-                new ProfileLookupCallback() {
+        repo.findProfilesByNames(playerNames, Agent.MINECRAFT, new ProfileLookupCallback() {
 
-                    @Override
-                    public void onProfileLookupFailed(GameProfile profile, Exception e) {
+            @Override
+            public void onProfileLookupFailed(GameProfile profile, Exception e) {
 
-                        if (Messaging.isDebugging()) {
-                            Messaging.debug("Profile lookup for player '" +
-                                    profile.getName() + "' failed: " + getExceptionMsg(e));
-                        }
+                if (Messaging.isDebugging()) {
+                    Messaging.debug(
+                            "Profile lookup for player '" + profile.getName() + "' failed: " + getExceptionMsg(e));
+                }
 
-                        ProfileRequest request = findRequest(profile.getName(), requests);
-                        if (request == null)
-                            return;
+                ProfileRequest request = findRequest(profile.getName(), requests);
+                if (request == null)
+                    return;
 
-                        if (isProfileNotFound(e)) {
-                            request.setResult(null, ProfileFetchResult.NOT_FOUND);
-                        } else if (isTooManyRequests(e)) {
-                            request.setResult(null, ProfileFetchResult.TOO_MANY_REQUESTS);
-                        } else {
-                            request.setResult(null, ProfileFetchResult.FAILED);
-                        }
+                if (isProfileNotFound(e)) {
+                    request.setResult(null, ProfileFetchResult.NOT_FOUND);
+                } else if (isTooManyRequests(e)) {
+                    request.setResult(null, ProfileFetchResult.TOO_MANY_REQUESTS);
+                } else {
+                    request.setResult(null, ProfileFetchResult.FAILED);
+                }
+            }
+
+            @Override
+            public void onProfileLookupSucceeded(final GameProfile profile) {
+
+                if (Messaging.isDebugging()) {
+                    Messaging.debug("Fetched profile " + profile.getId() + " for player " + profile.getName());
+                }
+
+                ProfileRequest request = findRequest(profile.getName(), requests);
+                if (request == null)
+                    return;
+
+                try {
+                    request.setResult(NMS.fillProfileProperties(profile, true), ProfileFetchResult.SUCCESS);
+                } catch (Exception e) {
+
+                    if (Messaging.isDebugging()) {
+                        Messaging.debug(
+                                "Profile lookup for player '" + profile.getName() + "' failed: " + getExceptionMsg(e));
                     }
 
-                    @Override
-                    public void onProfileLookupSucceeded(final GameProfile profile) {
-
-                        if (Messaging.isDebugging()) {
-                            Messaging.debug("Fetched profile " + profile.getId()
-                                    + " for player " + profile.getName());
-                        }
-
-                        ProfileRequest request = findRequest(profile.getName(), requests);
-                        if (request == null)
-                            return;
-
-                        try {
-                            request.setResult(NMS.fillProfileProperties(profile, true), ProfileFetchResult.SUCCESS);
-                        } catch (Exception e) {
-
-                            if (Messaging.isDebugging()) {
-                                Messaging.debug("Profile lookup for player '" +
-                                        profile.getName() + "' failed: " + getExceptionMsg(e));
-                            }
-
-                            if (isTooManyRequests(e)) {
-                                request.setResult(null, ProfileFetchResult.TOO_MANY_REQUESTS);
-                            } else {
-                                request.setResult(null, ProfileFetchResult.FAILED);
-                            }
-                        }
+                    if (isTooManyRequests(e)) {
+                        request.setResult(null, ProfileFetchResult.TOO_MANY_REQUESTS);
+                    } else {
+                        request.setResult(null, ProfileFetchResult.FAILED);
                     }
-                });
+                }
+            }
+        });
+    }
+
+    /**
+     * Fetch a profile.
+     *
+     * @param name
+     *            The name of the player the profile belongs to.
+     * @param handler
+     *            Optional handler to handle the result. Handler always invoked from the main thread.
+     */
+    public static void fetch(String name, @Nullable ProfileFetchHandler handler) {
+        Preconditions.checkNotNull(name);
+
+        if (PROFILE_THREAD == null) {
+            PROFILE_THREAD = new ProfileFetchThread();
+            Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), PROFILE_THREAD, 11, 20);
+        }
+        PROFILE_THREAD.fetch(name, handler);
     }
 
     @Nullable
     private static ProfileRequest findRequest(String name, Collection<ProfileRequest> requests) {
-
         name = name.toLowerCase();
 
         for (ProfileRequest request : requests) {
@@ -127,18 +126,18 @@ public class ProfileFetcher {
         return null;
     }
 
+    private static String getExceptionMsg(Exception e) {
+        String message = e.getMessage();
+        String cause = e.getCause() != null ? e.getCause().getMessage() : null;
+        return cause != null ? cause : message;
+    }
+
     private static boolean isProfileNotFound(Exception e) {
         String message = e.getMessage();
         String cause = e.getCause() != null ? e.getCause().getMessage() : null;
 
         return (message != null && message.contains("did not find"))
                 || (cause != null && cause.contains("did not find"));
-    }
-
-    private static String getExceptionMsg(Exception e) {
-        String message = e.getMessage();
-        String cause = e.getCause() != null ? e.getCause().getMessage() : null;
-        return cause != null ? cause : message;
     }
 
     private static boolean isTooManyRequests(Exception e) {
