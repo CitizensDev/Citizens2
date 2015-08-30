@@ -18,6 +18,7 @@ import com.mojang.authlib.properties.Property;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
+import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.event.CitizensSerialiseMetaEvent;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
@@ -451,6 +452,18 @@ public class EventListen implements Listener {
         recalculatePlayer(event.getPlayer(), 10, false);
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onCitizensReload(CitizensReloadEvent event) {
+        skinUpdateTrackers.clear();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+
+            if (player.hasMetadata("NPC"))
+                continue;
+
+            skinUpdateTrackers.put(player.getUniqueId(), new SkinUpdateTracker(player));
+        }
+    }
+
     public void recalculatePlayer(final Player player, long delay, final boolean isInitial) {
 
         if (player.hasMetadata("NPC"))
@@ -589,8 +602,9 @@ public class EventListen implements Listener {
     private class SkinUpdateTracker {
         float initialYaw;
         final Location location = new Location(null, 0, 0, 0);
-        boolean hasMoved;
         int rotationCount;
+        float upperBound;
+        float lowerBound;
 
         SkinUpdateTracker(Player player) {
             reset(player);
@@ -598,22 +612,13 @@ public class EventListen implements Listener {
 
         boolean shouldUpdate(Player player) {
 
-            // check if this is the first time the player has moved
-            if (!hasMoved) {
-                hasMoved = true;
-                reset(player);
-                return true;
-            }
-
             Location currentLoc = player.getLocation(YAW_LOCATION);
-            float currentYaw = currentLoc.getYaw();
 
             if (rotationCount < 2) {
-
-                float rotationDegrees = Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
-
-                boolean hasRotated =
-                        Math.abs(NMS.clampYaw(currentYaw - this.initialYaw)) < rotationDegrees;
+                float yaw = NMS.clampYaw(currentLoc.getYaw());
+                boolean hasRotated = upperBound < lowerBound
+                        ? yaw > upperBound && yaw < lowerBound
+                        : yaw > upperBound || yaw < lowerBound;
 
                 // update the first 2 times the player rotates. helps load skins around player
                 // after the player logs/teleports.
@@ -639,7 +644,10 @@ public class EventListen implements Listener {
         // current location and yaw.
         void reset(Player player) {
             player.getLocation(location);
-            this.initialYaw = location.getYaw();
+            this.initialYaw = NMS.clampYaw(location.getYaw());
+            float rotationDegrees = Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
+            this.upperBound = NMS.clampYaw(this.initialYaw + rotationDegrees);
+            this.lowerBound = NMS.clampYaw(this.initialYaw - rotationDegrees);
         }
     }
 

@@ -1307,7 +1307,7 @@ public class NPCCommands {
                 throw new CommandException();
             npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, args.getString(1));
             if (args.hasFlag('p')) {
-                npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA, "cache");
+                npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, false);
             }
             skinName = args.getString(1);
         }
