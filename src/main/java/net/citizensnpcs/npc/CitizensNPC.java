@@ -192,7 +192,7 @@ public class CitizensNPC extends AbstractNPC {
         SkinnableEntity skinnable = NMS.getSkinnable(getEntity());
         if (skinnable != null) {
             final double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
-            skinnable.getSkinTracker().updateNearbyViewers(viewDistance);
+            //skinnable.getSkinTracker().updateNearbyViewers(viewDistance);
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
