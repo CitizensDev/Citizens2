@@ -291,6 +291,7 @@ public interface NPC extends Agent, Cloneable {
     public static final String NAMEPLATE_VISIBLE_METADATA = "nameplate-visible";
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA = "player-skin-textures";
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA = "player-skin-signature";
+    public static final String PLAYER_SKIN_USE_LATEST = "player-skin-use-latest";
     public static final String PLAYER_SKIN_UUID_METADATA = "player-skin-name";
     public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
     public static final String SCOREBOARD_FAKE_TEAM_NAME_METADATA = "fake-scoreboard-team-name";
