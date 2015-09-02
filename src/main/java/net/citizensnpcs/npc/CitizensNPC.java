@@ -189,23 +189,11 @@ public class CitizensNPC extends AbstractNPC {
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
 
         // send skin packets, if applicable, before other NMS packets are sent
-        SkinnableEntity skinnable = NMS.getSkinnable(getEntity());
-        if (skinnable != null) {
-            final double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
-            //skinnable.getSkinTracker().updateNearbyViewers(viewDistance);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    if (getEntity() == null || !getEntity().isValid())
-                        return;
-
-                    SkinnableEntity npc = NMS.getSkinnable(getEntity());
-                    if (npc == null)
-                        return;
-
-                    npc.getSkinTracker().updateNearbyViewers(viewDistance);
-                }
-            }, 20);
+        if (couldSpawn) {
+            SkinnableEntity skinnable = NMS.getSkinnable(getEntity());
+            if (skinnable != null) {
+                skinnable.getSkinTracker().onSpawnNPC();
+            }
         }
 
         mcEntity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
