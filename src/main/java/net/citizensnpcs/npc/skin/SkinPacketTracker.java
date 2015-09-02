@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import net.citizensnpcs.npc.CitizensNPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.google.common.base.Preconditions;
@@ -99,6 +101,23 @@ public class SkinPacketTracker {
     }
 
     /**
+     * Invoke when the NPC entity is spawned.
+     */
+    public void onSpawnNPC() {
+        isRemoved = false;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!entity.getNPC().isSpawned())
+                    return;
+
+                double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
+                updateNearbyViewers(viewDistance);
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), 20);
+    }
+
+    /**
      * Invoke when the NPC entity is removed.
      *
      * <p>
@@ -164,11 +183,11 @@ public class SkinPacketTracker {
         Player from = entity.getBukkitEntity();
         Location location = from.getLocation();
 
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+        for (Player player : world.getPlayers()) {
             if (player == null || player.hasMetadata("NPC"))
                 continue;
 
-            if (world != player.getWorld() || !player.canSee(from))
+            if (!player.canSee(from))
                 continue;
 
             if (location.distanceSquared(player.getLocation(CACHE_LOCATION)) > radius)
