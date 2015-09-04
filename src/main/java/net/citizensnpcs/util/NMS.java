@@ -553,6 +553,19 @@ public class NMS {
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
     }
 
+    public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
+        if (entity == null)
+            return;
+        EntityHuman handle = (EntityHuman) getHandle(entity);
+        if (handle.world == null)
+            return;
+        if (remove) {
+            handle.world.players.remove(handle);
+        } else if (!handle.world.players.contains(handle)) {
+            handle.world.players.add(handle);
+        }
+    }
+
     @SuppressWarnings("rawtypes")
     public static void replaceTrackerEntry(Player player) {
         WorldServer server = (WorldServer) NMS.getHandle(player).getWorld();
