@@ -34,6 +34,7 @@ import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -81,6 +82,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Team;
 
 public class EventListen implements Listener {
@@ -323,6 +325,16 @@ public class EventListen implements Listener {
     }
 
     @EventHandler
+    public void onNPCSpawn(NPCSpawnEvent event) {
+        SkinnableEntity skinnable = NMS.getSkinnable(event.getNPC().getEntity());
+        if (skinnable == null)
+            return;
+
+        // reset nearby players in case they are not looking at the NPC when it spawns.
+        resetNearbyPlayers(skinnable);
+    }
+
+    @EventHandler
     public void onNPCDespawn(NPCDespawnEvent event) {
         if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL) {
             if (event.getNPC().getStoredLocation() != null) {
@@ -441,7 +453,6 @@ public class EventListen implements Listener {
     // a player moves a certain distance from their last position.
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent event) {
-
         SkinUpdateTracker updateTracker = skinUpdateTrackers.get(event.getPlayer().getUniqueId());
         if (updateTracker == null)
             return;
@@ -460,17 +471,25 @@ public class EventListen implements Listener {
             if (player.hasMetadata("NPC"))
                 continue;
 
-            skinUpdateTrackers.put(player.getUniqueId(), new SkinUpdateTracker(player));
+            SkinUpdateTracker tracker = skinUpdateTrackers.get(player.getUniqueId());
+            if (tracker == null)
+                continue;
+
+            tracker.hardReset(player);
         }
     }
 
-    public void recalculatePlayer(final Player player, long delay, final boolean isInitial) {
-
+    public void recalculatePlayer(final Player player, long delay, boolean reset) {
         if (player.hasMetadata("NPC"))
             return;
 
-        if (isInitial) {
-            skinUpdateTrackers.put(player.getUniqueId(), new SkinUpdateTracker(player));
+        SkinUpdateTracker tracker = skinUpdateTrackers.get(player.getUniqueId());
+        if (tracker == null) {
+            tracker = new SkinUpdateTracker(player);
+            skinUpdateTrackers.put(player.getUniqueId(), tracker);
+        }
+        else if (reset) {
+            tracker.hardReset(player);
         }
 
         new BukkitRunnable() {
@@ -480,20 +499,42 @@ public class EventListen implements Listener {
 
                 List<SkinnableEntity> nearbyNPCs = getNearbySkinnableNPCs(player);
                 for (SkinnableEntity npc : nearbyNPCs) {
-                     npc.getSkinTracker().updateViewer(player);
-                }
-
-                if (!nearbyNPCs.isEmpty() && isInitial) {
-                    // one more time to help when resource pack load times
-                    // prevent immediate skin loading
-                    recalculatePlayer(player, 40, false);
+                    npc.getSkinTracker().updateViewer(player);
                 }
             }
         }.runTaskLater(CitizensAPI.getPlugin(), delay);
     }
 
-    private List<SkinnableEntity> getNearbySkinnableNPCs(Player player) {
+    // hard reset skin update trackers for players near a skinnable NPC
+    private void resetNearbyPlayers(SkinnableEntity skinnable) {
+        Entity entity = skinnable.getBukkitEntity();
+        if (entity == null || !entity.isValid())
+            return;
 
+        double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
+        viewDistance *= viewDistance;
+        Location location = entity.getLocation(NPC_LOCATION);
+        List<Player> players = entity.getWorld().getPlayers();
+        for (Player player : players) {
+            if (player.hasMetadata("NPC"))
+                continue;
+
+            double distanceSquared = player.getLocation(CACHE_LOCATION).distanceSquared(location);
+            if (distanceSquared > viewDistance)
+                continue;
+
+            SkinUpdateTracker tracker = skinUpdateTrackers.get(player.getUniqueId());
+            if (tracker == null) {
+                tracker = new SkinUpdateTracker(player);
+                skinUpdateTrackers.put(player.getUniqueId(), tracker);
+            }
+            else {
+                tracker.hardReset(player);
+            }
+        }
+    }
+
+    private List<SkinnableEntity> getNearbySkinnableNPCs(Player player) {
         List<SkinnableEntity> results = new ArrayList<SkinnableEntity>();
 
         double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
@@ -506,7 +547,7 @@ public class EventListen implements Listener {
                     && player.canSee((Player) npcEntity)
                     && player.getWorld().equals(npcEntity.getWorld())
                     && player.getLocation(CACHE_LOCATION)
-                        .distanceSquared(npc.getStoredLocation()) < viewDistance) {
+                    .distanceSquared(npc.getStoredLocation()) < viewDistance) {
 
                 SkinnableEntity skinnable = NMS.getSkinnable(npcEntity);
 
@@ -600,21 +641,25 @@ public class EventListen implements Listener {
     }
 
     private class SkinUpdateTracker {
-        float initialYaw;
         final Location location = new Location(null, 0, 0, 0);
         int rotationCount;
+        boolean hasMoved;
         float upperBound;
         float lowerBound;
 
         SkinUpdateTracker(Player player) {
-            reset(player);
+            hardReset(player);
         }
 
         boolean shouldUpdate(Player player) {
+            Location currentLoc = player.getLocation(CACHE_LOCATION);
 
-            Location currentLoc = player.getLocation(YAW_LOCATION);
+            if (!hasMoved) {
+                hasMoved = true;
+                return true;
+            }
 
-            if (rotationCount < 2) {
+            if (rotationCount < 3) {
                 float yaw = NMS.clampYaw(currentLoc.getYaw());
                 boolean hasRotated = upperBound < lowerBound
                         ? yaw > upperBound && yaw < lowerBound
@@ -643,15 +688,23 @@ public class EventListen implements Listener {
         // resets initial yaw and location to the players
         // current location and yaw.
         void reset(Player player) {
-            player.getLocation(location);
-            this.initialYaw = NMS.clampYaw(location.getYaw());
-            float rotationDegrees = Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
-            this.upperBound = NMS.clampYaw(this.initialYaw + rotationDegrees);
-            this.lowerBound = NMS.clampYaw(this.initialYaw - rotationDegrees);
+            player.getLocation(this.location);
+            if (rotationCount < 3) {
+                float rotationDegrees = Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
+                float yaw = NMS.clampYaw(this.location.getYaw());
+                this.upperBound = NMS.clampYaw(yaw + rotationDegrees);
+                this.lowerBound = NMS.clampYaw(yaw - rotationDegrees);
+            }
+        }
+
+        void hardReset(Player player) {
+            this.hasMoved = false;
+            this.rotationCount = 0;
+            reset(player);
         }
     }
 
-    private static final Location YAW_LOCATION = new Location(null, 0, 0, 0);
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
     private static final int MOVEMENT_SKIN_UPDATE_DISTANCE = 50 * 50;
 }
