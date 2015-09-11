@@ -89,13 +89,12 @@ public class HumanController extends AbstractEntityController {
         handle.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-
             @Override
             public void run() {
-
                 if (getBukkitEntity() == null || !getBukkitEntity().isValid())
-                    return;
-
+                    return; 
+                boolean removeFromPlayerList = npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
+                NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.data().get("removefromplayerlist", removeFromPlayerList));
                 if (prefixCapture != null) {
                     Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
                     String teamName = UUID.randomUUID().toString().substring(0, 16);

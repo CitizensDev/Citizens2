@@ -995,6 +995,7 @@ public class NPCCommands {
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+            NMS.addOrRemoveFromPlayerList(npc.getEntity(), remove);
         }
         Messaging.sendTr(sender, remove ? Messages.REMOVED_FROM_PLAYERLIST : Messages.ADDED_TO_PLAYERLIST,
                 npc.getName());
