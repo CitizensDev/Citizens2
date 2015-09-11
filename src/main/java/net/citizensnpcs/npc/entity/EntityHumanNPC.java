@@ -4,6 +4,16 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
+
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
 
@@ -45,16 +55,6 @@ import net.minecraft.server.v1_8_R3.PlayerInteractManager;
 import net.minecraft.server.v1_8_R3.WorldServer;
 import net.minecraft.server.v1_8_R3.WorldSettings.EnumGamemode;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.util.Vector;
-
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
     private PlayerControllerJump controllerJump;
     private PlayerControllerLook controllerLook;
@@ -67,7 +67,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private final SkinPacketTracker skinTracker;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
-                          PlayerInteractManager playerInteractManager, NPC npc) {
+            PlayerInteractManager playerInteractManager, NPC npc) {
         super(minecraftServer, world, gameProfile, playerInteractManager);
 
         this.npc = (CitizensNPC) npc;
@@ -75,8 +75,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             skinTracker = new SkinPacketTracker(this);
             playerInteractManager.setGameMode(EnumGamemode.SURVIVAL);
             initialise(minecraftServer);
-        }
-        else {
+        } else {
             skinTracker = null;
         }
     }
@@ -197,11 +196,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
-    public SkinPacketTracker getSkinTracker() {
-        return skinTracker;
-    }
-
-    @Override
     public String getSkinName() {
 
         MetadataStore meta = npc.data();
@@ -214,11 +208,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
-    public void setSkinName(String name) {
-        Preconditions.checkNotNull(name);
-
-        npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, name.toLowerCase());
-        skinTracker.notifySkinChange();
+    public SkinPacketTracker getSkinTracker() {
+        return skinTracker;
     }
 
     private void initialise(MinecraftServer minecraftServer) {
@@ -287,6 +278,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         controllerJump.a();
     }
 
+    @Override
+    public void setSkinName(String name) {
+        Preconditions.checkNotNull(name);
+
+        npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, name.toLowerCase());
+        skinTracker.notifySkinChange();
+    }
+
     public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
         controllerLook.a(target, yawOffset, renderOffset);
     }
@@ -352,6 +351,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             for (int i = 0; i < 5; i++) {
                 packets[i] = new PacketPlayOutEntityEquipment(getId(), i, getEquipment(i));
             }
+            boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
+                    Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
             NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
@@ -373,6 +374,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
 
         @Override
+        public Player getBukkitEntity() {
+            return this;
+        }
+
+        @Override
         public EntityHumanNPC getHandle() {
             return (EntityHumanNPC) this.entity;
         }
@@ -385,6 +391,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public String getSkinName() {
+            return ((SkinnableEntity) this.entity).getSkinName();
+        }
+
+        @Override
+        public SkinPacketTracker getSkinTracker() {
+            return ((SkinnableEntity) this.entity).getSkinTracker();
         }
 
         @Override
@@ -407,23 +423,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
 
         @Override
-        public SkinPacketTracker getSkinTracker() {
-            return ((SkinnableEntity)this.entity).getSkinTracker();
-        }
-
-        @Override
-        public Player getBukkitEntity() {
-            return this;
-        }
-
-        @Override
-        public String getSkinName() {
-            return ((SkinnableEntity)this.entity).getSkinName();
-        }
-
-        @Override
         public void setSkinName(String name) {
-            ((SkinnableEntity)this.entity).setSkinName(name);
+            ((SkinnableEntity) this.entity).setSkinName(name);
         }
     }
 
