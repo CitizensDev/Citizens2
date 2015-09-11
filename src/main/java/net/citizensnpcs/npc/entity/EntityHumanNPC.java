@@ -352,7 +352,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             for (int i = 0; i < 5; i++) {
                 packets[i] = new PacketPlayOutEntityEquipment(getId(), i, getEquipment(i));
             }
-
+            NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }
