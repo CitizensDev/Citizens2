@@ -3,8 +3,18 @@ package net.citizensnpcs.npc.entity;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
+
 import com.mojang.authlib.GameProfile;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Colorizer;
@@ -14,15 +24,6 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.PlayerInteractManager;
 import net.minecraft.server.v1_8_R3.WorldServer;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 public class HumanController extends AbstractEntityController {
     public HumanController() {
@@ -77,7 +78,7 @@ public class HumanController extends AbstractEntityController {
         }
 
         GameProfile profile = new GameProfile(uuid, coloredName);
-        
+
         final EntityHumanNPC handle = new EntityHumanNPC(nmsWorld.getServer().getServer(), nmsWorld, profile,
                 new PlayerInteractManager(nmsWorld), npc);
 
@@ -92,9 +93,11 @@ public class HumanController extends AbstractEntityController {
             @Override
             public void run() {
                 if (getBukkitEntity() == null || !getBukkitEntity().isValid())
-                    return; 
-                boolean removeFromPlayerList = npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-                NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.data().get("removefromplayerlist", removeFromPlayerList));
+                    return;
+                boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
+                        Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
+                NMS.addOrRemoveFromPlayerList(getBukkitEntity(),
+                        npc.data().get("removefromplayerlist", removeFromPlayerList));
                 if (prefixCapture != null) {
                     Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
                     String teamName = UUID.randomUUID().toString().substring(0, 16);
