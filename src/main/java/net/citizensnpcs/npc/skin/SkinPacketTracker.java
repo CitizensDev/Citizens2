@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.citizensnpcs.npc.CitizensNPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -135,8 +134,8 @@ public class SkinPacketTracker {
                 continue;
 
             // send packet now and later to ensure removal from player list
-            NMS.sendPlayerListRemove(player, entity.getBukkitEntity());
-            PLAYER_LIST_REMOVER.sendPacket(player, entity);
+            NMS.sendTabListRemove(player, entity.getBukkitEntity());
+            TAB_LIST_REMOVER.sendPacket(player, entity);
         }
     }
 
@@ -147,27 +146,24 @@ public class SkinPacketTracker {
         entry.removeTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                if (shouldRemoveFromPlayerList()) {
-                    PLAYER_LIST_REMOVER.sendPacket(entry.player, entity);
+                if (shouldRemoveFromTabList()) {
+                    TAB_LIST_REMOVER.sendPacket(entry.player, entity);
                 }
             }
         }, PACKET_DELAY_REMOVE);
     }
 
     private void scheduleRemovePacket(PlayerEntry entry, int count) {
-        if (!shouldRemoveFromPlayerList())
+        if (!shouldRemoveFromTabList())
             return;
 
         entry.removeCount = count;
         scheduleRemovePacket(entry);
     }
 
-    private boolean shouldRemoveFromPlayerList() {
-        boolean isTablistDisabled = Settings.Setting.DISABLE_TABLIST.asBoolean();
-        boolean isNpcRemoved = entity.getNPC().data().get("removefromplayerlist",
-                Settings.Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-
-        return isNpcRemoved && isTablistDisabled;
+    private boolean shouldRemoveFromTabList() {
+        return entity.getNPC().data().get("removefromtablist",
+                Settings.Setting.DISABLE_TABLIST.asBoolean());
     }
 
     /**
@@ -216,11 +212,11 @@ public class SkinPacketTracker {
             entry = new PlayerEntry(player);
         }
 
-        PLAYER_LIST_REMOVER.cancelPackets(player, entity);
+        TAB_LIST_REMOVER.cancelPackets(player, entity);
 
         inProgress.put(player.getUniqueId(), entry);
         skin.apply(entity);
-        NMS.sendPlayerListAdd(player, entity.getBukkitEntity());
+        NMS.sendTabListAdd(player, entity.getBukkitEntity());
 
         scheduleRemovePacket(entry, 2);
     }
@@ -248,12 +244,12 @@ public class SkinPacketTracker {
         private void onPlayerQuit(PlayerQuitEvent event) {
             // this also causes any entries in the "inProgress" field to
             // be removed.
-            PLAYER_LIST_REMOVER.cancelPackets(event.getPlayer());
+            TAB_LIST_REMOVER.cancelPackets(event.getPlayer());
         }
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static PlayerListener LISTENER;
     private static final int PACKET_DELAY_REMOVE = 1;
-    private static final PlayerListRemover PLAYER_LIST_REMOVER = new PlayerListRemover();
+    private static final TabListRemover TAB_LIST_REMOVER = new TabListRemover();
 }

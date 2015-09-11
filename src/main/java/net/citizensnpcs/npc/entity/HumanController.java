@@ -129,12 +129,12 @@ public class HumanController extends AbstractEntityController {
 
     @Override
     public void remove() {
-
-        NMS.removeFromWorld(getBukkitEntity());
-
-        SkinnableEntity npc = NMS.getSkinnable(getBukkitEntity());
-        npc.getSkinTracker().onRemoveNPC();
-
+        Player entity = getBukkitEntity();
+        if (entity != null) {
+            NMS.removeFromWorld(entity);
+            SkinnableEntity npc = NMS.getSkinnable(entity);
+            npc.getSkinTracker().onRemoveNPC();
+        }
         super.remove();
     }
 
