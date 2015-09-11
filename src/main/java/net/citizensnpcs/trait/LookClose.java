@@ -47,13 +47,16 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         Collections.sort(nearby, new Comparator<Entity>() {
             @Override
             public int compare(Entity o1, Entity o2) {
+                if (npcLocation.getWorld() != o1.getLocation().getWorld() || npcLocation.getWorld() != o2.getLocation().getWorld()) {
+                    return -1;
+                }
                 double d1 = o1.getLocation().distanceSquared(npcLocation);
                 double d2 = o2.getLocation().distanceSquared(npcLocation);
                 return Double.compare(d1, d2);
             }
         });
         for (Entity entity : nearby) {
-            if (entity.getType() != EntityType.PLAYER)
+            if (entity.getType() != EntityType.PLAYER || entity.getLocation().getWorld() != npcLocation.getWorld())
                 continue;
             if (CitizensAPI.getNPCRegistry().getNPC(entity) != null)
                 continue;
