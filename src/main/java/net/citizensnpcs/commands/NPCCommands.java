@@ -79,6 +79,8 @@ import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.RabbitType.RabbitTypes;
 import net.citizensnpcs.trait.SheepTrait;
+import net.citizensnpcs.trait.SkinLayers;
+import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WolfModifiers;
@@ -1320,6 +1322,42 @@ public class NPCCommands {
                 skinnable.setSkinName(skinName);
             }
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "skinlayers (--cape [true|false]) (--hat [true|false]) (--jacket [true|false]) (--sleeves [true|false]) (--pants [true|false])",
+            desc = "Sets an NPC's skin layers visibility.",
+            modifiers = { "skinlayers" },
+            min = 1,
+            max = 5,
+            permission = "citizens.npc.skinlayers")
+    @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
+    public void skinLayers(final CommandContext args, final CommandSender sender, final NPC npc) throws CommandException {
+        SkinLayers trait = npc.getTrait(SkinLayers.class);
+        if (args.hasValueFlag("cape")) {
+            trait.setVisible(Layer.CAPE, Boolean.valueOf(args.getFlag("cape")));
+        }
+        if (args.hasValueFlag("hat")) {
+            trait.setVisible(Layer.HAT, Boolean.valueOf(args.getFlag("hat")));
+        }
+        if (args.hasValueFlag("jacket")) {
+            trait.setVisible(Layer.JACKET, Boolean.valueOf(args.getFlag("jacket")));
+        }
+        if (args.hasValueFlag("sleeves")) {
+            boolean hasSleeves = Boolean.valueOf(args.getFlag("sleeves"));
+            trait.setVisible(Layer.LEFT_SLEEVE, hasSleeves);
+            trait.setVisible(Layer.RIGHT_SLEEVE, hasSleeves);
+        }
+        if (args.hasValueFlag("pants")) {
+            boolean hasPants = Boolean.valueOf(args.getFlag("pants"));
+            trait.setVisible(Layer.LEFT_PANTS, hasPants);
+            trait.setVisible(Layer.RIGHT_PANTS, hasPants);
+        }
+        Messaging.sendTr(sender, Messages.SKIN_LAYERS_SET, npc.getName(),
+                trait.isVisible(Layer.CAPE), trait.isVisible(Layer.HAT), trait.isVisible(Layer.JACKET),
+                trait.isVisible(Layer.LEFT_SLEEVE) || trait.isVisible(Layer.RIGHT_SLEEVE),
+                trait.isVisible(Layer.LEFT_PANTS) || trait.isVisible(Layer.RIGHT_PANTS));
     }
 
     @Command(
