@@ -235,6 +235,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         controllerMove = new PlayerControllerMove(this);
         navigation = new PlayerNavigation(this, world);
         NMS.setStepHeight(this, 1); // the default (0) breaks step climbing
+
+        setSkinFlags((byte)0xFF);
     }
 
     public boolean isNavigating() {
@@ -276,6 +278,18 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     public void setShouldJump() {
         controllerJump.a();
+    }
+
+    @Override
+    public void setSkinFlags(byte flags) {
+        // set skin flag byte (DataWatcher API is lacking so
+        // catch the NPE as a sign that this is a MC 1.7 server without the
+        // skin flag)
+        try {
+            getDataWatcher().watch(10, flags);
+        } catch (NullPointerException e) {
+            getDataWatcher().a(10, flags);
+        }
     }
 
     @Override
@@ -333,15 +347,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private void updatePackets(boolean navigating) {
 
         if (world.getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
-            // set skin flag byte to all visible (DataWatcher API is lacking so
-            // catch the NPE as a sign that this is a MC 1.7 server without the
-            // skin flag)
-            try {
-                datawatcher.watch(10, Byte.valueOf((byte) 127));
-            } catch (NullPointerException e) {
-                datawatcher.a(10, Byte.valueOf((byte) 127));
-            }
-
             Location current = getBukkitEntity().getLocation(packetLocationCache);
             Packet<?>[] packets = new Packet[navigating ? 5 : 6];
             if (!navigating) {
@@ -420,6 +425,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         @Override
         public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
             cserver.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
+        }
+
+        @Override
+        public void setSkinFlags(byte flags) {
+            ((SkinnableEntity) this.entity).setSkinFlags(flags);
         }
 
         @Override

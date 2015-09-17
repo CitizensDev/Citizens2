@@ -10,11 +10,6 @@ import org.bukkit.entity.Player;
 public interface SkinnableEntity extends NPCHolder {
 
     /**
-     * Get the entities skin packet tracker.
-     */
-    SkinPacketTracker getSkinTracker();
-
-    /**
      * Get the bukkit entity.
      */
     Player getBukkitEntity();
@@ -30,11 +25,32 @@ public interface SkinnableEntity extends NPCHolder {
     String getSkinName();
 
     /**
+     * Get the entities skin packet tracker.
+     */
+    SkinPacketTracker getSkinTracker();
+
+    /**
+     * Set the bit flags that represent the skin layer parts visibility.
+     *
+     * <p>
+     * Setting the skin flags automatically updates the NPC skin.
+     * </p>
+     *
+     * @param flags
+     *            The bit flags.
+     */
+    void setSkinFlags(byte flags);
+
+    /**
      * Set the name of the player whose skin the NPC
      * uses.
      *
-     * <p>Setting the skin name automatically updates and
-     * respawn the NPC.</p>
+     * <p>
+     * Setting the skin name automatically updates and respawn the NPC.
+     * </p>
+     *
+     * @param name
+     *            The skin name.
      */
     void setSkinName(String name);
 }
