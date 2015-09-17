@@ -646,6 +646,7 @@ permissions:
       citizens.npc.size: true
       citizens.npc.skeletontype: true
       citizens.npc.skin: true
+      citizens.npc.skinlayers: true
       citizens.npc.sound: true
       citizens.npc.spawn: true
       citizens.npc.speak: true
@@ -994,6 +995,7 @@ permissions:
       citizens.npc.size: true
       citizens.npc.skeletontype: true
       citizens.npc.skin: true
+      citizens.npc.skinlayers: true
       citizens.npc.sound: true
       citizens.npc.spawn: true
       citizens.npc.speak: true
