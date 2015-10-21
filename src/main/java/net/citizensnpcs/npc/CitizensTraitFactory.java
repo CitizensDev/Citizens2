@@ -31,6 +31,7 @@ import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.SheepTrait;
+import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WolfModifiers;
@@ -65,6 +66,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(RabbitType.class).withName("rabbittype"));
         registerTrait(TraitInfo.create(Saddle.class).withName("saddle"));
         registerTrait(TraitInfo.create(SheepTrait.class).withName("sheeptrait"));
+        registerTrait(TraitInfo.create(SkinLayers.class).withName("skinlayers"));
         registerTrait(TraitInfo.create(NPCSkeletonType.class).withName("skeletontype"));
         registerTrait(TraitInfo.create(SlimeSize.class).withName("slimesize"));
         registerTrait(TraitInfo.create(Spawned.class).withName("spawned"));
