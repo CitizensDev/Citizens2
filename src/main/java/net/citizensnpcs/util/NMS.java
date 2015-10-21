@@ -117,7 +117,7 @@ public class NMS {
         return null;
     }
 
-    public static void sendPlayerListAdd(Player recipient, Player listPlayer) {
+    public static void sendTabListAdd(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
 
@@ -127,7 +127,7 @@ public class NMS {
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entity));
     }
 
-    public static void sendPlayerListRemove(Player recipient, Player listPlayer) {
+    public static void sendTabListRemove(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
 
@@ -137,8 +137,8 @@ public class NMS {
                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
     }
 
-    public static void sendPlayerListRemove(Player recipient,
-                                            Collection<? extends SkinnableEntity> skinnableNPCs) {
+    public static void sendTabListRemove(Player recipient,
+                                         Collection<? extends SkinnableEntity> skinnableNPCs) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(skinnableNPCs);
 

@@ -25,10 +25,10 @@ import net.citizensnpcs.util.NMS;
  * Collects entities to remove and sends them all to the player in a single packet.
  * </p>
  */
-public class PlayerListRemover {
+public class TabListRemover {
     private final Map<UUID, PlayerEntry> pending = new HashMap<UUID, PlayerEntry>(Bukkit.getMaxPlayers() / 2);
 
-    PlayerListRemover() {
+    TabListRemover() {
         Bukkit.getScheduler().runTaskTimer(CitizensAPI.getPlugin(), new Sender(), 2, 2);
     }
 
@@ -143,7 +143,7 @@ public class PlayerListRemover {
                 }
 
                 if (entry.player.isOnline())
-                    NMS.sendPlayerListRemove(entry.player, skinnableList);
+                    NMS.sendTabListRemove(entry.player, skinnableList);
 
                 // notify skin trackers that a remove packet has been sent to a player
                 for (SkinnableEntity entity : skinnableList) {
