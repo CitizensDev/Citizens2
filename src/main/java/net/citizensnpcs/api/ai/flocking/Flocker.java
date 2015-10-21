@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.util.Vector;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class Flocker implements Runnable {
     private final List<FlockBehavior> behaviors;
@@ -29,7 +29,6 @@ public class Flocker implements Runnable {
         for (FlockBehavior behavior : behaviors) {
             base.add(behavior.getVector(npc, nearby));
         }
-        // base.multiply(1.0 / (nearby.size() * 50));
         base = clip(maxForce, base);
         npc.getEntity().setVelocity(npc.getEntity().getVelocity().add(base));
     }
