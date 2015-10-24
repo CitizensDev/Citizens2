@@ -67,7 +67,7 @@ public class HumanController extends AbstractEntityController {
                 }
             }
         }
-        final String prefixCapture = prefix, suffixCapture = suffix, coloredNameCapture = coloredName;
+        final String prefixCapture = prefix, suffixCapture = suffix;
 
         UUID uuid = npc.getUniqueId();
         if (uuid.version() == 4) { // clear version
