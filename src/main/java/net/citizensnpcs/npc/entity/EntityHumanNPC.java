@@ -236,7 +236,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         navigation = new PlayerNavigation(this, world);
         NMS.setStepHeight(this, 1); // the default (0) breaks step climbing
 
-        setSkinFlags((byte)0xFF);
+        setSkinFlags((byte) 0xFF);
     }
 
     public boolean isNavigating() {
