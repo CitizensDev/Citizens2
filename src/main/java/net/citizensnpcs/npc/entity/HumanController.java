@@ -115,7 +115,7 @@ public class HumanController extends AbstractEntityController {
                     handle.getNPC().data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
                 }
             }
-        }, 1);
+        }, 20);
 
         handle.getBukkitEntity().setSleepingIgnored(true);
 

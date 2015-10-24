@@ -215,15 +215,9 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     private double updateHorizontalSpeed(net.minecraft.server.v1_8_R3.Entity handle,
             net.minecraft.server.v1_8_R3.Entity passenger, double speed, float speedMod) {
         double oldSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
-        double horizontal = ((EntityLiving) passenger).ba;
-        if (horizontal > 0.0D) {
-            double dXcos = -Math.sin(passenger.yaw * Math.PI / 180.0F);
-            double dXsin = Math.cos(passenger.yaw * Math.PI / 180.0F);
-            handle.motX += dXcos * speed * speedMod * 0.5;
-            handle.motZ += dXsin * speed * speedMod * 0.5;
-        }
-        handle.motX += passenger.motX * speedMod;
-        handle.motZ += passenger.motZ * speedMod;
+        double angle = Math.toRadians(passenger.yaw - ((EntityLiving) passenger).aZ * 45.0F);
+        handle.motX += speedMod * -Math.sin(angle) * ((EntityLiving) passenger).ba * 0.05;
+        handle.motZ += speedMod * Math.cos(angle) * ((EntityLiving) passenger).ba * 0.05;
 
         double newSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
         if (newSpeed > oldSpeed && speed < 0.35D) {
