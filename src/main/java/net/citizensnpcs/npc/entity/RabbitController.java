@@ -120,9 +120,9 @@ public class RabbitController extends MobEntityController {
         public void E() {
             if (npc != null) {
                 npc.update();
+            } else {
+                super.E();
             }
-            super.E();
-
         }
 
         @Override

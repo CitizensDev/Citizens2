@@ -6,6 +6,40 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityCombustByBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scoreboard.Team;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
@@ -47,47 +81,12 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R3.Navigation;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityCombustByBlockEvent;
-import org.bukkit.event.entity.EntityCombustByEntityEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.vehicle.VehicleDestroyEvent;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.scoreboard.Team;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
     private final Map<String, NPCRegistry> registries;
-    private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create();
     private final SkinUpdateTracker skinUpdateTracker;
+    private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create();
 
     EventListen(Map<String, NPCRegistry> registries) {
         this.registries = registries;
@@ -155,6 +154,11 @@ public class EventListen implements Listener {
                         "due to chunk unload at [" + coord.x + "," + coord.z + "]");
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onCitizensReload(CitizensReloadEvent event) {
+        skinUpdateTracker.reset();
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -269,6 +273,9 @@ public class EventListen implements Listener {
             String owner = event.getKey().getString("skull.owner", "");
             UUID uuid = event.getKey().keyExists("skull.uuid") ? UUID.fromString(event.getKey().getString("skull.uuid"))
                     : null;
+            if (owner.isEmpty() && uuid == null) {
+                return;
+            }
             GameProfile profile = new GameProfile(uuid, owner);
             for (DataKey sub : event.getKey().getRelative("skull.properties").getSubKeys()) {
                 String propertyName = sub.name();
@@ -315,16 +322,21 @@ public class EventListen implements Listener {
     }
 
     @EventHandler
+    public void onNavigationBegin(NavigationBeginEvent event) {
+        skinUpdateTracker.onNPCNavigationBegin(event.getNPC());
+    }
+
+    @EventHandler
+    public void onNavigationComplete(NavigationCompleteEvent event) {
+        skinUpdateTracker.onNPCNavigationComplete(event.getNPC());
+    }
+
+    @EventHandler
     public void onNeedsRespawn(NPCNeedsRespawnEvent event) {
         ChunkCoord coord = toCoord(event.getSpawnLocation());
         if (toRespawn.containsEntry(coord, event.getNPC()))
             return;
         toRespawn.put(coord, event.getNPC());
-    }
-
-    @EventHandler
-    public void onNPCSpawn(NPCSpawnEvent event) {
-        skinUpdateTracker.onNPCSpawn(event.getNPC());
     }
 
     @EventHandler
@@ -338,13 +350,8 @@ public class EventListen implements Listener {
     }
 
     @EventHandler
-    public void onNavigationBegin(NavigationBeginEvent event) {
-        skinUpdateTracker.onNPCNavigationBegin(event.getNPC());
-    }
-
-    @EventHandler
-    public void onNavigationComplete(NavigationCompleteEvent event) {
-        skinUpdateTracker.onNPCNavigationComplete(event.getNPC());
+    public void onNPCSpawn(NPCSpawnEvent event) {
+        skinUpdateTracker.onNPCSpawn(event.getNPC());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -381,6 +388,13 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         skinUpdateTracker.updatePlayer(event.getPlayer(), 20, true);
+    }
+
+    // recalculate player NPCs the first time a player moves and every time
+    // a player moves a certain distance from their last position.
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerMove(final PlayerMoveEvent event) {
+        skinUpdateTracker.onPlayerMove(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -451,18 +465,6 @@ public class EventListen implements Listener {
             storeForRespawn(npc);
             Messaging.debug("Despawned", npc.getId() + "due to world unload at", event.getWorld().getName());
         }
-    }
-
-    // recalculate player NPCs the first time a player moves and every time
-    // a player moves a certain distance from their last position.
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerMove(final PlayerMoveEvent event) {
-        skinUpdateTracker.onPlayerMove(event.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onCitizensReload(CitizensReloadEvent event) {
-        skinUpdateTracker.reset();
     }
 
     private void respawnAllFromCoord(ChunkCoord coord) {

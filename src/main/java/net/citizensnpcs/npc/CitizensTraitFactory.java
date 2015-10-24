@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import net.citizensnpcs.Metrics;
 import net.citizensnpcs.Metrics.Graph;
 import net.citizensnpcs.api.CitizensAPI;
@@ -39,11 +44,6 @@ import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.ZombieModifier;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 public class CitizensTraitFactory implements TraitFactory {
     private final List<TraitInfo> defaultTraits = Lists.newArrayList();
@@ -112,6 +112,12 @@ public class CitizensTraitFactory implements TraitFactory {
 
     private <T extends Trait> T create(TraitInfo info) {
         return info.tryCreateInstance();
+    }
+
+    @Override
+    public void deregisterTrait(TraitInfo info) {
+        Preconditions.checkNotNull(info, "info cannot be null");
+        registered.remove(info.getTraitName());
     }
 
     @Override

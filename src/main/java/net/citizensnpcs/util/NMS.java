@@ -12,7 +12,26 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
+
 import javax.annotation.Nullable;
+
+import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.PluginLoadOrder;
 
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
@@ -58,24 +77,6 @@ import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
 import net.minecraft.server.v1_8_R3.World;
 import net.minecraft.server.v1_8_R3.WorldServer;
 
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.PluginLoadOrder;
-
 @SuppressWarnings("unchecked")
 public class NMS {
 
@@ -83,107 +84,27 @@ public class NMS {
         // util class
     }
 
-    public static GameProfileRepository getGameProfileRepository() {
-        return ((CraftServer) Bukkit.getServer()).getServer()
-                .getGameProfileRepository();
+    public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
+        if (entity == null)
+            return;
+        EntityHuman handle = (EntityHuman) getHandle(entity);
+        if (handle.world == null)
+            return;
+        if (remove) {
+            handle.world.players.remove(handle);
+        } else if (!handle.world.players.contains(handle)) {
+            handle.world.players.add(handle);
+        }
     }
 
-    public static boolean addToWorld(org.bukkit.World world,
-                                     org.bukkit.entity.Entity entity,
-                                     CreatureSpawnEvent.SpawnReason reason) {
+    public static boolean addToWorld(org.bukkit.World world, org.bukkit.entity.Entity entity,
+            CreatureSpawnEvent.SpawnReason reason) {
         Preconditions.checkNotNull(world);
         Preconditions.checkNotNull(entity);
         Preconditions.checkNotNull(reason);
 
-        Entity nmsEntity = ((CraftEntity)entity).getHandle();
-        return ((CraftWorld)world).getHandle().addEntity(nmsEntity, reason);
-    }
-
-    public static void removeFromWorld(org.bukkit.entity.Entity entity) {
-        Preconditions.checkNotNull(entity);
-
-        Entity nmsEntity = ((CraftEntity)entity).getHandle();
-        nmsEntity.world.removeEntity(nmsEntity);
-    }
-
-    @Nullable
-    public static SkinnableEntity getSkinnable(org.bukkit.entity.Entity entity) {
-        Preconditions.checkNotNull(entity);
-
         Entity nmsEntity = ((CraftEntity) entity).getHandle();
-        if (nmsEntity instanceof SkinnableEntity) {
-            return (SkinnableEntity)nmsEntity;
-        }
-        return null;
-    }
-
-    public static void sendTabListAdd(Player recipient, Player listPlayer) {
-        Preconditions.checkNotNull(recipient);
-        Preconditions.checkNotNull(listPlayer);
-
-        EntityPlayer entity = ((CraftPlayer)listPlayer).getHandle();
-
-        sendPacket(recipient, new PacketPlayOutPlayerInfo(
-                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entity));
-    }
-
-    public static void sendTabListRemove(Player recipient, Player listPlayer) {
-        Preconditions.checkNotNull(recipient);
-        Preconditions.checkNotNull(listPlayer);
-
-        EntityPlayer entity = ((CraftPlayer)listPlayer).getHandle();
-
-        sendPacket(recipient, new PacketPlayOutPlayerInfo(
-                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
-    }
-
-    public static void sendTabListRemove(Player recipient,
-                                         Collection<? extends SkinnableEntity> skinnableNPCs) {
-        Preconditions.checkNotNull(recipient);
-        Preconditions.checkNotNull(skinnableNPCs);
-
-        EntityPlayer[] entities = new EntityPlayer[skinnableNPCs.size()];
-        int i=0;
-        for (SkinnableEntity skinnable : skinnableNPCs) {
-            entities[i] = (EntityPlayer)skinnable;
-            i++;
-        }
-
-        sendPacket(recipient, new PacketPlayOutPlayerInfo(
-                PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entities));
-    }
-
-    /*
-     * Yggdrasil's default implementation of this method silently fails instead of throwing
-     * an Exception like it should.
-     */
-    public static GameProfile fillProfileProperties(GameProfile profile,
-                                              boolean requireSecure) throws Exception {
-
-        if (Bukkit.isPrimaryThread())
-            throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
-
-        MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer().aD();
-
-        YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
-                .getAuthenticationService();
-
-        URL url = HttpAuthenticationService.constantURL(
-                "https://sessionserver.mojang.com/session/minecraft/profile/" +
-                        UUIDTypeAdapter.fromUUID(profile.getId()));
-
-        url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
-
-        MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse)
-                MAKE_REQUEST.invoke(auth, url, null, MinecraftProfilePropertiesResponse.class);
-        if (response == null)
-            return profile;
-
-        GameProfile result = new GameProfile(response.getId(), response.getName());
-        result.getProperties().putAll(response.getProperties());
-        profile.getProperties().putAll(response.getProperties());
-
-        return result;
+        return ((CraftWorld) world).getHandle().addEntity(nmsEntity, reason);
     }
 
     public static void attack(EntityLiving handle, Entity target) {
@@ -240,6 +161,37 @@ public class NMS {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
             }
         }
+    }
+
+    /*
+     * Yggdrasil's default implementation of this method silently fails instead of throwing
+     * an Exception like it should.
+     */
+    public static GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Exception {
+
+        if (Bukkit.isPrimaryThread())
+            throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
+
+        MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer().aD();
+
+        YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
+                .getAuthenticationService();
+
+        URL url = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/profile/"
+                + UUIDTypeAdapter.fromUUID(profile.getId()));
+
+        url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
+
+        MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse) MAKE_REQUEST.invoke(auth,
+                url, null, MinecraftProfilePropertiesResponse.class);
+        if (response == null)
+            return profile;
+
+        GameProfile result = new GameProfile(response.getId(), response.getName());
+        result.getProperties().putAll(response.getProperties());
+        profile.getProperties().putAll(response.getProperties());
+
+        return result;
     }
 
     public static void flyingMoveLogic(EntityLiving entity, float f, float f1) {
@@ -388,6 +340,10 @@ public class NMS {
         return f;
     }
 
+    public static GameProfileRepository getGameProfileRepository() {
+        return ((CraftServer) Bukkit.getServer()).getServer().getGameProfileRepository();
+    }
+
     public static EntityLiving getHandle(LivingEntity entity) {
         return (EntityLiving) getHandle((org.bukkit.entity.Entity) entity);
     }
@@ -421,6 +377,17 @@ public class NMS {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Nullable
+    public static SkinnableEntity getSkinnable(org.bukkit.entity.Entity entity) {
+        Preconditions.checkNotNull(entity);
+
+        Entity nmsEntity = ((CraftEntity) entity).getHandle();
+        if (nmsEntity instanceof SkinnableEntity) {
+            return (SkinnableEntity) nmsEntity;
+        }
+        return null;
     }
 
     public static String getSound(String flag) throws CommandException {
@@ -553,17 +520,11 @@ public class NMS {
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
     }
 
-    public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
-        if (entity == null)
-            return;
-        EntityHuman handle = (EntityHuman) getHandle(entity);
-        if (handle.world == null)
-            return;
-        if (remove) {
-            handle.world.players.remove(handle);
-        } else if (!handle.world.players.contains(handle)) {
-            handle.world.players.add(handle);
-        }
+    public static void removeFromWorld(org.bukkit.entity.Entity entity) {
+        Preconditions.checkNotNull(entity);
+
+        Entity nmsEntity = ((CraftEntity) entity).getHandle();
+        nmsEntity.world.removeEntity(nmsEntity);
     }
 
     @SuppressWarnings("rawtypes")
@@ -619,6 +580,41 @@ public class NMS {
 
     public static void sendPacketsNearby(Player from, Location location, Packet... packets) {
         NMS.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
+    }
+
+    public static void sendTabListAdd(Player recipient, Player listPlayer) {
+        Preconditions.checkNotNull(recipient);
+        Preconditions.checkNotNull(listPlayer);
+
+        EntityPlayer entity = ((CraftPlayer) listPlayer).getHandle();
+
+        sendPacket(recipient,
+                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entity));
+    }
+
+    public static void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs) {
+        Preconditions.checkNotNull(recipient);
+        Preconditions.checkNotNull(skinnableNPCs);
+
+        EntityPlayer[] entities = new EntityPlayer[skinnableNPCs.size()];
+        int i = 0;
+        for (SkinnableEntity skinnable : skinnableNPCs) {
+            entities[i] = (EntityPlayer) skinnable;
+            i++;
+        }
+
+        sendPacket(recipient,
+                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entities));
+    }
+
+    public static void sendTabListRemove(Player recipient, Player listPlayer) {
+        Preconditions.checkNotNull(recipient);
+        Preconditions.checkNotNull(listPlayer);
+
+        EntityPlayer entity = ((CraftPlayer) listPlayer).getHandle();
+
+        sendPacket(recipient,
+                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
     }
 
     public static void sendToOnline(Packet... packets) {
@@ -800,16 +796,16 @@ public class NMS {
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
     private static Field GOAL_FIELD = getField(PathfinderGoalSelector.class, "b");
     private static final Field JUMP_FIELD = getField(EntityLiving.class, "aY");
+    private static Method MAKE_REQUEST;
     private static Field NAVIGATION_WORLD_FIELD = getField(NavigationAbstract.class, "c");
     private static Field NETWORK_ADDRESS = getField(NetworkManager.class, "l");
     private static Field NETWORK_CHANNEL = getField(NetworkManager.class, "channel");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "a");
     private static final Random RANDOM = Util.getFastRandom();
-    private static Field SKULL_PROFILE_FIELD;
 
+    private static Field SKULL_PROFILE_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
-    private static Method MAKE_REQUEST;
 
     static {
         try {
