@@ -66,6 +66,13 @@ public class HorseController extends MobEntityController {
         }
 
         @Override
+        public boolean cp() {
+            if (npc == null) return super.cp();
+            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            return super.cp() && !protectedDefault;
+        }
+
+        @Override
         protected void a(double d0, boolean flag, Block block, BlockPosition blockposition) {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
