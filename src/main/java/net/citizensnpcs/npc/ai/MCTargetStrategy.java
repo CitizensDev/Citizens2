@@ -26,6 +26,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final NavigatorParameters parameters;
     private final Entity target;
     private final TargetNavigator targetNavigator;
+    private int updateCounter;
 
     public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
         this.npc = npc;
@@ -117,8 +118,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
         if (!aggro && distanceSquared() < parameters.distanceMargin()) {
             stop();
-        } else if (target.world.getWorld().getFullTime() % 60 == 0) {
+        } else if (updateCounter++ > 60) {
             setPath();
+            updateCounter = 0;
         }
 
         NMS.look(handle, target);

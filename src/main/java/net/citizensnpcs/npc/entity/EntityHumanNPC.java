@@ -65,6 +65,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private final SkinPacketTracker skinTracker;
+    private int updateCounter = 0;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
             PlayerInteractManager playerInteractManager, NPC npc) {
@@ -345,8 +346,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     private void updatePackets(boolean navigating) {
-
-        if (world.getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
+        if (updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
+            updateCounter = 0;
             Location current = getBukkitEntity().getLocation(packetLocationCache);
             Packet<?>[] packets = new Packet[navigating ? 5 : 6];
             if (!navigating) {
