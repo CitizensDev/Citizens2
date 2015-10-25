@@ -3,11 +3,24 @@ package net.citizensnpcs.npc;
 import java.util.Collection;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scoreboard.NameTagVisibility;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
 import net.citizensnpcs.NPCNeedsRespawnEvent;
-import net.citizensnpcs.Settings;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
@@ -33,23 +46,10 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityTeleport;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scoreboard.NameTagVisibility;
-
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
+    private int updateCounter = 0;
 
     public CitizensNPC(UUID uuid, int id, String name, EntityController entityController, NPCRegistry registry) {
         super(uuid, id, name, registry);
@@ -267,8 +267,8 @@ public class CitizensNPC extends AbstractNPC {
             }
             navigator.run();
 
-            if (!getNavigator().isNavigating()
-                    && getEntity().getWorld().getFullTime() % Setting.PACKET_UPDATE_DELAY.asInt() == 0) {
+            if (!getNavigator().isNavigating() && updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
+                updateCounter = 0;
                 if (getEntity() instanceof LivingEntity) {
                     if (!getEntity().isCustomNameVisible()) {
                         if (getEntity() instanceof Player && data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
