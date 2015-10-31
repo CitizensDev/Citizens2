@@ -1,32 +1,43 @@
 package net.citizensnpcs.util.nms;
 
-import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R3.AttributeInstance;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.MathHelper;
+import java.util.Random;
 
 import org.bukkit.craftbukkit.v1_8_R3.TrigMath;
 
-public class PlayerControllerMove {
-    protected EntityHumanNPC a;
+import net.citizensnpcs.npc.entity.EntityHumanNPC;
+import net.citizensnpcs.util.NMS;
+import net.minecraft.server.v1_8_R3.AttributeInstance;
+import net.minecraft.server.v1_8_R3.ControllerMove;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
+import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.server.v1_8_R3.EntitySlime;
+import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.MathHelper;
+
+public class PlayerControllerMove extends ControllerMove {
+    protected EntityLiving a;
     protected double b;
     protected double c;
     protected double d;
     protected double e;
     protected boolean f;
+    private int h;
 
-    public PlayerControllerMove(EntityHumanNPC entityinsentient) {
+    public PlayerControllerMove(EntityLiving entityinsentient) {
+        super(entityinsentient instanceof EntityInsentient ? (EntityInsentient) entityinsentient
+                : new EntitySlime(entityinsentient.world));
         this.a = entityinsentient;
         this.b = entityinsentient.locX;
         this.c = entityinsentient.locY;
         this.d = entityinsentient.locZ;
     }
 
+    @Override
     public boolean a() {
         return this.f;
     }
 
+    @Override
     public void a(double d0, double d1, double d2, double d3) {
         this.b = d0;
         this.c = d1;
@@ -35,6 +46,7 @@ public class PlayerControllerMove {
         this.f = true;
     }
 
+    @Override
     protected float a(float f, float f1, float f2) {
         float f3 = MathHelper.g(f1 - f);
 
@@ -57,10 +69,12 @@ public class PlayerControllerMove {
         return f4;
     }
 
+    @Override
     public double b() {
         return this.e;
     }
 
+    @Override
     public void c() {
         this.a.ba = 0F;
         if (this.f) {
@@ -80,21 +94,45 @@ public class PlayerControllerMove {
                 speed.setValue(0.1D * this.e);
                 float movement = (float) (this.e * speed.getValue()) * 10;
                 this.a.ba = movement;
-                if ((d2 > 0.0D) && (d0 * d0 + d1 * d1 < 1.0D))
-                    this.a.getControllerJump().a();
+                if (shouldSlimeJump() || ((d2 > 0.0D) && (d0 * d0 + d1 * d1 < 1.0D))) {
+                    this.h = cg();
+                    this.h /= 3;
+                    if (this.a instanceof EntityHumanNPC) {
+                        ((EntityHumanNPC) this.a).getControllerJump().a();
+                    } else {
+                        ((EntityInsentient) this.a).getControllerJump().a();
+                    }
+                }
             }
         }
     }
 
+    protected int cg() {
+        return new Random().nextInt(20) + 10;
+    }
+
+    @Override
     public double d() {
         return this.b;
     }
 
+    @Override
     public double e() {
         return this.c;
     }
 
+    @Override
     public double f() {
         return this.d;
+    }
+
+    private boolean shouldSlimeJump() {
+        if (!(this.a instanceof EntitySlime)) {
+            return false;
+        }
+        if (this.h-- <= 0) {
+            return true;
+        }
+        return false;
     }
 }
