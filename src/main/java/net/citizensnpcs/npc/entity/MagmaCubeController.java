@@ -14,9 +14,9 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.citizensnpcs.util.nms.PlayerControllerMove;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.ControllerMove;
 import net.minecraft.server.v1_8_R3.EntityMagmaCube;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
@@ -44,7 +44,7 @@ public class MagmaCubeController extends MobEntityController {
             if (npc != null) {
                 setSize(3);
                 NMS.clearGoals(goalSelector, targetSelector);
-                this.moveController = new ControllerMove(this);
+                this.moveController = new PlayerControllerMove(this);
             }
         }
 
