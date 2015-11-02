@@ -59,7 +59,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean despawn(DespawnReason reason) {
-        if (!isSpawned()) {
+        if (!isSpawned() && reason != DespawnReason.DEATH) {
             Messaging.debug("Tried to despawn", getId(), "while already despawned.");
             if (reason == DespawnReason.REMOVAL) {
                 Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this, reason));

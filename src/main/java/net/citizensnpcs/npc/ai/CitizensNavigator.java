@@ -3,6 +3,15 @@ package net.citizensnpcs.npc.ai;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
@@ -25,15 +34,6 @@ import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.util.Vector;
 
 public class CitizensNavigator implements Navigator, Runnable {
     private final NavigatorParameters defaultParams = new NavigatorParameters().baseSpeed(UNINITIALISED_SPEED)
