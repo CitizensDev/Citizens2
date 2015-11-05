@@ -11,6 +11,7 @@ import net.citizensnpcs.api.astar.AStarMachine;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
 
 public class NavigatorParameters implements Cloneable {
+    private int attackDelayTicks = 20;
     private double attackRange;
     private AttackStrategy attackStrategy;
     private boolean avoidWater;
@@ -25,6 +26,7 @@ public class NavigatorParameters implements Cloneable {
     private float speedModifier = 1F;
     private int stationaryTicks = -1;
     private StuckAction stuckAction;
+    private int updatePathRate;
     private boolean useNewPathfinder;
 
     /**
@@ -49,10 +51,43 @@ public class NavigatorParameters implements Cloneable {
         return this;
     }
 
+    /**
+     * @see #attackDelayTicks(int)
+     * @return The number of ticks to wait between attacks
+     */
+    public int attackDelayTicks() {
+        return attackDelayTicks;
+    }
+
+    /**
+     * Sets the delay between attacks. When attacking a target using an aggressive target strategy, the NPC waits for a
+     * certain number of ticks between attacks to avoid spamming damage to the target. This determines the number of
+     * ticks to wait.
+     *
+     * @param ticks
+     *            The new number of ticks to wait between attacks
+     */
+    public NavigatorParameters attackDelayTicks(int ticks) {
+        attackDelayTicks = ticks;
+        return this;
+    }
+
+    /**
+     * @see #attackRange(double)
+     * @return The attack range, in blocks squared
+     */
     public double attackRange() {
         return attackRange;
     }
 
+    /**
+     * When using aggressive NPC navigation, the NPC will wait until close enough to the target before attempting to use
+     * the {@link #attackStrategy()}. This parameter determines the range in blocks squared before the target will be
+     * valid to attack.
+     *
+     * @param range
+     *            The new attack range, in blocks squared
+     */
     public NavigatorParameters attackRange(double range) {
         this.attackRange = range;
         return this;
@@ -369,6 +404,26 @@ public class NavigatorParameters implements Cloneable {
      */
     public NavigatorParameters stuckAction(StuckAction action) {
         stuckAction = action;
+        return this;
+    }
+
+    /**
+     * @see #updatePathRate(int)
+     * @return The current path rate
+     */
+    public int updatePathRate() {
+        return updatePathRate;
+    }
+
+    /**
+     * Sets the update path rate, in ticks (default 20). Mainly used for target following at this point - the NPC will
+     * recalculate its path to the target every {@code rate} ticks.
+     *
+     * @param rate
+     *            The new rate in ticks to use
+     */
+    public NavigatorParameters updatePathRate(int rate) {
+        updatePathRate = rate;
         return this;
     }
 

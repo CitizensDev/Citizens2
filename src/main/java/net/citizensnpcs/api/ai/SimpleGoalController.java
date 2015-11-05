@@ -132,8 +132,9 @@ public class SimpleGoalController implements GoalController {
             @Override
             public void remove() {
                 itr.remove();
-                if (cur.getGoal() == executingRootGoal)
+                if (cur.getGoal() == executingRootGoal) {
                     finishCurrentGoalExecution();
+                }
             }
         };
     }
