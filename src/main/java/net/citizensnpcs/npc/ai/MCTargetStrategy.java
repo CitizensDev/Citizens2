@@ -118,7 +118,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
         if (!aggro && distanceSquared() < parameters.distanceMargin()) {
             stop();
-        } else if (updateCounter++ > 20) {
+        } else if (updateCounter++ > parameters.updatePathRate()) {
             setPath();
             updateCounter = 0;
         }
@@ -130,7 +130,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             } else if (strategy != parameters.defaultAttackStrategy()) {
                 parameters.defaultAttackStrategy().handle((LivingEntity) handle.getBukkitEntity(), getTarget());
             }
-            attackTicks = ATTACK_DELAY_TICKS;
+            attackTicks = parameters.attackDelayTicks();
         }
         if (attackTicks > 0) {
             attackTicks--;
@@ -198,7 +198,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         void stop();
     }
 
-    private static final int ATTACK_DELAY_TICKS = 20;
     static final AttackStrategy DEFAULT_ATTACK_STRATEGY = new AttackStrategy() {
         @Override
         public boolean handle(LivingEntity attacker, LivingEntity bukkitTarget) {
