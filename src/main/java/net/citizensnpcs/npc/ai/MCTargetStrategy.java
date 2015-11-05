@@ -118,7 +118,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
         if (!aggro && distanceSquared() < parameters.distanceMargin()) {
             stop();
-        } else if (updateCounter++ > 60) {
+        } else if (updateCounter++ > 20) {
             setPath();
             updateCounter = 0;
         }
