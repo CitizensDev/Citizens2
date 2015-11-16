@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import net.citizensnpcs.npc.skin.SkinnableEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -65,6 +64,7 @@ import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.npc.entity.nonliving.FallingBlockController.FallingBlockNPC;
 import net.citizensnpcs.npc.entity.nonliving.ItemController.ItemNPC;
 import net.citizensnpcs.npc.entity.nonliving.ItemFrameController.ItemFrameNPC;
+import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.Controllable;
@@ -83,6 +83,7 @@ import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
+import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.ZombieModifier;
 import net.citizensnpcs.util.Anchor;
@@ -1333,7 +1334,8 @@ public class NPCCommands {
             max = 5,
             permission = "citizens.npc.skinlayers")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
-    public void skinLayers(final CommandContext args, final CommandSender sender, final NPC npc) throws CommandException {
+    public void skinLayers(final CommandContext args, final CommandSender sender, final NPC npc)
+            throws CommandException {
         SkinLayers trait = npc.getTrait(SkinLayers.class);
         if (args.hasValueFlag("cape")) {
             trait.setVisible(Layer.CAPE, Boolean.valueOf(args.getFlag("cape")));
@@ -1354,8 +1356,8 @@ public class NPCCommands {
             trait.setVisible(Layer.LEFT_PANTS, hasPants);
             trait.setVisible(Layer.RIGHT_PANTS, hasPants);
         }
-        Messaging.sendTr(sender, Messages.SKIN_LAYERS_SET, npc.getName(),
-                trait.isVisible(Layer.CAPE), trait.isVisible(Layer.HAT), trait.isVisible(Layer.JACKET),
+        Messaging.sendTr(sender, Messages.SKIN_LAYERS_SET, npc.getName(), trait.isVisible(Layer.CAPE),
+                trait.isVisible(Layer.HAT), trait.isVisible(Layer.JACKET),
                 trait.isVisible(Layer.LEFT_SLEEVE) || trait.isVisible(Layer.RIGHT_SLEEVE),
                 trait.isVisible(Layer.LEFT_PANTS) || trait.isVisible(Layer.RIGHT_PANTS));
     }
@@ -1695,6 +1697,27 @@ public class NPCCommands {
         }
         String key = vulnerable ? Messages.VULNERABLE_STOPPED : Messages.VULNERABLE_SET;
         Messaging.sendTr(sender, key, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "wither (--charged [charged])",
+            desc = "Sets wither modifiers",
+            modifiers = { "wither" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.wither")
+    @Requirements(selected = true, ownership = true, types = { EntityType.WITHER })
+    public void wither(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        WitherTrait trait = npc.getTrait(WitherTrait.class);
+        boolean hasArg = false;
+        if (args.hasValueFlag("charged")) {
+            trait.setCharged(Boolean.valueOf(args.getFlag("charged")));
+            hasArg = true;
+        }
+        if (!hasArg) {
+            throw new CommandException();
+        }
     }
 
     @Command(

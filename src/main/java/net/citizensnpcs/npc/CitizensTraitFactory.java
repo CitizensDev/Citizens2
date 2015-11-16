@@ -39,6 +39,7 @@ import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
+import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.ZombieModifier;
@@ -74,6 +75,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Text.class).withName("text"));
         registerTrait(TraitInfo.create(MobType.class).withName("type").asDefaultTrait());
         registerTrait(TraitInfo.create(Waypoints.class).withName("waypoints"));
+        registerTrait(TraitInfo.create(WitherTrait.class).withName("withertrait"));
         registerTrait(TraitInfo.create(WoolColor.class).withName("woolcolor"));
         registerTrait(TraitInfo.create(WolfModifiers.class).withName("wolfmodifiers"));
         registerTrait(TraitInfo.create(VillagerProfession.class).withName("profession"));
