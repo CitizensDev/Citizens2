@@ -16,6 +16,7 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.EntityRabbit;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
@@ -42,7 +43,8 @@ public class RabbitController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-
+                // this.g = new ControllerJump(this);
+                // this.moveController = new ControllerMove(this);
             }
         }
 
@@ -119,6 +121,7 @@ public class RabbitController extends MobEntityController {
         @Override
         public void E() {
             if (npc != null) {
+                super.E();
                 npc.update();
             } else {
                 super.E();
@@ -161,6 +164,11 @@ public class RabbitController extends MobEntityController {
             if (bukkitEntity == null && npc != null)
                 bukkitEntity = new RabbitNPC(this);
             return super.getBukkitEntity();
+        }
+
+        @Override
+        public EntityLiving getGoalTarget() {
+            return npc != null ? null : super.getGoalTarget();
         }
 
         @Override
