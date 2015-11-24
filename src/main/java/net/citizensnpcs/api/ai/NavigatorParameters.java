@@ -3,6 +3,10 @@ package net.citizensnpcs.api.ai;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.ai.event.CancelReason;
@@ -20,6 +24,7 @@ public class NavigatorParameters implements Cloneable {
     private AttackStrategy defaultStrategy;
     private double distanceMargin = 2F;
     private List<BlockExaminer> examiners = Lists.newArrayList();
+    private Function<Entity, Location> mapper;
     private double pathDistanceMargin = 1F;
     private float range;
     private List<Runnable> runCallbacks = Lists.newArrayListWithExpectedSize(3);
@@ -228,6 +233,26 @@ public class NavigatorParameters implements Cloneable {
      */
     public NavigatorParameters distanceMargin(double newMargin) {
         distanceMargin = newMargin;
+        return this;
+    }
+
+    /**
+     * Gets the target location mapper. This is a function that maps from a target entity to the location the NPC should
+     * pathfind to. The default mapper returns the location using {@link Entity#getLocation(Location)}.
+     */
+    public Function<Entity, Location> entityTargetLocationMapper() {
+        return mapper != null ? mapper : DEFAULT_MAPPER;
+    }
+
+    /**
+     * Set the target location mapper.
+     *
+     * @param mapper
+     *            The new mapper
+     * @see #entityTargetLocationMapper(Function)
+     */
+    public NavigatorParameters entityTargetLocationMapper(Function<Entity, Location> mapper) {
+        this.mapper = mapper;
         return this;
     }
 
@@ -450,4 +475,13 @@ public class NavigatorParameters implements Cloneable {
         useNewPathfinder = use;
         return this;
     }
+
+    private static final Function<org.bukkit.entity.Entity, Location> DEFAULT_MAPPER = new Function<Entity, Location>() {
+        Location location = new Location(null, 0, 0, 0);
+
+        @Override
+        public Location apply(Entity input) {
+            return input.getLocation(location);
+        }
+    };
 }
