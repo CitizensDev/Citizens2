@@ -163,7 +163,10 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
 
         private void setStrategy() {
-            Location location = target.getBukkitEntity().getLocation(TARGET_LOCATION);
+            Location location = parameters.entityTargetLocationMapper().apply(target.getBukkitEntity());
+            if (location == null) {
+                throw new IllegalStateException("mapper should not return null");
+            }
             strategy = npc.isFlyable() ? new FlyingAStarNavigationStrategy(npc, location, parameters)
                     : new AStarNavigationStrategy(npc, location, parameters);
         }
@@ -183,7 +186,18 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         @Override
         public void setPath() {
+            Location location = parameters.entityTargetLocationMapper().apply(target.getBukkitEntity());
+            if (location == null) {
+                throw new IllegalStateException("mapper should not return null");
+            }
+            double oldX = target.locX, oldY = target.locY, oldZ = target.locZ;
+            target.locX = location.getX();
+            target.locY = location.getY();
+            target.locZ = location.getZ();
             navigation.a(target, parameters.speed());
+            target.locX = oldX;
+            target.locY = oldY;
+            target.locZ = oldZ;
         }
 
         @Override

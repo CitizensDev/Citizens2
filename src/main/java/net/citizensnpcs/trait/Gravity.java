@@ -27,7 +27,7 @@ public class Gravity extends Trait implements Toggleable {
             ((PlayerNPC) npc.getEntity()).setGravityEnabled(!enabled);
             return;
         }
-        if (!enabled)
+        if (!enabled || npc.getNavigator().isNavigating())
             return;
         Vector vector = npc.getEntity().getVelocity();
         vector.setY(Math.max(0, vector.getY()));

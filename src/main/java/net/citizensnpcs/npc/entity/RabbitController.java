@@ -43,8 +43,6 @@ public class RabbitController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMS.clearGoals(goalSelector, targetSelector);
-                // this.g = new ControllerJump(this);
-                // this.moveController = new ControllerMove(this);
             }
         }
 
