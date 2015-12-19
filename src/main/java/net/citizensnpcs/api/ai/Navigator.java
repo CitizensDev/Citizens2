@@ -1,14 +1,12 @@
 package net.citizensnpcs.api.ai;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+
+import net.citizensnpcs.api.npc.NPC;
 
 /**
- * Represents the pathfinding AI of an {@link NPC}. The navigator can path
- * towards a single target at a time.
+ * Represents the pathfinding AI of an {@link NPC}. The navigator can path towards a single target at a time.
  */
 public interface Navigator {
     /**
@@ -17,10 +15,9 @@ public interface Navigator {
     void cancelNavigation();
 
     /**
-     * Returns the {@link NavigatorParameters} local to this navigator. These
-     * parameters are copied to local target parameters when a new target is
-     * started.
-     * 
+     * Returns the {@link NavigatorParameters} local to this navigator. These parameters are copied to local target
+     * parameters when a new target is started.
+     *
      * @see #getLocalParameters()
      * @return The default parameters
      */
@@ -28,17 +25,16 @@ public interface Navigator {
     NavigatorParameters getDefaultParameters();
 
     /**
-     * Returns the current {@link EntityTarget} of the navigator, if any. May
-     * return null.
-     * 
+     * Returns the current {@link EntityTarget} of the navigator, if any. May return null.
+     *
      * @return The current entity target
      */
     EntityTarget getEntityTarget();
 
     /**
-     * Returns the {@link NavigatorParameters} local to any current target
-     * execution. These are updated independently of the default parameters.
-     * 
+     * Returns the {@link NavigatorParameters} local to any current target execution. These are updated independently of
+     * the default parameters.
+     *
      * @see #getDefaultParameters()
      * @return The local parameters
      */
@@ -50,10 +46,9 @@ public interface Navigator {
     NPC getNPC();
 
     /**
-     * Returns the current {@link Location} being navigated towards - this is
-     * not necessarily permanent and may change, for example when pathing
-     * towards a moving {@link Entity}. May return null.
-     * 
+     * Returns the current {@link Location} being navigated towards - this is not necessarily permanent and may change,
+     * for example when pathing towards a moving {@link Entity}. May return null.
+     *
      * @return The target location
      */
     Location getTargetAsLocation();
@@ -75,9 +70,8 @@ public interface Navigator {
     boolean isPaused();
 
     /**
-     * Sets whether the navigator is paused and shouldn't process the path for
-     * now.
-     * 
+     * Sets whether the navigator is paused and shouldn't process the path for now.
+     *
      * @param paused
      *            Whether the navigator should be paused or not
      */
@@ -85,7 +79,7 @@ public interface Navigator {
 
     /**
      * Sets the current navigation to an entity target.
-     * 
+     *
      * @param target
      *            The {@link Entity} to path towards
      * @param aggressive
@@ -94,20 +88,8 @@ public interface Navigator {
     void setTarget(Entity target, boolean aggressive);
 
     /**
-     * Sets the current navigation to an entity target.
-     * 
-     * @param target
-     *            The {@link LivingEntity} to path towards
-     * @param aggressive
-     *            Whether to attack the target when close enough
-     * @deprecated See {@link #setTarget(Entity, boolean)}
-     */
-    @Deprecated
-    void setTarget(LivingEntity target, boolean aggressive);
-
-    /**
      * Sets the current navigation to a {@link Location} destination.
-     * 
+     *
      * @param target
      *            The destination
      */
