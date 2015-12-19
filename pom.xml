@@ -101,6 +101,7 @@
 				<version>2.9</version>
 				<configuration>
 					<author>false</author>
+                    <additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 			</plugin>
 		</plugins>
