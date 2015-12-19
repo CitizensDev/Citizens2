@@ -219,8 +219,10 @@ public class SkinUpdateTracker {
         for (Player player : players) {
             if (player.hasMetadata("NPC"))
                 continue;
-
-            double distanceSquared = player.getLocation(CACHE_LOCATION).distanceSquared(location);
+            Location ploc = player.getLocation(CACHE_LOCATION);
+            if (ploc.getWorld() != location.getWorld())
+                continue;
+            double distanceSquared = ploc.distanceSquared(location);
             if (distanceSquared > viewDistance)
                 continue;
 
