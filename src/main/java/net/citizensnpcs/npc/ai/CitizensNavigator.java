@@ -176,11 +176,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     @Override
-    public void setTarget(LivingEntity target, boolean aggressive) {
-        setTarget((Entity) target, aggressive);
-    }
-
-    @Override
     public void setTarget(Location target) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
