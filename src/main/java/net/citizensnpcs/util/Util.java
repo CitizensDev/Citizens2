@@ -5,7 +5,7 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -75,7 +75,7 @@ public class Util {
     }
 
     public static String getMinecraftRevision() {
-        String raw = CraftServer.class.getPackage().getName();
+        String raw = Bukkit.getServer().getClass().getPackage().getName();
         return raw.substring(raw.lastIndexOf('.') + 2);
     }
 
