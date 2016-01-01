@@ -109,8 +109,9 @@ public class Equipment extends Trait {
                 enderman.setCarriedMaterial(equipment[0].getData());
         } else {
             EntityEquipment equip = getEquipmentFromEntity(npc.getEntity());
-            if (equipment[0] != null)
+            if (equipment[0] != null) {
                 equip.setItemInHand(equipment[0]);
+            }
             equip.setHelmet(equipment[1]);
             equip.setChestplate(equipment[2]);
             equip.setLeggings(equipment[3]);
