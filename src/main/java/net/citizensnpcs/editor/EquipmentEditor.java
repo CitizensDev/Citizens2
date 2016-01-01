@@ -2,11 +2,6 @@ package net.citizensnpcs.editor;
 
 import java.util.Map;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
-
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -16,6 +11,11 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import com.google.common.collect.Maps;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 
 public class EquipmentEditor extends Editor {
     private final NPC npc;
@@ -50,8 +50,9 @@ public class EquipmentEditor extends Editor {
             return;
 
         Equipper equipper = EQUIPPERS.get(npc.getEntity().getType());
-        if (equipper == null)
+        if (equipper == null) {
             equipper = new GenericEquipper();
+        }
         equipper.equip(event.getPlayer(), npc);
         event.setCancelled(true);
     }
