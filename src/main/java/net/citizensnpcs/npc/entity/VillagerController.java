@@ -1,5 +1,12 @@
 package net.citizensnpcs.npc.entity;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftVillager;
+import org.bukkit.entity.Villager;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -13,13 +20,6 @@ import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.EntityVillager;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftVillager;
-import org.bukkit.entity.Villager;
-import org.bukkit.util.Vector;
 
 public class VillagerController extends MobEntityController {
     public VillagerController() {
@@ -117,17 +117,17 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
-        public void E() {
-            super.E();
-            if (npc != null) {
-                npc.update();
+        public void e(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.e(f, f1);
             }
         }
 
         @Override
-        public void e(float f, float f1) {
-            if (npc == null || !npc.isFlyable()) {
-                super.e(f, f1);
+        public void E() {
+            super.E();
+            if (npc != null) {
+                npc.update();
             }
         }
 
