@@ -11,14 +11,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import net.citizensnpcs.api.util.DataKey;
-
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Primitives;
+
+import net.citizensnpcs.api.util.DataKey;
 
 public class PersistenceLoader {
     private static class PersistField {
@@ -87,7 +89,7 @@ public class PersistenceLoader {
             return parent;
         if (ext.charAt(0) == '.')
             return parent.isEmpty() ? ext.substring(1, ext.length()) : parent + ext;
-            return parent.isEmpty() ? ext : parent + '.' + ext;
+        return parent.isEmpty() ? ext : parent + '.' + ext;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -116,9 +118,8 @@ public class PersistenceLoader {
                 if (field.getType().isEnum()) {
                     set = EnumSet.noneOf((Class<? extends Enum>) field.getType());
                 } else {
-                    set = (Set<Object>) (field.get() != null && Set.class.isAssignableFrom(field.get().getClass()) ? field
-                            .get().getClass().newInstance()
-                            : Sets.newHashSet());
+                    set = (Set<Object>) (field.get() != null && Set.class.isAssignableFrom(field.get().getClass())
+                            ? field.get().getClass().newInstance() : Sets.newHashSet());
                 }
             }
             Object raw = root.getRaw(field.key);
@@ -253,9 +254,8 @@ public class PersistenceLoader {
     }
 
     /**
-     * Creates an instance of the given class using the default constructor and
-     * loads it using {@link #load(Object, DataKey)}. Will return null if an
-     * exception occurs.
+     * Creates an instance of the given class using the default constructor and loads it using
+     * {@link #load(Object, DataKey)}. Will return null if an exception occurs.
      *
      * @see #load(Object, DataKey)
      * @param clazz
@@ -281,11 +281,9 @@ public class PersistenceLoader {
     }
 
     /**
-     * Analyses the class for {@link Field}s with the {@link Persist} annotation
-     * and loads data into them using the given {@link DataKey}. If a
-     * {@link DelegatePersistence} annotation is provided the referenced
-     * {@link Persister} will be used to create the instance. This annotation
-     * can be omitted if the Persister has been registered using
+     * Analyses the class for {@link Field}s with the {@link Persist} annotation and loads data into them using the
+     * given {@link DataKey}. If a {@link DelegatePersistence} annotation is provided the referenced {@link Persister}
+     * will be used to create the instance. This annotation can be omitted if the Persister has been registered using
      * {@link #registerPersistDelegate(Class, Class)}
      *
      * @param instance
@@ -314,9 +312,8 @@ public class PersistenceLoader {
     }
 
     /**
-     * Registers a {@link Persister} redirect. Fields with the {@link Persist}
-     * annotation with a type that has been registered using this method will
-     * use the Persister by default to load and save data. The
+     * Registers a {@link Persister} redirect. Fields with the {@link Persist} annotation with a type that has been
+     * registered using this method will use the Persister by default to load and save data. The
      * {@link DelegatePersistence} annotation will be preferred if present.
      *
      * @param clazz
@@ -330,8 +327,7 @@ public class PersistenceLoader {
     }
 
     /**
-     * Scans the object for fields annotated with {@link Persist} and saves them
-     * to the given {@link DataKey}.
+     * Scans the object for fields annotated with {@link Persist} and saves them to the given {@link DataKey}.
      *
      * @param instance
      *            The instance to save
@@ -397,5 +393,7 @@ public class PersistenceLoader {
 
     static {
         registerPersistDelegate(Location.class, LocationPersister.class);
+        registerPersistDelegate(ItemStack.class, ItemStackPersister.class);
+        registerPersistDelegate(EulerAngle.class, EulerAnglePersister.class);
     }
 }
