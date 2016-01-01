@@ -1207,7 +1207,7 @@ public class NPCCommands {
         NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
             @Override
             public void run(NPC toSelect) throws CommandException {
-                if (toSelect == null || !toSelect.getTrait(Spawned.class).shouldSpawn())
+                if (toSelect == null)
                     throw new CommandException(Messages.NPC_NOT_FOUND);
                 if (npc != null && toSelect.getId() == npc.getId())
                     throw new CommandException(Messages.NPC_ALREADY_SELECTED);
