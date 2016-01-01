@@ -1,5 +1,12 @@
 package net.citizensnpcs.npc.entity;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftWither;
+import org.bukkit.entity.Wither;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -10,13 +17,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.EntityWither;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftWither;
-import org.bukkit.entity.Wither;
-import org.bukkit.util.Vector;
 
 public class WitherController extends MobEntityController {
     public WitherController() {
@@ -92,6 +92,7 @@ public class WitherController extends MobEntityController {
             if (npc == null) {
                 super.E();
             }
+            npc.update();
         }
 
         @Override
@@ -129,13 +130,8 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
-        public void m() {
-            if (npc == null) {
-                super.m();
-            } else {
-                NMS.updateAI(this);
-                npc.update();
-            }
+        public int s(int i) {
+            return npc == null ? super.s(i) : 0;
         }
 
         @Override
