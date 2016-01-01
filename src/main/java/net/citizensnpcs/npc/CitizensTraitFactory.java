@@ -24,6 +24,7 @@ import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
+import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
@@ -52,6 +53,7 @@ public class CitizensTraitFactory implements TraitFactory {
 
     public CitizensTraitFactory() {
         registerTrait(TraitInfo.create(Age.class).withName("age"));
+        registerTrait(TraitInfo.create(ArmorStandTrait.class).withName("armorstandtrait"));
         registerTrait(TraitInfo.create(Anchors.class).withName("anchors"));
         registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));
         registerTrait(TraitInfo.create(Equipment.class).withName("equipment"));

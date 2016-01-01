@@ -67,6 +67,7 @@ import net.citizensnpcs.npc.entity.nonliving.ItemFrameController.ItemFrameNPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
+import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
@@ -221,6 +222,33 @@ public class NPCCommands {
         if (sender instanceof ConsoleCommandSender)
             throw new ServerCommandException();
         npc.teleport(args.getSenderLocation(), TeleportCause.COMMAND);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "armorstand --visible [visible] --small [small] --gravity [gravity] --arms [arms] --baseplate [baseplate]",
+            desc = "C whether the NPC can be ridden and controlled",
+            modifiers = { "armorstand", "control" },
+            min = 1,
+            max = 1)
+    @Requirements(selected = true, ownership = true, types = EntityType.ARMOR_STAND)
+    public void armorstand(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        ArmorStandTrait trait = npc.getTrait(ArmorStandTrait.class);
+        if (args.hasValueFlag("visible")) {
+            trait.setVisible(Boolean.valueOf(args.getFlag("visible")));
+        }
+        if (args.hasValueFlag("small")) {
+            trait.setSmall(Boolean.valueOf(args.getFlag("small")));
+        }
+        if (args.hasValueFlag("gravity")) {
+            trait.setGravity(Boolean.valueOf(args.getFlag("gravity")));
+        }
+        if (args.hasValueFlag("arms")) {
+            trait.setHasArms(Boolean.valueOf(args.getFlag("arms")));
+        }
+        if (args.hasValueFlag("baseplate")) {
+            trait.setHasBaseplate(Boolean.valueOf(args.getFlag("baseplate")));
+        }
     }
 
     @Command(

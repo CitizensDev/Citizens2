@@ -1,7 +1,5 @@
 package net.citizensnpcs.npc;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,6 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
@@ -18,14 +24,8 @@ import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.util.NMS;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
 public class CitizensNPCRegistry implements NPCRegistry {
     private final NPCCollection npcs = TROVE_EXISTS ? new TroveNPCCollection() : new MapNPCCollection();
@@ -49,6 +49,9 @@ public class CitizensNPCRegistry implements NPCRegistry {
             throw new IllegalStateException("Could not create NPC.");
         npcs.put(npc.getId(), npc);
         Bukkit.getPluginManager().callEvent(new NPCCreateEvent(npc));
+        if (type == EntityType.ARMOR_STAND && !npc.hasTrait(ArmorStandTrait.class)) {
+            npc.addTrait(ArmorStandTrait.class);
+        }
         return npc;
     }
 
