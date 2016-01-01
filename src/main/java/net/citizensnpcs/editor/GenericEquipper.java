@@ -1,13 +1,13 @@
 package net.citizensnpcs.editor;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class GenericEquipper implements Equipper {
     @Override
@@ -67,8 +67,9 @@ public class GenericEquipper implements Equipper {
         }
         // Drop any previous equipment on the ground
         ItemStack equippedItem = trait.get(slot);
-        if (equippedItem != null && equippedItem.getType() != Material.AIR)
+        if (equippedItem != null && equippedItem.getType() != Material.AIR) {
             equipper.getWorld().dropItemNaturally(toEquip.getEntity().getLocation(), equippedItem);
+        }
 
         // Now edit the equipment based on the slot
         if (type != Material.AIR) {

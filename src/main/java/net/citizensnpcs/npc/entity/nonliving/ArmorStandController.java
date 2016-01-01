@@ -1,5 +1,14 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -11,13 +20,6 @@ import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.Vec3D;
 import net.minecraft.server.v1_8_R3.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.util.Vector;
 
 public class ArmorStandController extends MobEntityController {
     public ArmorStandController() {
@@ -56,8 +58,14 @@ public class ArmorStandController extends MobEntityController {
         }
 
         @Override
-        public boolean a(EntityHuman paramEntityHuman, Vec3D paramVec3D) {
-            return true;
+        public boolean a(EntityHuman entityhuman, Vec3D vec3d) {
+            if (npc == null) {
+                return super.a(entityhuman, vec3d);
+            }
+            PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) entityhuman.getBukkitEntity(),
+                    getBukkitEntity());
+            Bukkit.getPluginManager().callEvent(event);
+            return !event.isCancelled();
         }
 
         @Override
