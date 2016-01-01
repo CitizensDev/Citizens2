@@ -173,6 +173,15 @@ public class MagmaCubeController extends MobEntityController {
         }
 
         @Override
+        public void setSize(float f, float f1) {
+            if (npc == null) {
+                super.setSize(f, f1);
+            } else {
+                NMS.setSize(this, f, f1, justCreated);
+            }
+        }
+
+        @Override
         protected String z() {
             return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z()
                     : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.z());

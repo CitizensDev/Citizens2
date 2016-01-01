@@ -14,6 +14,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.EntityHuman;
@@ -116,6 +117,15 @@ public class ArmorStandController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public void setSize(float f, float f1) {
+            if (npc == null) {
+                super.setSize(f, f1);
+            } else {
+                NMS.setSize(this, f, f1, justCreated);
+            }
         }
 
         @Override

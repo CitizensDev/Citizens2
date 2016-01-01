@@ -53,6 +53,7 @@ import net.citizensnpcs.npc.network.EmptyChannel;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.nms.PlayerlistTrackerEntry;
 import net.minecraft.server.v1_8_R3.AttributeInstance;
+import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.ControllerJump;
@@ -683,6 +684,20 @@ public class NMS {
         ((EntityTameableAnimal) getHandle((LivingEntity) tameable)).setSitting(sitting);
     }
 
+    public static void setSize(Entity entity, float f, float f1, boolean justCreated) {
+        if ((f != entity.width) || (f1 != entity.length)) {
+            float f2 = entity.width;
+
+            entity.width = f;
+            entity.length = f1;
+            entity.a(new AxisAlignedBB(entity.getBoundingBox().a, entity.getBoundingBox().b, entity.getBoundingBox().c,
+                    entity.getBoundingBox().a + entity.width, entity.getBoundingBox().b + entity.length,
+                    entity.getBoundingBox().c + entity.width));
+            if ((entity.width > f2) && (!justCreated) && (!entity.world.isClientSide))
+                entity.move((f2 - entity.width) / 2, 0.0D, (f2 - entity.width) / 2);
+        }
+    }
+
     public static void setStepHeight(EntityLiving entity, float height) {
         entity.S = height;
     }
@@ -809,6 +824,7 @@ public class NMS {
     private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "a");
     private static final Random RANDOM = Util.getFastRandom();
     private static Field SKULL_PROFILE_FIELD;
+
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
 
     static {

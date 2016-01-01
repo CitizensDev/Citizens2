@@ -1,19 +1,5 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
-import net.citizensnpcs.api.event.NPCPushEvent;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.npc.AbstractEntityController;
-import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R3.Block;
-import net.minecraft.server.v1_8_R3.Blocks;
-import net.minecraft.server.v1_8_R3.EntityFallingBlock;
-import net.minecraft.server.v1_8_R3.IBlockData;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.World;
-import net.minecraft.server.v1_8_R3.WorldServer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +11,21 @@ import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
+
+import net.citizensnpcs.api.event.NPCPushEvent;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.npc.AbstractEntityController;
+import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_8_R3.Block;
+import net.minecraft.server.v1_8_R3.Blocks;
+import net.minecraft.server.v1_8_R3.EntityFallingBlock;
+import net.minecraft.server.v1_8_R3.IBlockData;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.server.v1_8_R3.World;
+import net.minecraft.server.v1_8_R3.WorldServer;
 
 public class FallingBlockController extends AbstractEntityController {
     public FallingBlockController() {
@@ -115,6 +116,15 @@ public class FallingBlockController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public void setSize(float f, float f1) {
+            if (npc == null) {
+                super.setSize(f, f1);
+            } else {
+                NMS.setSize(this, f, f1, justCreated);
+            }
         }
 
         @Override

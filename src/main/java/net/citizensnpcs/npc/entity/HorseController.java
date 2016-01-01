@@ -1,5 +1,13 @@
 package net.citizensnpcs.npc.entity;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftHorse;
+import org.bukkit.entity.Horse;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -13,14 +21,6 @@ import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.EntityHorse;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftHorse;
-import org.bukkit.entity.Horse;
-import org.bukkit.util.Vector;
 
 public class HorseController extends MobEntityController {
     public HorseController() {
@@ -66,13 +66,6 @@ public class HorseController extends MobEntityController {
         }
 
         @Override
-        public boolean cp() {
-            if (npc == null) return super.cp();
-            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
-            return super.cp() && !protectedDefault;
-        }
-
-        @Override
         protected void a(double d0, boolean flag, Block block, BlockPosition blockposition) {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
@@ -110,6 +103,14 @@ public class HorseController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean cp() {
+            if (npc == null)
+                return super.cp();
+            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            return super.cp() && !protectedDefault;
         }
 
         @Override
