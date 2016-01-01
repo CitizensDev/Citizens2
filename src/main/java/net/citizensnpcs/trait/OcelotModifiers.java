@@ -1,9 +1,10 @@
 package net.citizensnpcs.trait;
 
+import org.bukkit.entity.Ocelot;
+
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
-
-import org.bukkit.entity.Ocelot;
+import net.citizensnpcs.util.NMS;
 
 public class OcelotModifiers extends Trait {
     @Persist("sitting")
@@ -34,7 +35,7 @@ public class OcelotModifiers extends Trait {
         if (npc.getEntity() instanceof Ocelot) {
             Ocelot ocelot = (Ocelot) npc.getEntity();
             ocelot.setCatType(type);
-            ocelot.setSitting(sitting);
+            NMS.setSitting(ocelot, sitting);
         }
     }
 }

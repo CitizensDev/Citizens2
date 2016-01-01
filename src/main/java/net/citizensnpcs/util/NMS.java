@@ -29,6 +29,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
@@ -64,6 +65,7 @@ import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.EntityMinecartAbstract;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.EntityTameableAnimal;
 import net.minecraft.server.v1_8_R3.EntityTracker;
 import net.minecraft.server.v1_8_R3.EntityTrackerEntry;
 import net.minecraft.server.v1_8_R3.EntityTypes;
@@ -677,6 +679,10 @@ public class NMS {
         }
     }
 
+    public static void setSitting(Tameable tameable, boolean sitting) {
+        ((EntityTameableAnimal) getHandle((LivingEntity) tameable)).setSitting(sitting);
+    }
+
     public static void setStepHeight(EntityLiving entity, float height) {
         entity.S = height;
     }
@@ -790,7 +796,6 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 1F;
-
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
@@ -803,7 +808,6 @@ public class NMS {
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "a");
     private static final Random RANDOM = Util.getFastRandom();
-
     private static Field SKULL_PROFILE_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
 
