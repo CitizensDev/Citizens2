@@ -41,6 +41,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             .defaultAttackStrategy(MCTargetStrategy.DEFAULT_ATTACK_STRATEGY)
             .attackRange(Setting.NPC_ATTACK_DISTANCE.asDouble())
             .updatePathRate(Setting.DEFAULT_PATHFINDER_UPDATE_PATH_RATE.asInt())
+            .distanceMargin(Setting.DEFAULT_DISTANCE_MARGIN.asDouble())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt()).stuckAction(TeleportStuckAction.INSTANCE)
             .examiner(new MinecraftBlockExaminer()).useNewPathfinder(Setting.USE_NEW_PATHFINDER.asBoolean());
     private PathStrategy executing;
@@ -74,8 +75,9 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public NavigatorParameters getLocalParameters() {
-        if (!isNavigating())
+        if (!isNavigating()) {
             return defaultParams;
+        }
         return localParams;
     }
 
@@ -105,13 +107,20 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     public void load(DataKey root) {
-        defaultParams.range((float) root.getDouble("pathfindingrange", Setting.DEFAULT_PATHFINDING_RANGE.asFloat()));
-        defaultParams.stationaryTicks(root.getInt("stationaryticks", Setting.DEFAULT_STATIONARY_TICKS.asInt()));
+        if (root.keyExists("pathfindingrange")) {
+            defaultParams.range((float) root.getDouble("pathfindingrange"));
+        }
+        if (root.keyExists("stationaryticks")) {
+            defaultParams.stationaryTicks(root.getInt("stationaryticks"));
+        }
+        if (root.keyExists("distancemargin")) {
+            defaultParams.distanceMargin(root.getDouble("distancemargin"));
+        }
         defaultParams.speedModifier((float) root.getDouble("speedmodifier", 1F));
-        if (root.keyExists("avoidwater"))
-            defaultParams.avoidWater(root.getBoolean("avoidwater"));
-        if (!root.getBoolean("usedefaultstuckaction") && defaultParams.stuckAction() == TeleportStuckAction.INSTANCE)
+        defaultParams.avoidWater(root.getBoolean("avoidwater"));
+        if (!root.getBoolean("usedefaultstuckaction") && defaultParams.stuckAction() == TeleportStuckAction.INSTANCE) {
             defaultParams.stuckAction(null);
+        }
     }
 
     public void onDespawn() {
@@ -149,8 +158,15 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     public void save(DataKey root) {
-        root.setDouble("pathfindingrange", defaultParams.range());
-        root.setInt("stationaryticks", defaultParams.stationaryTicks());
+        if (defaultParams.range() != Setting.DEFAULT_PATHFINDING_RANGE.asFloat()) {
+            root.setDouble("pathfindingrange", defaultParams.range());
+        }
+        if (defaultParams.stationaryTicks() != Setting.DEFAULT_STATIONARY_TICKS.asInt()) {
+            root.setInt("stationaryticks", defaultParams.stationaryTicks());
+        }
+        if (defaultParams.distanceMargin() != Setting.DEFAULT_DISTANCE_MARGIN.asDouble()) {
+            root.setDouble("distancemargin", defaultParams.distanceMargin());
+        }
         root.setDouble("speedmodifier", defaultParams.speedModifier());
         root.setBoolean("avoidwater", defaultParams.avoidWater());
         root.setBoolean("usedefaultstuckaction", defaultParams.stuckAction() == TeleportStuckAction.INSTANCE);
