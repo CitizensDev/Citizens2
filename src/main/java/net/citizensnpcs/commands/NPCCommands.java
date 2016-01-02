@@ -1489,6 +1489,12 @@ public class NPCCommands {
             npc.data().setPersistent(NPC.AMBIENT_SOUND_METADATA, ambientSound);
         }
 
+        if (ambientSound.isEmpty())
+            ambientSound = "none";
+        if (hurtSound.isEmpty())
+            hurtSound = "none";
+        if (deathSound.isEmpty())
+            deathSound = "none";
         Messaging.sendTr(sender, Messages.SOUND_SET, npc.getName(), ambientSound, hurtSound, deathSound);
     }
 
