@@ -65,6 +65,7 @@ public class Settings {
         CHECK_MINECRAFT_VERSION("advanced.check-minecraft-version", true),
         DEBUG_MODE("general.debug-mode", false),
         DEBUG_PATHFINDING("general.debug-pathfinding", false),
+        DEFAULT_DISTANCE_MARGIN("npc.pathfinding.default-distance-margin", 2),
         DEFAULT_LOOK_CLOSE("npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("npc.default.look-close.range", 5),
         DEFAULT_NPC_LIMIT("npc.limits.default-limit", 10),
