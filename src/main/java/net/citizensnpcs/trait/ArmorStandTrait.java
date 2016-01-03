@@ -16,6 +16,8 @@ public class ArmorStandTrait extends Trait {
     @Persist
     private boolean hasbaseplate = true;
     @Persist
+    private EulerAngle head;
+    @Persist
     private EulerAngle leftArm;
     @Persist
     private EulerAngle leftLeg;
@@ -51,6 +53,9 @@ public class ArmorStandTrait extends Trait {
             if (body != null) {
                 entity.setBodyPose(body);
             }
+            if (head != null) {
+                entity.setHeadPose(head);
+            }
         }
     }
 
@@ -63,6 +68,7 @@ public class ArmorStandTrait extends Trait {
             leftLeg = entity.getLeftLegPose();
             rightArm = entity.getRightArmPose();
             rightLeg = entity.getRightLegPose();
+            head = entity.getHeadPose();
             entity.setVisible(visible);
             entity.setGravity(gravity);
             entity.setArms(hasarms);
