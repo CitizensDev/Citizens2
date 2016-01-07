@@ -1,15 +1,17 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
-
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
+
+@TraitName("woolcolor")
 public class WoolColor extends Trait {
     private DyeColor color = DyeColor.WHITE;
     boolean sheep = false;

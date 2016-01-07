@@ -1,13 +1,15 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 
+import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
+
+@TraitName("age")
 public class Age extends Trait implements Toggleable {
     @Persist
     private int age = 0;

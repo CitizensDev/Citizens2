@@ -1,10 +1,12 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.trait.Trait;
-
 import org.bukkit.entity.Zombie;
 
+import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+
+@TraitName("zombiemodifier")
 public class ZombieModifier extends Trait {
     @Persist
     private boolean baby;

@@ -3,20 +3,22 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.command.CommandSender;
+
+import com.google.common.collect.Maps;
+
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
 
-import org.bukkit.command.CommandSender;
-
-import com.google.common.collect.Maps;
-
+@TraitName("waypoints")
 public class Waypoints extends Trait {
     private WaypointProvider provider = new LinearWaypointProvider();
     private String providerName = "linear";

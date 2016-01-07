@@ -1,11 +1,13 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.trait.Trait;
-
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftRabbit;
 import org.bukkit.entity.Rabbit;
 
+import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+
+@TraitName("rabbittype")
 public class RabbitType extends Trait {
     private Rabbit rabbit;
     @Persist
