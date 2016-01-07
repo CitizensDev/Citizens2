@@ -2,13 +2,14 @@ package net.citizensnpcs.api.trait.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
- * Represents the spawn state of an NPC. This only determines whether an NPC
- * should spawn onEnable. For checking if an NPC's entity is spawned, use
- * NPC.isSpawned().
+ * Represents the spawn state of an NPC. This only determines whether an NPC should spawn onEnable. For checking if an
+ * NPC's entity is spawned, use NPC.isSpawned().
  */
+@TraitName("spawned")
 public class Spawned extends Trait {
     private boolean shouldSpawn = true;
 
@@ -28,7 +29,7 @@ public class Spawned extends Trait {
 
     /**
      * Sets whether an NPC should spawn during server starts or reloads.
-     * 
+     *
      * @param shouldSpawn
      *            Whether an NPC should spawn
      */
@@ -38,7 +39,7 @@ public class Spawned extends Trait {
 
     /**
      * Gets whether an NPC should spawn during server starts or reloads.
-     * 
+     *
      * @return Whether an NPC should spawn
      */
     public boolean shouldSpawn() {

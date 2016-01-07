@@ -4,10 +4,12 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.VocalChord;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
 
 /**
  * Represents the default speech settings of an NPC.
  */
+@TraitName("speech")
 public class Speech extends Trait {
     @Persist("")
     private String defaultVocalChord = DEFAULT_VOCAL_CHORD;
@@ -18,7 +20,7 @@ public class Speech extends Trait {
 
     /**
      * Gets the name of the default {@link VocalChord} for this NPC.
-     * 
+     *
      * @return The name of the VocalChord
      */
     public String getDefaultVocalChord() {
@@ -27,7 +29,7 @@ public class Speech extends Trait {
 
     /**
      * Sets the name of the default {@link VocalChord} for this NPC.
-     * 
+     *
      * @return The name of the VocalChord
      */
     public void setDefaultVocalChord(Class<VocalChord> clazz) {

@@ -14,12 +14,14 @@ import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 
 /**
  * Represents an NPC's equipment. This only is applicable to human and enderman NPCs.
  */
+@TraitName("equipment")
 public class Equipment extends Trait {
     private final ItemStack[] equipment = new ItemStack[5];
 

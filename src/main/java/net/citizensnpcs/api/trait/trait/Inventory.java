@@ -2,19 +2,21 @@ package net.citizensnpcs.api.trait.trait;
 
 import java.util.Arrays;
 
-import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.ItemStorage;
-
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.ItemStorage;
+
 /**
  * Represents an NPC's inventory.
  */
+@TraitName("inventory")
 public class Inventory extends Trait {
     private ItemStack[] contents;
 
@@ -79,13 +81,11 @@ public class Inventory extends Trait {
         this.contents = Arrays.copyOf(contents, 72);
         if (npc.getEntity() instanceof Player) {
             ((Player) npc.getEntity()).getInventory().setContents(Arrays.copyOf(this.contents, 36));
-        }
-        else if (npc.getEntity() instanceof StorageMinecart) {
+        } else if (npc.getEntity() instanceof StorageMinecart) {
             ((StorageMinecart) npc.getEntity()).getInventory().setContents(this.contents);
-        }
-        else if (npc.getEntity() instanceof Horse) {
-            ((Horse) npc.getEntity()).getInventory().setContents(
-                    Arrays.copyOf(this.contents, ((Horse) npc.getEntity()).getInventory().getSize()));
+        } else if (npc.getEntity() instanceof Horse) {
+            ((Horse) npc.getEntity()).getInventory()
+                    .setContents(Arrays.copyOf(this.contents, ((Horse) npc.getEntity()).getInventory().getSize()));
             ((Horse) npc.getEntity()).getInventory().setSaddle(this.contents[0]);
             ((Horse) npc.getEntity()).getInventory().setArmor(this.contents[1]);
         }

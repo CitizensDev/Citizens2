@@ -1,13 +1,15 @@
 package net.citizensnpcs.api.trait.trait;
 
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
-
 import org.bukkit.entity.EntityType;
+
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
 
 /**
  * Represents an NPC's mob type.
  */
+@TraitName("type")
 public class MobType extends Trait {
     private EntityType type = EntityType.PLAYER;
 
@@ -17,7 +19,7 @@ public class MobType extends Trait {
 
     /**
      * Gets the type of mob that an NPC is.
-     * 
+     *
      * @return The mob type
      */
     public EntityType getType() {
@@ -44,7 +46,7 @@ public class MobType extends Trait {
 
     /**
      * Sets the type of mob that an NPC is.
-     * 
+     *
      * @param type
      *            Mob type to set the NPC as
      */

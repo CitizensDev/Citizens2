@@ -2,16 +2,18 @@ package net.citizensnpcs.api.trait.trait;
 
 import java.util.UUID;
 
-import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
 
 /**
  * Represents the owner of an NPC.
  */
+@TraitName("owner")
 public class Owner extends Trait {
     private String owner = SERVER;
     private UUID uuid = null;
@@ -30,11 +32,11 @@ public class Owner extends Trait {
     }
 
     /**
-     * @return The owner's UUID, or <code>null</code> if the owner is the server 
-     *			or a UUID has not been collected for the owner.
+     * @return The owner's UUID, or <code>null</code> if the owner is the server or a UUID has not been collected for
+     *         the owner.
      */
     public UUID getOwnerId() {
-    	return uuid;
+        return uuid;
     }
 
     /**
@@ -110,14 +112,15 @@ public class Owner extends Trait {
 
     /**
      * Sets the owner of an NPC.
+     * 
      * @param owner
-     *			Name of the owner
+     *            Name of the owner
      * @param uuid
-     *			UUID of the owner
+     *            UUID of the owner
      */
     public void setOwner(String owner, UUID uuid) {
-    	this.owner = owner;
-    	this.uuid = uuid;
+        this.owner = owner;
+        this.uuid = uuid;
     }
 
     @Override

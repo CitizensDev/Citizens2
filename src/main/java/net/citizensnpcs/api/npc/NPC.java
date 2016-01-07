@@ -298,5 +298,4 @@ public interface NPC extends Agent, Cloneable {
     public static final String SHOULD_SAVE_METADATA = "should-save";
     public static final String SWIMMING_METADATA = "swim";
     public static final String TARGETABLE_METADATA = "protected-target";
-
 }

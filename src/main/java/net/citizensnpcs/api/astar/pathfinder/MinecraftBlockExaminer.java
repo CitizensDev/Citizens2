@@ -153,6 +153,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return contains(materials, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA);
     }
 
+    public static boolean SEARCH_DISTANCE(Material mat) {
+        return !UNWALKABLE.contains(mat) && mat.isSolid();
+    }
+
     public static boolean validPosition(Block in) {
         return canStandIn(in.getType()) && canStandIn(in.getRelative(BlockFace.UP).getType())
                 && canStandOn(in.getRelative(BlockFace.DOWN));
