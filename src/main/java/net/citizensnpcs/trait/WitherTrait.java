@@ -5,8 +5,10 @@ import org.bukkit.entity.Wither;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
 import net.minecraft.server.v1_8_R3.EntityWither;
 
+@TraitName("withertrait")
 public class WitherTrait extends Trait {
     @Persist("charged")
     private boolean charged = false;

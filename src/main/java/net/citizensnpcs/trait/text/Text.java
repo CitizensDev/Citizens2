@@ -8,20 +8,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.speech.SpeechContext;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.Paginator;
-import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.trait.Toggleable;
-import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Util;
-
 import org.bukkit.Bukkit;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -35,6 +21,22 @@ import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.Maps;
 
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.speech.SpeechContext;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.Paginator;
+import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.trait.Toggleable;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Util;
+
+@TraitName("text")
 public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
     private final Map<UUID, Date> cooldowns = Maps.newHashMap();
     private int currentIndex;

@@ -1,10 +1,12 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.trait.Trait;
-
 import org.bukkit.Location;
 
+import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+
+@TraitName("location")
 public class CurrentLocation extends Trait {
     @Persist(value = "", required = true)
     private Location location = new Location(null, 0, 0, 0);

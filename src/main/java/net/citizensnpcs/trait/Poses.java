@@ -2,9 +2,15 @@ package net.citizensnpcs.trait;
 
 import java.util.Map;
 
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+
+import com.google.common.collect.Maps;
+
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
@@ -12,11 +18,7 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Pose;
 import net.citizensnpcs.util.Util;
 
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
-
-import com.google.common.collect.Maps;
-
+@TraitName("poses")
 public class Poses extends Trait {
     private final Map<String, Pose> poses = Maps.newHashMap();
 

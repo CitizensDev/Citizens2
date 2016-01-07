@@ -52,36 +52,36 @@ public class CitizensTraitFactory implements TraitFactory {
     private final Map<String, TraitInfo> registered = Maps.newHashMap();
 
     public CitizensTraitFactory() {
-        registerTrait(TraitInfo.create(Age.class).withName("age"));
-        registerTrait(TraitInfo.create(ArmorStandTrait.class).withName("armorstandtrait"));
-        registerTrait(TraitInfo.create(Anchors.class).withName("anchors"));
-        registerTrait(TraitInfo.create(Controllable.class).withName("controllable"));
-        registerTrait(TraitInfo.create(Equipment.class).withName("equipment"));
-        registerTrait(TraitInfo.create(Gravity.class).withName("gravity"));
-        registerTrait(TraitInfo.create(HorseModifiers.class).withName("horsemodifiers"));
-        registerTrait(TraitInfo.create(Inventory.class).withName("inventory"));
-        registerTrait(TraitInfo.create(CurrentLocation.class).withName("location"));
-        registerTrait(TraitInfo.create(LookClose.class).withName("lookclose"));
-        registerTrait(TraitInfo.create(OcelotModifiers.class).withName("ocelotmodifiers"));
-        registerTrait(TraitInfo.create(Owner.class).withName("owner"));
-        registerTrait(TraitInfo.create(Poses.class).withName("poses"));
-        registerTrait(TraitInfo.create(Powered.class).withName("powered"));
-        registerTrait(TraitInfo.create(RabbitType.class).withName("rabbittype"));
-        registerTrait(TraitInfo.create(Saddle.class).withName("saddle"));
-        registerTrait(TraitInfo.create(SheepTrait.class).withName("sheeptrait"));
-        registerTrait(TraitInfo.create(SkinLayers.class).withName("skinlayers"));
-        registerTrait(TraitInfo.create(NPCSkeletonType.class).withName("skeletontype"));
-        registerTrait(TraitInfo.create(SlimeSize.class).withName("slimesize"));
-        registerTrait(TraitInfo.create(Spawned.class).withName("spawned"));
-        registerTrait(TraitInfo.create(Speech.class).withName("speech"));
-        registerTrait(TraitInfo.create(Text.class).withName("text"));
-        registerTrait(TraitInfo.create(MobType.class).withName("type").asDefaultTrait());
-        registerTrait(TraitInfo.create(Waypoints.class).withName("waypoints"));
-        registerTrait(TraitInfo.create(WitherTrait.class).withName("withertrait"));
-        registerTrait(TraitInfo.create(WoolColor.class).withName("woolcolor"));
-        registerTrait(TraitInfo.create(WolfModifiers.class).withName("wolfmodifiers"));
-        registerTrait(TraitInfo.create(VillagerProfession.class).withName("profession"));
-        registerTrait(TraitInfo.create(ZombieModifier.class).withName("zombiemodifier"));
+        registerTrait(TraitInfo.create(Age.class));
+        registerTrait(TraitInfo.create(ArmorStandTrait.class));
+        registerTrait(TraitInfo.create(Anchors.class));
+        registerTrait(TraitInfo.create(Controllable.class));
+        registerTrait(TraitInfo.create(Equipment.class));
+        registerTrait(TraitInfo.create(Gravity.class));
+        registerTrait(TraitInfo.create(HorseModifiers.class));
+        registerTrait(TraitInfo.create(Inventory.class));
+        registerTrait(TraitInfo.create(CurrentLocation.class));
+        registerTrait(TraitInfo.create(LookClose.class));
+        registerTrait(TraitInfo.create(OcelotModifiers.class));
+        registerTrait(TraitInfo.create(Owner.class));
+        registerTrait(TraitInfo.create(Poses.class));
+        registerTrait(TraitInfo.create(Powered.class));
+        registerTrait(TraitInfo.create(RabbitType.class));
+        registerTrait(TraitInfo.create(Saddle.class));
+        registerTrait(TraitInfo.create(SheepTrait.class));
+        registerTrait(TraitInfo.create(SkinLayers.class));
+        registerTrait(TraitInfo.create(NPCSkeletonType.class));
+        registerTrait(TraitInfo.create(SlimeSize.class));
+        registerTrait(TraitInfo.create(Spawned.class));
+        registerTrait(TraitInfo.create(Speech.class));
+        registerTrait(TraitInfo.create(Text.class));
+        registerTrait(TraitInfo.create(MobType.class).asDefaultTrait());
+        registerTrait(TraitInfo.create(Waypoints.class));
+        registerTrait(TraitInfo.create(WitherTrait.class));
+        registerTrait(TraitInfo.create(WoolColor.class));
+        registerTrait(TraitInfo.create(WolfModifiers.class));
+        registerTrait(TraitInfo.create(VillagerProfession.class));
+        registerTrait(TraitInfo.create(ZombieModifier.class));
 
         for (String trait : registered.keySet()) {
             INTERNAL_TRAITS.add(trait);
@@ -157,8 +157,10 @@ public class CitizensTraitFactory implements TraitFactory {
     @Override
     public void registerTrait(TraitInfo info) {
         Preconditions.checkNotNull(info, "info cannot be null");
-        if (registered.containsKey(info.getTraitName()))
+        if (registered.containsKey(info.getTraitName())) {
+            System.out.println(info.getTraitClass());
             throw new IllegalArgumentException("trait name already registered");
+        }
         registered.put(info.getTraitName(), info);
         if (info.isDefaultTrait()) {
             defaultTraits.add(info);

@@ -4,21 +4,23 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.command.CommandConfigurable;
-import net.citizensnpcs.api.command.CommandContext;
-import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.util.Util;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.command.CommandConfigurable;
+import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.Util;
+
+@TraitName("lookclose")
 public class LookClose extends Trait implements Toggleable, CommandConfigurable {
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
@@ -47,7 +49,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         Collections.sort(nearby, new Comparator<Entity>() {
             @Override
             public int compare(Entity o1, Entity o2) {
-                if (npcLocation.getWorld() != o1.getLocation().getWorld() || npcLocation.getWorld() != o2.getLocation().getWorld()) {
+                if (npcLocation.getWorld() != o1.getLocation().getWorld()
+                        || npcLocation.getWorld() != o2.getLocation().getWorld()) {
                     return -1;
                 }
                 double d1 = o1.getLocation().distanceSquared(npcLocation);

@@ -1,10 +1,12 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.trait.Trait;
-
 import org.bukkit.entity.Skeleton;
 
+import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+
+@TraitName("skeletontype")
 public class NPCSkeletonType extends Trait {
     private Skeleton skeleton;
     @Persist

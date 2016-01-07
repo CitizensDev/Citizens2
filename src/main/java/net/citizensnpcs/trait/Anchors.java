@@ -3,18 +3,20 @@ package net.citizensnpcs.trait;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Anchor;
-import net.citizensnpcs.util.Messages;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.world.WorldLoadEvent;
 
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Anchor;
+import net.citizensnpcs.util.Messages;
+
+@TraitName("anchors")
 public class Anchors extends Trait {
     private final List<Anchor> anchors = new ArrayList<Anchor>();
 

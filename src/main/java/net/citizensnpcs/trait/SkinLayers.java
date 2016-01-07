@@ -2,11 +2,12 @@ package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
 
+@TraitName("skinlayers")
 public class SkinLayers extends Trait {
-
     @Persist("cape")
     private boolean cape = true;
     @Persist("hat")
@@ -24,74 +25,6 @@ public class SkinLayers extends Trait {
 
     public SkinLayers() {
         super("skinlayers");
-    }
-
-    public SkinLayers show() {
-        cape = true;
-        hat = true;
-        jacket = true;
-        leftSleeve = true;
-        rightSleeve = true;
-        leftPants = true;
-        rightPants = true;
-        setFlags();
-        return this;
-    }
-
-    public SkinLayers showCape() {
-        cape = true;
-        setFlags();
-        return this;
-    }
-
-    public SkinLayers showHat() {
-        hat = true;
-        setFlags();
-        return this;
-    }
-
-    public SkinLayers showJacket() {
-        jacket = true;
-        setFlags();
-        return this;
-    }
-
-    public SkinLayers showLeftPants() {
-        leftPants = true;
-        setFlags();
-        return this;
-    }
-
-    public SkinLayers showLeftSleeve() {
-        leftSleeve = true;
-        setFlags();
-        return this;
-    }
-
-    public SkinLayers showPants() {
-        leftPants = true;
-        rightPants = true;
-        setFlags();
-        return this;
-    }
-
-    public SkinLayers showRightPants() {
-        rightPants = true;
-        setFlags();
-        return this;
-    }
-
-    public SkinLayers showRightSleeve() {
-        rightSleeve = true;
-        setFlags();
-        return this;
-    }
-
-    public SkinLayers showSleeves() {
-        leftSleeve = true;
-        rightSleeve = true;
-        setFlags();
-        return this;
     }
 
     public SkinLayers hide() {
@@ -193,6 +126,23 @@ public class SkinLayers extends Trait {
         setFlags();
     }
 
+    private void setFlags() {
+        if (!npc.isSpawned())
+            return;
+
+        SkinnableEntity skinnable = NMS.getSkinnable(npc.getEntity());
+        if (skinnable == null)
+            return;
+
+        int flags = 0xFF;
+        for (Layer layer : Layer.values()) {
+            if (!isVisible(layer)) {
+                flags &= ~layer.flag;
+            }
+        }
+        skinnable.setSkinFlags((byte) flags);
+    }
+
     public SkinLayers setVisible(Layer layer, boolean isVisible) {
         switch (layer) {
             case CAPE:
@@ -221,37 +171,88 @@ public class SkinLayers extends Trait {
         return this;
     }
 
+    public SkinLayers show() {
+        cape = true;
+        hat = true;
+        jacket = true;
+        leftSleeve = true;
+        rightSleeve = true;
+        leftPants = true;
+        rightPants = true;
+        setFlags();
+        return this;
+    }
+
+    public SkinLayers showCape() {
+        cape = true;
+        setFlags();
+        return this;
+    }
+
+    public SkinLayers showHat() {
+        hat = true;
+        setFlags();
+        return this;
+    }
+
+    public SkinLayers showJacket() {
+        jacket = true;
+        setFlags();
+        return this;
+    }
+
+    public SkinLayers showLeftPants() {
+        leftPants = true;
+        setFlags();
+        return this;
+    }
+
+    public SkinLayers showLeftSleeve() {
+        leftSleeve = true;
+        setFlags();
+        return this;
+    }
+
+    public SkinLayers showPants() {
+        leftPants = true;
+        rightPants = true;
+        setFlags();
+        return this;
+    }
+
+    public SkinLayers showRightPants() {
+        rightPants = true;
+        setFlags();
+        return this;
+    }
+
+    public SkinLayers showRightSleeve() {
+        rightSleeve = true;
+        setFlags();
+        return this;
+    }
+
+    public SkinLayers showSleeves() {
+        leftSleeve = true;
+        rightSleeve = true;
+        setFlags();
+        return this;
+    }
+
     @Override
     public String toString() {
         return "SkinLayers{cape:" + cape + ", hat:" + hat + ", jacket:" + jacket + ", leftSleeve:" + leftSleeve
                 + ", rightSleeve:" + rightSleeve + ", leftPants:" + leftPants + ", rightPants:" + rightPants + "}";
     }
 
-    private void setFlags() {
-        if (!npc.isSpawned())
-            return;
-
-        SkinnableEntity skinnable = NMS.getSkinnable(npc.getEntity());
-        if (skinnable == null)
-            return;
-
-        int flags = 0xFF;
-        for (Layer layer : Layer.values()) {
-            if (!isVisible(layer)) {
-                flags &= ~layer.flag;
-            }
-        }
-        skinnable.setSkinFlags((byte)flags);
-    }
-
     public enum Layer {
-        CAPE (0),
-        JACKET (1),
-        LEFT_SLEEVE (2),
-        RIGHT_SLEEVE (3),
-        LEFT_PANTS (4),
-        RIGHT_PANTS (5),
-        HAT (6);
+        CAPE(0),
+        HAT(6),
+        JACKET(1),
+        LEFT_PANTS(4),
+        LEFT_SLEEVE(2),
+        RIGHT_PANTS(5),
+        RIGHT_SLEEVE(3);
 
         final int flag;
 

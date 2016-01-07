@@ -5,8 +5,10 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.npc.entity.EntityHumanNPC.PlayerNPC;
 
+@TraitName("gravity")
 public class Gravity extends Trait implements Toggleable {
     @Persist
     private boolean enabled;

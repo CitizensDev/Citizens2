@@ -1,11 +1,13 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.trait.Trait;
-
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Wolf;
 
+import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+
+@TraitName("wolfmodifiers")
 public class WolfModifiers extends Trait {
     @Persist("angry")
     private boolean angry;
@@ -18,6 +20,10 @@ public class WolfModifiers extends Trait {
 
     public WolfModifiers() {
         super("wolfmodifiers");
+    }
+
+    public DyeColor getCollarColor() {
+        return collarColor;
     }
 
     @Override
@@ -56,9 +62,5 @@ public class WolfModifiers extends Trait {
             }
             wolf.setTamed(tamed);
         }
-    }
-
-    public DyeColor getCollarColor() {
-        return collarColor;
     }
 }
