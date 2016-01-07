@@ -209,6 +209,12 @@ public class CitizensNPC extends AbstractNPC {
 
         NMS.setHeadYaw(mcEntity, at.getYaw());
 
+        getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+
+        // Set the spawned state
+        getTrait(CurrentLocation.class).setLocation(at);
+        getTrait(Spawned.class).setSpawned(true);
+
         NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at);
         Bukkit.getPluginManager().callEvent(spawnEvent);
 
@@ -217,12 +223,6 @@ public class CitizensNPC extends AbstractNPC {
             Messaging.debug("Couldn't spawn", getId(), "due to event cancellation.");
             return false;
         }
-
-        getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
-
-        // Set the spawned state
-        getTrait(CurrentLocation.class).setLocation(at);
-        getTrait(Spawned.class).setSpawned(true);
 
         navigator.onSpawn();
 
