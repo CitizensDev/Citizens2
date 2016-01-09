@@ -314,9 +314,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         updatePackets(navigating);
         if (gravity && !navigating && getBukkitEntity() != null
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION)) && !NMS.inWater(getBukkitEntity())) {
-            move(0, -0.2, 0);
-            // gravity. also works around an entity.onGround not updating issue
-            // (onGround is normally updated by the client)
+            g(0, 0);
         }
 
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
@@ -327,9 +325,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
                 NMS.updateNavigation(navigation);
             }
             moveOnCurrentHeading();
-        } else if (motX != 0 || motZ != 0 || motY != 0) {
-            g(0, 0); // is this necessary? it does controllable but sometimes
-            // players sink into the ground
         }
 
         if (noDamageTicks > 0) {
