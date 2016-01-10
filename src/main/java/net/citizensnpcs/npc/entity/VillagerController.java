@@ -127,6 +127,7 @@ public class VillagerController extends MobEntityController {
         public void E() {
             super.E();
             if (npc != null) {
+                NMS.setHeadYaw(this, yaw);
                 npc.update();
             }
         }
