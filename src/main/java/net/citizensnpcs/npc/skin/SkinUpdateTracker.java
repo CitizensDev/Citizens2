@@ -14,6 +14,12 @@ import java.util.WeakHashMap;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -24,12 +30,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.util.NMS;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
 /**
  * Tracks skin updates for players.
  *
@@ -39,9 +39,9 @@ public class SkinUpdateTracker {
 
     private final Map<SkinnableEntity, Void> navigating = new WeakHashMap<SkinnableEntity, Void>(25);
     private final NPCRegistry npcRegistry;
+    private final Map<UUID, PlayerTracker> playerTrackers = new HashMap<UUID, PlayerTracker>(
+            Bukkit.getMaxPlayers() / 2);
     private final Map<String, NPCRegistry> registries;
-    private final Map<UUID, PlayerTracker> playerTrackers =
-            new HashMap<UUID, PlayerTracker>(Bukkit.getMaxPlayers() / 2);
     private final NPCNavigationUpdater updater = new NPCNavigationUpdater();
 
     /**
@@ -63,80 +63,104 @@ public class SkinUpdateTracker {
         new NPCNavigationTracker().runTaskTimer(CitizensAPI.getPlugin(), 3, 7);
     }
 
-    /**
-     * Update a player with skin related packets from nearby skinnable NPC's.
-     *
-     * @param player
-     *            The player to update.
-     * @param delay
-     *            The delay before sending the packets.
-     * @param reset
-     *            True to hard reset the players tracking info, otherwise false.
-     */
-    public void updatePlayer(final Player player, long delay, final boolean reset) {
-        if (player.hasMetadata("NPC"))
-            return;
+    // determines if a player is near a skinnable entity and, if checkFov set, if the
+    // skinnable entity is within the players field of view.
+    private boolean canSee(Player player, SkinnableEntity skinnable, boolean checkFov) {
+        Player entity = skinnable.getBukkitEntity();
+        if (entity == null)
+            return false;
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                List<SkinnableEntity> visible = getNearbyNPCs(player, reset, false);
-                for (SkinnableEntity skinnable : visible) {
-                    skinnable.getSkinTracker().updateViewer(player);
-                }
+        if (!player.canSee(entity))
+            return false;
+
+        if (!player.getWorld().equals(entity.getWorld()))
+            return false;
+
+        Location playerLoc = player.getLocation(CACHE_LOCATION);
+        Location skinLoc = entity.getLocation(NPC_LOCATION);
+
+        double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
+        viewDistance *= viewDistance;
+
+        if (playerLoc.distanceSquared(skinLoc) > viewDistance)
+            return false;
+
+        // see if the NPC is within the players field of view
+        if (checkFov) {
+            double deltaX = skinLoc.getX() - playerLoc.getX();
+            double deltaZ = skinLoc.getZ() - playerLoc.getZ();
+            double angle = Math.atan2(deltaX, deltaZ);
+            float skinYaw = NMS.clampYaw(-(float) Math.toDegrees(angle));
+            float playerYaw = NMS.clampYaw(playerLoc.getYaw());
+            float upperBound = playerYaw + FIELD_OF_VIEW;
+            float lowerBound = playerYaw - FIELD_OF_VIEW;
+
+            return skinYaw >= lowerBound && skinYaw <= upperBound;
+        }
+
+        return true;
+    }
+
+    private Iterable<NPC> getAllNPCs() {
+        return Iterables.filter(Iterables.concat(npcRegistry, Iterables.concat(registries.values())),
+                Predicates.notNull());
+    }
+
+    private List<SkinnableEntity> getNearbyNPCs(Player player, boolean reset, boolean checkFov) {
+        List<SkinnableEntity> results = new ArrayList<SkinnableEntity>();
+        PlayerTracker tracker = getTracker(player, reset);
+        for (NPC npc : getAllNPCs()) {
+
+            SkinnableEntity skinnable = getSkinnable(npc);
+            if (skinnable == null)
+                continue;
+
+            // if checking field of view, don't add skins that have already been updated for FOV
+            if (checkFov && tracker.fovVisibleSkins.contains(skinnable))
+                continue;
+
+            if (canSee(player, skinnable, checkFov)) {
+                results.add(skinnable);
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), delay);
+        }
+        return results;
     }
 
-    /**
-     * Remove a player from the tracker.
-     *
-     * <p>
-     * Used when the player logs out.
-     * </p>
-     *
-     * @param playerId
-     *            The ID of the player.
-     */
-    public void removePlayer(UUID playerId) {
-        Preconditions.checkNotNull(playerId);
-        playerTrackers.remove(playerId);
-    }
+    // get all navigating skinnable NPC's within the players FOV that have not been "seen" yet
+    private void getNewVisibleNavigating(Player player, Collection<SkinnableEntity> output) {
+        PlayerTracker tracker = getTracker(player, false);
 
-    /**
-     * Reset all players currently being tracked.
-     *
-     * <p>
-     * Used when Citizens is reloaded.
-     * </p>
-     */
-    public void reset() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasMetadata("NPC"))
+        for (SkinnableEntity skinnable : navigating.keySet()) {
+
+            // make sure player hasn't already been updated to prevent excessive tab list flashing
+            // while NPC's are navigating and to reduce the number of times #canSee is invoked.
+            if (tracker.fovVisibleSkins.contains(skinnable))
                 continue;
 
-            PlayerTracker tracker = playerTrackers.get(player.getUniqueId());
-            if (tracker == null)
-                continue;
-
-            tracker.hardReset(player);
+            if (canSee(player, skinnable, true))
+                output.add(skinnable);
         }
     }
 
-    /**
-     * Invoke when an NPC is spawned.
-     *
-     * @param npc
-     *            The spawned NPC.
-     */
-    public void onNPCSpawn(NPC npc) {
-        Preconditions.checkNotNull(npc);
-        SkinnableEntity skinnable = getSkinnable(npc);
-        if (skinnable == null)
-            return;
+    @Nullable
+    private SkinnableEntity getSkinnable(NPC npc) {
+        Entity entity = npc.getEntity();
+        if (entity == null)
+            return null;
 
-        // reset nearby players in case they are not looking at the NPC when it spawns.
-        resetNearbyPlayers(skinnable);
+        return NMS.getSkinnable(entity);
+    }
+
+    // get a players tracker, create new one if not exists.
+    private PlayerTracker getTracker(Player player, boolean reset) {
+        PlayerTracker tracker = playerTrackers.get(player.getUniqueId());
+        if (tracker == null) {
+            tracker = new PlayerTracker(player);
+            playerTrackers.put(player.getUniqueId(), tracker);
+        } else if (reset) {
+            tracker.hardReset(player);
+        }
+        return tracker;
     }
 
     /**
@@ -189,6 +213,22 @@ public class SkinUpdateTracker {
     }
 
     /**
+     * Invoke when an NPC is spawned.
+     *
+     * @param npc
+     *            The spawned NPC.
+     */
+    public void onNPCSpawn(NPC npc) {
+        Preconditions.checkNotNull(npc);
+        SkinnableEntity skinnable = getSkinnable(npc);
+        if (skinnable == null)
+            return;
+
+        // reset nearby players in case they are not looking at the NPC when it spawns.
+        resetNearbyPlayers(skinnable);
+    }
+
+    /**
      * Invoke when a player moves.
      *
      * @param player
@@ -204,6 +244,41 @@ public class SkinUpdateTracker {
             return;
 
         updatePlayer(player, 10, false);
+    }
+
+    /**
+     * Remove a player from the tracker.
+     *
+     * <p>
+     * Used when the player logs out.
+     * </p>
+     *
+     * @param playerId
+     *            The ID of the player.
+     */
+    public void removePlayer(UUID playerId) {
+        Preconditions.checkNotNull(playerId);
+        playerTrackers.remove(playerId);
+    }
+
+    /**
+     * Reset all players currently being tracked.
+     *
+     * <p>
+     * Used when Citizens is reloaded.
+     * </p>
+     */
+    public void reset() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasMetadata("NPC"))
+                continue;
+
+            PlayerTracker tracker = playerTrackers.get(player.getUniqueId());
+            if (tracker == null)
+                continue;
+
+            tracker.hardReset(player);
+        }
     }
 
     // hard reset players near a skinnable NPC
@@ -233,119 +308,103 @@ public class SkinUpdateTracker {
         }
     }
 
-    private List<SkinnableEntity> getNearbyNPCs(Player player, boolean reset, boolean checkFov) {
-        List<SkinnableEntity> results = new ArrayList<SkinnableEntity>();
-        PlayerTracker tracker = getTracker(player, reset);
-        for (NPC npc : getAllNPCs()) {
+    /**
+     * Update a player with skin related packets from nearby skinnable NPC's.
+     *
+     * @param player
+     *            The player to update.
+     * @param delay
+     *            The delay before sending the packets.
+     * @param reset
+     *            True to hard reset the players tracking info, otherwise false.
+     */
+    public void updatePlayer(final Player player, long delay, final boolean reset) {
+        if (player.hasMetadata("NPC"))
+            return;
 
-            SkinnableEntity skinnable = getSkinnable(npc);
-            if (skinnable == null)
-                continue;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                List<SkinnableEntity> visible = getNearbyNPCs(player, reset, false);
+                for (SkinnableEntity skinnable : visible) {
+                    skinnable.getSkinTracker().updateViewer(player);
+                }
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), delay);
+    }
 
-            // if checking field of view, don't add skins that have already been updated for FOV
-            if (checkFov && tracker.fovVisibleSkins.contains(skinnable))
-                continue;
+    // update players when the NPC navigates into their field of view
+    private class NPCNavigationTracker extends BukkitRunnable {
+        @Override
+        public void run() {
+            if (navigating.isEmpty() || playerTrackers.isEmpty())
+                return;
 
-            if (canSee(player, skinnable, checkFov)) {
-                results.add(skinnable);
+            List<SkinnableEntity> nearby = new ArrayList<SkinnableEntity>(10);
+            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+
+            for (Player player : players) {
+                if (player.hasMetadata("NPC"))
+                    continue;
+
+                getNewVisibleNavigating(player, nearby);
+
+                for (SkinnableEntity skinnable : nearby) {
+                    PlayerTracker tracker = getTracker(player, false);
+                    tracker.fovVisibleSkins.add(skinnable);
+                    updater.queue.offer(new UpdateInfo(player, skinnable));
+                }
+
+                nearby.clear();
             }
         }
-        return results;
     }
 
-    private Iterable<NPC> getAllNPCs() {
-        return Iterables.filter(Iterables.concat(npcRegistry, Iterables.concat(registries.values())),
-                Predicates.notNull());
-    }
+    // Updates players. Repeating task used to schedule updates without
+    // causing excessive scheduling.
+    private class NPCNavigationUpdater extends BukkitRunnable {
+        Queue<UpdateInfo> queue = new ArrayDeque<UpdateInfo>(20);
 
-    // get all navigating skinnable NPC's within the players FOV that have not been "seen" yet
-    private void getNewVisibleNavigating(Player player, Collection<SkinnableEntity> output) {
-        PlayerTracker tracker = getTracker(player, false);
-
-        for (SkinnableEntity skinnable : navigating.keySet()) {
-
-            // make sure player hasn't already been updated to prevent excessive tab list flashing
-            // while NPC's are navigating and to reduce the number of times #canSee is invoked.
-            if (tracker.fovVisibleSkins.contains(skinnable))
-                continue;
-
-            if (canSee(player, skinnable, true))
-                output.add(skinnable);
+        @Override
+        public void run() {
+            while (!queue.isEmpty()) {
+                UpdateInfo info = queue.remove();
+                info.entity.getSkinTracker().updateViewer(info.player);
+            }
         }
-    }
-
-    @Nullable
-    private SkinnableEntity getSkinnable(NPC npc) {
-        Entity entity = npc.getEntity();
-        if (entity == null)
-            return null;
-
-        return NMS.getSkinnable(entity);
-    }
-
-    // get a players tracker, create new one if not exists.
-    private PlayerTracker getTracker(Player player, boolean reset) {
-        PlayerTracker tracker = playerTrackers.get(player.getUniqueId());
-        if (tracker == null) {
-            tracker = new PlayerTracker(player);
-            playerTrackers.put(player.getUniqueId(), tracker);
-        }
-        else if (reset) {
-            tracker.hardReset(player);
-        }
-        return tracker;
-    }
-
-    // determines if a player is near a skinnable entity and, if checkFov set, if the
-    // skinnable entity is within the players field of view.
-    private boolean canSee(Player player, SkinnableEntity skinnable, boolean checkFov) {
-        Player entity = skinnable.getBukkitEntity();
-        if (entity == null)
-            return false;
-
-        if (!player.canSee(entity))
-            return false;
-
-        if (!player.getWorld().equals(entity.getWorld()))
-            return false;
-
-        Location playerLoc = player.getLocation(CACHE_LOCATION);
-        Location skinLoc = entity.getLocation(NPC_LOCATION);
-
-        double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
-        viewDistance *= viewDistance;
-
-        if (playerLoc.distanceSquared(skinLoc) > viewDistance)
-            return false;
-
-        // see if the NPC is within the players field of view
-        if (checkFov) {
-            double deltaX = skinLoc.getX() - playerLoc.getX();
-            double deltaZ = skinLoc.getZ() - playerLoc.getZ();
-            double angle = Math.atan2(deltaX, deltaZ);
-            float skinYaw = NMS.clampYaw(-(float) Math.toDegrees(angle));
-            float playerYaw = NMS.clampYaw(playerLoc.getYaw());
-            float upperBound = playerYaw + FIELD_OF_VIEW;
-            float lowerBound = playerYaw - FIELD_OF_VIEW;
-
-            return skinYaw >= lowerBound && skinYaw <= upperBound;
-        }
-
-        return true;
     }
 
     // Tracks player location and yaw to determine when the player should be updated
     // with nearby skins.
     private class PlayerTracker {
-        final Location location = new Location(null, 0, 0, 0);
         final Set<SkinnableEntity> fovVisibleSkins = new HashSet<SkinnableEntity>(20);
-        int rotationCount;
         boolean hasMoved;
-        float upperBound;
+        final Location location = new Location(null, 0, 0, 0);
         float lowerBound;
+        int rotationCount;
+        float upperBound;
 
         PlayerTracker(Player player) {
             hardReset(player);
+        }
+
+        // reset all
+        void hardReset(Player player) {
+            this.hasMoved = false;
+            this.rotationCount = 0;
+            this.fovVisibleSkins.clear();
+            reset(player);
+        }
+
+        // resets initial yaw and location to the players current location and yaw.
+        void reset(Player player) {
+            player.getLocation(this.location);
+            if (rotationCount < 3) {
+                float rotationDegrees = Settings.Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
+                float yaw = NMS.clampYaw(this.location.getYaw());
+                this.upperBound = yaw + rotationDegrees;
+                this.lowerBound = yaw - rotationDegrees;
+            }
         }
 
         boolean shouldUpdate(Player player) {
@@ -380,75 +439,16 @@ public class SkinUpdateTracker {
             if (distance > MOVEMENT_SKIN_UPDATE_DISTANCE) {
                 reset(player);
                 return true;
-            }
-            else {
+            } else {
                 return false;
-            }
-        }
-
-        // resets initial yaw and location to the players current location and yaw.
-        void reset(Player player) {
-            player.getLocation(this.location);
-            if (rotationCount < 3) {
-                float rotationDegrees = Settings.Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
-                float yaw = NMS.clampYaw(this.location.getYaw());
-                this.upperBound = yaw + rotationDegrees;
-                this.lowerBound = yaw - rotationDegrees;
-            }
-        }
-
-        // reset all
-        void hardReset(Player player) {
-            this.hasMoved = false;
-            this.rotationCount = 0;
-            this.fovVisibleSkins.clear();
-            reset(player);
-        }
-    }
-
-    // update players when the NPC navigates into their field of view
-    private class NPCNavigationTracker extends BukkitRunnable {
-        @Override
-        public void run() {
-            if (navigating.isEmpty() || playerTrackers.isEmpty())
-                return;
-
-            List<SkinnableEntity> nearby = new ArrayList<SkinnableEntity>(10);
-            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-
-            for (Player player : players) {
-                if (player.hasMetadata("NPC"))
-                    continue;
-
-                getNewVisibleNavigating(player, nearby);
-
-                for (SkinnableEntity skinnable : nearby) {
-                    PlayerTracker tracker = getTracker(player, false);
-                    tracker.fovVisibleSkins.add(skinnable);
-                    updater.queue.offer(new UpdateInfo(player, skinnable));
-                }
-
-                nearby.clear();
-            }
-        }
-    }
-
-    // Updates players. Repeating task used to schedule updates without
-    // causing excessive scheduling.
-    private class NPCNavigationUpdater extends BukkitRunnable {
-        Queue<UpdateInfo> queue = new ArrayDeque<UpdateInfo>(20);
-        @Override
-        public void run() {
-            while (!queue.isEmpty()) {
-                UpdateInfo info = queue.remove();
-                info.entity.getSkinTracker().updateViewer(info.player);
             }
         }
     }
 
     private static class UpdateInfo {
-        Player player;
         SkinnableEntity entity;
+        Player player;
+
         UpdateInfo(Player player, SkinnableEntity entity) {
             this.player = player;
             this.entity = entity;
@@ -456,7 +456,7 @@ public class SkinUpdateTracker {
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
-    private static final int MOVEMENT_SKIN_UPDATE_DISTANCE = 50 * 50;
     private static final float FIELD_OF_VIEW = 70f;
+    private static final int MOVEMENT_SKIN_UPDATE_DISTANCE = 50 * 50;
+    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }

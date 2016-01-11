@@ -1,5 +1,9 @@
 package net.citizensnpcs.npc.ai;
 
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
@@ -12,10 +16,6 @@ import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.util.Vector;
 
 public class AStarNavigationStrategy extends AbstractPathStrategy {
     private final Location destination;
