@@ -2,6 +2,10 @@ package net.citizensnpcs.api;
 
 import java.io.File;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
+
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
@@ -10,45 +14,36 @@ import net.citizensnpcs.api.npc.NPCSelector;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-
 /**
  * Contains methods used in order to utilize the Citizens API.
  */
 public final class CitizensAPI {
-    private CitizensPlugin implementation;
-
     private CitizensAPI() {
     }
 
     /**
-     * Creates a new <em>anonymous</em> {@link NPCRegistry} with its own set of
-     * {@link NPC}s. This is not stored by the Citizens plugin.
-     * 
+     * Creates a new <em>anonymous</em> {@link NPCRegistry} with its own set of {@link NPC}s. This is not stored by the
+     * Citizens plugin.
+     *
      * @since 2.0.8
      * @param store
      *            The {@link NPCDataStore} to use with the registry
-     * @return A new anonymous NPCRegistry that is not accessible via
-     *         {@link #getPluginNPCRegistry(String)}
+     * @return A new anonymous NPCRegistry that is not accessible via {@link #getPluginNPCRegistry(String)}
      */
     public static NPCRegistry createAnonymousNPCRegistry(NPCDataStore store) {
         return getImplementation().createAnonymousNPCRegistry(store);
     }
 
     /**
-     * Creates a new {@link NPCRegistry} with its own set of {@link NPC}s. This
-     * is stored in memory with the Citizens plugin, and can be accessed via
-     * {@link #getNamedNPCRegistry(String)}.
-     * 
+     * Creates a new {@link NPCRegistry} with its own set of {@link NPC}s. This is stored in memory with the Citizens
+     * plugin, and can be accessed via {@link #getNamedNPCRegistry(String)}.
+     *
      * @param name
      *            The plugin name
      * @param store
      *            The {@link NPCDataStore} to use with the registry
      * @since 2.0.8
-     * @return A new NPCRegistry, that can also be retrieved via
-     *         {@link #getPluginNPCRegistry(String)}
+     * @return A new NPCRegistry, that can also be retrieved via {@link #getPluginNPCRegistry(String)}
      */
     public static NPCRegistry createNamedNPCRegistry(String name, NPCDataStore store) {
         return getImplementation().createNamedNPCRegistry(name, store);
@@ -66,9 +61,9 @@ public final class CitizensAPI {
     }
 
     private static CitizensPlugin getImplementation() {
-        if (instance.implementation == null)
+        if (instance == null)
             throw new IllegalStateException("no implementation set");
-        return instance.implementation;
+        return instance;
     }
 
     private static ClassLoader getImplementationClassLoader() {
@@ -76,15 +71,13 @@ public final class CitizensAPI {
     }
 
     /**
-     * Retrieves the {@link NPCRegistry} previously created via
-     * {@link #createNamedNPCRegistry(String)} with the given name, or null if
-     * not found.
-     * 
+     * Retrieves the {@link NPCRegistry} previously created via {@link #createNamedNPCRegistry(String)} with the given
+     * name, or null if not found.
+     *
      * @param name
      *            The registry name
      * @since 2.0.8
-     * @return A NPCRegistry previously created via
-     *         {@link #createNamedNPCRegistry(String)}, or null if not found
+     * @return A NPCRegistry previously created via {@link #createNamedNPCRegistry(String)}, or null if not found
      */
     public static NPCRegistry getNamedNPCRegistry(String name) {
         return getImplementation().getNamedNPCRegistry(name);
@@ -96,7 +89,7 @@ public final class CitizensAPI {
 
     /**
      * Gets the current implementation's <em>default</em> {@link NPCRegistry}.
-     * 
+     *
      * @return The NPC registry
      */
     public static NPCRegistry getNPCRegistry() {
@@ -129,7 +122,7 @@ public final class CitizensAPI {
 
     /**
      * Gets the current implementation's {@link SpeechFactory}.
-     * 
+     *
      * @see CitizensPlugin
      * @return Citizens speech factory
      */
@@ -139,7 +132,7 @@ public final class CitizensAPI {
 
     /**
      * Gets the current implementation's {@link TraitFactory}.
-     * 
+     *
      * @see CitizensPlugin
      * @return Citizens trait factory
      */
@@ -151,13 +144,12 @@ public final class CitizensAPI {
      * @return Whether a Citizens implementation is currently present
      */
     public static boolean hasImplementation() {
-        return instance.implementation != null;
+        return instance != null;
     }
 
     /**
-     * A helper method for registering events using the current implementation's
-     * {@link Plugin}.
-     * 
+     * A helper method for registering events using the current implementation's {@link Plugin}.
+     *
      * @see #getPlugin()
      * @param listener
      *            The listener to register events for
@@ -168,13 +160,11 @@ public final class CitizensAPI {
     }
 
     /**
-     * Removes any previously created {@link NPCRegistry} stored under the given
-     * name.
-     * 
+     * Removes any previously created {@link NPCRegistry} stored under the given name.
+     *
      * @since 2.0.8
      * @param name
-     *            The name previously given to
-     *            {@link #createNamedNPCRegistry(String)}
+     *            The name previously given to {@link #createNamedNPCRegistry(String)}
      */
     public static void removeNamedNPCRegistry(String name) {
         getImplementation().removeNamedNPCRegistry(name);
@@ -182,14 +172,15 @@ public final class CitizensAPI {
 
     /**
      * Sets the current Citizens implementation.
-     * 
+     *
      * @param implementation
      *            The new implementation
      */
     public static void setImplementation(CitizensPlugin implementation) {
-        if (implementation != null && hasImplementation())
+        if (implementation != null && hasImplementation()) {
             getImplementation().onImplementationChanged();
-        instance.implementation = implementation;
+        }
+        instance = implementation;
     }
 
     /**
@@ -198,12 +189,11 @@ public final class CitizensAPI {
     public static void shutdown() {
         if (scriptCompiler == null)
             return;
-        instance.implementation = null;
+        instance = null;
         scriptCompiler.interrupt();
         scriptCompiler = null;
     }
 
-    private static final CitizensAPI instance = new CitizensAPI();
-
+    private static CitizensPlugin instance = null;
     private static ScriptCompiler scriptCompiler;
 }
