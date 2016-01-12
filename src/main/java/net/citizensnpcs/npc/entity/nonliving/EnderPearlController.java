@@ -1,5 +1,12 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEnderPearl;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.entity.EnderPearl;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -7,16 +14,8 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.EntityEnderPearl;
-import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEnderPearl;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.entity.EnderPearl;
-import org.bukkit.util.Vector;
 
 public class EnderPearlController extends MobEntityController {
     public EnderPearlController() {
@@ -46,15 +45,11 @@ public class EnderPearlController extends MobEntityController {
         private final CitizensNPC npc;
 
         public EntityEnderPearlNPC(World world) {
-            this(world, null, null);
+            this(world, null);
         }
 
-        public EntityEnderPearlNPC(World world, EntityLiving living) {
-            this(world, living, null);
-        }
-
-        public EntityEnderPearlNPC(World world, EntityLiving living, NPC npc) {
-            super(world, null);
+        public EntityEnderPearlNPC(World world, NPC npc) {
+            super(world);
             this.npc = (CitizensNPC) npc;
         }
 
