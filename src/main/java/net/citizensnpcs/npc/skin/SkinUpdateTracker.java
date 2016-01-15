@@ -92,10 +92,18 @@ public class SkinUpdateTracker {
             double angle = Math.atan2(deltaX, deltaZ);
             float skinYaw = NMS.clampYaw(-(float) Math.toDegrees(angle));
             float playerYaw = NMS.clampYaw(playerLoc.getYaw());
-            float upperBound = playerYaw + FIELD_OF_VIEW;
-            float lowerBound = playerYaw - FIELD_OF_VIEW;
-
-            return skinYaw >= lowerBound && skinYaw <= upperBound;
+            float upperBound = NMS.clampYaw(playerYaw + FIELD_OF_VIEW);
+            float lowerBound = NMS.clampYaw(playerYaw - FIELD_OF_VIEW);
+            if (upperBound == -180.0 && playerYaw > 0) {
+                upperBound = 0;
+            }
+            boolean hasMoved;
+            if (playerYaw - 90 < -180 || playerYaw + 90 > 180) {
+                hasMoved = skinYaw > lowerBound && skinYaw < upperBound;
+            } else {
+                hasMoved = skinYaw < lowerBound || skinYaw > upperBound;
+            }
+            return hasMoved;
         }
 
         return true;
@@ -382,6 +390,7 @@ public class SkinUpdateTracker {
         final Location location = new Location(null, 0, 0, 0);
         float lowerBound;
         int rotationCount;
+        float startYaw;
         float upperBound;
 
         PlayerTracker(Player player) {
@@ -392,6 +401,7 @@ public class SkinUpdateTracker {
         void hardReset(Player player) {
             this.hasMoved = false;
             this.rotationCount = 0;
+            this.lowerBound = this.upperBound = this.startYaw = 0;
             this.fovVisibleSkins.clear();
             reset(player);
         }
@@ -402,8 +412,12 @@ public class SkinUpdateTracker {
             if (rotationCount < 3) {
                 float rotationDegrees = Settings.Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
                 float yaw = NMS.clampYaw(this.location.getYaw());
-                this.upperBound = yaw + rotationDegrees;
-                this.lowerBound = yaw - rotationDegrees;
+                this.startYaw = yaw;
+                this.upperBound = NMS.clampYaw(yaw + rotationDegrees);
+                this.lowerBound = NMS.clampYaw(yaw - rotationDegrees);
+                if (upperBound == -180.0 && startYaw > 0) {
+                    upperBound = 0;
+                }
             }
         }
 
@@ -417,7 +431,12 @@ public class SkinUpdateTracker {
 
             if (rotationCount < 3) {
                 float yaw = NMS.clampYaw(currentLoc.getYaw());
-                boolean hasRotated = yaw < lowerBound || yaw > upperBound;
+                boolean hasRotated;
+                if (startYaw - 90 < -180 || startYaw + 90 > 180) {
+                    hasRotated = yaw > lowerBound && yaw < upperBound;
+                } else {
+                    hasRotated = yaw < lowerBound || yaw > upperBound;
+                }
 
                 // update the first 3 times the player rotates. helps load skins around player
                 // after the player logs/teleports.
