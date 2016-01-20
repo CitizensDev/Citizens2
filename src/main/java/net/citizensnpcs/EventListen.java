@@ -340,7 +340,8 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onNPCDespawn(NPCDespawnEvent event) {
-        if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL) {
+        if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL
+                || event.getReason() == DespawnReason.RELOAD) {
             if (event.getNPC().getStoredLocation() != null) {
                 toRespawn.remove(toCoord(event.getNPC().getStoredLocation()), event.getNPC());
             }

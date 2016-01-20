@@ -64,6 +64,9 @@ public class CitizensNPC extends AbstractNPC {
             if (reason == DespawnReason.REMOVAL) {
                 Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this, reason));
             }
+            if (reason == DespawnReason.RELOAD) {
+                unloadEvents();
+            }
             return false;
         }
         NPCDespawnEvent event = new NPCDespawnEvent(this, reason);
@@ -84,6 +87,9 @@ public class CitizensNPC extends AbstractNPC {
             trait.onDespawn();
         }
         navigator.onDespawn();
+        if (reason == DespawnReason.RELOAD) {
+            unloadEvents();
+        }
         entityController.remove();
 
         return true;

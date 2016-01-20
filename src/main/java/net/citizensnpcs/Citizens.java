@@ -36,7 +36,6 @@ import net.citizensnpcs.api.npc.SimpleNPCDataStore;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.NBTStorage;
@@ -105,10 +104,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         while (itr.hasNext()) {
             NPC npc = itr.next();
             try {
-                npc.despawn(DespawnReason.REMOVAL);
-                for (Trait trait : npc.getTraits()) {
-                    trait.onDespawn();
-                }
+                npc.despawn(DespawnReason.RELOAD);
             } catch (Throwable e) {
                 e.printStackTrace();
                 // ensure that all entities are despawned
