@@ -5,6 +5,7 @@ public enum DespawnReason {
     DEATH,
     PENDING_RESPAWN,
     PLUGIN,
+    RELOAD,
     REMOVAL,
     WORLD_UNLOAD;
 }

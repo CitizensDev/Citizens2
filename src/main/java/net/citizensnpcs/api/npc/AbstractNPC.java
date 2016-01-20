@@ -411,6 +411,15 @@ public abstract class AbstractNPC implements NPC {
         teleport(entity, location, 5);
     }
 
+    protected void unloadEvents() {
+        runnables.clear();
+        for (Trait trait : traits.values()) {
+            HandlerList.unregisterAll(trait);
+        }
+        traits.clear();
+        goalController.clear();
+    }
+
     public void update() {
         for (int i = 0; i < runnables.size(); ++i) {
             runnables.get(i).run();
