@@ -1,6 +1,7 @@
 package net.citizensnpcs.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
@@ -79,6 +81,7 @@ import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.RabbitType.RabbitTypes;
+import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
@@ -1247,6 +1250,33 @@ public class NPCCommands {
         } else {
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1));
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "script --add [files] --remove [files]",
+            desc = "Controls an NPC's scripts",
+            modifiers = { "script" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.script")
+    public void script(CommandContext args, CommandSender sender, NPC npc) {
+        ScriptTrait trait = npc.getTrait(ScriptTrait.class);
+        if (args.hasValueFlag("add")) {
+            List<String> files = new ArrayList<String>();
+            for (String file : args.getFlag("add").split(",")) {
+                if (!trait.validateFile(file)) {
+                    Messaging.sendErrorTr(sender, Messages.INVALID_SCRIPT_FILE, file);
+                    return;
+                }
+                files.add(file);
+            }
+            trait.addScripts(files);
+        }
+        if (args.hasValueFlag("remove")) {
+            trait.removeScripts(Arrays.asList(args.getFlag("remove").split(",")));
+        }
+        Messaging.sendTr(sender, Messages.CURRENT_SCRIPTS, npc.getName(), Joiner.on("]],[[ ").join(trait.getScripts()));
     }
 
     @Command(
