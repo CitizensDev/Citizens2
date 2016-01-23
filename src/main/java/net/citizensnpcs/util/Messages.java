@@ -49,6 +49,7 @@ public class Messages {
     public static final String CONTROLLABLE_SET = "citizens.commands.npc.controllable.set";
     public static final String COPIER_EDITOR_BEGIN = "citizens.editors.copier.begin";
     public static final String COPIER_EDITOR_END = "citizens.editors.copier.end";
+    public static final String CURRENT_SCRIPTS = "citizens.commands.npc.script.current-scripts";
     public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.waypoints.current-provider";
     public static final String DATABASE_CONNECTION_FAILED = "citizens.notifications.database-connection-failed";
     public static final String DELAY_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.delay.prompt";
@@ -104,6 +105,7 @@ public class Messages {
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
     public static final String INVALID_RABBIT_TYPE = "citizens.commands.npc.rabbittype.invalid-type";
+    public static final String INVALID_SCRIPT_FILE = "citizens.commands.npc.script.invalid-file";
     public static final String INVALID_SHEEP_COLOR = "citizens.commands.npc.sheep.invalid-color";
     public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
     public static final String INVALID_SOUND = "citizens.commands.npc.sound.invalid-sound";
