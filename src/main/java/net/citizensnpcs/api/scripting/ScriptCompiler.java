@@ -73,6 +73,10 @@ public class ScriptCompiler {
         classLoader = new WeakReference<ClassLoader>(overrideClassLoader);
     }
 
+    public boolean canCompile(File file) {
+        return fileEngineConverter.apply(file) != null;
+    }
+
     /**
      * Create a builder to compile the given files.
      *
@@ -114,7 +118,13 @@ public class ScriptCompiler {
         ScriptEngine engine = engines.get(extension);
         if (engine != null)
             return engine;
-        ScriptEngine search = engineManager.getEngineByExtension(extension);
+        ScriptEngine search = null;
+        if (extension.equals("js") || extension.equals("javascript")) {
+            search = engineManager.getEngineByName("nashorn");
+        }
+        if (search == null) {
+            search = engineManager.getEngineByExtension(extension);
+        }
         if (search != null && (!(search instanceof Compilable) || !(search instanceof Invocable))) {
             search = null;
         } else if (search != null) {
@@ -149,8 +159,9 @@ public class ScriptCompiler {
         if (engine == null)
             throw new ScriptException("Couldn't load engine with extension " + extension);
         ScriptContext context = new SimpleScriptContext();
-        if (vars != null)
+        if (vars != null) {
             context.setBindings(new SimpleBindings(vars), ScriptContext.ENGINE_SCOPE);
+        }
         engine.eval(extension, context);
     }
 
@@ -205,10 +216,12 @@ public class ScriptCompiler {
             try {
                 CompiledScript src = compiler.compile(reader = engine.getReader());
                 ScriptFactory compiled = new SimpleScriptFactory(src, contextProviders);
-                if (cache)
+                if (cache) {
                     CACHE.put(engine.getIdentifier(), compiled);
-                for (CompileCallback callback : callbacks)
+                }
+                for (CompileCallback callback : callbacks) {
                     callback.onScriptCompiled(engine.getIdentifier(), compiled);
+                }
                 return compiled;
             } catch (IOException e) {
                 Messaging.severe("IO error while reading a file for scripting.");
@@ -287,8 +300,8 @@ public class ScriptCompiler {
     }
 
     private static final Map<String, ScriptFactory> CACHE = new MapMaker().weakValues().makeMap();
-
     private static boolean CLASSLOADER_OVERRIDE_ENABLED;
+
     private static Method GET_APPLICATION_CLASS_LOADER, GET_GLOBAL, INIT_APPLICATION_CLASS_LOADER;
 
     static {

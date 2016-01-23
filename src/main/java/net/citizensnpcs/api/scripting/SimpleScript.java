@@ -62,7 +62,7 @@ public class SimpleScript implements Script {
         } catch (ScriptException e) {
             Throwables.getRootCause(e).printStackTrace();
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -71,6 +71,7 @@ public class SimpleScript implements Script {
     public Object invoke(String name, Object... args) {
         if (name == null)
             throw new IllegalArgumentException("name should not be null");
+
         try {
             synchronized (engine) {
                 Bindings old = engine.getBindings(ScriptContext.ENGINE_SCOPE);
@@ -82,7 +83,7 @@ public class SimpleScript implements Script {
         } catch (ScriptException e) {
             Throwables.getRootCause(e).printStackTrace();
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return null;
     }
