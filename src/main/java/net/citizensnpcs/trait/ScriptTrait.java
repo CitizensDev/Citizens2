@@ -55,7 +55,6 @@ public class ScriptTrait extends Trait {
         CitizensAPI.getScriptCompiler().compile(f).cache(true).withCallback(new CompileCallback() {
             @Override
             public void onScriptCompiled(String sourceDescriptor, ScriptFactory compiled) {
-                System.out.println("compiled");
                 final Script newInstance = compiled.newInstance();
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                     @Override
