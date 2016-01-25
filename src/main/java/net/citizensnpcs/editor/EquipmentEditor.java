@@ -2,18 +2,24 @@ package net.citizensnpcs.editor;
 
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 
@@ -34,6 +40,28 @@ public class EquipmentEditor extends Editor {
     @Override
     public void end() {
         Messaging.sendTr(player, Messages.EQUIPMENT_EDITOR_END);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerChat(final AsyncPlayerChatEvent event) {
+        if (!event.getMessage().equals("helmet")
+                || !event.getPlayer().hasPermission("citizens.npc.edit.equip.any-helmet"))
+            return;
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                if (!event.getPlayer().isValid())
+                    return;
+                ItemStack hand = event.getPlayer().getItemInHand();
+                if (hand.getType() == Material.AIR || hand.getAmount() <= 0) {
+                    return;
+                }
+                npc.getTrait(Equipment.class).set(EquipmentSlot.HELMET,
+                        new ItemStack(event.getPlayer().getItemInHand().getType(), 1));
+                hand.setAmount(hand.getAmount() - 1);
+                event.getPlayer().setItemInHand(hand);
+            }
+        });
     }
 
     @EventHandler

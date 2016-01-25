@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 
@@ -14,7 +15,7 @@ public class GenericEquipper implements Equipper {
     public void equip(Player equipper, NPC toEquip) {
         ItemStack hand = equipper.getItemInHand();
         Equipment trait = toEquip.getTrait(Equipment.class);
-        int slot = 0;
+        EquipmentSlot slot = EquipmentSlot.HAND;
         Material type = hand == null ? Material.AIR : hand.getType();
         // First, determine the slot to edit
         switch (type) {
@@ -27,7 +28,7 @@ public class GenericEquipper implements Equipper {
             case IRON_HELMET:
             case DIAMOND_HELMET:
                 if (!equipper.isSneaking())
-                    slot = 1;
+                    slot = EquipmentSlot.HELMET;
                 break;
             case LEATHER_CHESTPLATE:
             case CHAINMAIL_CHESTPLATE:
@@ -35,7 +36,7 @@ public class GenericEquipper implements Equipper {
             case IRON_CHESTPLATE:
             case DIAMOND_CHESTPLATE:
                 if (!equipper.isSneaking())
-                    slot = 2;
+                    slot = EquipmentSlot.CHESTPLATE;
                 break;
             case LEATHER_LEGGINGS:
             case CHAINMAIL_LEGGINGS:
@@ -43,7 +44,7 @@ public class GenericEquipper implements Equipper {
             case IRON_LEGGINGS:
             case DIAMOND_LEGGINGS:
                 if (!equipper.isSneaking())
-                    slot = 3;
+                    slot = EquipmentSlot.LEGGINGS;
                 break;
             case LEATHER_BOOTS:
             case CHAINMAIL_BOOTS:
@@ -51,7 +52,7 @@ public class GenericEquipper implements Equipper {
             case IRON_BOOTS:
             case DIAMOND_BOOTS:
                 if (!equipper.isSneaking())
-                    slot = 4;
+                    slot = EquipmentSlot.BOOTS;
                 break;
             case AIR:
                 for (int i = 0; i < 5; i++) {
