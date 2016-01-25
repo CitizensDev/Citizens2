@@ -4,19 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 
 public abstract class Editor implements Listener {
     public abstract void begin();
 
     public abstract void end();
-
-    private static final Map<String, Editor> EDITING = new HashMap<String, Editor>();
 
     private static void enter(Player player, Editor editor) {
         editor.begin();
@@ -29,12 +27,13 @@ public abstract class Editor implements Listener {
         if (editor == null)
             return;
         Editor edit = EDITING.get(player.getName());
-        if (edit == null)
+        if (edit == null) {
             enter(player, editor);
-        else if (edit.getClass() == editor.getClass())
+        } else if (edit.getClass() == editor.getClass()) {
             leave(player);
-        else
+        } else {
             Messaging.sendErrorTr(player, Messages.ALREADY_IN_EDITOR);
+        }
     }
 
     public static boolean hasEditor(Player player) {
@@ -56,4 +55,6 @@ public abstract class Editor implements Listener {
         }
         EDITING.clear();
     }
+
+    private static final Map<String, Editor> EDITING = new HashMap<String, Editor>();
 }
