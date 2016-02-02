@@ -1,5 +1,13 @@
 package net.citizensnpcs.npc.entity;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftSheep;
+import org.bukkit.entity.Sheep;
+import org.bukkit.util.Vector;
+
+import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -12,13 +20,6 @@ import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.EntitySheep;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftSheep;
-import org.bukkit.entity.Sheep;
-import org.bukkit.util.Vector;
 
 public class SheepController extends MobEntityController {
     public SheepController() {
@@ -108,6 +109,13 @@ public class SheepController extends MobEntityController {
         }
 
         @Override
+        public void e(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.e(f, f1);
+            }
+        }
+
+        @Override
         public void E() {
             super.E();
             if (npc != null)
@@ -115,9 +123,13 @@ public class SheepController extends MobEntityController {
         }
 
         @Override
-        public void e(float f, float f1) {
-            if (npc == null || !npc.isFlyable()) {
-                super.e(f, f1);
+        public void enderTeleportTo(double d0, double d1, double d2) {
+            if (npc == null)
+                super.enderTeleportTo(d0, d1, d2);
+            NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
+            Bukkit.getPluginManager().callEvent(event);
+            if (!event.isCancelled()) {
+                super.enderTeleportTo(d0, d1, d2);
             }
         }
 

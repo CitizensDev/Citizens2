@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -83,12 +84,12 @@ public class CitizensNPC extends AbstractNPC {
         if (!keepSelected) {
             data().remove("selectors");
         }
-        for (Trait trait : traits.values()) {
-            trait.onDespawn();
-        }
         navigator.onDespawn();
         if (reason == DespawnReason.RELOAD) {
             unloadEvents();
+        }
+        for (Trait trait : new ArrayList<Trait>(traits.values())) {
+            trait.onDespawn();
         }
         entityController.remove();
 
