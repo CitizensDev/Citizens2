@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftGuardian;
 import org.bukkit.entity.Guardian;
 import org.bukkit.util.Vector;
 
+import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -101,6 +102,17 @@ public class GuardianController extends MobEntityController {
         public void e(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
+            }
+        }
+
+        @Override
+        public void enderTeleportTo(double d0, double d1, double d2) {
+            if (npc == null)
+                super.enderTeleportTo(d0, d1, d2);
+            NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
+            Bukkit.getPluginManager().callEvent(event);
+            if (!event.isCancelled()) {
+                super.enderTeleportTo(d0, d1, d2);
             }
         }
 

@@ -1,5 +1,12 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftSmallFireball;
+import org.bukkit.entity.SmallFireball;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -9,13 +16,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.EntitySmallFireball;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftSmallFireball;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.util.Vector;
 
 public class SmallFireballController extends MobEntityController {
     public SmallFireballController() {
@@ -34,11 +34,6 @@ public class SmallFireballController extends MobEntityController {
             this(world, null);
         }
 
-        @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
-        }
-
         public EntitySmallFireballNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
@@ -52,6 +47,11 @@ public class SmallFireballController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -93,6 +93,9 @@ public class SmallFireballController extends MobEntityController {
         public void t_() {
             if (npc != null) {
                 npc.update();
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+                    super.t_();
+                }
             } else {
                 super.t_();
             }

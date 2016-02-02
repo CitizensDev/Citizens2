@@ -1,5 +1,12 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftThrownExpBottle;
+import org.bukkit.entity.ThrownExpBottle;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -9,13 +16,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.EntityThrownExpBottle;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftThrownExpBottle;
-import org.bukkit.entity.ThrownExpBottle;
-import org.bukkit.util.Vector;
 
 public class ThrownExpBottleController extends MobEntityController {
     public ThrownExpBottleController() {
@@ -40,11 +40,6 @@ public class ThrownExpBottleController extends MobEntityController {
         }
 
         @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
-        }
-
-        @Override
         public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -52,6 +47,11 @@ public class ThrownExpBottleController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -93,6 +93,9 @@ public class ThrownExpBottleController extends MobEntityController {
         public void t_() {
             if (npc != null) {
                 npc.update();
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+                    super.t_();
+                }
             } else {
                 super.t_();
             }

@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftRabbit;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.util.Vector;
 
+import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -123,6 +124,17 @@ public class RabbitController extends MobEntityController {
                 npc.update();
             } else {
                 super.E();
+            }
+        }
+
+        @Override
+        public void enderTeleportTo(double d0, double d1, double d2) {
+            if (npc == null)
+                super.enderTeleportTo(d0, d1, d2);
+            NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
+            Bukkit.getPluginManager().callEvent(event);
+            if (!event.isCancelled()) {
+                super.enderTeleportTo(d0, d1, d2);
             }
         }
 
