@@ -92,8 +92,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             saves = new NBTStorage(new File(folder + File.separator + Setting.STORAGE_FILE.asString()),
                     "Citizens NPC Storage");
         }
-        if (saves == null)
+        if (saves == null){
             saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
+        }
         if (!saves.load())
             return null;
         return SimpleNPCDataStore.create(saves);
@@ -341,6 +342,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         despawnNPCs();
         ProfileFetcher.reset();
         Skin.clearCache();
+        saves = createStorage(getDataFolder());
         saves.loadInto(npcRegistry);
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
