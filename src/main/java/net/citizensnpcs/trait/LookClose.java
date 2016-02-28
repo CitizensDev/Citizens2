@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -62,7 +63,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         for (Entity entity : nearby) {
             if (entity.getType() != EntityType.PLAYER || entity.getLocation().getWorld() != npcLocation.getWorld())
                 continue;
-            if (CitizensAPI.getNPCRegistry().getNPC(entity) != null)
+            if (CitizensAPI.getNPCRegistry().getNPC(entity) != null
+                    || ((Player) npc.getEntity()).getGameMode() == GameMode.SPECTATOR)
                 continue;
             lookingAt = (Player) entity;
             return;

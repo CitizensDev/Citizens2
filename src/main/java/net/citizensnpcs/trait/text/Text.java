@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
@@ -134,7 +135,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
             return;
         List<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
         for (Entity search : nearby) {
-            if (!(search instanceof Player))
+            if (!(search instanceof Player) || ((Player) search).getGameMode() == GameMode.SPECTATOR)
                 continue;
             Player player = (Player) search;
             // If the cooldown is not expired, do not send text
