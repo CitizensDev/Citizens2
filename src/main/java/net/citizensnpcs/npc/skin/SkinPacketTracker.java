@@ -183,10 +183,11 @@ public class SkinPacketTracker {
             if (player == null || player.hasMetadata("NPC"))
                 continue;
 
-            if (!player.canSee(from))
+            player.getLocation(CACHE_LOCATION);
+            if (!player.canSee(from) || !location.getWorld().equals(CACHE_LOCATION.getWorld()))
                 continue;
 
-            if (location.distanceSquared(player.getLocation(CACHE_LOCATION)) > radius)
+            if (location.distanceSquared(CACHE_LOCATION) > radius)
                 continue;
 
             updateViewer(player);
