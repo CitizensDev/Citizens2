@@ -60,11 +60,12 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
                 return Double.compare(d1, d2);
             }
         });
+        Location cacheLocation = new Location(null, 0D, 0D, 0D);
         for (Entity entity : nearby) {
-            if (entity.getType() != EntityType.PLAYER || entity.getLocation().getWorld() != npcLocation.getWorld())
+            if (entity.getType() != EntityType.PLAYER || entity.getLocation(cacheLocation).getWorld() != npcLocation.getWorld())
                 continue;
             if (CitizensAPI.getNPCRegistry().getNPC(entity) != null
-                    || ((Player) npc.getEntity()).getGameMode() == GameMode.SPECTATOR)
+                    || ((Player) entity).getGameMode() == GameMode.SPECTATOR)
                 continue;
             lookingAt = (Player) entity;
             return;
