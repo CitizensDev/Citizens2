@@ -16,6 +16,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.EntityAIBodyControl;
 import net.minecraft.server.v1_9_R1.EntityShulker;
 import net.minecraft.server.v1_9_R1.IBlockData;
 import net.minecraft.server.v1_9_R1.MinecraftKey;
@@ -181,12 +182,24 @@ public class ShulkerController extends MobEntityController {
         }
 
         @Override
+        public void n() {
+            if (npc == null) {
+                super.n();
+            }
+        }
+
+        @Override
         public boolean n_() {
             if (npc == null || !npc.isFlyable()) {
                 return super.n_();
             } else {
                 return false;
             }
+        }
+
+        @Override
+        protected EntityAIBodyControl s() {
+            return new EntityAIBodyControl(this);
         }
 
         @Override
