@@ -18,17 +18,12 @@ import net.minecraft.server.v1_9_R1.PathEntity;
 import net.minecraft.server.v1_9_R1.PathPoint;
 import net.minecraft.server.v1_9_R1.PathType;
 import net.minecraft.server.v1_9_R1.Pathfinder;
-import net.minecraft.server.v1_9_R1.PathfinderAbstract;
-import net.minecraft.server.v1_9_R1.PathfinderNormal;
 import net.minecraft.server.v1_9_R1.Vec3D;
 import net.minecraft.server.v1_9_R1.World;
 
 public class PlayerNavigation extends NavigationAbstract {
     protected EntityHumanNPC a;
-    protected World b;
-    protected PathEntity c;
-    protected double d;
-    protected PathfinderAbstract e;
+    protected PlayerPathfinderNormal e;
     private boolean f2;
     private final AttributeInstance g;
     private int h;
@@ -42,23 +37,23 @@ public class PlayerNavigation extends NavigationAbstract {
     private boolean p;
     private long q;
     private BlockPosition r;
-    private final Pathfinder s;
+    private final PlayerPathfinder s;
 
     public PlayerNavigation(EntityHumanNPC entityinsentient, World world) {
-        super(getDummyInsentient(entityinsentient), world);
+        super(getDummyInsentient(entityinsentient, world), world);
         this.a = entityinsentient;
         this.b = world;
         this.g = entityinsentient.getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
         this.g.setValue(24);
-        this.s = a();
+        this.e = new PlayerPathfinderNormal();
+        this.e.a(true);
+        this.s = new PlayerPathfinder(this.e);
         this.b.C().a(this);
     }
 
     @Override
     protected Pathfinder a() {
-        this.e = new PathfinderNormal();
-        this.e.a(true);
-        return new Pathfinder(this.e);
+        return null;
     }
 
     @Override
@@ -503,8 +498,8 @@ public class PlayerNavigation extends NavigationAbstract {
         this.g.setValue(pathfindingRange);
     }
 
-    private static EntityInsentient getDummyInsentient(EntityHumanNPC from) {
-        return new EntityInsentient(null) {
+    private static EntityInsentient getDummyInsentient(EntityHumanNPC from, World world) {
+        return new EntityInsentient(world) {
         };
     }
 

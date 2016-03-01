@@ -7,7 +7,6 @@ import java.net.SocketAddress;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -162,7 +161,7 @@ public class NMS {
             return;
         for (PathfinderGoalSelector selector : goalSelectors) {
             try {
-                List<?> list = (List<?>) NMS.GOAL_FIELD.get(selector);
+                Collection<?> list = (Collection<?>) NMS.GOAL_FIELD.get(selector);
                 list.clear();
             } catch (Exception e) {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
@@ -824,7 +823,7 @@ public class NMS {
     }
 
     public static void updateNavigation(NavigationAbstract navigation) {
-        navigation.k();
+        navigation.l();
     }
 
     public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {
@@ -877,7 +876,7 @@ public class NMS {
     private static Field NAVIGATION_WORLD_FIELD = getField(NavigationAbstract.class, "b");
     private static Field NETWORK_ADDRESS = getField(NetworkManager.class, "l");
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "o");
+    private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "g");
     private static final Field RABBIT_FIELD = getField(EntityRabbit.class, "bv");
     private static final Random RANDOM = Util.getFastRandom();
     private static Field SKULL_PROFILE_FIELD;
