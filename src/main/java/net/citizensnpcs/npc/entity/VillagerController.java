@@ -72,8 +72,7 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public boolean a(EntityHuman entityhuman, EnumHand enumhand, ItemStack itemstack) {
-            return npc == null || !blockTrades ? super.a(entityhuman) : false; // block
-            // trades
+            return npc == null || !blockTrades ? super.a(entityhuman) : false; // block trades
         }
 
         @Override

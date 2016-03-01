@@ -172,6 +172,14 @@ public class GiantController extends MobEntityController {
         }
 
         @Override
+        public void M() {
+            super.M();
+            if (npc != null) {
+                npc.update();
+            }
+        }
+
+        @Override
         public boolean n_() {
             if (npc == null || !npc.isFlyable()) {
                 return super.n_();
