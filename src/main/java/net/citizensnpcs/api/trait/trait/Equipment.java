@@ -23,7 +23,7 @@ import net.citizensnpcs.api.util.ItemStorage;
  */
 @TraitName("equipment")
 public class Equipment extends Trait {
-    private final ItemStack[] equipment = new ItemStack[5];
+    private final ItemStack[] equipment = new ItemStack[6];
 
     public Equipment() {
         super("equipment");
@@ -46,8 +46,8 @@ public class Equipment extends Trait {
     public ItemStack get(int slot) {
         if (npc.getEntity() instanceof Enderman && slot != 0)
             throw new IllegalArgumentException("Slot must be 0 for enderman");
-        else if (slot < 0 || slot > 4)
-            throw new IllegalArgumentException("Slot must be between 0 and 4");
+        else if (slot < 0 || slot > 5)
+            throw new IllegalArgumentException("Slot must be between 0 and 5");
 
         return equipment[slot];
     }
@@ -73,6 +73,7 @@ public class Equipment extends Trait {
         map.put(EquipmentSlot.CHESTPLATE, equipment[2]);
         map.put(EquipmentSlot.LEGGINGS, equipment[3]);
         map.put(EquipmentSlot.BOOTS, equipment[4]);
+        map.put(EquipmentSlot.OFF_HAND, equipment[5]);
         return map;
     }
 
@@ -88,16 +89,24 @@ public class Equipment extends Trait {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (key.keyExists("hand"))
+        if (key.keyExists("hand")) {
             equipment[0] = ItemStorage.loadItemStack(key.getRelative("hand"));
-        if (key.keyExists("helmet"))
+        }
+        if (key.keyExists("helmet")) {
             equipment[1] = ItemStorage.loadItemStack(key.getRelative("helmet"));
-        if (key.keyExists("chestplate"))
+        }
+        if (key.keyExists("chestplate")) {
             equipment[2] = ItemStorage.loadItemStack(key.getRelative("chestplate"));
-        if (key.keyExists("leggings"))
+        }
+        if (key.keyExists("leggings")) {
             equipment[3] = ItemStorage.loadItemStack(key.getRelative("leggings"));
-        if (key.keyExists("boots"))
+        }
+        if (key.keyExists("boots")) {
             equipment[4] = ItemStorage.loadItemStack(key.getRelative("boots"));
+        }
+        if (key.keyExists("offhand")) {
+            equipment[5] = ItemStorage.loadItemStack(key.getRelative("offhand"));
+        }
     }
 
     @Override
@@ -112,12 +121,13 @@ public class Equipment extends Trait {
         } else {
             EntityEquipment equip = getEquipmentFromEntity(npc.getEntity());
             if (equipment[0] != null) {
-                equip.setItemInHand(equipment[0]);
+                equip.setItemInMainHand(equipment[0]);
             }
             equip.setHelmet(equipment[1]);
             equip.setChestplate(equipment[2]);
             equip.setLeggings(equipment[3]);
             equip.setBoots(equipment[4]);
+            equip.setItemInOffHand(equipment[5]);
             if (npc.getEntity() instanceof Player) {
                 ((Player) npc.getEntity()).updateInventory();
             }
@@ -131,14 +141,16 @@ public class Equipment extends Trait {
         saveOrRemove(key.getRelative("chestplate"), equipment[2]);
         saveOrRemove(key.getRelative("leggings"), equipment[3]);
         saveOrRemove(key.getRelative("boots"), equipment[4]);
+        saveOrRemove(key.getRelative("offhand"), equipment[5]);
     }
 
     private void saveOrRemove(DataKey key, ItemStack item) {
         if (item != null)
             ItemStorage.saveItem(key, item);
         else {
-            if (key.keyExists(""))
+            if (key.keyExists("")) {
                 key.removeKey("");
+            }
         }
     }
 
@@ -169,7 +181,7 @@ public class Equipment extends Trait {
             EntityEquipment equip = getEquipmentFromEntity(npc.getEntity());
             switch (slot) {
                 case 0:
-                    equip.setItemInHand(item);
+                    equip.setItemInMainHand(item);
                     break;
                 case 1:
                     equip.setHelmet(item);
@@ -183,8 +195,10 @@ public class Equipment extends Trait {
                 case 4:
                     equip.setBoots(item);
                     break;
+                case 5:
+                    equip.setItemInOffHand(item);
                 default:
-                    throw new IllegalArgumentException("Slot must be between 0 and 4");
+                    throw new IllegalArgumentException("Slot must be between 0 and 5");
             }
             if (npc.getEntity() instanceof Player) {
                 ((Player) npc.getEntity()).updateInventory();
@@ -196,7 +210,7 @@ public class Equipment extends Trait {
     @Override
     public String toString() {
         return "{hand=" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2] + ",leggings="
-                + equipment[3] + ",boots=" + equipment[4] + "}";
+                + equipment[3] + ",boots=" + equipment[4] + ",offhand=" + equipment[5] + "}";
     }
 
     private static class ArmorStandEquipmentWrapper implements EntityEquipment {
@@ -354,7 +368,8 @@ public class Equipment extends Trait {
         CHESTPLATE(2),
         HAND(0),
         HELMET(1),
-        LEGGINGS(3);
+        LEGGINGS(3),
+        OFF_HAND(5);
         private int index;
 
         EquipmentSlot(int index) {
