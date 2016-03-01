@@ -3,9 +3,9 @@ package net.citizensnpcs.npc.entity.nonliving;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftItemFrame;
+import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftItemFrame;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.util.Vector;
@@ -16,11 +16,11 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.EntityItemFrame;
-import net.minecraft.server.v1_8_R3.EnumDirection;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.World;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.EntityItemFrame;
+import net.minecraft.server.v1_9_R1.EnumDirection;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
+import net.minecraft.server.v1_9_R1.World;
 
 public class ItemFrameController extends MobEntityController {
     public ItemFrameController() {
@@ -54,7 +54,7 @@ public class ItemFrameController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_9_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -109,11 +109,11 @@ public class ItemFrameController extends MobEntityController {
         }
 
         @Override
-        public void t_() {
+        public void m() {
             if (npc != null) {
                 npc.update();
             } else {
-                super.t_();
+                super.m();
             }
         }
     }

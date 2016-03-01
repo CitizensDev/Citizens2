@@ -1,12 +1,12 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftWither;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftWither;
 import org.bukkit.entity.Wither;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.minecraft.server.v1_8_R3.EntityWither;
+import net.minecraft.server.v1_9_R1.EntityWither;
 
 @TraitName("withertrait")
 public class WitherTrait extends Trait {
@@ -30,7 +30,7 @@ public class WitherTrait extends Trait {
         if (npc.getEntity() instanceof Wither) {
             Wither wither = (Wither) npc.getEntity();
             EntityWither handle = ((CraftWither) wither).getHandle();
-            handle.r(charged ? 20 : 0);
+            handle.l(charged ? 20 : 0);
         }
     }
 

@@ -2,6 +2,11 @@ package net.citizensnpcs.npc;
 
 import java.util.Map;
 
+import org.bukkit.entity.EntityType;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
+
 import net.citizensnpcs.npc.entity.BatController;
 import net.citizensnpcs.npc.entity.BlazeController;
 import net.citizensnpcs.npc.entity.CaveSpiderController;
@@ -36,7 +41,6 @@ import net.citizensnpcs.npc.entity.WitherController;
 import net.citizensnpcs.npc.entity.WolfController;
 import net.citizensnpcs.npc.entity.ZombieController;
 import net.citizensnpcs.npc.entity.nonliving.ArmorStandController;
-import net.citizensnpcs.npc.entity.nonliving.ArrowController;
 import net.citizensnpcs.npc.entity.nonliving.BoatController;
 import net.citizensnpcs.npc.entity.nonliving.EggController;
 import net.citizensnpcs.npc.entity.nonliving.EnderCrystalController;
@@ -61,12 +65,8 @@ import net.citizensnpcs.npc.entity.nonliving.SnowballController;
 import net.citizensnpcs.npc.entity.nonliving.TNTPrimedController;
 import net.citizensnpcs.npc.entity.nonliving.ThrownExpBottleController;
 import net.citizensnpcs.npc.entity.nonliving.ThrownPotionController;
+import net.citizensnpcs.npc.entity.nonliving.TippedArrowController;
 import net.citizensnpcs.npc.entity.nonliving.WitherSkullController;
-
-import org.bukkit.entity.EntityType;
-
-import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
 
 public class EntityControllers {
     public static boolean controllerExistsForType(EntityType type) {
@@ -92,7 +92,7 @@ public class EntityControllers {
     private static final Map<EntityType, Class<? extends EntityController>> TYPES = Maps.newEnumMap(EntityType.class);
 
     static {
-        TYPES.put(EntityType.ARROW, ArrowController.class);
+        TYPES.put(EntityType.ARROW, TippedArrowController.class);
         TYPES.put(EntityType.ARMOR_STAND, ArmorStandController.class);
         TYPES.put(EntityType.BAT, BatController.class);
         TYPES.put(EntityType.BLAZE, BlazeController.class);

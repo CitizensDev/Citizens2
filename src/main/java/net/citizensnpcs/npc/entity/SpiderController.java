@@ -1,9 +1,9 @@
 package net.citizensnpcs.npc.entity;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftSpider;
+import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftSpider;
 import org.bukkit.entity.Spider;
 import org.bukkit.util.Vector;
 
@@ -15,11 +15,12 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R3.Block;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.EntitySpider;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.World;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.EntitySpider;
+import net.minecraft.server.v1_9_R1.IBlockData;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
+import net.minecraft.server.v1_9_R1.SoundEffect;
+import net.minecraft.server.v1_9_R1.World;
 
 public class SpiderController extends MobEntityController {
     public SpiderController() {
@@ -47,37 +48,26 @@ public class SpiderController extends MobEntityController {
         }
 
         @Override
-        protected void a(double d0, boolean flag, Block block, BlockPosition blockposition) {
+        protected void a(double d0, boolean flag, IBlockData block, BlockPosition blockposition) {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
         }
 
         @Override
-        protected String bo() {
-            return npc == null ? super.bo() : npc.data().get(NPC.HURT_SOUND_METADATA, super.bo());
+        protected SoundEffect bR() {
+            return (SoundEffect) (npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bR()
+                    : npc.data().get(NPC.HURT_SOUND_METADATA, SoundEffect.a.b(super.bR()).toString()));
         }
 
         @Override
-        protected String bp() {
-            return npc == null ? super.bp() : npc.data().get(NPC.DEATH_SOUND_METADATA, super.bp());
+        protected SoundEffect bS() {
+            return (SoundEffect) (npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bS()
+                    : npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bR()).toString()));
         }
 
         @Override
-        public boolean cc() {
-            if (npc == null)
-                return super.cc();
-            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
-            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.cc();
-            if (super.cc()) {
-                unleash(true, false); // clearLeash with client update
-            }
-            return false; // shouldLeash
-        }
-
-        @Override
-        public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_9_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -91,24 +81,10 @@ public class SpiderController extends MobEntityController {
         }
 
         @Override
-        protected void D() {
-            if (npc == null) {
-                super.D();
-            }
-        }
-
-        @Override
         public void e(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
             }
-        }
-
-        @Override
-        public void E() {
-            super.E();
-            if (npc != null)
-                npc.update();
         }
 
         @Override
@@ -154,6 +130,12 @@ public class SpiderController extends MobEntityController {
         }
 
         @Override
+        protected SoundEffect G() {
+            return (SoundEffect) (npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.G()
+                    : npc.data().get(NPC.AMBIENT_SOUND_METADATA, SoundEffect.a.b(super.G()).toString()));
+        }
+
+        @Override
         public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null)
                 bukkitEntity = new SpiderNPC(this);
@@ -166,9 +148,36 @@ public class SpiderController extends MobEntityController {
         }
 
         @Override
-        public boolean k_() {
+        public boolean isLeashed() {
+            if (npc == null)
+                return super.isLeashed();
+            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
+                return super.isLeashed();
+            if (super.isLeashed()) {
+                unleash(true, false); // clearLeash with client update
+            }
+            return false; // shouldLeash
+        }
+
+        @Override
+        protected void L() {
+            if (npc == null) {
+                super.L();
+            }
+        }
+
+        @Override
+        public void M() {
+            super.M();
+            if (npc != null)
+                npc.update();
+        }
+
+        @Override
+        public boolean n_() {
             if (npc == null || !npc.isFlyable()) {
-                return super.k_();
+                return super.n_();
             } else {
                 return false;
             }
@@ -183,11 +192,6 @@ public class SpiderController extends MobEntityController {
             }
         }
 
-        @Override
-        protected String z() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.z()
-                    : npc.data().get(NPC.AMBIENT_SOUND_METADATA, super.z());
-        }
     }
 
     public static class SpiderNPC extends CraftSpider implements NPCHolder {

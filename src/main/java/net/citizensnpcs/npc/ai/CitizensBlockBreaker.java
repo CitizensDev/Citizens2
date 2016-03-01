@@ -1,8 +1,8 @@
 package net.citizensnpcs.npc.ai;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
@@ -10,17 +10,17 @@ import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R3.Block;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.Blocks;
-import net.minecraft.server.v1_8_R3.Enchantment;
-import net.minecraft.server.v1_8_R3.EnchantmentManager;
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.ItemStack;
-import net.minecraft.server.v1_8_R3.Material;
-import net.minecraft.server.v1_8_R3.MobEffectList;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.Blocks;
+import net.minecraft.server.v1_9_R1.EnchantmentManager;
+import net.minecraft.server.v1_9_R1.Entity;
+import net.minecraft.server.v1_9_R1.EntityLiving;
+import net.minecraft.server.v1_9_R1.EntityPlayer;
+import net.minecraft.server.v1_9_R1.EnumItemSlot;
+import net.minecraft.server.v1_9_R1.IBlockData;
+import net.minecraft.server.v1_9_R1.ItemStack;
+import net.minecraft.server.v1_9_R1.Material;
+import net.minecraft.server.v1_9_R1.MobEffects;
 
 public class CitizensBlockBreaker extends BlockBreaker {
     private final BlockBreakerConfiguration configuration;
@@ -47,17 +47,17 @@ public class CitizensBlockBreaker extends BlockBreaker {
         return Math.pow(entity.locX - x, 2) + Math.pow(entity.locY - y, 2) + Math.pow(entity.locZ - z, 2);
     }
 
-    private net.minecraft.server.v1_8_R3.ItemStack getCurrentItem() {
+    private net.minecraft.server.v1_9_R1.ItemStack getCurrentItem() {
         return configuration.item() != null ? CraftItemStack.asNMSCopy(configuration.item())
-                : entity instanceof EntityLiving ? ((EntityLiving) entity).getEquipment(0) : null;
+                : entity instanceof EntityLiving ? ((EntityLiving) entity).getEquipment(EnumItemSlot.MAINHAND) : null;
     }
 
-    private float getStrength(Block block) {
-        float base = block.g(null, new BlockPosition(0, 0, 0));
+    private float getStrength(IBlockData block) {
+        float base = block.getBlock().b(block, null, new BlockPosition(0, 0, 0));
         return base < 0.0F ? 0.0F : (!isDestroyable(block) ? 1.0F / base / 100.0F : strengthMod(block) / base / 30.0F);
     }
 
-    private boolean isDestroyable(Block block) {
+    private boolean isDestroyable(IBlockData block) {
         if (block.getMaterial().isAlwaysDestroyable()) {
             return true;
         } else {
@@ -99,7 +99,7 @@ public class CitizensBlockBreaker extends BlockBreaker {
         if (entity instanceof EntityPlayer) {
             PlayerAnimation.ARM_SWING.play((Player) entity.getBukkitEntity());
         }
-        Block block = entity.world.getType(new BlockPosition(x, y, z)).getBlock();
+        IBlockData block = entity.world.getType(new BlockPosition(x, y, z));
         if (block == null || block == Blocks.AIR) {
             return BehaviorStatus.SUCCESS;
         } else {
@@ -128,35 +128,45 @@ public class CitizensBlockBreaker extends BlockBreaker {
         return entity.world.getType(new BlockPosition(x, y, z)).getBlock() != Blocks.AIR;
     }
 
-    private float strengthMod(Block block) {
+    private float strengthMod(IBlockData block) {
         ItemStack itemstack = getCurrentItem();
-        float strength = itemstack != null ? itemstack.a(block) : 1;
-        int ench = EnchantmentManager.getEnchantmentLevel(Enchantment.DURABILITY.id, getCurrentItem());
-
-        if (ench > 0 && itemstack != null) {
-            float levelSquared = ench * ench + 1;
-
-            if (!itemstack.b(block) && strength <= 1.0F) {
-                strength += levelSquared * 0.08F;
-            } else {
-                strength += levelSquared;
-            }
-        }
+        float f = itemstack.a(block);
         if (entity instanceof EntityLiving) {
-            EntityLiving living = (EntityLiving) entity;
-            if (living.hasEffect(MobEffectList.FASTER_DIG)) {
-                strength *= 1.0F + (living.getEffect(MobEffectList.FASTER_DIG).getAmplifier() + 1) * 0.2F;
+            EntityLiving handle = (EntityLiving) entity;
+            if (f > 1.0F) {
+                int i = EnchantmentManager.getDigSpeedEnchantmentLevel(handle);
+                if (i > 0) {
+                    f += i * i + 1;
+                }
             }
-            if (living.hasEffect(MobEffectList.SLOWER_DIG)) {
-                strength *= 1.0F - (living.getEffect(MobEffectList.SLOWER_DIG).getAmplifier() + 1) * 0.2F;
+            if (handle.hasEffect(MobEffects.FASTER_DIG)) {
+                f *= (1.0F + (handle.getEffect(MobEffects.FASTER_DIG).getAmplifier() + 1) * 0.2F);
             }
-            if (entity.a(Material.WATER) && !EnchantmentManager.j(living)) {
-                strength /= 5.0F;
+            if (handle.hasEffect(MobEffects.SLOWER_DIG)) {
+                float f1 = 1.0F;
+                switch (handle.getEffect(MobEffects.SLOWER_DIG).getAmplifier()) {
+                    case 0:
+                        f1 = 0.3F;
+                        break;
+                    case 1:
+                        f1 = 0.09F;
+                        break;
+                    case 2:
+                        f1 = 0.0027F;
+                        break;
+                    case 3:
+                    default:
+                        f1 = 8.1E-4F;
+                }
+                f *= f1;
+            }
+            if ((handle.a(Material.WATER)) && (!EnchantmentManager.i(handle))) {
+                f /= 5.0F;
             }
         }
         if (!entity.onGround) {
-            strength /= 5.0F;
+            f /= 5.0F;
         }
-        return strength;
+        return f;
     }
 }

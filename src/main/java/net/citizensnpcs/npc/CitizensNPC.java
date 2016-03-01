@@ -7,9 +7,8 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -45,7 +44,7 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_9_R1.PacketPlayOutEntityTeleport;
 
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
@@ -192,7 +191,7 @@ public class CitizensNPC extends AbstractNPC {
 
         entityController.spawn(at, this);
 
-        net.minecraft.server.v1_8_R3.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
+        net.minecraft.server.v1_9_R1.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
 
         // send skin packets, if applicable, before other NMS packets are sent
@@ -301,12 +300,6 @@ public class CitizensNPC extends AbstractNPC {
             if (getEntity() instanceof LivingEntity) {
                 boolean nameplateVisible = data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true);
                 ((LivingEntity) getEntity()).setCustomNameVisible(nameplateVisible);
-                Byte toByte = Byte.valueOf((byte) (nameplateVisible ? 1 : 0));
-                try {
-                    ((CraftLivingEntity) getEntity()).getHandle().getDataWatcher().watch(3, toByte);
-                } catch (NullPointerException e) {
-                    ((CraftLivingEntity) getEntity()).getHandle().getDataWatcher().a(3, toByte);
-                }
             }
         } catch (Exception ex) {
             Throwable error = Throwables.getRootCause(ex);
