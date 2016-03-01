@@ -13,13 +13,13 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_9_R1.EntityTippedArrow;
+import net.minecraft.server.v1_9_R1.EntitySpectralArrow;
 import net.minecraft.server.v1_9_R1.NBTTagCompound;
 import net.minecraft.server.v1_9_R1.World;
 
-public class TippedArrowController extends MobEntityController {
-    public TippedArrowController() {
-        super(EntityTippedArrowNPC.class);
+public class SpectralArrowController extends MobEntityController {
+    public SpectralArrowController() {
+        super(EntitySpectralArrowNPC.class);
     }
 
     @Override
@@ -27,14 +27,14 @@ public class TippedArrowController extends MobEntityController {
         return (Arrow) super.getBukkitEntity();
     }
 
-    public static class EntityTippedArrowNPC extends EntityTippedArrow implements NPCHolder {
+    public static class EntitySpectralArrowNPC extends EntitySpectralArrow implements NPCHolder {
         private final CitizensNPC npc;
 
-        public EntityTippedArrowNPC(World world) {
+        public EntitySpectralArrowNPC(World world) {
             this(world, null);
         }
 
-        public EntityTippedArrowNPC(World world, NPC npc) {
+        public EntitySpectralArrowNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
         }
@@ -79,7 +79,7 @@ public class TippedArrowController extends MobEntityController {
         @Override
         public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null) {
-                bukkitEntity = new TippedArrowNPC(this);
+                bukkitEntity = new SpectralArrowNPC(this);
             }
             return super.getBukkitEntity();
         }
@@ -99,10 +99,10 @@ public class TippedArrowController extends MobEntityController {
         }
     }
 
-    public static class TippedArrowNPC extends CraftArrow implements NPCHolder {
+    public static class SpectralArrowNPC extends CraftArrow implements NPCHolder {
         private final CitizensNPC npc;
 
-        public TippedArrowNPC(EntityTippedArrowNPC entity) {
+        public SpectralArrowNPC(EntitySpectralArrowNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
         }

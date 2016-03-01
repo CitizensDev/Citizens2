@@ -2,9 +2,9 @@ package net.citizensnpcs.npc.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftArrow;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftDragonFireball;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
-import org.bukkit.entity.Arrow;
+import org.bukkit.entity.DragonFireball;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
@@ -12,29 +12,44 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_9_R1.EntityTippedArrow;
+import net.minecraft.server.v1_9_R1.EntityDragonFireball;
 import net.minecraft.server.v1_9_R1.NBTTagCompound;
 import net.minecraft.server.v1_9_R1.World;
 
-public class TippedArrowController extends MobEntityController {
-    public TippedArrowController() {
-        super(EntityTippedArrowNPC.class);
+public class DragonFireballController extends MobEntityController {
+    public DragonFireballController() {
+        super(EntityDragonFireballNPC.class);
     }
 
     @Override
-    public Arrow getBukkitEntity() {
-        return (Arrow) super.getBukkitEntity();
+    public DragonFireball getBukkitEntity() {
+        return (DragonFireball) super.getBukkitEntity();
     }
 
-    public static class EntityTippedArrowNPC extends EntityTippedArrow implements NPCHolder {
+    public static class DragonFireballNPC extends CraftDragonFireball implements NPCHolder {
         private final CitizensNPC npc;
 
-        public EntityTippedArrowNPC(World world) {
+        public DragonFireballNPC(EntityDragonFireballNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class EntityDragonFireballNPC extends EntityDragonFireball implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public EntityDragonFireballNPC(World world) {
             this(world, null);
         }
 
-        public EntityTippedArrowNPC(World world, NPC npc) {
+        public EntityDragonFireballNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
         }
@@ -79,7 +94,7 @@ public class TippedArrowController extends MobEntityController {
         @Override
         public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null) {
-                bukkitEntity = new TippedArrowNPC(this);
+                bukkitEntity = new DragonFireballNPC(this);
             }
             return super.getBukkitEntity();
         }
@@ -93,23 +108,21 @@ public class TippedArrowController extends MobEntityController {
         public void m() {
             if (npc != null) {
                 npc.update();
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+                    super.m();
+                }
             } else {
                 super.m();
             }
         }
-    }
-
-    public static class TippedArrowNPC extends CraftArrow implements NPCHolder {
-        private final CitizensNPC npc;
-
-        public TippedArrowNPC(EntityTippedArrowNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
 
         @Override
-        public NPC getNPC() {
-            return npc;
+        public void setSize(float f, float f1) {
+            if (npc == null) {
+                super.setSize(f, f1);
+            } else {
+                NMS.setSize(this, f, f1, justCreated);
+            }
         }
     }
 }

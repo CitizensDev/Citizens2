@@ -2,9 +2,9 @@ package net.citizensnpcs.npc.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftArrow;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftAreaEffectCloud;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
-import org.bukkit.entity.Arrow;
+import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
@@ -13,28 +13,42 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_9_R1.EntityTippedArrow;
+import net.minecraft.server.v1_9_R1.EntityAreaEffectCloud;
 import net.minecraft.server.v1_9_R1.NBTTagCompound;
 import net.minecraft.server.v1_9_R1.World;
 
-public class TippedArrowController extends MobEntityController {
-    public TippedArrowController() {
-        super(EntityTippedArrowNPC.class);
+public class AreaEffectCloudController extends MobEntityController {
+    public AreaEffectCloudController() {
+        super(EntityAreaEffectCloudNPC.class);
     }
 
     @Override
-    public Arrow getBukkitEntity() {
-        return (Arrow) super.getBukkitEntity();
+    public AreaEffectCloud getBukkitEntity() {
+        return (AreaEffectCloud) super.getBukkitEntity();
     }
 
-    public static class EntityTippedArrowNPC extends EntityTippedArrow implements NPCHolder {
+    public static class AreaEffectCloudNPC extends CraftAreaEffectCloud implements NPCHolder {
         private final CitizensNPC npc;
 
-        public EntityTippedArrowNPC(World world) {
+        public AreaEffectCloudNPC(EntityAreaEffectCloudNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+    }
+
+    public static class EntityAreaEffectCloudNPC extends EntityAreaEffectCloud implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public EntityAreaEffectCloudNPC(World world) {
             this(world, null);
         }
 
-        public EntityTippedArrowNPC(World world, NPC npc) {
+        public EntityAreaEffectCloudNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
         }
@@ -79,7 +93,7 @@ public class TippedArrowController extends MobEntityController {
         @Override
         public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null) {
-                bukkitEntity = new TippedArrowNPC(this);
+                bukkitEntity = new AreaEffectCloudNPC(this);
             }
             return super.getBukkitEntity();
         }
@@ -96,20 +110,6 @@ public class TippedArrowController extends MobEntityController {
             } else {
                 super.m();
             }
-        }
-    }
-
-    public static class TippedArrowNPC extends CraftArrow implements NPCHolder {
-        private final CitizensNPC npc;
-
-        public TippedArrowNPC(EntityTippedArrowNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }
