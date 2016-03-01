@@ -3,11 +3,11 @@ package net.citizensnpcs.npc.entity.nonliving;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftFallingSand;
-import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftFallingSand;
+import org.bukkit.craftbukkit.v1_9_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
@@ -19,13 +19,13 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R3.Block;
-import net.minecraft.server.v1_8_R3.Blocks;
-import net.minecraft.server.v1_8_R3.EntityFallingBlock;
-import net.minecraft.server.v1_8_R3.IBlockData;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.World;
-import net.minecraft.server.v1_8_R3.WorldServer;
+import net.minecraft.server.v1_9_R1.Block;
+import net.minecraft.server.v1_9_R1.Blocks;
+import net.minecraft.server.v1_9_R1.EntityFallingBlock;
+import net.minecraft.server.v1_9_R1.IBlockData;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
+import net.minecraft.server.v1_9_R1.World;
+import net.minecraft.server.v1_9_R1.WorldServer;
 
 public class FallingBlockController extends AbstractEntityController {
     public FallingBlockController() {
@@ -69,7 +69,7 @@ public class FallingBlockController extends AbstractEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_9_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -128,7 +128,7 @@ public class FallingBlockController extends AbstractEntityController {
         }
 
         @Override
-        public void t_() {
+        public void m() {
             if (npc != null) {
                 npc.update();
                 if (Math.abs(motX) > EPSILON || Math.abs(motY) > EPSILON || Math.abs(motZ) > EPSILON) {
@@ -138,7 +138,7 @@ public class FallingBlockController extends AbstractEntityController {
                     move(motX, motY, motZ);
                 }
             } else {
-                super.t_();
+                super.m();
             }
         }
 

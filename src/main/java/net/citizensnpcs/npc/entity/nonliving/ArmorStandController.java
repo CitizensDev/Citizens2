@@ -1,9 +1,9 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -16,11 +16,14 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R3.EntityArmorStand;
-import net.minecraft.server.v1_8_R3.EntityHuman;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.Vec3D;
-import net.minecraft.server.v1_8_R3.World;
+import net.minecraft.server.v1_9_R1.EntityArmorStand;
+import net.minecraft.server.v1_9_R1.EntityHuman;
+import net.minecraft.server.v1_9_R1.EnumHand;
+import net.minecraft.server.v1_9_R1.EnumInteractionResult;
+import net.minecraft.server.v1_9_R1.ItemStack;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
+import net.minecraft.server.v1_9_R1.Vec3D;
+import net.minecraft.server.v1_9_R1.World;
 
 public class ArmorStandController extends MobEntityController {
     public ArmorStandController() {
@@ -59,18 +62,18 @@ public class ArmorStandController extends MobEntityController {
         }
 
         @Override
-        public boolean a(EntityHuman entityhuman, Vec3D vec3d) {
+        public EnumInteractionResult a(EntityHuman entityhuman, Vec3D vec3d, ItemStack itemstack, EnumHand enumhand) {
             if (npc == null) {
-                return super.a(entityhuman, vec3d);
+                return super.a(entityhuman, vec3d, itemstack, enumhand);
             }
             PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) entityhuman.getBukkitEntity(),
                     getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);
-            return !event.isCancelled();
+            return event.isCancelled() ? EnumInteractionResult.FAIL : EnumInteractionResult.SUCCESS;
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_9_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -120,19 +123,19 @@ public class ArmorStandController extends MobEntityController {
         }
 
         @Override
+        public void m() {
+            super.m();
+            if (npc != null) {
+                npc.update();
+            }
+        }
+
+        @Override
         public void setSize(float f, float f1) {
             if (npc == null) {
                 super.setSize(f, f1);
             } else {
                 NMS.setSize(this, f, f1, justCreated);
-            }
-        }
-
-        @Override
-        public void t_() {
-            super.t_();
-            if (npc != null) {
-                npc.update();
             }
         }
     }

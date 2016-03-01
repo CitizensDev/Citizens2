@@ -1,6 +1,6 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftRabbit;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftRabbit;
 import org.bukkit.entity.Rabbit;
 
 import net.citizensnpcs.api.persistence.Persist;

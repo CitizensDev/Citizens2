@@ -2,19 +2,19 @@ package net.citizensnpcs.util;
 
 import java.util.Arrays;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.npc.ai.NPCHolder;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.Packet;
-import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
-import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
-
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.npc.ai.NPCHolder;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.EntityPlayer;
+import net.minecraft.server.v1_9_R1.Packet;
+import net.minecraft.server.v1_9_R1.PacketPlayOutAnimation;
+import net.minecraft.server.v1_9_R1.PacketPlayOutBed;
+import net.minecraft.server.v1_9_R1.PacketPlayOutEntityMetadata;
 
 public enum PlayerAnimation {
     ARM_SWING {
@@ -64,8 +64,8 @@ public enum PlayerAnimation {
                         cancel();
                         return;
                     }
-                    if (player.passenger != player) {
-                        player.mount(player);
+                    if (!player.passengers.contains(player)) {
+                        NMS.mount(player.getBukkitEntity(), player.getBukkitEntity());
                     }
                 }
             }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
@@ -100,7 +100,7 @@ public enum PlayerAnimation {
         protected void playAnimation(EntityPlayer player, int radius) {
             player.getBukkitEntity().setMetadata("citizens.sitting",
                     new FixedMetadataValue(CitizensAPI.getPlugin(), false));
-            player.mount(null);
+            NMS.mount(player.getBukkitEntity(), null);
         }
     },
     STOP_SLEEPING {

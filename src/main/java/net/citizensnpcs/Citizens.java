@@ -92,7 +92,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             saves = new NBTStorage(new File(folder + File.separator + Setting.STORAGE_FILE.asString()),
                     "Citizens NPC Storage");
         }
-        if (saves == null){
+        if (saves == null) {
             saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
         }
         if (!saves.load())
@@ -457,8 +457,5 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return false;
     }
 
-    public static void main(String[] args) {
-    }
-
-    private static final String COMPATIBLE_MC_REVISION = "1_8_R3";
+    private static final String COMPATIBLE_MC_REVISION = "1_9_R1";
 }

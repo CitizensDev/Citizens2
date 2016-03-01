@@ -1,9 +1,9 @@
 package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.MathHelper;
+import net.minecraft.server.v1_9_R1.Entity;
+import net.minecraft.server.v1_9_R1.EntityLiving;
+import net.minecraft.server.v1_9_R1.MathHelper;
 
 public class PlayerControllerLook {
     private final EntityHumanNPC a;
@@ -22,29 +22,27 @@ public class PlayerControllerLook {
         this.a.pitch = 0.0F;
         if (this.d) {
             this.d = false;
-            double d0 = this.e - this.a.locX;
-            double d1 = this.f - (this.a.locY + this.a.getHeadHeight());
-            double d2 = this.g - this.a.locZ;
-            double d3 = Math.sqrt(d0 * d0 + d2 * d2);
 
-            float f = (float) (MathHelper.b(d2, d0) * 180.0D / 3.141592741012573D) - 90.0F;
-            float f1 = (float) (-(MathHelper.b(d1, d3) * 180.0D / 3.141592741012573D));
+            double d1 = this.e - this.a.locX;
+            double d2 = this.f - (this.a.locY + this.a.getHeadHeight());
+            double d3 = this.g - this.a.locZ;
+            double d4 = MathHelper.sqrt(d1 * d1 + d3 * d3);
 
-            this.a.pitch = a(this.a.pitch, f1, this.c);
-            this.a.aK = a(this.a.aK, f, this.b);
+            float f1 = (float) (MathHelper.b(d3, d1) * 57.2957763671875D) - 90.0F;
+            float f2 = (float) -(MathHelper.b(d2, d4) * 57.2957763671875D);
+            this.a.pitch = a(this.a.pitch, f2, this.c);
+            this.a.aO = a(this.a.aO, f1, this.b);
         } else {
-            this.a.aK = a(this.a.aK, this.a.aI, 10.0F);
+            this.a.aO = a(this.a.aO, this.a.aM, 10.0F);
         }
-
-        float f2 = MathHelper.g(this.a.aK - this.a.aI);
-
-        if (!this.a.getNavigation().m()) {
-            if (f2 < -75.0F) {
-                this.a.aK = (this.a.aI - 75.0F);
+        float f3 = MathHelper.g(this.a.aO - this.a.aM);
+        if (!this.a.getNavigation().n()) {
+            if (f3 < -75.0F) {
+                this.a.aO = (this.a.aM - 75.0F);
             }
-
-            if (f2 > 75.0F)
-                this.a.aK = (this.a.aI + 75.0F);
+            if (f3 > 75.0F) {
+                this.a.aO = (this.a.aM + 75.0F);
+            }
         }
     }
 

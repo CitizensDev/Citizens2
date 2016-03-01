@@ -1,14 +1,15 @@
 package net.citizensnpcs.util.nms;
 
+import java.lang.reflect.Field;
+
+import org.bukkit.entity.Player;
+
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.EntityTrackerEntry;
-import org.bukkit.entity.Player;
-
-import java.lang.reflect.Field;
+import net.minecraft.server.v1_9_R1.Entity;
+import net.minecraft.server.v1_9_R1.EntityPlayer;
+import net.minecraft.server.v1_9_R1.EntityTrackerEntry;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     public PlayerlistTrackerEntry(Entity entity, int i, int j, boolean flag) {
@@ -21,7 +22,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
-
         // prevent updates to NPC "viewers"
         if (entityplayer instanceof EntityHumanNPC)
             return;
@@ -34,7 +34,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
                 if ((this.tracker instanceof SkinnableEntity)) {
 
-                    SkinnableEntity skinnable = (SkinnableEntity)this.tracker;
+                    SkinnableEntity skinnable = (SkinnableEntity) this.tracker;
 
                     Player player = skinnable.getBukkitEntity();
                     if (!entityplayer.getBukkitEntity().canSee(player))

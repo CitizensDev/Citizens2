@@ -7,8 +7,8 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -37,24 +37,25 @@ import net.citizensnpcs.util.nms.PlayerControllerJump;
 import net.citizensnpcs.util.nms.PlayerControllerLook;
 import net.citizensnpcs.util.nms.PlayerControllerMove;
 import net.citizensnpcs.util.nms.PlayerNavigation;
-import net.minecraft.server.v1_8_R3.AttributeInstance;
-import net.minecraft.server.v1_8_R3.Block;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.DamageSource;
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.EnumProtocolDirection;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.MathHelper;
-import net.minecraft.server.v1_8_R3.MinecraftServer;
-import net.minecraft.server.v1_8_R3.NavigationAbstract;
-import net.minecraft.server.v1_8_R3.NetworkManager;
-import net.minecraft.server.v1_8_R3.Packet;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityHeadRotation;
-import net.minecraft.server.v1_8_R3.PlayerInteractManager;
-import net.minecraft.server.v1_8_R3.WorldServer;
-import net.minecraft.server.v1_8_R3.WorldSettings.EnumGamemode;
+import net.minecraft.server.v1_9_R1.AttributeInstance;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.DamageSource;
+import net.minecraft.server.v1_9_R1.Entity;
+import net.minecraft.server.v1_9_R1.EntityPlayer;
+import net.minecraft.server.v1_9_R1.EnumItemSlot;
+import net.minecraft.server.v1_9_R1.EnumProtocolDirection;
+import net.minecraft.server.v1_9_R1.GenericAttributes;
+import net.minecraft.server.v1_9_R1.IBlockData;
+import net.minecraft.server.v1_9_R1.MathHelper;
+import net.minecraft.server.v1_9_R1.MinecraftServer;
+import net.minecraft.server.v1_9_R1.NavigationAbstract;
+import net.minecraft.server.v1_9_R1.NetworkManager;
+import net.minecraft.server.v1_9_R1.Packet;
+import net.minecraft.server.v1_9_R1.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_9_R1.PacketPlayOutEntityHeadRotation;
+import net.minecraft.server.v1_9_R1.PlayerInteractManager;
+import net.minecraft.server.v1_9_R1.WorldServer;
+import net.minecraft.server.v1_9_R1.WorldSettings.EnumGamemode;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
     private PlayerControllerJump controllerJump;
@@ -83,14 +84,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
-    protected void a(double d0, boolean flag, Block block, BlockPosition blockposition) {
+    protected void a(double d0, boolean flag, IBlockData block, BlockPosition blockposition) {
         if (npc == null || !npc.isFlyable()) {
             super.a(d0, flag, block, blockposition);
         }
     }
 
     @Override
-    public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
+    public void collide(net.minecraft.server.v1_9_R1.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
@@ -231,7 +232,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         try {
             conn = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
             playerConnection = new EmptyNetHandler(minecraftServer, conn, this);
-            conn.a(playerConnection);
+            conn.setPacketListener(playerConnection);
             socket.close();
         } catch (IOException e) {
             // swallow
@@ -257,69 +258,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
-    public boolean k_() {
-        if (npc == null || !npc.isFlyable()) {
-            return super.k_();
-        } else {
-            return false;
-        }
-    }
-
-    private void moveOnCurrentHeading() {
-        NMS.updateAI(this);
-        if (aY) {
-            if (onGround && jumpTicks == 0) {
-                bF();
-                jumpTicks = 10;
-            }
-        } else {
-            jumpTicks = 0;
-        }
-        aZ *= 0.98F;
-        ba *= 0.98F;
-        bb *= 0.9F;
-        g(aZ, ba); // movement method
-        NMS.setHeadYaw(this, yaw);
-        if (jumpTicks > 0) {
-            jumpTicks--;
-        }
-    }
-
-    public void setMoveDestination(double x, double y, double z, double speed) {
-        controllerMove.a(x, y, z, speed);
-    }
-
-    public void setShouldJump() {
-        controllerJump.a();
-    }
-
-    @Override
-    public void setSkinFlags(byte flags) {
-        // set skin flag byte (DataWatcher API is lacking so
-        // catch the NPE as a sign that this is a MC 1.7 server without the
-        // skin flag)
-        try {
-            getDataWatcher().watch(10, flags);
-        } catch (NullPointerException e) {
-            getDataWatcher().a(10, flags);
-        }
-    }
-
-    @Override
-    public void setSkinName(String name) {
-        Preconditions.checkNotNull(name);
-
-        npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, name.toLowerCase());
-        skinTracker.notifySkinChange();
-    }
-
-    public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
-        controllerLook.a(target, yawOffset, renderOffset);
-    }
-
-    @Override
-    public void t_() {
-        super.t_();
+    public void m() {
+        super.m();
         if (npc == null)
             return;
         boolean navigating = npc.getNavigator().isNavigating();
@@ -346,6 +286,61 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         npc.update();
     }
 
+    private void moveOnCurrentHeading() {
+        NMS.updateAI(this);
+        if (bc) {
+            if (onGround && jumpTicks == 0) {
+                ch();
+                jumpTicks = 10;
+            }
+        } else {
+            jumpTicks = 0;
+        }
+        bd *= 0.98F;
+        be *= 0.98F;
+        bf *= 0.9F;
+        g(bd, be); // movement method
+        NMS.setHeadYaw(this, yaw);
+        if (jumpTicks > 0) {
+            jumpTicks--;
+        }
+    }
+
+    @Override
+    public boolean n_() {
+        if (npc == null || !npc.isFlyable()) {
+            return super.n_();
+        } else {
+            return false;
+        }
+    }
+
+    public void setMoveDestination(double x, double y, double z, double speed) {
+        controllerMove.a(x, y, z, speed);
+    }
+
+    public void setShouldJump() {
+        controllerJump.a();
+    }
+
+    @Override
+    public void setSkinFlags(byte flags) {
+        // set skin flag byte
+        getDataWatcher().set(bp, flags);
+    }
+
+    @Override
+    public void setSkinName(String name) {
+        Preconditions.checkNotNull(name);
+
+        npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, name.toLowerCase());
+        skinTracker.notifySkinChange();
+    }
+
+    public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
+        controllerLook.a(target, yawOffset, renderOffset);
+    }
+
     public void updateAI() {
         controllerMove.c();
         controllerLook.a();
@@ -361,8 +356,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
                 packets[5] = new PacketPlayOutEntityHeadRotation(this,
                         (byte) MathHelper.d(NMS.getHeadYaw(this) * 256.0F / 360.0F));
             }
-            for (int i = 0; i < 5; i++) {
-                packets[i] = new PacketPlayOutEntityEquipment(getId(), i, getEquipment(i));
+            int i = 0;
+            for (EnumItemSlot slot : EnumItemSlot.values()) {
+                packets[i++] = new PacketPlayOutEntityEquipment(getId(), slot, getEquipment(slot));
             }
             boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
                     Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());

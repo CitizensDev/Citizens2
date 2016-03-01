@@ -1,9 +1,9 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEnderPearl;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderPearl;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.util.Vector;
 
@@ -13,9 +13,9 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_8_R3.EntityEnderPearl;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.World;
+import net.minecraft.server.v1_9_R1.EntityEnderPearl;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
+import net.minecraft.server.v1_9_R1.World;
 
 public class EnderPearlController extends MobEntityController {
     public EnderPearlController() {
@@ -54,7 +54,7 @@ public class EnderPearlController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
+        public void collide(net.minecraft.server.v1_9_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -104,14 +104,14 @@ public class EnderPearlController extends MobEntityController {
         }
 
         @Override
-        public void t_() {
+        public void m() {
             if (npc != null) {
                 npc.update();
                 if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
-                    super.t_();
+                    super.m();
                 }
             } else {
-                super.t_();
+                super.m();
             }
         }
     }
