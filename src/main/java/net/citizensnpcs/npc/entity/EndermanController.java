@@ -196,8 +196,9 @@ public class EndermanController extends MobEntityController {
         @Override
         public void M() {
             super.M();
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
+            }
         }
 
         @Override

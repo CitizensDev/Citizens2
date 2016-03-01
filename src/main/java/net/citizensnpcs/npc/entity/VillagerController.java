@@ -18,7 +18,9 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_9_R1.BlockPosition;
 import net.minecraft.server.v1_9_R1.EntityHuman;
 import net.minecraft.server.v1_9_R1.EntityVillager;
+import net.minecraft.server.v1_9_R1.EnumHand;
 import net.minecraft.server.v1_9_R1.IBlockData;
+import net.minecraft.server.v1_9_R1.ItemStack;
 import net.minecraft.server.v1_9_R1.MinecraftKey;
 import net.minecraft.server.v1_9_R1.NBTTagCompound;
 import net.minecraft.server.v1_9_R1.SoundEffect;
@@ -69,7 +71,7 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
-        public boolean a(EntityHuman entityhuman) {
+        public boolean a(EntityHuman entityhuman, EnumHand enumhand, ItemStack itemstack) {
             return npc == null || !blockTrades ? super.a(entityhuman) : false; // block
             // trades
         }
