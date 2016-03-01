@@ -267,6 +267,16 @@ public class Equipment extends Trait {
         }
 
         @Override
+        public ItemStack getItemInMainHand() {
+            return entity.getItemInHand();
+        }
+
+        @Override
+        public ItemStack getItemInOffHand() {
+            return null;
+        }
+
+        @Override
         public ItemStack getLeggings() {
             return entity.getLeggings();
         }
@@ -318,6 +328,15 @@ public class Equipment extends Trait {
 
         @Override
         public void setItemInHandDropChance(float arg0) {
+        }
+
+        @Override
+        public void setItemInMainHand(ItemStack arg0) {
+            entity.setItemInHand(arg0);
+        }
+
+        @Override
+        public void setItemInOffHand(ItemStack arg0) {
         }
 
         @Override
@@ -410,6 +429,16 @@ public class Equipment extends Trait {
         }
 
         @Override
+        public ItemStack getItemInMainHand() {
+            return player.getInventory().getItemInMainHand();
+        }
+
+        @Override
+        public ItemStack getItemInOffHand() {
+            return player.getInventory().getItemInOffHand();
+        }
+
+        @Override
         public ItemStack getLeggings() {
             return player.getInventory().getLeggings();
         }
@@ -462,6 +491,16 @@ public class Equipment extends Trait {
         @Override
         public void setItemInHandDropChance(float chance) {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setItemInMainHand(ItemStack arg0) {
+            player.getInventory().setItemInMainHand(arg0);
+        }
+
+        @Override
+        public void setItemInOffHand(ItemStack arg0) {
+            player.getInventory().setItemInOffHand(arg0);
         }
 
         @Override
