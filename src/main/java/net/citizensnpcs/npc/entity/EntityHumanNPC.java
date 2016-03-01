@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.entity;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,6 +16,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.Settings.Setting;
@@ -53,11 +55,13 @@ import net.minecraft.server.v1_9_R1.NetworkManager;
 import net.minecraft.server.v1_9_R1.Packet;
 import net.minecraft.server.v1_9_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_9_R1.PacketPlayOutEntityHeadRotation;
+import net.minecraft.server.v1_9_R1.PathType;
 import net.minecraft.server.v1_9_R1.PlayerInteractManager;
 import net.minecraft.server.v1_9_R1.WorldServer;
 import net.minecraft.server.v1_9_R1.WorldSettings.EnumGamemode;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
+    private final Map<PathType, Float> bz = Maps.newEnumMap(PathType.class);
     private PlayerControllerJump controllerJump;
     private PlayerControllerLook controllerLook;
     private PlayerControllerMove controllerMove;
@@ -88,6 +92,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (npc == null || !npc.isFlyable()) {
             super.a(d0, flag, block, blockposition);
         }
+    }
+
+    public float a(PathType pathtype) {
+        return this.bz.containsKey(pathtype) ? this.bz.get(pathtype).floatValue() : pathtype.a();
+    }
+
+    public void a(PathType pathtype, float f) {
+        this.bz.put(pathtype, Float.valueOf(f));
     }
 
     @Override
@@ -351,7 +363,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateCounter = 0;
             Location current = getBukkitEntity().getLocation(packetLocationCache);
-            Packet<?>[] packets = new Packet[navigating ? 5 : 6];
+            Packet<?>[] packets = new Packet[navigating ? EnumItemSlot.values().length
+                    : EnumItemSlot.values().length + 1];
             if (!navigating) {
                 packets[5] = new PacketPlayOutEntityHeadRotation(this,
                         (byte) MathHelper.d(NMS.getHeadYaw(this) * 256.0F / 360.0F));
