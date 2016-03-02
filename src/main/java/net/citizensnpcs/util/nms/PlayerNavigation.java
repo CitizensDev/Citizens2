@@ -66,7 +66,7 @@ public class PlayerNavigation extends NavigationAbstract {
                 localBlockPosition = localBlockPosition.down();
             }
             if (localBlockPosition.getY() > 0) {
-                return super.a(localBlockPosition.up());
+                return supera(localBlockPosition.up());
             }
             while ((localBlockPosition.getY() < this.b.getHeight())
                     && (this.b.getType(localBlockPosition).getMaterial() == Material.AIR)) {
@@ -496,6 +496,25 @@ public class PlayerNavigation extends NavigationAbstract {
 
     public void setRange(float pathfindingRange) {
         this.g.setValue(pathfindingRange);
+    }
+
+    public PathEntity supera(BlockPosition paramBlockPosition) {
+        if (!b()) {
+            return null;
+        }
+        if ((this.c != null) && (!this.c.b()) && (paramBlockPosition.equals(this.r))) {
+            return this.c;
+        }
+        this.r = paramBlockPosition;
+
+        float f1 = h();
+        BlockPosition localBlockPosition = new BlockPosition(this.a);
+        int i1 = (int) (f1 + 8.0F);
+
+        ChunkCache localChunkCache = new ChunkCache(this.b, localBlockPosition.a(-i1, -i1, -i1),
+                localBlockPosition.a(i1, i1, i1), 0);
+        PathEntity localPathEntity = this.s.a(localChunkCache, this.a, this.r, f1);
+        return localPathEntity;
     }
 
     private static EntityInsentient getDummyInsentient(EntityHumanNPC from, World world) {
