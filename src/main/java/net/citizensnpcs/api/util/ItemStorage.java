@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -125,6 +126,7 @@ public class ItemStorage {
             }
             res.setItemMeta(meta);
         }
+
         if (root.keyExists("potion")) {
             PotionMeta meta = ensureMeta(res);
             for (DataKey sub : root.getRelative("potion.effects").getIntegerSubKeys()) {
@@ -135,6 +137,9 @@ public class ItemStorage {
                 meta.addCustomEffect(new PotionEffect(type, duration, amplifier, ambient), true);
             }
             res.setItemMeta(meta);
+        }
+        if (root.keyExists("repaircost") && res.getItemMeta() instanceof Repairable) {
+            ((Repairable) res.getItemMeta()).setRepairCost(root.getInt("repaircost"));
         }
 
         Bukkit.getPluginManager().callEvent(new CitizensDeserialiseMetaEvent(root, res));
@@ -225,6 +230,12 @@ public class ItemStorage {
             if (meta.hasItemFlag(flag)) {
                 key.setString("flags." + j++, flag.name());
             }
+        }
+        if (meta instanceof Repairable) {
+            Repairable rep = (Repairable) meta;
+            key.setInt("repaircost", rep.getRepairCost());
+        } else {
+            key.removeKey("repaircost");
         }
         if (meta.hasLore()) {
             List<String> lore = meta.getLore();
