@@ -58,6 +58,7 @@ import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
@@ -297,6 +298,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 startMetrics();
                 scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
                 Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
+                new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
             }
         }, 1) == -1) {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
