@@ -1,8 +1,10 @@
 package net.citizensnpcs.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -16,10 +18,16 @@ public class PlayerUpdateTask extends BukkitRunnable {
     public void cancel() {
         super.cancel();
         TICKERS.clear();
+        TICKERS_PENDING_ADD.clear();
+        TICKERS_PENDING_REMOVE.clear();
     }
 
     @Override
     public void run() {
+        TICKERS.removeAll(TICKERS_PENDING_REMOVE);
+        TICKERS.addAll(TICKERS_PENDING_ADD);
+        TICKERS_PENDING_ADD.clear();
+        TICKERS_PENDING_REMOVE.clear();
         Iterator<org.bukkit.entity.Entity> itr = TICKERS.iterator();
         while (itr.hasNext()) {
             Entity entity = NMS.getHandle(itr.next());
@@ -49,12 +57,14 @@ public class PlayerUpdateTask extends BukkitRunnable {
     }
 
     public static void addOrRemove(org.bukkit.entity.Entity entity, boolean remove) {
-        if (remove) {
-            TICKERS.remove(entity);
+        if (!remove) {
+            TICKERS_PENDING_REMOVE.add(entity);
         } else {
-            TICKERS.add(entity);
+            TICKERS_PENDING_ADD.add(entity);
         }
     }
 
-    private static List<org.bukkit.entity.Entity> TICKERS = new ArrayList<org.bukkit.entity.Entity>();
+    private static Set<org.bukkit.entity.Entity> TICKERS = new HashSet<org.bukkit.entity.Entity>();
+    private static List<org.bukkit.entity.Entity> TICKERS_PENDING_ADD = new ArrayList<org.bukkit.entity.Entity>();
+    private static List<org.bukkit.entity.Entity> TICKERS_PENDING_REMOVE = new ArrayList<org.bukkit.entity.Entity>();
 }
