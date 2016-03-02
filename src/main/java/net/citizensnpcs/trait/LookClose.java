@@ -46,12 +46,13 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     private void findNewTarget() {
         List<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
-        final Location npcLocation = npc.getEntity().getLocation(NPC_LOCATION);
+        final Location npcLocation = npc.getEntity().getLocation(NPC_LOCATION),
+                cacheLocation1 = new Location(null, 0, 0, 0), cacheLocation2 = new Location(null, 0, 0, 0);
         Collections.sort(nearby, new Comparator<Entity>() {
             @Override
             public int compare(Entity o1, Entity o2) {
-                Location l1 = o1.getLocation();
-                Location l2 = o2.getLocation();
+                Location l1 = o1.getLocation(cacheLocation1);
+                Location l2 = o2.getLocation(cacheLocation2);
                 if (!npcLocation.getWorld().equals(l1.getWorld()) || !npcLocation.getWorld().equals(l2.getWorld())) {
                     return -1;
                 }
@@ -60,24 +61,22 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
                 return Double.compare(d1, d2);
             }
         });
-        Location cacheLocation = new Location(null, 0D, 0D, 0D);
         for (Entity entity : nearby) {
-            if (entity.getType() != EntityType.PLAYER || entity.getLocation(cacheLocation).getWorld() != npcLocation.getWorld())
-                continue;
-            if (CitizensAPI.getNPCRegistry().getNPC(entity) != null
+            if (entity.getType() != EntityType.PLAYER
+                    || entity.getLocation(cacheLocation1).getWorld() != npcLocation.getWorld()
+                    || CitizensAPI.getNPCRegistry().getNPC(entity) != null
                     || ((Player) entity).getGameMode() == GameMode.SPECTATOR)
                 continue;
             lookingAt = (Player) entity;
             return;
         }
-        lookingAt = null;
     }
 
     private boolean hasInvalidTarget() {
         if (lookingAt == null)
             return true;
         if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getEntity().getWorld()
-                || lookingAt.getLocation().distanceSquared(npc.getEntity().getLocation()) > range) {
+                || lookingAt.getLocation().distanceSquared(npc.getEntity().getLocation(NPC_LOCATION)) > range) {
             lookingAt = null;
         }
         return lookingAt == null;
@@ -85,8 +84,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        enabled = key.getBoolean("enabled", key.getBoolean(""));
-        // TODO: remove key.getBoolean("") ^ after a few updates
+        enabled = key.getBoolean("enabled", true);
         range = key.getDouble("range", range);
         realisticLooking = key.getBoolean("realisticlooking", key.getBoolean("realistic-looking"));
     }
@@ -114,14 +112,6 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     @Override
     public void save(DataKey key) {
-        if (key.keyExists("")) {
-            // TODO: remove after a few updates
-            key.removeKey("");
-        }
-        if (key.keyExists("realistic-looking")) {
-            // TODO: remove after a few updates
-            key.removeKey("realistic-looking");
-        }
         key.setBoolean("enabled", enabled);
         key.setDouble("range", range);
         key.setBoolean("realisticlooking", realisticLooking);
