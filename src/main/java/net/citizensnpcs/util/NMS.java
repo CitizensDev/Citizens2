@@ -101,6 +101,7 @@ public class NMS {
         } else if (!handle.world.players.contains(handle)) {
             handle.world.players.add(handle);
         }
+        PlayerUpdateTask.addOrRemove(entity, remove);
     }
 
     public static boolean addToWorld(org.bukkit.World world, org.bukkit.entity.Entity entity,
