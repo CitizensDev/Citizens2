@@ -11,4 +11,9 @@ public class EmptyNetworkManager extends NetworkManager {
         super(flag);
         NMS.initNetworkManager(this);
     }
+
+    @Override
+    public boolean isConnected() {
+        return true;
+    }
 }

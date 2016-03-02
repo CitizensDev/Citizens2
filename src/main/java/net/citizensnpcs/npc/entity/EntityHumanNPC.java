@@ -223,7 +223,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public String getSkinName() {
-
         MetadataStore meta = npc.data();
 
         String skinName = meta.get(NPC.PLAYER_SKIN_UUID_METADATA);
