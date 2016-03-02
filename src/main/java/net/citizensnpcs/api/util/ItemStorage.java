@@ -12,6 +12,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -109,6 +110,14 @@ public class ItemStorage {
             meta.setScaling(root.getBoolean("map.scaling"));
             res.setItemMeta(meta);
         }
+        if (root.keyExists("enchantmentstorage")) {
+            EnchantmentStorageMeta meta = ensureMeta(res);
+            for (DataKey key : root.getRelative("enchantmentstorage").getSubKeys()) {
+                meta.addStoredEnchant(Enchantment.getByName(key.name()), key.getInt(""), true);
+            }
+            res.setItemMeta(meta);
+        }
+
         if (root.keyExists("skull")) {
             SkullMeta meta = ensureMeta(res);
             if (root.keyExists("skull.owner") && !root.getString("skull.owner").isEmpty()) {
@@ -223,13 +232,16 @@ public class ItemStorage {
             for (int i = 0; i < lore.size(); i++) {
                 root.setString(Integer.toString(i), lore.get(i));
             }
-        } else
+        } else {
             key.removeKey("lore");
+        }
 
         if (meta.hasDisplayName()) {
             key.setString("displayname", meta.getDisplayName());
-        } else
+        } else {
             key.removeKey("displayname");
+        }
+
         if (meta instanceof BookMeta) {
             BookMeta book = (BookMeta) meta;
             DataKey pages = key.getRelative("book.pages");
@@ -239,8 +251,9 @@ public class ItemStorage {
             key.setString("book.title", book.getTitle());
             key.setString("book.author", book.getAuthor());
             serialiseEnchantments(key.getRelative("book.enchantments"), book.getEnchants());
-        } else
+        } else {
             key.removeKey("book");
+        }
 
         if (meta instanceof SkullMeta) {
             SkullMeta skull = (SkullMeta) meta;
@@ -257,21 +270,33 @@ public class ItemStorage {
                 i++;
             }
             key.setInt("firework.power", firework.getPower());
-        } else
+        } else {
             key.removeKey("firework");
+        }
 
         if (meta instanceof MapMeta) {
             MapMeta map = (MapMeta) meta;
             key.setBoolean("map.scaling", map.isScaling());
-        } else
+        } else {
             key.removeKey("map");
+        }
 
         if (meta instanceof LeatherArmorMeta) {
             LeatherArmorMeta armor = (LeatherArmorMeta) meta;
             Color color = armor.getColor();
             key.setInt("armor.color", color.asRGB());
-        } else
+        } else {
             key.removeKey("armor");
+        }
+
+        if (meta instanceof EnchantmentStorageMeta) {
+            EnchantmentStorageMeta ench = (EnchantmentStorageMeta) meta;
+            for (Map.Entry<Enchantment, Integer> e : ench.getStoredEnchants().entrySet()) {
+                key.getRelative("enchantmentstorage").setInt(e.getKey().getName(), e.getValue());
+            }
+        } else {
+            key.removeKey("enchantmentstorage");
+        }
 
         if (meta instanceof PotionMeta) {
             PotionMeta potion = (PotionMeta) meta;
