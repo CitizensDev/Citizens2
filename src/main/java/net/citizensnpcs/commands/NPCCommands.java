@@ -12,7 +12,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
@@ -1482,8 +1481,7 @@ public class NPCCommands {
         String deathSound = npc.data().get(NPC.DEATH_SOUND_METADATA);
         String hurtSound = npc.data().get(NPC.HURT_SOUND_METADATA);
         if (args.getValueFlags().size() == 0 && args.getFlags().size() == 0) {
-            Messaging.sendTr(sender, Messages.SOUND_INFO, npc.getName(), ambientSound, hurtSound, deathSound,
-                    Util.listValuesPretty(Sound.values()));
+            Messaging.sendTr(sender, Messages.SOUND_INFO, npc.getName(), ambientSound, hurtSound, deathSound);
             return;
         }
 
@@ -1519,11 +1517,11 @@ public class NPCCommands {
             npc.data().setPersistent(NPC.AMBIENT_SOUND_METADATA, ambientSound);
         }
 
-        if (ambientSound.isEmpty())
+        if (ambientSound != null && ambientSound.isEmpty())
             ambientSound = "none";
-        if (hurtSound.isEmpty())
+        if (hurtSound != null && hurtSound.isEmpty())
             hurtSound = "none";
-        if (deathSound.isEmpty())
+        if (deathSound != null && deathSound.isEmpty())
             deathSound = "none";
         Messaging.sendTr(sender, Messages.SOUND_SET, npc.getName(), ambientSound, hurtSound, deathSound);
     }
