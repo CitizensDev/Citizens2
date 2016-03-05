@@ -532,6 +532,21 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "glowing",
+            desc = "Toggles an NPC's glowing status",
+            modifiers = { "glowing" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.glowing")
+    @Requirements(selected = true, ownership = true)
+    public void glowing(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        npc.data().setPersistent(NPC.GLOWING_METADATA, !npc.data().get(NPC.GLOWING_METADATA, false));
+        boolean glowing = npc.data().get(NPC.GLOWING_METADATA);
+        Messaging.sendTr(sender, glowing ? Messages.GLOWING_SET : Messages.GLOWING_UNSET);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "gravity",
             desc = "Toggles gravity",
             modifiers = { "gravity" },
