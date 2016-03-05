@@ -12,11 +12,8 @@ import net.minecraft.server.v1_9_R1.EntityPlayer;
 import net.minecraft.server.v1_9_R1.EntityTrackerEntry;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
-    private final Entity tracker;
-
     public PlayerlistTrackerEntry(Entity entity, int i, int j, int k, boolean flag) {
         super(entity, i, j, k, flag);
-        this.tracker = entity;
     }
 
     public PlayerlistTrackerEntry(EntityTrackerEntry entry) {
@@ -28,14 +25,14 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         // prevent updates to NPC "viewers"
         if (entityplayer instanceof EntityHumanNPC)
             return;
-
-        if (entityplayer != this.tracker && c(entityplayer)) {
+        Entity tracker = getTracker(this);
+        if (entityplayer != tracker && c(entityplayer)) {
             if (!this.trackedPlayers.contains(entityplayer)
-                    && ((entityplayer.x().getPlayerChunkMap().a(entityplayer, this.tracker.ab, this.tracker.ad))
-                            || (this.tracker.attachedToPlayer))) {
-                if ((this.tracker instanceof SkinnableEntity)) {
+                    && ((entityplayer.x().getPlayerChunkMap().a(entityplayer, tracker.ab, tracker.ad))
+                            || (tracker.attachedToPlayer))) {
+                if ((tracker instanceof SkinnableEntity)) {
 
-                    SkinnableEntity skinnable = (SkinnableEntity) this.tracker;
+                    SkinnableEntity skinnable = (SkinnableEntity) tracker;
 
                     Player player = skinnable.getBukkitEntity();
                     if (!entityplayer.getBukkitEntity().canSee(player))

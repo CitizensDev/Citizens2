@@ -28,8 +28,9 @@ public class Util {
     }
 
     public static void callCollisionEvent(NPC npc, Entity entity) {
-        if (NPCCollisionEvent.getHandlerList().getRegisteredListeners().length > 0)
+        if (NPCCollisionEvent.getHandlerList().getRegisteredListeners().length > 0) {
             Bukkit.getPluginManager().callEvent(new NPCCollisionEvent(npc, entity));
+        }
     }
 
     public static NPCPushEvent callPushEvent(NPC npc, Vector vector) {

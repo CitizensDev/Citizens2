@@ -187,6 +187,7 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         NPC npc = npcRegistry.getNPC(event.getEntity());
+
         if (npc == null) {
             if (event instanceof EntityDamageByEntityEvent) {
                 npc = npcRegistry.getNPC(((EntityDamageByEntityEvent) event).getDamager());
