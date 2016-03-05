@@ -273,6 +273,7 @@ public class CitizensNPC extends AbstractNPC {
             }
             navigator.run();
 
+            getEntity().setGlowing(data().get(NPC.GLOWING_METADATA, false));
             if (!getNavigator().isNavigating() && updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
                 updateCounter = 0;
                 if (getEntity() instanceof LivingEntity) {
