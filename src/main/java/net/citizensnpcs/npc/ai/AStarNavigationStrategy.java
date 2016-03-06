@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.ai;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.Settings.Setting;
@@ -22,10 +23,9 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
     private final NPC npc;
     private final NavigatorParameters params;
     private Path plan;
-
     private Vector vector;
 
-    AStarNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
+    public AStarNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
         this.params = params;
         this.destination = dest;
@@ -80,7 +80,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             npc.getEntity().getWorld().playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL,
                     0);
         }
-        if (distance > 0 && dY > 0 && dY < 1 && xzDistance <= 2.75) {
+        if (distance > 0 && dY > NMS.getStepHeight((LivingEntity) npc.getEntity()) && xzDistance <= 2.75) {
             NMS.setShouldJump(npc.getEntity());
         }
         double destX = vector.getX() + 0.5, destZ = vector.getZ() + 0.5;
