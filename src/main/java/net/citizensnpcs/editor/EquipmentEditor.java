@@ -44,24 +44,42 @@ public class EquipmentEditor extends Editor {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(final AsyncPlayerChatEvent event) {
-        if (!event.getMessage().equals("helmet")
-                || !event.getPlayer().hasPermission("citizens.npc.edit.equip.any-helmet"))
-            return;
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                if (!event.getPlayer().isValid())
-                    return;
-                ItemStack hand = event.getPlayer().getItemInHand();
-                if (hand.getType() == Material.AIR || hand.getAmount() <= 0) {
-                    return;
+        if (event.getMessage().equals("helmet")
+                && !event.getPlayer().hasPermission("citizens.npc.edit.equip.any-helmet")) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    if (!event.getPlayer().isValid())
+                        return;
+                    ItemStack hand = event.getPlayer().getInventory().getItemInMainHand();
+                    if (hand.getType() == Material.AIR || hand.getAmount() <= 0) {
+                        return;
+                    }
+                    npc.getTrait(Equipment.class).set(EquipmentSlot.HELMET,
+                            new ItemStack(event.getPlayer().getInventory().getItemInMainHand().getType(), 1));
+                    hand.setAmount(hand.getAmount() - 1);
+                    event.getPlayer().getInventory().setItemInMainHand(hand);
                 }
-                npc.getTrait(Equipment.class).set(EquipmentSlot.HELMET,
-                        new ItemStack(event.getPlayer().getItemInHand().getType(), 1));
-                hand.setAmount(hand.getAmount() - 1);
-                event.getPlayer().setItemInHand(hand);
-            }
-        });
+            });
+        }
+        if (event.getMessage().equals("offhand")
+                && !event.getPlayer().hasPermission("citizens.npc.edit.equip.offhand")) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    if (!event.getPlayer().isValid())
+                        return;
+                    ItemStack hand = event.getPlayer().getInventory().getItemInMainHand();
+                    if (hand.getType() == Material.AIR || hand.getAmount() <= 0) {
+                        return;
+                    }
+                    npc.getTrait(Equipment.class).set(EquipmentSlot.OFF_HAND,
+                            new ItemStack(event.getPlayer().getInventory().getItemInMainHand().getType(), 1));
+                    hand.setAmount(hand.getAmount() - 1);
+                    event.getPlayer().getInventory().setItemInMainHand(hand);
+                }
+            });
+        }
     }
 
     @EventHandler
