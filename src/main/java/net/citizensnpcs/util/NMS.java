@@ -471,7 +471,7 @@ public class NMS {
         // handle.getAttributeInstance(GenericAttributes.d).getValue();
     }
 
-    public static float getStepHeight(LivingEntity entity) {
+    public static float getStepHeight(org.bukkit.entity.Entity entity) {
         return NMS.getHandle(entity).P;
     }
 
