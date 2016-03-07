@@ -286,8 +286,18 @@ public class Equipment extends Trait {
         }
 
         @Override
+        public float getItemInMainHandDropChance() {
+            return 0;
+        }
+
+        @Override
         public ItemStack getItemInOffHand() {
             return null;
+        }
+
+        @Override
+        public float getItemInOffHandDropChance() {
+            return 0;
         }
 
         @Override
@@ -350,7 +360,15 @@ public class Equipment extends Trait {
         }
 
         @Override
+        public void setItemInMainHandDropChance(float arg0) {
+        }
+
+        @Override
         public void setItemInOffHand(ItemStack arg0) {
+        }
+
+        @Override
+        public void setItemInOffHandDropChance(float arg0) {
         }
 
         @Override
@@ -449,8 +467,18 @@ public class Equipment extends Trait {
         }
 
         @Override
+        public float getItemInMainHandDropChance() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public ItemStack getItemInOffHand() {
             return player.getInventory().getItemInOffHand();
+        }
+
+        @Override
+        public float getItemInOffHandDropChance() {
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -514,8 +542,18 @@ public class Equipment extends Trait {
         }
 
         @Override
+        public void setItemInMainHandDropChance(float arg0) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public void setItemInOffHand(ItemStack arg0) {
             player.getInventory().setItemInOffHand(arg0);
+        }
+
+        @Override
+        public void setItemInOffHandDropChance(float arg0) {
+            throw new UnsupportedOperationException();
         }
 
         @Override
