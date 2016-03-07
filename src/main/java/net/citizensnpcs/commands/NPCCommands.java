@@ -542,7 +542,7 @@ public class NPCCommands {
     public void glowing(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         npc.data().setPersistent(NPC.GLOWING_METADATA, !npc.data().get(NPC.GLOWING_METADATA, false));
         boolean glowing = npc.data().get(NPC.GLOWING_METADATA);
-        Messaging.sendTr(sender, glowing ? Messages.GLOWING_SET : Messages.GLOWING_UNSET);
+        Messaging.sendTr(sender, glowing ? Messages.GLOWING_SET : Messages.GLOWING_UNSET, npc.getName());
     }
 
     @Command(
