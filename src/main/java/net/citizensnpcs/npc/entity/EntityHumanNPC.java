@@ -373,9 +373,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             for (EnumItemSlot slot : EnumItemSlot.values()) {
                 packets[i++] = new PacketPlayOutEntityEquipment(getId(), slot, getEquipment(slot));
             }
-            boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
-                    Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-            NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
             NMS.sendPacketsNearby(getBukkitEntity(), current, packets);
         }
     }

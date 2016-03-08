@@ -9,9 +9,12 @@ import java.util.UUID;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.minecraft.server.v1_9_R1.CrashReport;
 import net.minecraft.server.v1_9_R1.CrashReportSystemDetails;
 import net.minecraft.server.v1_9_R1.Entity;
+import net.minecraft.server.v1_9_R1.EntityHuman;
 import net.minecraft.server.v1_9_R1.ReportedException;
 
 public class PlayerUpdateTask extends BukkitRunnable {
@@ -55,9 +58,18 @@ public class PlayerUpdateTask extends BukkitRunnable {
                         throw new ReportedException(crashreport);
                     }
                 }
+                boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get("removefromplayerlist",
+                        Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
                 if (entity.dead) {
                     entity.world.removeEntity(entity);
                     itr.remove();
+                } else if (!removeFromPlayerList) {
+                    itr.remove();
+                    if (!entity.world.players.contains(entity)) {
+                        entity.world.players.add((EntityHuman) entity);
+                    }
+                } else {
+                    entity.world.players.remove(entity);
                 }
             }
         }
