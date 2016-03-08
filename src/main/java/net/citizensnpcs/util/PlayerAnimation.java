@@ -29,6 +29,12 @@ public enum PlayerAnimation {
             playDefaultAnimation(player, radius, 4);
         }
     },
+    ARM_SWING_OFFHAND {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            playDefaultAnimation(player, radius, 3);
+        }
+    },    
     EAT_FOOD {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
