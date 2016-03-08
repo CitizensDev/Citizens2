@@ -38,6 +38,7 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Predicates;
@@ -377,7 +378,7 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = npcRegistry.getNPC(event.getRightClicked());
-        if (npc == null) {
+        if (npc == null || event.getHand() == EquipmentSlot.OFF_HAND) {
             return;
         }
 
