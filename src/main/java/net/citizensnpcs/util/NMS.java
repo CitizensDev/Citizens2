@@ -5,8 +5,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.SocketAddress;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -607,21 +609,27 @@ public class NMS {
         }
     }
 
-    public static void sendPacket(Player player, Packet packet) {
+    public static void sendPacket(Player player, Packet<?> packet) {
         if (packet == null)
             return;
         ((EntityPlayer) NMS.getHandle(player)).playerConnection.sendPacket(packet);
     }
 
-    public static void sendPacketNearby(Player from, Location location, Packet packet) {
-        NMS.sendPacketsNearby(from, location, Arrays.asList(packet), 64);
+    public static void sendPacketNearby(Player from, Location location, Packet<?> packet) {
+        NMS.sendPacketNearby(from, location, packet, 64);
     }
 
-    public static void sendPacketsNearby(Player from, Location location, Collection<Packet> packets) {
+    public static void sendPacketNearby(Player from, Location location, Packet<?> packet, double radius) {
+        List<Packet<?>> list = new ArrayList<Packet<?>>();
+        list.add(packet);
+        NMS.sendPacketsNearby(from, location, list, radius);
+    }
+
+    public static void sendPacketsNearby(Player from, Location location, Collection<Packet<?>> packets) {
         NMS.sendPacketsNearby(from, location, packets, 64);
     }
 
-    public static void sendPacketsNearby(Player from, Location location, Collection<Packet> packets, double radius) {
+    public static void sendPacketsNearby(Player from, Location location, Collection<Packet<?>> packets, double radius) {
         radius *= radius;
         final org.bukkit.World world = location.getWorld();
         for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
@@ -631,13 +639,13 @@ public class NMS {
             if (location.distanceSquared(ply.getLocation(PACKET_CACHE_LOCATION)) > radius) {
                 continue;
             }
-            for (Packet packet : packets) {
+            for (Packet<?> packet : packets) {
                 sendPacket(ply, packet);
             }
         }
     }
 
-    public static void sendPacketsNearby(Player from, Location location, Packet... packets) {
+    public static void sendPacketsNearby(Player from, Location location, Packet<?>... packets) {
         NMS.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
@@ -676,12 +684,12 @@ public class NMS {
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
     }
 
-    public static void sendToOnline(Packet... packets) {
+    public static void sendToOnline(Packet<?>... packets) {
         Validate.notNull(packets, "packets cannot be null");
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player == null || !player.isOnline())
                 continue;
-            for (Packet packet : packets) {
+            for (Packet<?> packet : packets) {
                 sendPacket(player, packet);
             }
         }
