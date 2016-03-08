@@ -1,7 +1,5 @@
 package net.citizensnpcs.util;
 
-import java.util.Arrays;
-
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -23,18 +21,18 @@ public enum PlayerAnimation {
             playDefaultAnimation(player, radius, 0);
         }
     },
+    ARM_SWING_OFFHAND {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            playDefaultAnimation(player, radius, 3);
+        }
+    },
     CRIT {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
             playDefaultAnimation(player, radius, 4);
         }
     },
-    ARM_SWING_OFFHAND {
-        @Override
-        protected void playAnimation(EntityPlayer player, int radius) {
-            playDefaultAnimation(player, radius, 3);
-        }
-    },    
     EAT_FOOD {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
@@ -149,8 +147,7 @@ public enum PlayerAnimation {
         sendPacketNearby(packet, player, radius);
     }
 
-    protected void sendPacketNearby(Packet packet, EntityPlayer player, int radius) {
-        NMS.sendPacketsNearby(player.getBukkitEntity(), player.getBukkitEntity().getLocation(), Arrays.asList(packet),
-                radius);
+    protected void sendPacketNearby(Packet<?> packet, EntityPlayer player, int radius) {
+        NMS.sendPacketNearby(player.getBukkitEntity(), player.getBukkitEntity().getLocation(), packet, radius);
     }
 }

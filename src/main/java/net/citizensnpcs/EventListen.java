@@ -25,6 +25,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -37,8 +38,8 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Predicates;
@@ -268,6 +269,16 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onFishCaught(PlayerFishEvent event) {
+        if (event.getCaught() == null)
+            return;
+        NPC npc = npcRegistry.getNPC(event.getCaught());
+        if (npc == null)
+            return;
+        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+    }
+
     @EventHandler
     public void onMetaDeserialise(CitizensDeserialiseMetaEvent event) {
         if (event.getKey().keyExists("skull")) {
@@ -381,7 +392,6 @@ public class EventListen implements Listener {
         if (npc == null || event.getHand() == EquipmentSlot.OFF_HAND) {
             return;
         }
-
         Player player = event.getPlayer();
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
         Bukkit.getPluginManager().callEvent(rightClickEvent);
