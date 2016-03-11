@@ -27,6 +27,7 @@ import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -47,6 +48,7 @@ import com.mojang.util.UUIDTypeAdapter;
 
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
@@ -62,6 +64,7 @@ import net.minecraft.server.v1_9_R1.DamageSource;
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.EnchantmentManager;
 import net.minecraft.server.v1_9_R1.Entity;
+import net.minecraft.server.v1_9_R1.EntityFishingHook;
 import net.minecraft.server.v1_9_R1.EntityHorse;
 import net.minecraft.server.v1_9_R1.EntityHuman;
 import net.minecraft.server.v1_9_R1.EntityInsentient;
@@ -588,6 +591,19 @@ public class NMS {
         nmsEntity.world.removeEntity(nmsEntity);
     }
 
+    public static void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity) {
+        EntityFishingHook hook = (EntityFishingHook) NMS.getHandle(entity);
+        if (hook.hooked == null)
+            return;
+        NPC npc = npcRegistry.getNPC(hook.hooked.getBukkitEntity());
+        if (npc == null)
+            return;
+        if (npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+            hook.hooked = null;
+            hook.die();
+        }
+    }
+
     @SuppressWarnings("rawtypes")
     public static void replaceTrackerEntry(Player player) {
         WorldServer server = (WorldServer) NMS.getHandle(player).getWorld();
@@ -875,7 +891,6 @@ public class NMS {
     }
 
     private static final float DEFAULT_SPEED = 1F;
-
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
@@ -887,7 +902,9 @@ public class NMS {
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "g");
     private static final Field RABBIT_FIELD = getField(EntityRabbit.class, "bv");
+
     private static final Random RANDOM = Util.getFastRandom();
+
     private static Field SKULL_PROFILE_FIELD;
 
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
