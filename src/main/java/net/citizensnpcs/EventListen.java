@@ -11,6 +11,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,8 +25,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -269,16 +270,6 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onFishCaught(PlayerFishEvent event) {
-        if (event.getCaught() == null)
-            return;
-        NPC npc = npcRegistry.getNPC(event.getCaught());
-        if (npc == null)
-            return;
-        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
-    }
-
     @EventHandler
     public void onMetaDeserialise(CitizensDeserialiseMetaEvent event) {
         if (event.getKey().keyExists("skull")) {
@@ -429,6 +420,18 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onProjectileHit(final ProjectileHitEvent event) {
+        if (!(event.getEntity() instanceof FishHook))
+            return;
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                NMS.removeHookIfNecessary(npcRegistry, (FishHook) event.getEntity());
+            }
+        });
     }
 
     @EventHandler
