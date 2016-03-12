@@ -550,7 +550,7 @@ public class NMS {
     public static void mount(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity passenger) {
         if (NMS.getHandle(passenger) == null)
             return;
-        NMS.getHandle(passenger).startRiding(NMS.getHandle(entity));
+        NMS.getHandle(entity).startRiding(NMS.getHandle(passenger));
     }
 
     public static void openHorseScreen(Horse horse, Player equipper) {

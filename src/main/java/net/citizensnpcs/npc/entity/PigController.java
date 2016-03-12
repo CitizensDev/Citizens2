@@ -176,6 +176,7 @@ public class PigController extends MobEntityController {
             }
             return false; // shouldLeash
         }
+ 
 
         @Override
         protected void L() {
