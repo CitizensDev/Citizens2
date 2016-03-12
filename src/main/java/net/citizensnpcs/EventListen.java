@@ -162,6 +162,7 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onCitizensReload(CitizensReloadEvent event) {
         skinUpdateTracker.reset();
+        toRespawn.clear();
     }
 
     @EventHandler(ignoreCancelled = true)
