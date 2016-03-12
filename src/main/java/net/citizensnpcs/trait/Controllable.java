@@ -78,7 +78,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         if (ownerRequired && !npc.getTrait(Owner.class).isOwnedBy(handle.getBukkitEntity())) {
             return;
         }
-        NMS.mount(player, npc.getEntity());
+        NMS.mount(npc.getEntity(), player);
     }
 
     private net.minecraft.server.v1_9_R1.Entity getHandle() {
