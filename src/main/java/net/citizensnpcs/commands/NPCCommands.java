@@ -832,8 +832,9 @@ public class NPCCommands {
             return;
         }
         boolean success = npc.getTrait(Controllable.class).mount(player);
-        if (!success)
+        if (!success) {
             Messaging.sendTr(player, Messages.FAILED_TO_MOUNT_NPC, npc.getName());
+        }
     }
 
     @Command(
