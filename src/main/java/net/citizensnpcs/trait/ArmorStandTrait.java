@@ -24,6 +24,8 @@ public class ArmorStandTrait extends Trait {
     @Persist
     private EulerAngle leftLeg;
     @Persist
+    private boolean marker;
+    @Persist
     private EulerAngle rightArm;
     @Persist
     private EulerAngle rightLeg;
@@ -76,6 +78,7 @@ public class ArmorStandTrait extends Trait {
             entity.setArms(hasarms);
             entity.setBasePlate(hasbaseplate);
             entity.setSmall(small);
+            entity.setMarker(marker);
         }
     }
 
@@ -91,6 +94,10 @@ public class ArmorStandTrait extends Trait {
         this.hasbaseplate = baseplate;
     }
 
+    public void setMarker(boolean marker) {
+        this.marker = marker;
+    }
+
     public void setSmall(boolean small) {
         this.small = small;
     }
@@ -98,5 +105,4 @@ public class ArmorStandTrait extends Trait {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
-
 }
