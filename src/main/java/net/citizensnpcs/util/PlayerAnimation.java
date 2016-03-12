@@ -1,11 +1,14 @@
 package net.citizensnpcs.util;
 
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.minecraft.server.v1_9_R1.BlockPosition;
 import net.minecraft.server.v1_9_R1.EntityPlayer;
@@ -56,7 +59,17 @@ public enum PlayerAnimation {
         protected void playAnimation(final EntityPlayer player, int radius) {
             player.getBukkitEntity().setMetadata("citizens.sitting",
                     new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+            final NPC holder = CitizensAPI.getNPCRegistry().createNPC(EntityType.SILVERFISH, "");
+            holder.spawn(player.getBukkitEntity().getLocation());
+            holder.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+            holder.data().set(NPC.DEFAULT_PROTECTED_METADATA, true);
             new BukkitRunnable() {
+                @Override
+                public void cancel() {
+                    super.cancel();
+                    holder.destroy();
+                }
+
                 @Override
                 public void run() {
                     if (player.dead || !player.valid
@@ -68,8 +81,9 @@ public enum PlayerAnimation {
                         cancel();
                         return;
                     }
-                    if (!player.passengers.contains(player)) {
-                        NMS.mount(player.getBukkitEntity(), player.getBukkitEntity());
+                    NMS.getHandle((LivingEntity) holder.getEntity()).setInvisible(true);
+                    if (!NMS.getHandle(holder.getEntity()).passengers.contains(player)) {
+                        NMS.mount(holder.getEntity(), player.getBukkitEntity());
                     }
                 }
             }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
