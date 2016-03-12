@@ -2,7 +2,6 @@ package net.citizensnpcs.util;
 
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -10,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.ArmorStandTrait;
 import net.minecraft.server.v1_9_R1.BlockPosition;
 import net.minecraft.server.v1_9_R1.EntityPlayer;
 import net.minecraft.server.v1_9_R1.Packet;
@@ -59,8 +59,16 @@ public enum PlayerAnimation {
         protected void playAnimation(final EntityPlayer player, int radius) {
             player.getBukkitEntity().setMetadata("citizens.sitting",
                     new FixedMetadataValue(CitizensAPI.getPlugin(), true));
-            final NPC holder = CitizensAPI.getNPCRegistry().createNPC(EntityType.SILVERFISH, "");
+            final NPC holder = CitizensAPI.getNPCRegistry().createNPC(EntityType.ARMOR_STAND, "");
             holder.spawn(player.getBukkitEntity().getLocation());
+            ArmorStandTrait trait = holder.getTrait(ArmorStandTrait.class);
+            trait.setGravity(false);
+            trait.setHasArms(false);
+            trait.setHasBaseplate(false);
+            trait.setSmall(true);
+            trait.setMarker(true);
+            trait.setVisible(false);
+            holder.getTrait(ArmorStandTrait.class).setVisible(false);
             holder.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
             holder.data().set(NPC.DEFAULT_PROTECTED_METADATA, true);
             new BukkitRunnable() {
@@ -81,7 +89,6 @@ public enum PlayerAnimation {
                         cancel();
                         return;
                     }
-                    NMS.getHandle((LivingEntity) holder.getEntity()).setInvisible(true);
                     if (!NMS.getHandle(holder.getEntity()).passengers.contains(player)) {
                         NMS.mount(holder.getEntity(), player.getBukkitEntity());
                     }
