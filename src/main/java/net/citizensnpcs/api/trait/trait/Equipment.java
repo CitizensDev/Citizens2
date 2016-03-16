@@ -23,7 +23,7 @@ import net.citizensnpcs.api.util.ItemStorage;
  */
 @TraitName("equipment")
 public class Equipment extends Trait {
-    private final ItemStack[] equipment = new ItemStack[6];
+    private final ItemStack[] equipment = new ItemStack[7];
 
     public Equipment() {
         super("equipment");
@@ -40,14 +40,14 @@ public class Equipment extends Trait {
      * Get an NPC's equipment from the given slot.
      *
      * @param slot
-     *            Slot where the armor is located (0, 1, 2, 3, or 4)
+     *            Slot where the armor is located (0-6)
      * @return ItemStack from the given armor slot
      */
     public ItemStack get(int slot) {
         if (npc.getEntity() instanceof Enderman && slot != 0)
             throw new IllegalArgumentException("Slot must be 0 for enderman");
-        else if (slot < 0 || slot > 5)
-            throw new IllegalArgumentException("Slot must be between 0 and 5");
+        else if (slot < 0 || slot > 6)
+            throw new IllegalArgumentException("Slot must be between 0 and 6");
 
         return equipment[slot];
     }
@@ -74,6 +74,7 @@ public class Equipment extends Trait {
         map.put(EquipmentSlot.LEGGINGS, equipment[3]);
         map.put(EquipmentSlot.BOOTS, equipment[4]);
         map.put(EquipmentSlot.OFF_HAND, equipment[5]);
+        map.put(EquipmentSlot.EXTRA, equipment[6]);
         return map;
     }
 
@@ -107,6 +108,9 @@ public class Equipment extends Trait {
         if (key.keyExists("offhand")) {
             equipment[5] = ItemStorage.loadItemStack(key.getRelative("offhand"));
         }
+        if (key.keyExists("extra")) {
+            equipment[6] = ItemStorage.loadItemStack(key.getRelative("extra"));
+        }
     }
 
     @Override
@@ -128,9 +132,11 @@ public class Equipment extends Trait {
             equip.setLeggings(equipment[3]);
             equip.setBoots(equipment[4]);
             equip.setItemInOffHand(equipment[5]);
-            if (npc.getEntity() instanceof Player) {
-                ((Player) npc.getEntity()).updateInventory();
-            }
+        }
+        if (npc.getEntity() instanceof Player) {
+            ((Player) npc.getEntity()).getInventory()
+                    .setExtraContents(new ItemStack[] { equipment[EquipmentSlot.EXTRA.getIndex()] });
+            ((Player) npc.getEntity()).updateInventory();
         }
     }
 
@@ -142,6 +148,7 @@ public class Equipment extends Trait {
         saveOrRemove(key.getRelative("leggings"), equipment[3]);
         saveOrRemove(key.getRelative("boots"), equipment[4]);
         saveOrRemove(key.getRelative("offhand"), equipment[5]);
+        saveOrRemove(key.getRelative("extra"), equipment[6]);
     }
 
     private void saveOrRemove(DataKey key, ItemStack item) {
@@ -198,14 +205,18 @@ public class Equipment extends Trait {
                 case 5:
                     equip.setItemInOffHand(item);
                     break;
+                case 6:
+                    ((Player) npc.getEntity()).getInventory().setExtraContents(new ItemStack[] { item });
+                    break;
                 default:
-                    throw new IllegalArgumentException("Slot must be between 0 and 5");
+                    throw new IllegalArgumentException("Slot must be between 0 and 6");
             }
-            if (npc.getEntity() instanceof Player) {
-                ((Player) npc.getEntity()).updateInventory();
-            }
+
+            equipment[slot] = item;
         }
-        equipment[slot] = item;
+        if (npc.getEntity() instanceof Player) {
+            ((Player) npc.getEntity()).updateInventory();
+        }
     }
 
     @Override
@@ -385,6 +396,7 @@ public class Equipment extends Trait {
     public enum EquipmentSlot {
         BOOTS(4),
         CHESTPLATE(2),
+        EXTRA(6),
         HAND(0),
         HELMET(1),
         LEGGINGS(3),
