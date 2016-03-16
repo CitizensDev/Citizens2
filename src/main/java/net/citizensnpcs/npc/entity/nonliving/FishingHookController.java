@@ -1,5 +1,12 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftFish;
+import org.bukkit.entity.FishHook;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -10,21 +17,14 @@ import net.minecraft.server.v1_9_R1.EntityFishingHook;
 import net.minecraft.server.v1_9_R1.NBTTagCompound;
 import net.minecraft.server.v1_9_R1.World;
 
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftFish;
-import org.bukkit.entity.Fish;
-import org.bukkit.util.Vector;
-
 public class FishingHookController extends MobEntityController {
     public FishingHookController() {
         super(EntityFishingHookNPC.class);
     }
 
     @Override
-    public Fish getBukkitEntity() {
-        return (Fish) super.getBukkitEntity();
+    public FishHook getBukkitEntity() {
+        return (FishHook) super.getBukkitEntity();
     }
 
     public static class EntityFishingHookNPC extends EntityFishingHook implements NPCHolder {
