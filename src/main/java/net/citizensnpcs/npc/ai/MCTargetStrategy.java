@@ -89,10 +89,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         return aggro;
     }
 
-    private void setPath() {
-        targetNavigator.setPath();
-    }
-
     @Override
     public void stop() {
         targetNavigator.stop();
