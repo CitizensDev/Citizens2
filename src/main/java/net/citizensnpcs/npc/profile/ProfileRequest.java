@@ -105,6 +105,8 @@ public class ProfileRequest {
      *            The result of the request.
      */
     void setResult(final @Nullable GameProfile profile, final ProfileFetchResult result) {
+        if (!CitizensAPI.hasImplementation())
+            return;
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
