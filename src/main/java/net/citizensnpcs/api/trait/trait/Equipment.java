@@ -40,14 +40,14 @@ public class Equipment extends Trait {
      * Get an NPC's equipment from the given slot.
      *
      * @param slot
-     *            Slot where the armor is located (0-6)
+     *            Slot where the armor is located (0-5)
      * @return ItemStack from the given armor slot
      */
     public ItemStack get(int slot) {
         if (npc.getEntity() instanceof Enderman && slot != 0)
             throw new IllegalArgumentException("Slot must be 0 for enderman");
-        else if (slot < 0 || slot > 6)
-            throw new IllegalArgumentException("Slot must be between 0 and 6");
+        else if (slot < 0 || slot > 5)
+            throw new IllegalArgumentException("Slot must be between 0 and 5");
 
         return equipment[slot];
     }
@@ -74,7 +74,6 @@ public class Equipment extends Trait {
         map.put(EquipmentSlot.LEGGINGS, equipment[3]);
         map.put(EquipmentSlot.BOOTS, equipment[4]);
         map.put(EquipmentSlot.OFF_HAND, equipment[5]);
-        map.put(EquipmentSlot.EXTRA, equipment[6]);
         return map;
     }
 
@@ -107,9 +106,6 @@ public class Equipment extends Trait {
         }
         if (key.keyExists("offhand")) {
             equipment[5] = ItemStorage.loadItemStack(key.getRelative("offhand"));
-        }
-        if (key.keyExists("extra")) {
-            equipment[6] = ItemStorage.loadItemStack(key.getRelative("extra"));
         }
     }
 
@@ -148,7 +144,6 @@ public class Equipment extends Trait {
         saveOrRemove(key.getRelative("leggings"), equipment[3]);
         saveOrRemove(key.getRelative("boots"), equipment[4]);
         saveOrRemove(key.getRelative("offhand"), equipment[5]);
-        saveOrRemove(key.getRelative("extra"), equipment[6]);
     }
 
     private void saveOrRemove(DataKey key, ItemStack item) {
@@ -172,7 +167,7 @@ public class Equipment extends Trait {
      * Set the armor from the given slot as the given item.
      *
      * @param slot
-     *            Slot of the armor (must be between 0 and 4)
+     *            Slot of the armor (must be between 0 and 5)
      * @param item
      *            Item to set the armor as
      */
@@ -205,11 +200,8 @@ public class Equipment extends Trait {
                 case 5:
                     equip.setItemInOffHand(item);
                     break;
-                case 6:
-                    ((Player) npc.getEntity()).getInventory().setExtraContents(new ItemStack[] { item });
-                    break;
                 default:
-                    throw new IllegalArgumentException("Slot must be between 0 and 6");
+                    throw new IllegalArgumentException("Slot must be between 0 and 5");
             }
 
             equipment[slot] = item;
