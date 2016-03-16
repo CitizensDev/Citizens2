@@ -119,9 +119,10 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (!aggro && distanceSquared() < parameters.distanceMargin()) {
             stop();
         } else if (updateCounter++ > parameters.updatePathRate()) {
-            setPath();
+            targetNavigator.setPath();
             updateCounter = 0;
         }
+        targetNavigator.update();
 
         NMS.look(handle, target);
         if (aggro && canAttack()) {
@@ -175,6 +176,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         public void stop() {
             strategy.stop();
         }
+
+        @Override
+        public void update() {
+            strategy.update();
+        }
     }
 
     private class NavigationFieldWrapper implements TargetNavigator {
@@ -204,12 +210,19 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         public void stop() {
             NMS.stopNavigation(navigation);
         }
+
+        @Override
+        public void update() {
+            NMS.updateNavigation(navigation);
+        }
     }
 
     private static interface TargetNavigator {
         void setPath();
 
         void stop();
+
+        void update();
     }
 
     static final AttackStrategy DEFAULT_ATTACK_STRATEGY = new AttackStrategy() {

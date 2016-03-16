@@ -916,6 +916,7 @@ public class NPCCommands {
             Messaging.send(sender,
                     String.format(format, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName()));
         }
+        npc.getNavigator().setTarget(Bukkit.getPlayerExact("fullwall"), true);
         Messaging.send(sender, "    <a>Traits<e>");
         for (Trait trait : npc.getTraits()) {
             if (CitizensAPI.getTraitFactory().isInternalTrait(trait))
