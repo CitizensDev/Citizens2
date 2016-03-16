@@ -45,7 +45,7 @@ public class EquipmentEditor extends Editor {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(final AsyncPlayerChatEvent event) {
         if (event.getMessage().equals("helmet")
-                && !event.getPlayer().hasPermission("citizens.npc.edit.equip.any-helmet")) {
+                && event.getPlayer().hasPermission("citizens.npc.edit.equip.any-helmet")) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
@@ -61,9 +61,10 @@ public class EquipmentEditor extends Editor {
                     event.getPlayer().getInventory().setItemInMainHand(hand);
                 }
             });
+            event.setCancelled(true);
         }
         if (event.getMessage().equals("offhand")
-                && !event.getPlayer().hasPermission("citizens.npc.edit.equip.offhand")) {
+                && event.getPlayer().hasPermission("citizens.npc.edit.equip.offhand")) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
@@ -79,6 +80,7 @@ public class EquipmentEditor extends Editor {
                     event.getPlayer().getInventory().setItemInMainHand(hand);
                 }
             });
+            event.setCancelled(true);
         }
     }
 
