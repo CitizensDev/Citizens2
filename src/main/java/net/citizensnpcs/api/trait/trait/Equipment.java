@@ -197,6 +197,7 @@ public class Equipment extends Trait {
                     break;
                 case 5:
                     equip.setItemInOffHand(item);
+                    break;
                 default:
                     throw new IllegalArgumentException("Slot must be between 0 and 5");
             }
