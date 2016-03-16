@@ -53,9 +53,6 @@ public class EquipmentEditor extends Editor {
                 && event.getPlayer().hasPermission("citizens.npc.edit.equip.offhand")) {
             slot = EquipmentSlot.OFF_HAND;
         }
-        if (event.getMessage().equals("extra") && event.getPlayer().hasPermission("citizens.npc.edit.equip.extra")) {
-            slot = EquipmentSlot.EXTRA;
-        }
         if (slot == null) {
             return;
         }
