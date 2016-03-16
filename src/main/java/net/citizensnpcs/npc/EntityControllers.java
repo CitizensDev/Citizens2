@@ -127,6 +127,7 @@ public class EntityControllers {
         TYPES.put(EntityType.IRON_GOLEM, IronGolemController.class);
         TYPES.put(EntityType.ITEM_FRAME, ItemFrameController.class);
         TYPES.put(EntityType.LEASH_HITCH, LeashController.class);
+        TYPES.put(EntityType.LINGERING_POTION, ThrownPotionController.class);
         TYPES.put(EntityType.MAGMA_CUBE, MagmaCubeController.class);
         TYPES.put(EntityType.MINECART, MinecartRideableController.class);
         TYPES.put(EntityType.MINECART_CHEST, MinecartChestController.class);
