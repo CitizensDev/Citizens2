@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -35,6 +36,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
+import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
@@ -76,6 +78,7 @@ import net.minecraft.server.v1_9_R1.EntityTameableAnimal;
 import net.minecraft.server.v1_9_R1.EntityTracker;
 import net.minecraft.server.v1_9_R1.EntityTrackerEntry;
 import net.minecraft.server.v1_9_R1.EntityTypes;
+import net.minecraft.server.v1_9_R1.EnumChatFormat;
 import net.minecraft.server.v1_9_R1.GenericAttributes;
 import net.minecraft.server.v1_9_R1.MathHelper;
 import net.minecraft.server.v1_9_R1.MobEffects;
@@ -84,6 +87,7 @@ import net.minecraft.server.v1_9_R1.NetworkManager;
 import net.minecraft.server.v1_9_R1.Packet;
 import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_9_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_9_R1.ScoreboardTeam;
 import net.minecraft.server.v1_9_R1.Vec3D;
 import net.minecraft.server.v1_9_R1.World;
 import net.minecraft.server.v1_9_R1.WorldServer;
@@ -720,8 +724,7 @@ public class NMS {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setMoveDestination(x, y, z, speed);
         }
-    }
-
+    } 
     public static void setHeadYaw(Entity en, float yaw) {
         if (!(en instanceof EntityLiving))
             return;
@@ -890,6 +893,7 @@ public class NMS {
         }
     }
 
+    private static Field CRAFT_TEAM_FIELD;
     private static final float DEFAULT_SPEED = 1F;
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
@@ -902,11 +906,8 @@ public class NMS {
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = getField(NavigationAbstract.class, "g");
     private static final Field RABBIT_FIELD = getField(EntityRabbit.class, "bv");
-
     private static final Random RANDOM = Util.getFastRandom();
-
     private static Field SKULL_PROFILE_FIELD;
-
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
 
     static {

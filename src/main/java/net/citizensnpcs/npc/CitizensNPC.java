@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
@@ -15,7 +16,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scoreboard.NameTagVisibility;
+import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.Team.Option;
+import org.bukkit.scoreboard.Team.OptionStatus;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -277,20 +280,21 @@ public class CitizensNPC extends AbstractNPC {
             if (!getNavigator().isNavigating() && updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
                 updateCounter = 0;
                 if (getEntity() instanceof LivingEntity) {
+                    OptionStatus nameVisibility = OptionStatus.NEVER;
                     if (!getEntity().isCustomNameVisible()) {
-                        if (getEntity() instanceof Player && data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
-                            String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-                            Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)
-                                    .setNameTagVisibility(NameTagVisibility.NEVER);
-                        }
                         getEntity().setCustomName("");
                     } else {
-                        if (getEntity() instanceof Player && data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
-                            String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-                            Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)
-                                    .setNameTagVisibility(NameTagVisibility.ALWAYS);
-                        }
+                        nameVisibility = OptionStatus.ALWAYS;
                         getEntity().setCustomName(getFullName());
+                    }
+                    if (getEntity() instanceof Player && data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
+                        String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+                        Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
+                        team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility);
+                        if (data().has(NPC.GLOWING_COLOR_METADATA) && team.getPrefix() == null) {
+                            team.setPrefix(
+                                    ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA)).toString());
+                        }
                     }
                 }
                 Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
