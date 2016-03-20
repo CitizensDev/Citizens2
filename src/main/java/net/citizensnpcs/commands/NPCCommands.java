@@ -256,8 +256,8 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "collidable",
-            desc = "Copies an NPC",
-            modifiers = { "copy" },
+            desc = "Toggles an NPC's collidability",
+            modifiers = { "collidable" },
             min = 1,
             max = 1,
             permission = "citizens.npc.collidable")

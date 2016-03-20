@@ -48,7 +48,6 @@ public class PlayerNavigation extends NavigationAbstract {
         this.e = new PlayerPathfinderNormal();
         this.e.a(true);
         this.s = new PlayerPathfinder(this.e);
-        this.b.C().a(this);
     }
 
     @Override
