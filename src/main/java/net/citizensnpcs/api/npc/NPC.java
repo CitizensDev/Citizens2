@@ -277,10 +277,12 @@ public interface NPC extends Agent, Cloneable {
     public void teleport(Location location, TeleportCause cause);
 
     public static final String AMBIENT_SOUND_METADATA = "ambient-sound";
+    public static final String COLLIDABLE_METADATA = "collidable";
     public static final String DAMAGE_OTHERS_METADATA = "damage-others";
     public static final String DEATH_SOUND_METADATA = "death-sound";
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
     public static final String FLYABLE_METADATA = "flyable";
+    public static final String GLOWING_COLOR_METADATA = "glowing-color";
     public static final String GLOWING_METADATA = "glowing";
     public static final String HURT_SOUND_METADATA = "hurt-sound";
     public static final String ITEM_DATA_METADATA = "item-type-data";
