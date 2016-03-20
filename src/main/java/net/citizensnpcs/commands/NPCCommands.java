@@ -255,6 +255,22 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "collidable",
+            desc = "Copies an NPC",
+            modifiers = { "copy" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.collidable")
+    @Requirements(ownership = true, selected = true, types = { EntityType.PLAYER })
+    public void collidable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        npc.data().setPersistent(NPC.COLLIDABLE_METADATA, !npc.data().get(NPC.COLLIDABLE_METADATA, true));
+        Messaging.sendTr(sender,
+                npc.data().get(NPC.COLLIDABLE_METADATA) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
+                npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "controllable|control (-m(ount),-y,-n,-o)",
             desc = "Toggles whether the NPC can be ridden and controlled",
             modifiers = { "controllable", "control" },
