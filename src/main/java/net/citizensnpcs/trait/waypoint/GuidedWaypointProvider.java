@@ -13,6 +13,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
@@ -113,7 +114,7 @@ public class GuidedWaypointProvider implements WaypointProvider {
             public void onPlayerInteract(PlayerInteractEvent event) {
                 if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL
                         || event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK
-                        || event.getClickedBlock() == null)
+                        || event.getClickedBlock() == null || event.getHand() == EquipmentSlot.OFF_HAND)
                     return;
                 if (event.getPlayer().getWorld() != npc.getEntity().getWorld())
                     return;
@@ -133,7 +134,8 @@ public class GuidedWaypointProvider implements WaypointProvider {
 
             @EventHandler(ignoreCancelled = true)
             public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-                if (!event.getRightClicked().hasMetadata("citizens.waypointhashcode"))
+                if (!event.getRightClicked().hasMetadata("citizens.waypointhashcode")
+                        || event.getHand() == EquipmentSlot.OFF_HAND)
                     return;
                 int hashcode = event.getRightClicked().getMetadata("citizens.waypointhashcode").get(0).asInt();
                 Iterator<Waypoint> itr = Iterables.concat(available, helpers).iterator();

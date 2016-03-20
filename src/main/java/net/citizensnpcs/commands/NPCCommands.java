@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -548,7 +549,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "glowing",
+            usage = "glowing --color [minecraft chat color]",
             desc = "Toggles an NPC's glowing status",
             modifiers = { "glowing" },
             min = 1,
@@ -556,6 +557,12 @@ public class NPCCommands {
             permission = "citizens.npc.glowing")
     @Requirements(selected = true, ownership = true)
     public void glowing(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (args.hasValueFlag("color")) {
+            ChatColor chatColor = Util.matchEnum(ChatColor.values(), args.getFlag("color"));
+            if (chatColor == null || !(npc.getEntity() instanceof Player))
+                throw new CommandException();
+            npc.data().setPersistent(NPC.GLOWING_COLOR_METADATA, chatColor.name());
+        }
         npc.data().setPersistent(NPC.GLOWING_METADATA, !npc.data().get(NPC.GLOWING_METADATA, false));
         boolean glowing = npc.data().get(NPC.GLOWING_METADATA);
         Messaging.sendTr(sender, glowing ? Messages.GLOWING_SET : Messages.GLOWING_UNSET, npc.getName());

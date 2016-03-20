@@ -478,8 +478,10 @@ public class EventListen implements Listener {
                 }
                 return;
             }
-            storeForRespawn(npc);
-            Messaging.debug("Despawned", npc.getId() + "due to world unload at", event.getWorld().getName());
+            if (npc.isSpawned()) {
+                storeForRespawn(npc);
+                Messaging.debug("Despawned", npc.getId() + "due to world unload at", event.getWorld().getName());
+            }
         }
     }
 
