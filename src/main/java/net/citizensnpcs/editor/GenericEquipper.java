@@ -31,6 +31,7 @@ public class GenericEquipper implements Equipper {
                     slot = EquipmentSlot.HELMET;
                 }
                 break;
+            case ELYTRA:
             case LEATHER_CHESTPLATE:
             case CHAINMAIL_CHESTPLATE:
             case GOLD_CHESTPLATE:
