@@ -291,9 +291,14 @@ public class CitizensNPC extends AbstractNPC {
                         String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
                         Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
                         team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility);
-                        if (data().has(NPC.GLOWING_COLOR_METADATA) && team.getPrefix() == null) {
-                            team.setPrefix(
-                                    ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA)).toString());
+                        if (data().has(NPC.GLOWING_COLOR_METADATA)) {
+                            if (team.getPrefix() == null || team.getPrefix().length() == 0
+                                    || (data().has("previous-glowing-color")
+                                            && !team.getPrefix().equals(data().get("previous-glowing-color")))) {
+                                team.setPrefix(
+                                        ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA)).toString());
+                                data().set("previous-glowing-color", team.getPrefix());
+                            }
                         }
                     }
                 }
