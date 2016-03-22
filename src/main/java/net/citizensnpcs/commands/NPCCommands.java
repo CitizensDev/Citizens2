@@ -559,9 +559,16 @@ public class NPCCommands {
     public void glowing(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("color")) {
             ChatColor chatColor = Util.matchEnum(ChatColor.values(), args.getFlag("color"));
-            if (chatColor == null || !(npc.getEntity() instanceof Player))
+            if (!(npc.getEntity() instanceof Player))
                 throw new CommandException();
-            npc.data().setPersistent(NPC.GLOWING_COLOR_METADATA, chatColor.name());
+            if (chatColor == null) {
+                npc.data().remove(NPC.GLOWING_COLOR_METADATA);
+            } else {
+                npc.data().setPersistent(NPC.GLOWING_COLOR_METADATA, chatColor.name());
+            }
+            Messaging.sendTr(sender, Messages.GLOWING_COLOR_SET, npc.getName(),
+                    chatColor == null ? ChatColor.WHITE + "white" : chatColor + Util.prettyEnum(chatColor));
+            return;
         }
         npc.data().setPersistent(NPC.GLOWING_METADATA, !npc.data().get(NPC.GLOWING_METADATA, false));
         boolean glowing = npc.data().get(NPC.GLOWING_METADATA);
