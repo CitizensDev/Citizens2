@@ -46,8 +46,9 @@ public class Inventory extends Trait {
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
         ItemStack[] contents = new ItemStack[72];
-        for (DataKey slotKey : key.getIntegerSubKeys())
+        for (DataKey slotKey : key.getIntegerSubKeys()) {
             contents[Integer.parseInt(slotKey.name())] = ItemStorage.loadItemStack(slotKey);
+        }
         return contents;
     }
 

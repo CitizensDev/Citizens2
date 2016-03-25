@@ -23,7 +23,7 @@ import net.citizensnpcs.api.util.ItemStorage;
  */
 @TraitName("equipment")
 public class Equipment extends Trait {
-    private final ItemStack[] equipment = new ItemStack[7];
+    private final ItemStack[] equipment = new ItemStack[6];
 
     public Equipment() {
         super("equipment");
@@ -130,8 +130,6 @@ public class Equipment extends Trait {
             equip.setItemInOffHand(equipment[5]);
         }
         if (npc.getEntity() instanceof Player) {
-            ((Player) npc.getEntity()).getInventory()
-                    .setExtraContents(new ItemStack[] { equipment[EquipmentSlot.EXTRA.getIndex()] });
             ((Player) npc.getEntity()).updateInventory();
         }
     }
@@ -388,7 +386,6 @@ public class Equipment extends Trait {
     public enum EquipmentSlot {
         BOOTS(4),
         CHESTPLATE(2),
-        EXTRA(6),
         HAND(0),
         HELMET(1),
         LEGGINGS(3),
