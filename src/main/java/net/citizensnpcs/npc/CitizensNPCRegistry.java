@@ -45,6 +45,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         Preconditions.checkNotNull(name, "name cannot be null");
         Preconditions.checkNotNull(type, "type cannot be null");
         CitizensNPC npc = getByType(type, uuid, id, name);
+
         if (npc == null)
             throw new IllegalStateException("Could not create NPC.");
         npcs.put(npc.getId(), npc);

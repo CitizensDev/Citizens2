@@ -12,6 +12,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.minecraft.server.v1_9_R1.BlockPosition;
 import net.minecraft.server.v1_9_R1.EntityPlayer;
+import net.minecraft.server.v1_9_R1.EnumHand;
 import net.minecraft.server.v1_9_R1.Packet;
 import net.minecraft.server.v1_9_R1.PacketPlayOutAnimation;
 import net.minecraft.server.v1_9_R1.PacketPlayOutBed;
@@ -112,10 +113,18 @@ public enum PlayerAnimation {
                     radius);
         }
     },
-    START_USE_ITEM {
+    START_USE_MAINHAND_ITEM {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            player.f(true);
+            player.c(EnumHand.MAIN_HAND);
+            sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
+                    radius);
+        }
+    },
+    START_USE_OFFHAND_ITEM {
+        @Override
+        protected void playAnimation(EntityPlayer player, int radius) {
+            player.c(EnumHand.OFF_HAND);
             sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
                     radius);
         }
