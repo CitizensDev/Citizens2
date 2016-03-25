@@ -154,7 +154,7 @@ public enum PlayerAnimation {
     STOP_USE_ITEM {
         @Override
         protected void playAnimation(EntityPlayer player, int radius) {
-            player.f(false);
+            player.cz();
             sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
                     radius);
         }
