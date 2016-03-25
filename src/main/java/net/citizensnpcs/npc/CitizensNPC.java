@@ -287,8 +287,9 @@ public class CitizensNPC extends AbstractNPC {
                         nameVisibility = OptionStatus.ALWAYS;
                         getEntity().setCustomName(getFullName());
                     }
-                    if (getEntity() instanceof Player && data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
-                        String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+                    String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+                    if (getEntity() instanceof Player
+                            && Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName) != null) {
                         Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
                         team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility);
                         if (data().has(NPC.GLOWING_COLOR_METADATA)) {
