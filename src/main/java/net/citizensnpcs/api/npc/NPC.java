@@ -281,6 +281,7 @@ public interface NPC extends Agent, Cloneable {
     public static final String DAMAGE_OTHERS_METADATA = "damage-others";
     public static final String DEATH_SOUND_METADATA = "death-sound";
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
+    public static final String DROPS_ITEMS_METADATA = "drops-items";
     public static final String FLYABLE_METADATA = "flyable";
     public static final String GLOWING_COLOR_METADATA = "glowing-color";
     public static final String GLOWING_METADATA = "glowing";

@@ -2,9 +2,13 @@ package net.citizensnpcs.api.trait.trait;
 
 import java.util.Arrays;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -19,6 +23,7 @@ import net.citizensnpcs.api.util.ItemStorage;
 @TraitName("inventory")
 public class Inventory extends Trait {
     private ItemStack[] contents;
+    private org.bukkit.inventory.Inventory view;
 
     public Inventory() {
         super("inventory");
@@ -34,6 +39,17 @@ public class Inventory extends Trait {
         return contents;
     }
 
+    public org.bukkit.inventory.Inventory getInventoryView() {
+        return view;
+    }
+
+    @EventHandler
+    public void inventoryEvent(InventoryEvent event) {
+        if (view != null && event.getInventory().equals(view)) {
+            contents = event.getInventory().getContents();
+        }
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         contents = parseContents(key);
@@ -42,6 +58,9 @@ public class Inventory extends Trait {
     @Override
     public void onSpawn() {
         setContents(contents);
+        view = Bukkit.createInventory(
+                npc.getEntity() instanceof InventoryHolder ? ((InventoryHolder) npc.getEntity()) : null,
+                contents.length);
     }
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
@@ -80,15 +99,25 @@ public class Inventory extends Trait {
      */
     public void setContents(ItemStack[] contents) {
         this.contents = Arrays.copyOf(contents, 72);
+        org.bukkit.inventory.Inventory dest = null;
+        int maxCopySize = -1;
         if (npc.getEntity() instanceof Player) {
-            ((Player) npc.getEntity()).getInventory().setContents(Arrays.copyOf(this.contents, 36));
+            dest = ((Player) npc.getEntity()).getInventory();
+            maxCopySize = 36;
         } else if (npc.getEntity() instanceof StorageMinecart) {
-            ((StorageMinecart) npc.getEntity()).getInventory().setContents(this.contents);
+            dest = ((StorageMinecart) npc.getEntity()).getInventory();
         } else if (npc.getEntity() instanceof Horse) {
-            ((Horse) npc.getEntity()).getInventory()
-                    .setContents(Arrays.copyOf(this.contents, ((Horse) npc.getEntity()).getInventory().getSize()));
-            ((Horse) npc.getEntity()).getInventory().setSaddle(this.contents[0]);
-            ((Horse) npc.getEntity()).getInventory().setArmor(this.contents[1]);
+            dest = ((Horse) npc.getEntity()).getInventory();
+        }
+
+        if (dest == null)
+            return;
+        if (maxCopySize == -1) {
+            maxCopySize = dest.getSize();
+        }
+
+        for (int i = 0; i < maxCopySize; i++) {
+            dest.setItem(i, contents[i]);
         }
     }
 
