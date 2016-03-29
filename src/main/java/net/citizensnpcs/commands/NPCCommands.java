@@ -679,8 +679,8 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "inventory",
-            desc = "Toggles gravity",
-            modifiers = { "gravity" },
+            desc = "Show's an NPC's inventory",
+            modifiers = { "inventory" },
             min = 1,
             max = 1,
             permission = "citizens.npc.inventory")
