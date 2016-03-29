@@ -1,10 +1,10 @@
 package net.citizensnpcs.trait.waypoint;
 
+import org.bukkit.command.CommandSender;
+
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persistable;
-
-import org.bukkit.command.CommandSender;
 
 public interface WaypointProvider extends Persistable {
     /**
@@ -44,4 +44,8 @@ public interface WaypointProvider extends Persistable {
      *            Whether to pause waypoint execution.
      */
     public void setPaused(boolean paused);
+
+    public static interface EnumerableWaypointProvider extends WaypointProvider {
+        public Iterable<Waypoint> waypoints();
+    }
 }

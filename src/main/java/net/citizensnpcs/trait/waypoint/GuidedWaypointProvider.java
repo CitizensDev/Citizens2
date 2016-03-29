@@ -40,10 +40,11 @@ import net.citizensnpcs.api.util.prtree.DistanceResult;
 import net.citizensnpcs.api.util.prtree.PRTree;
 import net.citizensnpcs.api.util.prtree.Region3D;
 import net.citizensnpcs.api.util.prtree.SimplePointND;
+import net.citizensnpcs.trait.waypoint.WaypointProvider.EnumerableWaypointProvider;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
-public class GuidedWaypointProvider implements WaypointProvider {
+public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     private final List<Waypoint> available = Lists.newArrayList();
     private GuidedAIGoal currentGoal;
     private final List<Waypoint> helpers = Lists.newArrayList();
@@ -232,6 +233,11 @@ public class GuidedWaypointProvider implements WaypointProvider {
     @Override
     public void setPaused(boolean paused) {
         this.paused = paused;
+    }
+
+    @Override
+    public Iterable<Waypoint> waypoints() {
+        return Iterables.concat(available, helpers);
     }
 
     private class GuidedAIGoal implements Goal {

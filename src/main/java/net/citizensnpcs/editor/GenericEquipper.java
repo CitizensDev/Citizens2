@@ -61,7 +61,7 @@ public class GenericEquipper implements Equipper {
                 break;
             case AIR:
                 if (equipper.isSneaking()) {
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 6; i++) {
                         if (trait.get(i) != null && trait.get(i).getType() != Material.AIR) {
                             equipper.getWorld().dropItemNaturally(toEquip.getEntity().getLocation(), trait.get(i));
                             trait.set(i, null);

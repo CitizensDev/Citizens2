@@ -36,11 +36,12 @@ import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.trait.waypoint.WaypointProvider.EnumerableWaypointProvider;
 import net.citizensnpcs.trait.waypoint.triggers.TriggerEditPrompt;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
-public class LinearWaypointProvider implements WaypointProvider {
+public class LinearWaypointProvider implements EnumerableWaypointProvider {
     private LinearWaypointGoal currentGoal;
     private NPC npc;
     private final List<Waypoint> waypoints = Lists.newArrayList();
@@ -84,6 +85,13 @@ public class LinearWaypointProvider implements WaypointProvider {
         return new LinearWaypointEditor((Player) sender);
     }
 
+    public Waypoint getCurrentWaypoint() {
+        if (currentGoal != null && currentGoal.currentDestination != null) {
+            return currentGoal.currentDestination;
+        }
+        return null;
+    }
+
     @Override
     public boolean isPaused() {
         return currentGoal.isPaused();
@@ -125,6 +133,11 @@ public class LinearWaypointProvider implements WaypointProvider {
     @Override
     public void setPaused(boolean paused) {
         currentGoal.setPaused(paused);
+    }
+
+    @Override
+    public Iterable<Waypoint> waypoints() {
+        return waypoints;
     }
 
     private final class LinearWaypointEditor extends WaypointEditor {
