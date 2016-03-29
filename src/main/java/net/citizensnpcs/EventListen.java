@@ -227,6 +227,11 @@ public class EventListen implements Listener {
         if (npc == null) {
             return;
         }
+
+        if (!npc.data().get(NPC.DROPS_ITEMS_METADATA, false)) {
+            event.getDrops().clear();
+        }
+
         final Location location = npc.getEntity().getLocation();
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);

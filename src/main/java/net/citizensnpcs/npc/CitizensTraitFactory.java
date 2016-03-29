@@ -30,6 +30,7 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
@@ -72,6 +73,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(ScriptTrait.class));
         registerTrait(TraitInfo.create(SheepTrait.class));
         registerTrait(TraitInfo.create(SkinLayers.class));
+        registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(NPCSkeletonType.class));
         registerTrait(TraitInfo.create(SlimeSize.class));
         registerTrait(TraitInfo.create(Spawned.class));

@@ -53,6 +53,7 @@ import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
@@ -673,6 +674,18 @@ public class NPCCommands {
             permission = "citizens.npc.id")
     public void id(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, npc.getId());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "inventory",
+            desc = "Toggles gravity",
+            modifiers = { "gravity" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.inventory")
+    public void inventory(CommandContext args, CommandSender sender, NPC npc) {
+        ((Player) sender).openInventory(npc.getTrait(Inventory.class).getInventoryView());
     }
 
     @Command(
