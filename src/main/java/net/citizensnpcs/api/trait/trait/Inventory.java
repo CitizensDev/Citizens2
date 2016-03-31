@@ -58,9 +58,13 @@ public class Inventory extends Trait {
     @Override
     public void onSpawn() {
         setContents(contents);
-        view = Bukkit.createInventory(
-                npc.getEntity() instanceof InventoryHolder ? ((InventoryHolder) npc.getEntity()) : null,
-                contents.length);
+        view = Bukkit
+                .createInventory(
+                        npc.getEntity() instanceof InventoryHolder ? ((InventoryHolder) npc.getEntity()) : null,
+                        npc.getEntity() instanceof Player ? 36
+                                : npc.getEntity() instanceof InventoryHolder
+                                        ? ((InventoryHolder) npc.getEntity()).getInventory().getSize()
+                                        : contents.length);
     }
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
