@@ -737,6 +737,11 @@ public class NMS {
         handle.aP = yaw;
     }
 
+    public static void setKnockbackResistance(org.bukkit.entity.LivingEntity entity, double d) {
+        EntityLiving handle = NMS.getHandle(entity);
+        handle.getAttributeInstance(GenericAttributes.c).setValue(d);
+    }
+
     public static void setProfile(SkullMeta meta, GameProfile profile) {
         if (SKULL_PROFILE_FIELD == null) {
             try {
@@ -894,7 +899,6 @@ public class NMS {
         }
     }
 
-    private static Field CRAFT_TEAM_FIELD;
     private static final float DEFAULT_SPEED = 1F;
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
@@ -909,7 +913,6 @@ public class NMS {
     private static final Field RABBIT_FIELD = getField(EntityRabbit.class, "bv");
     private static final Random RANDOM = Util.getFastRandom();
     private static Field SKULL_PROFILE_FIELD;
-
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
 
     static {
