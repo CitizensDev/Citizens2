@@ -34,11 +34,8 @@ public class HumanController extends AbstractEntityController {
     protected Entity createEntity(final Location at, final NPC npc) {
         final WorldServer nmsWorld = ((CraftWorld) at.getWorld()).getHandle();
         String coloredName = Colorizer.parseColors(npc.getFullName());
-        if (coloredName.length() > 16) {
-            coloredName = coloredName.substring(0, 16);
-        }
 
-        String name, prefix = null, suffix = null;
+        String name = coloredName, prefix = null, suffix = null;
         if (coloredName.length() > 16) {
             prefix = coloredName.substring(0, 16);
             if (coloredName.length() > 30) {
@@ -66,7 +63,9 @@ public class HumanController extends AbstractEntityController {
                     name = name.substring(0, 16);
                 }
             }
+            coloredName = coloredName.substring(0, 16);
         }
+
         final String prefixCapture = prefix, suffixCapture = suffix;
 
         UUID uuid = npc.getUniqueId();
@@ -77,7 +76,7 @@ public class HumanController extends AbstractEntityController {
             uuid = new UUID(msb, uuid.getLeastSignificantBits());
         }
 
-        GameProfile profile = new GameProfile(uuid, coloredName);
+        GameProfile profile = new GameProfile(uuid, name);
 
         final EntityHumanNPC handle = new EntityHumanNPC(nmsWorld.getServer().getServer(), nmsWorld, profile,
                 new PlayerInteractManager(nmsWorld), npc);
