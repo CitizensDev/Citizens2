@@ -66,6 +66,10 @@ public class EquipmentEditor extends Editor {
                 if (hand.getType() == Material.AIR || hand.getAmount() <= 0) {
                     return;
                 }
+                ItemStack old = npc.getTrait(Equipment.class).get(finalSlot);
+                if (old != null && old.getType() != Material.AIR) {
+                    event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), old);
+                }
                 npc.getTrait(Equipment.class).set(finalSlot,
                         new ItemStack(event.getPlayer().getInventory().getItemInMainHand().getType(), 1));
                 hand.setAmount(hand.getAmount() - 1);
