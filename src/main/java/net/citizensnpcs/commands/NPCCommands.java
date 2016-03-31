@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -862,13 +863,27 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "mount",
+            usage = "mount (--onnpc <npc id>)",
             desc = "Mounts a controllable NPC",
             modifiers = { "mount" },
             min = 1,
             max = 1,
             permission = "citizens.npc.controllable")
-    public void mount(CommandContext args, Player player, NPC npc) {
+    public void mount(CommandContext args, Player player, NPC npc) throws CommandException {
+        if (args.hasValueFlag("onnpc")) {
+            NPC mount;
+            try {
+                UUID uuid = UUID.fromString(args.getFlag("onnpc"));
+                mount = CitizensAPI.getNPCRegistry().getByUniqueId(uuid);
+            } catch (IllegalArgumentException ex) {
+                mount = CitizensAPI.getNPCRegistry().getById(args.getFlagInteger("onnpc"));
+            }
+            if (mount == null || !mount.isSpawned()) {
+                throw new CommandException(Messaging.tr(Messages.MOUNT_NPC_MUST_BE_SPAWNED, args.getFlag("onnpc")));
+            }
+            NMS.mount(mount.getEntity(), npc.getEntity());
+            return;
+        }
         boolean enabled = npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled();
         if (!enabled) {
             Messaging.sendTr(player, Messages.NPC_NOT_CONTROLLABLE, npc.getName());

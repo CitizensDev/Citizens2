@@ -141,6 +141,7 @@ public class Messages {
     public static final String MISSING_TRANSLATIONS = "citizens.notifications.missing-translations";
     public static final String MOBTYPE_CANNOT_BE_AGED = "citizens.commands.npc.age.cannot-be-aged";
     public static final String MONEY_WITHDRAWN = "citizens.economy.money-withdrawn";
+    public static final String MOUNT_NPC_MUST_BE_SPAWNED = "citizens.commands.npc.mount.must-be-spawned";
     public static final String MOVETO_FORMAT = "citizens.commands.npc.moveto.format";
     public static final String MOVETO_TELEPORTED = "citizens.commands.npc.moveto.teleported";
     public static final String NAMEPLATE_VISIBILITY_TOGGLED = "citizens.commands.npc.nameplate.toggled";
