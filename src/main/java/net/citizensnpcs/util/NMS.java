@@ -365,6 +365,11 @@ public class NMS {
         entity.aG += entity.aF;
     }
 
+    public static org.bukkit.entity.Entity getBukkitVehicle(org.bukkit.entity.Entity entity) {
+        Entity vehicle = getVehicle(entity);
+        return vehicle == null ? null : vehicle.getBukkitEntity();
+    }
+
     @SuppressWarnings("deprecation")
     private static Constructor<?> getCustomEntityConstructor(Class<?> clazz, EntityType type)
             throws SecurityException, NoSuchMethodException {
@@ -508,6 +513,10 @@ public class NMS {
 
     public static boolean isNavigationFinished(NavigationAbstract navigation) {
         return navigation.n();
+    }
+
+    public static boolean isPassenger(org.bukkit.entity.Entity entity) {
+        return NMS.getHandle(entity).isPassenger();
     }
 
     public static void loadPlugins() {
