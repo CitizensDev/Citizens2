@@ -1,14 +1,18 @@
 package net.citizensnpcs.api.trait.trait;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -24,6 +28,7 @@ import net.citizensnpcs.api.util.ItemStorage;
 public class Inventory extends Trait {
     private ItemStack[] contents;
     private org.bukkit.inventory.Inventory view;
+    private final Set<InventoryView> views = new HashSet<InventoryView>();
 
     public Inventory() {
         super("inventory");
@@ -39,15 +44,15 @@ public class Inventory extends Trait {
         return contents;
     }
 
-    public org.bukkit.inventory.Inventory getInventoryView() {
-        return view;
-    }
-
-    @EventHandler
-    public void inventoryEvent(InventoryEvent event) {
-        if (view != null && event.getInventory().equals(view)) {
-            contents = event.getInventory().getContents();
+    @EventHandler(ignoreCancelled = true)
+    public void inventoryCloseEvent(InventoryCloseEvent event) {
+        if (!views.contains(event.getView()))
+            return;
+        ItemStack[] contents = event.getInventory().getContents();
+        for (int i = 0; i < contents.length; i++) {
+            this.contents[i] = contents[i];
         }
+        views.remove(event.getView());
     }
 
     @Override
@@ -58,13 +63,17 @@ public class Inventory extends Trait {
     @Override
     public void onSpawn() {
         setContents(contents);
-        view = Bukkit
-                .createInventory(
-                        npc.getEntity() instanceof InventoryHolder ? ((InventoryHolder) npc.getEntity()) : null,
-                        npc.getEntity() instanceof Player ? 36
-                                : npc.getEntity() instanceof InventoryHolder
-                                        ? ((InventoryHolder) npc.getEntity()).getInventory().getSize()
-                                        : contents.length);
+        int size = npc.getEntity() instanceof Player ? 36
+                : npc.getEntity() instanceof InventoryHolder
+                        ? ((InventoryHolder) npc.getEntity()).getInventory().getSize() : contents.length;
+        size += size % 9; // round up to nearest multiple of 9
+        view = Bukkit.createInventory(
+                npc.getEntity() instanceof InventoryHolder ? ((InventoryHolder) npc.getEntity()) : null, size,
+                npc.getName() + "'s Inventory");
+    }
+
+    public void openInventory(Player sender) {
+        views.add(sender.openInventory(view));
     }
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
@@ -79,6 +88,14 @@ public class Inventory extends Trait {
     public void run() {
         if (npc.getEntity() instanceof Player) {
             contents = ((Player) npc.getEntity()).getInventory().getContents();
+        }
+        Iterator<InventoryView> itr = views.iterator();
+        while (itr.hasNext()) {
+            InventoryView iview = itr.next();
+            if (!iview.getPlayer().isValid()) {
+                iview.close();
+                itr.remove();
+            }
         }
     }
 
