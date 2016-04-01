@@ -686,7 +686,7 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.inventory")
     public void inventory(CommandContext args, CommandSender sender, NPC npc) {
-        ((Player) sender).openInventory(npc.getTrait(Inventory.class).getInventoryView());
+        npc.getTrait(Inventory.class).openInventory((Player) sender);
     }
 
     @Command(
@@ -880,6 +880,9 @@ public class NPCCommands {
             }
             if (mount == null || !mount.isSpawned()) {
                 throw new CommandException(Messaging.tr(Messages.MOUNT_NPC_MUST_BE_SPAWNED, args.getFlag("onnpc")));
+            }
+            if (mount.equals(npc)) {
+                throw new CommandException();
             }
             NMS.mount(mount.getEntity(), npc.getEntity());
             return;
