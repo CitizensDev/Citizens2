@@ -136,10 +136,12 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public void run() {
+        updateMountedStatus();
         if (!isNavigating() || !npc.isSpawned() || paused)
             return;
         if (updateStationaryStatus())
             return;
+
         updatePathfindingRange();
         boolean finished = executing.update();
         if (!finished) {
@@ -272,6 +274,26 @@ public class CitizensNavigator implements Navigator, Runnable {
             NMS.updateNavigationWorld(npc.getEntity(), npc.getEntity().getWorld());
         }
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
+    }
+
+    private void updateMountedStatus() {
+        if (!isNavigating())
+            return;
+        Entity vehicle = NMS.getBukkitVehicle(npc.getEntity());
+        if (!(vehicle instanceof NPCHolder))
+            return;
+        cancelNavigation();
+        NPC mount = ((NPCHolder) vehicle).getNPC();
+        switch (getTargetType()) {
+            case ENTITY:
+                mount.getNavigator().setTarget(getEntityTarget().getTarget(), getEntityTarget().isAggressive());
+                break;
+            case LOCATION:
+                mount.getNavigator().setTarget(getTargetAsLocation());
+                break;
+            default:
+                return;
+        }
     }
 
     private void updatePathfindingRange() {

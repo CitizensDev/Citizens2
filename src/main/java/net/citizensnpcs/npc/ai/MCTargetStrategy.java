@@ -66,8 +66,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     @Override
-    public LivingEntity getTarget() {
-        return (LivingEntity) target.getBukkitEntity();
+    public org.bukkit.entity.Entity getTarget() {
+        return target.getBukkitEntity();
     }
 
     @Override
@@ -123,9 +123,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         NMS.look(handle, target);
         if (aggro && canAttack()) {
             AttackStrategy strategy = parameters.attackStrategy();
-            if (strategy != null && strategy.handle((LivingEntity) handle.getBukkitEntity(), getTarget())) {
+            if (strategy != null
+                    && strategy.handle((LivingEntity) handle.getBukkitEntity(), (LivingEntity) getTarget())) {
             } else if (strategy != parameters.defaultAttackStrategy()) {
-                parameters.defaultAttackStrategy().handle((LivingEntity) handle.getBukkitEntity(), getTarget());
+                parameters.defaultAttackStrategy().handle((LivingEntity) handle.getBukkitEntity(),
+                        (LivingEntity) getTarget());
             }
             attackTicks = parameters.attackDelayTicks();
         }
