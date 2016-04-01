@@ -1,12 +1,12 @@
 package net.citizensnpcs.api.ai;
 
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 
 public interface EntityTarget {
     /**
-     * @return The {@link LivingEntity} being targeted.
+     * @return The {@link Entity} being targeted.
      */
-    LivingEntity getTarget();
+    Entity getTarget();
 
     /**
      * @return Whether the entity target should be attacked once within range
