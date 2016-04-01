@@ -52,6 +52,9 @@ public class Inventory extends Trait {
         for (int i = 0; i < contents.length; i++) {
             this.contents[i] = contents[i];
         }
+        if (npc.getEntity() instanceof InventoryHolder) {
+            ((InventoryHolder) npc.getEntity()).getInventory().setStorageContents(contents);
+        }
         views.remove(event.getView());
     }
 
@@ -73,6 +76,9 @@ public class Inventory extends Trait {
     }
 
     public void openInventory(Player sender) {
+        for (int i = 0; i < view.getSize(); i++) {
+            view.setItem(i, contents[i]);
+        }
         views.add(sender.openInventory(view));
     }
 
