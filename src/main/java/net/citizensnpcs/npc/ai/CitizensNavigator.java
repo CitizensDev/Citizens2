@@ -282,7 +282,6 @@ public class CitizensNavigator implements Navigator, Runnable {
         Entity vehicle = NMS.getBukkitVehicle(npc.getEntity());
         if (!(vehicle instanceof NPCHolder))
             return;
-        cancelNavigation();
         NPC mount = ((NPCHolder) vehicle).getNPC();
         switch (getTargetType()) {
             case ENTITY:
@@ -294,6 +293,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             default:
                 return;
         }
+        cancelNavigation();
     }
 
     private void updatePathfindingRange() {
