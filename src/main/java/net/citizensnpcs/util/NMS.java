@@ -486,7 +486,8 @@ public class NMS {
     }
 
     public static Entity getVehicle(org.bukkit.entity.Entity entity) {
-        return getHandle(entity).getVehicle();
+        Entity e = getHandle(entity).getVehicle();
+        return e == getHandle(entity) ? null : e;
     }
 
     public static void initNetworkManager(NetworkManager network) {
