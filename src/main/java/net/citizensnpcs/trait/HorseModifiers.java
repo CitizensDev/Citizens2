@@ -29,8 +29,16 @@ public class HorseModifiers extends Trait {
         super("horsemodifiers");
     }
 
+    public ItemStack getArmor() {
+        return armor;
+    }
+
     public Color getColor() {
         return color;
+    }
+
+    public ItemStack getSaddle() {
+        return saddle;
     }
 
     public Style getStyle() {
@@ -55,6 +63,10 @@ public class HorseModifiers extends Trait {
         }
     }
 
+    public void setArmor(ItemStack armor) {
+        this.armor = armor;
+    }
+
     public void setCarryingChest(boolean carryingChest) {
         this.carryingChest = carryingChest;
         updateModifiers();
@@ -63,6 +75,10 @@ public class HorseModifiers extends Trait {
     public void setColor(Horse.Color color) {
         this.color = color;
         updateModifiers();
+    }
+
+    public void setSaddle(ItemStack saddle) {
+        this.saddle = saddle;
     }
 
     public void setStyle(Horse.Style style) {
