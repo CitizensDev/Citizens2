@@ -6,11 +6,15 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -125,6 +129,18 @@ public class ItemStorage {
                 meta.setOwner(root.getString("skull.owner", ""));
             }
             res.setItemMeta(meta);
+        }
+
+        if (root.keyExists("banner")) {
+            BannerMeta meta = ensureMeta(res);
+            meta.setBaseColor(DyeColor.valueOf(root.getString("banner.basecolor")));
+            if (root.keyExists("banner.patterns")) {
+                for (DataKey sub : root.getRelative("banner.patterns").getIntegerSubKeys()) {
+                    Pattern pattern = new Pattern(DyeColor.valueOf(sub.getString("color")),
+                            PatternType.getByIdentifier(sub.getString("type")));
+                    meta.addPattern(pattern);
+                }
+            }
         }
 
         if (root.keyExists("potion")) {
@@ -312,6 +328,7 @@ public class ItemStorage {
         if (meta instanceof PotionMeta) {
             PotionMeta potion = (PotionMeta) meta;
             List<PotionEffect> effects = potion.getCustomEffects();
+            key.removeKey("potion.effects");
             DataKey effectKey = key.getRelative("potion.effects");
             for (int i = 0; i < effects.size(); i++) {
                 PotionEffect effect = effects.get(i);
@@ -323,6 +340,22 @@ public class ItemStorage {
             }
         } else {
             key.removeKey("potion");
+        }
+
+        if (meta instanceof BannerMeta) {
+            BannerMeta banner = (BannerMeta) meta;
+            DataKey root = key.getRelative("banner");
+            root.setString("basecolor", banner.getBaseColor().name());
+            List<org.bukkit.block.banner.Pattern> patterns = banner.getPatterns();
+            root.removeKey("patterns");
+            for (int i = 0; i < patterns.size(); i++) {
+                org.bukkit.block.banner.Pattern pattern = patterns.get(i);
+                DataKey sub = root.getRelative("patterns." + i);
+                sub.setString("color", pattern.getColor().name());
+                sub.setString("type", pattern.getPattern().getIdentifier());
+            }
+        } else {
+            key.removeKey("banner");
         }
 
         Bukkit.getPluginManager().callEvent(new CitizensSerialiseMetaEvent(key, meta));
