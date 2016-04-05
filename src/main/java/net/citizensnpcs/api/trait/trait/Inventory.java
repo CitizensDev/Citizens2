@@ -69,7 +69,10 @@ public class Inventory extends Trait {
         int size = npc.getEntity() instanceof Player ? 36
                 : npc.getEntity() instanceof InventoryHolder
                         ? ((InventoryHolder) npc.getEntity()).getInventory().getSize() : contents.length;
-        size += size % 9; // round up to nearest multiple of 9
+        int rem = size % 9;
+        if (rem != 0) {
+            size += 9 - rem; // round up to nearest multiple of 9
+        }
         view = Bukkit.createInventory(
                 npc.getEntity() instanceof InventoryHolder ? ((InventoryHolder) npc.getEntity()) : null, size,
                 npc.getName() + "'s Inventory");
