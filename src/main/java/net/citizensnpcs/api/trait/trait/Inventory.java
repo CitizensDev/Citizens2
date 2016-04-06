@@ -53,7 +53,8 @@ public class Inventory extends Trait {
             this.contents[i] = contents[i];
         }
         if (npc.getEntity() instanceof InventoryHolder) {
-            ((InventoryHolder) npc.getEntity()).getInventory().setStorageContents(contents);
+            int maxSize = ((InventoryHolder) npc.getEntity()).getInventory().getStorageContents().length;
+            ((InventoryHolder) npc.getEntity()).getInventory().setStorageContents(Arrays.copyOf(contents, maxSize));
         }
         views.remove(event.getView());
     }
