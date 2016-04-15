@@ -9,12 +9,15 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
+import org.bukkit.block.Banner;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -33,6 +36,17 @@ import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
 import net.citizensnpcs.api.event.CitizensSerialiseMetaEvent;
 
 public class ItemStorage {
+    private static void deserialiseBanner(DataKey root, Banner meta) {
+        meta.setBaseColor(DyeColor.valueOf(root.getString("banner.basecolor")));
+        if (root.keyExists("banner.patterns")) {
+            for (DataKey sub : root.getRelative("banner.patterns").getIntegerSubKeys()) {
+                Pattern pattern = new Pattern(DyeColor.valueOf(sub.getString("color")),
+                        PatternType.getByIdentifier(sub.getString("type")));
+                meta.addPattern(pattern);
+            }
+        }
+    }
+
     private static Iterable<Color> deserialiseColors(DataKey key) {
         List<Color> colors = Lists.newArrayList();
         for (DataKey sub : key.getIntegerSubKeys()) {
@@ -115,6 +129,16 @@ public class ItemStorage {
             meta.setScaling(root.getBoolean("map.scaling"));
             res.setItemMeta(meta);
         }
+        if (root.keyExists("blockstate")) {
+            BlockStateMeta meta = ensureMeta(res);
+            if (root.keyExists("blockstate.banner")) {
+                Banner banner = (Banner) meta.getBlockState();
+                deserialiseBanner(root.getRelative("blockstate"), banner);
+                meta.setBlockState(banner);
+            }
+            res.setItemMeta(meta);
+        }
+
         if (root.keyExists("enchantmentstorage")) {
             EnchantmentStorageMeta meta = ensureMeta(res);
             for (DataKey key : root.getRelative("enchantmentstorage").getSubKeys()) {
@@ -154,6 +178,7 @@ public class ItemStorage {
             }
             res.setItemMeta(meta);
         }
+
         if (root.keyExists("repaircost") && res.getItemMeta() instanceof Repairable) {
             ((Repairable) res.getItemMeta()).setRepairCost(root.getInt("repaircost"));
         }
@@ -216,6 +241,18 @@ public class ItemStorage {
             key.removeKey("meta");
         }
         serialiseEnchantments(key.getRelative("enchantments"), item.getEnchantments());
+    }
+
+    private static void serialiseBanner(DataKey root, Banner banner) {
+        root.setString("basecolor", banner.getBaseColor().name());
+        List<org.bukkit.block.banner.Pattern> patterns = banner.getPatterns();
+        root.removeKey("patterns");
+        for (int i = 0; i < patterns.size(); i++) {
+            org.bukkit.block.banner.Pattern pattern = patterns.get(i);
+            DataKey sub = root.getRelative("patterns." + i);
+            sub.setString("color", pattern.getColor().name());
+            sub.setString("type", pattern.getPattern().getIdentifier());
+        }
     }
 
     private static void serialiseColors(DataKey key, List<Color> colors) {
@@ -340,6 +377,21 @@ public class ItemStorage {
             }
         } else {
             key.removeKey("potion");
+        }
+
+        key.removeKey("blockstate");
+        if (meta instanceof BlockStateMeta) {
+            BlockStateMeta state = (BlockStateMeta) meta;
+            if (state.hasBlockState()) {
+                DataKey root = key.getRelative("blockstate");
+                BlockState blockstate = state.getBlockState();
+                if (blockstate instanceof Banner) {
+                    Banner banner = (Banner) blockstate;
+                    serialiseBanner(root.getRelative("banner"), banner);
+                } else {
+                    root.removeKey("banner");
+                }
+            }
         }
 
         if (meta instanceof BannerMeta) {
