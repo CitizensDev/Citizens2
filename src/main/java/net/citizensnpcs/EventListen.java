@@ -43,6 +43,7 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Predicates;
@@ -447,12 +448,18 @@ public class EventListen implements Listener {
     public void onProjectileHit(final ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof FishHook))
             return;
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+        NMS.removeHookIfNecessary(npcRegistry, (FishHook) event.getEntity());
+        new BukkitRunnable() {
+            int n = 0;
+
             @Override
             public void run() {
+                if (n++ > 5) {
+                    cancel();
+                }
                 NMS.removeHookIfNecessary(npcRegistry, (FishHook) event.getEntity());
             }
-        });
+        }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
     }
 
     @EventHandler
