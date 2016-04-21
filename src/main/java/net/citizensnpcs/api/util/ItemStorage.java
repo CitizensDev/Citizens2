@@ -134,6 +134,7 @@ public class ItemStorage {
             if (root.keyExists("blockstate.banner")) {
                 Banner banner = (Banner) meta.getBlockState();
                 deserialiseBanner(root.getRelative("blockstate"), banner);
+                banner.update(true);
                 meta.setBlockState(banner);
             }
             res.setItemMeta(meta);
