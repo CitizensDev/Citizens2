@@ -33,6 +33,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -41,6 +42,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Predicates;
@@ -423,8 +425,21 @@ public class EventListen implements Listener {
         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerTeleport(final PlayerTeleportEvent event) {
+        if (event.getCause() == TeleportCause.PLUGIN && !event.getPlayer().hasMetadata("citizens-force-teleporting")
+                && npcRegistry.getNPC(event.getPlayer()) != null && Setting.TELEPORT_DELAY.asInt() > 0) {
+            event.setCancelled(true);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    event.getPlayer().setMetadata("citizens-force-teleporting",
+                            new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+                    event.getPlayer().teleport(event.getTo());
+                    event.getPlayer().removeMetadata("citizens-force-teleporting", CitizensAPI.getPlugin());
+                }
+            }, Setting.TELEPORT_DELAY.asInt());
+        }
         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
     }
 
