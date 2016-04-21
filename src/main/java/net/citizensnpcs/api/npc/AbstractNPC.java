@@ -30,6 +30,7 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCAddTraitEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRemoveTraitEvent;
+import net.citizensnpcs.api.event.NPCTeleportEvent;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
@@ -402,6 +403,10 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void teleport(Location location, TeleportCause cause) {
         if (!isSpawned())
+            return;
+        NPCTeleportEvent event = new NPCTeleportEvent(this, location);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled())
             return;
         Entity entity = getEntity();
         while (entity.getVehicle() != null) {
