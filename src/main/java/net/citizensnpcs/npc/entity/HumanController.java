@@ -76,7 +76,7 @@ public class HumanController extends AbstractEntityController {
             uuid = new UUID(msb, uuid.getLeastSignificantBits());
         }
 
-        GameProfile profile = new GameProfile(uuid, name);
+        final GameProfile profile = new GameProfile(uuid, name);
 
         final EntityHumanNPC handle = new EntityHumanNPC(nmsWorld.getServer().getServer(), nmsWorld, profile,
                 new PlayerInteractManager(nmsWorld), npc);
@@ -100,7 +100,7 @@ public class HumanController extends AbstractEntityController {
 
                 if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
                     Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-                    String teamName = uuid.toString().substring(0, 16);
+                    String teamName = profile.getId().toString().substring(0, 16);
 
                     Team team = scoreboard.getTeam(teamName);
                     if (team == null) {
