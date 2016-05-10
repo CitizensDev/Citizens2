@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_9_R1.BlockPosition;
-import net.minecraft.server.v1_9_R1.Entity;
-import net.minecraft.server.v1_9_R1.IBlockAccess;
-import net.minecraft.server.v1_9_R1.Path;
-import net.minecraft.server.v1_9_R1.PathEntity;
-import net.minecraft.server.v1_9_R1.PathPoint;
+import net.minecraft.server.v1_9_R2.BlockPosition;
+import net.minecraft.server.v1_9_R2.Entity;
+import net.minecraft.server.v1_9_R2.IBlockAccess;
+import net.minecraft.server.v1_9_R2.Path;
+import net.minecraft.server.v1_9_R2.PathEntity;
+import net.minecraft.server.v1_9_R2.PathPoint;
 
 public class PlayerPathfinder {
     private final Path a = new Path();

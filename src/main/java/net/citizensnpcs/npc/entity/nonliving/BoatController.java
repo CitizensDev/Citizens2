@@ -1,9 +1,9 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftBoat;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftBoat;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEntity;
 import org.bukkit.entity.Boat;
 import org.bukkit.util.Vector;
 
@@ -14,9 +14,9 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_9_R1.EntityBoat;
-import net.minecraft.server.v1_9_R1.NBTTagCompound;
-import net.minecraft.server.v1_9_R1.World;
+import net.minecraft.server.v1_9_R2.EntityBoat;
+import net.minecraft.server.v1_9_R2.NBTTagCompound;
+import net.minecraft.server.v1_9_R2.World;
 
 public class BoatController extends MobEntityController {
     public BoatController() {
@@ -55,7 +55,7 @@ public class BoatController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_9_R1.Entity entity) {
+        public void collide(net.minecraft.server.v1_9_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);

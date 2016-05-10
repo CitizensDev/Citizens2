@@ -1,12 +1,12 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftWither;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftWither;
 import org.bukkit.entity.Wither;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.minecraft.server.v1_9_R1.EntityWither;
+import net.minecraft.server.v1_9_R2.EntityWither;
 
 @TraitName("withertrait")
 public class WitherTrait extends Trait {
