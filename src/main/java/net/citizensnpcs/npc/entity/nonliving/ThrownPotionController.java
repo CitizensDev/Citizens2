@@ -1,9 +1,9 @@
 package net.citizensnpcs.npc.entity.nonliving;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftLingeringPotion;
+import org.bukkit.craftbukkit.v1_9_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftLingeringPotion;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.util.Vector;
 
@@ -13,10 +13,10 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_9_R1.EntityPotion;
-import net.minecraft.server.v1_9_R1.Items;
-import net.minecraft.server.v1_9_R1.NBTTagCompound;
-import net.minecraft.server.v1_9_R1.World;
+import net.minecraft.server.v1_9_R2.EntityPotion;
+import net.minecraft.server.v1_9_R2.Items;
+import net.minecraft.server.v1_9_R2.NBTTagCompound;
+import net.minecraft.server.v1_9_R2.World;
 
 public class ThrownPotionController extends MobEntityController {
     public ThrownPotionController() {
@@ -41,7 +41,7 @@ public class ThrownPotionController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_9_R1.Entity entity) {
+        public void collide(net.minecraft.server.v1_9_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);

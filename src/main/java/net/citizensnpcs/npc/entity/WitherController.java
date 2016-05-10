@@ -1,9 +1,9 @@
 package net.citizensnpcs.npc.entity;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftWither;
+import org.bukkit.craftbukkit.v1_9_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftWither;
 import org.bukkit.entity.Wither;
 import org.bukkit.util.Vector;
 
@@ -15,11 +15,11 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_9_R1.EntityWither;
-import net.minecraft.server.v1_9_R1.MinecraftKey;
-import net.minecraft.server.v1_9_R1.NBTTagCompound;
-import net.minecraft.server.v1_9_R1.SoundEffect;
-import net.minecraft.server.v1_9_R1.World;
+import net.minecraft.server.v1_9_R2.EntityWither;
+import net.minecraft.server.v1_9_R2.MinecraftKey;
+import net.minecraft.server.v1_9_R2.NBTTagCompound;
+import net.minecraft.server.v1_9_R2.SoundEffect;
+import net.minecraft.server.v1_9_R2.World;
 
 public class WitherController extends MobEntityController {
     public WitherController() {
@@ -47,21 +47,21 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect bR() {
-            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bR()
-                    : SoundEffect.a.get(new MinecraftKey(
-                            npc.data().get(NPC.HURT_SOUND_METADATA, SoundEffect.a.b(super.bR()).toString())));
-        }
-
-        @Override
         protected SoundEffect bS() {
             return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bS()
                     : SoundEffect.a.get(new MinecraftKey(
-                            npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bR()).toString())));
+                            npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bS()).toString())));
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_9_R1.Entity entity) {
+        protected SoundEffect bT() {
+            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bT()
+                    : SoundEffect.a.get(new MinecraftKey(
+                            npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bT()).toString())));
+        }
+
+        @Override
+        public void collide(net.minecraft.server.v1_9_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
