@@ -138,10 +138,8 @@ public class PigController extends MobEntityController {
 
         @Override
         public void g(float f, float f1) {
-            if (npc == null) {
+            if (npc == null || !npc.isFlyable()) {
                 super.g(f, f1);
-            } else if (!npc.isFlyable()) {
-                g(f, f1);
             } else {
                 NMS.flyingMoveLogic(this, f, f1);
             }
