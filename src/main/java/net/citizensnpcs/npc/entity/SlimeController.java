@@ -26,7 +26,6 @@ import net.minecraft.server.v1_9_R2.SoundEffect;
 import net.minecraft.server.v1_9_R2.World;
 
 public class SlimeController extends MobEntityController {
-
     public SlimeController() {
         super(EntitySlimeNPC.class);
     }
@@ -72,13 +71,6 @@ public class SlimeController extends MobEntityController {
             return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bT()
                     : SoundEffect.a.get(new MinecraftKey(
                             npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bT()).toString())));
-        }
-
-        @Override
-        public void ci() {
-            if (npc == null) {
-                super.ci();
-            }
         }
 
         @Override
@@ -192,8 +184,8 @@ public class SlimeController extends MobEntityController {
         }
 
         @Override
-        public void M() {
-            super.M();
+        public void m() {
+            super.m();
             if (npc != null) {
                 npc.update();
             }

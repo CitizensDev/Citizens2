@@ -73,13 +73,6 @@ public class MagmaCubeController extends MobEntityController {
         }
 
         @Override
-        public void ci() {
-            if (npc == null) {
-                super.ci();
-            }
-        }
-
-        @Override
         public void collide(net.minecraft.server.v1_9_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -182,10 +175,11 @@ public class MagmaCubeController extends MobEntityController {
         }
 
         @Override
-        public void M() {
-            super.M();
-            if (npc != null)
+        public void m() {
+            super.m();
+            if (npc != null) {
                 npc.update();
+            }
         }
 
         @Override
