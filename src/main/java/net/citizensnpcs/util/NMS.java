@@ -181,7 +181,6 @@ public class NMS {
      * an Exception like it should.
      */
     public static GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Exception {
-
         if (Bukkit.isPrimaryThread())
             throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
 
@@ -741,7 +740,7 @@ public class NMS {
         yaw = clampYaw(yaw);
         handle.aO = yaw;
         if (!(handle instanceof EntityHuman))
-            handle.aM = yaw;
+            handle.aN = yaw;
         handle.aP = yaw;
     }
 

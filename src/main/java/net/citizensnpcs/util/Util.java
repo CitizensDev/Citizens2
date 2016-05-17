@@ -126,7 +126,7 @@ public class Util {
         }
         for (T check : values) {
             String name = check.name().toLowerCase();
-            if (name.replace("_", "").equals(toMatch) || name.matches(toMatch) || name.startsWith(toMatch)) {
+            if (name.replace("_", "").equals(toMatch) || name.startsWith(toMatch)) {
                 return check;
             }
         }
