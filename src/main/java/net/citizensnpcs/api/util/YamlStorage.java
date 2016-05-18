@@ -28,8 +28,9 @@ public class YamlStorage implements FileStorage {
         this.file = file;
         if (!file.exists()) {
             create();
-            if (header != null)
+            if (header != null) {
                 config.options().header(header);
+            }
             save();
         }
     }

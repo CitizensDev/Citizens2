@@ -1,10 +1,13 @@
 package net.citizensnpcs.api.persistence;
 
-import net.citizensnpcs.api.util.DataKey;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+
+import net.citizensnpcs.api.util.DataKey;
 
 public class LocationPersister implements Persister<Location> {
     @Override
@@ -14,17 +17,21 @@ public class LocationPersister implements Persister<Location> {
         World world = Bukkit.getWorld(root.getString("world"));
         double x = root.getDouble("x"), y = root.getDouble("y"), z = root.getDouble("z");
         float yaw = (float) root.getDouble("yaw"), pitch = (float) root.getDouble("pitch");
-        return world == null ? new LazilyLoadedLocation(root.getString("world"), x, y, z, yaw, pitch) : new Location(
-                world, x, y, z, yaw, pitch);
+        return world == null ? new LazilyLoadedLocation(root.getString("world"), x, y, z, yaw, pitch)
+                : new Location(world, x, y, z, yaw, pitch);
+    }
+
+    private double round(double z) {
+        return new BigDecimal(z).setScale(4, RoundingMode.DOWN).doubleValue();
     }
 
     @Override
     public void save(Location location, DataKey root) {
         if (location.getWorld() != null)
             root.setString("world", location.getWorld().getName());
-        root.setDouble("x", location.getX());
-        root.setDouble("y", location.getY());
-        root.setDouble("z", location.getZ());
+        root.setDouble("x", round(location.getX()));
+        root.setDouble("y", round(location.getY()));
+        root.setDouble("z", round(location.getZ()));
         root.setDouble("yaw", location.getYaw());
         root.setDouble("pitch", location.getPitch());
     }
