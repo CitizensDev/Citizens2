@@ -44,6 +44,7 @@ public class Skin {
      *
      * @param skinName
      *            The name of the player the skin belongs to.
+     * @param forceUpdate
      */
     Skin(String skinName) {
         this.skinName = skinName.toLowerCase();
@@ -205,6 +206,7 @@ public class Skin {
     }
 
     private void setData(@Nullable GameProfile profile) {
+        System.out.println("SET DATA");
         if (profile == null) {
             isValid = false;
             return;
@@ -251,10 +253,26 @@ public class Skin {
      *            The skinnable entity.
      */
     public static Skin get(SkinnableEntity entity) {
+        return get(entity, false);
+    }
+
+    /**
+     * Get a skin for a skinnable entity.
+     *
+     * <p>
+     * If a Skin instance does not exist, a new one is created and the skin data is automatically fetched.
+     * </p>
+     *
+     * @param entity
+     *            The skinnable entity.
+     * @param forceUpdate
+     *            if the skin should be checked via the cache
+     */
+    public static Skin get(SkinnableEntity entity, boolean forceUpdate) {
         Preconditions.checkNotNull(entity);
 
         String skinName = entity.getSkinName().toLowerCase();
-        return get(skinName);
+        return get(skinName, forceUpdate);
     }
 
     /**
@@ -267,7 +285,7 @@ public class Skin {
      * @param skinName
      *            The name of the skin.
      */
-    public static Skin get(String skinName) {
+    public static Skin get(String skinName, boolean forceUpdate) {
         Preconditions.checkNotNull(skinName);
 
         skinName = skinName.toLowerCase();
@@ -279,6 +297,8 @@ public class Skin {
 
         if (skin == null) {
             skin = new Skin(skinName);
+        } else if (forceUpdate) {
+            skin.fetch();
         }
 
         return skin;

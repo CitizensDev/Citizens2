@@ -1,6 +1,7 @@
 package net.citizensnpcs.npc.profile;
 
 import java.util.Collection;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -45,10 +46,8 @@ public class ProfileFetcher {
         }
 
         repo.findProfilesByNames(playerNames, Agent.MINECRAFT, new ProfileLookupCallback() {
-
             @Override
             public void onProfileLookupFailed(GameProfile profile, Exception e) {
-
                 if (Messaging.isDebugging()) {
                     Messaging.debug(
                             "Profile lookup for player '" + profile.getName() + "' failed: " + getExceptionMsg(e));
@@ -69,7 +68,6 @@ public class ProfileFetcher {
 
             @Override
             public void onProfileLookupSucceeded(final GameProfile profile) {
-
                 if (Messaging.isDebugging()) {
                     Messaging.debug("Fetched profile " + profile.getId() + " for player " + profile.getName());
                 }
@@ -81,7 +79,6 @@ public class ProfileFetcher {
                 try {
                     request.setResult(NMS.fillProfileProperties(profile, true), ProfileFetchResult.SUCCESS);
                 } catch (Exception e) {
-
                     if (Messaging.isDebugging()) {
                         Messaging.debug(
                                 "Profile lookup for player '" + profile.getName() + "' failed: " + getExceptionMsg(e));
@@ -114,20 +111,14 @@ public class ProfileFetcher {
         PROFILE_THREAD.fetch(name, handler);
     }
 
-    /**
-     * Clear all queued and cached requests.
-     */
-    public static void reset() {
-        initThread();
-    }
-
     @Nullable
     private static ProfileRequest findRequest(String name, Collection<ProfileRequest> requests) {
         name = name.toLowerCase();
 
         for (ProfileRequest request : requests) {
-            if (request.getPlayerName().equals(name))
+            if (request.getPlayerName().equals(name)) {
                 return request;
+            }
         }
         return null;
     }
@@ -136,6 +127,15 @@ public class ProfileFetcher {
         String message = e.getMessage();
         String cause = e.getCause() != null ? e.getCause().getMessage() : null;
         return cause != null ? cause : message;
+    }
+
+    private static void initThread() {
+        if (THREAD_TASK != null) {
+            THREAD_TASK.cancel();
+        }
+
+        PROFILE_THREAD = new ProfileFetchThread();
+        THREAD_TASK = Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), PROFILE_THREAD, 21, 20);
     }
 
     private static boolean isProfileNotFound(Exception e) {
@@ -155,13 +155,11 @@ public class ProfileFetcher {
                 || (cause != null && cause.contains("too many requests"));
     }
 
-    private static void initThread() {
-        if (THREAD_TASK != null)
-            THREAD_TASK.cancel();
-
-        PROFILE_THREAD = new ProfileFetchThread();
-        THREAD_TASK = Bukkit.getScheduler().runTaskTimerAsynchronously(
-                CitizensAPI.getPlugin(), PROFILE_THREAD, 21, 20);
+    /**
+     * Clear all queued and cached requests.
+     */
+    public static void reset() {
+        initThread();
     }
 
     private static ProfileFetchThread PROFILE_THREAD;
