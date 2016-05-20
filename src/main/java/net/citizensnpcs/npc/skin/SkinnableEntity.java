@@ -1,8 +1,10 @@
 package net.citizensnpcs.npc.skin;
 
-import com.mojang.authlib.GameProfile;
-import net.citizensnpcs.npc.ai.NPCHolder;
 import org.bukkit.entity.Player;
+
+import com.mojang.authlib.GameProfile;
+
+import net.citizensnpcs.npc.ai.NPCHolder;
 
 /**
  * Interface for player entities that are skinnable.
@@ -42,8 +44,7 @@ public interface SkinnableEntity extends NPCHolder {
     void setSkinFlags(byte flags);
 
     /**
-     * Set the name of the player whose skin the NPC
-     * uses.
+     * Set the name of the player whose skin the NPC uses.
      *
      * <p>
      * Setting the skin name automatically updates and respawn the NPC.
@@ -53,4 +54,6 @@ public interface SkinnableEntity extends NPCHolder {
      *            The skin name.
      */
     void setSkinName(String name);
+
+    void setSkinName(String skinName, boolean forceUpdate);
 }

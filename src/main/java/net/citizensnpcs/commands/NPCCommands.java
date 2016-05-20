@@ -1481,7 +1481,7 @@ public class NPCCommands {
 
             SkinnableEntity skinnable = NMS.getSkinnable(npc.getEntity());
             if (skinnable != null) {
-                skinnable.setSkinName(skinName);
+                skinnable.setSkinName(skinName, args.hasFlag('p'));
             }
         }
     }

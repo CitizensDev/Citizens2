@@ -348,10 +348,15 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public void setSkinName(String name) {
+        setSkinName(name, false);
+    }
+
+    @Override
+    public void setSkinName(String name, boolean forceUpdate) {
         Preconditions.checkNotNull(name);
 
         npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, name.toLowerCase());
-        skinTracker.notifySkinChange();
+        skinTracker.notifySkinChange(forceUpdate);
     }
 
     public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
@@ -455,8 +460,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         public void setSkinName(String name) {
             ((SkinnableEntity) this.entity).setSkinName(name);
         }
+
+        @Override
+        public void setSkinName(String skinName, boolean forceUpdate) {
+            ((SkinnableEntity) this.entity).setSkinName(skinName, forceUpdate);
+        }
     }
 
     private static final float EPSILON = 0.005F;
+
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }

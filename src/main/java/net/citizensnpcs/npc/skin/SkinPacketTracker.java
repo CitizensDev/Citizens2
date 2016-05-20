@@ -94,26 +94,9 @@ public class SkinPacketTracker {
     /**
      * Notify that the NPC skin has been changed.
      */
-    public void notifySkinChange() {
-        this.skin = Skin.get(entity);
+    public void notifySkinChange(boolean forceUpdate) {
+        this.skin = Skin.get(entity, forceUpdate);
         skin.applyAndRespawn(entity);
-    }
-
-    /**
-     * Invoke when the NPC entity is spawned.
-     */
-    public void onSpawnNPC() {
-        isRemoved = false;
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!entity.getNPC().isSpawned())
-                    return;
-
-                double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
-                updateNearbyViewers(viewDistance);
-            }
-        }.runTaskLater(CitizensAPI.getPlugin(), 20);
     }
 
     /**
@@ -139,6 +122,23 @@ public class SkinPacketTracker {
         }
     }
 
+    /**
+     * Invoke when the NPC entity is spawned.
+     */
+    public void onSpawnNPC() {
+        isRemoved = false;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!entity.getNPC().isSpawned())
+                    return;
+
+                double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
+                updateNearbyViewers(viewDistance);
+            }
+        }.runTaskLater(CitizensAPI.getPlugin(), 20);
+    }
+
     private void scheduleRemovePacket(final PlayerEntry entry) {
         if (isRemoved)
             return;
@@ -162,8 +162,7 @@ public class SkinPacketTracker {
     }
 
     private boolean shouldRemoveFromTabList() {
-        return entity.getNPC().data().get("removefromtablist",
-                Settings.Setting.DISABLE_TABLIST.asBoolean());
+        return entity.getNPC().data().get("removefromtablist", Settings.Setting.DISABLE_TABLIST.asBoolean());
     }
 
     /**
