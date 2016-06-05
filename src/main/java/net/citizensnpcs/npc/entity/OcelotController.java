@@ -145,9 +145,10 @@ public class OcelotController extends MobEntityController {
 
         @Override
         protected SoundEffect G() {
+            MinecraftKey a = SoundEffect.a.b(super.G());
             return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.G()
                     : SoundEffect.a.get(new MinecraftKey(
-                            npc.data().get(NPC.AMBIENT_SOUND_METADATA, SoundEffect.a.b(super.G()).toString())));
+                            npc.data().get(NPC.AMBIENT_SOUND_METADATA, a == null ? "" : a.toString())));
         }
 
         @Override

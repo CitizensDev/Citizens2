@@ -206,7 +206,6 @@ public class Skin {
     }
 
     private void setData(@Nullable GameProfile profile) {
-        System.out.println("SET DATA");
         if (profile == null) {
             isValid = false;
             return;
