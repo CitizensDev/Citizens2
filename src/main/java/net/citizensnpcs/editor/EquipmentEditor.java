@@ -90,6 +90,7 @@ public class EquipmentEditor extends Editor {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         if (!npc.isSpawned() || !event.getPlayer().equals(player)
+                || event.getHand() != org.bukkit.inventory.EquipmentSlot.HAND
                 || !npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
             return;
 
