@@ -47,7 +47,11 @@ public class Settings {
     }
 
     private void updateMessagingSettings() {
-        Messaging.configure(Setting.DEBUG_MODE.asBoolean(), Setting.MESSAGE_COLOUR.asString(),
+        File file = null;
+        if (!Setting.DEBUG_FILE.asString().isEmpty()) {
+            file = new File(Setting.DEBUG_FILE.asString());
+        }
+        Messaging.configure(file, Setting.DEBUG_MODE.asBoolean(), Setting.MESSAGE_COLOUR.asString(),
                 Setting.HIGHLIGHT_COLOUR.asString());
     }
 
@@ -63,6 +67,7 @@ public class Settings {
                 "<target>|, <target>| & <target>| & others"),
         CHAT_RANGE("npc.chat.options.range", 5),
         CHECK_MINECRAFT_VERSION("advanced.check-minecraft-version", true),
+        DEBUG_FILE("general.debug-file", ""),
         DEBUG_MODE("general.debug-mode", false),
         DEBUG_PATHFINDING("general.debug-pathfinding", false),
         DEFAULT_DISTANCE_MARGIN("npc.pathfinding.default-distance-margin", 2),
