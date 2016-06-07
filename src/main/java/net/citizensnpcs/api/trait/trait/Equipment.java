@@ -116,8 +116,9 @@ public class Equipment extends Trait {
             return;
         if (npc.getEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getEntity();
-            if (equipment[0] != null)
+            if (equipment[0] != null) { 
                 enderman.setCarriedMaterial(equipment[0].getData());
+            }
         } else {
             EntityEquipment equip = getEquipmentFromEntity(npc.getEntity());
             if (equipment[0] != null) {
