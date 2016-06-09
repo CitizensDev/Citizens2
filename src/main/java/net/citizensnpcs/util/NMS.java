@@ -622,7 +622,7 @@ public class NMS {
         NPC npc = npcRegistry.getNPC(hook.hooked.getBukkitEntity());
         if (npc == null)
             return;
-        if (npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+        if (npc.isProtected()) {
             hook.hooked = null;
             hook.die();
         }
