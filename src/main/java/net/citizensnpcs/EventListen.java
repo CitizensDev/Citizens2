@@ -27,6 +27,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -262,6 +263,12 @@ public class EventListen implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled=true)
+    public void onPlayerFish(PlayerFishEvent event) {
+        if (npcRegistry.isNPC(event.getCaught()) && npcRegistry.getNPC(event.getCaught()).isProtected()) {
+            event.setCancelled(true);
+        }
+    }
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntitySpawn(CreatureSpawnEvent event) {
         if (event.isCancelled() && npcRegistry.isNPC(event.getEntity())) {
