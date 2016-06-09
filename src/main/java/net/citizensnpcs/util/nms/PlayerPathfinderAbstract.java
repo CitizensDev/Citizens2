@@ -1,12 +1,12 @@
 package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_9_R2.EntityInsentient;
-import net.minecraft.server.v1_9_R2.IBlockAccess;
-import net.minecraft.server.v1_9_R2.MathHelper;
-import net.minecraft.server.v1_9_R2.PathPoint;
-import net.minecraft.server.v1_9_R2.PathType;
-import net.minecraft.server.v1_9_R2.PathfinderAbstract;
+import net.minecraft.server.v1_10_R1.EntityInsentient;
+import net.minecraft.server.v1_10_R1.IBlockAccess;
+import net.minecraft.server.v1_10_R1.MathHelper;
+import net.minecraft.server.v1_10_R1.PathPoint;
+import net.minecraft.server.v1_10_R1.PathType;
+import net.minecraft.server.v1_10_R1.PathfinderAbstract;
 
 public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
     protected IBlockAccess a;

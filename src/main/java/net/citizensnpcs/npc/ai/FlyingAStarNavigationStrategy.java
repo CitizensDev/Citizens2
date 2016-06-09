@@ -17,7 +17,7 @@ import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_9_R2.MathHelper;
+import net.minecraft.server.v1_10_R1.MathHelper;
 
 public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     private final NPC npc;

@@ -8,8 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -47,7 +47,7 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_9_R2.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_10_R1.PacketPlayOutEntityTeleport;
 
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
@@ -194,7 +194,7 @@ public class CitizensNPC extends AbstractNPC {
 
         entityController.spawn(at, this);
 
-        net.minecraft.server.v1_9_R2.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
+        net.minecraft.server.v1_10_R1.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
         boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
 
         // send skin packets, if applicable, before other NMS packets are sent

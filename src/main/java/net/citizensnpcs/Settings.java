@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Storage;
@@ -49,7 +50,7 @@ public class Settings {
     private void updateMessagingSettings() {
         File file = null;
         if (!Setting.DEBUG_FILE.asString().isEmpty()) {
-            file = new File(Setting.DEBUG_FILE.asString());
+            file = new File(CitizensAPI.getPlugin().getDataFolder(), Setting.DEBUG_FILE.asString());
         }
         Messaging.configure(file, Setting.DEBUG_MODE.asBoolean(), Setting.MESSAGE_COLOUR.asString(),
                 Setting.HIGHLIGHT_COLOUR.asString());

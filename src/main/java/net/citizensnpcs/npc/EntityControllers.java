@@ -27,6 +27,7 @@ import net.citizensnpcs.npc.entity.MushroomCowController;
 import net.citizensnpcs.npc.entity.OcelotController;
 import net.citizensnpcs.npc.entity.PigController;
 import net.citizensnpcs.npc.entity.PigZombieController;
+import net.citizensnpcs.npc.entity.PolarBearController;
 import net.citizensnpcs.npc.entity.RabbitController;
 import net.citizensnpcs.npc.entity.SheepController;
 import net.citizensnpcs.npc.entity.ShulkerController;
@@ -140,6 +141,7 @@ public class EntityControllers {
         TYPES.put(EntityType.PAINTING, PaintingController.class);
         TYPES.put(EntityType.PIG, PigController.class);
         TYPES.put(EntityType.PIG_ZOMBIE, PigZombieController.class);
+        TYPES.put(EntityType.POLAR_BEAR, PolarBearController.class);
         TYPES.put(EntityType.PLAYER, HumanController.class);
         TYPES.put(EntityType.RABBIT, RabbitController.class);
         TYPES.put(EntityType.SHEEP, SheepController.class);

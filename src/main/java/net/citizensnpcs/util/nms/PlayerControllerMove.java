@@ -4,13 +4,13 @@ import java.util.Random;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_9_R2.AttributeInstance;
-import net.minecraft.server.v1_9_R2.ControllerMove;
-import net.minecraft.server.v1_9_R2.EntityInsentient;
-import net.minecraft.server.v1_9_R2.EntityLiving;
-import net.minecraft.server.v1_9_R2.EntitySlime;
-import net.minecraft.server.v1_9_R2.GenericAttributes;
-import net.minecraft.server.v1_9_R2.MathHelper;
+import net.minecraft.server.v1_10_R1.AttributeInstance;
+import net.minecraft.server.v1_10_R1.ControllerMove;
+import net.minecraft.server.v1_10_R1.EntityInsentient;
+import net.minecraft.server.v1_10_R1.EntityLiving;
+import net.minecraft.server.v1_10_R1.EntitySlime;
+import net.minecraft.server.v1_10_R1.GenericAttributes;
+import net.minecraft.server.v1_10_R1.MathHelper;
 
 public class PlayerControllerMove extends ControllerMove {
     protected EntityLiving a;
@@ -74,7 +74,7 @@ public class PlayerControllerMove extends ControllerMove {
 
     @Override
     public void c() {
-        this.a.be = 0F;
+        this.a.bf = 0F;
         if (this.f) {
             this.f = false;
             int i = MathHelper.floor(this.a.getBoundingBox().b + 0.5D);
@@ -90,7 +90,7 @@ public class PlayerControllerMove extends ControllerMove {
             AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
             speed.setValue(0.1D * this.e);
             float movement = (float) (this.e * speed.getValue()) * 10;
-            this.a.bf = movement;
+            this.a.bg = movement;
             if (shouldSlimeJump() || ((d2 > 0.0D) && (d0 * d0 + d1 * d1 < 1.0D))) {
                 this.h = cg();
                 this.h /= 3;
