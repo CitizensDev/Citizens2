@@ -4,24 +4,24 @@ import java.util.EnumSet;
 import java.util.HashSet;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_9_R2.AxisAlignedBB;
-import net.minecraft.server.v1_9_R2.Block;
-import net.minecraft.server.v1_9_R2.BlockCobbleWall;
-import net.minecraft.server.v1_9_R2.BlockDoor;
-import net.minecraft.server.v1_9_R2.BlockFence;
-import net.minecraft.server.v1_9_R2.BlockFenceGate;
-import net.minecraft.server.v1_9_R2.BlockMinecartTrackAbstract;
-import net.minecraft.server.v1_9_R2.BlockPosition;
-import net.minecraft.server.v1_9_R2.BlockPosition.MutableBlockPosition;
-import net.minecraft.server.v1_9_R2.Blocks;
-import net.minecraft.server.v1_9_R2.EntityInsentient;
-import net.minecraft.server.v1_9_R2.EnumDirection;
-import net.minecraft.server.v1_9_R2.IBlockAccess;
-import net.minecraft.server.v1_9_R2.IBlockData;
-import net.minecraft.server.v1_9_R2.Material;
-import net.minecraft.server.v1_9_R2.MathHelper;
-import net.minecraft.server.v1_9_R2.PathPoint;
-import net.minecraft.server.v1_9_R2.PathType;
+import net.minecraft.server.v1_10_R1.AxisAlignedBB;
+import net.minecraft.server.v1_10_R1.Block;
+import net.minecraft.server.v1_10_R1.BlockCobbleWall;
+import net.minecraft.server.v1_10_R1.BlockDoor;
+import net.minecraft.server.v1_10_R1.BlockFence;
+import net.minecraft.server.v1_10_R1.BlockFenceGate;
+import net.minecraft.server.v1_10_R1.BlockMinecartTrackAbstract;
+import net.minecraft.server.v1_10_R1.BlockPosition;
+import net.minecraft.server.v1_10_R1.BlockPosition.MutableBlockPosition;
+import net.minecraft.server.v1_10_R1.Blocks;
+import net.minecraft.server.v1_10_R1.EntityInsentient;
+import net.minecraft.server.v1_10_R1.EnumDirection;
+import net.minecraft.server.v1_10_R1.IBlockAccess;
+import net.minecraft.server.v1_10_R1.IBlockData;
+import net.minecraft.server.v1_10_R1.Material;
+import net.minecraft.server.v1_10_R1.MathHelper;
+import net.minecraft.server.v1_10_R1.PathPoint;
+import net.minecraft.server.v1_10_R1.PathType;
 
 public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     private float j;
@@ -246,7 +246,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             int i = 0;
             while ((paramInt2 > 0) && (localPathType == PathType.OPEN)) {
                 paramInt2--;
-                if (i++ >= this.b.aW()) {
+                if (i++ >= this.b.aY()) {
                     return null;
                 }
                 localPathType = a(this.b, paramInt1, paramInt2, paramInt3);

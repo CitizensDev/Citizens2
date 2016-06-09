@@ -11,11 +11,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.minecraft.server.v1_9_R2.CrashReport;
-import net.minecraft.server.v1_9_R2.CrashReportSystemDetails;
-import net.minecraft.server.v1_9_R2.Entity;
-import net.minecraft.server.v1_9_R2.EntityHuman;
-import net.minecraft.server.v1_9_R2.ReportedException;
+import net.minecraft.server.v1_10_R1.CrashReport;
+import net.minecraft.server.v1_10_R1.CrashReportSystemDetails;
+import net.minecraft.server.v1_10_R1.Entity;
+import net.minecraft.server.v1_10_R1.EntityHuman;
+import net.minecraft.server.v1_10_R1.ReportedException;
 
 public class PlayerUpdateTask extends BukkitRunnable {
     @Override
@@ -33,15 +33,14 @@ public class PlayerUpdateTask extends BukkitRunnable {
             TICKERS.put(ent.getUniqueId(), ent);
         }
         for (int i = 0; i < TICKERS_PENDING_REMOVE.size(); i++) {
-            org.bukkit.entity.Entity ent = TICKERS_PENDING_REMOVE.get(i);
-            TICKERS.remove(ent.getUniqueId());
+            TICKERS.remove(TICKERS_PENDING_REMOVE.get(i).getUniqueId());
         }
         TICKERS_PENDING_ADD.clear();
         TICKERS_PENDING_REMOVE.clear();
         Iterator<org.bukkit.entity.Entity> itr = TICKERS.values().iterator();
         while (itr.hasNext()) {
             Entity entity = NMS.getHandle(itr.next());
-            Entity entity1 = entity.bz();
+            Entity entity1 = entity.bB();
             if (entity1 != null) {
                 if ((entity1.dead) || (!entity1.w(entity))) {
                     entity.stopRiding();

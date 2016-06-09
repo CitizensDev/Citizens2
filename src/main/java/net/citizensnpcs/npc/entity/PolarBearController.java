@@ -2,9 +2,9 @@ package net.citizensnpcs.npc.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_10_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftBlaze;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
-import org.bukkit.entity.Blaze;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPolarBear;
+import org.bukkit.entity.PolarBear;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
@@ -15,44 +15,30 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_10_R1.EntityBlaze;
+import net.minecraft.server.v1_10_R1.EntityPolarBear;
 import net.minecraft.server.v1_10_R1.MinecraftKey;
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import net.minecraft.server.v1_10_R1.SoundEffect;
 import net.minecraft.server.v1_10_R1.World;
 
-public class BlazeController extends MobEntityController {
-    public BlazeController() {
-        super(EntityBlazeNPC.class);
+public class PolarBearController extends MobEntityController {
+    public PolarBearController() {
+        super(EntityPolarBearNPC.class);
     }
 
     @Override
-    public Blaze getBukkitEntity() {
-        return (Blaze) super.getBukkitEntity();
+    public PolarBear getBukkitEntity() {
+        return (PolarBear) super.getBukkitEntity();
     }
 
-    public static class BlazeNPC extends CraftBlaze implements NPCHolder {
+    public static class EntityPolarBearNPC extends EntityPolarBear implements NPCHolder {
         private final CitizensNPC npc;
 
-        public BlazeNPC(EntityBlazeNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-    }
-
-    public static class EntityBlazeNPC extends EntityBlaze implements NPCHolder {
-        private final CitizensNPC npc;
-
-        public EntityBlazeNPC(World world) {
+        public EntityPolarBearNPC(World world) {
             this(world, null);
         }
 
-        public EntityBlazeNPC(World world, NPC npc) {
+        public EntityPolarBearNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
@@ -61,17 +47,17 @@ public class BlazeController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect bW() {
-            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bW()
-                    : SoundEffect.a.get(new MinecraftKey(
-                            npc.data().get(NPC.HURT_SOUND_METADATA, SoundEffect.a.b(super.bW()).toString())));
-        }
-
-        @Override
         protected SoundEffect bV() {
             return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bV()
                     : SoundEffect.a.get(new MinecraftKey(
                             npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bV()).toString())));
+        }
+
+        @Override
+        protected SoundEffect bW() {
+            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bW()
+                    : SoundEffect.a.get(new MinecraftKey(
+                            npc.data().get(NPC.HURT_SOUND_METADATA, SoundEffect.a.b(super.bW()).toString())));
         }
 
         @Override
@@ -132,7 +118,7 @@ public class BlazeController extends MobEntityController {
         @Override
         public CraftEntity getBukkitEntity() {
             if (bukkitEntity == null && npc != null)
-                bukkitEntity = new BlazeNPC(this);
+                bukkitEntity = new PolarBearNPC(this);
             return super.getBukkitEntity();
         }
 
@@ -143,8 +129,9 @@ public class BlazeController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            if (npc == null)
+            if (npc == null) {
                 return super.isLeashed();
+            }
             boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
                 return super.isLeashed();
@@ -162,10 +149,26 @@ public class BlazeController extends MobEntityController {
         }
 
         @Override
-        public void M() {
+        public void m() {
+            super.m();
             if (npc != null) {
+                NMS.updateAI(this);
                 npc.update();
             }
+        }
+    }
+
+    public static class PolarBearNPC extends CraftPolarBear implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public PolarBearNPC(EntityPolarBearNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

@@ -1,9 +1,9 @@
 package net.citizensnpcs.npc.entity;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_9_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftSnowman;
+import org.bukkit.craftbukkit.v1_10_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftSnowman;
 import org.bukkit.entity.Snowman;
 import org.bukkit.util.Vector;
 
@@ -15,13 +15,13 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_9_R2.BlockPosition;
-import net.minecraft.server.v1_9_R2.EntitySnowman;
-import net.minecraft.server.v1_9_R2.IBlockData;
-import net.minecraft.server.v1_9_R2.MinecraftKey;
-import net.minecraft.server.v1_9_R2.NBTTagCompound;
-import net.minecraft.server.v1_9_R2.SoundEffect;
-import net.minecraft.server.v1_9_R2.World;
+import net.minecraft.server.v1_10_R1.BlockPosition;
+import net.minecraft.server.v1_10_R1.EntitySnowman;
+import net.minecraft.server.v1_10_R1.IBlockData;
+import net.minecraft.server.v1_10_R1.MinecraftKey;
+import net.minecraft.server.v1_10_R1.NBTTagCompound;
+import net.minecraft.server.v1_10_R1.SoundEffect;
+import net.minecraft.server.v1_10_R1.World;
 
 public class SnowmanController extends MobEntityController {
     public SnowmanController() {
@@ -56,21 +56,21 @@ public class SnowmanController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect bS() {
-            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bS()
+        protected SoundEffect bW() {
+            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bW()
                     : SoundEffect.a.get(new MinecraftKey(
-                            npc.data().get(NPC.HURT_SOUND_METADATA, SoundEffect.a.b(super.bS()).toString())));
+                            npc.data().get(NPC.HURT_SOUND_METADATA, SoundEffect.a.b(super.bW()).toString())));
         }
 
         @Override
-        protected SoundEffect bT() {
-            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bT()
+        protected SoundEffect bV() {
+            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bV()
                     : SoundEffect.a.get(new MinecraftKey(
-                            npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bT()).toString())));
+                            npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bV()).toString())));
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_9_R2.Entity entity) {
+        public void collide(net.minecraft.server.v1_10_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -180,9 +180,9 @@ public class SnowmanController extends MobEntityController {
         }
 
         @Override
-        public boolean n_() {
+        public boolean m_() {
             if (npc == null || !npc.isFlyable()) {
-                return super.n_();
+                return super.m_();
             } else {
                 return false;
             }

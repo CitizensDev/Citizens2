@@ -1,25 +1,25 @@
 package net.citizensnpcs.util.nms;
 
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
-import net.minecraft.server.v1_9_R2.AttributeInstance;
-import net.minecraft.server.v1_9_R2.AxisAlignedBB;
-import net.minecraft.server.v1_9_R2.Block;
-import net.minecraft.server.v1_9_R2.BlockPosition;
-import net.minecraft.server.v1_9_R2.Blocks;
-import net.minecraft.server.v1_9_R2.ChunkCache;
-import net.minecraft.server.v1_9_R2.Entity;
-import net.minecraft.server.v1_9_R2.EntityInsentient;
-import net.minecraft.server.v1_9_R2.GenericAttributes;
-import net.minecraft.server.v1_9_R2.IBlockData;
-import net.minecraft.server.v1_9_R2.Material;
-import net.minecraft.server.v1_9_R2.MathHelper;
-import net.minecraft.server.v1_9_R2.NavigationAbstract;
-import net.minecraft.server.v1_9_R2.PathEntity;
-import net.minecraft.server.v1_9_R2.PathPoint;
-import net.minecraft.server.v1_9_R2.PathType;
-import net.minecraft.server.v1_9_R2.Pathfinder;
-import net.minecraft.server.v1_9_R2.Vec3D;
-import net.minecraft.server.v1_9_R2.World;
+import net.minecraft.server.v1_10_R1.AttributeInstance;
+import net.minecraft.server.v1_10_R1.AxisAlignedBB;
+import net.minecraft.server.v1_10_R1.Block;
+import net.minecraft.server.v1_10_R1.BlockPosition;
+import net.minecraft.server.v1_10_R1.Blocks;
+import net.minecraft.server.v1_10_R1.ChunkCache;
+import net.minecraft.server.v1_10_R1.Entity;
+import net.minecraft.server.v1_10_R1.EntityInsentient;
+import net.minecraft.server.v1_10_R1.GenericAttributes;
+import net.minecraft.server.v1_10_R1.IBlockData;
+import net.minecraft.server.v1_10_R1.Material;
+import net.minecraft.server.v1_10_R1.MathHelper;
+import net.minecraft.server.v1_10_R1.NavigationAbstract;
+import net.minecraft.server.v1_10_R1.PathEntity;
+import net.minecraft.server.v1_10_R1.PathPoint;
+import net.minecraft.server.v1_10_R1.PathType;
+import net.minecraft.server.v1_10_R1.Pathfinder;
+import net.minecraft.server.v1_10_R1.Vec3D;
+import net.minecraft.server.v1_10_R1.World;
 
 public class PlayerNavigation extends NavigationAbstract {
     protected EntityHumanNPC a;
@@ -189,7 +189,7 @@ public class PlayerNavigation extends NavigationAbstract {
             if (!localVec3D.equals(this.k)) {
                 this.k = localVec3D;
                 double d1 = paramVec3D.f(this.k);
-                this.n = (this.a.cl() > 0.0F ? d1 / this.a.cl() * 1000.0D : 0.0D);
+                this.n = (this.a.cp() > 0.0F ? d1 / this.a.cp() * 1000.0D : 0.0D);
             } else {
                 this.l += System.currentTimeMillis() - this.m;
             }
@@ -470,7 +470,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     protected boolean p() {
-        return (this.a.isInWater()) || (this.a.an());
+        return (this.a.isInWater()) || (this.a.ao());
     }
 
     private int r() {

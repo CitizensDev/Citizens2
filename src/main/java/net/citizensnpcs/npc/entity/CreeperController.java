@@ -1,9 +1,9 @@
 package net.citizensnpcs.npc.entity;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_9_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftCreeper;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_10_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftCreeper;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
 import org.bukkit.entity.Creeper;
 import org.bukkit.util.Vector;
 
@@ -15,17 +15,17 @@ import net.citizensnpcs.npc.MobEntityController;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_9_R2.BlockPosition;
-import net.minecraft.server.v1_9_R2.EntityCreeper;
-import net.minecraft.server.v1_9_R2.EntityHuman;
-import net.minecraft.server.v1_9_R2.EntityLightning;
-import net.minecraft.server.v1_9_R2.EnumHand;
-import net.minecraft.server.v1_9_R2.IBlockData;
-import net.minecraft.server.v1_9_R2.ItemStack;
-import net.minecraft.server.v1_9_R2.MinecraftKey;
-import net.minecraft.server.v1_9_R2.NBTTagCompound;
-import net.minecraft.server.v1_9_R2.SoundEffect;
-import net.minecraft.server.v1_9_R2.World;
+import net.minecraft.server.v1_10_R1.BlockPosition;
+import net.minecraft.server.v1_10_R1.EntityCreeper;
+import net.minecraft.server.v1_10_R1.EntityHuman;
+import net.minecraft.server.v1_10_R1.EntityLightning;
+import net.minecraft.server.v1_10_R1.EnumHand;
+import net.minecraft.server.v1_10_R1.IBlockData;
+import net.minecraft.server.v1_10_R1.ItemStack;
+import net.minecraft.server.v1_10_R1.MinecraftKey;
+import net.minecraft.server.v1_10_R1.NBTTagCompound;
+import net.minecraft.server.v1_10_R1.SoundEffect;
+import net.minecraft.server.v1_10_R1.World;
 
 public class CreeperController extends MobEntityController {
     public CreeperController() {
@@ -81,20 +81,20 @@ public class CreeperController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect bS() {
-            return (SoundEffect) (npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bS()
-                    : npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bS()).toString()));
+        protected SoundEffect bW() {
+            return (SoundEffect) (npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bW()
+                    : npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bW()).toString()));
         }
 
         @Override
-        protected SoundEffect bT() {
-            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bT()
+        protected SoundEffect bV() {
+            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bV()
                     : SoundEffect.a.get(new MinecraftKey(
-                            npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bT()).toString())));
+                            npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bV()).toString())));
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_9_R2.Entity entity) {
+        public void collide(net.minecraft.server.v1_10_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -204,9 +204,9 @@ public class CreeperController extends MobEntityController {
         }
 
         @Override
-        public boolean n_() {
+        public boolean m_() {
             if (npc == null || !npc.isFlyable()) {
-                return super.n_();
+                return super.m_();
             } else {
                 return false;
             }

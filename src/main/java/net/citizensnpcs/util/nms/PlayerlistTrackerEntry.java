@@ -7,9 +7,9 @@ import org.bukkit.entity.Player;
 import net.citizensnpcs.npc.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_9_R2.Entity;
-import net.minecraft.server.v1_9_R2.EntityPlayer;
-import net.minecraft.server.v1_9_R2.EntityTrackerEntry;
+import net.minecraft.server.v1_10_R1.Entity;
+import net.minecraft.server.v1_10_R1.EntityPlayer;
+import net.minecraft.server.v1_10_R1.EntityTrackerEntry;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     public PlayerlistTrackerEntry(Entity entity, int i, int j, int k, boolean flag) {
@@ -28,7 +28,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         Entity tracker = getTracker(this);
         if (entityplayer != tracker && c(entityplayer)) {
             if (!this.trackedPlayers.contains(entityplayer)
-                    && ((entityplayer.x().getPlayerChunkMap().a(entityplayer, tracker.ab, tracker.ad))
+                    && ((entityplayer.x().getPlayerChunkMap().a(entityplayer, tracker.ac, tracker.ae))
                             || (tracker.attachedToPlayer))) {
                 if ((tracker instanceof SkinnableEntity)) {
 

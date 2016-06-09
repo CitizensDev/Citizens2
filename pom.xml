@@ -6,13 +6,13 @@
 
 	<groupId>net.citizensnpcs</groupId>
 	<artifactId>citizens</artifactId>
-	<version>2.0.18-SNAPSHOT</version>
+	<version>2.0.19-SNAPSHOT</version>
 	<name>Citizens</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<craftbukkit.version>1.9.4-R0.1-SNAPSHOT</craftbukkit.version>
-		<citizensapi.version>2.0.18-SNAPSHOT</citizensapi.version>
+		<craftbukkit.version>1.10-R0.1-SNAPSHOT</craftbukkit.version>
+		<citizensapi.version>2.0.19-SNAPSHOT</citizensapi.version>
 		<vault.version>1.5.4</vault.version>
 		<powermock.version>1.4.12</powermock.version>
 		<build.number>Unknown</build.number>
