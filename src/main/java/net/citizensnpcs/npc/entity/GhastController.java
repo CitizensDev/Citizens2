@@ -16,7 +16,6 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_10_R1.EntityGhast;
-import net.minecraft.server.v1_10_R1.MinecraftKey;
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import net.minecraft.server.v1_10_R1.SoundEffect;
 import net.minecraft.server.v1_10_R1.World;
@@ -48,16 +47,12 @@ public class GhastController extends MobEntityController {
 
         @Override
         protected SoundEffect bV() {
-            return npc == null || !npc.data().has(NPC.DEATH_SOUND_METADATA) ? super.bV()
-                    : SoundEffect.a.get(new MinecraftKey(
-                            npc.data().get(NPC.DEATH_SOUND_METADATA, SoundEffect.a.b(super.bV()).toString())));
+            return NMS.getSoundEffect(npc, super.bV(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override
         protected SoundEffect bW() {
-            return npc == null || !npc.data().has(NPC.HURT_SOUND_METADATA) ? super.bW()
-                    : SoundEffect.a.get(new MinecraftKey(
-                            npc.data().get(NPC.HURT_SOUND_METADATA, SoundEffect.a.b(super.bW()).toString())));
+            return NMS.getSoundEffect(npc, super.bW(), NPC.HURT_SOUND_METADATA);
         }
 
         @Override
@@ -115,9 +110,7 @@ public class GhastController extends MobEntityController {
 
         @Override
         protected SoundEffect G() {
-            return npc == null || !npc.data().has(NPC.AMBIENT_SOUND_METADATA) ? super.G()
-                    : SoundEffect.a.get(new MinecraftKey(
-                            npc.data().get(NPC.AMBIENT_SOUND_METADATA, SoundEffect.a.b(super.G()).toString())));
+            return NMS.getSoundEffect(npc, super.G(), NPC.AMBIENT_SOUND_METADATA);
         }
 
         @Override

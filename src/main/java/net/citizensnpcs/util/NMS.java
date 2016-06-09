@@ -80,12 +80,14 @@ import net.minecraft.server.v1_10_R1.EntityTrackerEntry;
 import net.minecraft.server.v1_10_R1.EntityTypes;
 import net.minecraft.server.v1_10_R1.GenericAttributes;
 import net.minecraft.server.v1_10_R1.MathHelper;
+import net.minecraft.server.v1_10_R1.MinecraftKey;
 import net.minecraft.server.v1_10_R1.MobEffects;
 import net.minecraft.server.v1_10_R1.NavigationAbstract;
 import net.minecraft.server.v1_10_R1.NetworkManager;
 import net.minecraft.server.v1_10_R1.Packet;
 import net.minecraft.server.v1_10_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_10_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_10_R1.SoundEffect;
 import net.minecraft.server.v1_10_R1.Vec3D;
 import net.minecraft.server.v1_10_R1.World;
 import net.minecraft.server.v1_10_R1.WorldServer;
@@ -471,6 +473,11 @@ public class NMS {
         } catch (Exception e) {
             throw new CommandException(Messages.INVALID_SOUND);
         }
+    }
+
+    public static SoundEffect getSoundEffect(NPC npc, SoundEffect snd, String meta) {
+        return npc == null || !npc.data().has(meta) ? snd
+                : SoundEffect.a.get(new MinecraftKey(npc.data().get(meta, snd == null ? "" : snd.toString())));
     }
 
     public static float getSpeedFor(NPC npc) {
