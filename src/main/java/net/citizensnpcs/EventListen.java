@@ -358,7 +358,7 @@ public class EventListen implements Listener {
         toRespawn.put(coord, event.getNPC());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCDespawn(NPCDespawnEvent event) {
         if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL
                 || event.getReason() == DespawnReason.RELOAD) {
