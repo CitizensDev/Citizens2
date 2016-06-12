@@ -369,7 +369,7 @@ public class EventListen implements Listener {
         skinUpdateTracker.onNPCDespawn(event.getNPC());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onNPCSpawn(NPCSpawnEvent event) {
         skinUpdateTracker.onNPCSpawn(event.getNPC());
     }
