@@ -291,14 +291,19 @@ public class CitizensNPC extends AbstractNPC {
                     if (getEntity() instanceof Player
                             && Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName) != null) {
                         Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
-                        team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility);
-                        if (data().has(NPC.GLOWING_COLOR_METADATA)) {
-                            if (team.getPrefix() == null || team.getPrefix().length() == 0
-                                    || (data().has("previous-glowing-color")
-                                            && !team.getPrefix().equals(data().get("previous-glowing-color")))) {
-                                team.setPrefix(
-                                        ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA)).toString());
-                                data().set("previous-glowing-color", team.getPrefix());
+                        if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+                            team.unregister();
+                            data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+                        } else {
+                            team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility);
+                            if (data().has(NPC.GLOWING_COLOR_METADATA)) {
+                                if (team.getPrefix() == null || team.getPrefix().length() == 0
+                                        || (data().has("previous-glowing-color")
+                                                && !team.getPrefix().equals(data().get("previous-glowing-color")))) {
+                                    team.setPrefix(ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA))
+                                            .toString());
+                                    data().set("previous-glowing-color", team.getPrefix());
+                                }
                             }
                         }
                     }

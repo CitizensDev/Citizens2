@@ -86,8 +86,6 @@ public class HumanController extends AbstractEntityController {
             skin.apply(handle);
         }
 
-        handle.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
-
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
