@@ -306,6 +306,15 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         npc.update();
     }
 
+    @Override
+    public boolean m_() {
+        if (npc == null || !npc.isFlyable()) {
+            return super.m_();
+        } else {
+            return false;
+        }
+    }
+
     private void moveOnCurrentHeading() {
         NMS.updateAI(this);
         if (be) {
@@ -323,15 +332,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         NMS.setHeadYaw(this, yaw);
         if (jumpTicks > 0) {
             jumpTicks--;
-        }
-    }
-
-    @Override
-    public boolean m_() {
-        if (npc == null || !npc.isFlyable()) {
-            return super.m_();
-        } else {
-            return false;
         }
     }
 

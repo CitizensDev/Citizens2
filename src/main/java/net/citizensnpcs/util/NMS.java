@@ -21,9 +21,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.v1_10_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_10_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_10_R1.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_10_R1.event.CraftEventFactory;
@@ -60,11 +64,14 @@ import net.minecraft.server.v1_10_R1.AttributeInstance;
 import net.minecraft.server.v1_10_R1.AxisAlignedBB;
 import net.minecraft.server.v1_10_R1.Block;
 import net.minecraft.server.v1_10_R1.BlockPosition;
+import net.minecraft.server.v1_10_R1.BossBattleServer;
 import net.minecraft.server.v1_10_R1.ControllerJump;
 import net.minecraft.server.v1_10_R1.DamageSource;
 import net.minecraft.server.v1_10_R1.DataWatcherObject;
 import net.minecraft.server.v1_10_R1.EnchantmentManager;
+import net.minecraft.server.v1_10_R1.EnderDragonBattle;
 import net.minecraft.server.v1_10_R1.Entity;
+import net.minecraft.server.v1_10_R1.EntityEnderDragon;
 import net.minecraft.server.v1_10_R1.EntityFishingHook;
 import net.minecraft.server.v1_10_R1.EntityHorse;
 import net.minecraft.server.v1_10_R1.EntityHuman;
@@ -78,6 +85,7 @@ import net.minecraft.server.v1_10_R1.EntityTameableAnimal;
 import net.minecraft.server.v1_10_R1.EntityTracker;
 import net.minecraft.server.v1_10_R1.EntityTrackerEntry;
 import net.minecraft.server.v1_10_R1.EntityTypes;
+import net.minecraft.server.v1_10_R1.EntityWither;
 import net.minecraft.server.v1_10_R1.GenericAttributes;
 import net.minecraft.server.v1_10_R1.MathHelper;
 import net.minecraft.server.v1_10_R1.MinecraftKey;
@@ -368,6 +376,28 @@ public class NMS {
         }
         entity.aH += (f2 - entity.aH) * 0.4F;
         entity.aI += entity.aH;
+    }
+
+    public static BossBar getBossBar(org.bukkit.entity.Entity entity) {
+        BossBattleServer bserver = null;
+        try {
+            if (entity.getType() == EntityType.WITHER) {
+                bserver = (BossBattleServer) WITHER_BOSS_BAR_FIELD.get(NMS.getHandle(entity));
+            } else if (entity.getType() == EntityType.ENDER_DRAGON) {
+                bserver = (BossBattleServer) ENDERDRAGON_BATTLE_BAR_FIELD
+                        .get(ENDERDRAGON_BATTLE_FIELD.get(NMS.getHandle(entity)));
+            }
+        } catch (Exception e) {
+        }
+        if (bserver == null) {
+            return null;
+        }
+        BossBar ret = Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SEGMENTED_10);
+        try {
+            CRAFT_BOSSBAR_HANDLE_FIELD.set(ret, bserver);
+        } catch (Exception e) {
+        }
+        return ret;
     }
 
     public static org.bukkit.entity.Entity getBukkitVehicle(org.bukkit.entity.Entity entity) {
@@ -919,7 +949,10 @@ public class NMS {
         }
     }
 
+    private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = getField(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
+    private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = getField(EnderDragonBattle.class, "c");
+    private static final Field ENDERDRAGON_BATTLE_FIELD = getField(EntityEnderDragon.class, "bK");
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
     private static final Map<Class<?>, Constructor<?>> ENTITY_CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
@@ -934,6 +967,7 @@ public class NMS {
     private static final Random RANDOM = Util.getFastRandom();
     private static Field SKULL_PROFILE_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
+    private static final Field WITHER_BOSS_BAR_FIELD = getField(EntityWither.class, "bG");
 
     static {
         try {
