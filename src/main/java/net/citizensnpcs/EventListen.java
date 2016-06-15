@@ -263,12 +263,6 @@ public class EventListen implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled=true)
-    public void onPlayerFish(PlayerFishEvent event) {
-        if (npcRegistry.isNPC(event.getCaught()) && npcRegistry.getNPC(event.getCaught()).isProtected()) {
-            event.setCancelled(true);
-        }
-    }
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntitySpawn(CreatureSpawnEvent event) {
         if (event.isCancelled() && npcRegistry.isNPC(event.getEntity())) {
@@ -362,9 +356,14 @@ public class EventListen implements Listener {
     public void onNPCDespawn(NPCDespawnEvent event) {
         if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL
                 || event.getReason() == DespawnReason.RELOAD) {
+            Messaging.debug("Preventing further respawns of " + event.getNPC().getId() + " due to DespawnReason."
+                    + event.getReason().name());
             if (event.getNPC().getStoredLocation() != null) {
                 toRespawn.remove(toCoord(event.getNPC().getStoredLocation()), event.getNPC());
             }
+        } else {
+            Messaging.debug("Removing " + event.getNPC().getId() + " from skin tracker due to DespawnReason."
+                    + event.getReason().name());
         }
         skinUpdateTracker.onNPCDespawn(event.getNPC());
     }
@@ -391,6 +390,13 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
         checkCreationEvent(event);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerFish(PlayerFishEvent event) {
+        if (npcRegistry.isNPC(event.getCaught()) && npcRegistry.getNPC(event.getCaught()).isProtected()) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)

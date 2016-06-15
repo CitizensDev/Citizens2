@@ -15,6 +15,8 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -38,6 +40,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
@@ -74,6 +77,7 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.BossBarTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
@@ -234,8 +238,8 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "armorstand --visible [visible] --small [small] --gravity [gravity] --arms [arms] --baseplate [baseplate]",
-            desc = "C whether the NPC can be ridden and controlled",
-            modifiers = { "armorstand", "control" },
+            desc = "Edit armorstand properties",
+            modifiers = { "armorstand" },
             min = 1,
             max = 1)
     @Requirements(selected = true, ownership = true, types = EntityType.ARMOR_STAND)
@@ -255,6 +259,38 @@ public class NPCCommands {
         }
         if (args.hasValueFlag("baseplate")) {
             trait.setHasBaseplate(Boolean.valueOf(args.getFlag("baseplate")));
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "bossbar --color [color] --title [title] --visible [visible] --flags [flags]",
+            desc = "Edit bossbar properties",
+            modifiers = { "bossbar" },
+            min = 1,
+            max = 1)
+    @Requirements(selected = true, ownership = true, types = { EntityType.WITHER, EntityType.ENDER_DRAGON })
+    public void bossbar(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        BossBarTrait trait = npc.getTrait(BossBarTrait.class);
+        if (args.hasValueFlag("color")) {
+            BarColor color = Util.matchEnum(BarColor.values(), args.getFlag("color"));
+            trait.setColor(color);
+        }
+        if (args.hasValueFlag("title")) {
+            trait.setTitle(args.getFlag("title"));
+        }
+        if (args.hasValueFlag("visible")) {
+            trait.setVisible(Boolean.parseBoolean(args.getFlag("visible")));
+        }
+        if (args.hasValueFlag("flags")) {
+            List<BarFlag> flags = Lists.newArrayList();
+            for (String s : Splitter.on(',').omitEmptyStrings().trimResults().split(args.getFlag("flags"))) {
+                BarFlag flag = Util.matchEnum(BarFlag.values(), s);
+                if (flag != null) {
+                    flags.add(flag);
+                }
+            }
+            trait.setFlags(flags);
         }
     }
 
