@@ -8,6 +8,7 @@ Compatible With:
 Maven
 =====
 Include CitizensAPI in your pom.xml like this (set the artifactId to citizens if you want to access the full plugin details of Citizens):
+```
 <dependency>
 	<groupId>net.citizensnpcs</groupId>
 	<artifactId>citizensapi</artifactId>
@@ -15,6 +16,7 @@ Include CitizensAPI in your pom.xml like this (set the artifactId to citizens if
 	<type>jar</type>
 	<scope>compile</scope>
 </dependency>
+```
 
 Javadoc
 =======
