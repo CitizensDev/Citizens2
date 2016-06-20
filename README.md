@@ -18,4 +18,4 @@ Include CitizensAPI in your pom.xml like this (set the artifactId to citizens if
 
 Javadoc
 =======
-http://jd.ciitzensnpcs.co
+http://jd.citizensnpcs.co
