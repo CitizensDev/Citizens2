@@ -6,6 +6,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -14,14 +16,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.MemoryDataKey;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.MemoryDataKey;
+import net.citizensnpcs.api.util.YamlStorage;
+import net.citizensnpcs.api.util.YamlStorage.YamlKey;
+
 public class PersistenceLoaderTest {
     private DataKey root;
+    private YamlKey yamlRoot;
 
     @Test
     public void canAccessPrivateMembers() {
@@ -53,9 +58,22 @@ public class PersistenceLoaderTest {
     @Test
     public void longLoadSaveTest() {
         LongLoadSaveTest load = new LongLoadSaveTest();
+        load.term = 23423423333333L;
         PersistenceLoader.save(load, root);
         PersistenceLoader.load(load, root);
-        assertEquals(load.term, 234234233);
+        assertEquals(load.term, 23423423333333L);
+    }
+
+    @Test
+    public void longLoadSaveTestYaml() {
+        LongLoadSaveTest load = new LongLoadSaveTest();
+        load.term = 3;
+        PersistenceLoader.save(load, yamlRoot);
+        yamlRoot.getStorage().save();
+        load = new LongLoadSaveTest();
+        yamlRoot.getStorage().load();
+        PersistenceLoader.load(load, yamlRoot);
+        assertEquals(load.term, 3);
     }
 
     @Test
@@ -78,6 +96,11 @@ public class PersistenceLoaderTest {
     @Before
     public void setUp() {
         root = new MemoryDataKey();
+        try {
+            yamlRoot = new YamlStorage(File.createTempFile("citizens_test", null)).getKey("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -124,8 +147,8 @@ public class PersistenceLoaderTest {
     }
 
     public static class LongLoadSaveTest {
-        @Persist
-        private final long term = 234234233;
+        @Persist("root2")
+        public long term = 0;
     }
 
     public static class RequiredTest {

@@ -116,7 +116,7 @@ public class Equipment extends Trait {
             return;
         if (npc.getEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getEntity();
-            if (equipment[0] != null) { 
+            if (equipment[0] != null) {
                 enderman.setCarriedMaterial(equipment[0].getData());
             }
         } else {
@@ -146,9 +146,9 @@ public class Equipment extends Trait {
     }
 
     private void saveOrRemove(DataKey key, ItemStack item) {
-        if (item != null)
+        if (item != null) {
             ItemStorage.saveItem(key, item);
-        else {
+        } else {
             if (key.keyExists("")) {
                 key.removeKey("");
             }

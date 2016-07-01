@@ -142,14 +142,41 @@ public class PersistenceLoader {
             value = deserialiseValue(field, root.getRelative(field.key));
         if (value == null && field.isRequired())
             throw loadException;
-        if (type.isPrimitive()) {
+        if (type.isPrimitive() || Primitives.isWrapperType(type)) {
             if (value == null)
                 return;
-            type = Primitives.wrap(type);
+            if (!Primitives.isWrapperType(type)) {
+                type = Primitives.wrap(type);
+            }
+            Class<?> clazz = value.getClass();
+            if (clazz == Integer.class && type != Integer.class && type != Double.class && type != Long.class
+                    && type != Float.class) {
+                return;
+            }
+            if (clazz == Float.class && type != Double.class && type != Float.class) {
+                return;
+            }
+            if (clazz == Double.class && type != Double.class) {
+                return;
+            }
+            if (clazz == Byte.class && type != Short.class && type != Byte.class && type != Integer.class
+                    && type != Double.class && type != Long.class && type != Float.class) {
+                return;
+            }
+            if (clazz == Short.class && type != Short.class && type != Integer.class && type != Double.class
+                    && type != Long.class && type != Float.class) {
+                return;
+            }
+            if (clazz == Character.class && type != Character.class && type != Short.class && type != Integer.class
+                    && type != Double.class && type != Long.class && type != Float.class) {
+                return;
+            }
+            field.set(value);
+        } else {
+            if (value != null && !type.isAssignableFrom(value.getClass()))
+                return;
+            field.set(value);
         }
-        if (value != null && !type.isAssignableFrom(value.getClass()))
-            return;
-        field.set(value);
     }
 
     private static void deserialiseCollection(Collection<Object> collection, DataKey root, PersistField field) {
