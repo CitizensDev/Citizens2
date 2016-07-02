@@ -79,7 +79,8 @@ public class CitizensNPC extends AbstractNPC {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             getEntity().getLocation().getChunk();
-            Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Force loaded chunk.");
+            Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Force loaded chunk.",
+                    getEntity().isValid());
             return false;
         }
         boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
@@ -93,6 +94,7 @@ public class CitizensNPC extends AbstractNPC {
         for (Trait trait : new ArrayList<Trait>(traits.values())) {
             trait.onDespawn();
         }
+        Messaging.debug("Despawned", getId(), "DespawnReason.", reason);
         entityController.remove();
 
         return true;
@@ -139,6 +141,9 @@ public class CitizensNPC extends AbstractNPC {
         CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
         if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
             spawn(spawnLocation.getLocation());
+        }
+        if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() == null) {
+            Messaging.debug("Tried to spawn", getId(), "on load but world was null");
         }
 
         navigator.load(root.getRelative("navigator"));
@@ -261,6 +266,7 @@ public class CitizensNPC extends AbstractNPC {
                 NMS.replaceTrackerEntry(player);
             }
         }
+        Messaging.debug("Spawned", getId(), at, mcEntity.valid);
 
         return true;
     }

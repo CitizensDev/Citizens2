@@ -59,7 +59,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
-import net.citizensnpcs.api.event.CitizensReloadEvent;
+import net.citizensnpcs.api.event.CitizensPreReloadEvent;
 import net.citizensnpcs.api.event.CitizensSerialiseMetaEvent;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
@@ -164,7 +164,7 @@ public class EventListen implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onCitizensReload(CitizensReloadEvent event) {
+    public void onCitizensReload(CitizensPreReloadEvent event) {
         skinUpdateTracker.reset();
         toRespawn.clear();
     }
@@ -306,29 +306,29 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onMetaSerialise(CitizensSerialiseMetaEvent event) {
-        if (event.getMeta() instanceof SkullMeta) {
-            SkullMeta meta = (SkullMeta) event.getMeta();
-            GameProfile profile = NMS.getProfile(meta);
-            if (profile == null)
-                return;
-            if (profile.getName() != null) {
-                event.getKey().setString("skull.owner", profile.getName());
-            }
-            if (profile.getId() != null) {
-                event.getKey().setString("skull.uuid", profile.getId().toString());
-            }
-            if (profile.getProperties() != null) {
-                for (Entry<String, Collection<Property>> entry : profile.getProperties().asMap().entrySet()) {
-                    DataKey relative = event.getKey().getRelative("skull.properties." + entry.getKey());
-                    int i = 0;
-                    for (Property value : entry.getValue()) {
-                        relative.getRelative(i).setString("name", value.getName());
-                        if (value.getSignature() != null) {
-                            relative.getRelative(i).setString("signature", value.getSignature());
-                        }
-                        relative.getRelative(i).setString("value", value.getValue());
-                        i++;
+        if (!(event.getMeta() instanceof SkullMeta))
+            return;
+        SkullMeta meta = (SkullMeta) event.getMeta();
+        GameProfile profile = NMS.getProfile(meta);
+        if (profile == null)
+            return;
+        if (profile.getName() != null) {
+            event.getKey().setString("skull.owner", profile.getName());
+        }
+        if (profile.getId() != null) {
+            event.getKey().setString("skull.uuid", profile.getId().toString());
+        }
+        if (profile.getProperties() != null) {
+            for (Entry<String, Collection<Property>> entry : profile.getProperties().asMap().entrySet()) {
+                DataKey relative = event.getKey().getRelative("skull.properties." + entry.getKey());
+                int i = 0;
+                for (Property value : entry.getValue()) {
+                    relative.getRelative(i).setString("name", value.getName());
+                    if (value.getSignature() != null) {
+                        relative.getRelative(i).setString("signature", value.getSignature());
                     }
+                    relative.getRelative(i).setString("value", value.getValue());
+                    i++;
                 }
             }
         }
@@ -349,6 +349,7 @@ public class EventListen implements Listener {
         ChunkCoord coord = toCoord(event.getSpawnLocation());
         if (toRespawn.containsEntry(coord, event.getNPC()))
             return;
+        Messaging.debug("Stored", event.getNPC().getId(), "for respawn from NPCNeedsRespawnEvent");
         toRespawn.put(coord, event.getNPC());
     }
 
@@ -516,6 +517,7 @@ public class EventListen implements Listener {
                         respawnAllFromCoord(coord);
                     }
                 }
+                event.setCancelled(true);
                 return;
             }
             if (npc.isSpawned()) {
