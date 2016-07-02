@@ -26,6 +26,7 @@ import net.citizensnpcs.api.command.CommandManager.CommandInfo;
 import net.citizensnpcs.api.command.Injector;
 import net.citizensnpcs.api.event.CitizensDisableEvent;
 import net.citizensnpcs.api.event.CitizensEnableEvent;
+import net.citizensnpcs.api.event.CitizensPreReloadEvent;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -344,6 +345,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         despawnNPCs();
         ProfileFetcher.reset();
         Skin.clearCache();
+        getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
+
         saves = createStorage(getDataFolder());
         saves.loadInto(npcRegistry);
 
