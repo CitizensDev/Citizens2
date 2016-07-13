@@ -6,7 +6,6 @@ import org.bukkit.util.Vector;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.npc.entity.EntityHumanNPC.PlayerNPC;
 
 @TraitName("gravity")
 public class Gravity extends Trait implements Toggleable {
@@ -21,12 +20,15 @@ public class Gravity extends Trait implements Toggleable {
         enabled = gravitate;
     }
 
+    public boolean hasGravity() {
+        return enabled;
+    }
+
     @Override
     public void run() {
         if (!npc.isSpawned())
             return;
         if (npc.getEntity() instanceof Player) {
-            ((PlayerNPC) npc.getEntity()).setGravityEnabled(!enabled);
             return;
         }
         if (!enabled || npc.getNavigator().isNavigating())

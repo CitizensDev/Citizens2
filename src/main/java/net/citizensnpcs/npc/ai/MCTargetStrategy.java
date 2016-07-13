@@ -12,7 +12,6 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_10_R1.NavigationAbstract;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final boolean aggro;
@@ -30,9 +29,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         this.parameters = params;
         this.handle = npc.getEntity();
         this.target = target;
-        NavigationAbstract nav = NMS.getNavigation(npc.getEntity());
-        this.targetNavigator = nav != null && !params.useNewPathfinder() ? new NavigationFieldWrapper(nav)
-                : new AStarTargeter();
+        TargetNavigator nav = NMS.getTargetNavigator(npc.getEntity(), target, params);
+        this.targetNavigator = nav != null && !params.useNewPathfinder() ? nav : new AStarTargeter();
         this.aggro = aggro;
     }
 
@@ -174,37 +172,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
     }
 
-    private class NavigationFieldWrapper implements TargetNavigator {
-        private final NavigationAbstract navigation;
-
-        private NavigationFieldWrapper(NavigationAbstract navigation) {
-            this.navigation = navigation;
-        }
-
-        @Override
-        public void setPath() {
-            Location location = parameters.entityTargetLocationMapper().apply(target);
-            if (location == null) {
-                throw new IllegalStateException("mapper should not return null");
-            }
-            Location oldLoc = target.getLocation(HANDLE_LOCATION);
-            target.teleport(location);
-            NMS.setNavigationTarget(handle, target, parameters.speed());
-            target.teleport(oldLoc);
-        }
-
-        @Override
-        public void stop() {
-            NMS.stopNavigation(navigation);
-        }
-
-        @Override
-        public void update() {
-            NMS.updateNavigation(navigation);
-        }
-    }
-
-    private static interface TargetNavigator {
+    public static interface TargetNavigator {
         void setPath();
 
         void stop();

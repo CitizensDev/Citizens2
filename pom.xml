@@ -55,7 +55,7 @@
 			<version>${craftbukkit.version}</version>
 			<type>jar</type>
 			<scope>provided</scope>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>net.citizensnpcs</groupId>
 			<artifactId>citizensapi</artifactId>

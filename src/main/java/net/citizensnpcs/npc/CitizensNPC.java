@@ -200,7 +200,7 @@ public class CitizensNPC extends AbstractNPC {
 
         // send skin packets, if applicable, before other NMS packets are sent
         if (couldSpawn) {
-            SkinnableEntity skinnable = NMS.getSkinnable(getEntity());
+            SkinnableEntity skinnable = getEntity() instanceof SkinnableEntity ? ((SkinnableEntity) getEntity()) : null;
             if (skinnable != null) {
                 skinnable.getSkinTracker().onSpawnNPC();
             }
@@ -254,7 +254,7 @@ public class CitizensNPC extends AbstractNPC {
             entity.setRemoveWhenFarAway(false);
 
             if (NMS.getStepHeight(entity) < 1) {
-                NMS.setStepHeight(NMS.getHandle(entity), 1);
+                NMS.setStepHeight(entity, 1);
             }
 
             if (getEntity() instanceof Player) {

@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.ai;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.Settings.Setting;
@@ -16,7 +17,7 @@ import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.NMS; 
+import net.citizensnpcs.util.NMS;
 
 public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     private final NPC npc;
@@ -93,13 +94,13 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         motY += (Math.signum(d1) * 0.7D - motY) * 0.1;
         motZ += (Math.signum(d2) * 0.5D - motZ) * 0.1;
         float targetYaw = (float) (Math.atan2(motZ, motX) * 180.0D / Math.PI) - 90.0F;
-        float normalisedTargetYaw = (targetYaw - current.getYaw()) % 360; 
+        float normalisedTargetYaw = (targetYaw - current.getYaw()) % 360;
         if (normalisedTargetYaw >= 180.0F) {
             normalisedTargetYaw -= 360.0F;
         }
         if (normalisedTargetYaw < -180.0F) {
             normalisedTargetYaw += 360.0F;
-        } 
+        }
 
         velocity.setX(motX).setY(motY).setZ(motZ).multiply(parameters.speed());
         npc.getEntity().setVelocity(velocity);
@@ -107,8 +108,9 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         NMS.setVerticalMovement(npc.getEntity(), 0.5);
         if (npc.getEntity().getType() != EntityType.ENDER_DRAGON) {
             float newYaw = current.getYaw() + normalisedTargetYaw;
-            NMS.setHeadYaw(NMS.getHandle(npc.getEntity()), newYaw);
-            NMS.getHandle(npc.getEntity()).yaw = newYaw;
+            current.setYaw(newYaw);
+            NMS.setHeadYaw(npc.getEntity(), newYaw);
+            npc.teleport(current, TeleportCause.PLUGIN);
         }
         parameters.run();
         plan.run(npc);
