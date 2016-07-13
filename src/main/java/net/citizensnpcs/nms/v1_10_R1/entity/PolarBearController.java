@@ -45,6 +45,17 @@ public class PolarBearController extends MobEntityController {
         }
 
         @Override
+        public void a(boolean flag) {
+            float oldw = width;
+            float oldl = length;
+            super.a(flag);
+            if (oldw != width || oldl != length) {
+                this.setPosition(locX - 0.01, locY, locZ - 0.01);
+                this.setPosition(locX + 0.01, locY, locZ + 0.01);
+            }
+        }
+
+        @Override
         protected SoundEffect bV() {
             return NMSImpl.getSoundEffect(npc, super.bV(), NPC.DEATH_SOUND_METADATA);
         }
