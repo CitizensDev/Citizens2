@@ -1,9 +1,11 @@
 package net.citizensnpcs.trait;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 import java.util.Map;
 
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
+import org.bukkit.Location;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -27,11 +29,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_10_R1.EntityEnderDragon;
-import net.minecraft.server.v1_10_R1.EntityLiving;
-import net.minecraft.server.v1_10_R1.EntityPlayer;
 
-//TODO: reduce reliance on CitizensNPC
 @TraitName("controllable")
 public class Controllable extends Trait implements Toggleable, CommandConfigurable {
     private MovementController controller = new GroundController();
@@ -60,29 +58,27 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             explicitType = EntityType.UNKNOWN;
         } else if (args.hasFlag('r')) {
             explicitType = null;
-        } else if (args.hasValueFlag("explicittype"))
+        } else if (args.hasValueFlag("explicittype")) {
             explicitType = Util.matchEntityType(args.getFlag("explicittype"));
+        }
+
         if (npc.isSpawned()) {
             loadController();
         }
     }
 
     private void enterOrLeaveVehicle(Player player) {
-        EntityPlayer handle = ((CraftPlayer) player).getHandle();
-        if (getHandle().isVehicle()) {
-            if (getHandle().passengers.contains(handle)) {
+        List<Entity> passengers = NMS.getPassengers(player);
+        if (passengers.size() > 0) {
+            if (passengers.contains(player)) {
                 player.leaveVehicle();
             }
             return;
         }
-        if (ownerRequired && !npc.getTrait(Owner.class).isOwnedBy(handle.getBukkitEntity())) {
+        if (ownerRequired && !npc.getTrait(Owner.class).isOwnedBy(player)) {
             return;
         }
         NMS.mount(npc.getEntity(), player);
-    }
-
-    private net.minecraft.server.v1_10_R1.Entity getHandle() {
-        return NMS.getHandle(npc.getEntity());
     }
 
     public boolean isEnabled() {
@@ -138,7 +134,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         if (!npc.isSpawned() || !enabled)
             return;
         Action performed = event.getAction();
-        if (!getHandle().passengers.contains(getHandle()))
+        if (NMS.getPassengers(npc.getEntity()).contains(npc.getEntity()))
             return;
         switch (performed) {
             case RIGHT_CLICK_BLOCK:
@@ -168,10 +164,12 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     @Override
     public void run() {
-        if (!enabled || !npc.isSpawned() || !getHandle().isVehicle()
-                || !(getHandle().passengers.get(0).getBukkitEntity() instanceof Player))
+        if (!enabled || !npc.isSpawned())
             return;
-        controller.run((Player) getHandle().passengers.get(0).getBukkitEntity());
+        List<Entity> passengers = NMS.getPassengers(npc.getEntity());
+        if (passengers.size() == 0 || !(passengers.get(0) instanceof Player))
+            return;
+        controller.run((Player) passengers.get(0));
     }
 
     @Override
@@ -188,17 +186,20 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return enabled;
     }
 
-    private void setMountedYaw(net.minecraft.server.v1_10_R1.Entity handle) {
-        if (handle instanceof EntityEnderDragon || !Setting.USE_BOAT_CONTROLS.asBoolean())
+    private void setMountedYaw(Entity entity) {
+        if (entity instanceof EnderDragon || !Setting.USE_BOAT_CONTROLS.asBoolean())
             return; // EnderDragon handles this separately
-        double tX = handle.locX + handle.motX;
-        double tZ = handle.locZ + handle.motZ;
-        if (handle.locZ > tZ) {
-            handle.yaw = (float) -Math.toDegrees(Math.atan((handle.locX - tX) / (handle.locZ - tZ))) + 180F;
-        } else if (handle.locZ < tZ) {
-            handle.yaw = (float) -Math.toDegrees(Math.atan((handle.locX - tX) / (handle.locZ - tZ)));
+        Location loc = entity.getLocation();
+        Vector vel = entity.getVelocity();
+        double tX = loc.getX() + vel.getX();
+        double tZ = loc.getZ() + vel.getZ();
+        if (loc.getX() > tZ) {
+            loc.setYaw((float) -Math.toDegrees(Math.atan((loc.getX() - tX) / (loc.getZ() - tZ))) + 180F);
+        } else if (loc.getZ() < tZ) {
+            loc.setYaw((float) -Math.toDegrees(Math.atan((loc.getX() - tX) / (loc.getZ() - tZ))));
         }
-        NMS.setHeadYaw(handle, handle.yaw);
+        entity.teleport(loc);
+        NMS.setHeadYaw(entity, loc.getYaw());
     }
 
     public void setOwnerRequired(boolean ownerRequired) {
@@ -208,20 +209,21 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     @Override
     public boolean toggle() {
         enabled = !enabled;
-        if (!enabled && getHandle().isVehicle()) {
-            getHandle().passengers.get(0).getBukkitEntity().leaveVehicle();
+        if (!enabled && NMS.getPassengers(npc.getEntity()).size() > 0) {
+            NMS.getPassengers(npc.getEntity()).get(0).leaveVehicle();
         }
         return enabled;
     }
 
-    private double updateHorizontalSpeed(net.minecraft.server.v1_10_R1.Entity handle,
-            net.minecraft.server.v1_10_R1.Entity passenger, double speed, float speedMod) {
-        double oldSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
-        double angle = Math.toRadians(passenger.yaw - ((EntityLiving) passenger).bf * 45.0F);
-        handle.motX += speedMod * -Math.sin(angle) * ((EntityLiving) passenger).bg * 0.05;
-        handle.motZ += speedMod * Math.cos(angle) * ((EntityLiving) passenger).bg * 0.05;
+    private double updateHorizontalSpeed(Entity handle, Entity passenger, double speed, float speedMod) {
+        Vector hvel = handle.getVelocity();
+        double oldSpeed = Math.sqrt(hvel.getX() * hvel.getX() + hvel.getZ() * hvel.getZ());
+        double angle = Math.toRadians(passenger.getLocation().getYaw() - NMS.getVerticalMovement(passenger) * 45.0F);
+        hvel = hvel.add(new Vector(speedMod * -Math.sin(angle) * NMS.getHorizontalMovement(passenger) * 0.05, 0,
+                speedMod * Math.cos(angle) * NMS.getHorizontalMovement(passenger) * 0.05));
+        handle.setVelocity(hvel);
 
-        double newSpeed = Math.sqrt(handle.motX * handle.motX + handle.motZ * handle.motZ);
+        double newSpeed = Math.sqrt(hvel.getX() * hvel.getX() + hvel.getZ() * hvel.getZ());
         if (newSpeed > oldSpeed && speed < 0.35D) {
             return (float) Math.min(0.35D, (speed + ((0.35D - speed) / 35.0D)));
         } else {
@@ -248,25 +250,22 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
         @Override
         public void run(Player rider) {
-            net.minecraft.server.v1_10_R1.Entity handle = getHandle();
-            net.minecraft.server.v1_10_R1.Entity passenger = ((CraftPlayer) rider).getHandle();
-            boolean onGround = handle.onGround;
+            boolean onGround = NMS.isOnGround(npc.getEntity());
             float speedMod = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
-            speed = updateHorizontalSpeed(handle, passenger, speed, speedMod);
+            speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, speedMod);
 
-            boolean shouldJump = NMS.shouldJump(passenger);
+            boolean shouldJump = NMS.shouldJump(rider);
             if (shouldJump) {
-                if (handle.onGround && jumpTicks == 0) {
-                    getHandle().motY = JUMP_VELOCITY;
+                if (onGround && jumpTicks == 0) {
+                    npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(JUMP_VELOCITY));
                     jumpTicks = 10;
                 }
             } else {
                 jumpTicks = 0;
             }
             jumpTicks = Math.max(0, jumpTicks - 1);
-
-            setMountedYaw(handle);
+            setMountedYaw(npc.getEntity());
         }
 
         private static final float AIR_SPEED = 1.5F;
@@ -295,16 +294,13 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         @Override
         public void run(Player rider) {
             if (paused) {
-                getHandle().motY = 0.001;
+                npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.001));
                 return;
             }
             Vector dir = rider.getEyeLocation().getDirection();
             dir.multiply(npc.getNavigator().getDefaultParameters().speedModifier());
-            net.minecraft.server.v1_10_R1.Entity handle = getHandle();
-            handle.motX = dir.getX();
-            handle.motY = dir.getY();
-            handle.motZ = dir.getZ();
-            setMountedYaw(handle);
+            npc.getEntity().setVelocity(dir);
+            setMountedYaw(npc.getEntity());
         }
     }
 
@@ -329,7 +325,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
         @Override
         public void rightClick(PlayerInteractEvent event) {
-            getHandle().motY = -0.3F;
+            npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(-0.3F));
         }
 
         @Override
@@ -340,18 +336,16 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         @Override
         public void run(Player rider) {
             if (paused) {
-                getHandle().motY = 0.001;
+                npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.001F));
                 return;
             }
-            net.minecraft.server.v1_10_R1.Entity handle = getHandle();
-            net.minecraft.server.v1_10_R1.Entity passenger = ((CraftPlayer) rider).getHandle();
 
-            speed = updateHorizontalSpeed(handle, passenger, speed, 1F);
-            boolean shouldJump = NMS.shouldJump(passenger);
+            speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, 1F);
+            boolean shouldJump = NMS.shouldJump(rider);
             if (shouldJump) {
-                handle.motY = 0.3F;
+                npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3F));
             }
-            handle.motY *= 0.98F;
+            npc.getEntity().setVelocity(npc.getEntity().getVelocity().multiply(new Vector(1, 0.98, 1)));
         }
     }
 

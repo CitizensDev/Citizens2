@@ -30,6 +30,7 @@ import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_10_R1.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftWither;
 import org.bukkit.craftbukkit.v1_10_R1.event.CraftEventFactory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
@@ -37,11 +38,15 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.HttpAuthenticationService;
@@ -93,6 +98,7 @@ import net.minecraft.server.v1_10_R1.MobEffects;
 import net.minecraft.server.v1_10_R1.NavigationAbstract;
 import net.minecraft.server.v1_10_R1.NetworkManager;
 import net.minecraft.server.v1_10_R1.Packet;
+import net.minecraft.server.v1_10_R1.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_10_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_10_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_10_R1.SoundEffect;
@@ -105,6 +111,10 @@ public class NMS {
 
     private NMS() {
         // util class
+    }
+
+    public static boolean addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom) {
+        return getHandle(entity).world.addEntity(getHandle(entity), custom);
     }
 
     public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
@@ -449,9 +459,25 @@ public class NMS {
         return handle.aP;
     }
 
+    public static float getHorizontalMovement(org.bukkit.entity.Entity bukkitEntity) {
+        if (!bukkitEntity.getType().isAlive())
+            return Float.NaN;
+        EntityLiving handle = NMS.getHandle((LivingEntity) bukkitEntity);
+        return handle.bg;
+    }
+
     public static NavigationAbstract getNavigation(Entity handle) {
         return handle instanceof EntityInsentient ? ((EntityInsentient) handle).getNavigation()
                 : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getNavigation() : null;
+    }
+
+    public static List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
+        return Lists.transform(NMS.getHandle(entity).passengers, new Function<Entity, org.bukkit.entity.Entity>() {
+            @Override
+            public org.bukkit.entity.Entity apply(Entity input) {
+                return input.getBukkitEntity();
+            }
+        });
     }
 
     public static GameProfile getProfile(SkullMeta meta) {
@@ -530,6 +556,13 @@ public class NMS {
         return e == getHandle(entity) ? null : e;
     }
 
+    public static float getVerticalMovement(org.bukkit.entity.Entity bukkitEntity) {
+        if (!bukkitEntity.getType().isAlive())
+            return Float.NaN;
+        EntityLiving handle = NMS.getHandle((LivingEntity) bukkitEntity);
+        return handle.bf;
+    }
+
     public static void initNetworkManager(NetworkManager network) {
         if (NETWORK_ADDRESS == null)
             return;
@@ -554,6 +587,10 @@ public class NMS {
 
     public static boolean isNavigationFinished(NavigationAbstract navigation) {
         return navigation.n();
+    }
+
+    public static boolean isOnGround(org.bukkit.entity.Entity entity) {
+        return getHandle(entity).onGround;
     }
 
     public static boolean isPassenger(org.bukkit.entity.Entity entity) {
@@ -719,6 +756,10 @@ public class NMS {
         NMS.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
+    public static void sendPositionUpdate(Player excluding, org.bukkit.entity.Entity from, Location storedLocation) {
+        sendPacketNearby(excluding, storedLocation, new PacketPlayOutEntityTeleport(getHandle(from)));
+    }
+
     public static void sendTabListAdd(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
@@ -787,6 +828,10 @@ public class NMS {
         handle.aQ = yaw;
     }
 
+    public static void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
+        setHeadYaw(getHandle(entity), yaw);
+    }
+
     public static void setKnockbackResistance(org.bukkit.entity.LivingEntity entity, double d) {
         EntityLiving handle = NMS.getHandle(entity);
         handle.getAttributeInstance(GenericAttributes.c).setValue(d);
@@ -848,11 +893,16 @@ public class NMS {
         handle.bf = (float) d;
     }
 
-    public static boolean shouldJump(net.minecraft.server.v1_10_R1.Entity entity) {
-        if (JUMP_FIELD == null || !(entity instanceof EntityLiving))
+    public static void setWitherCharged(Wither wither, boolean charged) {
+        EntityWither handle = ((CraftWither) wither).getHandle();
+        handle.l(charged ? 20 : 0);
+    }
+
+    public static boolean shouldJump(org.bukkit.entity.Entity entity) {
+        if (JUMP_FIELD == null || !(entity instanceof LivingEntity))
             return false;
         try {
-            return JUMP_FIELD.getBoolean(entity);
+            return JUMP_FIELD.getBoolean(getHandle(entity));
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

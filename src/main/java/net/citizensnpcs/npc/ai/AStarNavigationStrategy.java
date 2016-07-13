@@ -61,17 +61,17 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
         }
-        if (npc.getEntity().getLocation(NPC_LOCATION).toVector().distanceSquared(vector) <= params.distanceMargin()) {
+        Location currLoc = npc.getEntity().getLocation(NPC_LOCATION);
+        if (currLoc.toVector().distanceSquared(vector) <= params.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
                 return true;
             }
             vector = plan.getCurrentVector();
         }
-        net.minecraft.server.v1_10_R1.Entity handle = NMS.getHandle(npc.getEntity());
-        double dX = vector.getBlockX() - handle.locX;
-        double dZ = vector.getBlockZ() - handle.locZ;
-        double dY = vector.getY() - handle.locY;
+        double dX = vector.getBlockX() - currLoc.getX();
+        double dZ = vector.getBlockZ() - currLoc.getZ();
+        double dY = vector.getY() - currLoc.getY();
         double xzDistance = dX * dX + dZ * dZ;
         double distance = xzDistance + dY * dY;
         if (Setting.DEBUG_PATHFINDING.asBoolean()) {

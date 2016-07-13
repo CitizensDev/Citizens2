@@ -8,8 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -47,7 +45,6 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_10_R1.PacketPlayOutEntityTeleport;
 
 public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
@@ -199,8 +196,7 @@ public class CitizensNPC extends AbstractNPC {
 
         entityController.spawn(at, this);
 
-        net.minecraft.server.v1_10_R1.Entity mcEntity = ((CraftEntity) getEntity()).getHandle();
-        boolean couldSpawn = !Util.isLoaded(at) ? false : mcEntity.world.addEntity(mcEntity, SpawnReason.CUSTOM);
+        boolean couldSpawn = !Util.isLoaded(at) ? false : NMS.addEntityToWorld(getEntity(), SpawnReason.CUSTOM);
 
         // send skin packets, if applicable, before other NMS packets are sent
         if (couldSpawn) {
@@ -210,7 +206,7 @@ public class CitizensNPC extends AbstractNPC {
             }
         }
 
-        mcEntity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
+        getEntity().teleport(at);
 
         if (!couldSpawn) {
             Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.",
@@ -221,7 +217,7 @@ public class CitizensNPC extends AbstractNPC {
             return false;
         }
 
-        NMS.setHeadYaw(mcEntity, at.getYaw());
+        NMS.setHeadYaw(getEntity(), at.getYaw());
 
         getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
@@ -262,11 +258,9 @@ public class CitizensNPC extends AbstractNPC {
             }
 
             if (getEntity() instanceof Player) {
-                final CraftPlayer player = (CraftPlayer) getEntity();
-                NMS.replaceTrackerEntry(player);
+                NMS.replaceTrackerEntry((Player) getEntity());
             }
         }
-        Messaging.debug("Spawned", getId(), at, mcEntity.valid);
 
         return true;
     }
@@ -315,8 +309,7 @@ public class CitizensNPC extends AbstractNPC {
                     }
                 }
                 Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
-                NMS.sendPacketNearby(player, getStoredLocation(),
-                        new PacketPlayOutEntityTeleport(NMS.getHandle(getEntity())));
+                NMS.sendPositionUpdate(player, getEntity(), getStoredLocation());
             }
 
             if (getEntity() instanceof LivingEntity) {
