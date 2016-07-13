@@ -2,6 +2,8 @@ package net.citizensnpcs.trait.waypoint;
 
 import java.util.Map;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 
 import org.bukkit.Location;
@@ -36,11 +38,14 @@ public class WaypointMarkers {
 
     public void removeWaypointMarker(Waypoint waypoint) {
         Entity entity = waypointMarkers.remove(waypoint);
-        if (entity != null)
+        if (entity != null) {
             entity.remove();
+        }
     }
 
     public Entity spawnMarker(World world, Location at) {
-        return NMS.spawnCustomEntity(world, at, EntityEnderSignalMarker.class, EntityType.ENDER_SIGNAL);
+        NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.ENDER_SIGNAL, "");
+        npc.spawn(at);
+        return npc.getEntity();
     }
 }

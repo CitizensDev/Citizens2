@@ -31,6 +31,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -88,7 +89,6 @@ import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
-import net.citizensnpcs.trait.RabbitType.RabbitTypes;
 import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.SkinLayers;
@@ -101,6 +101,7 @@ import net.citizensnpcs.trait.ZombieModifier;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
@@ -1005,7 +1006,7 @@ public class NPCCommands {
     }
 
     @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "citizens.npc.info")
-    public void npc(CommandContext args, CommandSender sender, NPC npc) {
+    public void npc(CommandContext args, CommandSender sender, final NPC npc) {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
         Messaging.send(sender, "    <a>Type: <e>" + npc.getTrait(MobType.class).getType());
@@ -1023,6 +1024,12 @@ public class NPCCommands {
             String message = "     <e>- <a>" + trait.getName();
             Messaging.send(sender, message);
         }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                PlayerAnimation.SLEEP.play((Player) npc.getEntity());
+            }
+        });
     }
 
     @Command(
@@ -1270,11 +1277,11 @@ public class NPCCommands {
             permission = "citizens.npc.rabbittype")
     @Requirements(selected = true, ownership = true, types = { EntityType.RABBIT })
     public void rabbitType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        RabbitTypes type;
+        Rabbit.Type type;
         try {
-            type = RabbitTypes.valueOf(args.getString(1).toUpperCase());
+            type = Rabbit.Type.valueOf(args.getString(1).toUpperCase());
         } catch (IllegalArgumentException ex) {
-            throw new CommandException(Messages.INVALID_RABBIT_TYPE, StringUtils.join(RabbitTypes.values(), ","));
+            throw new CommandException(Messages.INVALID_RABBIT_TYPE, StringUtils.join(Rabbit.Type.values(), ","));
         }
         npc.getTrait(RabbitType.class).setType(type);
         Messaging.sendTr(sender, Messages.RABBIT_TYPE_SET, npc.getName(), type.name());

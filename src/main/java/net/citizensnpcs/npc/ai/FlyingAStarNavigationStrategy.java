@@ -16,8 +16,7 @@ import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_10_R1.MathHelper;
+import net.citizensnpcs.util.NMS; 
 
 public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     private final NPC npc;
@@ -94,7 +93,13 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         motY += (Math.signum(d1) * 0.7D - motY) * 0.1;
         motZ += (Math.signum(d2) * 0.5D - motZ) * 0.1;
         float targetYaw = (float) (Math.atan2(motZ, motX) * 180.0D / Math.PI) - 90.0F;
-        float normalisedTargetYaw = MathHelper.g(targetYaw - current.getYaw());
+        float normalisedTargetYaw = (targetYaw - current.getYaw()) % 360; 
+        if (normalisedTargetYaw >= 180.0F) {
+            normalisedTargetYaw -= 360.0F;
+        }
+        if (normalisedTargetYaw < -180.0F) {
+            normalisedTargetYaw += 360.0F;
+        } 
 
         velocity.setX(motX).setY(motY).setZ(motZ).multiply(parameters.speed());
         npc.getEntity().setVelocity(velocity);
