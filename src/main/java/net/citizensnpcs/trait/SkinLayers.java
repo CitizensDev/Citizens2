@@ -4,7 +4,6 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import net.citizensnpcs.util.NMS;
 
 @TraitName("skinlayers")
 public class SkinLayers extends Trait {
@@ -130,7 +129,8 @@ public class SkinLayers extends Trait {
         if (!npc.isSpawned())
             return;
 
-        SkinnableEntity skinnable = NMS.getSkinnable(npc.getEntity());
+        SkinnableEntity skinnable = npc.getEntity() instanceof SkinnableEntity ? (SkinnableEntity) npc.getEntity()
+                : null;
         if (skinnable == null)
             return;
 

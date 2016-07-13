@@ -279,7 +279,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     private void updateMountedStatus() {
         if (!isNavigating())
             return;
-        Entity vehicle = NMS.getBukkitVehicle(npc.getEntity());
+        Entity vehicle = NMS.getVehicle(npc.getEntity());
         if (!(vehicle instanceof NPCHolder))
             return;
         NPC mount = ((NPCHolder) vehicle).getNPC();

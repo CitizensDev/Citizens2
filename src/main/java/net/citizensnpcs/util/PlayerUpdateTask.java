@@ -9,14 +9,6 @@ import java.util.UUID;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.npc.ai.NPCHolder;
-import net.minecraft.server.v1_10_R1.CrashReport;
-import net.minecraft.server.v1_10_R1.CrashReportSystemDetails;
-import net.minecraft.server.v1_10_R1.Entity;
-import net.minecraft.server.v1_10_R1.EntityHuman;
-import net.minecraft.server.v1_10_R1.ReportedException;
-
 public class PlayerUpdateTask extends BukkitRunnable {
     @Override
     public void cancel() {
@@ -39,37 +31,8 @@ public class PlayerUpdateTask extends BukkitRunnable {
         TICKERS_PENDING_REMOVE.clear();
         Iterator<org.bukkit.entity.Entity> itr = TICKERS.values().iterator();
         while (itr.hasNext()) {
-            Entity entity = NMS.getHandle(itr.next());
-            Entity entity1 = entity.bB();
-            if (entity1 != null) {
-                if ((entity1.dead) || (!entity1.w(entity))) {
-                    entity.stopRiding();
-                }
-            } else {
-                if (!entity.dead) {
-                    try {
-                        entity.world.g(entity);
-                    } catch (Throwable throwable) {
-                        CrashReport crashreport = CrashReport.a(throwable, "Ticking player");
-                        CrashReportSystemDetails crashreportsystemdetails = crashreport.a("Player being ticked");
-
-                        entity.appendEntityCrashDetails(crashreportsystemdetails);
-                        throw new ReportedException(crashreport);
-                    }
-                }
-                boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get("removefromplayerlist",
-                        Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-                if (entity.dead) {
-                    entity.world.removeEntity(entity);
-                    itr.remove();
-                } else if (!removeFromPlayerList) {
-                    itr.remove();
-                    if (!entity.world.players.contains(entity)) {
-                        entity.world.players.add((EntityHuman) entity);
-                    }
-                } else {
-                    entity.world.players.remove(entity);
-                }
+            if (NMS.tick(itr.next())) {
+                itr.remove();
             }
         }
     }

@@ -23,6 +23,17 @@ public class Util {
     private Util() {
     }
 
+    public static float clampYaw(float yaw) {
+        while (yaw < -180.0F) {
+            yaw += 360.0F;
+        }
+    
+        while (yaw >= 180.0F) {
+            yaw -= 360.0F;
+        }
+        return yaw;
+    }
+
     public static void assumePose(Entity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);
     }

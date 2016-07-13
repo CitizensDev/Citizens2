@@ -71,9 +71,6 @@ import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
-import net.citizensnpcs.npc.entity.nonliving.FallingBlockController.FallingBlockNPC;
-import net.citizensnpcs.npc.entity.nonliving.ItemController.ItemNPC;
-import net.citizensnpcs.npc.entity.nonliving.ItemFrameController.ItemFrameNPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
@@ -745,20 +742,21 @@ public class NPCCommands {
         if (mat == null)
             throw new CommandException(Messages.UNKNOWN_MATERIAL);
         int data = args.getInteger(2, 0);
+        npc.data().setPersistent(NPC.ITEM_ID_METADATA, mat.name());
+        npc.data().setPersistent(NPC.ITEM_DATA_METADATA, data);
         switch (npc.getEntity().getType()) {
             case DROPPED_ITEM:
                 ((org.bukkit.entity.Item) npc.getEntity()).getItemStack().setType(mat);
-                ((ItemNPC) npc.getEntity()).setType(mat, data);
                 break;
             case ITEM_FRAME:
                 ((ItemFrame) npc.getEntity()).getItem().setType(mat);
-                ((ItemFrameNPC) npc.getEntity()).setType(mat, data);
-                break;
-            case FALLING_BLOCK:
-                ((FallingBlockNPC) npc.getEntity()).setType(mat, data);
                 break;
             default:
                 break;
+        }
+        if (npc.isSpawned()) {
+            npc.despawn();
+            npc.spawn(npc.getStoredLocation());
         }
         Messaging.sendTr(sender, Messages.ITEM_SET, Util.prettyEnum(mat));
     }
@@ -1518,7 +1516,8 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), skinName);
         if (npc.isSpawned()) {
 
-            SkinnableEntity skinnable = NMS.getSkinnable(npc.getEntity());
+            SkinnableEntity skinnable = npc.getEntity() instanceof SkinnableEntity ? (SkinnableEntity) npc.getEntity()
+                    : null;
             if (skinnable != null) {
                 skinnable.setSkinName(skinName, args.hasFlag('p'));
             }

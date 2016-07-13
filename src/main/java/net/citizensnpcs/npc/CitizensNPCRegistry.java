@@ -123,8 +123,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
             return null;
         if (entity instanceof NPCHolder)
             return ((NPCHolder) entity).getNPC();
-        Object handle = NMS.getHandle(entity);
-        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
+        return NMS.getNPC(entity);
     }
 
     @Override
