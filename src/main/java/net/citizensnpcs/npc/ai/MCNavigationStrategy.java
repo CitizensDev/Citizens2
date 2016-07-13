@@ -1,7 +1,7 @@
 package net.citizensnpcs.npc.ai;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftLivingEntity;
+import org.bukkit.entity.Entity;
 
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
@@ -10,11 +10,10 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_10_R1.EntityHorse;
-import net.minecraft.server.v1_10_R1.EntityLiving;
 import net.minecraft.server.v1_10_R1.NavigationAbstract;
 
 public class MCNavigationStrategy extends AbstractPathStrategy {
-    private final EntityLiving handle;
+    private final Entity handle;
     private float lastSpeed;
     private final NavigationAbstract navigation;
     private final NavigatorParameters parameters;
@@ -25,26 +24,27 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         this.target = dest;
         this.parameters = params;
         this.lastSpeed = parameters.speed();
-        handle = ((CraftLivingEntity) npc.getEntity()).getHandle();
-        handle.onGround = true;
+        handle = npc.getEntity();
+        net.minecraft.server.v1_10_R1.Entity raw = NMS.getHandle(handle);
+        raw.onGround = true;
         // not sure of a better way around this - if onGround is false, then
         // navigation won't execute, and calling entity.move doesn't
         // entirely fix the problem.
-        navigation = NMS.getNavigation(handle);
-        float oldWidth = handle.width;
-        if (handle instanceof EntityHorse) {
-            handle.width = Math.min(0.99f, oldWidth);
+        navigation = NMS.getNavigation(npc.getEntity());
+        float oldWidth = raw.width;
+        if (raw instanceof EntityHorse) {
+            raw.width = Math.min(0.99f, oldWidth);
         }
         navigation.a(dest.getX(), dest.getY(), dest.getZ(), parameters.speed());
-        handle.width = oldWidth; // minecraft requires that an entity fit onto both blocks if width >= 1f, but we'd
-                                 // prefer to make it just fit on 1 so hack around it a bit.
+        raw.width = oldWidth; // minecraft requires that an entity fit onto both blocks if width >= 1f, but we'd
+                              // prefer to make it just fit on 1 so hack around it a bit.
         if (NMS.isNavigationFinished(navigation)) {
             setCancelReason(CancelReason.STUCK);
         }
     }
 
     private double distanceSquared() {
-        return handle.getBukkitEntity().getLocation(HANDLE_LOCATION).distanceSquared(target);
+        return handle.getLocation(HANDLE_LOCATION).distanceSquared(target);
     }
 
     @Override

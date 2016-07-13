@@ -142,6 +142,12 @@ public class NMS {
     }
 
     public static void attack(EntityLiving handle, Entity target) {
+        if (handle instanceof EntityPlayer) {
+            EntityPlayer humanHandle = (EntityPlayer) handle;
+            humanHandle.attack(target);
+            PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
+            return;
+        }
         AttributeInstance attackDamage = handle.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE);
         float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
         int i = 0;
@@ -167,6 +173,10 @@ public class NMS {
         if (fireAspectLevel > 0) {
             target.setOnFire(fireAspectLevel * 4);
         }
+    }
+
+    public static void attack(LivingEntity attacker, LivingEntity bukkitTarget) {
+        attack(NMS.getHandle(attacker), NMS.getHandle(bukkitTarget));
     }
 
     public static void changeWorlds(org.bukkit.entity.Entity entity, org.bukkit.World world) {
@@ -410,6 +420,11 @@ public class NMS {
         return ret;
     }
 
+    public static BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
+        AxisAlignedBB bb = NMS.getHandle(handle).getBoundingBox();
+        return new BoundingBox(bb.a, bb.b, bb.c, bb.d, bb.e, bb.f);
+    }
+
     public static org.bukkit.entity.Entity getBukkitVehicle(org.bukkit.entity.Entity entity) {
         Entity vehicle = getVehicle(entity);
         return vehicle == null ? null : vehicle.getBukkitEntity();
@@ -466,7 +481,8 @@ public class NMS {
         return handle.bg;
     }
 
-    public static NavigationAbstract getNavigation(Entity handle) {
+    public static NavigationAbstract getNavigation(org.bukkit.entity.Entity entity) {
+        Entity handle = NMS.getHandle(entity);
         return handle instanceof EntityInsentient ? ((EntityInsentient) handle).getNavigation()
                 : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getNavigation() : null;
     }
@@ -601,14 +617,6 @@ public class NMS {
         ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.POSTWORLD);
     }
 
-    public static void look(Entity handle, Entity target) {
-        if (handle instanceof EntityInsentient) {
-            ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).N());
-        } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).setTargetLook(target, 10F, 40F);
-        }
-    }
-
     public static void look(org.bukkit.entity.Entity entity, float yaw, float pitch) {
         Entity handle = getHandle(entity);
         if (handle == null)
@@ -617,6 +625,15 @@ public class NMS {
         handle.yaw = yaw;
         setHeadYaw(handle, yaw);
         handle.pitch = pitch;
+    }
+
+    public static void look(org.bukkit.entity.Entity bhandle, org.bukkit.entity.Entity btarget) {
+        Entity handle = NMS.getHandle(bhandle), target = NMS.getHandle(btarget);
+        if (handle instanceof EntityInsentient) {
+            ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).N());
+        } else if (handle instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) handle).setTargetLook(target, 10F, 40F);
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -835,6 +852,11 @@ public class NMS {
     public static void setKnockbackResistance(org.bukkit.entity.LivingEntity entity, double d) {
         EntityLiving handle = NMS.getHandle(entity);
         handle.getAttributeInstance(GenericAttributes.c).setValue(d);
+    }
+
+    public static void setNavigationTarget(org.bukkit.entity.Entity handle, org.bukkit.entity.Entity target,
+            float speed) {
+        NMS.getNavigation(handle).a(NMS.getHandle(target), speed);
     }
 
     public static void setProfile(SkullMeta meta, GameProfile profile) {
