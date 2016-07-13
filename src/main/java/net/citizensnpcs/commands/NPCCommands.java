@@ -101,7 +101,6 @@ import net.citizensnpcs.trait.ZombieModifier;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
@@ -1024,12 +1023,6 @@ public class NPCCommands {
             String message = "     <e>- <a>" + trait.getName();
             Messaging.send(sender, message);
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                PlayerAnimation.SLEEP.play((Player) npc.getEntity());
-            }
-        });
     }
 
     @Command(
