@@ -365,9 +365,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
         private void ensureItr() {
             if (itr == null) {
-                itr = waypoints.iterator();
-            } else if (!itr.hasNext())
+                itr = getUnsafeIterator();
+            } else if (!itr.hasNext()) {
                 itr = getNewIterator();
+            }
         }
 
         private Navigator getNavigator() {
@@ -376,10 +377,31 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
         private Iterator<Waypoint> getNewIterator() {
             LinearWaypointsCompleteEvent event = new LinearWaypointsCompleteEvent(LinearWaypointProvider.this,
-                    waypoints.iterator());
+                    getUnsafeIterator());
             Bukkit.getPluginManager().callEvent(event);
             Iterator<Waypoint> next = event.getNextWaypoints();
             return next;
+        }
+
+        private Iterator<Waypoint> getUnsafeIterator() {
+            return new Iterator<Waypoint>() {
+                int idx = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return idx < waypoints.size();
+                }
+
+                @Override
+                public Waypoint next() {
+                    return waypoints.get(idx++);
+                }
+
+                @Override
+                public void remove() {
+                    waypoints.remove(Math.max(0, idx - 1));
+                }
+            };
         }
 
         public boolean isPaused() {
@@ -387,7 +409,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         }
 
         public void onProviderChanged() {
-            itr = waypoints.iterator();
+            itr = getUnsafeIterator();
             if (currentDestination != null) {
                 if (selector != null) {
                     selector.finish();
