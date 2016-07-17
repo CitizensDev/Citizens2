@@ -1,12 +1,13 @@
 package net.citizensnpcs.api.npc;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.citizensnpcs.api.util.DataKey;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+
+import net.citizensnpcs.api.util.DataKey;
 
 public class SimpleMetadataStore implements MetadataStore {
     private final Map<String, MetadataObject> metadata = Maps.newHashMap();
@@ -45,9 +46,10 @@ public class SimpleMetadataStore implements MetadataStore {
 
     @Override
     public void loadFrom(DataKey key) {
-        for (Entry<String, MetadataObject> entry : metadata.entrySet()) {
-            if (entry.getValue().persistent) {
-                remove(entry.getKey());
+        Iterator<Entry<String, MetadataObject>> itr = metadata.entrySet().iterator();
+        while (itr.hasNext()) {
+            if (itr.next().getValue().persistent) {
+                itr.remove();
             }
         }
         for (DataKey subKey : key.getSubKeys()) {
