@@ -41,6 +41,12 @@ public class Inventory extends Trait {
      * @return ItemStack array of an NPC's inventory contents
      */
     public ItemStack[] getContents() {
+        if (view != null) {
+            for (int i = 0; i < view.getSize(); i++) {
+                view.setItem(i, contents[i]);
+            }
+            return view.getContents();
+        }
         return contents;
     }
 
