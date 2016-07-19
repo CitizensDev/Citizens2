@@ -287,7 +287,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
-        if (npc.getTrait(Gravity.class).hasGravity() && !navigating && getBukkitEntity() != null
+        if (!navigating && getBukkitEntity() != null && npc.getTrait(Gravity.class).hasGravity()
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
             g(0, 0);
         }
