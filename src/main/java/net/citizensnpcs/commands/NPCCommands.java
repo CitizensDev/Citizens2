@@ -1969,7 +1969,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "zombiemod (-b(aby), -v(illager))",
+            usage = "zombiemod (-b(aby), -v(illager) --p(rofession) [profession])",
             desc = "Sets a zombie NPC to be a baby or villager",
             modifiers = { "zombie", "zombiemod" },
             flags = "bv",
@@ -1987,6 +1987,15 @@ public class NPCCommands {
             boolean isVillager = trait.toggleVillager();
             Messaging.sendTr(sender, isVillager ? Messages.ZOMBIE_VILLAGER_SET : Messages.ZOMBIE_VILLAGER_UNSET,
                     npc.getName());
+        }
+        if (args.hasValueFlag("profession") || args.hasValueFlag("p")) {
+            Profession profession = Util.matchEnum(Profession.values(), args.getFlag("profession", args.getFlag("p")));
+            if (profession == null) {
+                throw new CommandException();
+            }
+            trait.setProfession(profession);
+            Messaging.sendTr(sender, Messages.ZOMBIE_VILLAGER_PROFESSION_SET, npc.getName(),
+                    Util.prettyEnum(profession));
         }
     }
 }
