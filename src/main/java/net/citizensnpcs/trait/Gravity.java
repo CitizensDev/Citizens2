@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.persistence.Persist;
@@ -28,9 +27,6 @@ public class Gravity extends Trait implements Toggleable {
     public void run() {
         if (!npc.isSpawned())
             return;
-        if (npc.getEntity() instanceof Player) {
-            return;
-        }
         if (!enabled || npc.getNavigator().isNavigating())
             return;
         Vector vector = npc.getEntity().getVelocity();
