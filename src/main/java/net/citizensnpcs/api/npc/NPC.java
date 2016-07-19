@@ -300,6 +300,7 @@ public interface NPC extends Agent, Cloneable {
     public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
     public static final String SCOREBOARD_FAKE_TEAM_NAME_METADATA = "fake-scoreboard-team-name";
     public static final String SHOULD_SAVE_METADATA = "should-save";
+    public static final String SILENT_METADATA = "silent-sounds";
     public static final String SWIMMING_METADATA = "swim";
     public static final String TARGETABLE_METADATA = "protected-target";
 }
