@@ -322,6 +322,10 @@ public class CitizensNPC extends AbstractNPC {
                     NMS.setKnockbackResistance((LivingEntity) getEntity(), 0D);
                 }
             }
+
+            if (data().has(NPC.SILENT_METADATA)) {
+                getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.SILENT_METADATA).toString()));
+            }
         } catch (Exception ex) {
             Throwable error = Throwables.getRootCause(ex);
             Messaging.logTr(Messages.EXCEPTION_UPDATING_NPC, getId(), error.getMessage());

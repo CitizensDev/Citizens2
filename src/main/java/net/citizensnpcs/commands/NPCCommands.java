@@ -1586,7 +1586,7 @@ public class NPCCommands {
             usage = "sound (--death [death sound|d]) (--ambient [ambient sound|d]) (--hurt [hurt sound|d]) (-n(one)) (-d(efault))",
             desc = "Sets an NPC's played sounds",
             modifiers = { "sound" },
-            flags = "dn",
+            flags = "dns",
             min = 1,
             max = 1,
             permission = "citizens.npc.sound")
@@ -1600,8 +1600,9 @@ public class NPCCommands {
             return;
         }
 
-        if (args.hasFlag('n')) {
+        if (args.hasFlag('n') || args.hasFlag('s')) {
             ambientSound = deathSound = hurtSound = "";
+            npc.data().setPersistent(NPC.SILENT_METADATA, true);
         }
         if (args.hasFlag('d')) {
             ambientSound = deathSound = hurtSound = null;
@@ -1632,12 +1633,18 @@ public class NPCCommands {
             npc.data().setPersistent(NPC.AMBIENT_SOUND_METADATA, ambientSound);
         }
 
-        if (ambientSound != null && ambientSound.isEmpty())
+        if (ambientSound != null && ambientSound.isEmpty()) {
             ambientSound = "none";
-        if (hurtSound != null && hurtSound.isEmpty())
+        }
+        if (hurtSound != null && hurtSound.isEmpty()) {
             hurtSound = "none";
-        if (deathSound != null && deathSound.isEmpty())
+        }
+        if (deathSound != null && deathSound.isEmpty()) {
             deathSound = "none";
+        }
+        if (ambientSound != null || deathSound != null || hurtSound != null) {
+            npc.data().setPersistent(NPC.SILENT_METADATA, false);
+        }
         Messaging.sendTr(sender, Messages.SOUND_SET, npc.getName(), ambientSound, hurtSound, deathSound);
     }
 
