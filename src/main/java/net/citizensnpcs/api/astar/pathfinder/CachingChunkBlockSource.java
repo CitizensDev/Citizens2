@@ -1,13 +1,17 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
+import java.util.Map;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import com.google.common.collect.Maps;
+
 public abstract class CachingChunkBlockSource<T> extends BlockSource {
+    private final Map<ChunkCoord, ChunkCache> chunkCache = Maps.newHashMap();
     private final Object[][] chunks;
     private final int chunkX;
     private final int chunkZ;
-    int t;
     protected final World world;
 
     protected CachingChunkBlockSource(Location location, float radius) {
@@ -56,11 +60,52 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
                 return (T) inner[zz];
             }
         }
+        ChunkCoord key = new ChunkCoord(x >> 4, z >> 4);
+        ChunkCache prev = chunkCache.get(key);
+        if (prev == null) {
+            chunkCache.put(key, prev = new ChunkCache());
+        } else if (prev.obj != null) {
+            return prev.obj;
+        } else if (++prev.hitCount >= 2) {
+            return prev.obj = getChunkObject(x >> 4, z >> 4);
+        }
         return null;
     }
 
     @Override
     public World getWorld() {
         return world;
+    }
+
+    private class ChunkCache {
+        int hitCount;
+        T obj;
+    }
+
+    private static class ChunkCoord {
+        int x, z;
+
+        public ChunkCoord(int xx, int zz) {
+            this.x = xx;
+            this.z = zz;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            ChunkCoord other = (ChunkCoord) obj;
+            return x == other.x && z == other.z;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 31 * x;
+            return 31 * result + z;
+        }
     }
 }
