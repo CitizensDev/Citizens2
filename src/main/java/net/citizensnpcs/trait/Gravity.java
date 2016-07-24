@@ -20,7 +20,7 @@ public class Gravity extends Trait implements Toggleable {
     }
 
     public boolean hasGravity() {
-        return enabled;
+        return !enabled;
     }
 
     @Override
