@@ -105,8 +105,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (cancelReason != null) {
             return true;
         }
-        if (!aggro && distanceSquared() < parameters.distanceMargin()) {
+        if (!aggro && distanceSquared() <= parameters.distanceMargin()) {
             stop();
+            return false;
         } else if (updateCounter++ > parameters.updatePathRate()) {
             targetNavigator.setPath();
             updateCounter = 0;
