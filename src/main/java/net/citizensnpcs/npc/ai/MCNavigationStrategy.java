@@ -2,7 +2,9 @@ package net.citizensnpcs.npc.ai;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 
+import net.citizensnpcs.api.ai.AbstractPathStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
@@ -25,6 +27,11 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
 
     private double distanceSquared() {
         return handle.getLocation(HANDLE_LOCATION).distanceSquared(target);
+    }
+
+    @Override
+    public Iterable<Vector> getPath() {
+        return navigator.getPath();
     }
 
     @Override
@@ -65,6 +72,8 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
 
     public static interface MCNavigator {
         CancelReason getCancelReason();
+
+        Iterable<Vector> getPath();
 
         void stop();
 

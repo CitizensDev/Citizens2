@@ -3,10 +3,12 @@ package net.citizensnpcs.npc.ai;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.ai.AttackStrategy;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
@@ -56,6 +58,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     @Override
     public CancelReason getCancelReason() {
         return cancelReason;
+    }
+
+    @Override
+    public Iterable<Vector> getPath() {
+        return targetNavigator.getPath();
     }
 
     @Override
@@ -139,6 +146,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
 
         @Override
+        public Iterable<Vector> getPath() {
+            return strategy.getPath();
+        }
+
+        @Override
         public void setPath() {
             setStrategy();
             strategy.update();
@@ -174,6 +186,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     public static interface TargetNavigator {
+        Iterable<Vector> getPath();
+
         void setPath();
 
         void stop();
@@ -189,5 +203,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
     };
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
+
     private static final Location TARGET_LOCATION = new Location(null, 0, 0, 0);
 }

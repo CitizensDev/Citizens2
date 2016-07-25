@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -38,6 +39,7 @@ import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
+import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -175,6 +177,7 @@ import net.minecraft.server.v1_10_R1.NetworkManager;
 import net.minecraft.server.v1_10_R1.Packet;
 import net.minecraft.server.v1_10_R1.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_10_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_10_R1.PathPoint;
 import net.minecraft.server.v1_10_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_10_R1.ReportedException;
 import net.minecraft.server.v1_10_R1.SoundEffect;
@@ -403,6 +406,11 @@ public class NMSImpl implements NMSBridge {
             @Override
             public CancelReason getCancelReason() {
                 return reason;
+            }
+
+            @Override
+            public Iterable<Vector> getPath() {
+                return new NavigationIterable(navigation);
             }
 
             @Override
@@ -888,6 +896,11 @@ public class NMSImpl implements NMSBridge {
         }
 
         @Override
+        public Iterable<Vector> getPath() {
+            return new NavigationIterable(navigation);
+        }
+
+        @Override
         public void setPath() {
             Location location = parameters.entityTargetLocationMapper().apply(target);
             if (location == null) {
@@ -910,6 +923,40 @@ public class NMSImpl implements NMSBridge {
         }
 
         private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
+    }
+
+    private static class NavigationIterable implements Iterable<Vector> {
+        private final NavigationAbstract navigation;
+
+        public NavigationIterable(NavigationAbstract nav) {
+            this.navigation = nav;
+        }
+
+        @Override
+        public Iterator<Vector> iterator() {
+            final int npoints = navigation.k() == null ? 0 : navigation.k().d();
+            return new Iterator<Vector>() {
+                PathPoint curr = npoints > 0 ? navigation.k().a(0) : null;
+                int i = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return curr != null;
+                }
+
+                @Override
+                public Vector next() {
+                    PathPoint old = curr;
+                    curr = i + 1 < npoints ? navigation.k().a(++i) : null;
+                    return new Vector(old.a, old.b, old.c);
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
     }
 
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
