@@ -16,6 +16,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.ai.StuckAction;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.TeleportStuckAction;
@@ -84,6 +85,11 @@ public class CitizensNavigator implements Navigator, Runnable {
     @Override
     public NPC getNPC() {
         return npc;
+    }
+
+    @Override
+    public PathStrategy getPathStrategy() {
+        return executing;
     }
 
     @Override

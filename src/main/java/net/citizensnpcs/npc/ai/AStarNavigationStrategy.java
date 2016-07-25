@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.ai.AbstractPathStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
@@ -41,6 +42,11 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                 plan.debug();
             }
         }
+    }
+
+    @Override
+    public Iterable<Vector> getPath() {
+        return plan == null ? null : plan.getPath();
     }
 
     @Override
@@ -89,5 +95,6 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
     }
 
     private static final AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithDefaultStorage();
+
     private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }
