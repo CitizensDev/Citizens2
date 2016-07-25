@@ -2,13 +2,15 @@ package net.citizensnpcs.api.astar.pathfinder;
 
 import java.util.ListIterator;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
+import net.citizensnpcs.api.npc.NPC;
+
 public interface PathPoint {
     void addCallback(PathCallback callback);
+
+    PathPoint createAtOffset(Vector vector);
 
     Vector getGoal();
 

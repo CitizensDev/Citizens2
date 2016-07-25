@@ -2,14 +2,14 @@ package net.citizensnpcs.api.astar.pathfinder;
 
 import java.util.List;
 
-import net.citizensnpcs.api.astar.AStarNode;
-import net.citizensnpcs.api.astar.Plan;
-import net.citizensnpcs.api.astar.pathfinder.BlockExaminer.PassableState;
-
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
+
+import net.citizensnpcs.api.astar.AStarNode;
+import net.citizensnpcs.api.astar.Plan;
+import net.citizensnpcs.api.astar.pathfinder.BlockExaminer.PassableState;
 
 public class VectorNode extends AStarNode implements PathPoint {
     private float blockCost = -1;
@@ -42,6 +42,11 @@ public class VectorNode extends AStarNode implements PathPoint {
     public Plan buildPlan() {
         Iterable<VectorNode> parents = getParents();
         return new Path(parents);
+    }
+
+    @Override
+    public VectorNode createAtOffset(Vector mod) {
+        return new VectorNode(goal, mod, blockSource, examiners);
     }
 
     public float distance(VectorNode to) {
@@ -84,7 +89,27 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public Iterable<AStarNode> getNeighbours() {
+        List<PathPoint> neighbours = null;
+        for (BlockExaminer examiner : examiners) {
+            if (examiner instanceof NeighbourGeneratorBlockExaminer) {
+                neighbours = ((NeighbourGeneratorBlockExaminer) examiner).getNeighbours(blockSource, this);
+                break;
+            }
+        }
+        if (neighbours == null) {
+            neighbours = getNeighbours(blockSource, this);
+        }
         List<AStarNode> nodes = Lists.newArrayList();
+        for (PathPoint sub : neighbours) {
+            if (!isPassable(sub))
+                continue;
+            nodes.add((AStarNode) sub);
+        }
+        return nodes;
+    }
+
+    public List<PathPoint> getNeighbours(BlockSource source, PathPoint point) {
+        List<PathPoint> neighbours = Lists.newArrayList();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 for (int z = -1; z <= 1; z++) {
@@ -95,18 +120,11 @@ public class VectorNode extends AStarNode implements PathPoint {
                     Vector mod = location.clone().add(new Vector(x, y, z));
                     if (mod.equals(location))
                         continue;
-                    VectorNode sub = getNewNode(mod);
-                    if (!isPassable(sub))
-                        continue;
-                    nodes.add(sub);
+                    neighbours.add(point.createAtOffset(mod));
                 }
             }
         }
-        return nodes;
-    }
-
-    private VectorNode getNewNode(Vector mod) {
-        return new VectorNode(goal, mod, blockSource, examiners);
+        return neighbours;
     }
 
     @Override

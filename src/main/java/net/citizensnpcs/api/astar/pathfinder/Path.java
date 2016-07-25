@@ -4,11 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.citizensnpcs.api.astar.Agent;
-import net.citizensnpcs.api.astar.Plan;
-import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -17,7 +12,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
+import net.citizensnpcs.api.astar.Agent;
+import net.citizensnpcs.api.astar.Plan;
+import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
+import net.citizensnpcs.api.npc.NPC;
 
 public class Path implements Plan {
     private int index = 0;
@@ -56,6 +57,15 @@ public class Path implements Plan {
 
     public Vector getCurrentVector() {
         return path[index].vector;
+    }
+
+    public Iterable<Vector> getPath() {
+        return Iterables.transform(Arrays.asList(path), new Function<PathEntry, Vector>() {
+            @Override
+            public Vector apply(PathEntry input) {
+                return input.vector;
+            }
+        });
     }
 
     @Override
@@ -100,11 +110,8 @@ public class Path implements Plan {
                     ListIterator<Block> vec = Lists.transform(Arrays.asList(path), new Function<PathEntry, Block>() {
                         @Override
                         public Block apply(PathEntry input) {
-                            return npc
-                                    .getEntity()
-                                    .getWorld()
-                                    .getBlockAt(input.vector.getBlockX(), input.vector.getBlockY(),
-                                            input.vector.getBlockZ());
+                            return npc.getEntity().getWorld().getBlockAt(input.vector.getBlockX(),
+                                    input.vector.getBlockY(), input.vector.getBlockZ());
                         }
                     }).listIterator();
                     if (index > 0) {

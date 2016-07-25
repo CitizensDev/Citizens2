@@ -46,6 +46,12 @@ public interface Navigator {
     NPC getNPC();
 
     /**
+     *
+     * @return The current {@link PathStrategy} or null if the navigator is not pathfinding
+     */
+    PathStrategy getPathStrategy();
+
+    /**
      * Returns the current {@link Location} being navigated towards - this is not necessarily permanent and may change,
      * for example when pathing towards a moving {@link Entity}. May return null.
      *
