@@ -27,8 +27,10 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import com.google.common.collect.Lists;
 
@@ -170,6 +172,9 @@ public class ItemStorage {
 
         if (root.keyExists("potion")) {
             PotionMeta meta = ensureMeta(res);
+            PotionData data = new PotionData(PotionType.valueOf(root.getString("potion.data.type")),
+                    root.getBoolean("potion.data.extended"), root.getBoolean("potion.data.upgraded"));
+            meta.setBasePotionData(data);
             for (DataKey sub : root.getRelative("potion.effects").getIntegerSubKeys()) {
                 int duration = sub.getInt("duration");
                 int amplifier = sub.getInt("amplifier");
@@ -365,7 +370,11 @@ public class ItemStorage {
 
         if (meta instanceof PotionMeta) {
             PotionMeta potion = (PotionMeta) meta;
+            PotionData data = potion.getBasePotionData();
             List<PotionEffect> effects = potion.getCustomEffects();
+            key.setBoolean("potion.data.extended", data.isExtended());
+            key.setBoolean("potion.data.upgraded", data.isUpgraded());
+            key.setString("potion.data.type", data.getType().name());
             key.removeKey("potion.effects");
             DataKey effectKey = key.getRelative("potion.effects");
             for (int i = 0; i < effects.size(); i++) {
