@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_10_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftShulkerBullet;
-import org.bukkit.entity.Arrow;
+import org.bukkit.entity.ShulkerBullet;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
@@ -23,8 +23,8 @@ public class ShulkerBulletController extends MobEntityController {
     }
 
     @Override
-    public Arrow getBukkitEntity() {
-        return (Arrow) super.getBukkitEntity();
+    public ShulkerBullet getBukkitEntity() {
+        return (ShulkerBullet) super.getBukkitEntity();
     }
 
     public static class EntityShulkerBulletNPC extends EntityShulkerBullet implements NPCHolder {
