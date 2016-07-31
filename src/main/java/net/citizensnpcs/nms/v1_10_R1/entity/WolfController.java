@@ -5,6 +5,7 @@ import org.bukkit.craftbukkit.v1_10_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftWolf;
 import org.bukkit.entity.Wolf;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
@@ -15,6 +16,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_10_R1.BlockPosition;
+import net.minecraft.server.v1_10_R1.EntityLiving;
 import net.minecraft.server.v1_10_R1.EntityWolf;
 import net.minecraft.server.v1_10_R1.IBlockData;
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
@@ -192,6 +194,10 @@ public class WolfController extends MobEntityController {
             }
         }
 
+        @Override
+        public boolean setGoalTarget(EntityLiving entityliving, EntityTargetEvent.TargetReason reason, boolean fire) {
+            return npc == null ? super.setGoalTarget(killer, reason, fire) : false;
+        }
     }
 
     public static class WolfNPC extends CraftWolf implements NPCHolder {
