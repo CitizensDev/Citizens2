@@ -205,5 +205,13 @@ public class ChickenController extends MobEntityController {
                 return false;
             }
         }
+
+        @Override
+        public void n() {
+            if (npc != null) {
+                this.bD = 100; // egg timer
+            }
+            super.n();
+        }
     }
 }

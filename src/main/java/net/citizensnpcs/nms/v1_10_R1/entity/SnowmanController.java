@@ -181,6 +181,18 @@ public class SnowmanController extends MobEntityController {
         }
 
         @Override
+        public void n() {
+            boolean allowsGriefing = this.world.getGameRules().getBoolean("mobGriefing");
+            if (npc != null) {
+                this.world.getGameRules().set("mobGriefing", "false");
+            }
+            super.n();
+            if (npc != null) {
+                this.world.getGameRules().set("mobGriefing", Boolean.toString(allowsGriefing));
+            }
+        }
+
+        @Override
         public void setSize(float f, float f1) {
             if (npc == null) {
                 super.setSize(f, f1);
