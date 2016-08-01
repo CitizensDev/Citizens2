@@ -257,8 +257,8 @@ public class NMSImpl implements NMSBridge {
         YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
                 .getAuthenticationService();
 
-        URL url = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/profile/"
-                + UUIDTypeAdapter.fromUUID(profile.getId()));
+        URL url = HttpAuthenticationService
+                .constantURL(Setting.AUTH_SERVER_URL.asString() + UUIDTypeAdapter.fromUUID(profile.getId()));
 
         url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
 

@@ -57,6 +57,7 @@ public class Settings {
     }
 
     public enum Setting {
+        AUTH_SERVER_URL("general.authlib.profile-url", "https://sessionserver.mojang.com/session/minecraft/profile/"),
         CHAT_BYSTANDERS_HEAR_TARGETED_CHAT("npc.chat.options.bystanders-hear-targeted-chat", true),
         CHAT_FORMAT("npc.chat.format.no-targets", "[<npc>]: <text>"),
         CHAT_FORMAT_TO_BYSTANDERS("npc.chat.format.with-target-to-bystanders", "[<npc>] -> [<target>]: <text>"),
