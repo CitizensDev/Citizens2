@@ -258,7 +258,7 @@ public class NMSImpl implements NMSBridge {
                 .getAuthenticationService();
 
         URL url = HttpAuthenticationService
-                .constantURL(Setting.AUTH_SERVER_URL.asString() + UUIDTypeAdapter.fromUUID(profile.getId()));
+                .constantURL(getAuthServerBaseUrl() + UUIDTypeAdapter.fromUUID(profile.getId()));
 
         url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
 
@@ -272,6 +272,10 @@ public class NMSImpl implements NMSBridge {
         profile.getProperties().putAll(response.getProperties());
 
         return result;
+    }
+
+    public String getAuthServerBaseUrl() {
+        return Setting.AUTH_SERVER_URL.asString();
     }
 
     @Override

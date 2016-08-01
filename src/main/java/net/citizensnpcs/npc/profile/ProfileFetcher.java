@@ -76,7 +76,7 @@ public class ProfileFetcher {
                 if (request == null)
                     return;
 
-                try {
+                try { 
                     request.setResult(NMS.fillProfileProperties(profile, true), ProfileFetchResult.SUCCESS);
                 } catch (Exception e) {
                     if (Messaging.isDebugging()) {
