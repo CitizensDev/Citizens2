@@ -196,6 +196,8 @@ public class CitizensNPC extends AbstractNPC {
 
         entityController.spawn(at, this);
 
+        getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+
         boolean couldSpawn = !Util.isLoaded(at) ? false : NMS.addEntityToWorld(getEntity(), SpawnReason.CUSTOM);
 
         // send skin packets, if applicable, before other NMS packets are sent
@@ -218,8 +220,6 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         NMS.setHeadYaw(getEntity(), at.getYaw());
-
-        getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         // Set the spawned state
         getTrait(CurrentLocation.class).setLocation(at);
