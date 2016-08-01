@@ -185,6 +185,7 @@ public class RabbitController extends MobEntityController {
         public void M() {
             if (npc != null) {
                 super.M();
+                this.be = npc.getNavigator().isNavigating();
                 npc.update();
             } else {
                 super.M();
