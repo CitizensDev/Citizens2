@@ -1,6 +1,8 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -21,8 +23,18 @@ import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
 
 public class Path implements Plan {
+    private List<Block> blockList;
     private int index = 0;
     private final PathEntry[] path;
+
+    public Path(Collection<Vector> vector) {
+        this.path = Iterables.toArray(Iterables.transform(vector, new Function<Vector, PathEntry>() {
+            @Override
+            public PathEntry apply(Vector input) {
+                return new PathEntry(input, Collections.<PathCallback> emptyList());
+            }
+        }), PathEntry.class);
+    }
 
     Path(Iterable<VectorNode> unfiltered) {
         this.path = cull(unfiltered);
@@ -104,23 +116,26 @@ public class Path implements Plan {
         }
 
         public void run(final NPC npc) {
-            if (callbacks != null) {
-                Block block = getBlockUsingWorld(npc.getEntity().getWorld());
-                for (PathCallback callback : callbacks) {
-                    ListIterator<Block> vec = Lists.transform(Arrays.asList(path), new Function<PathEntry, Block>() {
+            if (callbacks == null)
+                return;
+            Block block = getBlockUsingWorld(npc.getEntity().getWorld());
+            for (PathCallback callback : callbacks) {
+                if (blockList == null) {
+                    blockList = Lists.transform(Arrays.asList(path), new Function<PathEntry, Block>() {
                         @Override
                         public Block apply(PathEntry input) {
                             return npc.getEntity().getWorld().getBlockAt(input.vector.getBlockX(),
                                     input.vector.getBlockY(), input.vector.getBlockZ());
                         }
-                    }).listIterator();
-                    if (index > 0) {
-                        while (index != vec.nextIndex()) {
-                            vec.next();
-                        }
-                    }
-                    callback.run(npc, block, vec);
+                    });
                 }
+                ListIterator<Block> vec = blockList.listIterator();
+                if (index > 0) {
+                    while (index != vec.nextIndex()) {
+                        vec.next();
+                    }
+                }
+                callback.run(npc, block, vec);
             }
         }
 

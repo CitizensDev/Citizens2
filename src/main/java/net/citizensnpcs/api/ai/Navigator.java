@@ -2,6 +2,7 @@ package net.citizensnpcs.api.ai;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 
@@ -92,6 +93,14 @@ public interface Navigator {
      *            Whether to attack the target when close enough
      */
     void setTarget(Entity target, boolean aggressive);
+
+    /**
+     * Sets the current navigation using a list of {@link Vector}s which will be followed in turn.
+     *
+     * @param path
+     *            The path
+     */
+    void setTarget(Iterable<Vector> path);
 
     /**
      * Sets the current navigation to a {@link Location} destination.
