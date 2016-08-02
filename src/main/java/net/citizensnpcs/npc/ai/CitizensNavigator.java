@@ -12,6 +12,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
+import com.google.common.collect.Iterables;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
@@ -200,6 +202,27 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     @Override
+    public void setTarget(Iterable<Vector> path) {
+        if (!npc.isSpawned())
+            throw new IllegalStateException("npc is not spawned");
+        if (path == null || Iterables.size(path) == 0) {
+            cancelNavigation();
+            return;
+        }
+        switchParams();
+        updatePathfindingRange();
+        PathStrategy newStrategy;
+        if (npc.isFlyable()) {
+            newStrategy = new FlyingAStarNavigationStrategy(npc, path, localParams);
+        } else if (localParams.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
+            newStrategy = new AStarNavigationStrategy(npc, path, localParams);
+        } else {
+            newStrategy = new MCNavigationStrategy(npc, path, localParams);
+        }
+        switchStrategyTo(newStrategy);
+    }
+
+    @Override
     public void setTarget(Location target) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
@@ -357,5 +380,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private static final Location STATIONARY_LOCATION = new Location(null, 0, 0, 0);
+
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;
 }

@@ -15,6 +15,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.util.Vector;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
@@ -57,6 +58,8 @@ public interface NMSBridge {
     public float getStepHeight(Entity entity);
 
     public TargetNavigator getTargetNavigator(Entity handle, Entity target, NavigatorParameters parameters);
+
+    public MCNavigator getTargetNavigator(Entity entity, Iterable<Vector> dest, NavigatorParameters params);
 
     public MCNavigator getTargetNavigator(Entity entity, Location dest, NavigatorParameters params);
 

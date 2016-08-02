@@ -1,9 +1,13 @@
 package net.citizensnpcs.npc.ai;
 
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
+
+import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.AbstractPathStrategy;
@@ -27,6 +31,15 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     private final Location target;
     private Vector vector;
 
+    public FlyingAStarNavigationStrategy(NPC npc, Iterable<Vector> path, NavigatorParameters params) {
+        super(TargetType.LOCATION);
+        List<Vector> list = Lists.newArrayList(path);
+        this.target = list.get(list.size() - 1).toLocation(npc.getStoredLocation().getWorld());
+        this.parameters = params;
+        this.npc = npc;
+        setPlan(new Path(list));
+    }
+
     public FlyingAStarNavigationStrategy(final NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
         this.target = dest;
@@ -44,17 +57,9 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         if (!found) {
             params.examiner(new FlyingBlockExaminer());
         }
-        plan = ASTAR.runFully(goal,
+        setPlan(ASTAR.runFully(goal,
                 new VectorNode(goal, location, new ChunkBlockSource(location, params.range()), params.examiners()),
-                50000);
-        if (plan == null || plan.isComplete()) {
-            setCancelReason(CancelReason.STUCK);
-        } else {
-            vector = plan.getCurrentVector();
-            if (Setting.DEBUG_PATHFINDING.asBoolean()) {
-                plan.debug();
-            }
-        }
+                50000));
     }
 
     @Override
@@ -65,6 +70,18 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     @Override
     public Location getTargetAsLocation() {
         return target;
+    }
+
+    public void setPlan(Path path) {
+        this.plan = path;
+        if (plan == null || plan.isComplete()) {
+            setCancelReason(CancelReason.STUCK);
+        } else {
+            vector = plan.getCurrentVector();
+            if (Setting.DEBUG_PATHFINDING.asBoolean()) {
+                plan.debug();
+            }
+        }
     }
 
     @Override
@@ -124,6 +141,5 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     }
 
     private static final AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithDefaultStorage();
-
     private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }

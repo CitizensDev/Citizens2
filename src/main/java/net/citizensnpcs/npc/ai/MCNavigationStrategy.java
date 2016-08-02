@@ -1,8 +1,12 @@
 package net.citizensnpcs.npc.ai;
 
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
+
+import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.ai.AbstractPathStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -16,6 +20,15 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
     private final MCNavigator navigator;
     private final NavigatorParameters parameters;
     private final Location target;
+
+    MCNavigationStrategy(final NPC npc, Iterable<Vector> path, NavigatorParameters params) {
+        super(TargetType.LOCATION);
+        List<Vector> list = Lists.newArrayList(path);
+        this.target = list.get(list.size() - 1).toLocation(npc.getStoredLocation().getWorld());
+        this.parameters = params;
+        handle = npc.getEntity();
+        this.navigator = NMS.getTargetNavigator(npc.getEntity(), list, params);
+    }
 
     MCNavigationStrategy(final NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);

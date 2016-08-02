@@ -43,6 +43,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
@@ -177,6 +178,7 @@ import net.minecraft.server.v1_10_R1.NetworkManager;
 import net.minecraft.server.v1_10_R1.Packet;
 import net.minecraft.server.v1_10_R1.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_10_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_10_R1.PathEntity;
 import net.minecraft.server.v1_10_R1.PathPoint;
 import net.minecraft.server.v1_10_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_10_R1.ReportedException;
@@ -382,8 +384,38 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public MCNavigator getTargetNavigator(org.bukkit.entity.Entity entity, Iterable<Vector> dest,
+            final NavigatorParameters params) {
+        final PathEntity path = new PathEntity(
+                Iterables.toArray(Iterables.transform(dest, new Function<Vector, PathPoint>() {
+                    @Override
+                    public PathPoint apply(Vector input) {
+                        return new PathPoint(input.getBlockX(), input.getBlockY(), input.getBlockZ());
+                    }
+                }), PathPoint.class));
+        return getTargetNavigator(entity, params, new Function<NavigationAbstract, Void>() {
+            @Override
+            public Void apply(NavigationAbstract input) {
+                input.a(path, params.speed());
+                return null;
+            }
+        });
+    }
+
+    @Override
     public MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final Location dest,
             final NavigatorParameters params) {
+        return getTargetNavigator(entity, params, new Function<NavigationAbstract, Void>() {
+            @Override
+            public Void apply(NavigationAbstract input) {
+                input.a(dest.getX(), dest.getY(), dest.getZ(), params.speed());
+                return null;
+            }
+        });
+    }
+
+    private MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final NavigatorParameters params,
+            final Function<NavigationAbstract, Void> function) {
         net.minecraft.server.v1_10_R1.Entity raw = getHandle(entity);
         raw.onGround = true;
         // not sure of a better way around this - if onGround is false, then
@@ -394,7 +426,7 @@ public class NMSImpl implements NMSBridge {
         if (raw instanceof EntityHorse) {
             raw.width = Math.min(0.99f, oldWidth);
         }
-        navigation.a(dest.getX(), dest.getY(), dest.getZ(), params.speed());
+        function.apply(navigation);
         raw.width = oldWidth; // minecraft requires that an entity fit onto both blocks if width >= 1f, but we'd
                               // prefer to make it just fit on 1 so hack around it a bit.
         final CancelReason initial;
@@ -426,7 +458,7 @@ public class NMSImpl implements NMSBridge {
             public boolean update() {
                 if (params.speed() != lastSpeed) {
                     Messaging.debug("Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change");
-                    navigation.a(dest.getX(), dest.getY(), dest.getZ(), params.speed());
+                    function.apply(navigation);
                     lastSpeed = params.speed();
                 }
                 navigation.a(params.speed());
@@ -1295,6 +1327,7 @@ public class NMSImpl implements NMSBridge {
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "f");
     private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bx");
     private static final Random RANDOM = Util.getFastRandom();
+
     private static Field SKULL_PROFILE_FIELD;
 
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
