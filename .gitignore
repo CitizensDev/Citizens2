@@ -4,6 +4,7 @@ target
 .project
 .settings
 Citizens.jar
+*.jardesc
 *.lnk
 *.iml
 /.idea
