@@ -470,8 +470,9 @@ public class NMSImpl implements NMSBridge {
     @Override
     public TargetNavigator getTargetNavigator(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity target,
             NavigatorParameters parameters) {
-        return getNavigation(entity) == null ? null
-                : new NavigationFieldWrapper(getNavigation(entity), entity, target, parameters);
+        NavigationAbstract navigation = getNavigation(entity);
+        return navigation == null ? null
+                : new NavigationFieldWrapper(navigation, target, parameters);
     }
 
     @Override
@@ -918,15 +919,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static class NavigationFieldWrapper implements TargetNavigator {
-        private final org.bukkit.entity.Entity handle;
         private final NavigationAbstract navigation;
         private final NavigatorParameters parameters;
         private final org.bukkit.entity.Entity target;
 
-        private NavigationFieldWrapper(NavigationAbstract navigation, org.bukkit.entity.Entity handle,
-                org.bukkit.entity.Entity target, NavigatorParameters parameters) {
+        private NavigationFieldWrapper(NavigationAbstract navigation, org.bukkit.entity.Entity target,
+                NavigatorParameters parameters) {
             this.navigation = navigation;
-            this.handle = handle;
             this.target = target;
             this.parameters = parameters;
         }
@@ -942,10 +941,7 @@ public class NMSImpl implements NMSBridge {
             if (location == null) {
                 throw new IllegalStateException("mapper should not return null");
             }
-            Location oldLoc = target.getLocation(HANDLE_LOCATION);
-            target.teleport(location);
-            NMS.setNavigationTarget(handle, target, parameters.speed());
-            target.teleport(oldLoc);
+            navigation.a(location.getX(), location.getY(), location.getZ(), parameters.speed());
         }
 
         @Override
@@ -956,9 +952,7 @@ public class NMSImpl implements NMSBridge {
         @Override
         public void update() {
             updateNavigation(navigation);
-        }
-
-        private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
+        };
     }
 
     private static class NavigationIterable implements Iterable<Vector> {
