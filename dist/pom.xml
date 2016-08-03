@@ -22,6 +22,8 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                        
+                            <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>
                                 <descriptor>src/main/assembly/all-jar.xml</descriptor>
                             </descriptors>
