@@ -1,5 +1,8 @@
-/bin 
-
+/bin
+target
+.classpath
+.project
+.settings
 Citizens.jar
 *.lnk
 *.iml
