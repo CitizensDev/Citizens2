@@ -39,5 +39,12 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency> 
+                <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>citizens-v1_10_R1</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency> 
     </dependencies>
 </project>
