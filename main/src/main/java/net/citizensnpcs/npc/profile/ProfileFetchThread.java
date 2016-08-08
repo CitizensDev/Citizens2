@@ -56,16 +56,15 @@ class ProfileFetchThread implements Runnable {
                 queue.add(request);
                 requested.put(name, request);
                 return;
-            }
-            else if (request.getResult() == ProfileFetchResult.TOO_MANY_REQUESTS) {
+            } else if (request.getResult() == ProfileFetchResult.TOO_MANY_REQUESTS) {
                 queue.add(request);
             }
         }
 
         if (handler != null) {
 
-            if (request.getResult() == ProfileFetchResult.PENDING ||
-                    request.getResult() == ProfileFetchResult.TOO_MANY_REQUESTS) {
+            if (request.getResult() == ProfileFetchResult.PENDING
+                    || request.getResult() == ProfileFetchResult.TOO_MANY_REQUESTS) {
                 addHandler(request, handler);
             } else {
                 sendResult(handler, request);

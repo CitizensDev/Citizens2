@@ -471,8 +471,7 @@ public class NMSImpl implements NMSBridge {
     public TargetNavigator getTargetNavigator(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity target,
             NavigatorParameters parameters) {
         NavigationAbstract navigation = getNavigation(entity);
-        return navigation == null ? null
-                : new NavigationFieldWrapper(navigation, target, parameters);
+        return navigation == null ? null : new NavigationFieldWrapper(navigation, target, parameters);
     }
 
     @Override

@@ -23,17 +23,6 @@ public class Util {
     private Util() {
     }
 
-    public static float clampYaw(float yaw) {
-        while (yaw < -180.0F) {
-            yaw += 360.0F;
-        }
-    
-        while (yaw >= 180.0F) {
-            yaw -= 360.0F;
-        }
-        return yaw;
-    }
-
     public static void assumePose(Entity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);
     }
@@ -51,14 +40,29 @@ public class Util {
         return event;
     }
 
+    public static float clampYaw(float yaw) {
+        while (yaw < -180.0F) {
+            yaw += 360.0F;
+        }
+
+        while (yaw >= 180.0F) {
+            yaw -= 360.0F;
+        }
+        return yaw;
+    }
+
     public static void faceEntity(Entity entity, Entity at) {
-        if (entity.getWorld() != at.getWorld())
+        if (at == null || entity == null || entity.getWorld() != at.getWorld())
             return;
         faceLocation(entity, at.getLocation(AT_LOCATION));
     }
 
     public static void faceLocation(Entity entity, Location to) {
-        if (entity.getWorld() != to.getWorld())
+        faceLocation(entity, to, false);
+    }
+
+    public static void faceLocation(Entity entity, Location to, boolean headOnly) {
+        if (to == null || entity.getWorld() != to.getWorld())
             return;
         Location fromLocation = entity.getLocation(FROM_LOCATION);
         double xDiff, yDiff, zDiff;
@@ -74,7 +78,11 @@ public class Util {
         if (zDiff < 0.0)
             yaw += Math.abs(180 - yaw) * 2;
 
-        NMS.look(entity, (float) yaw - 90, (float) pitch);
+        if (headOnly) {
+            NMS.setHeadYaw(entity, (float) yaw - 90);
+        } else {
+            NMS.look(entity, (float) yaw - 90, (float) pitch);
+        }
     }
 
     public static Location getEyeLocation(Entity entity) {

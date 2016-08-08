@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
@@ -41,8 +42,7 @@ public class ProfileFetcher {
 
         int i = 0;
         for (ProfileRequest request : requests) {
-            playerNames[i] = request.getPlayerName();
-            i++;
+            playerNames[i++] = request.getPlayerName();
         }
 
         repo.findProfilesByNames(playerNames, Agent.MINECRAFT, new ProfileLookupCallback() {
@@ -50,7 +50,8 @@ public class ProfileFetcher {
             public void onProfileLookupFailed(GameProfile profile, Exception e) {
                 if (Messaging.isDebugging()) {
                     Messaging.debug(
-                            "Profile lookup for player '" + profile.getName() + "' failed: " + getExceptionMsg(e));
+                            "Profile lookup for player '" + profile.getName() + "' failed2: " + getExceptionMsg(e));
+                    Messaging.debug(Throwables.getStackTraceAsString(e));
                 }
 
                 ProfileRequest request = findRequest(profile.getName(), requests);
@@ -76,12 +77,13 @@ public class ProfileFetcher {
                 if (request == null)
                     return;
 
-                try { 
+                try {
                     request.setResult(NMS.fillProfileProperties(profile, true), ProfileFetchResult.SUCCESS);
                 } catch (Exception e) {
                     if (Messaging.isDebugging()) {
                         Messaging.debug(
-                                "Profile lookup for player '" + profile.getName() + "' failed: " + getExceptionMsg(e));
+                                "Profile lookup for player '" + profile.getName() + "' failed2: " + getExceptionMsg(e));
+                        Messaging.debug(Throwables.getStackTraceAsString(e));
                     }
 
                     if (isTooManyRequests(e)) {
@@ -124,9 +126,7 @@ public class ProfileFetcher {
     }
 
     private static String getExceptionMsg(Exception e) {
-        String message = e.getMessage();
-        String cause = e.getCause() != null ? e.getCause().getMessage() : null;
-        return cause != null ? cause : message;
+        return Throwables.getRootCause(e).getMessage();
     }
 
     private static void initThread() {

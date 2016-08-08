@@ -37,6 +37,7 @@ import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 
 public class CitizensNavigator implements Navigator, Runnable {
     private final NavigatorParameters defaultParams = new NavigatorParameters().baseSpeed(UNINITIALISED_SPEED)
@@ -152,6 +153,9 @@ public class CitizensNavigator implements Navigator, Runnable {
 
         updatePathfindingRange();
         boolean finished = executing.update();
+        if (localParams.lookAtFunction() != null) {
+            Util.faceLocation(npc.getEntity(), localParams.lookAtFunction().apply(this), true);
+        }
         if (!finished) {
             return;
         }
