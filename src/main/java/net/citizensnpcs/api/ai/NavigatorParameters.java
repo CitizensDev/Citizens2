@@ -2,6 +2,7 @@ package net.citizensnpcs.api.ai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -24,6 +25,7 @@ public class NavigatorParameters implements Cloneable {
     private AttackStrategy defaultStrategy;
     private double distanceMargin = 2F;
     private List<BlockExaminer> examiners = Lists.newArrayList();
+    private Function<Navigator, Location> lookAtFunction;
     private Function<Entity, Location> mapper;
     private double pathDistanceMargin = 1F;
     private float range;
@@ -274,6 +276,24 @@ public class NavigatorParameters implements Cloneable {
      */
     public BlockExaminer[] examiners() {
         return examiners.toArray(new BlockExaminer[examiners.size()]);
+    }
+
+    /**
+     * @see #lookAtFunction(Callable)
+     */
+    public Function<Navigator, Location> lookAtFunction() {
+        return this.lookAtFunction;
+    }
+
+    /**
+     * Sets the position to look at during pathfinding, overriding the default 'look at target' behaviour.
+     *
+     * @param lookAt
+     *            Where to look
+     */
+    public NavigatorParameters lookAtFunction(Function<Navigator, Location> lookAt) {
+        this.lookAtFunction = lookAt;
+        return this;
     }
 
     /**
