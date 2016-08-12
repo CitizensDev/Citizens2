@@ -393,11 +393,10 @@ public class NMSImpl implements NMSBridge {
                         return new PathPoint(input.getBlockX(), input.getBlockY(), input.getBlockZ());
                     }
                 }), PathPoint.class));
-        return getTargetNavigator(entity, params, new Function<NavigationAbstract, Void>() {
+        return getTargetNavigator(entity, params, new Function<NavigationAbstract, Boolean>() {
             @Override
-            public Void apply(NavigationAbstract input) {
-                input.a(path, params.speed());
-                return null;
+            public Boolean apply(NavigationAbstract input) {
+                return input.a(path, params.speed());
             }
         });
     }
@@ -405,17 +404,16 @@ public class NMSImpl implements NMSBridge {
     @Override
     public MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final Location dest,
             final NavigatorParameters params) {
-        return getTargetNavigator(entity, params, new Function<NavigationAbstract, Void>() {
+        return getTargetNavigator(entity, params, new Function<NavigationAbstract, Boolean>() {
             @Override
-            public Void apply(NavigationAbstract input) {
-                input.a(dest.getX(), dest.getY(), dest.getZ(), params.speed());
-                return null;
+            public Boolean apply(NavigationAbstract input) {
+                return input.a(dest.getX(), dest.getY(), dest.getZ(), params.speed());
             }
         });
     }
 
     private MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final NavigatorParameters params,
-            final Function<NavigationAbstract, Void> function) {
+            final Function<NavigationAbstract, Boolean> function) {
         net.minecraft.server.v1_10_R1.Entity raw = getHandle(entity);
         raw.onGround = true;
         // not sure of a better way around this - if onGround is false, then
@@ -426,18 +424,12 @@ public class NMSImpl implements NMSBridge {
         if (raw instanceof EntityHorse) {
             raw.width = Math.min(0.99f, oldWidth);
         }
-        function.apply(navigation);
+        final boolean worked = function.apply(navigation);
         raw.width = oldWidth; // minecraft requires that an entity fit onto both blocks if width >= 1f, but we'd
                               // prefer to make it just fit on 1 so hack around it a bit.
-        final CancelReason initial;
-        if (NMSImpl.isNavigationFinished(navigation)) {
-            initial = CancelReason.STUCK;
-        } else {
-            initial = null;
-        }
         return new MCNavigator() {
             float lastSpeed = params.speed();
-            CancelReason reason = initial;
+            CancelReason reason = worked ? null : CancelReason.STUCK;
 
             @Override
             public CancelReason getCancelReason() {
