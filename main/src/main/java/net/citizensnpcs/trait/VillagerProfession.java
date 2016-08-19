@@ -20,6 +20,9 @@ public class VillagerProfession extends Trait {
     public void load(DataKey key) throws NPCLoadException {
         try {
             profession = Profession.valueOf(key.getString(""));
+            if (profession == Profession.NORMAL) {
+                profession = Profession.FARMER;
+            }
         } catch (IllegalArgumentException ex) {
             throw new NPCLoadException("Invalid profession.");
         }
@@ -27,8 +30,9 @@ public class VillagerProfession extends Trait {
 
     @Override
     public void onSpawn() {
-        if (npc.getEntity() instanceof Villager)
+        if (npc.getEntity() instanceof Villager) {
             ((Villager) npc.getEntity()).setProfession(profession);
+        }
     }
 
     @Override
@@ -37,9 +41,13 @@ public class VillagerProfession extends Trait {
     }
 
     public void setProfession(Profession profession) {
+        if (profession == Profession.NORMAL) {
+            profession = Profession.FARMER;
+        }
         this.profession = profession;
-        if (npc.getEntity() instanceof Villager)
+        if (npc.getEntity() instanceof Villager) {
             ((Villager) npc.getEntity()).setProfession(profession);
+        }
     }
 
     @Override
