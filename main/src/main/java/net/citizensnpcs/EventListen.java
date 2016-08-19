@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -490,7 +491,8 @@ public class EventListen implements Listener {
         if (!npcRegistry.isNPC(event.getEntered()))
             return;
         NPC npc = npcRegistry.getNPC(event.getEntered());
-        if (npc.getEntity().getType() == EntityType.HORSE && !npc.getTrait(Controllable.class).isEnabled()) {
+        if ((npc.getEntity().getType() == EntityType.HORSE || npc.getEntity().getType() == EntityType.BOAT
+                || npc.getEntity() instanceof Minecart) && !npc.getTrait(Controllable.class).isEnabled()) {
             event.setCancelled(true);
         }
     }
