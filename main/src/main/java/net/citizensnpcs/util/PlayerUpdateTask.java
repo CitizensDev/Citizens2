@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerUpdateTask extends BukkitRunnable {
@@ -31,7 +32,8 @@ public class PlayerUpdateTask extends BukkitRunnable {
         TICKERS_PENDING_REMOVE.clear();
         Iterator<org.bukkit.entity.Entity> itr = TICKERS.values().iterator();
         while (itr.hasNext()) {
-            if (NMS.tick(itr.next())) {
+            Entity entity = itr.next();
+            if (NMS.tick(entity)) {
                 itr.remove();
             }
         }
