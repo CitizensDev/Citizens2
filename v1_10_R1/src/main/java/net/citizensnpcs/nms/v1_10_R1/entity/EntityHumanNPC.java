@@ -283,7 +283,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
         }
-        NMS.replaceTrackerEntry(getBukkitEntity());
         tickPotionEffects();
 
         boolean navigating = npc.getNavigator().isNavigating();

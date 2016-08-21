@@ -256,6 +256,9 @@ public class CitizensNPC extends AbstractNPC {
             if (NMS.getStepHeight(entity) < 1) {
                 NMS.setStepHeight(entity, 1);
             }
+            if (getEntity() instanceof Player) {
+                NMS.replaceTrackerEntry((Player) getEntity());
+            }
         }
 
         return true;
