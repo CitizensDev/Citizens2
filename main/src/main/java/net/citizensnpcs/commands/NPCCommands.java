@@ -1512,7 +1512,6 @@ public class NPCCommands {
         }
         Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), skinName);
         if (npc.isSpawned()) {
-
             SkinnableEntity skinnable = npc.getEntity() instanceof SkinnableEntity ? (SkinnableEntity) npc.getEntity()
                     : null;
             if (skinnable != null) {

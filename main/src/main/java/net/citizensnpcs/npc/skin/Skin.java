@@ -327,7 +327,7 @@ public class Skin {
         // packet errors that disconnect the client.
         Property current = Iterables.getFirst(profile.getProperties().get("textures"), null);
         if (current != null && current.getValue().equals(skinProperty.getValue())
-                && current.getSignature().equals(skinProperty.getSignature())) {
+                && (current.getSignature() != null && current.getSignature().equals(skinProperty.getSignature()))) {
             return;
         }
 
