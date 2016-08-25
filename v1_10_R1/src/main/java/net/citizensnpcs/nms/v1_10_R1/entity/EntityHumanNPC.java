@@ -376,21 +376,20 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     private void updatePackets(boolean navigating) {
-        if (updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
-            updateCounter = 0;
-            Location current = getBukkitEntity().getLocation(packetLocationCache);
-            Packet<?>[] packets = new Packet[navigating ? EnumItemSlot.values().length
-                    : EnumItemSlot.values().length + 1];
-            if (!navigating) {
-                packets[5] = new PacketPlayOutEntityHeadRotation(this,
-                        (byte) MathHelper.d(NMSImpl.getHeadYaw(this) * 256.0F / 360.0F));
-            }
-            int i = 0;
-            for (EnumItemSlot slot : EnumItemSlot.values()) {
-                packets[i++] = new PacketPlayOutEntityEquipment(getId(), slot, getEquipment(slot));
-            }
-            NMSImpl.sendPacketsNearby(getBukkitEntity(), current, packets);
+        if (updateCounter++ <= Setting.PACKET_UPDATE_DELAY.asInt())
+            return;
+        updateCounter = 0;
+        Location current = getBukkitEntity().getLocation(packetLocationCache);
+        Packet<?>[] packets = new Packet[navigating ? EnumItemSlot.values().length : EnumItemSlot.values().length + 1];
+        if (!navigating) {
+            packets[5] = new PacketPlayOutEntityHeadRotation(this,
+                    (byte) MathHelper.d(NMSImpl.getHeadYaw(this) * 256.0F / 360.0F));
         }
+        int i = 0;
+        for (EnumItemSlot slot : EnumItemSlot.values()) {
+            packets[i++] = new PacketPlayOutEntityEquipment(getId(), slot, getEquipment(slot));
+        }
+        NMSImpl.sendPacketsNearby(getBukkitEntity(), current, packets);
     }
 
     public void updatePathfindingRange(float pathfindingRange) {

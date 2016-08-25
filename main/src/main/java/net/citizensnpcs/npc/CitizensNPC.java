@@ -333,7 +333,7 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private void updateFlyableState() {
-        EntityType type = getTrait(MobType.class).getType();
+        EntityType type = isSpawned() ? getEntity().getType() : getTrait(MobType.class).getType();
         if (type == null)
             return;
         if (Util.isAlwaysFlyable(type)) {

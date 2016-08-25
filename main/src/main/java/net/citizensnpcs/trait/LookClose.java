@@ -46,26 +46,21 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     private void findNewTarget() {
         List<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
-        final Location npcLocation = npc.getEntity().getLocation(NPC_LOCATION),
-                cacheLocation1 = new Location(null, 0, 0, 0), cacheLocation2 = new Location(null, 0, 0, 0);
         Collections.sort(nearby, new Comparator<Entity>() {
             @Override
             public int compare(Entity o1, Entity o2) {
-                Location l1 = o1.getLocation(cacheLocation1);
-                Location l2 = o2.getLocation(cacheLocation2);
-                if (!npcLocation.getWorld().equals(l1.getWorld()) || !npcLocation.getWorld().equals(l2.getWorld())) {
+                Location l1 = o1.getLocation(CACHE_LOCATION);
+                Location l2 = o2.getLocation(CACHE_LOCATION2);
+                if (!NPC_LOCATION.getWorld().equals(l1.getWorld()) || !NPC_LOCATION.getWorld().equals(l2.getWorld())) {
                     return -1;
                 }
-                double d1 = l1.distanceSquared(npcLocation);
-                double d2 = l2.distanceSquared(npcLocation);
-                return Double.compare(d1, d2);
+                return Double.compare(l1.distanceSquared(NPC_LOCATION), l2.distanceSquared(NPC_LOCATION));
             }
         });
         for (Entity entity : nearby) {
-            if (entity.getType() != EntityType.PLAYER
-                    || entity.getLocation(cacheLocation1).getWorld() != npcLocation.getWorld()
-                    || CitizensAPI.getNPCRegistry().getNPC(entity) != null
-                    || ((Player) entity).getGameMode() == GameMode.SPECTATOR)
+            if (entity.getType() != EntityType.PLAYER || ((Player) entity).getGameMode() == GameMode.SPECTATOR
+                    || entity.getLocation(CACHE_LOCATION).getWorld() != NPC_LOCATION.getWorld()
+                    || CitizensAPI.getNPCRegistry().getNPC(entity) != null)
                 continue;
             lookingAt = (Player) entity;
             return;
@@ -76,7 +71,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         if (lookingAt == null)
             return true;
         if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getEntity().getWorld()
-                || lookingAt.getLocation().distanceSquared(npc.getEntity().getLocation(NPC_LOCATION)) > range) {
+                || lookingAt.getLocation(PLAYER_LOCATION).distanceSquared(NPC_LOCATION) > range) {
             lookingAt = null;
         }
         return lookingAt == null;
@@ -102,6 +97,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     public void run() {
         if (!enabled || !npc.isSpawned() || npc.getNavigator().isNavigating())
             return;
+        npc.getEntity().getLocation(NPC_LOCATION);
         if (hasInvalidTarget()) {
             findNewTarget();
         }
@@ -136,5 +132,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         return "LookClose{" + enabled + "}";
     }
 
+    private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location CACHE_LOCATION2 = new Location(null, 0, 0, 0);
     private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location PLAYER_LOCATION = new Location(null, 0, 0, 0);
 }
