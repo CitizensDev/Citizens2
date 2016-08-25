@@ -82,7 +82,6 @@ public class Sequence extends Composite {
         if (!executing.shouldExecute()) {
             return getContinuationStatus();
         }
-        prepareForExecution(executing);
         return BehaviorStatus.RUNNING;
     }
 

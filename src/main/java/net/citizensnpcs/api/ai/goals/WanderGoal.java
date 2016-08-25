@@ -5,14 +5,17 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
 
-public class WanderGoal extends BehaviorGoalAdapter {
+public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private boolean forceFinish;
     private final NPC npc;
     private final Random random = new Random();
@@ -49,6 +52,7 @@ public class WanderGoal extends BehaviorGoalAdapter {
     @Override
     public void reset() {
         forceFinish = false;
+        HandlerList.unregisterAll(this);
     }
 
     @Override
@@ -66,6 +70,7 @@ public class WanderGoal extends BehaviorGoalAdapter {
         if (dest == null)
             return false;
         npc.getNavigator().setTarget(dest);
+        CitizensAPI.registerEvents(this);
         return true;
     }
 

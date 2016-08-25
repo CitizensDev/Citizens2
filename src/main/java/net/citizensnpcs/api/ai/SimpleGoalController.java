@@ -4,13 +4,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.ForwardingBehaviorGoalAdapter;
@@ -45,9 +41,6 @@ public class SimpleGoalController implements GoalController {
     }
 
     private void addGoalToExecution(Goal goal) {
-        if (CitizensAPI.hasImplementation()) {
-            Bukkit.getPluginManager().registerEvents(goal, CitizensAPI.getPlugin());
-        }
         executingGoals.add(goal);
         goal.run(selector);
     }
@@ -99,7 +92,6 @@ public class SimpleGoalController implements GoalController {
             return;
         resetGoalList();
         executingPriority = -1;
-        HandlerList.unregisterAll(executingRootGoal);
         executingRootGoal = null;
     }
 
@@ -178,10 +170,9 @@ public class SimpleGoalController implements GoalController {
 
     private void resetGoalList() {
         for (int i = 0; i < executingGoals.size(); ++i) {
-            Goal goal = executingGoals.remove(i--);
-            goal.reset();
-            HandlerList.unregisterAll(goal);
+            executingGoals.get(i).reset();
         }
+        executingGoals.clear();
     }
 
     @Override

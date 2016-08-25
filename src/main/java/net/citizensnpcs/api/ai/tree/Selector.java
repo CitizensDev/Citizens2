@@ -53,9 +53,7 @@ public class Selector extends Composite {
                 return BehaviorStatus.FAILURE;
             }
 
-            if (executing.shouldExecute()) {
-                prepareForExecution(executing);
-            } else {
+            if (!executing.shouldExecute()) {
                 status = BehaviorStatus.FAILURE;
             }
         }
