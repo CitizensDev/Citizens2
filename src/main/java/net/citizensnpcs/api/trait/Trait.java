@@ -1,10 +1,10 @@
 package net.citizensnpcs.api.trait;
 
+import org.bukkit.event.Listener;
+
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
-
-import org.bukkit.event.Listener;
 
 /**
  * Represents a Trait that can be loaded and saved.
@@ -15,7 +15,7 @@ public abstract class Trait implements Listener, Runnable {
     private boolean runImplemented = true;
 
     protected Trait(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     /**
@@ -58,8 +58,7 @@ public abstract class Trait implements Listener, Runnable {
     }
 
     /**
-     * Called when the trait has been attached to an {@link NPC}. {@link #npc}
-     * will be null until this is called.
+     * Called when the trait has been attached to an {@link NPC}. {@link #npc} will be null until this is called.
      */
     public void onAttach() {
     }
@@ -71,8 +70,7 @@ public abstract class Trait implements Listener, Runnable {
     }
 
     /**
-     * Called just before the attached {@link NPC} is despawned.
-     * {@link NPC#getEntity()} will be non-null.
+     * Called just before the attached {@link NPC} is despawned. {@link NPC#getEntity()} will be non-null.
      */
     public void onDespawn() {
     }
@@ -84,9 +82,8 @@ public abstract class Trait implements Listener, Runnable {
     }
 
     /**
-     * Called when an {@link NPC} is spawned. {@link NPC#getEntity()} will
-     * return null until this is called. This is also called onAttach when the
-     * NPC is already spawned.
+     * Called when an {@link NPC} is spawned. {@link NPC#getEntity()} will return null until this is called. This is
+     * also called onAttach when the NPC is already spawned.
      */
     public void onSpawn() {
     }
