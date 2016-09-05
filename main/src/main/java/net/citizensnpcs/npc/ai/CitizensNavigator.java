@@ -148,6 +148,10 @@ public class CitizensNavigator implements Navigator, Runnable {
         updateMountedStatus();
         if (!isNavigating() || !npc.isSpawned() || paused)
             return;
+        if (Math.pow(localParams.range(), 2) < npc.getStoredLocation().distanceSquared(getTargetAsLocation())) {
+            stopNavigating(CancelReason.STUCK);
+            return;
+        }
         if (updateStationaryStatus())
             return;
 
