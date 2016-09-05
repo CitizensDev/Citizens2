@@ -24,7 +24,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final NavigatorParameters parameters;
     private final Entity target;
     private final TargetNavigator targetNavigator;
-    private int updateCounter;
+    private int updateCounter = -1;
 
     public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
         this.npc = npc;
@@ -115,7 +115,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (!aggro && distanceSquared() <= parameters.distanceMargin()) {
             stop();
             return false;
-        } else if (updateCounter++ > parameters.updatePathRate()) {
+        } else if (updateCounter == -1 || updateCounter++ > parameters.updatePathRate()) {
             targetNavigator.setPath();
             updateCounter = 0;
         }
@@ -140,10 +140,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private class AStarTargeter implements TargetNavigator {
         private int failureTimes = 0;
         private PathStrategy strategy;
-
-        public AStarTargeter() {
-            setStrategy();
-        }
 
         @Override
         public Iterable<Vector> getPath() {

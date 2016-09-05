@@ -26,6 +26,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
     private final NPC npc;
     private final NavigatorParameters params;
     private Path plan;
+    private boolean planned = false;
     private Vector vector;
 
     public AStarNavigationStrategy(NPC npc, Iterable<Vector> path, NavigatorParameters params) {
@@ -42,11 +43,6 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         this.params = params;
         this.destination = dest;
         this.npc = npc;
-        Location location = npc.getEntity().getLocation();
-        VectorGoal goal = new VectorGoal(dest, (float) params.pathDistanceMargin());
-        setPlan(ASTAR.runFully(goal,
-                new VectorNode(goal, location, new ChunkBlockSource(location, params.range()), params.examiners()),
-                50000));
     }
 
     @Override
@@ -61,6 +57,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
 
     public void setPlan(Path path) {
         this.plan = path;
+        this.planned = true;
         if (plan == null || plan.isComplete()) {
             setCancelReason(CancelReason.STUCK);
         } else {
@@ -81,6 +78,13 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public boolean update() {
+        if (!planned) {
+            Location location = npc.getEntity().getLocation();
+            VectorGoal goal = new VectorGoal(destination, (float) params.pathDistanceMargin());
+            setPlan(ASTAR.runFully(goal,
+                    new VectorNode(goal, location, new ChunkBlockSource(location, params.range()), params.examiners()),
+                    50000));
+        }
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
         }

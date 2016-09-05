@@ -28,6 +28,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     private final NPC npc;
     private final NavigatorParameters parameters;
     private Path plan;
+    private boolean planned;
     private final Location target;
     private Vector vector;
 
@@ -45,21 +46,6 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         this.target = dest;
         this.parameters = params;
         this.npc = npc;
-        Location location = npc.getEntity().getLocation();
-        VectorGoal goal = new VectorGoal(dest, (float) params.pathDistanceMargin());
-        boolean found = false;
-        for (BlockExaminer examiner : params.examiners()) {
-            if (examiner instanceof FlyingBlockExaminer) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            params.examiner(new FlyingBlockExaminer());
-        }
-        setPlan(ASTAR.runFully(goal,
-                new VectorNode(goal, location, new ChunkBlockSource(location, params.range()), params.examiners()),
-                50000));
     }
 
     @Override
@@ -94,6 +80,22 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public boolean update() {
+        if (!planned) {
+            Location location = npc.getEntity().getLocation();
+            VectorGoal goal = new VectorGoal(target, (float) parameters.pathDistanceMargin());
+            boolean found = false;
+            for (BlockExaminer examiner : parameters.examiners()) {
+                if (examiner instanceof FlyingBlockExaminer) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                parameters.examiner(new FlyingBlockExaminer());
+            }
+            setPlan(ASTAR.runFully(goal, new VectorNode(goal, location,
+                    new ChunkBlockSource(location, parameters.range()), parameters.examiners()), 50000));
+        }
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
         }
