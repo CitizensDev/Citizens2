@@ -420,16 +420,9 @@ public class NMSImpl implements NMSBridge {
         // navigation won't execute, and calling entity.move doesn't
         // entirely fix the problem.
         final NavigationAbstract navigation = NMSImpl.getNavigation(entity);
-        float oldWidth = raw.width;
-        if (raw instanceof EntityHorse) {
-            raw.width = Math.min(0.99f, oldWidth);
-        }
-        final boolean worked = function.apply(navigation);
-        raw.width = oldWidth; // minecraft requires that an entity fit onto both blocks if width >= 1f, but we'd
-                              // prefer to make it just fit on 1 so hack around it a bit.
         return new MCNavigator() {
-            float lastSpeed = params.speed();
-            CancelReason reason = worked ? null : CancelReason.STUCK;
+            float lastSpeed;
+            CancelReason reason;
 
             @Override
             public CancelReason getCancelReason() {
@@ -449,8 +442,20 @@ public class NMSImpl implements NMSBridge {
             @Override
             public boolean update() {
                 if (params.speed() != lastSpeed) {
-                    Messaging.debug("Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change");
-                    function.apply(navigation);
+                    if (Messaging.isDebugging()) {
+                        Messaging.debug(
+                                "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change");
+                    }
+                    Entity handle = getHandle(entity);
+                    float oldWidth = handle.width;
+                    if (handle instanceof EntityHorse) {
+                        handle.width = Math.min(0.99f, oldWidth);
+                    }
+                    if (!function.apply(navigation)) {
+                        reason = CancelReason.STUCK;
+                    }
+                    handle.width = oldWidth; // minecraft requires that an entity fit onto both blocks if width >= 1f,
+                                             // but we'd prefer to make it just fit on 1 so hack around it a bit.
                     lastSpeed = params.speed();
                 }
                 navigation.a(params.speed());
@@ -1312,11 +1317,8 @@ public class NMSImpl implements NMSBridge {
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "f");
     private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bx");
     private static final Random RANDOM = Util.getFastRandom();
-
     private static Field SKULL_PROFILE_FIELD;
-
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
-
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bG");
 
     static {

@@ -68,6 +68,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
                 plan.debug();
             }
         }
+        planned = true;
     }
 
     @Override
@@ -130,8 +131,8 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         velocity.setX(motX).setY(motY).setZ(motZ).multiply(parameters.speed());
         npc.getEntity().setVelocity(velocity);
 
-        NMS.setVerticalMovement(npc.getEntity(), 0.5);
         if (npc.getEntity().getType() != EntityType.ENDER_DRAGON) {
+            NMS.setVerticalMovement(npc.getEntity(), 0.5);
             float newYaw = current.getYaw() + normalisedTargetYaw;
             current.setYaw(newYaw);
             NMS.setHeadYaw(npc.getEntity(), newYaw);
