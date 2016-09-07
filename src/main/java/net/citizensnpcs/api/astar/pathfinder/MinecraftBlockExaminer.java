@@ -28,7 +28,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             return 1F;
         if (isLiquid(above, below, in))
             return 0.5F;
-        return 0.5F; // TODO: add light level-specific costs
+        return 0F; // TODO: add light level-specific costs
     }
 
     private boolean isClimbable(Material mat) {

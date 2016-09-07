@@ -1,9 +1,9 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
-import net.citizensnpcs.api.astar.AStarGoal;
-
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+
+import net.citizensnpcs.api.astar.AStarGoal;
 
 public class VectorGoal implements AStarGoal<VectorNode> {
     final Vector goal;
@@ -25,7 +25,7 @@ public class VectorGoal implements AStarGoal<VectorNode> {
 
     @Override
     public float getInitialCost(VectorNode node) {
-        return node.heuristicDistance(goal);
+        return (float) node.getVector().distance(goal);
     }
 
     @Override
