@@ -125,6 +125,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (root.keyExists("distancemargin")) {
             defaultParams.distanceMargin(root.getDouble("distancemargin"));
         }
+        if (root.keyExists("updatepathrate")) {
+            defaultParams.updatePathRate(root.getInt("updatepathrate"));
+        }
         defaultParams.speedModifier((float) root.getDouble("speedmodifier", 1F));
         defaultParams.avoidWater(root.getBoolean("avoidwater"));
         if (!root.getBoolean("usedefaultstuckaction") && defaultParams.stuckAction() == TeleportStuckAction.INSTANCE) {
@@ -178,12 +181,23 @@ public class CitizensNavigator implements Navigator, Runnable {
     public void save(DataKey root) {
         if (defaultParams.range() != Setting.DEFAULT_PATHFINDING_RANGE.asFloat()) {
             root.setDouble("pathfindingrange", defaultParams.range());
+        } else {
+            root.removeKey("pathfindingrange");
         }
         if (defaultParams.stationaryTicks() != Setting.DEFAULT_STATIONARY_TICKS.asInt()) {
             root.setInt("stationaryticks", defaultParams.stationaryTicks());
+        } else {
+            root.removeKey("stationaryticks");
         }
         if (defaultParams.distanceMargin() != Setting.DEFAULT_DISTANCE_MARGIN.asDouble()) {
             root.setDouble("distancemargin", defaultParams.distanceMargin());
+        } else {
+            root.removeKey("distancemargin");
+        }
+        if (defaultParams.updatePathRate() != Setting.DEFAULT_PATHFINDER_UPDATE_PATH_RATE.asInt()) {
+            root.setInt("updatepathrate", defaultParams.updatePathRate());
+        } else {
+            root.removeKey("updatepathrate");
         }
         root.setDouble("speedmodifier", defaultParams.speedModifier());
         root.setBoolean("avoidwater", defaultParams.avoidWater());

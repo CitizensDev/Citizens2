@@ -2,16 +2,16 @@ package net.citizensnpcs.trait.waypoint;
 
 import java.util.Map;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.NMS;
-
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import com.google.common.collect.Maps;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.MemoryNPCDataStore;
+import net.citizensnpcs.api.npc.NPC;
 
 public class WaypointMarkers {
     private final Map<Waypoint, Entity> waypointMarkers = Maps.newHashMap();
@@ -44,7 +44,8 @@ public class WaypointMarkers {
     }
 
     public Entity spawnMarker(World world, Location at) {
-        NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.ENDER_SIGNAL, "");
+        NPC npc = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore()).createNPC(EntityType.ENDER_SIGNAL,
+                "");
         npc.spawn(at);
         return npc.getEntity();
     }
