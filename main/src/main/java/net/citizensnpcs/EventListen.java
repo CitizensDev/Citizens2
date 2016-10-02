@@ -414,7 +414,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        skinUpdateTracker.updatePlayer(event.getPlayer(), 20, true);
+        skinUpdateTracker.updatePlayer(event.getPlayer(), 6 * 20, true);
     }
 
     // recalculate player NPCs the first time a player moves and every time
