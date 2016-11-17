@@ -4,12 +4,12 @@
 
 	<groupId>net.citizensnpcs</groupId>
 	<artifactId>citizensapi</artifactId>
-	<version>2.0.20-SNAPSHOT</version>
+	<version>2.0.21-SNAPSHOT</version>
 	<name>CitizensAPI</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.10-R0.1-SNAPSHOT</bukkit.version>
+		<bukkit.version>1.11-R0.1-SNAPSHOT</bukkit.version>
 		<powermock.version>1.4.12</powermock.version>
 		<build.number>Unknown</build.number>
 	</properties>
@@ -76,7 +76,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.4</version>
+				<version>2.1</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -101,7 +101,7 @@
 				<version>2.9</version>
 				<configuration>
 					<author>false</author>
-                    <additionalparam>-Xdoclint:none</additionalparam>
+					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 			</plugin>
 		</plugins>
