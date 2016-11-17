@@ -3,7 +3,6 @@ package net.citizensnpcs.trait;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
-import org.bukkit.entity.Horse.Variant;
 import org.bukkit.inventory.ItemStack;
 
 import net.citizensnpcs.api.persistence.Persist;
@@ -22,8 +21,6 @@ public class HorseModifiers extends Trait {
     private ItemStack saddle = null;
     @Persist("style")
     private Style style = Style.NONE;
-    @Persist("type")
-    private Variant type = Variant.HORSE;
 
     public HorseModifiers() {
         super("horsemodifiers");
@@ -43,10 +40,6 @@ public class HorseModifiers extends Trait {
 
     public Style getStyle() {
         return style;
-    }
-
-    public Variant getType() {
-        return type;
     }
 
     @Override
@@ -86,18 +79,11 @@ public class HorseModifiers extends Trait {
         updateModifiers();
     }
 
-    public void setType(Horse.Variant type) {
-        this.type = type;
-        updateModifiers();
-    }
-
     private void updateModifiers() {
         if (npc.getEntity() instanceof Horse) {
             Horse horse = (Horse) npc.getEntity();
-            horse.setCarryingChest(carryingChest);
             horse.setColor(color);
             horse.setStyle(style);
-            horse.setVariant(type);
             horse.getInventory().setArmor(armor);
             horse.getInventory().setSaddle(saddle);
         }

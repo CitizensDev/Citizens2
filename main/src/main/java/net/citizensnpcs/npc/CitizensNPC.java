@@ -38,7 +38,6 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.npc.ai.CitizensBlockBreaker;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.CurrentLocation;
@@ -106,7 +105,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public BlockBreaker getBlockBreaker(Block targetBlock, BlockBreakerConfiguration config) {
-        return new CitizensBlockBreaker(getEntity(), targetBlock, config);
+        return NMS.getBlockBreaker(getEntity(), targetBlock, config);
     }
 
     @Override

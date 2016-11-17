@@ -57,6 +57,8 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.npc.BlockBreaker;
+import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.Messaging;
@@ -100,6 +102,7 @@ import net.citizensnpcs.nms.v1_11_R1.entity.SlimeController;
 import net.citizensnpcs.nms.v1_11_R1.entity.SnowmanController;
 import net.citizensnpcs.nms.v1_11_R1.entity.SpiderController;
 import net.citizensnpcs.nms.v1_11_R1.entity.SquidController;
+import net.citizensnpcs.nms.v1_11_R1.entity.VexController;
 import net.citizensnpcs.nms.v1_11_R1.entity.VillagerController;
 import net.citizensnpcs.nms.v1_11_R1.entity.VindicatorController;
 import net.citizensnpcs.nms.v1_11_R1.entity.WitchController;
@@ -293,6 +296,12 @@ public class NMSImpl implements NMSBridge {
 
     public String getAuthServerBaseUrl() {
         return Setting.AUTH_SERVER_URL.asString();
+    }
+
+    @Override
+    public BlockBreaker getBlockBreaker(org.bukkit.entity.Entity entity, org.bukkit.block.Block targetBlock,
+            BlockBreakerConfiguration config) {
+        return new CitizensBlockBreaker(entity, targetBlock, config);
     }
 
     @Override
@@ -579,6 +588,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.TIPPED_ARROW, TippedArrowController.class);
         EntityControllers.setEntityControllerForType(EntityType.THROWN_EXP_BOTTLE, ThrownExpBottleController.class);
         EntityControllers.setEntityControllerForType(EntityType.PRIMED_TNT, TNTPrimedController.class);
+        EntityControllers.setEntityControllerForType(EntityType.VEX, VexController.class);
         EntityControllers.setEntityControllerForType(EntityType.VILLAGER, VillagerController.class);
         EntityControllers.setEntityControllerForType(EntityType.VINDICATOR, VindicatorController.class);
         EntityControllers.setEntityControllerForType(EntityType.WOLF, WolfController.class);

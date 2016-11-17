@@ -58,6 +58,8 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.npc.BlockBreaker;
+import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.Messaging;
@@ -278,6 +280,12 @@ public class NMSImpl implements NMSBridge {
 
     public String getAuthServerBaseUrl() {
         return Setting.AUTH_SERVER_URL.asString();
+    }
+
+    @Override
+    public BlockBreaker getBlockBreaker(org.bukkit.entity.Entity entity, org.bukkit.block.Block targetBlock,
+            BlockBreakerConfiguration config) {
+        return new CitizensBlockBreaker(entity, targetBlock, config);
     }
 
     @Override
@@ -1319,6 +1327,7 @@ public class NMSImpl implements NMSBridge {
     private static final Random RANDOM = Util.getFastRandom();
     private static Field SKULL_PROFILE_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
+
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bG");
 
     static {

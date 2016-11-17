@@ -1,4 +1,4 @@
-package net.citizensnpcs.npc.ai;
+package net.citizensnpcs.nms.v1_10_R1.util;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_10_R1.BlockPosition;

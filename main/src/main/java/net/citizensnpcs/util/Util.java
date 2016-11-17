@@ -99,6 +99,8 @@ public class Util {
     }
 
     public static boolean isAlwaysFlyable(EntityType type) {
+        if (type.name().toLowerCase().contains("vex")) // 1.11 compatibility
+            return true;
         switch (type) {
             case BAT:
             case BLAZE:

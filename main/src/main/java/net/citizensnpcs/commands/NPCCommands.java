@@ -23,16 +23,14 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Guardian;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
-import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
-import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -79,7 +77,6 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
@@ -92,7 +89,6 @@ import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
-import net.citizensnpcs.trait.ZombieModifier;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -626,23 +622,6 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "guardian --elder [true|false]",
-            desc = "Changes guardian modifiers",
-            modifiers = { "guardian" },
-            min = 1,
-            max = 2,
-            permission = "citizens.npc.guardian")
-    @Requirements(selected = true, ownership = true, types = { EntityType.GUARDIAN })
-    public void guardian(CommandContext args, CommandSender sender, NPC npc) {
-        Guardian guardian = (Guardian) npc.getEntity();
-        if (args.hasValueFlag("elder")) {
-            guardian.setElder(args.getFlag("elder", "false").equals("true") ? true : false);
-            Messaging.sendTr(sender, guardian.isElder() ? Messages.ELDER_SET : Messages.ELDER_UNSET, npc.getName());
-        }
-    }
-
-    @Command(
-            aliases = { "npc" },
             usage = "horse (--color color) (--type type) (--style style) (-cb)",
             desc = "Sets horse modifiers",
             help = "Use the -c flag to make the horse have a chest, or the -b flag to stop them from having a chest.",
@@ -651,8 +630,11 @@ public class NPCCommands {
             max = 1,
             flags = "cb",
             permission = "citizens.npc.horse")
-    @Requirements(selected = true, ownership = true, types = { EntityType.HORSE })
+    @Requirements(selected = true, ownership = true)
     public void horse(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (!(npc.getEntity() instanceof Horse)) {
+            throw new CommandException(Messages.INVALID_ENTITY_TYPE);
+        }
         HorseModifiers horse = npc.getTrait(HorseModifiers.class);
         String output = "";
         if (args.hasFlag('c')) {
@@ -672,15 +654,6 @@ public class NPCCommands {
             horse.setColor(color);
             output += Messaging.tr(Messages.HORSE_COLOR_SET, Util.prettyEnum(color));
         }
-        if (args.hasValueFlag("type")) {
-            Variant variant = Util.matchEnum(Variant.values(), args.getFlag("type"));
-            if (variant == null) {
-                String valid = Util.listValuesPretty(Variant.values());
-                throw new CommandException(Messages.INVALID_HORSE_VARIANT, valid);
-            }
-            horse.setType(variant);
-            output += Messaging.tr(Messages.HORSE_TYPE_SET, Util.prettyEnum(variant));
-        }
         if (args.hasValueFlag("style")) {
             Style style = Util.matchEnum(Style.values(), args.getFlag("style"));
             if (style == null) {
@@ -692,7 +665,7 @@ public class NPCCommands {
         }
         if (output.isEmpty()) {
             Messaging.sendTr(sender, Messages.HORSE_DESCRIBE, Util.prettyEnum(horse.getColor()),
-                    Util.prettyEnum(horse.getType()), Util.prettyEnum(horse.getStyle()));
+                    Util.prettyEnum(horse.getNPC().getEntity().getType()), Util.prettyEnum(horse.getStyle()));
         } else {
             sender.sendMessage(output);
         }
@@ -1469,26 +1442,6 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skeletontype [type]",
-            desc = "Sets the NPC's skeleton type",
-            modifiers = { "skeletontype", "sktype" },
-            min = 2,
-            max = 2,
-            permission = "citizens.npc.skeletontype")
-    @Requirements(selected = true, ownership = true, types = EntityType.SKELETON)
-    public void skeletonType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        SkeletonType type;
-        try {
-            type = SkeletonType.valueOf(args.getString(1).toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            throw new CommandException(Messages.INVALID_SKELETON_TYPE, StringUtils.join(SkeletonType.values(), ","));
-        }
-        npc.getTrait(NPCSkeletonType.class).setType(type);
-        Messaging.sendTr(sender, Messages.SKELETON_TYPE_SET, npc.getName(), type);
-    }
-
-    @Command(
-            aliases = { "npc" },
             usage = "skin (-c -p) [name]",
             desc = "Sets an NPC's skin name, Use -p to save a skin snapshot that won't change",
             modifiers = { "skin" },
@@ -1961,37 +1914,5 @@ public class NPCCommands {
         }
         Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), args.hasFlag('a'), args.hasFlag('s'),
                 args.hasFlag('t'), trait.getCollarColor().name());
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "zombiemod (-b(aby), -v(illager) --p(rofession) [profession])",
-            desc = "Sets a zombie NPC to be a baby or villager",
-            modifiers = { "zombie", "zombiemod" },
-            flags = "bv",
-            min = 1,
-            max = 1,
-            permission = "citizens.npc.zombiemodifier")
-    @Requirements(selected = true, ownership = true, types = { EntityType.ZOMBIE, EntityType.PIG_ZOMBIE })
-    public void zombieModifier(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        ZombieModifier trait = npc.getTrait(ZombieModifier.class);
-        if (args.hasFlag('b')) {
-            boolean isBaby = trait.toggleBaby();
-            Messaging.sendTr(sender, isBaby ? Messages.ZOMBIE_BABY_SET : Messages.ZOMBIE_BABY_UNSET, npc.getName());
-        }
-        if (args.hasFlag('v')) {
-            boolean isVillager = trait.toggleVillager();
-            Messaging.sendTr(sender, isVillager ? Messages.ZOMBIE_VILLAGER_SET : Messages.ZOMBIE_VILLAGER_UNSET,
-                    npc.getName());
-        }
-        if (args.hasValueFlag("profession") || args.hasValueFlag("p")) {
-            Profession profession = Util.matchEnum(Profession.values(), args.getFlag("profession", args.getFlag("p")));
-            if (profession == null) {
-                throw new CommandException();
-            }
-            trait.setProfession(profession);
-            Messaging.sendTr(sender, Messages.ZOMBIE_VILLAGER_PROFESSION_SET, npc.getName(),
-                    Util.prettyEnum(profession));
-        }
     }
 }

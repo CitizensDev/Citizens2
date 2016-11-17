@@ -32,7 +32,6 @@ import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.MountTrait;
-import net.citizensnpcs.trait.NPCSkeletonType;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
@@ -46,7 +45,6 @@ import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.WoolColor;
-import net.citizensnpcs.trait.ZombieModifier;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
@@ -76,7 +74,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(SheepTrait.class));
         registerTrait(TraitInfo.create(SkinLayers.class));
         registerTrait(TraitInfo.create(MountTrait.class));
-        registerTrait(TraitInfo.create(NPCSkeletonType.class));
         registerTrait(TraitInfo.create(SlimeSize.class));
         registerTrait(TraitInfo.create(Spawned.class));
         registerTrait(TraitInfo.create(Speech.class));
@@ -87,7 +84,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(WoolColor.class));
         registerTrait(TraitInfo.create(WolfModifiers.class));
         registerTrait(TraitInfo.create(VillagerProfession.class));
-        registerTrait(TraitInfo.create(ZombieModifier.class));
 
         for (String trait : registered.keySet()) {
             INTERNAL_TRAITS.add(trait);

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
@@ -22,6 +23,8 @@ import com.mojang.authlib.GameProfileRepository;
 
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.npc.BlockBreaker;
+import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
@@ -36,6 +39,8 @@ public interface NMSBridge {
     public void attack(LivingEntity attacker, LivingEntity target);
 
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Exception;
+
+    public BlockBreaker getBlockBreaker(Entity entity, Block targetBlock, BlockBreakerConfiguration config);
 
     public BossBar getBossBar(Entity entity);
 

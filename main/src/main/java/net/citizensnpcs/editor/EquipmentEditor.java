@@ -109,5 +109,13 @@ public class EquipmentEditor extends Editor {
         EQUIPPERS.put(EntityType.SHEEP, new SheepEquipper());
         EQUIPPERS.put(EntityType.ENDERMAN, new EndermanEquipper());
         EQUIPPERS.put(EntityType.HORSE, new HorseEquipper());
+        try {
+            EQUIPPERS.put(EntityType.valueOf("ZOMBIE_HORSE"), new HorseEquipper());
+            EQUIPPERS.put(EntityType.valueOf("LLAMA"), new HorseEquipper());
+            EQUIPPERS.put(EntityType.valueOf("DONKEY"), new HorseEquipper());
+            EQUIPPERS.put(EntityType.valueOf("MULE"), new HorseEquipper());
+            EQUIPPERS.put(EntityType.valueOf("SKELETON_HORSE"), new HorseEquipper());
+        } catch (IllegalArgumentException ex) {
+        }
     }
 }
