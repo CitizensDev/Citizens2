@@ -36,7 +36,6 @@ import net.citizensnpcs.util.Util;
  * @see net.citizensnpcs.EventListen
  */
 public class SkinUpdateTracker {
-
     private final Map<SkinnableEntity, Void> navigating = new WeakHashMap<SkinnableEntity, Void>(25);
     private final NPCRegistry npcRegistry;
     private final Map<UUID, PlayerTracker> playerTrackers = new HashMap<UUID, PlayerTracker>(
@@ -118,7 +117,6 @@ public class SkinUpdateTracker {
         List<SkinnableEntity> results = new ArrayList<SkinnableEntity>();
         PlayerTracker tracker = getTracker(player, reset);
         for (NPC npc : getAllNPCs()) {
-
             SkinnableEntity skinnable = getSkinnable(npc);
             if (skinnable == null)
                 continue;
@@ -139,7 +137,6 @@ public class SkinUpdateTracker {
         PlayerTracker tracker = getTracker(player, false);
 
         for (SkinnableEntity skinnable : navigating.keySet()) {
-
             // make sure player hasn't already been updated to prevent excessive tab list flashing
             // while NPC's are navigating and to reduce the number of times #canSee is invoked.
             if (tracker.fovVisibleSkins.contains(skinnable))

@@ -26,6 +26,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -415,6 +416,17 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         skinUpdateTracker.updatePlayer(event.getPlayer(), 6 * 20, true);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerLeashEntity(PlayerLeashEntityEvent event) {
+        NPC npc = npcRegistry.getNPC(event.getEntity());
+        if (npc == null) {
+            return;
+        }
+        if (npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+            event.setCancelled(true);
+        }
     }
 
     // recalculate player NPCs the first time a player moves and every time

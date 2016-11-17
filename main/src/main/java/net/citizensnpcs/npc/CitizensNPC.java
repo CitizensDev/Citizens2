@@ -314,7 +314,6 @@ public class CitizensNPC extends AbstractNPC {
             if (getEntity() instanceof LivingEntity) {
                 boolean nameplateVisible = data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true);
                 ((LivingEntity) getEntity()).setCustomNameVisible(nameplateVisible);
-
                 if (data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
                     NMS.setKnockbackResistance((LivingEntity) getEntity(), 1D);
                 } else {
