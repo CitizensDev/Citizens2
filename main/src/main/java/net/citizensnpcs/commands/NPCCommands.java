@@ -1442,7 +1442,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-c -p) [name]",
+            usage = "skin (-c -p -f) [name]",
             desc = "Sets an NPC's skin name, Use -p to save a skin snapshot that won't change",
             modifiers = { "skin" },
             min = 1,
@@ -1468,7 +1468,7 @@ public class NPCCommands {
             SkinnableEntity skinnable = npc.getEntity() instanceof SkinnableEntity ? (SkinnableEntity) npc.getEntity()
                     : null;
             if (skinnable != null) {
-                skinnable.setSkinName(skinName, args.hasFlag('p'));
+                skinnable.setSkinName(skinName, true);
             }
         }
     }
