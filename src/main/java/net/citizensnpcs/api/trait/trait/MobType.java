@@ -28,7 +28,11 @@ public class MobType extends Trait {
 
     @Override
     public void load(DataKey key) {
-        type = EntityType.fromName(key.getString(""));
+        try {
+            type = EntityType.valueOf(key.getString(""));
+        } catch (IllegalArgumentException ex) {
+            type = EntityType.fromName(key.getString(""));
+        }
         if (type == null) {
             type = EntityType.PLAYER;
         }
@@ -41,7 +45,7 @@ public class MobType extends Trait {
 
     @Override
     public void save(DataKey key) {
-        key.setString("", type.getName());
+        key.setString("", type.name());
     }
 
     /**
