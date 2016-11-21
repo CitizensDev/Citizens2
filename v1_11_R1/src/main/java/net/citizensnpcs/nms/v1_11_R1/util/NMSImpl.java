@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_11_R1.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
@@ -652,7 +653,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void registerEntityClass(Class<?> clazz) {
-        if (ENTITY_REGISTRY == null || ENTITY_REGISTRY.b((Class<? extends Entity>) clazz) != null)
+        if (ENTITY_REGISTRY == null)
             return;
 
         Class<?> search = clazz;
@@ -661,7 +662,7 @@ public class NMSImpl implements NMSBridge {
             if (key == null)
                 continue;
             int code = ENTITY_REGISTRY.a((Class<? extends Entity>) search);
-            ENTITY_REGISTRY.a(code, key, (Class<? extends Entity>) clazz);
+            ENTITY_REGISTRY.put(code, key, (Class<? extends Entity>) clazz);
             return;
         }
         throw new IllegalArgumentException("unable to find valid entity superclass for class " + clazz.toString());
@@ -859,6 +860,20 @@ public class NMSImpl implements NMSBridge {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public void shutdown() {
+        if (ENTITY_REGISTRY == null)
+            return;
+        Field field = NMS.getField(EntityTypes.class, "b");
+        Field modifiersField = NMS.getField(Field.class, "modifiers");
+        try {
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            field.set(null, ENTITY_REGISTRY.getWrapped());
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
@@ -1345,7 +1360,7 @@ public class NMSImpl implements NMSBridge {
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c");
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bJ");
-    private static RegistryMaterials<MinecraftKey, Class<? extends Entity>> ENTITY_REGISTRY;
+    private static CustomEntityRegistry ENTITY_REGISTRY;
     public static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
     private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "bd");
     private static Method MAKE_REQUEST;
@@ -1362,7 +1377,11 @@ public class NMSImpl implements NMSBridge {
     static {
         try {
             Field field = NMS.getField(EntityTypes.class, "b");
-            ENTITY_REGISTRY = (RegistryMaterials<MinecraftKey, Class<? extends Entity>>) field.get(null);
+            Field modifiersField = NMS.getField(Field.class, "modifiers");
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            ENTITY_REGISTRY = new CustomEntityRegistry(
+                    (RegistryMaterials<MinecraftKey, Class<? extends Entity>>) field.get(null));
+            field.set(null, ENTITY_REGISTRY);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }

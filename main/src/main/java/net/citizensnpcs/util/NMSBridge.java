@@ -126,6 +126,8 @@ public interface NMSBridge {
 
     public boolean shouldJump(Entity entity);
 
+    public void shutdown();
+
     public boolean tick(Entity next);
 
     public void trySwim(Entity entity);

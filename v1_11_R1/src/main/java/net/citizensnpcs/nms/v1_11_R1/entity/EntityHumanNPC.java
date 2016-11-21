@@ -47,6 +47,8 @@ import net.minecraft.server.v1_11_R1.DamageSource;
 import net.minecraft.server.v1_11_R1.Entity;
 import net.minecraft.server.v1_11_R1.EntityHuman;
 import net.minecraft.server.v1_11_R1.EntityPlayer;
+import net.minecraft.server.v1_11_R1.EntityTypes;
+import net.minecraft.server.v1_11_R1.EntityVillager;
 import net.minecraft.server.v1_11_R1.EnumGamemode;
 import net.minecraft.server.v1_11_R1.EnumItemSlot;
 import net.minecraft.server.v1_11_R1.EnumProtocolDirection;
@@ -109,6 +111,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         super.A_();
         if (npc == null)
             return;
+        System.out.println(EntityTypes.getName(EntityVillager.class));
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
         }

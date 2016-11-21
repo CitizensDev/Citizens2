@@ -249,6 +249,10 @@ public class NMS {
         return BRIDGE.shouldJump(entity);
     }
 
+    public static void shutdown() {
+        BRIDGE.shutdown();
+    }
+
     public static boolean tick(Entity next) {
         return BRIDGE.tick(next);
     }

@@ -247,6 +247,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             saves.saveToDiskImmediate();
             despawnNPCs();
             npcRegistry = null;
+            NMS.shutdown();
         }
 
         CitizensAPI.shutdown();
