@@ -10,7 +10,7 @@ import net.minecraft.server.v1_11_R1.Entity;
 import net.minecraft.server.v1_11_R1.MinecraftKey;
 import net.minecraft.server.v1_11_R1.RegistryMaterials;
 
-public class CustomEntityRegistry extends RegistryMaterials<MinecraftKey, Class<? extends Entity>> {
+public class CustomEntityRegistry extends RegistryMaterials {
     private final BiMap<MinecraftKey, Class<? extends Entity>> entities = HashBiMap.create();
     private final BiMap<Class<? extends Entity>, MinecraftKey> entityClasses = this.entities.inverse();
     private final Map<Class<? extends Entity>, Integer> entityIds = Maps.newHashMap();
@@ -21,30 +21,30 @@ public class CustomEntityRegistry extends RegistryMaterials<MinecraftKey, Class<
     }
 
     @Override
-    public int a(Class<? extends Entity> key) {
+    public int a(Object key) {
         if (this.entityIds.containsKey(key)) {
             return this.entityIds.get(key);
         }
 
-        return this.wrapped.a(key);
+        return this.wrapped.a((Class<? extends Entity>) key);
     }
 
     @Override
-    public MinecraftKey b(Class<? extends Entity> value) {
+    public MinecraftKey b(Object value) {
         if (entityClasses.containsKey(value)) {
             return entityClasses.get(value);
         }
 
-        return wrapped.b(value);
+        return wrapped.b((Class<? extends Entity>) value);
     }
 
     @Override
-    public Class<? extends Entity> get(MinecraftKey key) {
+    public Class<? extends Entity> get(Object key) {
         if (entities.containsKey(key)) {
             return entities.get(key);
         }
 
-        return wrapped.get(key);
+        return wrapped.get((MinecraftKey) key);
     }
 
     public RegistryMaterials<MinecraftKey, Class<? extends Entity>> getWrapped() {
@@ -52,7 +52,7 @@ public class CustomEntityRegistry extends RegistryMaterials<MinecraftKey, Class<
     }
 
     public void put(int entityId, MinecraftKey key, Class<? extends Entity> entityClass) {
-        this.entities.put(key, entityClass);
-        this.entityIds.put(entityClass, entityId);
+        entities.put(key, entityClass);
+        entityIds.put(entityClass, entityId);
     }
 }
