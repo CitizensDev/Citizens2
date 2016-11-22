@@ -153,18 +153,14 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return contains(materials, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA);
     }
 
-    public static boolean SEARCH_DISTANCE(Material mat) {
-        return !UNWALKABLE.contains(mat) && mat.isSolid();
-    }
-
     public static boolean validPosition(Block in) {
         return canStandIn(in.getType()) && canStandIn(in.getRelative(BlockFace.UP).getType())
                 && canStandOn(in.getRelative(BlockFace.DOWN));
     }
 
-    private static final Set<Material> DOORS = EnumSet.of(Material.IRON_DOOR, Material.IRON_DOOR_BLOCK,
-            Material.WOODEN_DOOR, Material.WOOD_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR,
-            Material.ACACIA_DOOR, Material.DARK_OAK_DOOR);
+    private static final Set<Material> DOORS = EnumSet.of(Material.IRON_DOOR_BLOCK, Material.WOODEN_DOOR,
+            Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR,
+            Material.DARK_OAK_DOOR);
     private static final Vector DOWN = new Vector(0, -1, 0);
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.FENCE, Material.IRON_FENCE,
             Material.NETHER_FENCE, Material.COBBLE_WALL, Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
