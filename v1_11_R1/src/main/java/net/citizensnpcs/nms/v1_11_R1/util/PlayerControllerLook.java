@@ -31,17 +31,17 @@ public class PlayerControllerLook {
             float f1 = (float) (MathHelper.c(d3, d1) * 57.2957763671875D) - 90.0F;
             float f2 = (float) -(MathHelper.c(d2, d4) * 57.2957763671875D);
             this.a.pitch = a(this.a.pitch, f2, this.c);
-            this.a.aO = a(this.a.aO, f1, this.b);
+            this.a.aP = a(this.a.aP, f1, this.b);
         } else {
-            this.a.aO = a(this.a.aO, this.a.aM, 10.0F);
+            this.a.aP = a(this.a.aP, this.a.aN, 10.0F);
         }
         float f3 = MathHelper.g(this.a.aO - this.a.aM);
         if (!this.a.getNavigation().n()) {
             if (f3 < -75.0F) {
-                this.a.aO = (this.a.aM - 75.0F);
+                this.a.aP = (this.a.aN - 75.0F);
             }
             if (f3 > 75.0F) {
-                this.a.aO = (this.a.aM + 75.0F);
+                this.a.aP = (this.a.aN + 75.0F);
             }
         }
     }

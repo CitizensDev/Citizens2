@@ -15,7 +15,7 @@ public class PlayerControllerJump {
     }
 
     public void b() {
-        this.a.k(this.b);
+        this.a.l(this.b);
         this.b = false;
     }
 }
