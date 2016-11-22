@@ -658,10 +658,10 @@ public class NMSImpl implements NMSBridge {
 
         Class<?> search = clazz;
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
-            MinecraftKey key = ENTITY_REGISTRY.b((Class<? extends Entity>) search);
+            MinecraftKey key = ENTITY_REGISTRY.b(search);
             if (key == null)
                 continue;
-            int code = ENTITY_REGISTRY.a((Class<? extends Entity>) search);
+            int code = ENTITY_REGISTRY.a(search);
             ENTITY_REGISTRY.put(code, key, (Class<? extends Entity>) clazz);
             return;
         }

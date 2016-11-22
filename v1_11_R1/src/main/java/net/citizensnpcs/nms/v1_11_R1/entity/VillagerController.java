@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_11_R1.entity;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_11_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
@@ -20,6 +22,7 @@ import net.minecraft.server.v1_11_R1.EntityHuman;
 import net.minecraft.server.v1_11_R1.EntityVillager;
 import net.minecraft.server.v1_11_R1.EnumHand;
 import net.minecraft.server.v1_11_R1.IBlockData;
+import net.minecraft.server.v1_11_R1.MerchantRecipe;
 import net.minecraft.server.v1_11_R1.NBTTagCompound;
 import net.minecraft.server.v1_11_R1.SoundEffect;
 import net.minecraft.server.v1_11_R1.World;
@@ -73,6 +76,10 @@ public class VillagerController extends MobEntityController {
         public boolean a(EntityHuman entityhuman, EnumHand enumhand) {
             if (npc != null && blockTrades) {
                 blockingATrade = true;
+                List<MerchantRecipe> list = getOffers(entityhuman);
+                if (list != null) {
+                    list.clear();
+                }
             }
             return super.a(entityhuman, enumhand);
         }

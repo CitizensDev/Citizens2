@@ -43,6 +43,7 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_11_R1.AttributeInstance;
 import net.minecraft.server.v1_11_R1.BlockPosition;
+import net.minecraft.server.v1_11_R1.ChatComponentText;
 import net.minecraft.server.v1_11_R1.DamageSource;
 import net.minecraft.server.v1_11_R1.Entity;
 import net.minecraft.server.v1_11_R1.EntityHuman;
@@ -52,6 +53,7 @@ import net.minecraft.server.v1_11_R1.EnumItemSlot;
 import net.minecraft.server.v1_11_R1.EnumProtocolDirection;
 import net.minecraft.server.v1_11_R1.GenericAttributes;
 import net.minecraft.server.v1_11_R1.IBlockData;
+import net.minecraft.server.v1_11_R1.IChatBaseComponent;
 import net.minecraft.server.v1_11_R1.MathHelper;
 import net.minecraft.server.v1_11_R1.MinecraftServer;
 import net.minecraft.server.v1_11_R1.NavigationAbstract;
@@ -259,6 +261,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public IChatBaseComponent getPlayerListName() {
+        if (Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean()) {
+            return new ChatComponentText("");
+        }
+        return super.getPlayerListName();
+    }
+
+    @Override
     public String getSkinName() {
         MetadataStore meta = npc.data();
 
@@ -350,7 +360,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     @Override
     public void setSkinFlags(byte flags) {
         // set skin flag byte
-        getDataWatcher().set(EntityHuman.br, flags);
+        getDataWatcher().set(EntityHuman.bq, flags);
     }
 
     @Override
@@ -379,6 +389,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private void updatePackets(boolean navigating) {
         if (updateCounter++ <= Setting.PACKET_UPDATE_DELAY.asInt())
             return;
+
         updateCounter = 0;
         Location current = getBukkitEntity().getLocation(packetLocationCache);
         Packet<?>[] packets = new Packet[navigating ? EnumItemSlot.values().length : EnumItemSlot.values().length + 1];
