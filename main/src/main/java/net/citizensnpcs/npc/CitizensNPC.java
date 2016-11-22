@@ -279,7 +279,8 @@ public class CitizensNPC extends AbstractNPC {
                 updateCounter = 0;
                 if (getEntity() instanceof LivingEntity) {
                     OptionStatus nameVisibility = OptionStatus.NEVER;
-                    if (!getEntity().isCustomNameVisible()) {
+                    if (!getEntity().isCustomNameVisible()
+                            && !data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("hover")) {
                         getEntity().setCustomName("");
                     } else {
                         nameVisibility = OptionStatus.ALWAYS;
@@ -311,8 +312,12 @@ public class CitizensNPC extends AbstractNPC {
             }
 
             if (getEntity() instanceof LivingEntity) {
-                boolean nameplateVisible = data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true);
-                ((LivingEntity) getEntity()).setCustomNameVisible(nameplateVisible);
+                String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+                if (nameplateVisible.equals("hover")) {
+                    ((LivingEntity) getEntity()).setCustomNameVisible(false);
+                } else {
+                    ((LivingEntity) getEntity()).setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
+                }
                 if (data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
                     NMS.setKnockbackResistance((LivingEntity) getEntity(), 1D);
                 } else {

@@ -27,7 +27,6 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
@@ -964,12 +963,17 @@ public class NPCCommands {
             desc = "Toggle nameplate visibility",
             min = 1,
             max = 1,
+            flags = "h",
             permission = "citizens.npc.name")
     @Requirements(selected = true, ownership = true, livingEntity = true)
     public void name(CommandContext args, CommandSender sender, NPC npc) {
-        LivingEntity entity = (LivingEntity) npc.getEntity();
-        entity.setCustomNameVisible(!entity.isCustomNameVisible());
-        npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, entity.isCustomNameVisible());
+        String old = npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+        if (args.hasFlag('h')) {
+            old = "hover";
+        } else {
+            old = old.equals("hover") ? "true" : "" + !Boolean.parseBoolean(old);
+        }
+        npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, old);
         Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_TOGGLED);
     }
 
