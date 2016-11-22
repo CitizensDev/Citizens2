@@ -148,8 +148,12 @@ public class NMS {
         BRIDGE.loadPlugins();
     }
 
-    public static void look(org.bukkit.entity.Entity entity, float yaw, float pitch) {
+    public static void look(Entity entity, float yaw, float pitch) {
         BRIDGE.look(entity, yaw, pitch);
+    }
+
+    public static void look(org.bukkit.entity.Entity entity, Location to, boolean headOnly) {
+        BRIDGE.look(entity, to, headOnly);
     }
 
     public static void look(org.bukkit.entity.Entity bhandle, org.bukkit.entity.Entity btarget) {

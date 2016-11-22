@@ -618,6 +618,38 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void look(org.bukkit.entity.Entity entity, Location to, boolean headOnly) {
+        Entity handle = NMSImpl.getHandle(entity);
+        if (headOnly || (!(handle instanceof EntityInsentient) && !(handle instanceof EntityHumanNPC))) {
+            Location fromLocation = entity.getLocation(FROM_LOCATION);
+            double xDiff, yDiff, zDiff;
+            xDiff = to.getX() - fromLocation.getX();
+            yDiff = to.getY() - fromLocation.getY();
+            zDiff = to.getZ() - fromLocation.getZ();
+
+            double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
+            double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
+
+            double yaw = Math.toDegrees(Math.acos(xDiff / distanceXZ));
+            double pitch = Math.toDegrees(Math.acos(yDiff / distanceY)) - 90;
+            if (zDiff < 0.0)
+                yaw += Math.abs(180 - yaw) * 2;
+
+            if (headOnly) {
+                setHeadYaw(entity, (float) yaw - 90);
+            } else {
+                look(entity, (float) yaw - 90, (float) pitch);
+            }
+        }
+        if (handle instanceof EntityInsentient) {
+            ((EntityInsentient) handle).getControllerLook().a(to.getX(), to.getY(), to.getZ(), to.getYaw(),
+                    to.getPitch());
+        } else if (handle instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) handle).setTargetLook(to);
+        }
+    }
+
+    @Override
     public void look(org.bukkit.entity.Entity from, org.bukkit.entity.Entity to) {
         Entity handle = NMSImpl.getHandle(from), target = NMSImpl.getHandle(to);
         if (handle instanceof EntityInsentient) {
@@ -1357,10 +1389,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
+
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c");
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bJ");
     private static CustomEntityRegistry ENTITY_REGISTRY;
+    private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     public static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
     private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "bd");
     private static Method MAKE_REQUEST;
@@ -1372,6 +1406,7 @@ public class NMSImpl implements NMSBridge {
     private static final Random RANDOM = Util.getFastRandom();
     private static Field SKULL_PROFILE_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
+
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bF");
 
     static {

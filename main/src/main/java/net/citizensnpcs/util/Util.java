@@ -64,25 +64,7 @@ public class Util {
     public static void faceLocation(Entity entity, Location to, boolean headOnly) {
         if (to == null || entity.getWorld() != to.getWorld())
             return;
-        Location fromLocation = entity.getLocation(FROM_LOCATION);
-        double xDiff, yDiff, zDiff;
-        xDiff = to.getX() - fromLocation.getX();
-        yDiff = to.getY() - fromLocation.getY();
-        zDiff = to.getZ() - fromLocation.getZ();
-
-        double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
-        double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
-
-        double yaw = Math.toDegrees(Math.acos(xDiff / distanceXZ));
-        double pitch = Math.toDegrees(Math.acos(yDiff / distanceY)) - 90;
-        if (zDiff < 0.0)
-            yaw += Math.abs(180 - yaw) * 2;
-
-        if (headOnly) {
-            NMS.setHeadYaw(entity, (float) yaw - 90);
-        } else {
-            NMS.look(entity, (float) yaw - 90, (float) pitch);
-        }
+        NMS.look(entity, to, headOnly);
     }
 
     public static Location getEyeLocation(Entity entity) {
@@ -171,5 +153,4 @@ public class Util {
     }
 
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
 }

@@ -16,6 +16,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
@@ -25,6 +26,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.util.NMS;
 
 public class CitizensNPCRegistry implements NPCRegistry {
@@ -52,6 +54,9 @@ public class CitizensNPCRegistry implements NPCRegistry {
         Bukkit.getPluginManager().callEvent(new NPCCreateEvent(npc));
         if (type == EntityType.ARMOR_STAND && !npc.hasTrait(ArmorStandTrait.class)) {
             npc.addTrait(ArmorStandTrait.class);
+        }
+        if (Setting.DEFAULT_LOOK_CLOSE.asBoolean()) {
+            npc.addTrait(LookClose.class);
         }
         return npc;
     }

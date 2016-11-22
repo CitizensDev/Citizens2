@@ -80,6 +80,8 @@ public interface NMSBridge {
 
     public void look(Entity entity, float yaw, float pitch);
 
+    public void look(Entity entity, Location to, boolean headOnly);
+
     public void mount(Entity entity, Entity passenger);
 
     public void openHorseScreen(Horse horse, Player equipper);
