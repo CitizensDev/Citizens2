@@ -8,8 +8,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.material.Door;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Iterables;
@@ -391,12 +393,17 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     private static class DoorOpener implements PathCallback {
         @Override
-        @SuppressWarnings("deprecation")
         public void run(NPC npc, Block point, ListIterator<Block> path) {
+            BlockState state = point.getState();
+            Door door = (Door) state.getData();
             if (npc.getStoredLocation().distance(point.getLocation()) < 2) {
-                boolean bottom = (point.getData() & 8) == 0;
+                boolean bottom = !door.isTopHalf();
                 Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
-                set.setData((byte) ((set.getData() & 7) | 4));
+                state = set.getState();
+                door = (Door) state.getData();
+                door.setOpen(true);
+                state.setData(door);
+                state.update();
             }
         }
     }

@@ -1,6 +1,9 @@
 package net.citizensnpcs.nms.v1_11_R1.util;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -10,6 +13,7 @@ import net.minecraft.server.v1_11_R1.Entity;
 import net.minecraft.server.v1_11_R1.MinecraftKey;
 import net.minecraft.server.v1_11_R1.RegistryMaterials;
 
+@SuppressWarnings("rawtypes")
 public class CustomEntityRegistry extends RegistryMaterials {
     private final BiMap<MinecraftKey, Class<? extends Entity>> entities = HashBiMap.create();
     private final BiMap<Class<? extends Entity>, MinecraftKey> entityClasses = this.entities.inverse();
@@ -35,12 +39,22 @@ public class CustomEntityRegistry extends RegistryMaterials {
     }
 
     @Override
+    public Object a(Random paramRandom) {
+        return wrapped.a(paramRandom);
+    }
+
+    @Override
     public MinecraftKey b(Object value) {
         if (entityClasses.containsKey(value)) {
             return entityClasses.get(value);
         }
 
         return wrapped.b((Class<? extends Entity>) value);
+    }
+
+    @Override
+    public boolean d(Object paramK) {
+        return wrapped.d((MinecraftKey) paramK);
     }
 
     @Override
@@ -52,8 +66,23 @@ public class CustomEntityRegistry extends RegistryMaterials {
         return wrapped.get((MinecraftKey) key);
     }
 
+    @Override
+    public Object getId(int paramInt) {
+        return wrapped.getId(paramInt);
+    }
+
     public RegistryMaterials<MinecraftKey, Class<? extends Entity>> getWrapped() {
         return wrapped;
+    }
+
+    @Override
+    public Iterator<Object> iterator() {
+        return (Iterator) wrapped.iterator();
+    }
+
+    @Override
+    public Set<Object> keySet() {
+        return (Set) wrapped.keySet();
     }
 
     public void put(int entityId, MinecraftKey key, Class<? extends Entity> entityClass) {
