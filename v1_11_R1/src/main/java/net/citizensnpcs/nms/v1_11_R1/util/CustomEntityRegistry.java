@@ -21,12 +21,17 @@ public class CustomEntityRegistry extends RegistryMaterials {
     }
 
     @Override
+    public void a(int code, Object key, Object v) {
+        put(code, (MinecraftKey) key, (Class<? extends Entity>) v);
+    }
+
+    @Override
     public int a(Object key) {
-        if (this.entityIds.containsKey(key)) {
-            return this.entityIds.get(key);
+        if (entityIds.containsKey(key)) {
+            return entityIds.get(key);
         }
 
-        return this.wrapped.a((Class<? extends Entity>) key);
+        return wrapped.a((Class<? extends Entity>) key);
     }
 
     @Override
