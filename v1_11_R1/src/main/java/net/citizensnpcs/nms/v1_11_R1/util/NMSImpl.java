@@ -810,10 +810,11 @@ public class NMSImpl implements NMSBridge {
             return;
         EntityLiving handle = (EntityLiving) getHandle(entity);
         yaw = Util.clampYaw(yaw);
-        handle.aP = yaw;
-        if (!(handle instanceof EntityHuman))
-            handle.aO = yaw;
-        handle.aQ = yaw;
+        handle.aN = yaw;
+        if (!(handle instanceof EntityHuman)) {
+            handle.aL = yaw;
+        }
+        handle.aO = yaw;
     }
 
     @Override
