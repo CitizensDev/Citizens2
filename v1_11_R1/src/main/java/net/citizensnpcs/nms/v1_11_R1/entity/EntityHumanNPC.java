@@ -108,10 +108,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public void A_() {
-        livingEntityBaseTick();
         super.A_();
         if (npc == null)
             return;
+
+        livingEntityBaseTick();
 
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;

@@ -612,6 +612,12 @@ public class NMSImpl implements NMSBridge {
         if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).getControllerLook().a(to.getX(), to.getY(), to.getZ(), to.getYaw(),
                     to.getPitch());
+            while (((EntityInsentient) handle).aO >= 180F) {
+                ((EntityInsentient) handle).aO -= 360F;
+            }
+            while (((EntityInsentient) handle).aO < -180F) {
+                ((EntityInsentient) handle).aO += 360F;
+            }
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setTargetLook(to);
         }
