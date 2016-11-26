@@ -32,6 +32,13 @@ public class PlayerControllerLook {
             float f2 = (float) -(MathHelper.b(d2, d4) * 57.2957763671875D);
             this.a.pitch = a(this.a.pitch, f2, this.c);
             this.a.aO = a(this.a.aO, f1, this.b);
+            this.a.yaw = this.a.aO;
+            while (this.a.aO >= 180F) {
+                this.a.aO -= 360F;
+            }
+            while (this.a.aO < -180F) {
+                this.a.aO += 360F;
+            }
         } else {
             this.a.aO = a(this.a.aO, this.a.aM, 10.0F);
         }

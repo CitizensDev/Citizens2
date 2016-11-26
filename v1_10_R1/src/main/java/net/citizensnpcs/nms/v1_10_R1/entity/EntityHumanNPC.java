@@ -275,6 +275,20 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         return npc.getNavigator().isNavigating();
     }
 
+    public void livingEntityBaseTick() {
+        this.aD = this.aE;
+        this.aK = this.aL;
+        if (this.hurtTicks > 0) {
+            this.hurtTicks -= 1;
+        }
+        tickPotionEffects();
+        this.ba = this.aZ;
+        this.aP = this.aO;
+        this.aR = this.aQ;
+        this.lastYaw = this.yaw;
+        this.lastPitch = this.pitch;
+    }
+
     @Override
     public void m() {
         super.m();
@@ -283,7 +297,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
         }
-        tickPotionEffects();
+        livingEntityBaseTick();
 
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
