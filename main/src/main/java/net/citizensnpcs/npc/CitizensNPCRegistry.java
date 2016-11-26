@@ -27,6 +27,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.util.NMS;
 
 public class CitizensNPCRegistry implements NPCRegistry {
@@ -58,6 +59,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         if (Setting.DEFAULT_LOOK_CLOSE.asBoolean()) {
             npc.addTrait(LookClose.class);
         }
+        npc.addTrait(MountTrait.class);
         return npc;
     }
 

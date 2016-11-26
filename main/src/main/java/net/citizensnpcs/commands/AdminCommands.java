@@ -22,7 +22,7 @@ public class AdminCommands {
     }
 
     @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "citizens.admin")
-    public void citizens(CommandContext args, CommandSender sender, NPC npc) {
+    public void citizens(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.send(sender,
                 "          " + StringHelper.wrapHeader("<e>Citizens v" + plugin.getDescription().getVersion()));
         Messaging.send(sender, "     <7>-- <c>Written by fullwall and aPunch");

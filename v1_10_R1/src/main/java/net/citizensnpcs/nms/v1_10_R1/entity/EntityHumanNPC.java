@@ -301,6 +301,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             }
             moveOnCurrentHeading();
         }
+        NMSImpl.updateAI(this);
 
         if (noDamageTicks > 0) {
             --noDamageTicks;
@@ -319,7 +320,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     private void moveOnCurrentHeading() {
-        NMSImpl.updateAI(this);
         if (be) {
             if (onGround && jumpTicks == 0) {
                 cl();

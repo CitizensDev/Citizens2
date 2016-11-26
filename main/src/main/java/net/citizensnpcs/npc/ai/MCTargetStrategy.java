@@ -172,7 +172,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         @Override
         public void stop() {
-            strategy.stop();
+            if (strategy != null) {
+                strategy.stop();
+            }
         }
 
         @Override

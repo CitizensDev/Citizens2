@@ -29,7 +29,6 @@ public class MountTrait extends Trait {
                 NMS.mount(other.getEntity(), npc.getEntity());
             }
         }
-
         if (NMS.getVehicle(npc.getEntity()) instanceof NPCHolder) {
             mountedOn = ((NPCHolder) NMS.getVehicle(npc.getEntity())).getNPC().getUniqueId();
         }
