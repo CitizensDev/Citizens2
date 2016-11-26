@@ -111,9 +111,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         super.A_();
         if (npc == null)
             return;
-
-        livingEntityBaseTick();
-
+        livingEntityBaseTick(); 
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
         }
@@ -323,6 +321,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     public void livingEntityBaseTick() {
+        cA();
         this.aC = this.aD;
         this.aJ = this.aK;
         if (this.hurtTicks > 0) {

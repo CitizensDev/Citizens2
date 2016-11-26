@@ -55,7 +55,7 @@ public class Util {
         if (at == null || entity == null || entity.getWorld() != at.getWorld())
             return;
         if (at instanceof LivingEntity) {
-            faceLocation(entity, ((LivingEntity) at).getEyeLocation());
+            NMS.look(entity, at);
         } else {
             faceLocation(entity, at.getLocation(AT_LOCATION));
         }

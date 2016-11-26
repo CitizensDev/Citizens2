@@ -13,7 +13,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_10_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_10_R1.BlockPosition;
 import net.minecraft.server.v1_10_R1.EntityHuman;
@@ -206,7 +205,6 @@ public class VillagerController extends MobEntityController {
         public void M() {
             super.M();
             if (npc != null) {
-                NMS.setHeadYaw(getBukkitEntity(), yaw);
                 npc.update();
             }
         }

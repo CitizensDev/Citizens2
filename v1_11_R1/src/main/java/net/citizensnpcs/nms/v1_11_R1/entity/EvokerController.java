@@ -169,7 +169,6 @@ public class EvokerController extends MobEntityController {
         public void M() {
             super.M();
             if (npc != null) {
-                NMS.setHeadYaw(getBukkitEntity(), yaw);
                 npc.update();
             }
         }
