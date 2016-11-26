@@ -54,7 +54,11 @@ public class Util {
     public static void faceEntity(Entity entity, Entity at) {
         if (at == null || entity == null || entity.getWorld() != at.getWorld())
             return;
-        faceLocation(entity, at.getLocation(AT_LOCATION));
+        if (at instanceof LivingEntity) {
+            faceLocation(entity, ((LivingEntity) at).getEyeLocation());
+        } else {
+            faceLocation(entity, at.getLocation(AT_LOCATION));
+        }
     }
 
     public static void faceLocation(Entity entity, Location to) {
