@@ -148,7 +148,7 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     private boolean isPassable(PathPoint mod) {
-        boolean passable = true;
+        boolean passable = false;
         for (BlockExaminer examiner : examiners) {
             PassableState state = examiner.isPassable(blockSource, mod);
             if (state == PassableState.IGNORE)
