@@ -187,9 +187,8 @@ public class HorseController extends MobEntityController {
 
         @Override
         public void M() {
-            if (npc == null) {
-                super.M();
-            } else {
+            super.M();
+            if (npc != null) {
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }

@@ -56,15 +56,6 @@ public class PolarBearController extends MobEntityController {
         }
 
         @Override
-        public void A_() {
-            super.A_();
-            if (npc != null) {
-                NMSImpl.updateAI(this);
-                npc.update();
-            }
-        }
-
-        @Override
         protected SoundEffect bW() {
             return NMSImpl.getSoundEffect(npc, super.bW(), NPC.DEATH_SOUND_METADATA);
         }
@@ -157,6 +148,14 @@ public class PolarBearController extends MobEntityController {
         protected void L() {
             if (npc == null) {
                 super.L();
+            }
+        }
+
+        @Override
+        public void M() {
+            super.M();
+            if (npc != null) {
+                npc.update();
             }
         }
     }

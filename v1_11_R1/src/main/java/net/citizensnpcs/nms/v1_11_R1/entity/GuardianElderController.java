@@ -54,15 +54,6 @@ public class GuardianElderController extends MobEntityController {
         }
 
         @Override
-        public void A_() {
-            if (npc == null) {
-                super.A_();
-            } else {
-                npc.update();
-            }
-        }
-
-        @Override
         protected SoundEffect bW() {
             return NMSImpl.getSoundEffect(npc, super.bW(), NPC.DEATH_SOUND_METADATA);
         }
@@ -179,6 +170,16 @@ public class GuardianElderController extends MobEntityController {
                 return super.m_();
             } else {
                 return false;
+            }
+        }
+
+        @Override
+        public void n() {
+            if (npc == null) {
+                super.n();
+            } else {
+                NMSImpl.updateAI(this);
+                npc.update();
             }
         }
 

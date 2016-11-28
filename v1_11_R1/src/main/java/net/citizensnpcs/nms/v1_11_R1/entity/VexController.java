@@ -142,10 +142,8 @@ public class VexController extends MobEntityController {
 
         @Override
         public void M() {
-            if (npc == null) {
-                super.M();
-            } else {
-                NMSImpl.updateAI(this);
+            super.M();
+            if (npc != null) {
                 npc.update();
             }
         }

@@ -111,7 +111,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         super.A_();
         if (npc == null)
             return;
-        livingEntityBaseTick(); 
+        livingEntityBaseTick();
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
         }
@@ -122,7 +122,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
             g(0, 0);
         }
-
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
             motX = motY = motZ = 0;
         }
@@ -139,6 +138,17 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
 
         npc.update();
+    }
+
+    private float bodyControla(float paramFloat1, float paramFloat2, float paramFloat3) {
+        float f = MathHelper.g(paramFloat1 - paramFloat2);
+        if (f < -paramFloat3) {
+            f = -paramFloat3;
+        }
+        if (f >= paramFloat3) {
+            f = paramFloat3;
+        }
+        return paramFloat1 - f;
     }
 
     @Override
@@ -282,6 +292,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     @Override
     public SkinPacketTracker getSkinTracker() {
         return skinTracker;
+    }
+
+    @Override
+    protected float h(float f, float f1) {
+        return f1;
     }
 
     private void initialise(MinecraftServer minecraftServer) {
