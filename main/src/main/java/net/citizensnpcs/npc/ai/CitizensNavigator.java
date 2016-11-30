@@ -159,7 +159,6 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         if (updateStationaryStatus())
             return;
-
         updatePathfindingRange();
         boolean finished = executing.update();
         if (localParams.lookAtFunction() != null) {
