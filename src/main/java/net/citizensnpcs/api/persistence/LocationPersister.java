@@ -22,13 +22,17 @@ public class LocationPersister implements Persister<Location> {
     }
 
     private double round(double z) {
+        if (Double.isInfinite(z) || Double.isNaN(z)) {
+            return z;
+        }
         return new BigDecimal(z).setScale(4, RoundingMode.DOWN).doubleValue();
     }
 
     @Override
     public void save(Location location, DataKey root) {
-        if (location.getWorld() != null)
+        if (location.getWorld() != null) {
             root.setString("world", location.getWorld().getName());
+        }
         root.setDouble("x", round(location.getX()));
         root.setDouble("y", round(location.getY()));
         root.setDouble("z", round(location.getZ()));
