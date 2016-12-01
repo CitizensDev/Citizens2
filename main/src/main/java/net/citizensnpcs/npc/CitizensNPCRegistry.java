@@ -65,11 +65,11 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public void deregister(NPC npc) {
+        npc.despawn(DespawnReason.REMOVAL);
         npcs.remove(npc);
         if (saves != null) {
             saves.clearData(npc);
         }
-        npc.despawn(DespawnReason.REMOVAL);
     }
 
     @Override
@@ -77,11 +77,11 @@ public class CitizensNPCRegistry implements NPCRegistry {
         Iterator<NPC> itr = iterator();
         while (itr.hasNext()) {
             NPC npc = itr.next();
-            itr.remove();
             npc.despawn(DespawnReason.REMOVAL);
             for (Trait t : npc.getTraits()) {
                 t.onRemove();
             }
+            itr.remove();
             if (saves != null) {
                 saves.clearData(npc);
             }
