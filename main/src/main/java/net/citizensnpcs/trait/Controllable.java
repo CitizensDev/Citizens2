@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -94,8 +95,14 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
     private void loadController() {
         EntityType type = npc.getEntity().getType();
-        if (explicitType != null)
+        if (explicitType != null) {
             type = explicitType;
+        }
+        if (!(npc.getEntity() instanceof LivingEntity) && (explicitType == null || explicitType == EntityType.UNKNOWN
+                || npc.getEntity().getType() == explicitType)) {
+            controller = new LookAirController();
+            return;
+        }
         Class<? extends MovementController> clazz = controllerTypes.get(type);
         if (clazz == null) {
             controller = new GroundController();
@@ -112,8 +119,9 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         try {
             if (innerConstructor == null) {
                 controller = clazz.newInstance();
-            } else
+            } else {
                 controller = innerConstructor.newInstance(this);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             controller = new GroundController();
