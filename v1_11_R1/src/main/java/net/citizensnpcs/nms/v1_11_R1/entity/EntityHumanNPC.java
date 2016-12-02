@@ -294,11 +294,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         return skinTracker;
     }
 
-    @Override
-    protected float h(float f, float f1) {
-        return f1;
-    }
-
     private void initialise(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
         NetworkManager conn = null;
