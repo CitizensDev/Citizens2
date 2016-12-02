@@ -2,6 +2,8 @@ package net.citizensnpcs.trait;
 
 import java.util.UUID;
 
+import org.bukkit.entity.Entity;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
@@ -19,18 +21,30 @@ public class MountTrait extends Trait {
         super("mounttrait");
     }
 
-    @Override
-    public void run() {
-        if (!npc.isSpawned())
-            return;
-        if (mountedOn != null) {
+    public void checkMount(Entity e) {
+        if (mountedOn != null && (e == null || !e.getUniqueId().equals(mountedOn))) {
             NPC other = CitizensAPI.getNPCRegistry().getByUniqueId(mountedOn);
             if (other != null && other.isSpawned()) {
                 NMS.mount(other.getEntity(), npc.getEntity());
             }
         }
-        if (NMS.getVehicle(npc.getEntity()) instanceof NPCHolder) {
-            mountedOn = ((NPCHolder) NMS.getVehicle(npc.getEntity())).getNPC().getUniqueId();
+    }
+
+    @Override
+    public void onSpawn() {
+        checkMount(null);
+    }
+
+    @Override
+    public void run() {
+        if (!npc.isSpawned())
+            return;
+        Entity e = NMS.getVehicle(npc.getEntity());
+        if (e == null) {
+            mountedOn = null;
+        } else if (e instanceof NPCHolder) {
+            mountedOn = ((NPCHolder) e).getNPC().getUniqueId();
         }
+        checkMount(e);
     }
 }
