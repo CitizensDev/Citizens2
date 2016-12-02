@@ -163,6 +163,14 @@ public class CitizensNavigator implements Navigator, Runnable {
         boolean finished = executing.update();
         if (localParams.lookAtFunction() != null) {
             Util.faceLocation(npc.getEntity(), localParams.lookAtFunction().apply(this), true);
+            Entity entity = npc.getEntity().getPassenger();
+            Location npcLoc = npc.getEntity().getLocation();
+            while (entity != null) {
+                Location loc = entity.getLocation(STATIONARY_LOCATION);
+                loc.setYaw(npcLoc.getYaw());
+                entity.teleport(loc);
+                entity = entity.getPassenger();
+            }
         }
         if (!finished) {
             return;
