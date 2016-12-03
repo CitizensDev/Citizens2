@@ -2,7 +2,6 @@ package net.citizensnpcs.trait;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
 import net.citizensnpcs.api.CitizensAPI;
