@@ -31,6 +31,14 @@ public class MountTrait extends Trait {
     }
 
     @Override
+    public void onDespawn() {
+        Entity e = NMS.getVehicle(npc.getEntity());
+        if (e != null) {
+            npc.getEntity().leaveVehicle();
+        }
+    }
+
+    @Override
     public void onSpawn() {
         checkMount(null);
     }

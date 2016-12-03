@@ -340,8 +340,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (!isNavigating())
             return;
         Entity vehicle = NMS.getVehicle(npc.getEntity());
-        if (!(vehicle instanceof NPCHolder))
+        if (!(vehicle instanceof NPCHolder)) {
             return;
+        }
         NPC mount = ((NPCHolder) vehicle).getNPC();
         switch (getTargetType()) {
             case ENTITY:
