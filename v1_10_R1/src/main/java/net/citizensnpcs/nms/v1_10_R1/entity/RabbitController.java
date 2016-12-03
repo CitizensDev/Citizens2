@@ -146,7 +146,7 @@ public class RabbitController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (bukkitEntity == null && npc != null)
+            if (npc != null && !(bukkitEntity instanceof NPCHolder))
                 bukkitEntity = new RabbitNPC(this);
             return super.getBukkitEntity();
         }

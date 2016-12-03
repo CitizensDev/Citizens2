@@ -481,8 +481,9 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public org.bukkit.entity.Entity getVehicle(org.bukkit.entity.Entity entity) {
-        Entity e = NMSImpl.getHandle(entity).getVehicle();
-        return e == NMSImpl.getHandle(entity) ? null : e.getBukkitEntity();
+        Entity handle = NMSImpl.getHandle(entity);
+        Entity e = handle.getVehicle();
+        return (e == handle || e == null) ? null : e.getBukkitEntity();
     }
 
     @Override

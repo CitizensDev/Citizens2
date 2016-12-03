@@ -79,7 +79,7 @@ public class ThrownPotionController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (bukkitEntity == null && npc != null) {
+            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 if (getItem() != null && getItem().getItem().equals(Items.LINGERING_POTION)) {
                     bukkitEntity = new LingeringThrownPotionNPC(this);
                 } else {

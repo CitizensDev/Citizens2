@@ -107,7 +107,7 @@ public class FallingBlockController extends AbstractEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (bukkitEntity == null && npc != null) {
+            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new FallingBlockNPC(this);
             }
             return super.getBukkitEntity();

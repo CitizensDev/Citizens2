@@ -155,8 +155,9 @@ public class HorseController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (bukkitEntity == null && npc != null)
+            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new HorseNPC(this);
+            }
             return super.getBukkitEntity();
         }
 

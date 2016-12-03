@@ -133,7 +133,7 @@ public class SnowmanController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (bukkitEntity == null && npc != null)
+            if (npc != null && !(bukkitEntity instanceof NPCHolder))
                 bukkitEntity = new SnowmanNPC(this);
             return super.getBukkitEntity();
         }

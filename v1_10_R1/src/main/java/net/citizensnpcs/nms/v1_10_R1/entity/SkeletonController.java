@@ -133,7 +133,7 @@ public class SkeletonController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (bukkitEntity == null && npc != null)
+            if (npc != null && !(bukkitEntity instanceof NPCHolder))
                 bukkitEntity = new SkeletonNPC(this);
             return super.getBukkitEntity();
         }

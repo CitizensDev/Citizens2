@@ -160,8 +160,9 @@ public class CowController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (bukkitEntity == null && npc != null)
+            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new CowNPC(this);
+            }
             return super.getBukkitEntity();
         }
 

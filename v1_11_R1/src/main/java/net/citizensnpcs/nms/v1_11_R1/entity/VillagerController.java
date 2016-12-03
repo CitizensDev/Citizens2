@@ -173,7 +173,7 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (bukkitEntity == null && npc != null)
+            if (npc != null && !(bukkitEntity instanceof NPCHolder))
                 bukkitEntity = new VillagerNPC(this);
             return super.getBukkitEntity();
         }

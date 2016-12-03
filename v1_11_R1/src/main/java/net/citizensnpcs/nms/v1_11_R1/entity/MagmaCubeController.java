@@ -144,8 +144,9 @@ public class MagmaCubeController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (bukkitEntity == null && npc != null)
+            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new MagmaCubeNPC(this);
+            }
             return super.getBukkitEntity();
         }
 

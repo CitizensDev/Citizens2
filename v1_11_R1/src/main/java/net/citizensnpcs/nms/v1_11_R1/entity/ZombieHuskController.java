@@ -133,7 +133,7 @@ public class ZombieHuskController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (bukkitEntity == null && npc != null)
+            if (npc != null && !(bukkitEntity instanceof NPCHolder))
                 bukkitEntity = new ZombieHuskNPC(this);
             return super.getBukkitEntity();
         }

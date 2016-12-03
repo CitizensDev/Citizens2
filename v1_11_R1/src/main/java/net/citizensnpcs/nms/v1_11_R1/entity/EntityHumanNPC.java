@@ -247,7 +247,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public CraftPlayer getBukkitEntity() {
-        if (npc != null && bukkitEntity == null) {
+        if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
             bukkitEntity = new PlayerNPC(this);
         }
         return super.getBukkitEntity();
