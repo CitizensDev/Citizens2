@@ -14,9 +14,10 @@ import net.citizensnpcs.util.NMS;
 
 @TraitName("mounttrait")
 public class MountTrait extends Trait {
-    @Persist("mountedon") private String uuid;
     private UUID mountedOn;
     private boolean triggered = false;
+    @Persist("mountedon")
+    private String uuid;
 
     public MountTrait() {
         super("mounttrait");
@@ -49,8 +50,12 @@ public class MountTrait extends Trait {
     public void run() {
         if (!npc.isSpawned())
             return;
-        if(!triggered && uuid != null) {
-            mountedOn = UUID.fromString(uuid);
+        if (!triggered && uuid != null) {
+            try {
+                mountedOn = UUID.fromString(uuid);
+            } catch (IllegalArgumentException e) {
+                mountedOn = null;
+            }
             checkMount(null);
         }
         Entity e = NMS.getVehicle(npc.getEntity());
