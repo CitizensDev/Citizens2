@@ -14,8 +14,9 @@ import net.citizensnpcs.util.NMS;
 
 @TraitName("mounttrait")
 public class MountTrait extends Trait {
-    @Persist("mountedon")
+    @Persist("mountedon") private String uuid;
     private UUID mountedOn;
+    private boolean triggered = false;
 
     public MountTrait() {
         super("mounttrait");
@@ -26,6 +27,7 @@ public class MountTrait extends Trait {
             NPC other = CitizensAPI.getNPCRegistry().getByUniqueId(mountedOn);
             if (other != null && other.isSpawned()) {
                 NMS.mount(other.getEntity(), npc.getEntity());
+                triggered = true;
             }
         }
     }
@@ -47,11 +49,16 @@ public class MountTrait extends Trait {
     public void run() {
         if (!npc.isSpawned())
             return;
+        if(!triggered && uuid != null) {
+            mountedOn = UUID.fromString(uuid);
+            checkMount(null);
+        }
         Entity e = NMS.getVehicle(npc.getEntity());
-        if (e == null) {
+        if (e == null && !triggered) {
             mountedOn = null;
         } else if (e instanceof NPCHolder) {
             mountedOn = ((NPCHolder) e).getNPC().getUniqueId();
+            uuid = mountedOn.toString();
         }
         checkMount(e);
     }
