@@ -85,7 +85,7 @@ public class PlayerControllerMove extends ControllerMove {
             if (d3 < 2.500000277905201E-007D)
                 return;
             float f = (float) Math.toDegrees(Math.atan2(d1, d0)) - 90.0F;
-            this.a.yaw = a(this.a.yaw, f, 30.0F);
+            this.a.yaw = a(this.a.yaw, f, 90.0F);
             NMS.setHeadYaw(a.getBukkitEntity(), this.a.yaw);
             AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
             speed.setValue(0.1D * this.e);

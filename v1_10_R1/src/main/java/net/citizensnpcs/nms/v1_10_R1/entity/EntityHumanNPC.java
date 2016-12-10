@@ -305,7 +305,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
             g(0, 0);
         }
-
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
             motX = motY = motZ = 0;
         }

@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -317,6 +318,15 @@ public class NMSImpl implements NMSBridge {
         return new BoundingBox(bb.a, bb.b, bb.c, bb.d, bb.e, bb.f);
     }
 
+    private float getDragonYaw(Entity handle, double tX, double tZ) {
+        if (handle.locZ > tZ)
+            return (float) (-Math.toDegrees(Math.atan((handle.locX - tX) / (handle.locZ - tZ))));
+        if (handle.locZ < tZ) {
+            return (float) (-Math.toDegrees(Math.atan((handle.locX - tX) / (handle.locZ - tZ)))) + 180.0F;
+        }
+        return handle.yaw;
+    }
+
     @Override
     public GameProfileRepository getGameProfileRepository() {
         return ((CraftServer) Bukkit.getServer()).getServer().getGameProfileRepository();
@@ -589,7 +599,8 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void look(org.bukkit.entity.Entity entity, Location to, boolean headOnly) {
         Entity handle = NMSImpl.getHandle(entity);
-        if (headOnly || (!(handle instanceof EntityInsentient) && !(handle instanceof EntityHumanNPC))) {
+        if (headOnly || BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())
+                || (!(handle instanceof EntityInsentient) && !(handle instanceof EntityHumanNPC))) {
             Location fromLocation = entity.getLocation(FROM_LOCATION);
             double xDiff, yDiff, zDiff;
             xDiff = to.getX() - fromLocation.getX();
@@ -603,21 +614,26 @@ public class NMSImpl implements NMSBridge {
             double pitch = Math.toDegrees(Math.acos(yDiff / distanceY)) - 90;
             if (zDiff < 0.0)
                 yaw += Math.abs(180 - yaw) * 2;
-
-            if (headOnly) {
-                setHeadYaw(entity, (float) yaw - 90);
+            if (handle instanceof EntityEnderDragon) {
+                yaw = getDragonYaw(handle, to.getX(), to.getZ());
             } else {
-                look(entity, (float) yaw - 90, (float) pitch);
+                yaw = yaw - 90;
             }
+            if (headOnly) {
+                setHeadYaw(entity, (float) yaw);
+            } else {
+                look(entity, (float) yaw, (float) pitch);
+            }
+            return;
         }
         if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).getControllerLook().a(to.getX(), to.getY(), to.getZ(), to.getYaw(),
                     to.getPitch());
-            while (((EntityInsentient) handle).aO >= 180F) {
-                ((EntityInsentient) handle).aO -= 360F;
+            while (((EntityInsentient) handle).aQ >= 180F) {
+                ((EntityInsentient) handle).aQ -= 360F;
             }
-            while (((EntityInsentient) handle).aO < -180F) {
-                ((EntityInsentient) handle).aO += 360F;
+            while (((EntityInsentient) handle).aQ < -180F) {
+                ((EntityInsentient) handle).aQ += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setTargetLook(to);
@@ -627,8 +643,21 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void look(org.bukkit.entity.Entity from, org.bukkit.entity.Entity to) {
         Entity handle = NMSImpl.getHandle(from), target = NMSImpl.getHandle(to);
-        if (handle instanceof EntityInsentient) {
-            ((EntityInsentient) handle).getControllerLook().a(target, 10.0F, ((EntityInsentient) handle).N());
+        if (BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())) {
+            if (to instanceof LivingEntity) {
+                look(from, ((LivingEntity) to).getEyeLocation(), false);
+            } else {
+                look(from, to.getLocation(), false);
+            }
+        } else if (handle instanceof EntityInsentient) {
+            ((EntityInsentient) handle).getControllerLook().a(target, ((EntityInsentient) handle).cJ(),
+                    ((EntityInsentient) handle).N());
+            while (((EntityLiving) handle).aQ >= 180F) {
+                ((EntityLiving) handle).aQ -= 360F;
+            }
+            while (((EntityLiving) handle).aQ < -180F) {
+                ((EntityLiving) handle).aQ += 360F;
+            }
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setTargetLook(target, 10F, 40F);
         }
@@ -1352,6 +1381,10 @@ public class NMSImpl implements NMSBridge {
     public static void updateNavigation(NavigationAbstract navigation) {
         navigation.l();
     }
+
+    private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.SILVERFISH, EntityType.ENDERMITE,
+            EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE,
+            EntityType.GHAST);
 
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
 

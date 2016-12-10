@@ -31,24 +31,24 @@ public class PlayerControllerLook {
             float f1 = (float) (MathHelper.b(d3, d1) * 57.2957763671875D) - 90.0F;
             float f2 = (float) -(MathHelper.b(d2, d4) * 57.2957763671875D);
             this.a.pitch = a(this.a.pitch, f2, this.c);
-            this.a.aO = a(this.a.aO, f1, this.b);
-            this.a.yaw = this.a.aO;
-            while (this.a.aO >= 180F) {
-                this.a.aO -= 360F;
+            this.a.aQ = a(this.a.aQ, f1, this.b);
+            this.a.yaw = this.a.aQ;
+            while (this.a.aQ >= 180F) {
+                this.a.aQ -= 360F;
             }
-            while (this.a.aO < -180F) {
-                this.a.aO += 360F;
+            while (this.a.aQ < -180F) {
+                this.a.aQ += 360F;
             }
         } else {
-            // this.a.aO = a(this.a.aO, this.a.aM, 10.0F);
+            // this.a.aQ = a(this.a.aQ, this.a.aO, 10.0F);
         }
-        float f3 = MathHelper.g(this.a.aO - this.a.aM);
+        float f3 = MathHelper.g(this.a.aQ - this.a.aO);
         if (!this.a.getNavigation().n()) {
             if (f3 < -75.0F) {
-                this.a.aO = (this.a.aM - 75.0F);
+                this.a.aQ = (this.a.aO - 75.0F);
             }
             if (f3 > 75.0F) {
-                this.a.aO = (this.a.aM + 75.0F);
+                this.a.aQ = (this.a.aO + 75.0F);
             }
         }
     }

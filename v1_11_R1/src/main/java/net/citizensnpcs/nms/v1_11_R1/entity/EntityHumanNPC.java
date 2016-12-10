@@ -111,10 +111,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         super.A_();
         if (npc == null)
             return;
-        livingEntityBaseTick();
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
         }
+        livingEntityBaseTick();
 
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
