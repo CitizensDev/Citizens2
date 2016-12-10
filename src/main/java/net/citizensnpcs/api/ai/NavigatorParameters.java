@@ -22,6 +22,7 @@ public class NavigatorParameters implements Cloneable {
     private boolean avoidWater;
     private float baseSpeed = 1F;
     private List<NavigatorCallback> callbacks = Lists.newArrayListWithExpectedSize(3);
+    private boolean debug;
     private AttackStrategy defaultStrategy;
     private double distanceMargin = 2F;
     private List<BlockExaminer> examiners = Lists.newArrayList();
@@ -189,6 +190,26 @@ public class NavigatorParameters implements Cloneable {
         } catch (CloneNotSupportedException e) {
             return null;
         }
+    }
+
+    /**
+     * Returns whether this path will be debugged. Path debugging happens by repeatedly setting the next destination
+     * block to a client-sided flower.
+     *
+     * @return Whether the path is debugging
+     */
+    public boolean debug() {
+        return this.debug;
+    }
+
+    /**
+     * Sets whether the path should be debugged.
+     *
+     * @see #debug()
+     */
+    public NavigatorParameters debug(boolean debug) {
+        this.debug = debug;
+        return this;
     }
 
     /**
