@@ -2,11 +2,11 @@ package net.citizensnpcs.api.npc;
 
 import java.util.UUID;
 
+import org.bukkit.entity.EntityType;
+
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Storage;
-
-import org.bukkit.entity.EntityType;
 
 public class SimpleNPCDataStore implements NPCDataStore {
     private final Storage root;
@@ -55,7 +55,7 @@ public class SimpleNPCDataStore implements NPCDataStore {
             }
             NPC npc = registry.createNPC(type,
                     !key.getString("uuid", "").isEmpty() ? UUID.fromString(key.getString("uuid")) : UUID.randomUUID(),
-                            id, key.getString("name"));
+                    id, key.getString("name"));
             npc.load(key);
         }
     }
@@ -92,7 +92,12 @@ public class SimpleNPCDataStore implements NPCDataStore {
     }
 
     private static EntityType matchEntityType(String toMatch) {
-        EntityType type = EntityType.fromName(toMatch);
+        EntityType type;
+        try {
+            type = EntityType.valueOf(toMatch);
+        } catch (IllegalArgumentException ex) {
+            type = EntityType.fromName(toMatch);
+        }
         if (type != null)
             return type;
         return matchEnum(EntityType.values(), toMatch);

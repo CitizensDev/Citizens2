@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.WeakHashMap;
 
 import org.bukkit.Location;
@@ -422,5 +423,6 @@ public class PersistenceLoader {
         registerPersistDelegate(Location.class, LocationPersister.class);
         registerPersistDelegate(ItemStack.class, ItemStackPersister.class);
         registerPersistDelegate(EulerAngle.class, EulerAnglePersister.class);
+        registerPersistDelegate(UUID.class, UUIDPersister.class);
     }
 }
