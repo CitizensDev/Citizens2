@@ -8,7 +8,6 @@ import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.AbstractPathStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
@@ -62,7 +61,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             setCancelReason(CancelReason.STUCK);
         } else {
             vector = plan.getCurrentVector();
-            if (Setting.DEBUG_PATHFINDING.asBoolean()) {
+            if (params.debug()) {
                 plan.debug();
             }
         }
@@ -70,7 +69,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public void stop() {
-        if (plan != null && Setting.DEBUG_PATHFINDING.asBoolean()) {
+        if (plan != null && params.debug()) {
             plan.debugEnd();
         }
         plan = null;
@@ -101,7 +100,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double dY = vector.getY() - currLoc.getY();
         double xzDistance = dX * dX + dZ * dZ;
         double distance = xzDistance + dY * dY;
-        if (Setting.DEBUG_PATHFINDING.asBoolean()) {
+        if (params.debug()) {
             npc.getEntity().getWorld().playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL,
                     0);
         }

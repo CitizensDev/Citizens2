@@ -192,7 +192,6 @@ public class CitizensNPC extends AbstractNPC {
 
         at = at.clone();
         getTrait(CurrentLocation.class).setLocation(at);
-
         entityController.spawn(at, this);
 
         getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));

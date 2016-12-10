@@ -82,14 +82,17 @@ public class PlayerControllerMove extends ControllerMove {
             double d1 = this.d - this.a.locZ;
             double d2 = this.c - i;
             double d3 = d0 * d0 + d2 * d2 + d1 * d1;
-            if (d3 < 2.500000277905201E-007D)
+            if (d3 < 2.500000277905201E-007D) {
+                this.a.bf = (0.0F);
                 return;
+            }
             float f = (float) Math.toDegrees(Math.atan2(d1, d0)) - 90.0F;
-            this.a.yaw = a(this.a.yaw, f, 30.0F);
+            this.a.yaw = a(this.a.yaw, f, 90.0F);
             NMS.setHeadYaw(a.getBukkitEntity(), this.a.yaw);
             AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
             speed.setValue(0.1D * this.e);
             float movement = (float) (this.e * speed.getValue()) * 10;
+            this.a.l(movement);
             this.a.bf = movement;
             if (shouldSlimeJump() || ((d2 > 0.0D) && (d0 * d0 + d1 * d1 < 1.0D))) {
                 this.h = cg();

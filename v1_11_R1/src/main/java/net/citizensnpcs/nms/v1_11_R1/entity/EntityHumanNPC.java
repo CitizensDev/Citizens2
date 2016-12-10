@@ -140,17 +140,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         npc.update();
     }
 
-    private float bodyControla(float paramFloat1, float paramFloat2, float paramFloat3) {
-        float f = MathHelper.g(paramFloat1 - paramFloat2);
-        if (f < -paramFloat3) {
-            f = -paramFloat3;
-        }
-        if (f >= paramFloat3) {
-            f = paramFloat3;
-        }
-        return paramFloat1 - f;
-    }
-
     @Override
     public void collide(net.minecraft.server.v1_11_R1.Entity entity) {
         // this method is called by both the entities involved - cancelling

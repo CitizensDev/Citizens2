@@ -2,6 +2,7 @@ package net.citizensnpcs.npc.ai;
 
 import java.util.List;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -9,7 +10,6 @@ import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.AbstractPathStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
@@ -64,7 +64,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
             setCancelReason(CancelReason.STUCK);
         } else {
             vector = plan.getCurrentVector();
-            if (Setting.DEBUG_PATHFINDING.asBoolean()) {
+            if (parameters.debug()) {
                 plan.debug();
             }
         }
@@ -73,7 +73,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public void stop() {
-        if (plan != null && Setting.DEBUG_PATHFINDING.asBoolean()) {
+        if (plan != null && parameters.debug()) {
             plan.debugEnd();
         }
         plan = null;
@@ -107,6 +107,10 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
                 return true;
             }
             vector = plan.getCurrentVector();
+        }
+        if (parameters.debug()) {
+            npc.getEntity().getWorld().playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL,
+                    0);
         }
 
         double d0 = vector.getX() + 0.5D - current.getX();

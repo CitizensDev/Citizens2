@@ -43,7 +43,7 @@ import net.citizensnpcs.util.Util;
 
 public class CitizensNavigator implements Navigator, Runnable {
     private final NavigatorParameters defaultParams = new NavigatorParameters().baseSpeed(UNINITIALISED_SPEED)
-            .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat())
+            .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat()).debug(Setting.DEBUG_PATHFINDING.asBoolean())
             .defaultAttackStrategy(MCTargetStrategy.DEFAULT_ATTACK_STRATEGY)
             .attackRange(Setting.NPC_ATTACK_DISTANCE.asDouble())
             .updatePathRate(Setting.DEFAULT_PATHFINDER_UPDATE_PATH_RATE.asInt())
