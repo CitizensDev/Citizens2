@@ -86,6 +86,10 @@ public class NMS {
         return BRIDGE.getGameProfileRepository();
     }
 
+    public static float getHeadYaw(org.bukkit.entity.Entity entity) {
+        return BRIDGE.getHeadYaw(entity);
+    }
+
     public static float getHorizontalMovement(org.bukkit.entity.Entity bukkitEntity) {
         return BRIDGE.getHorizontalMovement(bukkitEntity);
     }

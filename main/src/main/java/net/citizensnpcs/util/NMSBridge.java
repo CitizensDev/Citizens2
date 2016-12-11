@@ -48,6 +48,8 @@ public interface NMSBridge {
 
     public GameProfileRepository getGameProfileRepository();
 
+    public float getHeadYaw(Entity entity);
+
     public float getHorizontalMovement(Entity entity);
 
     public NPC getNPC(Entity entity);

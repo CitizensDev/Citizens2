@@ -13,6 +13,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_10_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_10_R1.BlockPosition;
 import net.minecraft.server.v1_10_R1.EntityLightning;
@@ -83,6 +84,14 @@ public class PigController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean cP() {
+            if (npc == null) {
+                return super.cP();
+            }
+            return npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled();
         }
 
         @Override

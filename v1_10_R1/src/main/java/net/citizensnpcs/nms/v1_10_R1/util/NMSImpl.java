@@ -333,6 +333,14 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public float getHeadYaw(org.bukkit.entity.Entity entity) {
+        if (!(entity instanceof LivingEntity)) {
+            return entity.getLocation().getYaw();
+        }
+        return getHandle((LivingEntity) entity).aQ;
+    }
+
+    @Override
     public float getHorizontalMovement(org.bukkit.entity.Entity entity) {
         if (!entity.getType().isAlive())
             return Float.NaN;
@@ -1387,7 +1395,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.GHAST);
 
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
-
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c");
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bK");

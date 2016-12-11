@@ -199,15 +199,18 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             return; // EnderDragon handles this separately
         Location loc = entity.getLocation();
         Vector vel = entity.getVelocity();
+        if (vel.lengthSquared() == 0) {
+            return;
+        }
+
         double tX = loc.getX() + vel.getX();
         double tZ = loc.getZ() + vel.getZ();
-        if (loc.getX() > tZ) {
+        if (loc.getZ() > tZ) {
             loc.setYaw((float) -Math.toDegrees(Math.atan((loc.getX() - tX) / (loc.getZ() - tZ))) + 180F);
         } else if (loc.getZ() < tZ) {
             loc.setYaw((float) -Math.toDegrees(Math.atan((loc.getX() - tX) / (loc.getZ() - tZ))));
         }
-        entity.teleport(loc);
-        NMS.setHeadYaw(entity, loc.getYaw());
+        NMS.look(entity, loc.getYaw(), loc.getPitch());
     }
 
     public void setOwnerRequired(boolean ownerRequired) {
@@ -224,14 +227,27 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     private double updateHorizontalSpeed(Entity handle, Entity passenger, double speed, float speedMod) {
-        Vector hvel = handle.getVelocity();
-        double oldSpeed = Math.sqrt(hvel.getX() * hvel.getX() + hvel.getZ() * hvel.getZ());
-        double angle = Math.toRadians(passenger.getLocation().getYaw() - NMS.getVerticalMovement(passenger) * 45.0F);
-        hvel = hvel.add(new Vector(speedMod * -Math.sin(angle) * NMS.getHorizontalMovement(passenger) * 0.05, 0,
-                speedMod * Math.cos(angle) * NMS.getHorizontalMovement(passenger) * 0.05));
-        handle.setVelocity(hvel);
+        Vector vel = handle.getVelocity();
+        double oldSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
+        double horizontal = NMS.getHorizontalMovement(passenger);
+        double yaw = passenger.getLocation().getYaw();
+        if (horizontal > 0.0D) {
+            double dXcos = -Math.sin(yaw * Math.PI / 180.0F);
+            double dXsin = Math.cos(yaw * Math.PI / 180.0F);
 
-        double newSpeed = Math.sqrt(hvel.getX() * hvel.getX() + hvel.getZ() * hvel.getZ());
+            vel = vel.setX(dXcos * speed * 0.5).setZ(dXsin * speed * 0.5);
+        }
+        vel = vel.add(
+                new Vector(passenger.getVelocity().getX() * speedMod, 0D, passenger.getVelocity().getZ() * speedMod));
+
+        double newSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
+        if (newSpeed > 0.35D) {
+            double movementFactor = 0.35D / newSpeed;
+            vel = vel.multiply(new Vector(movementFactor, 1, movementFactor));
+            newSpeed = 0.35D;
+        }
+        handle.setVelocity(vel);
+
         if (newSpeed > oldSpeed && speed < 0.35D) {
             return (float) Math.min(0.35D, (speed + ((0.35D - speed) / 35.0D)));
         } else {
