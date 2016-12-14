@@ -286,7 +286,7 @@ public class CitizensNPC extends AbstractNPC {
                         getEntity().setCustomName(getFullName());
                     }
                     String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
-                    if (getEntity() instanceof Player
+                    if (getEntity() instanceof Player && teamName.length() > 0
                             && Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName) != null) {
                         Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
                         if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
