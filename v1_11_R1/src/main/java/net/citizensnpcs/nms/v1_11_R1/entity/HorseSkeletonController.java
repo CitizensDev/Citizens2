@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_11_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftSkeletonHorse;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.util.Vector;
 
@@ -53,7 +52,8 @@ public class HorseSkeletonController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
-                ((Horse) getBukkitEntity()).setDomestication(((Horse) getBukkitEntity()).getMaxDomestication());
+                ((SkeletonHorse) getBukkitEntity())
+                        .setDomestication(((SkeletonHorse) getBukkitEntity()).getMaxDomestication());
             }
         }
 

@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_11_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftDonkey;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
 import org.bukkit.entity.Donkey;
-import org.bukkit.entity.Horse;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
@@ -37,7 +36,7 @@ public class HorseDonkeyController extends MobEntityController {
 
     @Override
     public void spawn(Location at, NPC npc) {
-        npc.getTrait(HorseModifiers.class);
+        npc.addTrait(HorseModifiers.class);
         super.spawn(at, npc);
     }
 
@@ -53,7 +52,7 @@ public class HorseDonkeyController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
-                ((Horse) getBukkitEntity()).setDomestication(((Horse) getBukkitEntity()).getMaxDomestication());
+                ((Donkey) getBukkitEntity()).setDomestication(((Donkey) getBukkitEntity()).getMaxDomestication());
             }
         }
 
