@@ -383,7 +383,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     public void setTargetLook(Location target) {
-        controllerLook.a(target.getX(), target.getY(), target.getZ(), target.getYaw(), target.getPitch());
+        controllerLook.a(target.getX(), target.getY(), target.getZ(), 10, 40);
     }
 
     public void updateAI() {

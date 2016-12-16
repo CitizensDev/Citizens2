@@ -82,7 +82,7 @@ public interface NMSBridge {
 
     public void look(Entity entity, float yaw, float pitch);
 
-    public void look(Entity entity, Location to, boolean headOnly);
+    public void look(Entity entity, Location to, boolean headOnly, boolean immediate);
 
     public void mount(Entity entity, Entity passenger);
 

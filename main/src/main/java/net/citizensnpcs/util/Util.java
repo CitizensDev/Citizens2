@@ -66,9 +66,13 @@ public class Util {
     }
 
     public static void faceLocation(Entity entity, Location to, boolean headOnly) {
+        faceLocation(entity, to, headOnly, true);
+    }
+
+    public static void faceLocation(Entity entity, Location to, boolean headOnly, boolean immediate) {
         if (to == null || entity.getWorld() != to.getWorld())
             return;
-        NMS.look(entity, to, headOnly);
+        NMS.look(entity, to, headOnly, immediate);
     }
 
     public static Location getEyeLocation(Entity entity) {
