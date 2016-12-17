@@ -140,7 +140,7 @@ public class SkinPacketTracker {
     }
 
     private void scheduleRemovePacket(final PlayerEntry entry) {
-        if (isRemoved)
+        if (isRemoved || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
             return;
 
         entry.removeTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
