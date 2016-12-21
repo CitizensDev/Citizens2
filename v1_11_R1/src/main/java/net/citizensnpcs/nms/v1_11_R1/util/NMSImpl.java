@@ -965,7 +965,7 @@ public class NMSImpl implements NMSBridge {
         } else {
             if (!entity.dead) {
                 try {
-                    entity.world.g(entity);
+                    entity.world.entityJoinedWorld(entity, true);
                 } catch (Throwable throwable) {
                     CrashReport crashreport = CrashReport.a(throwable, "Ticking player");
                     CrashReportSystemDetails crashreportsystemdetails = crashreport.a("Player being ticked");
