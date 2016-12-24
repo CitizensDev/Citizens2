@@ -19,8 +19,9 @@ public class Paginator {
     }
 
     public boolean sendPage(CommandSender sender, int page) {
-        int pages = (int) ((lines.size() / LINES_PER_PAGE == 0) ? 1 : Math.ceil((double) lines.size() / LINES_PER_PAGE));
-        if (page < 0 || page > pages)
+        int pages = (int) (Math.ceil((double) lines.size() / LINES_PER_PAGE) == 0 ? 1
+                : Math.ceil((double) lines.size() / LINES_PER_PAGE));
+        if (page <= 0 || page > pages)
             return false;
 
         int startIndex = LINES_PER_PAGE * page - LINES_PER_PAGE;
