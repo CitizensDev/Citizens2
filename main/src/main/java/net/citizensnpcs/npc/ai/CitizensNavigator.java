@@ -162,7 +162,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         updatePathfindingRange();
         boolean finished = executing.update();
         if (localParams.lookAtFunction() != null) {
-            Util.faceLocation(npc.getEntity(), localParams.lookAtFunction().apply(this), true);
+            Util.faceLocation(npc.getEntity(), localParams.lookAtFunction().apply(this), true, false);
             Entity entity = npc.getEntity().getPassenger();
             Location npcLoc = npc.getEntity().getLocation();
             while (entity != null) {
