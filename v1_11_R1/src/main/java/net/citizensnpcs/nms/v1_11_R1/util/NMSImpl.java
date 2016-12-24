@@ -1137,7 +1137,7 @@ public class NMSImpl implements NMSBridge {
                 double d1 = entity.locY;
                 float f4 = entity instanceof EntityPolarBear ? 0.98F : 0.8F;
                 float f3 = 0.02F;
-                float f2 = EnchantmentManager.d(entity);
+                float f2 = EnchantmentManager.e(entity);
                 if (f2 > 3.0F) {
                     f2 = 3.0F;
                 }
