@@ -170,6 +170,7 @@ import net.minecraft.server.v1_11_R1.CrashReportSystemDetails;
 import net.minecraft.server.v1_11_R1.DamageSource;
 import net.minecraft.server.v1_11_R1.DataWatcherObject;
 import net.minecraft.server.v1_11_R1.EnchantmentManager;
+import net.minecraft.server.v1_11_R1.Enchantments;
 import net.minecraft.server.v1_11_R1.EnderDragonBattle;
 import net.minecraft.server.v1_11_R1.Entity;
 import net.minecraft.server.v1_11_R1.EntityEnderDragon;
@@ -248,7 +249,7 @@ public class NMSImpl implements NMSBridge {
 
         if (target instanceof EntityLiving) {
             f += EnchantmentManager.a(handle.getItemInMainHand(), target.getMonsterType());
-            i += EnchantmentManager.a(handle);
+            i += EnchantmentManager.a(Enchantments.KNOCKBACK, handle);
         }
 
         boolean flag = target.damageEntity(DamageSource.mobAttack(handle), f);
