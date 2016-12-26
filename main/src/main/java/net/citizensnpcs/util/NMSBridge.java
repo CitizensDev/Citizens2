@@ -22,6 +22,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 
 import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
@@ -75,6 +76,8 @@ public interface NMSBridge {
     public float getVerticalMovement(Entity entity);
 
     public boolean isOnGround(Entity entity);
+
+    public void load(CommandManager commands);
 
     public void loadPlugins();
 

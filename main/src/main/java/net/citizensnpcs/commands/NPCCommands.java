@@ -23,7 +23,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.ItemFrame;
@@ -629,11 +628,8 @@ public class NPCCommands {
             max = 1,
             flags = "cb",
             permission = "citizens.npc.horse")
-    @Requirements(selected = true, ownership = true)
+    @Requirements(selected = true, ownership = true, types = EntityType.HORSE)
     public void horse(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        if (!(npc.getEntity() instanceof Horse)) {
-            throw new CommandException(Messages.INVALID_ENTITY_TYPE);
-        }
         HorseModifiers horse = npc.getTrait(HorseModifiers.class);
         String output = "";
         if (args.hasFlag('c')) {

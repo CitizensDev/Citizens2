@@ -22,6 +22,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 
 import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
@@ -141,6 +142,10 @@ public class NMS {
 
     public static boolean isOnGround(org.bukkit.entity.Entity entity) {
         return BRIDGE.isOnGround(entity);
+    }
+
+    public static void load(CommandManager commands) {
+        BRIDGE.load(commands);
     }
 
     public static void loadBridge(String rev) throws Exception {

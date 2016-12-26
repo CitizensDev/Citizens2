@@ -56,13 +56,16 @@ import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import com.mojang.util.UUIDTypeAdapter;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.nms.v1_11_R1.entity.BatController;
 import net.citizensnpcs.nms.v1_11_R1.entity.BlazeController;
@@ -147,6 +150,8 @@ import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ThrownPotionController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.TippedArrowController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.WitherSkullController;
 import net.citizensnpcs.nms.v1_11_R1.network.EmptyChannel;
+import net.citizensnpcs.nms.v1_11_R1.trait.Commands;
+import net.citizensnpcs.nms.v1_11_R1.trait.LlamaTrait;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -533,6 +538,12 @@ public class NMSImpl implements NMSBridge {
     @Override
     public boolean isOnGround(org.bukkit.entity.Entity entity) {
         return NMSImpl.getHandle(entity).onGround;
+    }
+
+    @Override
+    public void load(CommandManager manager) {
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LlamaTrait.class));
+        manager.register(Commands.class);
     }
 
     private void loadEntityTypes() {
@@ -1453,6 +1464,7 @@ public class NMSImpl implements NMSBridge {
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "f");
     private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bx");
     private static final Random RANDOM = Util.getFastRandom();
+
     private static Field SKULL_PROFILE_FIELD;
 
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");

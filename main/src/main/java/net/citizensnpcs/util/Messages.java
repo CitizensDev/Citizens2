@@ -106,6 +106,7 @@ public class Messages {
     public static final String INVALID_HORSE_COLOR = "citizens.commands.npc.horse.invalid-color";
     public static final String INVALID_HORSE_STYLE = "citizens.commands.npc.horse.invalid-style";
     public static final String INVALID_HORSE_VARIANT = "citizens.commands.npc.horse.invalid-variant";
+    public static final String INVALID_LLAMA_COLOR = "citizens.commands.npc.llama.invalid-color";
     public static final String INVALID_OCELOT_TYPE = "citizens.commands.npc.ocelot.invalid-type";
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
@@ -128,6 +129,8 @@ public class Messages {
     public static final String LINEAR_WAYPOINT_EDITOR_REMOVED_WAYPOINT = "citizens.editors.waypoints.linear.removed-waypoint";
     public static final String LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS = "citizens.editors.waypoints.linear.showing-markers";
     public static final String LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED = "citizens.editors.waypoints.linear.waypoints-cleared";
+    public static final String LLAMA_COLOR_SET = "citizens.commands.npc.llama.color-set";
+    public static final String LLAMA_STRENGTH_SET = "citizens.commands.npc.llama.strength-set";
     public static final String LOAD_NAME_NOT_FOUND = "citizens.notifications.npc-name-not-found";
     public static final String LOAD_TASK_NOT_SCHEDULED = "citizens.load-task-error";
     public static final String LOAD_UNKNOWN_NPC_TYPE = "citizens.notifications.unknown-npc-type";
