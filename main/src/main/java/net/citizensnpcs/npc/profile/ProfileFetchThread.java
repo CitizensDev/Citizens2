@@ -62,7 +62,41 @@ class ProfileFetchThread implements Runnable {
         }
 
         if (handler != null) {
+            if (request.getResult() == ProfileFetchResult.PENDING
+                    || request.getResult() == ProfileFetchResult.TOO_MANY_REQUESTS) {
+                addHandler(request, handler);
+            } else {
+                sendResult(handler, request);
+            }
+        }
+    }
 
+    public void fetchForced(String name, ProfileFetchHandler handler) {
+        Preconditions.checkNotNull(name);
+
+        name = name.toLowerCase();
+        ProfileRequest request;
+
+        synchronized (sync) {
+            request = requested.get(name);
+            if (request != null) {
+                if (request.getResult() == ProfileFetchResult.TOO_MANY_REQUESTS) {
+                    queue.add(request);
+                } else {
+                    requested.remove(name);
+                    queue.remove(request);
+                    request = null;
+                }
+            }
+            if (request == null) {
+                request = new ProfileRequest(name, handler);
+                queue.add(request);
+                requested.put(name, request);
+                return;
+            }
+        }
+
+        if (handler != null) {
             if (request.getResult() == ProfileFetchResult.PENDING
                     || request.getResult() == ProfileFetchResult.TOO_MANY_REQUESTS) {
                 addHandler(request, handler);

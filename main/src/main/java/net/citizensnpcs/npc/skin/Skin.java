@@ -174,6 +174,52 @@ public class Skin {
         });
     }
 
+    private void fetchForced() {
+        final int maxRetries = Setting.MAX_NPC_SKIN_RETRIES.asInt();
+        if (maxRetries > -1 && fetchRetries >= maxRetries) {
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Reached max skin fetch retries for '" + skinName + "'");
+            }
+            return;
+        }
+
+        ProfileFetcher.fetchForced(this.skinName, new ProfileFetchHandler() {
+            @Override
+            public void onResult(ProfileRequest request) {
+                hasFetched = true;
+
+                switch (request.getResult()) {
+                    case NOT_FOUND:
+                        isValid = false;
+                        break;
+                    case TOO_MANY_REQUESTS:
+                        if (maxRetries == 0) {
+                            break;
+                        }
+                        fetchRetries++;
+                        long delay = Setting.NPC_SKIN_RETRY_DELAY.asLong();
+                        retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
+                            @Override
+                            public void run() {
+                                fetchForced();
+                            }
+                        }, delay);
+
+                        if (Messaging.isDebugging()) {
+                            Messaging.debug("Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
+                        }
+                        break;
+                    case SUCCESS:
+                        GameProfile profile = request.getProfile();
+                        setData(profile);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
     /**
      * Get the ID of the player the skin belongs to.
      *
@@ -293,11 +339,10 @@ public class Skin {
         synchronized (CACHE) {
             skin = CACHE.get(skinName);
         }
-
         if (skin == null) {
             skin = new Skin(skinName);
         } else if (forceUpdate) {
-            skin.fetch();
+            skin.fetchForced();
         }
 
         return skin;

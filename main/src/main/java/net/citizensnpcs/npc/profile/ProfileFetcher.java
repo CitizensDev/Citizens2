@@ -113,6 +113,15 @@ public class ProfileFetcher {
         PROFILE_THREAD.fetch(name, handler);
     }
 
+    public static void fetchForced(String name, ProfileFetchHandler handler) {
+        Preconditions.checkNotNull(name);
+
+        if (PROFILE_THREAD == null) {
+            initThread();
+        }
+        PROFILE_THREAD.fetchForced(name, handler);
+    }
+
     @Nullable
     private static ProfileRequest findRequest(String name, Collection<ProfileRequest> requests) {
         name = name.toLowerCase();

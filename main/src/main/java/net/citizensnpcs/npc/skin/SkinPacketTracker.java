@@ -112,7 +112,6 @@ public class SkinPacketTracker {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 
         for (Player player : players) {
-
             if (player.hasMetadata("NPC"))
                 continue;
 
