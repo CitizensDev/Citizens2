@@ -485,6 +485,16 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void stop() {
+                if (navigation.k() != null) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        for (int i = 0; i < navigation.k().d(); i++) {
+                            PathPoint pp = navigation.k().a(i);
+                            org.bukkit.block.Block block = new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld())
+                                    .getBlock();
+                            player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
+                        }
+                    }
+                }
                 stopNavigation(navigation);
             }
 
@@ -506,6 +516,15 @@ public class NMSImpl implements NMSBridge {
                     handle.width = oldWidth; // minecraft requires that an entity fit onto both blocks if width >= 1f,
                                              // but we'd prefer to make it just fit on 1 so hack around it a bit.
                     lastSpeed = params.speed();
+                }
+                if (params.debug() && !NMSImpl.isNavigationFinished(navigation)) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        for (int i = 0; i < navigation.k().d(); i++) {
+                            PathPoint pp = navigation.k().a(i);
+                            player.sendBlockChange(new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld()),
+                                    Material.YELLOW_FLOWER, (byte) 0);
+                        }
+                    }
                 }
                 navigation.a(params.speed());
                 return NMSImpl.isNavigationFinished(navigation);
@@ -1149,7 +1168,7 @@ public class NMSImpl implements NMSBridge {
                 double d1 = entity.locY;
                 float f4 = entity instanceof EntityPolarBear ? 0.98F : 0.8F;
                 float f3 = 0.02F;
-                float f2 = EnchantmentManager.d(entity);
+                float f2 = EnchantmentManager.a(Enchantments.DEPTH_STRIDER, entity);
                 if (f2 > 3.0F) {
                     f2 = 3.0F;
                 }

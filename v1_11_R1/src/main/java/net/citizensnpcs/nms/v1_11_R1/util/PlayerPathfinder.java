@@ -33,7 +33,6 @@ public class PlayerPathfinder {
         this.d.a(paramIBlockAccess, paramEntityInsentient);
         PathPoint localPathPoint1 = this.d.b();
         PathPoint localPathPoint2 = this.d.a(paramDouble1, paramDouble2, paramDouble3);
-
         PathEntity localPathEntity = a(localPathPoint1, localPathPoint2, paramFloat);
 
         this.d.a();
