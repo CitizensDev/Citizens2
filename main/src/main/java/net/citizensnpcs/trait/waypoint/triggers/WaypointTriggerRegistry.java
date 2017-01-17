@@ -2,14 +2,14 @@ package net.citizensnpcs.trait.waypoint.triggers;
 
 import java.util.Map;
 
-import net.citizensnpcs.api.persistence.PersistenceLoader;
-import net.citizensnpcs.api.persistence.Persister;
-import net.citizensnpcs.api.util.DataKey;
-
 import org.bukkit.conversations.Prompt;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+
+import net.citizensnpcs.api.persistence.PersistenceLoader;
+import net.citizensnpcs.api.persistence.Persister;
+import net.citizensnpcs.api.util.DataKey;
 
 public class WaypointTriggerRegistry implements Persister<WaypointTrigger> {
     @Override
@@ -54,6 +54,5 @@ public class WaypointTriggerRegistry implements Persister<WaypointTrigger> {
         addTrigger("delay", DelayTrigger.class, DelayTriggerPrompt.class);
         addTrigger("teleport", TeleportTrigger.class, TeleportTriggerPrompt.class);
         addTrigger("speed", SpeedTrigger.class, SpeedTriggerPrompt.class);
-        // addTrigger("pose", PoseTrigger.class, PoseTriggerPrompt.class);
     }
 }

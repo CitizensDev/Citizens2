@@ -147,8 +147,9 @@ public class WitherController extends MobEntityController {
         protected void M() {
             if (npc == null) {
                 super.M();
+            } else {
+                npc.update();
             }
-            npc.update();
         }
     }
 
