@@ -265,6 +265,9 @@ public class Messages {
     public static final String UNKNOWN_MATERIAL = "citizens.commands.npc.item.unknown-material";
     public static final String VULNERABLE_SET = "citizens.commands.npc.vulnerable.set";
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
+    public static final String WANDER_WAYPOINTS_BEGIN = "citizens.editors.waypoints.wander.begin";
+    public static final String WANDER_WAYPOINTS_END = "citizens.editors.waypoints.wander.end";
+    public static final String WANDER_WAYPOINTS_RANGE_SET = "citizens.editors.waypoints.wander.range-set";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
     public static final String WAYPOINT_TRIGGER_ADD_PROMPT = "citizens.editors.waypoints.triggers.add.prompt";
