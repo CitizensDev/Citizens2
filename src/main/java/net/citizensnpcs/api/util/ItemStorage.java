@@ -39,7 +39,9 @@ import net.citizensnpcs.api.event.CitizensSerialiseMetaEvent;
 
 public class ItemStorage {
     private static void deserialiseBanner(DataKey root, Banner meta) {
-        meta.setBaseColor(DyeColor.valueOf(root.getString("banner.basecolor")));
+        if (root.keyExists("banner.basecolor")) {
+            meta.setBaseColor(DyeColor.valueOf(root.getString("banner.basecolor")));
+        }
         if (root.keyExists("banner.patterns")) {
             for (DataKey sub : root.getRelative("banner.patterns").getIntegerSubKeys()) {
                 Pattern pattern = new Pattern(DyeColor.valueOf(sub.getString("color")),
@@ -160,7 +162,9 @@ public class ItemStorage {
 
         if (root.keyExists("banner")) {
             BannerMeta meta = ensureMeta(res);
-            meta.setBaseColor(DyeColor.valueOf(root.getString("banner.basecolor")));
+            if (root.keyExists("banner.basecolor")) {
+                meta.setBaseColor(DyeColor.valueOf(root.getString("banner.basecolor")));
+            }
             if (root.keyExists("banner.patterns")) {
                 for (DataKey sub : root.getRelative("banner.patterns").getIntegerSubKeys()) {
                     Pattern pattern = new Pattern(DyeColor.valueOf(sub.getString("color")),
@@ -250,7 +254,11 @@ public class ItemStorage {
     }
 
     private static void serialiseBanner(DataKey root, Banner banner) {
-        root.setString("basecolor", banner.getBaseColor().name());
+        if (banner.getBaseColor() != null) {
+            root.setString("basecolor", banner.getBaseColor().name());
+        } else {
+            root.removeKey("basecolor");
+        }
         List<org.bukkit.block.banner.Pattern> patterns = banner.getPatterns();
         root.removeKey("patterns");
         for (int i = 0; i < patterns.size(); i++) {
@@ -407,7 +415,11 @@ public class ItemStorage {
         if (meta instanceof BannerMeta) {
             BannerMeta banner = (BannerMeta) meta;
             DataKey root = key.getRelative("banner");
-            root.setString("basecolor", banner.getBaseColor().name());
+            if (banner.getBaseColor() != null) {
+                root.setString("basecolor", banner.getBaseColor().name());
+            } else {
+                root.removeKey("basecolor");
+            }
             List<org.bukkit.block.banner.Pattern> patterns = banner.getPatterns();
             root.removeKey("patterns");
             for (int i = 0; i < patterns.size(); i++) {

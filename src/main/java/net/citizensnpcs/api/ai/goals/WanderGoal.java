@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -35,8 +36,9 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             int x = base.getBlockX() + random.nextInt(2 * xrange) - xrange;
             int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
             int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
-            Block block = base.getWorld().getBlockAt(x, y - 2, z);
-            if (MinecraftBlockExaminer.canStandOn(block)) {
+            Block block = base.getWorld().getBlockAt(x, y, z);
+            if (MinecraftBlockExaminer.canStandOn(block)
+                    && MinecraftBlockExaminer.canStandIn(block.getRelative(BlockFace.UP).getType())) {
                 found = block.getLocation().add(0, 1, 0);
                 break;
             }
