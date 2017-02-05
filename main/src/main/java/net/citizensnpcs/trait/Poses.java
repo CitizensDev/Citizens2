@@ -36,9 +36,9 @@ public class Poses extends Trait {
     }
 
     private void assumePose(float yaw, float pitch) {
-        if (!npc.isSpawned())
+        if (!npc.isSpawned()) {
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
-
+        }
         Util.assumePose(npc.getEntity(), yaw, pitch);
     }
 
@@ -66,9 +66,11 @@ public class Poses extends Trait {
     }
 
     public Pose getPose(String name) {
-        for (Pose pose : poses.values())
-            if (pose.getName().equalsIgnoreCase(name))
+        for (Pose pose : poses.values()) {
+            if (pose.getName().equalsIgnoreCase(name)) {
                 return pose;
+            }
+        }
         return null;
     }
 
