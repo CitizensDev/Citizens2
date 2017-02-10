@@ -1481,7 +1481,7 @@ public class NMSImpl implements NMSBridge {
     public static Field NETWORK_ADDRESS = NMS.getField(NetworkManager.class, "l");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "f");
-    private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bx");
+    private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bw");
     private static final Random RANDOM = Util.getFastRandom();
 
     private static Field SKULL_PROFILE_FIELD;
