@@ -357,7 +357,11 @@ public class Skin {
         npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, skinId.toString());
         if (skinProperty.getValue() != null) {
             npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA, skinProperty.getValue());
-            npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA, skinProperty.getSignature());
+            if (skinProperty.getSignature() == null) {
+                npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA, "");
+            } else {
+                npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA, skinProperty.getSignature());
+            }
             setNPCTexture(entity, skinProperty);
         } else {
             npc.data().remove(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA);
