@@ -52,9 +52,8 @@ public abstract class Precondition extends BehaviorGoalAdapter {
     }
 
     /**
-     * Creates a {@link Precondition} that returns either
-     * {@link BehaviorStatus#SUCCESS} or {@link BehaviorStatus#FAILURE}
-     * depending on the underlying {@link Condition}'s return status.
+     * Creates a {@link Precondition} that returns either {@link BehaviorStatus#SUCCESS} or
+     * {@link BehaviorStatus#FAILURE} depending on the underlying {@link Condition}'s return status.
      * 
      * @param condition
      *            The condition to check while executing
@@ -65,9 +64,8 @@ public abstract class Precondition extends BehaviorGoalAdapter {
     }
 
     /**
-     * Creates a {@link Precondition} that wraps the <code>shouldExecute</code>
-     * method in {@link Behavior}. When <code>shouldExecute</code> is called,
-     * the given {@link Condition} will be checked before the wrapped behavior's
+     * Creates a {@link Precondition} that wraps the <code>shouldExecute</code> method in {@link Behavior}. When
+     * <code>shouldExecute</code> is called, the given {@link Condition} will be checked before the wrapped behavior's
      * method is called.
      * 
      * @param wrapping

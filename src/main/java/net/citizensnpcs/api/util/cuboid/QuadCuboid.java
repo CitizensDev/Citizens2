@@ -60,8 +60,7 @@ public class QuadCuboid {
     }
 
     /**
-     * Normalize the corners so that all A is <= B This is CRITICAL to have for
-     * comparison to a point
+     * Normalize the corners so that all A is <= B This is CRITICAL to have for comparison to a point
      */
     private void normalize() {
         for (int i = 0; i < 3; i++) {

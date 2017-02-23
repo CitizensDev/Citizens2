@@ -12,8 +12,7 @@ public class QuadTree {
     QuadNode root;
 
     /**
-     * Adds the {@link QuadCuboid} to the target node and fixes up the children's
-     * list holder link
+     * Adds the {@link QuadCuboid} to the target node and fixes up the children's list holder link
      * 
      * @param node
      *            The target node
@@ -73,8 +72,7 @@ public class QuadTree {
     /**
      * Returns -1 for too small, 0 for minimal, 1 for larger than needed
      * <p>
-     * Fit is based on the larger side. Means more tests but consumes an order
-     * of magnitude or less memory.
+     * Fit is based on the larger side. Means more tests but consumes an order of magnitude or less memory.
      * 
      * @param node
      * @param cuboid
@@ -172,15 +170,12 @@ public class QuadTree {
     }
 
     /**
-     * Oftentimes a node will overlap with the neighbors of a node Since we
-     * always search for the next node based on the lower left we know that the
-     * left and bottom will not go over the edge, leaving only the top, right,
-     * and upper right possibilities need be regarded. Spits out a list of
-     * cuboids that are fit for "insertion" although we just use them for the
-     * search and actually attach the original cuboid. We also return the
-     * remainder shard if we generated any others. At the other end we only
-     * include a node if it's shard didn't re-shard. Keeps the tree search
-     * spaces minimal.
+     * Oftentimes a node will overlap with the neighbors of a node Since we always search for the next node based on the
+     * lower left we know that the left and bottom will not go over the edge, leaving only the top, right, and upper
+     * right possibilities need be regarded. Spits out a list of cuboids that are fit for "insertion" although we just
+     * use them for the search and actually attach the original cuboid. We also return the remainder shard if we
+     * generated any others. At the other end we only include a node if it's shard didn't re-shard. Keeps the tree
+     * search spaces minimal.
      */
     private List<QuadCuboid> generateShards(QuadNode node, QuadCuboid cuboid) {
         List<QuadCuboid> shards = new ArrayList<QuadCuboid>(4);
@@ -370,8 +365,7 @@ public class QuadTree {
     }
 
     /**
-     * Attempts to insert the node ONLY if there are no overlaps with existing
-     * nodes
+     * Attempts to insert the node ONLY if there are no overlaps with existing nodes
      * 
      * @param cuboid
      *            cuboid to insert
@@ -496,8 +490,7 @@ public class QuadTree {
     }
 
     /**
-     * Removes any node from the tree that no longer serves a purpose, starting
-     * from the node given and moving up
+     * Removes any node from the tree that no longer serves a purpose, starting from the node given and moving up
      * 
      * @param node
      */

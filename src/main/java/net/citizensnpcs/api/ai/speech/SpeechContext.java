@@ -13,8 +13,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 /**
- * SpeechContext contains information about a {@link NPCSpeechEvent}, including
- * the {@link Talkable} talker, recipients, and message.
+ * SpeechContext contains information about a {@link NPCSpeechEvent}, including the {@link Talkable} talker, recipients,
+ * and message.
  * 
  */
 public class SpeechContext implements Iterable<Talkable> {
@@ -52,10 +52,8 @@ public class SpeechContext implements Iterable<Talkable> {
     }
 
     /**
-     * Adds a direct {@link Talkable} recipient. The {@link VocalChord} should
-     * use this information to correctly direct the message. Note: depending on
-     * the VocalChord, this list may not be inclusive as to who gets the
-     * message.
+     * Adds a direct {@link Talkable} recipient. The {@link VocalChord} should use this information to correctly direct
+     * the message. Note: depending on the VocalChord, this list may not be inclusive as to who gets the message.
      * 
      * @param talkable
      *            Talkable entity
@@ -75,10 +73,8 @@ public class SpeechContext implements Iterable<Talkable> {
     }
 
     /**
-     * Adds a list of {@link Talkable} recipients. The {@link VocalChord} should
-     * use this information to correctly direct the message. Note: depending on
-     * the VocalChord, this list may not be inclusive as to who gets the
-     * message.
+     * Adds a list of {@link Talkable} recipients. The {@link VocalChord} should use this information to correctly
+     * direct the message. Note: depending on the VocalChord, this list may not be inclusive as to who gets the message.
      * 
      * @param talkable
      *            Talkable entity
@@ -111,8 +107,7 @@ public class SpeechContext implements Iterable<Talkable> {
     }
 
     /**
-     * Checks if there are any recipients. If none, this {@link SpeechContext}
-     * is not targeted.
+     * Checks if there are any recipients. If none, this {@link SpeechContext} is not targeted.
      * 
      * @return true if recipients are specified.
      */

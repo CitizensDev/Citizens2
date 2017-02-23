@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.command.exception;
 
-
 public class RequirementMissingException extends CommandException {
     public RequirementMissingException(String message) {
         super(message);

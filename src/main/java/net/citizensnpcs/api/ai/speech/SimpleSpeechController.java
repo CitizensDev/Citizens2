@@ -8,8 +8,7 @@ import net.citizensnpcs.api.trait.trait.Speech;
 import org.bukkit.Bukkit;
 
 /**
- * Simple implementation of {@link SpeechController} which allows a NPC to speak
- * with any registered {@link VocalChord}.
+ * Simple implementation of {@link SpeechController} which allows a NPC to speak with any registered {@link VocalChord}.
  * 
  */
 public class SimpleSpeechController implements SpeechController {

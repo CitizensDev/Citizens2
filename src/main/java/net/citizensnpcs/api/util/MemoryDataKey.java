@@ -66,7 +66,7 @@ public class MemoryDataKey extends DataKey {
             return path;
         if (key.charAt(0) == '.')
             return path.isEmpty() ? key.substring(1, key.length()) : path + key;
-            return path.isEmpty() ? key : path + "." + key;
+        return path.isEmpty() ? key : path + "." + key;
     }
 
     @Override

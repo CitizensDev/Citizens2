@@ -7,8 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * A Priority R-Tree, a spatial index, for N dimensions. This tree only supports
- * bulk loading.
+ * A Priority R-Tree, a spatial index, for N dimensions. This tree only supports bulk loading.
  * 
  * @param <T>
  *            the data type stored in the PRTree
@@ -46,9 +45,8 @@ public class PRTree<T> {
     }
 
     /**
-     * Find all objects that intersect the given rectangle. Note, this find
-     * method will only use two dimensions, no matter how many dimensions the
-     * PRTree actually has.
+     * Find all objects that intersect the given rectangle. Note, this find method will only use two dimensions, no
+     * matter how many dimensions the PRTree actually has.
      * 
      * @param xmin
      *            the minimum value of the x coordinate when searching
@@ -67,9 +65,8 @@ public class PRTree<T> {
     }
 
     /**
-     * Finds all objects that intersect the given rectangle and stores the found
-     * node in the given list. Note, this find method will only use two
-     * dimensions, no matter how many dimensions the PRTree actually has.
+     * Finds all objects that intersect the given rectangle and stores the found node in the given list. Note, this find
+     * method will only use two dimensions, no matter how many dimensions the PRTree actually has.
      * 
      * @param xmin
      *            the minimum value of the x coordinate when searching
@@ -106,8 +103,7 @@ public class PRTree<T> {
     }
 
     /**
-     * Finds all objects that intersect the given rectangle and stores the found
-     * node in the given list.
+     * Finds all objects that intersect the given rectangle and stores the found node in the given list.
      * 
      * @param query
      *            the bounds of the query
@@ -129,8 +125,7 @@ public class PRTree<T> {
     }
 
     /**
-     * Get an N dimensional minimum bounding box of the data stored in this
-     * tree.
+     * Get an N dimensional minimum bounding box of the data stored in this tree.
      * 
      * @return the MBR of the whole PRTree
      */
@@ -139,8 +134,7 @@ public class PRTree<T> {
     }
 
     /**
-     * Get a 2 dimensional minimum bounding rectangle of the data stored in this
-     * tree.
+     * Get a 2 dimensional minimum bounding rectangle of the data stored in this tree.
      * 
      * @return the MBR of the whole PRTree
      */
@@ -172,9 +166,8 @@ public class PRTree<T> {
     /**
      * Bulk load data into this tree.
      * 
-     * Create the leaf nodes that each hold (up to) branchFactor data entries.
-     * Then use the leaf nodes as data until we can fit all nodes into the root
-     * node.
+     * Create the leaf nodes that each hold (up to) branchFactor data entries. Then use the leaf nodes as data until we
+     * can fit all nodes into the root node.
      * 
      * @param data
      *            the collection of data to store in the tree.
@@ -212,8 +205,7 @@ public class PRTree<T> {
      *            the maximum number of entries to find.
      * @param p
      *            the point to find the nearest neighbour to.
-     * @return A List of DistanceResult with up to maxHits results. Will return
-     *         an empty list if this tree is empty.
+     * @return A List of DistanceResult with up to maxHits results. Will return an empty list if this tree is empty.
      */
     public List<DistanceResult<T>> nearestNeighbour(DistanceCalculator<T> dc, NodeFilter<T> filter, int maxHits,
             PointND p) {
@@ -239,8 +231,8 @@ public class PRTree<T> {
             double max = query.getMax(i);
             double min = query.getMin(i);
             if (max < min)
-                throw new IllegalArgumentException("max: " + max + " < min: " + min + ", axis: " + i + ", query: "
-                        + query);
+                throw new IllegalArgumentException(
+                        "max: " + max + " < min: " + min + ", axis: " + i + ", query: " + query);
         }
     }
 

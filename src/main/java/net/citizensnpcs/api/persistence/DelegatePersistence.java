@@ -6,8 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Delegates persistence to a given {@link Persister}, which will be used to
- * create and save instances.
+ * Delegates persistence to a given {@link Persister}, which will be used to create and save instances.
  * 
  * @see Persist
  * @see Persister

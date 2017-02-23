@@ -13,9 +13,8 @@ public interface AStarGoal<T extends AStarNode> {
     float g(T from, T to);
 
     /**
-     * Returns the initial cost value when starting from the supplied
-     * {@link AStarNode}. This represents an initial estimate for reaching the
-     * goal state from the start node.
+     * Returns the initial cost value when starting from the supplied {@link AStarNode}. This represents an initial
+     * estimate for reaching the goal state from the start node.
      * 
      * @param node
      *            The start node
@@ -24,8 +23,7 @@ public interface AStarGoal<T extends AStarNode> {
     float getInitialCost(T node);
 
     /**
-     * Returns the estimated heuristic cost of traversing from the supplied
-     * {@link AStarNode} to the goal.
+     * Returns the estimated heuristic cost of traversing from the supplied {@link AStarNode} to the goal.
      * 
      * @param from
      *            The start node
@@ -34,9 +32,8 @@ public interface AStarGoal<T extends AStarNode> {
     float h(T from);
 
     /**
-     * Returns whether the supplied {@link AStarNode} represents the goal state
-     * for this <code>AStarGoal</code>. This will halt execution of the calling
-     * {@link AStarMachine}.
+     * Returns whether the supplied {@link AStarNode} represents the goal state for this <code>AStarGoal</code>. This
+     * will halt execution of the calling {@link AStarMachine}.
      * 
      * @param node
      *            The node to check

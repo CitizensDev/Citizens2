@@ -31,7 +31,8 @@ public class Selectors {
         return prioritySelectionFunction0(BEHAVIOR_COMPARATOR);
     }
 
-    private static Function<List<Behavior>, Behavior> prioritySelectionFunction0(final Comparator<Behavior> comparator) {
+    private static Function<List<Behavior>, Behavior> prioritySelectionFunction0(
+            final Comparator<Behavior> comparator) {
         return new PrioritySelection(comparator);
     }
 

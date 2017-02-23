@@ -95,8 +95,7 @@ public class NBTStorage implements FileStorage {
                 if (stream != null) {
                     stream.close();
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.getCause(); // Do nothing
             }
         }
@@ -125,8 +124,7 @@ public class NBTStorage implements FileStorage {
                 if (stream != null) {
                     stream.close();
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.getCause(); // Do nothing
             }
         }

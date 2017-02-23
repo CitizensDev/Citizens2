@@ -47,8 +47,8 @@ public class CommandSenderCreateNPCEvent extends NPCCreateEvent implements Cance
     }
 
     /**
-     * Sets the reason for cancelling the event. This will be sent to the
-     * {@link CommandSender} creator to explain why the NPC cannot be created.
+     * Sets the reason for cancelling the event. This will be sent to the {@link CommandSender} creator to explain why
+     * the NPC cannot be created.
      * 
      * @param reason
      *            The reason explaining the cancellation

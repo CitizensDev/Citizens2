@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.command.exception;
 
-
 public class WrappedCommandException extends CommandException {
     public WrappedCommandException(Throwable t) {
         super(t);

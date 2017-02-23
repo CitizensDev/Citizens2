@@ -15,9 +15,9 @@ public interface MetadataStore {
      */
     <T> T get(String key);
 
-/**
-     *  Fetches metadata from the given key. Sets the default value provided via
-     * {@link #set(String, Object) if the metadata is not already stored.
+    /**
+     * Fetches metadata from the given key. Sets the default value provided via {@link #set(String, Object) if the
+     * metadata is not already stored.
      * 
      * @param key
      *            The key to get metadata from
@@ -71,8 +71,7 @@ public interface MetadataStore {
     void set(String key, Object data);
 
     /**
-     * Stores data at the given key. Data will persist and must be a primitive
-     * type or {@link String}.
+     * Stores data at the given key. Data will persist and must be a primitive type or {@link String}.
      * 
      * @param key
      *            The metadata key

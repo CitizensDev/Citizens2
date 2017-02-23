@@ -8,8 +8,8 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 /**
- * Represents an event where an NPC speaks, with {@link SpeechContext}. This
- * event takes place before being sent to the {@link VocalChord}.
+ * Represents an event where an NPC speaks, with {@link SpeechContext}. This event takes place before being sent to the
+ * {@link VocalChord}.
  * 
  */
 public class NPCSpeechEvent extends NPCEvent implements Cancellable {

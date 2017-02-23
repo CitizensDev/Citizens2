@@ -68,12 +68,12 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
 
         EntityType type = npc.getTrait(MobType.class).getType();
         if (!types.contains(type)) {
-            throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, type
-                    .name().toLowerCase().replace('_', ' ')));
+            throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE,
+                    type.name().toLowerCase().replace('_', ' ')));
         }
         if (requirements.livingEntity() && !type.isAlive()) {
-            throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_MUST_BE_LIVING_ENTITY,
-                    methodArgs));
+            throw new RequirementMissingException(
+                    Messaging.tr(CommandMessages.REQUIREMENTS_MUST_BE_LIVING_ENTITY, methodArgs));
         }
     }
 }

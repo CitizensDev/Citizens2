@@ -9,8 +9,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Represents an event where a {@link Talkable} entity speaks at/near a
- * {@link Talkable} entity.
+ * Represents an event where a {@link Talkable} entity speaks at/near a {@link Talkable} entity.
  * 
  */
 public class SpeechEvent extends Event implements Cancellable {
@@ -44,9 +43,8 @@ public class SpeechEvent extends Event implements Cancellable {
     }
 
     /**
-     * The final message to be sent to the bystander. Note: This may differ from
-     * the message contained in the SpeechContext, as formatting may have
-     * occurred.
+     * The final message to be sent to the bystander. Note: This may differ from the message contained in the
+     * SpeechContext, as formatting may have occurred.
      * 
      * @return the message to be sent to the {@link Talkable} bystander.
      */
@@ -74,9 +72,8 @@ public class SpeechEvent extends Event implements Cancellable {
     }
 
     /**
-     * Sets the message to be sent to the bystander. Note: This may differ from
-     * the message contained in the SpeechContext, as formatting may have
-     * occurred.
+     * Sets the message to be sent to the bystander. Note: This may differ from the message contained in the
+     * SpeechContext, as formatting may have occurred.
      * 
      * @return the message to be sent
      */

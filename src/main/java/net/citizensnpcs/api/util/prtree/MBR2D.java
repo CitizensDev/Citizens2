@@ -1,37 +1,52 @@
 package net.citizensnpcs.api.util.prtree;
 
-/** A minimum bounding rectangle
- */ 
+/**
+ * A minimum bounding rectangle
+ */
 public interface MBR2D {
-    /** Get the maximum x value
+    /**
+     * Get the maximum x value
+     * 
      * @return the x max value
      */
-    double getMaxX ();
+    double getMaxX();
 
-    /** Get the maximum y value
+    /**
+     * Get the maximum y value
+     * 
      * @return the y max value
      */
-    double getMaxY ();
+    double getMaxY();
 
-    /** Get the minimum x value 
+    /**
+     * Get the minimum x value
+     * 
      * @return the x min value
      */
-    double getMinX ();
+    double getMinX();
 
-    /** Get the minimum y value
+    /**
+     * Get the minimum y value
+     * 
      * @return the y min value
      */
-    double getMinY ();
+    double getMinY();
 
-    /** Check if the other MBR intersects this one
-     * @param other the MBR to check against
+    /**
+     * Check if the other MBR intersects this one
+     * 
+     * @param other
+     *            the MBR to check against
      * @return true if the given MBR intersects with this MBR
      */
-    boolean intersects (MBR2D other);
+    boolean intersects(MBR2D other);
 
-    /** Return a new MBR that is the union of this mbr and the other 
-     * @param mbr the MBR to create a union with
+    /**
+     * Return a new MBR that is the union of this mbr and the other
+     * 
+     * @param mbr
+     *            the MBR to create a union with
      * @return the new MBR
      */
-    MBR2D union (MBR2D mbr);
+    MBR2D union(MBR2D mbr);
 }

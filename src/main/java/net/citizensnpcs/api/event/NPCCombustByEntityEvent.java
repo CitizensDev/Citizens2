@@ -15,8 +15,7 @@ public class NPCCombustByEntityEvent extends NPCCombustEvent {
     }
 
     /**
-     * The combuster can be a WeatherStorm a Blaze, or an Entity holding a
-     * FIRE_ASPECT enchanted item.
+     * The combuster can be a WeatherStorm a Blaze, or an Entity holding a FIRE_ASPECT enchanted item.
      * 
      * @return the Entity that set the combustee alight.
      */

@@ -14,8 +14,7 @@ import org.bukkit.plugin.PluginManager;
 import com.google.common.collect.Maps;
 
 /**
- * A simple {@link ContextProvider} for scripts, allowing them to register and
- * unregister events.
+ * A simple {@link ContextProvider} for scripts, allowing them to register and unregister events.
  */
 public class EventRegistrar implements ContextProvider {
     private final Plugin plugin;

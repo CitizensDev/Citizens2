@@ -101,8 +101,8 @@ public final class NBTUtils {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 Tag tag = createTag("", entry.getValue());
                 if (tag == null)
-                    throw new IllegalArgumentException("cannot convert map value with key " + entry.getKey()
-                            + " to tag");
+                    throw new IllegalArgumentException(
+                            "cannot convert map value with key " + entry.getKey() + " to tag");
                 newMap.put(entry.getKey(), tag);
             }
             return new CompoundTag(name, newMap);

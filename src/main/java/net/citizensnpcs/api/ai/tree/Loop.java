@@ -1,9 +1,8 @@
 package net.citizensnpcs.api.ai.tree;
 
 /**
- * A decorator {@link Behavior} that continues to execute its child behavior as
- * long as a {@link Condition} returns <code>true</code> and the behavior
- * returns {@link BehaviorStatus#SUCCESS}.
+ * A decorator {@link Behavior} that continues to execute its child behavior as long as a {@link Condition} returns
+ * <code>true</code> and the behavior returns {@link BehaviorStatus#SUCCESS}.
  */
 public class Loop extends BehaviorGoalAdapter {
     private final Condition condition;

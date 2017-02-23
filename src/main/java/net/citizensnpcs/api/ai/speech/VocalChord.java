@@ -9,8 +9,7 @@ public interface VocalChord {
     public String getName();
 
     /**
-     * Called when an NPC's {@link SpeechController} needs to output some text
-     * to a {@link Talkable} entity.
+     * Called when an NPC's {@link SpeechController} needs to output some text to a {@link Talkable} entity.
      * 
      * @param context
      *            The {@link SpeechContext} with talk information

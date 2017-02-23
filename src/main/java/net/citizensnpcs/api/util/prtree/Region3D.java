@@ -64,10 +64,10 @@ public class Region3D<T> implements MBR {
 
     @Override
     public MBR union(MBR mbr) {
-        Vector umin = new Vector(Math.min(min.getX(), mbr.getMin(0)), Math.min(min.getY(), mbr.getMin(1)), Math.min(
-                min.getZ(), mbr.getMin(2)));
-        Vector umax = new Vector(Math.max(max.getX(), mbr.getMax(0)), Math.max(max.getY(), mbr.getMax(1)), Math.max(
-                max.getZ(), mbr.getMax(2)));
+        Vector umin = new Vector(Math.min(min.getX(), mbr.getMin(0)), Math.min(min.getY(), mbr.getMin(1)),
+                Math.min(min.getZ(), mbr.getMin(2)));
+        Vector umax = new Vector(Math.max(max.getX(), mbr.getMax(0)), Math.max(max.getY(), mbr.getMax(1)),
+                Math.max(max.getZ(), mbr.getMax(2)));
         return new Region3D<T>(umin, umax, data);
     }
 

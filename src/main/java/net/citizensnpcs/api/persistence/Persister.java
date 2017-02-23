@@ -4,8 +4,7 @@ import net.citizensnpcs.api.util.DataKey;
 
 public interface Persister<T> {
     /**
-     * Creates an object instance from the given {@link DataKey}. Should not
-     * return null unless no data is present.
+     * Creates an object instance from the given {@link DataKey}. Should not return null unless no data is present.
      * 
      * @param root
      *            The root key to load from

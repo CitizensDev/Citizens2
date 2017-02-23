@@ -16,34 +16,28 @@ class NearestNeighbour<T> {
     private final PointND p;
     private final Node<T> root;
 
-    public NearestNeighbour (MBRConverter<T> converter,
-			     NodeFilter<T> filter,
-			     int maxHits,
-			     Node<T> root,
-			     DistanceCalculator<T> dc,
-			     PointND p) {
-	this.converter = converter;
-	this.filter = filter;
-	this.maxHits = maxHits;
-	this.root = root;
-	this.dc = dc;
-	this.p = p;
+    public NearestNeighbour(MBRConverter<T> converter, NodeFilter<T> filter, int maxHits, Node<T> root,
+            DistanceCalculator<T> dc, PointND p) {
+        this.converter = converter;
+        this.filter = filter;
+        this.maxHits = maxHits;
+        this.root = root;
+        this.dc = dc;
+        this.p = p;
     }
 
     /**
      * @return the nearest neighbour
      */
-    public List<DistanceResult<T>> find () {
-	List<DistanceResult<T>> ret =
-	    new ArrayList<DistanceResult<T>> (maxHits);
-	MinDistComparator<T, Node<T>> nc =
-	    new MinDistComparator<T, Node<T>> (converter, p);
-	PriorityQueue<Node<T>> queue = new PriorityQueue<Node<T>> (20, nc);
-	queue.add (root);
-	while (!queue.isEmpty ()) {
-	    Node<T> n = queue.remove ();
-	    n.nnExpand (dc, filter, ret, maxHits, queue, nc);
-	}
-	return ret;
+    public List<DistanceResult<T>> find() {
+        List<DistanceResult<T>> ret = new ArrayList<DistanceResult<T>>(maxHits);
+        MinDistComparator<T, Node<T>> nc = new MinDistComparator<T, Node<T>>(converter, p);
+        PriorityQueue<Node<T>> queue = new PriorityQueue<Node<T>>(20, nc);
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            Node<T> n = queue.remove();
+            n.nnExpand(dc, filter, ret, maxHits, queue, nc);
+        }
+        return ret;
     }
 }

@@ -4,8 +4,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 /**
- * SpeechFactory keeps track of and creates new VocalChord instances, necessary
- * for NPC Speech.
+ * SpeechFactory keeps track of and creates new VocalChord instances, necessary for NPC Speech.
  * 
  */
 public interface SpeechFactory {
@@ -25,8 +24,7 @@ public interface SpeechFactory {
      * 
      * @param name
      *            The name of the desired VocalChord
-     * @return a new instance of this VocalChord, ornull if a VocalChord is not
-     *         registered with this name
+     * @return a new instance of this VocalChord, ornull if a VocalChord is not registered with this name
      * 
      */
     public VocalChord getVocalChord(String name);
@@ -64,9 +62,8 @@ public interface SpeechFactory {
     public Talkable newTalkableEntity(LivingEntity entity);
 
     /**
-     * Registers a {@link VocalChord} class with the SpeechController, making it
-     * available for use within. Requires a 'name', which should generally
-     * describe the intent of the VocalChord.
+     * Registers a {@link VocalChord} class with the SpeechController, making it available for use within. Requires a
+     * 'name', which should generally describe the intent of the VocalChord.
      * 
      * @param clazz
      *            The VocalChord class

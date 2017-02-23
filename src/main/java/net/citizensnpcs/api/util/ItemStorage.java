@@ -192,6 +192,15 @@ public class ItemStorage {
         if (root.keyExists("repaircost") && res.getItemMeta() instanceof Repairable) {
             ((Repairable) res.getItemMeta()).setRepairCost(root.getInt("repaircost"));
         }
+        ItemMeta meta = res.getItemMeta();
+        if (meta != null) {
+            try {
+                meta.setUnbreakable(root.getBoolean("unbreakable", false));
+            } catch (Throwable t) {
+                // probably backwards-compat issue, don't log
+            }
+            res.setItemMeta(meta);
+        }
 
         Bukkit.getPluginManager().callEvent(new CitizensDeserialiseMetaEvent(root, res));
     }
@@ -292,6 +301,11 @@ public class ItemStorage {
 
     private static void serialiseMeta(DataKey key, ItemMeta meta) {
         key.removeKey("flags");
+        try {
+            key.setBoolean("unbreakable", meta.isUnbreakable());
+        } catch (Throwable t) {
+            // probably backwards-compat issue, don't log
+        }
         int j = 0;
         for (ItemFlag flag : ItemFlag.values()) {
             if (meta.hasItemFlag(flag)) {
