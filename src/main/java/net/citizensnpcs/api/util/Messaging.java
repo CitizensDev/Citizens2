@@ -107,8 +107,7 @@ public class Messaging {
                 message = messageColour + message;
         }
         message = message.replace("[[", Colorizer.parseColors(HIGHLIGHT_COLOUR));
-        message = message.replace("]]", messageColour);
-        return message;
+        return CHAT_NEWLINE.matcher(message).replaceAll("<n>]]").replace("]]", messageColour);
     }
 
     public static void send(CommandSender sender, Object... msg) {
@@ -173,7 +172,6 @@ public class Messaging {
     }
 
     private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|<n>|\\n", Pattern.MULTILINE);
-
     private static final Splitter CHAT_NEWLINE_SPLITTER = Splitter.on(CHAT_NEWLINE);
     private static boolean DEBUG = false;
     private static Logger DEBUG_LOGGER;
