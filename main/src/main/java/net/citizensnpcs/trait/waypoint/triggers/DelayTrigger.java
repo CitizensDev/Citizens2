@@ -1,13 +1,13 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.trait.waypoint.WaypointProvider;
 import net.citizensnpcs.trait.waypoint.Waypoints;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 
 public class DelayTrigger implements WaypointTrigger {
     @Persist

@@ -1,11 +1,5 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.trait.waypoint.Waypoint;
-import net.citizensnpcs.trait.waypoint.WaypointEditor;
-import net.citizensnpcs.util.Messages;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationContext;
@@ -13,6 +7,12 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.trait.waypoint.Waypoint;
+import net.citizensnpcs.trait.waypoint.WaypointEditor;
+import net.citizensnpcs.util.Messages;
 
 public class TriggerEditPrompt extends StringPrompt {
     private final WaypointEditor editor;
@@ -54,8 +54,8 @@ public class TriggerEditPrompt extends StringPrompt {
 
     public static Conversation start(Player player, WaypointEditor editor) {
         final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin()).withLocalEcho(false)
-                .withEscapeSequence("exit").withEscapeSequence("/npc path").withModality(false)
-                .withFirstPrompt(new TriggerEditPrompt(editor)).buildConversation(player);
+                .withEscapeSequence("exit").withEscapeSequence("triggers").withEscapeSequence("/npc path")
+                .withModality(false).withFirstPrompt(new TriggerEditPrompt(editor)).buildConversation(player);
         conversation.begin();
         return conversation;
     }

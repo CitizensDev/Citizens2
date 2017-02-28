@@ -22,6 +22,12 @@ public class WaypointTriggerRegistry implements Persister<WaypointTrigger> {
     @Override
     public void save(WaypointTrigger instance, DataKey root) {
         PersistenceLoader.save(instance, root);
+        for (Map.Entry<String, Class<? extends WaypointTrigger>> entry : triggers.entrySet()) {
+            if (entry.getValue() == instance.getClass()) {
+                root.setString("type", entry.getKey());
+                break;
+            }
+        }
     }
 
     public static void addTrigger(String name, Class<? extends WaypointTrigger> triggerClass,

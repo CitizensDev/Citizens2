@@ -132,7 +132,9 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
     @Override
     public void setPaused(boolean paused) {
-        currentGoal.setPaused(paused);
+        if (currentGoal != null) {
+            currentGoal.setPaused(paused);
+        }
     }
 
     @Override
@@ -462,8 +464,8 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(@Nullable CancelReason cancelReason) {
-                    if (npc.isSpawned() && currentDestination != null && Util
-                            .locationWithinRange(npc.getEntity().getLocation(), currentDestination.getLocation(), 4)) {
+                    if (npc.isSpawned() && currentDestination != null
+                            && Util.locationWithinRange(npc.getStoredLocation(), currentDestination.getLocation(), 2)) {
                         currentDestination.onReach(npc);
                     }
                     selector.finish();

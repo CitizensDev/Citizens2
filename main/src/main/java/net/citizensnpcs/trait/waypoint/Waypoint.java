@@ -3,6 +3,11 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Collections;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+
+import com.google.common.collect.Lists;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
@@ -10,11 +15,6 @@ import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.trait.waypoint.triggers.DelayTrigger;
 import net.citizensnpcs.trait.waypoint.triggers.WaypointTrigger;
 import net.citizensnpcs.trait.waypoint.triggers.WaypointTriggerRegistry;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-
-import com.google.common.collect.Lists;
 
 public class Waypoint {
     @Persist(required = true)
@@ -69,9 +69,8 @@ public class Waypoint {
         return location;
     }
 
-    @SuppressWarnings("unchecked")
     public List<WaypointTrigger> getTriggers() {
-        return triggers == null ? Collections.EMPTY_LIST : triggers;
+        return triggers == null ? Collections.<WaypointTrigger> emptyList() : triggers;
     }
 
     @Override
@@ -96,7 +95,7 @@ public class Waypoint {
             int delay = ((DelayTrigger) trigger).getDelay();
             if (delay <= 0)
                 continue;
-            final int newStart = i;
+            final int newStart = i + 1;
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
