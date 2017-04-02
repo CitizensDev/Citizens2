@@ -30,6 +30,7 @@ import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager.Profession;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.google.common.base.Joiner;
@@ -114,8 +115,8 @@ public class NPCCommands {
             max = 2,
             permission = "citizens.npc.age")
     public void age(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        if (!npc.isSpawned() || !(npc.getEntity() instanceof Ageable))
-            throw new CommandException(Messages.MOBTYPE_CANNOT_BE_AGED);
+        if (!npc.isSpawned() || (!(npc.getEntity() instanceof Ageable) && !(npc.getEntity() instanceof Zombie)))
+            throw new CommandException(Messages.MOBTYPE_CANNOT_BE_AGED, npc.getName());
         Age trait = npc.getTrait(Age.class);
 
         boolean toggleLock = args.hasFlag('l');

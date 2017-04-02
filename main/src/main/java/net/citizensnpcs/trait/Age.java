@@ -2,6 +2,7 @@ package net.citizensnpcs.trait;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Zombie;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -36,8 +37,12 @@ public class Age extends Trait implements Toggleable {
             entity.setAge(age);
             entity.setAgeLock(locked);
             ageable = entity;
-        } else
+        } else if (npc.getEntity() instanceof Zombie) {
+            ((Zombie) npc.getEntity()).setBaby(age < 0);
             ageable = null;
+        } else {
+            ageable = null;
+        }
     }
 
     @Override
@@ -51,14 +56,17 @@ public class Age extends Trait implements Toggleable {
         this.age = age;
         if (isAgeable()) {
             ageable.setAge(age);
+        } else if (npc.getEntity() instanceof Zombie) {
+            ((Zombie) npc.getEntity()).setBaby(age < 0);
         }
     }
 
     @Override
     public boolean toggle() {
         locked = !locked;
-        if (isAgeable())
+        if (isAgeable()) {
             ageable.setAgeLock(locked);
+        }
         return locked;
     }
 
