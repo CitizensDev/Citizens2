@@ -10,7 +10,7 @@ import net.minecraft.server.v1_12_R1.PathfinderAbstract;
 public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
     protected IBlockAccess a;
     protected EntityHumanNPC b;
-    protected final IntHashMap<PathPoint> c = new IntHashMap<>();
+    protected final IntHashMap<PathPoint> c = new IntHashMap<PathPoint>();
     protected int d;
     protected int e;
     protected int f;
