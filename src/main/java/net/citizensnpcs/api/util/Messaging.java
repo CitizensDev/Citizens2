@@ -103,8 +103,9 @@ public class Messaging {
                     message = messageColour + message;
                 } else
                     messageColour = test.toString();
-            } else
+            } else {
                 message = messageColour + message;
+            }
         }
         message = message.replace("[[", Colorizer.parseColors(HIGHLIGHT_COLOUR));
         return CHAT_NEWLINE.matcher(message).replaceAll("<n>]]").replace("]]", messageColour);
