@@ -147,5 +147,10 @@ public abstract class DataKey {
                 return false;
             }
         }
+
+        @Override
+        public boolean test(DataKey key) {
+            return apply(key);
+        }
     };
 }
