@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_11_R1.util;
+package net.citizensnpcs.nms.v1_12_R1.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -22,14 +22,14 @@ import org.bukkit.World;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.craftbukkit.v1_11_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_11_R1.CraftSound;
-import org.bukkit.craftbukkit.v1_11_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_11_R1.boss.CraftBossBar;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftWither;
-import org.bukkit.craftbukkit.v1_11_R1.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_12_R1.CraftSound;
+import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_12_R1.boss.CraftBossBar;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftWither;
+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Horse;
@@ -67,91 +67,93 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.nms.v1_11_R1.entity.BatController;
-import net.citizensnpcs.nms.v1_11_R1.entity.BlazeController;
-import net.citizensnpcs.nms.v1_11_R1.entity.CaveSpiderController;
-import net.citizensnpcs.nms.v1_11_R1.entity.ChickenController;
-import net.citizensnpcs.nms.v1_11_R1.entity.CowController;
-import net.citizensnpcs.nms.v1_11_R1.entity.CreeperController;
-import net.citizensnpcs.nms.v1_11_R1.entity.EnderDragonController;
-import net.citizensnpcs.nms.v1_11_R1.entity.EndermanController;
-import net.citizensnpcs.nms.v1_11_R1.entity.EndermiteController;
-import net.citizensnpcs.nms.v1_11_R1.entity.EntityHumanNPC;
-import net.citizensnpcs.nms.v1_11_R1.entity.EvokerController;
-import net.citizensnpcs.nms.v1_11_R1.entity.GhastController;
-import net.citizensnpcs.nms.v1_11_R1.entity.GiantController;
-import net.citizensnpcs.nms.v1_11_R1.entity.GuardianController;
-import net.citizensnpcs.nms.v1_11_R1.entity.GuardianElderController;
-import net.citizensnpcs.nms.v1_11_R1.entity.HorseController;
-import net.citizensnpcs.nms.v1_11_R1.entity.HorseDonkeyController;
-import net.citizensnpcs.nms.v1_11_R1.entity.HorseMuleController;
-import net.citizensnpcs.nms.v1_11_R1.entity.HorseSkeletonController;
-import net.citizensnpcs.nms.v1_11_R1.entity.HorseZombieController;
-import net.citizensnpcs.nms.v1_11_R1.entity.HumanController;
-import net.citizensnpcs.nms.v1_11_R1.entity.IronGolemController;
-import net.citizensnpcs.nms.v1_11_R1.entity.LlamaController;
-import net.citizensnpcs.nms.v1_11_R1.entity.MagmaCubeController;
-import net.citizensnpcs.nms.v1_11_R1.entity.MushroomCowController;
-import net.citizensnpcs.nms.v1_11_R1.entity.OcelotController;
-import net.citizensnpcs.nms.v1_11_R1.entity.PigController;
-import net.citizensnpcs.nms.v1_11_R1.entity.PigZombieController;
-import net.citizensnpcs.nms.v1_11_R1.entity.PolarBearController;
-import net.citizensnpcs.nms.v1_11_R1.entity.RabbitController;
-import net.citizensnpcs.nms.v1_11_R1.entity.SheepController;
-import net.citizensnpcs.nms.v1_11_R1.entity.ShulkerController;
-import net.citizensnpcs.nms.v1_11_R1.entity.SilverfishController;
-import net.citizensnpcs.nms.v1_11_R1.entity.SkeletonController;
-import net.citizensnpcs.nms.v1_11_R1.entity.SkeletonStrayController;
-import net.citizensnpcs.nms.v1_11_R1.entity.SkeletonWitherController;
-import net.citizensnpcs.nms.v1_11_R1.entity.SlimeController;
-import net.citizensnpcs.nms.v1_11_R1.entity.SnowmanController;
-import net.citizensnpcs.nms.v1_11_R1.entity.SpiderController;
-import net.citizensnpcs.nms.v1_11_R1.entity.SquidController;
-import net.citizensnpcs.nms.v1_11_R1.entity.VexController;
-import net.citizensnpcs.nms.v1_11_R1.entity.VillagerController;
-import net.citizensnpcs.nms.v1_11_R1.entity.VindicatorController;
-import net.citizensnpcs.nms.v1_11_R1.entity.WitchController;
-import net.citizensnpcs.nms.v1_11_R1.entity.WitherController;
-import net.citizensnpcs.nms.v1_11_R1.entity.WolfController;
-import net.citizensnpcs.nms.v1_11_R1.entity.ZombieController;
-import net.citizensnpcs.nms.v1_11_R1.entity.ZombieHuskController;
-import net.citizensnpcs.nms.v1_11_R1.entity.ZombieVillagerController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.AreaEffectCloudController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ArmorStandController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.BoatController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.DragonFireballController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.EggController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.EnderCrystalController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.EnderPearlController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.EnderSignalController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.EvokerFangsController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.FallingBlockController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.FireworkController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.FishingHookController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ItemController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ItemFrameController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.LargeFireballController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.LeashController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.LlamaSpitController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.MinecartChestController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.MinecartCommandController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.MinecartFurnaceController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.MinecartHopperController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.MinecartRideableController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.MinecartTNTController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.PaintingController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ShulkerBulletController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.SmallFireballController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.SnowballController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.SpectralArrowController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.TNTPrimedController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ThrownExpBottleController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ThrownPotionController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.TippedArrowController;
-import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.WitherSkullController;
-import net.citizensnpcs.nms.v1_11_R1.network.EmptyChannel;
-import net.citizensnpcs.nms.v1_11_R1.trait.Commands;
-import net.citizensnpcs.nms.v1_11_R1.trait.LlamaTrait;
+import net.citizensnpcs.nms.v1_12_R1.entity.BatController;
+import net.citizensnpcs.nms.v1_12_R1.entity.BlazeController;
+import net.citizensnpcs.nms.v1_12_R1.entity.CaveSpiderController;
+import net.citizensnpcs.nms.v1_12_R1.entity.ChickenController;
+import net.citizensnpcs.nms.v1_12_R1.entity.CowController;
+import net.citizensnpcs.nms.v1_12_R1.entity.CreeperController;
+import net.citizensnpcs.nms.v1_12_R1.entity.EnderDragonController;
+import net.citizensnpcs.nms.v1_12_R1.entity.EndermanController;
+import net.citizensnpcs.nms.v1_12_R1.entity.EndermiteController;
+import net.citizensnpcs.nms.v1_12_R1.entity.EntityHumanNPC;
+import net.citizensnpcs.nms.v1_12_R1.entity.EvokerController;
+import net.citizensnpcs.nms.v1_12_R1.entity.GhastController;
+import net.citizensnpcs.nms.v1_12_R1.entity.GiantController;
+import net.citizensnpcs.nms.v1_12_R1.entity.GuardianController;
+import net.citizensnpcs.nms.v1_12_R1.entity.GuardianElderController;
+import net.citizensnpcs.nms.v1_12_R1.entity.HorseController;
+import net.citizensnpcs.nms.v1_12_R1.entity.HorseDonkeyController;
+import net.citizensnpcs.nms.v1_12_R1.entity.HorseMuleController;
+import net.citizensnpcs.nms.v1_12_R1.entity.HorseSkeletonController;
+import net.citizensnpcs.nms.v1_12_R1.entity.HorseZombieController;
+import net.citizensnpcs.nms.v1_12_R1.entity.HumanController;
+import net.citizensnpcs.nms.v1_12_R1.entity.IllusionerController;
+import net.citizensnpcs.nms.v1_12_R1.entity.IronGolemController;
+import net.citizensnpcs.nms.v1_12_R1.entity.LlamaController;
+import net.citizensnpcs.nms.v1_12_R1.entity.MagmaCubeController;
+import net.citizensnpcs.nms.v1_12_R1.entity.MushroomCowController;
+import net.citizensnpcs.nms.v1_12_R1.entity.OcelotController;
+import net.citizensnpcs.nms.v1_12_R1.entity.ParrotController;
+import net.citizensnpcs.nms.v1_12_R1.entity.PigController;
+import net.citizensnpcs.nms.v1_12_R1.entity.PigZombieController;
+import net.citizensnpcs.nms.v1_12_R1.entity.PolarBearController;
+import net.citizensnpcs.nms.v1_12_R1.entity.RabbitController;
+import net.citizensnpcs.nms.v1_12_R1.entity.SheepController;
+import net.citizensnpcs.nms.v1_12_R1.entity.ShulkerController;
+import net.citizensnpcs.nms.v1_12_R1.entity.SilverfishController;
+import net.citizensnpcs.nms.v1_12_R1.entity.SkeletonController;
+import net.citizensnpcs.nms.v1_12_R1.entity.SkeletonStrayController;
+import net.citizensnpcs.nms.v1_12_R1.entity.SkeletonWitherController;
+import net.citizensnpcs.nms.v1_12_R1.entity.SlimeController;
+import net.citizensnpcs.nms.v1_12_R1.entity.SnowmanController;
+import net.citizensnpcs.nms.v1_12_R1.entity.SpiderController;
+import net.citizensnpcs.nms.v1_12_R1.entity.SquidController;
+import net.citizensnpcs.nms.v1_12_R1.entity.VexController;
+import net.citizensnpcs.nms.v1_12_R1.entity.VillagerController;
+import net.citizensnpcs.nms.v1_12_R1.entity.VindicatorController;
+import net.citizensnpcs.nms.v1_12_R1.entity.WitchController;
+import net.citizensnpcs.nms.v1_12_R1.entity.WitherController;
+import net.citizensnpcs.nms.v1_12_R1.entity.WolfController;
+import net.citizensnpcs.nms.v1_12_R1.entity.ZombieController;
+import net.citizensnpcs.nms.v1_12_R1.entity.ZombieHuskController;
+import net.citizensnpcs.nms.v1_12_R1.entity.ZombieVillagerController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.AreaEffectCloudController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.ArmorStandController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.BoatController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.DragonFireballController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.EggController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.EnderCrystalController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.EnderPearlController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.EnderSignalController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.EvokerFangsController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.FallingBlockController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.FireworkController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.FishingHookController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.ItemController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.ItemFrameController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.LargeFireballController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.LeashController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.LlamaSpitController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.MinecartChestController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.MinecartCommandController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.MinecartFurnaceController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.MinecartHopperController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.MinecartRideableController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.MinecartTNTController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.PaintingController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.ShulkerBulletController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.SmallFireballController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.SnowballController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.SpectralArrowController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.TNTPrimedController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.ThrownExpBottleController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.ThrownPotionController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.TippedArrowController;
+import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.WitherSkullController;
+import net.citizensnpcs.nms.v1_12_R1.network.EmptyChannel;
+import net.citizensnpcs.nms.v1_12_R1.trait.Commands;
+import net.citizensnpcs.nms.v1_12_R1.trait.LlamaTrait;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -164,53 +166,55 @@ import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_11_R1.AttributeInstance;
-import net.minecraft.server.v1_11_R1.AxisAlignedBB;
-import net.minecraft.server.v1_11_R1.Block;
-import net.minecraft.server.v1_11_R1.BlockPosition;
-import net.minecraft.server.v1_11_R1.BossBattleServer;
-import net.minecraft.server.v1_11_R1.ControllerJump;
-import net.minecraft.server.v1_11_R1.CrashReport;
-import net.minecraft.server.v1_11_R1.CrashReportSystemDetails;
-import net.minecraft.server.v1_11_R1.DamageSource;
-import net.minecraft.server.v1_11_R1.DataWatcherObject;
-import net.minecraft.server.v1_11_R1.EnchantmentManager;
-import net.minecraft.server.v1_11_R1.Enchantments;
-import net.minecraft.server.v1_11_R1.EnderDragonBattle;
-import net.minecraft.server.v1_11_R1.Entity;
-import net.minecraft.server.v1_11_R1.EntityEnderDragon;
-import net.minecraft.server.v1_11_R1.EntityFishingHook;
-import net.minecraft.server.v1_11_R1.EntityHorse;
-import net.minecraft.server.v1_11_R1.EntityHuman;
-import net.minecraft.server.v1_11_R1.EntityInsentient;
-import net.minecraft.server.v1_11_R1.EntityLiving;
-import net.minecraft.server.v1_11_R1.EntityMinecartAbstract;
-import net.minecraft.server.v1_11_R1.EntityPlayer;
-import net.minecraft.server.v1_11_R1.EntityPolarBear;
-import net.minecraft.server.v1_11_R1.EntityRabbit;
-import net.minecraft.server.v1_11_R1.EntityTameableAnimal;
-import net.minecraft.server.v1_11_R1.EntityTracker;
-import net.minecraft.server.v1_11_R1.EntityTrackerEntry;
-import net.minecraft.server.v1_11_R1.EntityTypes;
-import net.minecraft.server.v1_11_R1.EntityWither;
-import net.minecraft.server.v1_11_R1.EnumMoveType;
-import net.minecraft.server.v1_11_R1.GenericAttributes;
-import net.minecraft.server.v1_11_R1.MathHelper;
-import net.minecraft.server.v1_11_R1.MinecraftKey;
-import net.minecraft.server.v1_11_R1.MobEffects;
-import net.minecraft.server.v1_11_R1.NavigationAbstract;
-import net.minecraft.server.v1_11_R1.NetworkManager;
-import net.minecraft.server.v1_11_R1.Packet;
-import net.minecraft.server.v1_11_R1.PacketPlayOutEntityTeleport;
-import net.minecraft.server.v1_11_R1.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_11_R1.PathEntity;
-import net.minecraft.server.v1_11_R1.PathPoint;
-import net.minecraft.server.v1_11_R1.PathfinderGoalSelector;
-import net.minecraft.server.v1_11_R1.RegistryMaterials;
-import net.minecraft.server.v1_11_R1.ReportedException;
-import net.minecraft.server.v1_11_R1.SoundEffect;
-import net.minecraft.server.v1_11_R1.Vec3D;
-import net.minecraft.server.v1_11_R1.WorldServer;
+import net.minecraft.server.v1_12_R1.AttributeInstance;
+import net.minecraft.server.v1_12_R1.AxisAlignedBB;
+import net.minecraft.server.v1_12_R1.Block;
+import net.minecraft.server.v1_12_R1.BlockPosition;
+import net.minecraft.server.v1_12_R1.BossBattleServer;
+import net.minecraft.server.v1_12_R1.ControllerJump;
+import net.minecraft.server.v1_12_R1.CrashReport;
+import net.minecraft.server.v1_12_R1.CrashReportSystemDetails;
+import net.minecraft.server.v1_12_R1.DamageSource;
+import net.minecraft.server.v1_12_R1.DataWatcherObject;
+import net.minecraft.server.v1_12_R1.EnchantmentManager;
+import net.minecraft.server.v1_12_R1.Enchantments;
+import net.minecraft.server.v1_12_R1.EnderDragonBattle;
+import net.minecraft.server.v1_12_R1.Entity;
+import net.minecraft.server.v1_12_R1.EntityBird;
+import net.minecraft.server.v1_12_R1.EntityEnderDragon;
+import net.minecraft.server.v1_12_R1.EntityFishingHook;
+import net.minecraft.server.v1_12_R1.EntityHorse;
+import net.minecraft.server.v1_12_R1.EntityHuman;
+import net.minecraft.server.v1_12_R1.EntityInsentient;
+import net.minecraft.server.v1_12_R1.EntityLiving;
+import net.minecraft.server.v1_12_R1.EntityMinecartAbstract;
+import net.minecraft.server.v1_12_R1.EntityPlayer;
+import net.minecraft.server.v1_12_R1.EntityPolarBear;
+import net.minecraft.server.v1_12_R1.EntityRabbit;
+import net.minecraft.server.v1_12_R1.EntityTameableAnimal;
+import net.minecraft.server.v1_12_R1.EntityTracker;
+import net.minecraft.server.v1_12_R1.EntityTrackerEntry;
+import net.minecraft.server.v1_12_R1.EntityTypes;
+import net.minecraft.server.v1_12_R1.EntityWither;
+import net.minecraft.server.v1_12_R1.EnumMoveType;
+import net.minecraft.server.v1_12_R1.GenericAttributes;
+import net.minecraft.server.v1_12_R1.MathHelper;
+import net.minecraft.server.v1_12_R1.MinecraftKey;
+import net.minecraft.server.v1_12_R1.MobEffects;
+import net.minecraft.server.v1_12_R1.NavigationAbstract;
+import net.minecraft.server.v1_12_R1.NetworkManager;
+import net.minecraft.server.v1_12_R1.Packet;
+import net.minecraft.server.v1_12_R1.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_12_R1.PathEntity;
+import net.minecraft.server.v1_12_R1.PathPoint;
+import net.minecraft.server.v1_12_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_12_R1.RegistryMaterials;
+import net.minecraft.server.v1_12_R1.ReportedException;
+import net.minecraft.server.v1_12_R1.SoundEffect;
+import net.minecraft.server.v1_12_R1.SoundEffects;
+import net.minecraft.server.v1_12_R1.Vec3D;
+import net.minecraft.server.v1_12_R1.WorldServer;
 
 @SuppressWarnings("unchecked")
 public class NMSImpl implements NMSBridge {
@@ -368,7 +372,7 @@ public class NMSImpl implements NMSBridge {
         if (!entity.getType().isAlive())
             return Float.NaN;
         EntityLiving handle = NMSImpl.getHandle((LivingEntity) entity);
-        return handle.bf;
+        return handle.bg;
     }
 
     @Override
@@ -463,7 +467,7 @@ public class NMSImpl implements NMSBridge {
 
     private MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final NavigatorParameters params,
             final Function<NavigationAbstract, Boolean> function) {
-        net.minecraft.server.v1_11_R1.Entity raw = getHandle(entity);
+        net.minecraft.server.v1_12_R1.Entity raw = getHandle(entity);
         raw.onGround = true;
         // not sure of a better way around this - if onGround is false, then
         // navigation won't execute, and calling entity.move doesn't
@@ -485,10 +489,10 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void stop() {
-                if (navigation.k() != null) {
+                if (navigation.l() != null) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < navigation.k().d(); i++) {
-                            PathPoint pp = navigation.k().a(i);
+                        for (int i = 0; i < navigation.l().d(); i++) {
+                            PathPoint pp = navigation.l().a(i);
                             org.bukkit.block.Block block = new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld())
                                     .getBlock();
                             player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
@@ -519,8 +523,8 @@ public class NMSImpl implements NMSBridge {
                 }
                 if (params.debug() && !NMSImpl.isNavigationFinished(navigation)) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < navigation.k().d(); i++) {
-                            PathPoint pp = navigation.k().a(i);
+                        for (int i = 0; i < navigation.l().d(); i++) {
+                            PathPoint pp = navigation.l().a(i);
                             player.sendBlockChange(new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld()),
                                     Material.YELLOW_FLOWER, (byte) 0);
                         }
@@ -602,6 +606,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.ZOMBIE_HORSE, HorseZombieController.class);
         EntityControllers.setEntityControllerForType(EntityType.HUSK, ZombieHuskController.class);
         EntityControllers.setEntityControllerForType(EntityType.IRON_GOLEM, IronGolemController.class);
+        EntityControllers.setEntityControllerForType(EntityType.ILLUSIONER, IllusionerController.class);
         EntityControllers.setEntityControllerForType(EntityType.ITEM_FRAME, ItemFrameController.class);
         EntityControllers.setEntityControllerForType(EntityType.LEASH_HITCH, LeashController.class);
         EntityControllers.setEntityControllerForType(EntityType.LLAMA, LlamaController.class);
@@ -617,6 +622,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.MUSHROOM_COW, MushroomCowController.class);
         EntityControllers.setEntityControllerForType(EntityType.OCELOT, OcelotController.class);
         EntityControllers.setEntityControllerForType(EntityType.PAINTING, PaintingController.class);
+        EntityControllers.setEntityControllerForType(EntityType.PARROT, ParrotController.class);
         EntityControllers.setEntityControllerForType(EntityType.PIG, PigController.class);
         EntityControllers.setEntityControllerForType(EntityType.PIG_ZOMBIE, PigZombieController.class);
         EntityControllers.setEntityControllerForType(EntityType.POLAR_BEAR, PolarBearController.class);
@@ -699,7 +705,7 @@ public class NMSImpl implements NMSBridge {
         }
         if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).getControllerLook().a(to.getX(), to.getY(), to.getZ(),
-                    ((EntityInsentient) handle).cL(), ((EntityInsentient) handle).N());
+                    ((EntityInsentient) handle).O(), ((EntityInsentient) handle).N());
 
             while (((EntityLiving) handle).aP >= 180F) {
                 ((EntityLiving) handle).aP -= 360F;
@@ -722,7 +728,7 @@ public class NMSImpl implements NMSBridge {
                 look(from, to.getLocation(), false, true);
             }
         } else if (handle instanceof EntityInsentient) {
-            ((EntityInsentient) handle).getControllerLook().a(target, ((EntityInsentient) handle).cL(),
+            ((EntityInsentient) handle).getControllerLook().a(target, ((EntityInsentient) handle).O(),
                     ((EntityInsentient) handle).N());
             while (((EntityLiving) handle).aP >= 180F) {
                 ((EntityLiving) handle).aP -= 360F;
@@ -988,7 +994,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public boolean tick(org.bukkit.entity.Entity next) {
         Entity entity = NMSImpl.getHandle(next);
-        Entity entity1 = entity.bB();
+        Entity entity1 = entity.bH();
         if (entity1 != null) {
             if ((entity1.dead) || (!entity1.w(entity))) {
                 entity.stopRiding();
@@ -1032,7 +1038,7 @@ public class NMSImpl implements NMSBridge {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null)
             return;
-        if (RANDOM.nextFloat() < 0.8F && (handle.ak() || handle.ao())) {
+        if (RANDOM.nextFloat() < 0.8F && (handle.aq() || handle.au())) {
             handle.motY += power;
         }
     }
@@ -1124,9 +1130,9 @@ public class NMSImpl implements NMSBridge {
 
         @Override
         public Iterator<Vector> iterator() {
-            final int npoints = navigation.k() == null ? 0 : navigation.k().d();
+            final int npoints = navigation.l() == null ? 0 : navigation.l().d();
             return new Iterator<Vector>() {
-                PathPoint curr = npoints > 0 ? navigation.k().a(0) : null;
+                PathPoint curr = npoints > 0 ? navigation.l().a(0) : null;
                 int i = 0;
 
                 @Override
@@ -1137,7 +1143,7 @@ public class NMSImpl implements NMSBridge {
                 @Override
                 public Vector next() {
                     PathPoint old = curr;
-                    curr = i + 1 < npoints ? navigation.k().a(++i) : null;
+                    curr = i + 1 < npoints ? navigation.l().a(++i) : null;
                     return new Vector(old.a, old.b, old.c);
                 }
 
@@ -1162,24 +1168,24 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    public static void flyingMoveLogic(EntityLiving entity, float f, float f1) {
-        if ((entity.cu()) || (entity.bA())) {
-            if (entity.isInWater()) {
-                double d1 = entity.locY;
+    public static void flyingMoveLogic(EntityLiving entity, float f, float f1, float f2) {
+        if ((entity.cA()) || (entity.bG())) {
+            if ((entity.isInWater())) {
+                double d2 = entity.locY;
                 float f4 = entity instanceof EntityPolarBear ? 0.98F : 0.8F;
                 float f3 = 0.02F;
-                float f2 = EnchantmentManager.a(Enchantments.DEPTH_STRIDER, entity);
-                if (f2 > 3.0F) {
-                    f2 = 3.0F;
+                float f5 = EnchantmentManager.e(entity);
+                if (f5 > 3.0F) {
+                    f5 = 3.0F;
                 }
                 if (!entity.onGround) {
-                    f2 *= 0.5F;
+                    f5 *= 0.5F;
                 }
-                if (f2 > 0.0F) {
-                    f4 += (0.54600006F - f4) * f2 / 3.0F;
-                    f3 += (entity.cq() - f3) * f2 / 3.0F;
+                if (f5 > 0.0F) {
+                    f4 += (0.54600006F - f4) * f5 / 3.0F;
+                    f3 += (entity.cw() - f3) * f5 / 3.0F;
                 }
-                entity.a(f, f1, f3);
+                entity.b(f, f1, f2, f3);
                 entity.move(EnumMoveType.SELF, entity.motX, entity.motY, entity.motZ);
                 entity.motX *= f4;
                 entity.motY *= 0.800000011920929D;
@@ -1188,13 +1194,12 @@ public class NMSImpl implements NMSBridge {
                     entity.motY -= 0.02D;
                 }
                 if ((entity.positionChanged)
-                        && (entity.c(entity.motX, entity.motY + 0.6000000238418579D - entity.locY + d1, entity.motZ))) {
+                        && (entity.c(entity.motX, entity.motY + 0.6000000238418579D - entity.locY + d2, entity.motZ))) {
                     entity.motY = 0.30000001192092896D;
                 }
-            } else if ((entity.ao())
-                    && ((!(entity instanceof EntityHuman)) || (!((EntityHuman) entity).abilities.isFlying))) {
-                double d1 = entity.locY;
-                entity.a(f, f1, 0.02F);
+            } else if (entity.au()) {
+                double d2 = entity.locY;
+                entity.b(f, f1, f2, 0.02F);
                 entity.move(EnumMoveType.SELF, entity.motX, entity.motY, entity.motZ);
                 entity.motX *= 0.5D;
                 entity.motY *= 0.5D;
@@ -1203,38 +1208,38 @@ public class NMSImpl implements NMSBridge {
                     entity.motY -= 0.02D;
                 }
                 if ((entity.positionChanged)
-                        && (entity.c(entity.motX, entity.motY + 0.6000000238418579D - entity.locY + d1, entity.motZ))) {
+                        && (entity.c(entity.motX, entity.motY + 0.6000000238418579D - entity.locY + d2, entity.motZ))) {
                     entity.motY = 0.30000001192092896D;
                 }
-            } else if (entity.cH()) {
+            } else if (entity.cN()) {
                 if (entity.motY > -0.5D) {
                     entity.fallDistance = 1.0F;
                 }
-                Vec3D vec3d = entity.aB();
-                float f5 = entity.pitch * 0.017453292F;
+                Vec3D vec3d = entity.aH();
+                float f6 = entity.pitch * 0.017453292F;
 
                 double d0 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
-                double d2 = Math.sqrt(entity.motX * entity.motX + entity.motZ * entity.motZ);
+                double d1 = Math.sqrt(entity.motX * entity.motX + entity.motZ * entity.motZ);
                 double d3 = vec3d.b();
-                float f6 = MathHelper.cos(f5);
+                float f7 = MathHelper.cos(f6);
 
-                f6 = (float) (f6 * f6 * Math.min(1.0D, d3 / 0.4D));
-                entity.motY += -0.08D + f6 * 0.06D;
+                f7 = (float) (f7 * f7 * Math.min(1.0D, d3 / 0.4D));
+                entity.motY += -0.08D + f7 * 0.06D;
                 if ((entity.motY < 0.0D) && (d0 > 0.0D)) {
-                    double d4 = entity.motY * -0.1D * f6;
+                    double d4 = entity.motY * -0.1D * f7;
                     entity.motY += d4;
                     entity.motX += vec3d.x * d4 / d0;
                     entity.motZ += vec3d.z * d4 / d0;
                 }
-                if (f5 < 0.0F) {
-                    double d4 = d2 * -MathHelper.sin(f5) * 0.04D;
+                if (f6 < 0.0F) {
+                    double d4 = d1 * -MathHelper.sin(f6) * 0.04D;
                     entity.motY += d4 * 3.2D;
                     entity.motX -= vec3d.x * d4 / d0;
                     entity.motZ -= vec3d.z * d4 / d0;
                 }
                 if (d0 > 0.0D) {
-                    entity.motX += (vec3d.x / d0 * d2 - entity.motX) * 0.1D;
-                    entity.motZ += (vec3d.z / d0 * d2 - entity.motZ) * 0.1D;
+                    entity.motX += (vec3d.x / d0 * d1 - entity.motX) * 0.1D;
+                    entity.motZ += (vec3d.z / d0 * d1 - entity.motZ) * 0.1D;
                 }
                 entity.motX *= 0.9900000095367432D;
                 entity.motY *= 0.9800000190734863D;
@@ -1242,11 +1247,11 @@ public class NMSImpl implements NMSBridge {
                 entity.move(EnumMoveType.SELF, entity.motX, entity.motY, entity.motZ);
                 if ((entity.positionChanged) && (!entity.world.isClientSide)) {
                     double d4 = Math.sqrt(entity.motX * entity.motX + entity.motZ * entity.motZ);
-                    double d5 = d2 - d4;
-                    float f7 = (float) (d5 * 10.0D - 3.0D);
-                    if (f7 > 0.0F) {
-                        entity.a(entity.e((int) f7), 1.0F, 1.0F);
-                        entity.damageEntity(DamageSource.FLY_INTO_WALL, f7);
+                    double d5 = d1 - d4;
+                    float f8 = (float) (d5 * 10.0D - 3.0D);
+                    if (f8 > 0.0F) {
+                        entity.a(f8 > 4 ? SoundEffects.bQ : SoundEffects.bY, 1.0F, 1.0F);
+                        entity.damageEntity(DamageSource.FLY_INTO_WALL, f8);
                     }
                 }
                 if ((entity.onGround) && (!entity.world.isClientSide) && (entity.getFlag(7))
@@ -1254,23 +1259,23 @@ public class NMSImpl implements NMSBridge {
                     entity.setFlag(7, false);
                 }
             } else {
-                float f8 = 0.91F;
+                float f9 = 0.91F;
                 BlockPosition.PooledBlockPosition blockposition_pooledblockposition = BlockPosition.PooledBlockPosition
                         .d(entity.locX, entity.getBoundingBox().b - 1.0D, entity.locZ);
                 if (entity.onGround) {
-                    f8 = entity.world.getType(blockposition_pooledblockposition).getBlock().frictionFactor * 0.91F;
+                    f9 = entity.world.getType(blockposition_pooledblockposition).getBlock().frictionFactor * 0.91F;
                 }
-                float f4 = 0.16277136F / (f8 * f8 * f8);
+                float f4 = 0.16277136F / (f9 * f9 * f9);
                 float f3;
                 if (entity.onGround) {
-                    f3 = entity.cq() * f4;
+                    f3 = entity.cw() * f4;
                 } else {
                     f3 = entity.aR;
                 }
-                entity.a(f, f1, f3);
-                f8 = 0.91F;
+                entity.b(f, f1, f2, f3);
+                f9 = 0.91F;
                 if (entity.onGround) {
-                    f8 = entity.world.getType(blockposition_pooledblockposition.e(entity.locX,
+                    f9 = entity.world.getType(blockposition_pooledblockposition.e(entity.locX,
                             entity.getBoundingBox().b - 1.0D, entity.locZ)).getBlock().frictionFactor * 0.91F;
                 }
                 if (entity.m_()) {
@@ -1280,7 +1285,7 @@ public class NMSImpl implements NMSBridge {
                     if (entity.motY < -0.15D) {
                         entity.motY = -0.15D;
                     }
-                    boolean flag = (entity.isSneaking()) && ((entity instanceof EntityHuman));
+                    boolean flag = (entity.isSneaking());
                     if ((flag) && (entity.motY < 0.0D)) {
                         entity.motY = 0.0D;
                     }
@@ -1306,19 +1311,20 @@ public class NMSImpl implements NMSBridge {
                     }
                 }
                 entity.motY *= 0.9800000190734863D;
-                entity.motX *= f8;
-                entity.motZ *= f8;
+                entity.motX *= f9;
+                entity.motZ *= f9;
                 blockposition_pooledblockposition.t();
             }
         }
         entity.aF = entity.aG;
-        double d1 = entity.locX - entity.lastX;
+        double d2 = entity.locX - entity.lastX;
         double d0 = entity.locZ - entity.lastZ;
-        float f2 = MathHelper.sqrt(d1 * d1 + d0 * d0) * 4.0F;
-        if (f2 > 1.0F) {
-            f2 = 1.0F;
+        double d1 = (entity instanceof EntityBird) ? entity.locY - entity.lastY : 0.0D;
+        float f10 = MathHelper.sqrt(d2 * d2 + d1 * d1 + d0 * d0) * 4.0F;
+        if (f10 > 1.0F) {
+            f10 = 1.0F;
         }
-        entity.aG += (f2 - entity.aG) * 0.4F;
+        entity.aG += (f10 - entity.aG) * 0.4F;
         entity.aH += entity.aG;
     }
 
@@ -1376,7 +1382,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static boolean isNavigationFinished(NavigationAbstract navigation) {
-        return navigation.n();
+        return navigation.o();
     }
 
     @SuppressWarnings("deprecation")
@@ -1445,7 +1451,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void stopNavigation(NavigationAbstract navigation) {
-        navigation.o();
+        navigation.p();
     }
 
     public static void updateAI(EntityLiving entity) {
@@ -1453,7 +1459,7 @@ public class NMSImpl implements NMSBridge {
             EntityInsentient handle = (EntityInsentient) entity;
             handle.getEntitySenses().a();
             NMSImpl.updateNavigation(handle.getNavigation());
-            handle.getControllerMove().c();
+            handle.getControllerMove().a();
             handle.getControllerLook().a();
             handle.getControllerJump().b();
         } else if (entity instanceof EntityHumanNPC) {
@@ -1462,7 +1468,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void updateNavigation(NavigationAbstract navigation) {
-        navigation.l();
+        navigation.d();
     }
 
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
@@ -1471,7 +1477,7 @@ public class NMSImpl implements NMSBridge {
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c");
-    private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bJ");
+    private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bK");
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     public static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
@@ -1480,15 +1486,12 @@ public class NMSImpl implements NMSBridge {
     private static Field NAVIGATION_WORLD_FIELD = NMS.getField(NavigationAbstract.class, "b");
     public static Field NETWORK_ADDRESS = NMS.getField(NetworkManager.class, "l");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "f");
-    private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bw");
+    private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "i");
+    private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bx");
     private static final Random RANDOM = Util.getFastRandom();
-
     private static Field SKULL_PROFILE_FIELD;
-
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
-
-    private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bF");
+    private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bG");
 
     static {
         try {

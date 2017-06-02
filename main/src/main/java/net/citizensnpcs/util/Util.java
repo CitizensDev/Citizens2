@@ -94,8 +94,9 @@ public class Util {
         switch (type) {
             case BAT:
             case BLAZE:
-            case GHAST:
             case ENDER_DRAGON:
+            case GHAST:
+            case PARROT:
             case WITHER:
                 return true;
             default:

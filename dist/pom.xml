@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.citizensnpcs</groupId>
         <artifactId>citizens-parent</artifactId> 
-        <version>2.0.21-SNAPSHOT</version>
+        <version>2.0.22-SNAPSHOT</version>
     </parent>
     <artifactId>citizens</artifactId>
     <packaging>pom</packaging>
@@ -51,6 +51,13 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>citizens-v1_11_R1</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency> 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>citizens-v1_12_R1</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
