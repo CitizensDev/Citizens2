@@ -3,11 +3,10 @@ package net.citizensnpcs.api.ai.flocking;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import net.citizensnpcs.api.npc.NPC;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 
 public class GroupNPCFlock implements NPCFlock {
     private final List<NPC> npcs;
@@ -22,12 +21,12 @@ public class GroupNPCFlock implements NPCFlock {
     public Collection<NPC> getNearby(final NPC npc) {
         if (radius < 0)
             return npcs;
-        return Collections2.filter(npcs, new Predicate<NPC>() {
+        return npcs.stream().filter(new Predicate<NPC>() {
             @Override
-            public boolean apply(NPC input) {
+            public boolean test(NPC input) {
                 return input.getStoredLocation().distance(npc.getStoredLocation()) < radius;
             }
-        });
+        }).collect(Collectors.<NPC> toList());
     }
 
     public static GroupNPCFlock create(Iterable<NPC> npcs) {
