@@ -66,8 +66,8 @@ public class RabbitController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cd() {
-            return NMSImpl.getSoundEffect(npc, super.cd(), NPC.DEATH_SOUND_METADATA);
+        protected SoundEffect cf() {
+            return NMSImpl.getSoundEffect(npc, super.cf(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override

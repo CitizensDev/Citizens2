@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_12_R1.entity; import net.minecraft.server.v1_12_R1.DamageSource;
+package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import java.util.List;
 
@@ -17,6 +17,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_12_R1.BlockPosition;
+import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityVillager;
 import net.minecraft.server.v1_12_R1.EnumHand;
@@ -84,13 +85,17 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cd() {
-            return NMSImpl.getSoundEffect(npc, super.cd(), NPC.DEATH_SOUND_METADATA);
+        public void a(float f, float f1, float f2) {
+            if (npc == null || !npc.isFlyable()) {
+                super.a(f, f1, f2);
+            } else {
+                NMSImpl.flyingMoveLogic(this, f, f1, f2);
+            }
         }
 
         @Override
-        protected SoundEffect d(DamageSource damagesource) {
-            return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
+        protected SoundEffect cf() {
+            return NMSImpl.getSoundEffect(npc, super.cf(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override
@@ -104,17 +109,22 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
+        protected SoundEffect d(DamageSource damagesource) {
+            return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
+        }
+
+        @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
         }
 
         @Override
-        public boolean dk() {
+        public boolean do_() {
             if (blockingATrade) {
                 blockingATrade = false;
                 return true;
             }
-            return super.dk();
+            return super.do_();
         }
 
         @Override
@@ -155,15 +165,6 @@ public class VillagerController extends MobEntityController {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
-        }
-
-        @Override
-        public void a(float f, float f1, float f2) {
-            if (npc == null || !npc.isFlyable()) {
-                super.a(f, f1, f2);
-            } else {
-                NMSImpl.flyingMoveLogic(this, f, f1, f2);
-            }
         }
 
         @Override

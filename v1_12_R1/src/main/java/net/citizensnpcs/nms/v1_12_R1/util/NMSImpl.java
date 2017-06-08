@@ -994,7 +994,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public boolean tick(org.bukkit.entity.Entity next) {
         Entity entity = NMSImpl.getHandle(next);
-        Entity entity1 = entity.bH();
+        Entity entity1 = entity.bJ();
         if (entity1 != null) {
             if ((entity1.dead) || (!entity1.w(entity))) {
                 entity.stopRiding();
@@ -1169,7 +1169,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void flyingMoveLogic(EntityLiving entity, float f, float f1, float f2) {
-        if ((entity.cA()) || (entity.bG())) {
+        if ((entity.cC()) || (entity.bI())) {
             if ((entity.isInWater())) {
                 double d2 = entity.locY;
                 float f4 = entity instanceof EntityPolarBear ? 0.98F : 0.8F;
@@ -1183,7 +1183,7 @@ public class NMSImpl implements NMSBridge {
                 }
                 if (f5 > 0.0F) {
                     f4 += (0.54600006F - f4) * f5 / 3.0F;
-                    f3 += (entity.cw() - f3) * f5 / 3.0F;
+                    f3 += (entity.cy() - f3) * f5 / 3.0F;
                 }
                 entity.b(f, f1, f2, f3);
                 entity.move(EnumMoveType.SELF, entity.motX, entity.motY, entity.motZ);
@@ -1211,11 +1211,11 @@ public class NMSImpl implements NMSBridge {
                         && (entity.c(entity.motX, entity.motY + 0.6000000238418579D - entity.locY + d2, entity.motZ))) {
                     entity.motY = 0.30000001192092896D;
                 }
-            } else if (entity.cN()) {
+            } else if (entity.cP()) {
                 if (entity.motY > -0.5D) {
                     entity.fallDistance = 1.0F;
                 }
-                Vec3D vec3d = entity.aH();
+                Vec3D vec3d = entity.aJ();
                 float f6 = entity.pitch * 0.017453292F;
 
                 double d0 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
@@ -1268,7 +1268,7 @@ public class NMSImpl implements NMSBridge {
                 float f4 = 0.16277136F / (f9 * f9 * f9);
                 float f3;
                 if (entity.onGround) {
-                    f3 = entity.cw() * f4;
+                    f3 = entity.cy() * f4;
                 } else {
                     f3 = entity.aR;
                 }

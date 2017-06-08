@@ -164,7 +164,7 @@ public class PlayerNavigation extends NavigationAbstract {
             } else {
                 this.l = localVec3D;
                 double d1 = paramVec3D.f(this.l);
-                this.o = (this.a.cw() > 0.0F ? d1 / this.a.cw() * 1000.0D : 0.0D);
+                this.o = (this.a.cy() > 0.0F ? d1 / this.a.cy() * 1000.0D : 0.0D);
             }
             if ((this.o > 0.0D) && (this.m > this.o * 3.0D)) {
                 this.l = Vec3D.a;

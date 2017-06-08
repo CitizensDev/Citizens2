@@ -249,7 +249,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             int i = 0;
             while ((paramInt2 > 0) && (localPathType1 == PathType.OPEN)) {
                 paramInt2--;
-                if (i++ >= this.b.be()) {
+                if (i++ >= this.b.bg()) {
                     return null;
                 }
                 localPathType1 = a(this.b, paramInt1, paramInt2, paramInt3);

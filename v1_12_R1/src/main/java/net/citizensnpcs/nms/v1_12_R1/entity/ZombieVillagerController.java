@@ -54,8 +54,8 @@ public class ZombieVillagerController extends MobEntityController {
         }
 
         @Override
-        public SoundEffect cd() {
-            return NMSImpl.getSoundEffect(npc, super.cd(), NPC.DEATH_SOUND_METADATA);
+        public SoundEffect cf() {
+            return NMSImpl.getSoundEffect(npc, super.cf(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override

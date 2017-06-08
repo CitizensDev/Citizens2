@@ -320,7 +320,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     public void livingEntityBaseTick() {
-        cA();
+        B_();
         this.aC = this.aD;
         this.aJ = this.aK;
         if (this.hurtTicks > 0) {
@@ -346,7 +346,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private void moveOnCurrentHeading() {
         if (bd) {
             if (onGround && jumpTicks == 0) {
-                cs();
+                cu();
                 jumpTicks = 10;
             }
         } else {
