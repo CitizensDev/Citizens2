@@ -114,6 +114,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
         }
+        Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", bukkitEntity);
         livingEntityBaseTick();
 
         boolean navigating = npc.getNavigator().isNavigating();
