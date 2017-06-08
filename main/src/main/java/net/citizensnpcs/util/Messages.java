@@ -108,6 +108,7 @@ public class Messages {
     public static final String INVALID_HORSE_VARIANT = "citizens.commands.npc.horse.invalid-variant";
     public static final String INVALID_LLAMA_COLOR = "citizens.commands.npc.llama.invalid-color";
     public static final String INVALID_OCELOT_TYPE = "citizens.commands.npc.ocelot.invalid-type";
+    public static final String INVALID_PARROT_VARIANT = "citizens.commands.npc.parrot.invalid-variant";
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
     public static final String INVALID_RABBIT_TYPE = "citizens.commands.npc.rabbittype.invalid-type";
@@ -170,6 +171,7 @@ public class Messages {
     public static final String OVER_NPC_LIMIT = "citizens.limits.over-npc-limit";
     public static final String OWNER_SET = "citizens.commands.npc.owner.set";
     public static final String OWNER_SET_SERVER = "citizens.commands.npc.owner.set-server";
+    public static final String PARROT_VARIANT_SET = "citizens.commands.npc.parrot.variant-set";
     public static final String PASSIVE_SET = "citizens.commands.npc.passive.set";
     public static final String PASSIVE_UNSET = "citizens.commands.npc.passive.unset";
     public static final String PATHFINDING_OPTIONS_ATTACK_RANGE_SET = "citizens.commands.npc.pathopt.attack-range-set";

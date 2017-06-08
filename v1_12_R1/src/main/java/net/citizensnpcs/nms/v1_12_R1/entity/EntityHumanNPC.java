@@ -320,7 +320,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     public void livingEntityBaseTick() {
-        B_();
         this.aC = this.aD;
         this.aJ = this.aK;
         if (this.hurtTicks > 0) {
