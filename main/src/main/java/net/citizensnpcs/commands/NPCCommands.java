@@ -540,7 +540,7 @@ public class NPCCommands {
         npc.setFlyable(flyable);
         flyable = npc.isFlyable(); // may not have applied, eg bats always
         // flyable
-        Messaging.sendTr(sender, flyable ? Messages.FLYABLE_SET : Messages.FLYABLE_UNSET);
+        Messaging.sendTr(sender, flyable ? Messages.FLYABLE_SET : Messages.FLYABLE_UNSET, npc.getName());
     }
 
     @Command(
