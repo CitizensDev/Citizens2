@@ -297,6 +297,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
         }
+        this.noclip = isSpectator();
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", bukkitEntity);
         livingEntityBaseTick();
 
