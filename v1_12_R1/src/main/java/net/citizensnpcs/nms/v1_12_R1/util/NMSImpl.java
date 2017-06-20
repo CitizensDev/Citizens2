@@ -154,6 +154,7 @@ import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.WitherSkullController;
 import net.citizensnpcs.nms.v1_12_R1.network.EmptyChannel;
 import net.citizensnpcs.nms.v1_12_R1.trait.Commands;
 import net.citizensnpcs.nms.v1_12_R1.trait.LlamaTrait;
+import net.citizensnpcs.nms.v1_12_R1.trait.ParrotTrait;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -566,6 +567,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void load(CommandManager manager) {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LlamaTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));
         manager.register(Commands.class);
     }
 
