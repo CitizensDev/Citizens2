@@ -172,6 +172,7 @@ public class Equipment extends Trait {
      */
     @SuppressWarnings("deprecation")
     public void set(int slot, ItemStack item) {
+        equipment[slot] = item;
         if (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof ArmorStand))
             return;
         if (npc.getEntity() instanceof Enderman) {
@@ -202,8 +203,6 @@ public class Equipment extends Trait {
                 default:
                     throw new IllegalArgumentException("Slot must be between 0 and 5");
             }
-
-            equipment[slot] = item;
         }
         if (npc.getEntity() instanceof Player) {
             ((Player) npc.getEntity()).updateInventory();
