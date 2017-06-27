@@ -57,6 +57,9 @@ public class Inventory extends Trait {
         ItemStack[] contents = event.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
             this.contents[i] = contents[i];
+            if (i == 0) {
+                npc.getTrait(Equipment.class).setItemInHand(contents[i]);
+            }
         }
         if (npc.getEntity() instanceof InventoryHolder) {
             int maxSize = ((InventoryHolder) npc.getEntity()).getInventory().getStorageContents().length;
@@ -104,6 +107,7 @@ public class Inventory extends Trait {
     public void run() {
         if (npc.getEntity() instanceof Player) {
             contents = ((Player) npc.getEntity()).getInventory().getContents();
+            npc.getTrait(Equipment.class).setItemInHand(contents[0]);
         }
         Iterator<InventoryView> itr = views.iterator();
         while (itr.hasNext()) {
@@ -155,6 +159,27 @@ public class Inventory extends Trait {
 
         for (int i = 0; i < maxCopySize; i++) {
             dest.setItem(i, contents[i]);
+        }
+    }
+
+    public void setItem(int slot, ItemStack item) {
+        if (view != null && view.getSize() > slot) {
+            view.setItem(slot, item);
+        } else if (contents.length > slot) {
+            contents[slot] = item;
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+        if (slot == 0) {
+            npc.getTrait(Equipment.class).setItemInHand(item);
+        }
+    }
+
+    void setItemInHand(ItemStack item) {
+        if (view != null && view.getSize() > 0) {
+            view.setItem(0, item);
+        } else if (contents.length > 0) {
+            contents[0] = item;
         }
     }
 

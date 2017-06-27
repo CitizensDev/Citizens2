@@ -78,11 +78,11 @@ public class Equipment extends Trait {
     }
 
     private EntityEquipment getEquipmentFromEntity(Entity entity) {
-        if (entity instanceof Player)
+        if (entity instanceof Player) {
             return new PlayerEquipmentWrapper((Player) entity);
-        else if (entity instanceof LivingEntity)
+        } else if (entity instanceof LivingEntity) {
             return ((LivingEntity) entity).getEquipment();
-        else if (entity instanceof ArmorStand)
+        } else if (entity instanceof ArmorStand)
             return new ArmorStandEquipmentWrapper((ArmorStand) entity);
         throw new RuntimeException("Unsupported entity equipment");
     }
@@ -173,6 +173,9 @@ public class Equipment extends Trait {
     @SuppressWarnings("deprecation")
     public void set(int slot, ItemStack item) {
         equipment[slot] = item;
+        if (slot == 0) {
+            npc.getTrait(Inventory.class).setItemInHand(item);
+        }
         if (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof ArmorStand))
             return;
         if (npc.getEntity() instanceof Enderman) {
@@ -207,6 +210,10 @@ public class Equipment extends Trait {
         if (npc.getEntity() instanceof Player) {
             ((Player) npc.getEntity()).updateInventory();
         }
+    }
+
+    void setItemInHand(ItemStack item) {
+        equipment[0] = item;
     }
 
     @Override
