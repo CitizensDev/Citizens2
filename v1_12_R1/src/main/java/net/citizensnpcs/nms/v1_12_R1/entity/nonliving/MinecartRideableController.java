@@ -43,11 +43,10 @@ public class MinecartRideableController extends MobEntityController {
 
         @Override
         public void B_() {
+            super.B_();
             if (npc != null) {
                 npc.update();
                 NMSImpl.minecartItemLogic(this);
-            } else {
-                super.B_();
             }
         }
 

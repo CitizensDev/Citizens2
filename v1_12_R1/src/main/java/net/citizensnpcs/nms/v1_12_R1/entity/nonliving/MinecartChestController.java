@@ -42,6 +42,15 @@ public class MinecartChestController extends MobEntityController {
         }
 
         @Override
+        public void B_() {
+            super.B_();
+            if (npc != null) {
+                npc.update();
+                NMSImpl.minecartItemLogic(this);
+            }
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_12_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -98,15 +107,6 @@ public class MinecartChestController extends MobEntityController {
             return npc;
         }
 
-        @Override
-        public void B_() {
-            if (npc != null) {
-                npc.update();
-                NMSImpl.minecartItemLogic(this);
-            } else {
-                super.B_();
-            }
-        }
     }
 
     public static class MinecartChestNPC extends CraftMinecartChest implements NPCHolder {

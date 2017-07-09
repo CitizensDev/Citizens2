@@ -100,11 +100,10 @@ public class MinecartChestController extends MobEntityController {
 
         @Override
         public void m() {
+            super.m();
             if (npc != null) {
                 npc.update();
                 NMSImpl.minecartItemLogic(this);
-            } else {
-                super.m();
             }
         }
     }
