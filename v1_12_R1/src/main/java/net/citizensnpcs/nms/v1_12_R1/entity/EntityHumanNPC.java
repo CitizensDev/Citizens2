@@ -120,6 +120,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         super.B_();
         if (npc == null)
             return;
+        this.getAdvancementData().b();
         this.noclip = isSpectator();
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
