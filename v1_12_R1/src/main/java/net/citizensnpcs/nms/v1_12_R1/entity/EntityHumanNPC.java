@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.Socket;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_12_R1.AdvancementProgress;
 import net.minecraft.server.v1_12_R1.AttributeInstance;
 import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.ChatComponentText;
@@ -120,6 +122,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         super.B_();
         if (npc == null)
             return;
+        if (this.getAdvancementData().data != null) {
+            for (AdvancementProgress progress : this.getAdvancementData().data.values()) {
+                clearProgress(progress);
+            }
+        }
         this.noclip = isSpectator();
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
@@ -149,6 +156,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
 
         npc.update();
+    }
+
+    private void clearProgress(AdvancementProgress progress) {
+        try {
+            PROGRESS_TRACKER_FIELD.set(progress, EMPTY_PROGRESS);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -499,6 +514,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
     }
 
+    private static final String[][] EMPTY_PROGRESS = new String[0][0];
+
     private static final float EPSILON = 0.005F;
+
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
+    private static final Field PROGRESS_TRACKER_FIELD = NMS.getField(AdvancementProgress.class, "b");
 }
