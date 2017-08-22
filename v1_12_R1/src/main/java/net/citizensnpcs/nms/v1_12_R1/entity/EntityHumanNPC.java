@@ -161,7 +161,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private void clearProgress(AdvancementProgress progress) {
         try {
             PROGRESS_TRACKER_FIELD.set(progress, EMPTY_PROGRESS);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
