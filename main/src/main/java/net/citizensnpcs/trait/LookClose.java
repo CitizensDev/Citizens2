@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -59,6 +60,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         });
         for (Entity entity : nearby) {
             if (entity.getType() != EntityType.PLAYER || ((Player) entity).getGameMode() == GameMode.SPECTATOR
+                    || ((Player) entity).hasPotionEffect(PotionEffectType.INVISIBILITY)
                     || entity.getLocation(CACHE_LOCATION).getWorld() != NPC_LOCATION.getWorld()
                     || CitizensAPI.getNPCRegistry().getNPC(entity) != null)
                 continue;

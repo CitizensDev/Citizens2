@@ -555,7 +555,14 @@ public class EventListen implements Listener {
                 }
                 continue;
             }
-            ids.remove(i--);
+            try {
+                ids.remove(i--);
+            } catch (IndexOutOfBoundsException ex) {
+                // something caused toRespawn to get modified?
+                Messaging.debug("Some strange chunk loading happened while spawning", npc.getId(),
+                        " - check all your NPCs in chunk [" + coord.x + "," + coord.z + "] are spawned");
+                break;
+            }
             if (Messaging.isDebugging()) {
                 Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
             }
