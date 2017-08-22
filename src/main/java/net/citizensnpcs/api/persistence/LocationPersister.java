@@ -16,9 +16,13 @@ public class LocationPersister implements Persister<Location> {
             return null;
         World world = Bukkit.getWorld(root.getString("world"));
         double x = root.getDouble("x"), y = root.getDouble("y"), z = root.getDouble("z");
-        float yaw = (float) root.getDouble("yaw"), pitch = (float) root.getDouble("pitch");
+        float yaw = normalise(root.getDouble("yaw")), pitch = normalise(root.getDouble("pitch"));
         return world == null ? new LazilyLoadedLocation(root.getString("world"), x, y, z, yaw, pitch)
                 : new Location(world, x, y, z, yaw, pitch);
+    }
+
+    private float normalise(double double1) {
+        return (float) (!Double.isFinite(double1) ? 0 : double1);
     }
 
     private double round(double z) {

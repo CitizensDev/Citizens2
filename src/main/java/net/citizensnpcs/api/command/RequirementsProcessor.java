@@ -5,6 +5,11 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
+
+import com.google.common.collect.Sets;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.RequirementMissingException;
@@ -13,11 +18,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.Messaging;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
-
-import com.google.common.collect.Sets;
 
 public class RequirementsProcessor implements CommandAnnotationProcessor {
     @Override
@@ -35,8 +35,9 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
         String error = Messaging.tr(CommandMessages.MUST_HAVE_SELECTED);
         if (canRedefineSelected) {
             npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
-            if (methodArgs.length >= 3)
+            if (methodArgs.length >= 3) {
                 methodArgs[2] = npc;
+            }
             if (npc == null) {
                 error += ' ' + Messaging.tr(CommandMessages.ID_NOT_FOUND, context.getFlagInteger("id"));
             }
