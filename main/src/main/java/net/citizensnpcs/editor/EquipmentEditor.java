@@ -45,11 +45,11 @@ public class EquipmentEditor extends Editor {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(final AsyncPlayerChatEvent event) {
         EquipmentSlot slot = null;
-        if (event.getMessage().equals("helmet")
+        if (event.getMessage().contains("helmet")
                 && event.getPlayer().hasPermission("citizens.npc.edit.equip.any-helmet")) {
             slot = EquipmentSlot.HELMET;
         }
-        if (event.getMessage().equals("offhand")
+        if (event.getMessage().contains("offhand")
                 && event.getPlayer().hasPermission("citizens.npc.edit.equip.offhand")) {
             slot = EquipmentSlot.OFF_HAND;
         }

@@ -81,8 +81,8 @@ public class ProfileFetcher {
                     request.setResult(NMS.fillProfileProperties(profile, true), ProfileFetchResult.SUCCESS);
                 } catch (Exception e) {
                     if (Messaging.isDebugging()) {
-                        Messaging.debug(
-                                "Profile lookup for player '" + profile.getName() + "' failed2: " + getExceptionMsg(e));
+                        Messaging.debug("Profile lookup for player '" + profile.getName() + "' failed: "
+                                + getExceptionMsg(e) + " " + isTooManyRequests(e));
                         Messaging.debug(Throwables.getStackTraceAsString(e));
                     }
 
