@@ -1,6 +1,7 @@
 package net.citizensnpcs.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
@@ -79,6 +80,20 @@ public class NMS {
             f.setAccessible(true);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+        }
+        return f;
+    }
+
+    public static Field getFinalField(Class<?> clazz, String field) {
+        Field f = getField(clazz, field);
+        if (f == null) {
+            return null;
+        }
+        try {
+            MODIFIERS_FIELD.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+        } catch (Exception e) {
+            Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+            return null;
         }
         return f;
     }
@@ -221,6 +236,10 @@ public class NMS {
         BRIDGE.setDestination(entity, x, y, z, speed);
     }
 
+    public static void setDummyAdvancement(Player entity) {
+        BRIDGE.setDummyAdvancement(entity);
+    }
+
     public static void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
         BRIDGE.setHeadYaw(entity, yaw);
     }
@@ -287,4 +306,6 @@ public class NMS {
     }
 
     private static NMSBridge BRIDGE;
+
+    private static Field MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers");
 }

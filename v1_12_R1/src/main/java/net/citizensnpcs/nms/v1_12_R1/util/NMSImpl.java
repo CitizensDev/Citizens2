@@ -889,6 +889,17 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setDummyAdvancement(Player entity) {
+        try {
+            ADVANCEMENT_PLAYER_FIELD.set(getHandle(entity), DummyPlayerAdvancementData.INSTANCE);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
         if (!(entity instanceof LivingEntity))
             return;
@@ -1473,6 +1484,7 @@ public class NMSImpl implements NMSBridge {
         navigation.d();
     }
 
+    private static Field ADVANCEMENT_PLAYER_FIELD = NMS.getFinalField(EntityPlayer.class, "bY");;
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE,
             EntityType.HORSE, EntityType.GHAST);
@@ -1493,13 +1505,12 @@ public class NMSImpl implements NMSBridge {
     private static final Random RANDOM = Util.getFastRandom();
     private static Field SKULL_PROFILE_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
+
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bG");
 
     static {
         try {
-            Field field = NMS.getField(EntityTypes.class, "b");
-            Field modifiersField = NMS.getField(Field.class, "modifiers");
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            Field field = NMS.getFinalField(EntityTypes.class, "b");
             ENTITY_REGISTRY = new CustomEntityRegistry(
                     (RegistryMaterials<MinecraftKey, Class<? extends Entity>>) field.get(null));
             field.set(null, ENTITY_REGISTRY);

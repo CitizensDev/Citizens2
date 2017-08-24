@@ -821,6 +821,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setDummyAdvancement(Player entity) {
+    }
+
+    @Override
     public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
         if (!(entity instanceof LivingEntity))
             return;

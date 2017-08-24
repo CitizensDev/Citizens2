@@ -113,6 +113,8 @@ public interface NMSBridge {
 
     public void setDestination(Entity entity, double x, double y, double z, float speed);
 
+    public void setDummyAdvancement(Player entity);
+
     public void setHeadYaw(Entity entity, float yaw);
 
     public void setKnockbackResistance(LivingEntity entity, double d);
