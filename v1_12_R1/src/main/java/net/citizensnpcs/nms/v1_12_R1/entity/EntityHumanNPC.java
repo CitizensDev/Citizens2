@@ -197,6 +197,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public void die() {
+        super.die();
+        getAdvancementData().a();
+    }
+
+    @Override
     public void die(DamageSource damagesource) {
         // players that die are not normally removed from the world. when the
         // NPC dies, we are done with the instance and it should be removed.
@@ -326,7 +332,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         navigation = new PlayerNavigation(this, world);
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
-        NMS.setDummyAdvancement(getBukkitEntity());
     }
 
     @Override
