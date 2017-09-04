@@ -35,6 +35,7 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -188,6 +189,7 @@ import net.minecraft.server.v1_11_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_11_R1.EntityPlayer;
 import net.minecraft.server.v1_11_R1.EntityPolarBear;
 import net.minecraft.server.v1_11_R1.EntityRabbit;
+import net.minecraft.server.v1_11_R1.EntityShulker;
 import net.minecraft.server.v1_11_R1.EntityTameableAnimal;
 import net.minecraft.server.v1_11_R1.EntityTracker;
 import net.minecraft.server.v1_11_R1.EntityTrackerEntry;
@@ -938,6 +940,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setShulkerPeek(Shulker shulker, int peek) {
+        ((EntityShulker) getHandle(shulker)).a((byte) peek);
+    }
+
+    @Override
     public void setSitting(Tameable tameable, boolean sitting) {
         ((EntityTameableAnimal) NMSImpl.getHandle((LivingEntity) tameable)).setSitting(sitting);
     }
@@ -1486,13 +1493,9 @@ public class NMSImpl implements NMSBridge {
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "f");
     private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bw");
-
     private static final Random RANDOM = Util.getFastRandom();
-
     private static Field SKULL_PROFILE_FIELD;
-
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
-
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bF");
 
     static {

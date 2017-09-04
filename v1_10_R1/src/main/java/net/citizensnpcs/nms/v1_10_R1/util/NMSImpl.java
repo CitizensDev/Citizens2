@@ -35,6 +35,7 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -168,6 +169,7 @@ import net.minecraft.server.v1_10_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_10_R1.EntityPlayer;
 import net.minecraft.server.v1_10_R1.EntityPolarBear;
 import net.minecraft.server.v1_10_R1.EntityRabbit;
+import net.minecraft.server.v1_10_R1.EntityShulker;
 import net.minecraft.server.v1_10_R1.EntityTameableAnimal;
 import net.minecraft.server.v1_10_R1.EntityTracker;
 import net.minecraft.server.v1_10_R1.EntityTrackerEntry;
@@ -874,6 +876,11 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setShouldJump();
         }
+    }
+
+    @Override
+    public void setShulkerPeek(Shulker shulker, int peek) {
+        ((EntityShulker) getHandle(shulker)).a((byte) peek);
     }
 
     @Override

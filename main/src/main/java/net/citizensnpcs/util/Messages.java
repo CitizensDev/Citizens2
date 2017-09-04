@@ -204,6 +204,7 @@ public class Messages {
     public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";
     public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
     public static final String SHEEP_COLOR_SET = "citizens.commands.npc.sheep.color-set";
+    public static final String SHULKER_PEEK_SET = "citizens.commands.npc.shulker.peek-set";
     public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.description";
     public static final String SIZE_SET = "citizens.commands.npc.size.set";
     public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";

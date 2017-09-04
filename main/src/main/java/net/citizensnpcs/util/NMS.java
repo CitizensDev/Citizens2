@@ -13,6 +13,7 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -261,6 +262,10 @@ public class NMS {
         BRIDGE.setShouldJump(entity);
     }
 
+    public static void setShulkerPeek(Shulker shulker, int peek) {
+        BRIDGE.setShulkerPeek(shulker, peek);
+    }
+
     public static void setSitting(Tameable tameable, boolean sitting) {
         BRIDGE.setSitting(tameable, sitting);
     }
@@ -306,6 +311,5 @@ public class NMS {
     }
 
     private static NMSBridge BRIDGE;
-
     private static Field MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers");
 }

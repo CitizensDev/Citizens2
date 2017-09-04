@@ -82,6 +82,7 @@ import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
+import net.citizensnpcs.trait.ShulkerTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SlimeSize;
@@ -1443,8 +1444,31 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "shulker (--peek [peek])",
+            desc = "Sets shulker modifiers.",
+            modifiers = { "shulker" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.shulker")
+    @Requirements(selected = true, ownership = true, types = { EntityType.SHULKER })
+    public void shulker(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        ShulkerTrait trait = npc.getTrait(ShulkerTrait.class);
+        boolean hasArg = false;
+        if (args.hasValueFlag("peek")) {
+            int peek = (byte) args.getFlagInteger("peek");
+            trait.setPeek(peek);
+            Messaging.sendTr(sender, Messages.SHULKER_PEEK_SET, npc.getName(), peek);
+            hasArg = true;
+        }
+        if (!hasArg) {
+            throw new CommandException();
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "skin (-c -p -f) [name]",
-            desc = "Sets an NPC's skin name, Use -p to save a skin snapshot that won't change",
+            desc = "Sets an NPC's skin name. Use -p to save a skin snapshot that won't change",
             modifiers = { "skin" },
             min = 1,
             max = 2,
