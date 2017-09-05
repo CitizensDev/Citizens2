@@ -18,16 +18,13 @@ public class ShulkerTrait extends Trait {
 
     @Override
     public void onSpawn() {
-    }
-
-    @Override
-    public void run() {
-        if (npc.getEntity() instanceof Shulker) {
-            NMS.setShulkerPeek((Shulker) npc.getEntity(), peek);
-        }
+        setPeek(peek);
     }
 
     public void setPeek(int peek) {
         this.peek = peek;
+        if (npc.getEntity() instanceof Shulker) {
+            NMS.setShulkerPeek((Shulker) npc.getEntity(), peek);
+        }
     }
 }
