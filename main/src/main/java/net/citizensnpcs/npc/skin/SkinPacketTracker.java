@@ -58,6 +58,15 @@ public class SkinPacketTracker {
     public Skin getSkin() {
         return skin;
     }
+    
+    /**
+     * Set the NPC skin.
+     * @param skin
+     *          The skin of the player.
+     */
+    public void setSkin(Skin skin) {
+        this.skin = skin;
+    }
 
     /**
      * Notify the tracker that a remove packet has been sent to the specified player.

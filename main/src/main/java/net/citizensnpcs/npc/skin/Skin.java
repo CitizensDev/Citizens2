@@ -39,6 +39,16 @@ public class Skin {
     private volatile UUID skinId;
     private final String skinName;
 
+    /*
+     * Allows custom skinning
+     */
+    public Skin(String skinName, UUID id, Property skinData){
+    	this.skinName = skinName.toLowerCase();
+    	this.hasFetched = true;
+    	this.skinId = id;
+    	this.skinData = skinData;
+    }
+    
     /**
      * Constructor.
      *
