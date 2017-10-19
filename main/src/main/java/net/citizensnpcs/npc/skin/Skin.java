@@ -30,6 +30,7 @@ import net.citizensnpcs.npc.profile.ProfileRequest;
  * Stores data for a single skin.
  */
 public class Skin {
+    private boolean fetching;
     private int fetchRetries = -1;
     private boolean hasFetched;
     private volatile boolean isValid = true;
@@ -56,7 +57,7 @@ public class Skin {
             CACHE.put(this.skinName, this);
         }
 
-        fetch();
+        // fetch();
     }
 
     /**
@@ -98,6 +99,9 @@ public class Skin {
             if (hasFetched) {
                 return true;
             } else {
+                if (!fetching) {
+                    fetch();
+                }
                 pending.put(entity, null);
                 return false;
             }
@@ -136,6 +140,7 @@ public class Skin {
             }
             return;
         }
+        fetching = true;
 
         ProfileFetcher.fetch(this.skinName, new ProfileFetchHandler() {
             @Override
@@ -182,6 +187,7 @@ public class Skin {
             }
             return;
         }
+        fetching = true;
 
         ProfileFetcher.fetchForced(this.skinName, new ProfileFetchHandler() {
             @Override
