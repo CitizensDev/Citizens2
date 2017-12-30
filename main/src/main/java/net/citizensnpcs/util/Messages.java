@@ -139,6 +139,8 @@ public class Messages {
     public static final String LOCALE_NOTIFICATION = "citizens.notifications.locale";
     public static final String LOOKCLOSE_SET = "citizens.commands.npc.lookclose.set";
     public static final String LOOKCLOSE_STOPPED = "citizens.commands.npc.lookclose.stopped";
+    public static final String METADATA_SET = "citizens.commands.npc.metadata.set";
+    public static final String METADATA_UNSET = "citizens.commands.npc.metadata.unset";
     public static final String METRICS_ERROR_NOTIFICATION = "citizens.notifications.metrics-load-error";
     public static final String MINECART_SET = "citizens.commands.npc.minecart.set";
     public static final String MINIMUM_COST_REQUIRED = "citizens.economy.minimum-cost-required";

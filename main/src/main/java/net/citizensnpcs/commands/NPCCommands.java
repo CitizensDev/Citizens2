@@ -829,6 +829,41 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "metadata set|get|remove [key] (value) (-t(emporary))",
+            desc = "Manages NPC metadata",
+            modifiers = { "metadata" },
+            flags = "t",
+            min = 2,
+            max = 4,
+            permission = "citizens.npc.metadata")
+    @Requirements(selected = true, ownership = true)
+    public void metadata(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        String command = args.getString(1).toLowerCase();
+        if (command.equals("set")) {
+            if (args.argsLength() != 4)
+                throw new CommandException();
+            if (args.hasFlag('t')) {
+                npc.data().set(args.getString(2), args.getString(3));
+            } else {
+                npc.data().setPersistent(args.getString(2), args.getString(3));
+            }
+            Messaging.sendTr(sender, Messages.METADATA_SET, args.getString(2), args.getString(3));
+        } else if (args.equals("get")) {
+            if (args.argsLength() != 3) {
+                throw new CommandException();
+            }
+            Messaging.send(sender, npc.data().get(args.getString(2), "null"));
+        } else if (args.equals("remove")) {
+            if (args.argsLength() != 3) {
+                throw new CommandException();
+            }
+            npc.data().remove(args.getString(3));
+            Messaging.sendTr(sender, Messages.METADATA_UNSET, args.getString(2));
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "minecart (--item item_name(:data)) (--offset offset)",
             desc = "Sets minecart item",
             modifiers = { "minecart" },
@@ -1624,11 +1659,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "spawn (id|name)",
+            usage = "spawn (id|name) -l(oad chunks)",
             desc = "Spawn an existing NPC",
             modifiers = { "spawn" },
             min = 1,
             max = 2,
+            flags = "l",
             permission = "citizens.npc.spawn")
     @Requirements(ownership = true)
     public void spawn(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
@@ -1651,6 +1687,9 @@ public class NPCCommands {
                         throw new CommandException(Messages.NO_STORED_SPAWN_LOCATION);
 
                     location = args.getSenderLocation();
+                }
+                if (args.hasFlag('l') && !Util.isLoaded(location)) {
+                    location.getChunk().load();
                 }
                 if (respawn.spawn(location)) {
                     selector.select(sender, respawn);
