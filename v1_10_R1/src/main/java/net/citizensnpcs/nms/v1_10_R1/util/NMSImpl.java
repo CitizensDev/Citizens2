@@ -262,6 +262,9 @@ public class NMSImpl implements NMSBridge {
 
         MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer().ay();
 
+        if (!(sessionService instanceof YggdrasilMinecraftSessionService)) {
+            return sessionService.fillProfileProperties(profile, requireSecure);
+        }
         YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
                 .getAuthenticationService();
 

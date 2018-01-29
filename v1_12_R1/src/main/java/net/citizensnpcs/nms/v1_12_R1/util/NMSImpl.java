@@ -288,7 +288,9 @@ public class NMSImpl implements NMSBridge {
             throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
 
         MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer().az();
-
+        if (!(sessionService instanceof YggdrasilMinecraftSessionService)) {
+            return sessionService.fillProfileProperties(profile, requireSecure);
+        }
         YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
                 .getAuthenticationService();
 
