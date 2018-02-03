@@ -10,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Shulker;
@@ -189,7 +188,7 @@ public class NMS {
         BRIDGE.mount(entity, passenger);
     }
 
-    public static void openHorseScreen(Horse horse, Player equipper) {
+    public static void openHorseScreen(Tameable horse, Player equipper) {
         BRIDGE.openHorseScreen(horse, equipper);
     }
 

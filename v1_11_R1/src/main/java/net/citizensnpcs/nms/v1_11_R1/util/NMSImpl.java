@@ -32,7 +32,6 @@ import org.bukkit.craftbukkit.v1_11_R1.entity.CraftWither;
 import org.bukkit.craftbukkit.v1_11_R1.event.CraftEventFactory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Shulker;
@@ -182,6 +181,7 @@ import net.minecraft.server.v1_11_R1.Entity;
 import net.minecraft.server.v1_11_R1.EntityEnderDragon;
 import net.minecraft.server.v1_11_R1.EntityFishingHook;
 import net.minecraft.server.v1_11_R1.EntityHorse;
+import net.minecraft.server.v1_11_R1.EntityHorseAbstract;
 import net.minecraft.server.v1_11_R1.EntityHuman;
 import net.minecraft.server.v1_11_R1.EntityInsentient;
 import net.minecraft.server.v1_11_R1.EntityLiving;
@@ -748,14 +748,14 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void openHorseScreen(Horse horse, Player equipper) {
-        EntityLiving handle = NMSImpl.getHandle(horse);
+    public void openHorseScreen(Tameable horse, Player equipper) {
+        EntityLiving handle = NMSImpl.getHandle((LivingEntity) horse);
         EntityLiving equipperHandle = NMSImpl.getHandle(equipper);
         if (handle == null || equipperHandle == null)
             return;
         boolean wasTamed = horse.isTamed();
         horse.setTamed(true);
-        ((EntityHorse) handle).a((EntityHuman) equipperHandle);
+        ((EntityHorseAbstract) handle).a((EntityHuman) equipperHandle);
         horse.setTamed(wasTamed);
     }
 
