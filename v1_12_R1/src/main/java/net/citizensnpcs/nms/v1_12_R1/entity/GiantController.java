@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_12_R1.entity; import net.minecraft.server.v1_12_R1.DamageSource;
+package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
@@ -55,6 +55,15 @@ public class GiantController extends MobEntityController {
         }
 
         @Override
+        public void a(float f, float f1, float f2) {
+            if (npc == null || !npc.isFlyable()) {
+                super.a(f, f1, f2);
+            } else {
+                NMSImpl.flyingMoveLogic(this, f, f1, f2);
+            }
+        }
+
+        @Override
         protected SoundEffect cf() {
             return NMSImpl.getSoundEffect(npc, super.cf(), NPC.DEATH_SOUND_METADATA);
         }
@@ -87,8 +96,10 @@ public class GiantController extends MobEntityController {
 
         @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
-            if (npc == null)
+            if (npc == null) {
                 super.enderTeleportTo(d0, d1, d2);
+                return;
+            }
             NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
             Bukkit.getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
@@ -121,15 +132,6 @@ public class GiantController extends MobEntityController {
         @Override
         protected SoundEffect F() {
             return NMSImpl.getSoundEffect(npc, super.F(), NPC.AMBIENT_SOUND_METADATA);
-        }
-
-        @Override
-        public void a(float f, float f1, float f2) {
-            if (npc == null || !npc.isFlyable()) {
-                super.a(f, f1, f2);
-            } else {
-                NMSImpl.flyingMoveLogic(this, f, f1, f2);
-            }
         }
 
         @Override

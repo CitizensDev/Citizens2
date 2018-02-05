@@ -196,7 +196,7 @@ public class WolfController extends MobEntityController {
 
         @Override
         public boolean setGoalTarget(EntityLiving entityliving, EntityTargetEvent.TargetReason reason, boolean fire) {
-            return npc == null ? super.setGoalTarget(killer, reason, fire) : false;
+            return npc == null ? super.setGoalTarget(entityliving, reason, fire) : false;
         }
     }
 

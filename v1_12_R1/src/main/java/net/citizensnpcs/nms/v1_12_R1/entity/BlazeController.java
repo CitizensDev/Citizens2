@@ -86,8 +86,10 @@ public class BlazeController extends MobEntityController {
 
         @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
-            if (npc == null)
+            if (npc == null) {
                 super.enderTeleportTo(d0, d1, d2);
+                return;
+            }
             NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
             Bukkit.getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
