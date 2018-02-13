@@ -73,7 +73,7 @@ public class CitizensNPC extends AbstractNPC {
             event.setCancelled(Setting.KEEP_CHUNKS_LOADED.asBoolean());
         }
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
+        if (event.isCancelled() && reason != DespawnReason.DEATH) {
             getEntity().getLocation().getChunk();
             Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Force loaded chunk.",
                     getEntity().isValid());
@@ -91,8 +91,11 @@ public class CitizensNPC extends AbstractNPC {
             trait.onDespawn();
         }
         Messaging.debug("Despawned", getId(), "DespawnReason.", reason);
-        entityController.remove();
-
+        if (reason == DespawnReason.DEATH) {
+            entityController.setEntity(null);
+        } else {
+            entityController.remove();
+        }
         return true;
     }
 

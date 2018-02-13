@@ -24,6 +24,11 @@ public abstract class AbstractEntityController implements EntityController {
     }
 
     @Override
+    public void setEntity(Entity entity) {
+        this.bukkitEntity = entity;
+    }
+
+    @Override
     public void remove() {
         if (bukkitEntity == null)
             return;
