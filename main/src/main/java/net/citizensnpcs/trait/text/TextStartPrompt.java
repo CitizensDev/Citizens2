@@ -1,14 +1,14 @@
 package net.citizensnpcs.trait.text;
 
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
+
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 
 public class TextStartPrompt extends StringPrompt {
     private final Text text;
@@ -28,7 +28,15 @@ public class TextStartPrompt extends StringPrompt {
             return new TextEditStartPrompt(text);
         else if (input.equalsIgnoreCase("remove"))
             return new TextRemovePrompt(text);
-        else if (input.equalsIgnoreCase("random"))
+        else if (input.equalsIgnoreCase("delay")) {
+            try {
+                int delay = Integer.parseInt(parts[1]);
+                text.setDelay(delay);
+                Messaging.sendTr(sender, Messages.TEXT_EDITOR_DELAY_SET, delay);
+            } catch (NumberFormatException e) {
+                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_DELAY);
+            }
+        } else if (input.equalsIgnoreCase("random"))
             Messaging.sendTr(sender, Messages.TEXT_EDITOR_RANDOM_TALKER_SET, text.toggleRandomTalker());
         else if (input.equalsIgnoreCase("realistic looking"))
             Messaging.sendTr(sender, Messages.TEXT_EDITOR_REALISTIC_LOOKING_SET, text.toggleRealisticLooking());

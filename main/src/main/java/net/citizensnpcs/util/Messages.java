@@ -239,10 +239,12 @@ public class Messages {
     public static final String TEXT_EDITOR_ADDED_ENTRY = "citizens.editors.text.added-entry";
     public static final String TEXT_EDITOR_BEGIN = "citizens.editors.text.begin";
     public static final String TEXT_EDITOR_CLOSE_TALKER_SET = "citizens.editors.text.close-talker-set";
+    public static final String TEXT_EDITOR_DELAY_SET = "citizens.editors.text.delay-set";
     public static final String TEXT_EDITOR_EDIT_BEGIN_PROMPT = "citizens.editors.text.edit-begin-prompt";
     public static final String TEXT_EDITOR_EDIT_PROMPT = "citizens.editors.text.edit-prompt";
     public static final String TEXT_EDITOR_EDITED_TEXT = "citizens.editors.text.edited-text";
     public static final String TEXT_EDITOR_END = "citizens.editors.text.end";
+    public static final String TEXT_EDITOR_INVALID_DELAY = "citizens.editors.text.invalid-delay";
     public static final String TEXT_EDITOR_INVALID_EDIT_TYPE = "citizens.editors.text.invalid-edit-type";
     public static final String TEXT_EDITOR_INVALID_INDEX = "citizens.editors.text.invalid-index";
     public static final String TEXT_EDITOR_INVALID_INPUT = "citizens.editors.text.invalid-input";
