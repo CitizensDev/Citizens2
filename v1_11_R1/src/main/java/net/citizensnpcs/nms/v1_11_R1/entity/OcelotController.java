@@ -89,6 +89,13 @@ public class OcelotController extends MobEntityController {
         }
 
         @Override
+        protected void di() {
+            if (npc == null) {
+                super.di();
+            }
+        }
+
+        @Override
         public void e(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
@@ -190,6 +197,7 @@ public class OcelotController extends MobEntityController {
                 return false;
             }
         }
+
     }
 
     public static class OcelotNPC extends CraftOcelot implements NPCHolder {

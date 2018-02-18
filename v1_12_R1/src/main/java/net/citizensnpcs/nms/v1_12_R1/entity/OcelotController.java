@@ -99,6 +99,13 @@ public class OcelotController extends MobEntityController {
         }
 
         @Override
+        protected void dm() {
+            if (npc == null) {
+                super.dm();
+            }
+        }
+
+        @Override
         public void e(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
