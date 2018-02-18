@@ -240,7 +240,7 @@ public class EventListen implements Listener {
             event.getDrops().clear();
         }
 
-        final Location location = npc.getEntity().getLocation();
+        final Location location = npc.getStoredLocation();
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);
 
