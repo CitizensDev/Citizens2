@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
@@ -50,6 +51,10 @@ public class Inventory extends Trait {
         return contents;
     }
 
+    public org.bukkit.inventory.Inventory getInventoryView() {
+        return view;
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void inventoryCloseEvent(InventoryCloseEvent event) {
         if (!views.contains(event.getView()))
@@ -74,11 +79,17 @@ public class Inventory extends Trait {
     }
 
     @Override
+    public void onDespawn() {
+        saveContents(npc.getEntity());
+    }
+
+    @Override
     public void onSpawn() {
         setContents(contents);
         int size = npc.getEntity() instanceof Player ? 36
                 : npc.getEntity() instanceof InventoryHolder
-                        ? ((InventoryHolder) npc.getEntity()).getInventory().getSize() : contents.length;
+                        ? ((InventoryHolder) npc.getEntity()).getInventory().getSize()
+                        : contents.length;
         int rem = size % 9;
         if (rem != 0) {
             size += 9 - rem; // round up to nearest multiple of 9
@@ -105,10 +116,7 @@ public class Inventory extends Trait {
 
     @Override
     public void run() {
-        if (npc.getEntity() instanceof Player) {
-            contents = ((Player) npc.getEntity()).getInventory().getContents();
-            npc.getTrait(Equipment.class).setItemInHand(contents[0]);
-        }
+        saveContents(npc.getEntity());
         Iterator<InventoryView> itr = views.iterator();
         while (itr.hasNext()) {
             InventoryView iview = itr.next();
@@ -129,6 +137,13 @@ public class Inventory extends Trait {
                 ItemStorage.saveItem(key.getRelative(String.valueOf(slot)), item);
             }
             slot++;
+        }
+    }
+
+    private void saveContents(Entity entity) {
+        if (entity instanceof Player) {
+            contents = ((Player) entity).getInventory().getContents();
+            npc.getTrait(Equipment.class).setItemInHand(contents[0]);
         }
     }
 
