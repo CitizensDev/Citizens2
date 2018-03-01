@@ -84,8 +84,9 @@ public class OcelotController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override
@@ -188,8 +189,9 @@ public class OcelotController extends MobEntityController {
         @Override
         public void M() {
             super.M();
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
+            }
         }
 
         @Override
