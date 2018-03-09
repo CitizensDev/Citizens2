@@ -101,7 +101,7 @@ public class CitizensTraitFactory implements TraitFactory {
 
     public void addPlotters(Graph graph) {
         for (Map.Entry<String, TraitInfo> entry : registered.entrySet()) {
-            if (INTERNAL_TRAITS.contains(entry.getKey()))
+            if (INTERNAL_TRAITS.contains(entry.getKey()) || entry.getKey() == null)
                 continue;
             final Class<? extends Trait> traitClass = entry.getValue().getTraitClass();
             graph.addPlotter(new Metrics.Plotter(entry.getKey()) {
@@ -109,8 +109,9 @@ public class CitizensTraitFactory implements TraitFactory {
                 public int getValue() {
                     int numberUsingTrait = 0;
                     for (NPC npc : CitizensAPI.getNPCRegistry()) {
-                        if (npc.hasTrait(traitClass))
+                        if (npc.hasTrait(traitClass)) {
                             ++numberUsingTrait;
+                        }
                     }
                     return numberUsingTrait;
                 }

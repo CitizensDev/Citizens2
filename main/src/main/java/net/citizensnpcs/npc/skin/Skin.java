@@ -89,6 +89,9 @@ public class Skin {
             setNPCTexture(entity, localData);
 
             // check if NPC prefers to use cached skin over the latest skin.
+            if (entity.getNPC().data().has("player-skin-use-latest")) {
+                entity.getNPC().data().remove("player-skin-use-latest");
+            }
             if (!entity.getNPC().data().get(NPC.PLAYER_SKIN_USE_LATEST, Setting.NPC_SKIN_USE_LATEST.asBoolean())) {
                 // cache preferred
                 return true;
