@@ -91,6 +91,12 @@ public class PigController extends MobEntityController {
         }
 
         @Override
+        public boolean cV() {
+            // block carrot-on-a-stick behaviour
+            return npc == null ? super.cV() : false;
+        }
+
+        @Override
         protected SoundEffect d(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
         }
