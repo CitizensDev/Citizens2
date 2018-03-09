@@ -501,12 +501,13 @@ public class EventListen implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onVehicleEnter(VehicleEnterEvent event) {
-        if (!npcRegistry.isNPC(event.getEntered()))
+    public void onVehicleEnter(final VehicleEnterEvent event) {
+        if (!npcRegistry.isNPC(event.getVehicle()))
             return;
-        NPC npc = npcRegistry.getNPC(event.getEntered());
+        NPC npc = npcRegistry.getNPC(event.getVehicle());
         if ((npc.getEntity() instanceof AbstractHorse || npc.getEntity().getType() == EntityType.BOAT
-                || npc.getEntity() instanceof Minecart) && !npc.getTrait(Controllable.class).isEnabled()) {
+                || npc.getEntity().getType() == EntityType.PIG || npc.getEntity() instanceof Minecart)
+                && (!npc.hasTrait(Controllable.class) || !npc.getTrait(Controllable.class).isEnabled())) {
             event.setCancelled(true);
         }
     }
