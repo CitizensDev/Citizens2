@@ -17,6 +17,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.CommandConfigurable;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
@@ -24,9 +25,11 @@ import net.citizensnpcs.util.Util;
 
 @TraitName("lookclose")
 public class LookClose extends Trait implements Toggleable, CommandConfigurable {
+    @Persist("enabled")
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
     private double range = Setting.DEFAULT_LOOK_CLOSE_RANGE.asDouble();
+    @Persist("realisticlooking")
     private boolean realisticLooking = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
 
     public LookClose() {
@@ -40,8 +43,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     @Override
     public void configure(CommandContext args) {
-        range = args.getFlagDouble("range", range);
-        range = args.getFlagDouble("r", range);
+        range = args.getFlagDouble("range", args.getFlagDouble("r", range));
         realisticLooking = args.hasFlag('r');
     }
 
@@ -81,9 +83,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        enabled = key.getBoolean("enabled", true);
         range = key.getDouble("range", range);
-        realisticLooking = key.getBoolean("realisticlooking", key.getBoolean("realistic-looking"));
     }
 
     public void lookClose(boolean lookClose) {
@@ -110,9 +110,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     @Override
     public void save(DataKey key) {
-        key.setBoolean("enabled", enabled);
         key.setDouble("range", range);
-        key.setBoolean("realisticlooking", realisticLooking);
     }
 
     public void setRange(int range) {
