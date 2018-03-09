@@ -63,6 +63,7 @@ public class WanderWaypointProvider implements WaypointProvider {
                             Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_RANGE_SET, xrange, yrange);
                         }
                     });
+                } else if (message.startsWith("")) {
                 }
             }
         };

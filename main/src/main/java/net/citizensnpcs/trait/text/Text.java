@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -61,7 +60,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent event) {
-        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
     }
 
     void edit(int index, String newText) {
