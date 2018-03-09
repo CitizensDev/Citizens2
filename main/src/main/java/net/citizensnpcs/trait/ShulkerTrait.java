@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import org.bukkit.DyeColor;
 import org.bukkit.entity.Shulker;
 
 import net.citizensnpcs.api.persistence.Persist;
@@ -9,6 +10,8 @@ import net.citizensnpcs.util.NMS;
 
 @TraitName("shulkertrait")
 public class ShulkerTrait extends Trait {
+    @Persist("color")
+    private DyeColor color = DyeColor.PURPLE;
     @Persist("peek")
     private int peek = 0;
 
@@ -21,10 +24,19 @@ public class ShulkerTrait extends Trait {
         setPeek(peek);
     }
 
-    public void setPeek(int peek) {
-        this.peek = peek;
+    @Override
+    public void run() {
         if (npc.getEntity() instanceof Shulker) {
             NMS.setShulkerPeek((Shulker) npc.getEntity(), peek);
+            NMS.setShulkerColor((Shulker) npc.getEntity(), color);
         }
+    }
+
+    public void setColor(DyeColor color) {
+        this.color = color;
+    }
+
+    public void setPeek(int peek) {
+        this.peek = peek;
     }
 }

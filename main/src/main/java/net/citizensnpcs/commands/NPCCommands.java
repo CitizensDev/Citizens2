@@ -48,6 +48,7 @@ import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.command.exception.CommandUsageException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
 import net.citizensnpcs.api.command.exception.ServerCommandException;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
@@ -120,7 +121,6 @@ public class NPCCommands {
         if (!npc.isSpawned() || (!(npc.getEntity() instanceof Ageable) && !(npc.getEntity() instanceof Zombie)))
             throw new CommandException(Messages.MOBTYPE_CANNOT_BE_AGED, npc.getName());
         Age trait = npc.getTrait(Age.class);
-
         boolean toggleLock = args.hasFlag('l');
         if (toggleLock) {
             Messaging.sendTr(sender, trait.toggle() ? Messages.AGE_LOCKED : Messages.AGE_UNLOCKED);
@@ -298,8 +298,9 @@ public class NPCCommands {
     public void collidable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         npc.data().setPersistent(NPC.COLLIDABLE_METADATA, !npc.data().get(NPC.COLLIDABLE_METADATA, true));
         Messaging.sendTr(sender,
-                npc.data().get(NPC.COLLIDABLE_METADATA) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
+                npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
                 npc.getName());
+
     }
 
     @Command(
@@ -1492,7 +1493,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "shulker (--peek [peek])",
+            usage = "shulker (--peek [peek] --color [color])",
             desc = "Sets shulker modifiers.",
             modifiers = { "shulker" },
             min = 1,
@@ -1508,8 +1509,14 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.SHULKER_PEEK_SET, npc.getName(), peek);
             hasArg = true;
         }
+        if (args.hasValueFlag("color")) {
+            DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("color"));
+            trait.setColor(color);
+            Messaging.sendTr(sender, Messages.SHULKER_COLOR_SET, npc.getName(), Util.prettyEnum(color));
+            hasArg = true;
+        }
         if (!hasArg) {
-            throw new CommandException();
+            throw new CommandUsageException();
         }
     }
 

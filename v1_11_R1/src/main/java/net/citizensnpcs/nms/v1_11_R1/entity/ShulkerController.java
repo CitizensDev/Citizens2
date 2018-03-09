@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_11_R1.entity;
 
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.v1_11_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftShulker;
@@ -192,6 +193,10 @@ public class ShulkerController extends MobEntityController {
         @Override
         protected EntityAIBodyControl s() {
             return new EntityAIBodyControl(this);
+        }
+
+        public void setColor(DyeColor color) {
+            this.datawatcher.set(bw, color.getDyeData());
         }
 
         @Override

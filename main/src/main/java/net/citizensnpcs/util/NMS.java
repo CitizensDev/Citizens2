@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BossBar;
@@ -259,6 +260,10 @@ public class NMS {
 
     public static void setShouldJump(org.bukkit.entity.Entity entity) {
         BRIDGE.setShouldJump(entity);
+    }
+
+    public static void setShulkerColor(Shulker entity, DyeColor color) {
+        BRIDGE.setShulkerColor(entity, color);
     }
 
     public static void setShulkerPeek(Shulker shulker, int peek) {

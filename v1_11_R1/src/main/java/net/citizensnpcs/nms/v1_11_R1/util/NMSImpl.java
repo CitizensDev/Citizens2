@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -99,6 +100,7 @@ import net.citizensnpcs.nms.v1_11_R1.entity.PolarBearController;
 import net.citizensnpcs.nms.v1_11_R1.entity.RabbitController;
 import net.citizensnpcs.nms.v1_11_R1.entity.SheepController;
 import net.citizensnpcs.nms.v1_11_R1.entity.ShulkerController;
+import net.citizensnpcs.nms.v1_11_R1.entity.ShulkerController.EntityShulkerNPC;
 import net.citizensnpcs.nms.v1_11_R1.entity.SilverfishController;
 import net.citizensnpcs.nms.v1_11_R1.entity.SkeletonController;
 import net.citizensnpcs.nms.v1_11_R1.entity.SkeletonStrayController;
@@ -943,6 +945,11 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setShouldJump();
         }
+    }
+
+    @Override
+    public void setShulkerColor(Shulker shulker, DyeColor color) {
+        ((EntityShulkerNPC) getHandle(shulker)).setColor(color);
     }
 
     @Override
