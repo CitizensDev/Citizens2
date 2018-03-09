@@ -1038,6 +1038,7 @@ public class NPCCommands {
             modifiers = { "ocelot" },
             min = 1,
             max = 1,
+            requiresFlags = true,
             flags = "sn",
             permission = "citizens.npc.ocelot")
     @Requirements(selected = true, ownership = true, types = { EntityType.OCELOT })
@@ -1941,36 +1942,39 @@ public class NPCCommands {
             desc = "Sets wither modifiers",
             modifiers = { "wither" },
             min = 1,
+            requiresFlags = true,
             max = 1,
             permission = "citizens.npc.wither")
     @Requirements(selected = true, ownership = true, types = { EntityType.WITHER })
     public void wither(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         WitherTrait trait = npc.getTrait(WitherTrait.class);
-        boolean hasArg = false;
         if (args.hasValueFlag("charged")) {
             trait.setCharged(Boolean.valueOf(args.getFlag("charged")));
-            hasArg = true;
-        }
-        if (!hasArg) {
-            throw new CommandException();
         }
     }
 
     @Command(
             aliases = { "npc" },
-            usage = "wolf (-s(itting) a(ngry) t(amed)) --collar [hex rgb color|name]",
+            usage = "wolf (-s(itting) a(ngry) t(amed) i(nfo)) --collar [hex rgb color|name]",
             desc = "Sets wolf modifiers",
             modifiers = { "wolf" },
             min = 1,
             max = 1,
+            requiresFlags = true,
             flags = "sat",
             permission = "citizens.npc.wolf")
     @Requirements(selected = true, ownership = true, types = EntityType.WOLF)
     public void wolf(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         WolfModifiers trait = npc.getTrait(WolfModifiers.class);
-        trait.setAngry(args.hasFlag('a'));
-        trait.setSitting(args.hasFlag('s'));
-        trait.setTamed(args.hasFlag('t'));
+        if (args.hasFlag('a')) {
+            trait.setAngry(!trait.isAngry());
+        }
+        if (args.hasFlag('s')) {
+            trait.setSitting(!trait.isSitting());
+        }
+        if (args.hasFlag('t')) {
+            trait.setTamed(!trait.isTamed());
+        }
         if (args.hasValueFlag("collar")) {
             String unparsed = args.getFlag("collar");
             DyeColor color = null;
@@ -1988,7 +1992,9 @@ public class NPCCommands {
                 throw new CommandException(Messages.COLLAR_COLOUR_NOT_SUPPORTED, unparsed);
             trait.setCollarColor(color);
         }
-        Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), args.hasFlag('a'), args.hasFlag('s'),
-                args.hasFlag('t'), trait.getCollarColor().name());
+        if (args.hasFlag('i')) {
+            Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), args.hasFlag('a'), args.hasFlag('s'),
+                    args.hasFlag('t'), trait.getCollarColor().name());
+        }
     }
 }

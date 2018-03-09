@@ -113,7 +113,7 @@ public class Util {
     }
 
     public static String listValuesPretty(Enum<?>[] values) {
-        return "<e>" + Joiner.on("<a>, <e>").join(values).toLowerCase().replace('_', ' ');
+        return "<e>" + Joiner.on("<a>, <e>").join(values).toLowerCase();
     }
 
     public static boolean locationWithinRange(Location current, Location target, double range) {
