@@ -273,7 +273,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 return false;
             }
             Waypoint target = available.get(Util.getFastRandom().nextInt(available.size()));
-            plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(new Waypoint(npc.getStoredLocation())));
+            plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(null, new Waypoint(npc.getStoredLocation())));
             return plan != null;
         }
     }
@@ -309,7 +309,8 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     private class GuidedNode extends AStarNode {
         private final Waypoint waypoint;
 
-        public GuidedNode(Waypoint waypoint) {
+        public GuidedNode(GuidedNode parent, Waypoint waypoint) {
+            super(parent);
             this.waypoint = waypoint;
         }
 
@@ -350,7 +351,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             return Iterables.transform(res, new Function<DistanceResult<Region3D<Waypoint>>, AStarNode>() {
                 @Override
                 public AStarNode apply(DistanceResult<Region3D<Waypoint>> arg0) {
-                    return new GuidedNode(arg0.get().getData());
+                    return new GuidedNode(GuidedNode.this, arg0.get().getData());
                 }
             });
         }
