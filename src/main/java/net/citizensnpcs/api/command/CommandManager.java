@@ -423,7 +423,7 @@ public class CommandManager {
         if (name.equalsIgnoreCase("npc"))
             name = "NPC";
         Paginator paginator = new Paginator()
-                .header(capitalize(ChatColor.GREEN + name) + " " + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER));
+                .header(ChatColor.GREEN + capitalize(name) + " " + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER));
         for (String line : getLines(sender, name.toLowerCase()))
             paginator.addLine(line);
         if (!paginator.sendPage(sender, page))
