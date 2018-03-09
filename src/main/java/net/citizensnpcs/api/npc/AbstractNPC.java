@@ -282,11 +282,6 @@ public abstract class AbstractNPC implements NPC {
             }
         }));
         for (DataKey traitKey : keys) {
-            if (traitKey.keyExists("enabled") && !traitKey.getBoolean("enabled")
-                    && traitKey.getRaw("enabled") instanceof Boolean) {
-                // avoid YAML coercing map existence to boolean
-                continue;
-            }
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
             Trait trait;
             if (hasTrait(clazz)) {
