@@ -107,7 +107,7 @@ public class Settings {
         NPC_COST("economy.npc.cost", 100D),
         NPC_SKIN_RETRY_DELAY("npc.skins.retry-delay", 120),
         NPC_SKIN_ROTATION_UPDATE_DEGREES("npc.skins.rotation-update-degrees", 90f),
-        NPC_SKIN_USE_LATEST("npc.skins.use-latest", true),
+        NPC_SKIN_USE_LATEST("npc.skins.use-latest-by-default", false),
         NPC_SKIN_VIEW_DISTANCE("npc.skins.view-distance", 100D),
         PACKET_UPDATE_DELAY("npc.packets.update-delay", 30),
         QUICK_SELECT("npc.selection.quick-select", false),
