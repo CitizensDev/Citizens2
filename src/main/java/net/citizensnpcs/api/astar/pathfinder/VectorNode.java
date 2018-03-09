@@ -20,10 +20,12 @@ public class VectorNode extends AStarNode implements PathPoint {
     Vector location;
 
     public VectorNode(VectorGoal goal, Location location, BlockSource source, BlockExaminer... examiners) {
-        this(goal, location.toVector(), source, examiners);
+        this(null, goal, location.toVector(), source, examiners);
     }
 
-    public VectorNode(VectorGoal goal, Vector location, BlockSource source, BlockExaminer... examiners) {
+    public VectorNode(VectorNode parent, VectorGoal goal, Vector location, BlockSource source,
+            BlockExaminer... examiners) {
+        super(parent);
         this.location = location.setX(location.getBlockX()).setY(location.getBlockY()).setZ(location.getBlockZ());
         this.blockSource = source;
         this.examiners = examiners == null ? new BlockExaminer[] {} : examiners;
@@ -46,7 +48,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public VectorNode createAtOffset(Vector mod) {
-        return new VectorNode(goal, mod, blockSource, examiners);
+        return new VectorNode(this, goal, mod, blockSource, examiners);
     }
 
     public float distance(VectorNode to) {

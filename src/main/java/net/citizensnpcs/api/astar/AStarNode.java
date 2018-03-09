@@ -10,6 +10,10 @@ public abstract class AStarNode implements Comparable<AStarNode> {
     AStarNode parent;
     List<AStarNode> parents;
 
+    protected AStarNode(AStarNode parent) {
+        this.parent = parent;
+    }
+
     public abstract Plan buildPlan();
 
     @Override

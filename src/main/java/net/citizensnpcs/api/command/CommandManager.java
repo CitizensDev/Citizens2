@@ -289,7 +289,7 @@ public class CommandManager {
                     || (!sender.hasPermission("citizens.admin") && !sender.hasPermission(command.permission())))
                 continue;
             lines.add(format(command, baseCommand));
-            if (command.modifiers().length > 1) {
+            if (command.modifiers().length > 0) {
                 processed.add(info);
             }
         }
@@ -423,7 +423,7 @@ public class CommandManager {
         if (name.equalsIgnoreCase("npc"))
             name = "NPC";
         Paginator paginator = new Paginator()
-                .header(capitalize(name) + " " + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER));
+                .header(capitalize(ChatColor.GREEN + name) + " " + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER));
         for (String line : getLines(sender, name.toLowerCase()))
             paginator.addLine(line);
         if (!paginator.sendPage(sender, page))
