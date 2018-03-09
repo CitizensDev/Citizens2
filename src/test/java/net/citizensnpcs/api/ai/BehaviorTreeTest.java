@@ -52,12 +52,12 @@ public class BehaviorTreeTest {
         test.addGoal(p, 1);
         test.run();
         test.run();
-        assertThat("Reset count", goal.resetCount, is(1));
-        assertThat("Run count", goal.runCount, is(1));
-        assertThat("Should execute count", goal.shouldExecuteCount, is(1));
-        assertThat("Reset count2", goal2.resetCount, is(1));
-        assertThat("Run count2", goal2.runCount, is(1));
-        assertThat("Should execute count2", goal2.shouldExecuteCount, is(1));
+        assertThat("Reset count", goal.resetCount, is(2));
+        assertThat("Run count", goal.runCount, is(2));
+        assertThat("Should execute count", goal.shouldExecuteCount, is(2));
+        assertThat("Reset count2", goal2.resetCount, is(0));
+        assertThat("Run count2", goal2.runCount, is(0));
+        assertThat("Should execute count2", goal2.shouldExecuteCount, is(0));
     }
 
     @Before

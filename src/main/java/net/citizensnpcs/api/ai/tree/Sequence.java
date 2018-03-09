@@ -34,7 +34,7 @@ public class Sequence extends Composite {
     public void reset() {
         super.reset();
         resetCurrent();
-        executingIndex = 0;
+        executingIndex = -1;
     }
 
     private void resetCurrent() {
