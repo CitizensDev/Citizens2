@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,6 +29,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -471,6 +473,18 @@ public class EventListen implements Listener {
             }, Setting.TELEPORT_DELAY.asInt());
         }
         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPotionSplashEvent(PotionSplashEvent event) {
+        for (LivingEntity entity : event.getAffectedEntities()) {
+            NPC npc = npcRegistry.getNPC(entity);
+            if (npc == null)
+                continue;
+            if (npc.isProtected()) {
+                event.setIntensity(entity, 0);
+            }
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
