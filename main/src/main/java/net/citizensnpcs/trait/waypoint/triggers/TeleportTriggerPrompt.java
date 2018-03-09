@@ -2,9 +2,6 @@ package net.citizensnpcs.trait.waypoint.triggers;
 
 import java.util.regex.Pattern;
 
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -16,6 +13,9 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 
 public class TeleportTriggerPrompt extends RegexPrompt implements WaypointTriggerPrompt {
     public TeleportTriggerPrompt() {
@@ -33,7 +33,7 @@ public class TeleportTriggerPrompt extends RegexPrompt implements WaypointTrigge
                     new TeleportTrigger(player.getLocation()));
             return (Prompt) context.getSessionData(WaypointTriggerPrompt.RETURN_PROMPT_KEY);
         }
-        String[] parts = Iterables.toArray(Splitter.on(':').split(input), String.class);
+        String[] parts = Iterables.toArray(Splitter.on(':').omitEmptyStrings().split(input), String.class);
         String worldName = parts[0];
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
