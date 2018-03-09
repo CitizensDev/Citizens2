@@ -51,6 +51,11 @@ public @interface Command {
     String permission() default "";
 
     /**
+     * Whether a flag or value flag MUST be used for this command.
+     */
+    boolean requiresFlags() default false;
+
+    /**
      * Command usage string that is displayed when an error occurs with the command processing.
      */
     String usage() default "";

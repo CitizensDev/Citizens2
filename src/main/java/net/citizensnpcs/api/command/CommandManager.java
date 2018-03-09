@@ -128,6 +128,9 @@ public class CommandManager {
         Command cmd = method.getAnnotation(Command.class);
         CommandContext context = new CommandContext(sender, args);
 
+        if (cmd.requiresFlags() && !context.hasAnyFlags())
+            throw new CommandUsageException("", getUsage(args, cmd));
+
         if (context.argsLength() < cmd.min())
             throw new CommandUsageException(CommandMessages.TOO_FEW_ARGUMENTS, getUsage(args, cmd));
 
@@ -155,8 +158,13 @@ public class CommandManager {
         } catch (IllegalAccessException e) {
             logger.log(Level.SEVERE, "Failed to execute command", e);
         } catch (InvocationTargetException e) {
-            if (e.getCause() instanceof CommandException)
+            if (e.getCause() instanceof CommandException) {
+                if (e.getCause() instanceof CommandUsageException
+                        && ((CommandUsageException) e.getCause()).getUsage() == null) {
+                    ((CommandUsageException) e.getCause()).setUsage(getUsage(args, cmd));
+                }
                 throw (CommandException) e.getCause();
+            }
             throw new WrappedCommandException(e.getCause());
         }
     }
@@ -176,7 +184,9 @@ public class CommandManager {
             } catch (ServerCommandException ex) {
                 Messaging.sendTr(sender, CommandMessages.MUST_BE_INGAME);
             } catch (CommandUsageException ex) {
-                Messaging.sendError(sender, ex.getMessage());
+                if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+                    Messaging.sendError(sender, ex.getMessage());
+                }
                 Messaging.sendError(sender, ex.getUsage());
             } catch (UnhandledCommandException ex) {
                 return false;
