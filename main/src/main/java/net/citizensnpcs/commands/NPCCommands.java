@@ -1528,7 +1528,7 @@ public class NPCCommands {
             npc.data().remove(NPC.PLAYER_SKIN_UUID_METADATA);
         } else {
             if (args.argsLength() != 2)
-                throw new CommandException();
+                throw new CommandException(Messages.SKIN_REQUIRED);
             npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, args.getString(1));
             if (args.hasFlag('p')) {
                 npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, false);

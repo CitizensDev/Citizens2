@@ -213,6 +213,7 @@ public class Messages {
     public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";
     public static final String SKIN_CLEARED = "citizens.commands.npc.skin.cleared";
     public static final String SKIN_LAYERS_SET = "citizens.commands.npc.skin.layers-set";
+    public static final String SKIN_REQUIRED = "citizens.commands.npc.skin.missing-skin";
     public static final String SKIN_SET = "citizens.commands.npc.skin.set";
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
     public static final String SKIPPING_INVALID_ANCHOR = "citizens.notifications.skipping-invalid-anchor";
