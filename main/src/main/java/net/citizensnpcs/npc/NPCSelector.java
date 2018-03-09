@@ -3,17 +3,6 @@ package net.citizensnpcs.npc;
 import java.util.List;
 import java.util.UUID;
 
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.NPCRemoveEvent;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.event.NPCSelectEvent;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.trait.Owner;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.util.Util;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -29,6 +18,17 @@ import org.bukkit.metadata.Metadatable;
 import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.Lists;
+
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCRemoveEvent;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.event.NPCSelectEvent;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.util.Util;
 
 public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelector {
     private UUID consoleSelectedNPC;
@@ -57,6 +57,10 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         List<MetadataValue> metadata = sender.getMetadata("selected");
         if (metadata.size() == 0)
             return null;
+        if (metadata.get(0).value() == null) {
+            sender.removeMetadata("selected", plugin);
+            return null;
+        }
         return CitizensAPI.getNPCRegistry().getByUniqueIdGlobal((UUID) metadata.get(0).value());
     }
 
