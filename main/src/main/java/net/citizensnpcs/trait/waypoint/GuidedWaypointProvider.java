@@ -60,7 +60,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         }
         final Player player = (Player) sender;
         return new WaypointEditor() {
-            private final WaypointMarkers markers = new WaypointMarkers(player.getWorld());
+            private final EntityMarkers<Waypoint> markers = new EntityMarkers<Waypoint>();
             private boolean showPath;
 
             @Override
@@ -71,12 +71,12 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
             private void createWaypointMarkers() {
                 for (Waypoint waypoint : Iterables.concat(available, helpers)) {
-                    markers.createWaypointMarker(waypoint);
+                    markers.createMarker(waypoint, waypoint.getLocation().clone().add(0, 1, 0));
                 }
             }
 
             private void createWaypointMarkerWithData(Waypoint element) {
-                Entity entity = markers.createWaypointMarker(element);
+                Entity entity = markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
                 if (entity == null)
                     return;
                 entity.setMetadata("citizens.waypointhashcode",
@@ -86,7 +86,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             @Override
             public void end() {
                 Messaging.sendTr(player, Messages.GUIDED_WAYPOINT_EDITOR_END);
-                markers.destroyWaypointMarkers();
+                markers.destroyMarkers();
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -105,7 +105,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                             available.clear();
                             helpers.clear();
                             if (showPath)
-                                markers.destroyWaypointMarkers();
+                                markers.destroyMarkers();
                         }
                     });
                 }
@@ -160,7 +160,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     createWaypointMarkers();
                     Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS);
                 } else {
-                    markers.destroyWaypointMarkers();
+                    markers.destroyMarkers();
                     Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_NOT_SHOWING_MARKERS);
                 }
             }

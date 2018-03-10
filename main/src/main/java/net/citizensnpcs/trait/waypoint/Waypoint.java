@@ -16,7 +16,7 @@ import net.citizensnpcs.trait.waypoint.triggers.DelayTrigger;
 import net.citizensnpcs.trait.waypoint.triggers.WaypointTrigger;
 import net.citizensnpcs.trait.waypoint.triggers.WaypointTriggerRegistry;
 
-public class Waypoint {
+public class Waypoint implements Locatable {
     @Persist(required = true)
     private Location location;
     @Persist
@@ -65,6 +65,7 @@ public class Waypoint {
         return true;
     }
 
+    @Override
     public Location getLocation() {
         return location;
     }
