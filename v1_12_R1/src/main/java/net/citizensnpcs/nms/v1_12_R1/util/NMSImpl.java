@@ -767,7 +767,7 @@ public class NMSImpl implements NMSBridge {
             return;
         boolean wasTamed = horse.isTamed();
         horse.setTamed(true);
-        ((EntityHorseAbstract) handle).a((EntityHuman) equipperHandle);
+        ((EntityHorseAbstract) handle).c((EntityHuman) equipperHandle);
         horse.setTamed(wasTamed);
     }
 
