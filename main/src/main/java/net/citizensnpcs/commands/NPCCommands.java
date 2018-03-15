@@ -382,7 +382,6 @@ public class NPCCommands {
     @Requirements
     public void create(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String name = Colorizer.parseColors(args.getJoinedStrings(1).trim());
-
         EntityType type = EntityType.PLAYER;
         if (args.hasValueFlag("type")) {
             String inputType = args.getFlag("type");
