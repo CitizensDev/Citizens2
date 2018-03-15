@@ -9,24 +9,30 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
+import com.google.common.base.Supplier;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.cuboid.QuadTree;
 
 public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private boolean forceFinish;
     private final NPC npc;
+    private boolean paused;
     private final Random random = new Random();
-    private final int xrange;
-    private final int yrange;
+    private final Supplier<QuadTree> tree;
+    private int xrange;
+    private int yrange;
 
-    private WanderGoal(NPC npc, int xrange, int yrange) {
+    private WanderGoal(NPC npc, int xrange, int yrange, Supplier<QuadTree> tree) {
         this.npc = npc;
         this.xrange = xrange;
         this.yrange = yrange;
+        this.tree = tree;
     }
 
     private Location findRandomPosition() {
@@ -39,6 +45,9 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             Block block = base.getWorld().getBlockAt(x, y, z);
             if (MinecraftBlockExaminer.canStandOn(block)
                     && MinecraftBlockExaminer.canStandIn(block.getRelative(BlockFace.UP).getType())) {
+                if (tree != null && tree.get() != null && tree.get().search(x, y, z).isEmpty()) {
+                    continue;
+                }
                 found = block.getLocation().add(0, 1, 0);
                 break;
             }
@@ -49,6 +58,10 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     @EventHandler
     public void onFinish(NavigationCompleteEvent event) {
         forceFinish = true;
+    }
+
+    public void pause() {
+        this.paused = true;
     }
 
     @Override
@@ -64,9 +77,14 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         return BehaviorStatus.RUNNING;
     }
 
+    public void setXYRange(int xrange, int yrange) {
+        this.xrange = xrange;
+        this.yrange = yrange;
+    }
+
     @Override
     public boolean shouldExecute() {
-        if (!npc.isSpawned() || npc.getNavigator().isNavigating())
+        if (!npc.isSpawned() || npc.getNavigator().isNavigating() || paused)
             return false;
         Location dest = findRandomPosition();
         if (dest == null)
@@ -76,11 +94,19 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         return true;
     }
 
+    public void unpause() {
+        this.paused = false;
+    }
+
     public static WanderGoal createWithNPC(NPC npc) {
         return createWithNPCAndRange(npc, 10, 2);
     }
 
     public static WanderGoal createWithNPCAndRange(NPC npc, int xrange, int yrange) {
-        return new WanderGoal(npc, xrange, yrange);
+        return createWithNPCAndRangeAndTree(npc, xrange, yrange, null);
+    }
+
+    public static WanderGoal createWithNPCAndRangeAndTree(NPC npc, int xrange, int yrange, Supplier<QuadTree> tree) {
+        return new WanderGoal(npc, xrange, yrange, tree);
     }
 }
