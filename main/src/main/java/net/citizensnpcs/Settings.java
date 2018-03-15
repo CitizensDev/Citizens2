@@ -101,6 +101,7 @@ public class Settings {
         MAX_PACKET_ENTRIES("npc.limits.max-packet-entries", 15),
         MAX_SPEED("npc.limits.max-speed", 100),
         MAX_TEXT_RANGE("npc.chat.options.max-text-range", 500),
+        MAXIMUM_ASTAR_ITERATIONS("npc.pathfinding.maximum-new-pathfinder-iterations", 50000),
         MESSAGE_COLOUR("general.color-scheme.message", "<a>"),
         NEW_PATHFINDER_OPENS_DOORS("npc.pathfinding.new-finder-open-doors", false),
         NPC_ATTACK_DISTANCE("npc.pathfinding.attack-range", 1.75 * 1.75),

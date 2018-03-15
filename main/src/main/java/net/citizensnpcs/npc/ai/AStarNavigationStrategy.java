@@ -11,6 +11,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.AbstractPathStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
@@ -86,7 +87,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             VectorGoal goal = new VectorGoal(destination, (float) params.pathDistanceMargin());
             setPlan(ASTAR.runFully(goal,
                     new VectorNode(goal, location, new ChunkBlockSource(location, params.range()), params.examiners()),
-                    50000));
+                    Setting.MAXIMUM_ASTAR_ITERATIONS.asInt()));
         }
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
