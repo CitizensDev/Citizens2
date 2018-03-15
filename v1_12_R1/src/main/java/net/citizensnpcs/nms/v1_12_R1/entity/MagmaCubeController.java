@@ -17,6 +17,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.DamageSource;
+import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityMagmaCube;
 import net.minecraft.server.v1_12_R1.IBlockData;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
@@ -91,6 +92,13 @@ public class MagmaCubeController extends MobEntityController {
         @Override
         protected SoundEffect d(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
+        }
+
+        @Override
+        public void d(EntityHuman human) {
+            if (npc == null) {
+                super.d(human);
+            }
         }
 
         @Override
