@@ -909,7 +909,7 @@ public class NPCCommands {
             min = 1,
             max = 1,
             permission = "citizens.npc.controllable")
-    public void mount(CommandContext args, Player player, NPC npc) throws CommandException {
+    public void mount(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("onnpc")) {
             NPC mount;
             try {
@@ -929,9 +929,13 @@ public class NPCCommands {
         }
         boolean enabled = npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled();
         if (!enabled) {
-            Messaging.sendTr(player, Messages.NPC_NOT_CONTROLLABLE, npc.getName());
+            Messaging.sendTr(sender, Messages.NPC_NOT_CONTROLLABLE, npc.getName());
             return;
         }
+        if (!(sender instanceof Player)) {
+            throw new CommandException(CommandMessages.MUST_BE_INGAME);
+        }
+        Player player = (Player) sender;
         boolean success = npc.getTrait(Controllable.class).mount(player);
         if (!success) {
             Messaging.sendTr(player, Messages.FAILED_TO_MOUNT_NPC, npc.getName());
