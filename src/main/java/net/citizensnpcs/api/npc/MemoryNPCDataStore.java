@@ -31,4 +31,8 @@ public class MemoryNPCDataStore implements NPCDataStore {
     @Override
     public void storeAll(NPCRegistry registry) {
     }
+
+    @Override
+    public void reloadFromSource() {
+    }
 }
