@@ -355,7 +355,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Skin.clearCache();
         getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
 
-        saves = createStorage(getDataFolder());
+        saves.reloadFromSource();
         saves.loadInto(npcRegistry);
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
