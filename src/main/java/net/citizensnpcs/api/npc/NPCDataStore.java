@@ -3,7 +3,7 @@ package net.citizensnpcs.api.npc;
 public interface NPCDataStore {
     /**
      * Clears all data about the given {@link NPC} from storage. Called when the NPC is removed.
-     * 
+     *
      * @param npc
      *            The NPC to clear data from
      */
@@ -18,7 +18,7 @@ public interface NPCDataStore {
 
     /**
      * Loads NPCs from disk into the given {@link NPCRegistry}. The registry should be cleared before this is called.
-     * 
+     *
      * @param registry
      *            The NPCRegistry to load NPCs into
      */
@@ -36,7 +36,7 @@ public interface NPCDataStore {
 
     /**
      * Stores the given {@link NPC} into memory or to a disk representation.
-     * 
+     *
      * @param npc
      *            The NPC to store
      */
@@ -44,9 +44,14 @@ public interface NPCDataStore {
 
     /**
      * Stores all {@link NPC}s in the given {@link NPCRegistry} to disk.
-     * 
+     *
      * @param registry
      *            The registry to store NPCs from
      */
     void storeAll(NPCRegistry registry);
+
+    /**
+     * Reloads the data store from source (such as a file on disk).
+     */
+    void reloadFromSource();
 }

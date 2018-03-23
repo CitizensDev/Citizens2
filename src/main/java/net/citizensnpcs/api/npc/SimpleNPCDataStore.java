@@ -118,6 +118,11 @@ public class SimpleNPCDataStore implements NPCDataStore {
         return type;
     }
 
+    @Override
+    public void reloadFromSource() {
+        root.load();
+    }
+
     private static final String LOAD_NAME_NOT_FOUND = "citizens.notifications.npc-name-not-found";
     private static final String LOAD_UNKNOWN_NPC_TYPE = "citizens.notifications.unknown-npc-type";
 }
