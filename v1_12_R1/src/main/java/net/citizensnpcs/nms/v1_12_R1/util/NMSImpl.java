@@ -963,7 +963,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setShulkerColor(Shulker shulker, DyeColor color) {
-        ((EntityShulker) getHandle(shulker)).getDataWatcher().set(EntityShulker.COLOR, color.getDyeData());
+        ((EntityShulker) getHandle(shulker)).getDataWatcher().set(EntityShulker.COLOR, color.getWoolData());
     }
 
     @Override

@@ -12,6 +12,7 @@ import net.citizensnpcs.util.NMS;
 public class ShulkerTrait extends Trait {
     @Persist("color")
     private DyeColor color = DyeColor.PURPLE;
+    private int lastPeekSet = 0;
     @Persist("peek")
     private int peek = 0;
 
@@ -30,7 +31,10 @@ public class ShulkerTrait extends Trait {
             color = DyeColor.PURPLE;
         }
         if (npc.getEntity() instanceof Shulker) {
-            NMS.setShulkerPeek((Shulker) npc.getEntity(), peek);
+            if (peek != lastPeekSet) {
+                NMS.setShulkerPeek((Shulker) npc.getEntity(), peek);
+                lastPeekSet = peek;
+            }
             NMS.setShulkerColor((Shulker) npc.getEntity(), color);
         }
     }

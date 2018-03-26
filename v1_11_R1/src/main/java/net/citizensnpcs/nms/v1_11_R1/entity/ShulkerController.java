@@ -196,7 +196,7 @@ public class ShulkerController extends MobEntityController {
         }
 
         public void setColor(DyeColor color) {
-            this.datawatcher.set(bw, color.getDyeData());
+            this.datawatcher.set(bw, color.getWoolData());
         }
 
         @Override
