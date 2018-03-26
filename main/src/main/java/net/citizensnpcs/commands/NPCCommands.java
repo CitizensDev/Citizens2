@@ -1975,7 +1975,7 @@ public class NPCCommands {
             min = 1,
             max = 1,
             requiresFlags = true,
-            flags = "sat",
+            flags = "sati",
             permission = "citizens.npc.wolf")
     @Requirements(selected = true, ownership = true, types = EntityType.WOLF)
     public void wolf(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
@@ -2006,9 +2006,7 @@ public class NPCCommands {
                 throw new CommandException(Messages.COLLAR_COLOUR_NOT_SUPPORTED, unparsed);
             trait.setCollarColor(color);
         }
-        if (args.hasFlag('i')) {
-            Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), args.hasFlag('a'), args.hasFlag('s'),
-                    args.hasFlag('t'), trait.getCollarColor().name());
-        }
+        Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), trait.isAngry(), trait.isSitting(),
+                trait.isTamed(), trait.getCollarColor().name());
     }
 }
