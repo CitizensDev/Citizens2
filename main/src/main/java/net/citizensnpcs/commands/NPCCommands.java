@@ -1514,6 +1514,10 @@ public class NPCCommands {
         }
         if (args.hasValueFlag("color")) {
             DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("color"));
+            if (color == null) {
+                Messaging.sendErrorTr(sender, Messages.INVALID_SHULKER_COLOR, Util.listValuesPretty(DyeColor.values()));
+                return;
+            }
             trait.setColor(color);
             Messaging.sendTr(sender, Messages.SHULKER_COLOR_SET, npc.getName(), Util.prettyEnum(color));
             hasArg = true;

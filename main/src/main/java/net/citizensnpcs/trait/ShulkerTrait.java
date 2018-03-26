@@ -26,6 +26,9 @@ public class ShulkerTrait extends Trait {
 
     @Override
     public void run() {
+        if (color == null) {
+            color = DyeColor.PURPLE;
+        }
         if (npc.getEntity() instanceof Shulker) {
             NMS.setShulkerPeek((Shulker) npc.getEntity(), peek);
             NMS.setShulkerColor((Shulker) npc.getEntity(), color);
