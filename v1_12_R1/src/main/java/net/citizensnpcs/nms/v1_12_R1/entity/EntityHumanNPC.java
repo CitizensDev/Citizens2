@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
@@ -534,7 +534,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     private static final String[][] EMPTY_PROGRESS = new String[0][0];
-    private static final Map<String, Criterion> EMPTY_PROGRESS_MAP = ImmutableMap.of();
+    private static final Map<String, Criterion> EMPTY_PROGRESS_MAP = Collections.emptyMap();
     private static final float EPSILON = 0.005F;
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }
