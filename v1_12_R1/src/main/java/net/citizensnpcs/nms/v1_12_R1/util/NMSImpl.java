@@ -1019,7 +1019,6 @@ public class NMSImpl implements NMSBridge {
             modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
             field.set(null, ENTITY_REGISTRY.getWrapped());
         } catch (Exception e) {
-
         }
     }
 
