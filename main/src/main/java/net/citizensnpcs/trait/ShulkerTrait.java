@@ -45,5 +45,6 @@ public class ShulkerTrait extends Trait {
 
     public void setPeek(int peek) {
         this.peek = peek;
+        lastPeekSet = -1;
     }
 }
