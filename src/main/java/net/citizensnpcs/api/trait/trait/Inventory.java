@@ -67,8 +67,13 @@ public class Inventory extends Trait {
             }
         }
         if (npc.getEntity() instanceof InventoryHolder) {
-            int maxSize = ((InventoryHolder) npc.getEntity()).getInventory().getStorageContents().length;
-            ((InventoryHolder) npc.getEntity()).getInventory().setStorageContents(Arrays.copyOf(contents, maxSize));
+            try {
+                int maxSize = ((InventoryHolder) npc.getEntity()).getInventory().getStorageContents().length;
+                ((InventoryHolder) npc.getEntity()).getInventory().setStorageContents(Arrays.copyOf(contents, maxSize));
+            } catch (NoSuchMethodError e) {
+                int maxSize = ((InventoryHolder) npc.getEntity()).getInventory().getContents().length;
+                ((InventoryHolder) npc.getEntity()).getInventory().setContents(Arrays.copyOf(contents, maxSize));
+            }
         }
         views.remove(event.getView());
     }
@@ -88,8 +93,7 @@ public class Inventory extends Trait {
         setContents(contents);
         int size = npc.getEntity() instanceof Player ? 36
                 : npc.getEntity() instanceof InventoryHolder
-                        ? ((InventoryHolder) npc.getEntity()).getInventory().getSize()
-                        : contents.length;
+                        ? ((InventoryHolder) npc.getEntity()).getInventory().getSize() : contents.length;
         int rem = size % 9;
         if (rem != 0) {
             size += 9 - rem; // round up to nearest multiple of 9

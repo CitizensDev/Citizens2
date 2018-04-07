@@ -122,13 +122,16 @@ public class Equipment extends Trait {
         } else {
             EntityEquipment equip = getEquipmentFromEntity(npc.getEntity());
             if (equipment[0] != null) {
-                equip.setItemInMainHand(equipment[0]);
+                equip.setItemInHand(equipment[0]);
             }
             equip.setHelmet(equipment[1]);
             equip.setChestplate(equipment[2]);
             equip.setLeggings(equipment[3]);
             equip.setBoots(equipment[4]);
-            equip.setItemInOffHand(equipment[5]);
+            try {
+                equip.setItemInOffHand(equipment[5]);
+            } catch (NoSuchMethodError e) {
+            }
         }
         if (npc.getEntity() instanceof Player) {
             ((Player) npc.getEntity()).updateInventory();
@@ -186,7 +189,7 @@ public class Equipment extends Trait {
             EntityEquipment equip = getEquipmentFromEntity(npc.getEntity());
             switch (slot) {
                 case 0:
-                    equip.setItemInMainHand(item);
+                    equip.setItemInHand(item);
                     break;
                 case 1:
                     equip.setHelmet(item);
@@ -201,7 +204,10 @@ public class Equipment extends Trait {
                     equip.setBoots(item);
                     break;
                 case 5:
-                    equip.setItemInOffHand(item);
+                    try {
+                        equip.setItemInOffHand(item);
+                    } catch (NoSuchMethodError e) {
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Slot must be between 0 and 5");

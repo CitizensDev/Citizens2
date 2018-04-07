@@ -176,9 +176,12 @@ public class ItemStorage {
 
         if (root.keyExists("potion")) {
             PotionMeta meta = ensureMeta(res);
-            PotionData data = new PotionData(PotionType.valueOf(root.getString("potion.data.type")),
-                    root.getBoolean("potion.data.extended"), root.getBoolean("potion.data.upgraded"));
-            meta.setBasePotionData(data);
+            try {
+                PotionData data = new PotionData(PotionType.valueOf(root.getString("potion.data.type")),
+                        root.getBoolean("potion.data.extended"), root.getBoolean("potion.data.upgraded"));
+                meta.setBasePotionData(data);
+            } catch (Throwable t) {
+            }
             for (DataKey sub : root.getRelative("potion.effects").getIntegerSubKeys()) {
                 int duration = sub.getInt("duration");
                 int amplifier = sub.getInt("amplifier");
@@ -392,11 +395,14 @@ public class ItemStorage {
 
         if (meta instanceof PotionMeta) {
             PotionMeta potion = (PotionMeta) meta;
-            PotionData data = potion.getBasePotionData();
             List<PotionEffect> effects = potion.getCustomEffects();
-            key.setBoolean("potion.data.extended", data.isExtended());
-            key.setBoolean("potion.data.upgraded", data.isUpgraded());
-            key.setString("potion.data.type", data.getType().name());
+            try {
+                PotionData data = potion.getBasePotionData();
+                key.setBoolean("potion.data.extended", data.isExtended());
+                key.setBoolean("potion.data.upgraded", data.isUpgraded());
+                key.setString("potion.data.type", data.getType().name());
+            } catch (Throwable t) {
+            }
             key.removeKey("potion.effects");
             DataKey effectKey = key.getRelative("potion.effects");
             for (int i = 0; i < effects.size(); i++) {
