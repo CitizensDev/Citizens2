@@ -105,12 +105,12 @@ public class PlayerAnimationImpl {
                         radius);
                 break;
             case STOP_USE_ITEM:
-                player.cA();
+                player.clearActiveItem();
                 sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
                         radius);
                 break;
             default:
-                break;
+                throw new UnsupportedOperationException();
         }
     }
 

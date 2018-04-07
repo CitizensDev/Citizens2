@@ -13,7 +13,7 @@ import net.citizensnpcs.util.Messages;
 public class PigEquipper implements Equipper {
     @Override
     public void equip(Player equipper, NPC toEquip) {
-        ItemStack hand = equipper.getInventory().getItemInMainHand();
+        ItemStack hand = equipper.getInventory().getItemInHand();
         Pig pig = (Pig) toEquip.getEntity();
         if (hand.getType() == Material.SADDLE) {
             if (!pig.hasSaddle()) {
@@ -26,6 +26,6 @@ public class PigEquipper implements Equipper {
             toEquip.getTrait(Saddle.class).toggle();
             Messaging.sendTr(equipper, Messages.SADDLED_STOPPED, toEquip.getName());
         }
-        equipper.getInventory().setItemInMainHand(hand);
+        equipper.getInventory().setItemInHand(hand);
     }
 }

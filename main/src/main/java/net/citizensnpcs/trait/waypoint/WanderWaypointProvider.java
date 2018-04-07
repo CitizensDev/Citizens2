@@ -11,7 +11,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Supplier;
@@ -27,6 +26,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.cuboid.QuadCuboid;
 import net.citizensnpcs.api.util.cuboid.QuadTree;
 import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Util;
 
 public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTree> {
     private WanderGoal currentGoal;
@@ -122,8 +122,7 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
             @EventHandler(ignoreCancelled = true)
             public void onPlayerInteract(PlayerInteractEvent event) {
                 if (!event.getPlayer().equals(sender) || event.getAction() == Action.PHYSICAL || !npc.isSpawned()
-                        || event.getPlayer().getWorld() != npc.getEntity().getWorld()
-                        || event.getHand() == EquipmentSlot.OFF_HAND)
+                        || event.getPlayer().getWorld() != npc.getEntity().getWorld() || Util.isOffHand(event))
                     return;
                 if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
                     if (event.getClickedBlock() == null)
@@ -143,7 +142,7 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
 
             @EventHandler(ignoreCancelled = true)
             public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-                if (!sender.equals(event.getPlayer()) || !editingRegions || event.getHand() == EquipmentSlot.OFF_HAND)
+                if (!sender.equals(event.getPlayer()) || !editingRegions || Util.isOffHand(event))
                     return;
                 if (!event.getRightClicked().hasMetadata("wandermarker"))
                     return;

@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
@@ -46,7 +45,6 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -93,6 +91,7 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
@@ -409,7 +408,7 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = npcRegistry.getNPC(event.getRightClicked());
-        if (npc == null || event.getHand() == EquipmentSlot.OFF_HAND) {
+        if (npc == null || Util.isOffHand(event)) {
             return;
         }
         Player player = event.getPlayer();
@@ -519,7 +518,7 @@ public class EventListen implements Listener {
         if (!npcRegistry.isNPC(event.getVehicle()))
             return;
         NPC npc = npcRegistry.getNPC(event.getVehicle());
-        if ((npc.getEntity() instanceof AbstractHorse || npc.getEntity().getType() == EntityType.BOAT
+        if ((Util.isHorse(npc.getEntity()) || npc.getEntity().getType() == EntityType.BOAT
                 || npc.getEntity().getType() == EntityType.PIG || npc.getEntity() instanceof Minecart)
                 && (!npc.hasTrait(Controllable.class) || !npc.getTrait(Controllable.class).isEnabled())) {
             event.setCancelled(true);

@@ -110,7 +110,7 @@ public class PlayerAnimationImpl {
                         radius);
                 break;
             default:
-                break;
+                throw new UnsupportedOperationException();
         }
     }
 

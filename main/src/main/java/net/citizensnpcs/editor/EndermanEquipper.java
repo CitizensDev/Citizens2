@@ -14,7 +14,7 @@ import net.citizensnpcs.util.Messages;
 public class EndermanEquipper implements Equipper {
     @Override
     public void equip(Player equipper, NPC npc) {
-        ItemStack hand = equipper.getInventory().getItemInMainHand();
+        ItemStack hand = equipper.getInventory().getItemInHand();
         if (!hand.getType().isBlock()) {
             Messaging.sendErrorTr(equipper, Messages.EQUIPMENT_EDITOR_INVALID_BLOCK);
             return;
@@ -35,7 +35,7 @@ public class EndermanEquipper implements Equipper {
         if (set.getType() != Material.AIR) {
             set.setAmount(1);
             hand.setAmount(hand.getAmount() - 1);
-            equipper.getInventory().setItemInMainHand(hand);
+            equipper.getInventory().setItemInHand(hand);
         }
         npc.getTrait(Equipment.class).set(0, set);
     }

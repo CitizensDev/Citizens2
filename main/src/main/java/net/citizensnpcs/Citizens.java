@@ -307,7 +307,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 startMetrics();
                 scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
                 Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
-                new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
+                if (!Util.getMinecraftRevision().equals("1_8_R3")) {
+                    new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
+                }
             }
         }, 1) == -1) {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);

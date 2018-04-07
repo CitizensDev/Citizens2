@@ -16,7 +16,7 @@ import net.citizensnpcs.util.Messages;
 public class SheepEquipper implements Equipper {
     @Override
     public void equip(Player equipper, NPC toEquip) {
-        ItemStack hand = equipper.getInventory().getItemInMainHand();
+        ItemStack hand = equipper.getInventory().getItemInHand();
         Sheep sheep = (Sheep) toEquip.getEntity();
         if (hand.getType() == Material.SHEARS) {
             Messaging.sendTr(equipper, toEquip.getTrait(SheepTrait.class).toggleSheared() ? Messages.SHEARED_SET
@@ -35,6 +35,6 @@ public class SheepEquipper implements Equipper {
             toEquip.getTrait(WoolColor.class).setColor(DyeColor.WHITE);
             Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED, toEquip.getName(), "white");
         }
-        equipper.getInventory().setItemInMainHand(hand);
+        equipper.getInventory().setItemInHand(hand);
     }
 }

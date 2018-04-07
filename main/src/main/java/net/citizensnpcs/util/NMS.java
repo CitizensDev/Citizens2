@@ -5,15 +5,12 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -62,10 +59,6 @@ public class NMS {
 
     public static BlockBreaker getBlockBreaker(Entity entity, Block targetBlock, BlockBreakerConfiguration config) {
         return BRIDGE.getBlockBreaker(entity, targetBlock, config);
-    }
-
-    public static BossBar getBossBar(org.bukkit.entity.Entity entity) {
-        return BRIDGE.getBossBar(entity);
     }
 
     public static BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
@@ -260,14 +253,6 @@ public class NMS {
 
     public static void setShouldJump(org.bukkit.entity.Entity entity) {
         BRIDGE.setShouldJump(entity);
-    }
-
-    public static void setShulkerColor(Shulker entity, DyeColor color) {
-        BRIDGE.setShulkerColor(entity, color);
-    }
-
-    public static void setShulkerPeek(Shulker shulker, int peek) {
-        BRIDGE.setShulkerPeek(shulker, peek);
     }
 
     public static void setSitting(Tameable tameable, boolean sitting) {

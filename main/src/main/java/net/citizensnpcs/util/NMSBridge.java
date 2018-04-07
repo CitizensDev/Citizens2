@@ -3,16 +3,13 @@ package net.citizensnpcs.util;
 import java.util.Collection;
 import java.util.List;
 
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -43,8 +40,6 @@ public interface NMSBridge {
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Exception;
 
     public BlockBreaker getBlockBreaker(Entity entity, Block targetBlock, BlockBreakerConfiguration config);
-
-    public BossBar getBossBar(Entity entity);
 
     public BoundingBox getBoundingBox(Entity handle);
 
@@ -125,10 +120,6 @@ public interface NMSBridge {
     public void setProfile(SkullMeta meta, GameProfile profile);
 
     public void setShouldJump(Entity entity);
-
-    public void setShulkerColor(Shulker entity, DyeColor color);
-
-    public void setShulkerPeek(Shulker shulker, int peek);
 
     public void setSitting(Tameable tameable, boolean sitting);
 

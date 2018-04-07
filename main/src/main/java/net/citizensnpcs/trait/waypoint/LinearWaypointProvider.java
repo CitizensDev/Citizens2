@@ -17,7 +17,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
 import com.google.common.collect.Lists;
 
@@ -264,8 +263,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         @EventHandler(ignoreCancelled = true)
         public void onPlayerInteract(PlayerInteractEvent event) {
             if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL || !npc.isSpawned()
-                    || event.getPlayer().getWorld() != npc.getEntity().getWorld()
-                    || event.getHand() == EquipmentSlot.OFF_HAND)
+                    || event.getPlayer().getWorld() != npc.getEntity().getWorld() || Util.isOffHand(event))
                 return;
             if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
                 if (event.getClickedBlock() == null)
@@ -309,7 +307,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
         @EventHandler(ignoreCancelled = true)
         public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-            if (!player.equals(event.getPlayer()) || !showPath || event.getHand() == EquipmentSlot.OFF_HAND)
+            if (!player.equals(event.getPlayer()) || !showPath || Util.isOffHand(event))
                 return;
             if (!event.getRightClicked().hasMetadata("waypointindex"))
                 return;
