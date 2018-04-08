@@ -248,7 +248,7 @@ public class NMS {
     }
 
     public static void setPeekShulker(org.bukkit.entity.Entity entity, int peek) {
-        if (entity.getType().name().equals("SHULKER")) {
+        if (!entity.getType().name().equals("SHULKER")) {
             throw new IllegalArgumentException("entity must be a shulker");
         }
         BRIDGE.setPeekShulker(entity, peek);
