@@ -914,6 +914,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
+        ((EntityShulker) getHandle(shulker)).a((byte) peek);
+    }
+
+    @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
         if (SKULL_PROFILE_FIELD == null) {
             try {
@@ -1462,10 +1467,6 @@ public class NMSImpl implements NMSBridge {
 
     public static void setShulkerColor(Shulker shulker, DyeColor color) {
         ((EntityShulker) getHandle(shulker)).getDataWatcher().set(EntityShulker.COLOR, color.getWoolData());
-    }
-
-    public static void setShulkerPeek(Shulker shulker, int peek) {
-        ((EntityShulker) getHandle(shulker)).a((byte) peek);
     }
 
     public static void setSize(Entity entity, float f, float f1, boolean justCreated) {

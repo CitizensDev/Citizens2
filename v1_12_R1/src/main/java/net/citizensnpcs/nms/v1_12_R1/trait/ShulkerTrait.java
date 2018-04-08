@@ -7,6 +7,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.nms.v1_12_R1.util.NMSImpl;
+import net.citizensnpcs.util.NMS;
 
 @TraitName("shulkertrait")
 public class ShulkerTrait extends Trait {
@@ -32,7 +33,7 @@ public class ShulkerTrait extends Trait {
         }
         if (npc.getEntity() instanceof Shulker) {
             if (peek != lastPeekSet) {
-                NMSImpl.setShulkerPeek((Shulker) npc.getEntity(), peek);
+                NMS.setPeekShulker((Shulker) npc.getEntity(), peek);
                 lastPeekSet = peek;
             }
             NMSImpl.setShulkerColor((Shulker) npc.getEntity(), color);

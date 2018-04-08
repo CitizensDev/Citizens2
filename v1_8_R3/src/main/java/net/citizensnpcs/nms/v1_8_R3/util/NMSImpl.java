@@ -796,6 +796,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
         if (SKULL_PROFILE_FIELD == null) {
             try {

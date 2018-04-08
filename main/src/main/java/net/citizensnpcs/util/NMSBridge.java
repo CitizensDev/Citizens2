@@ -117,6 +117,8 @@ public interface NMSBridge {
 
     public void setNavigationTarget(Entity handle, Entity target, float speed);
 
+    public void setPeekShulker(Entity entity, int peek);
+
     public void setProfile(SkullMeta meta, GameProfile profile);
 
     public void setShouldJump(Entity entity);

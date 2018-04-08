@@ -247,6 +247,13 @@ public class NMS {
         BRIDGE.setNavigationTarget(handle, target, speed);
     }
 
+    public static void setPeekShulker(org.bukkit.entity.Entity entity, int peek) {
+        if (entity.getType().name().equals("SHULKER")) {
+            throw new IllegalArgumentException("entity must be a shulker");
+        }
+        BRIDGE.setPeekShulker(entity, peek);
+    }
+
     public static void setProfile(SkullMeta meta, GameProfile profile) {
         BRIDGE.setProfile(meta, profile);
     }
