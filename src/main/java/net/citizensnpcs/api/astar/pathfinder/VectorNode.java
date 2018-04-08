@@ -13,23 +13,23 @@ import net.citizensnpcs.api.astar.pathfinder.BlockExaminer.PassableState;
 
 public class VectorNode extends AStarNode implements PathPoint {
     private float blockCost = -1;
-    private final BlockSource blockSource;
     List<PathCallback> callbacks;
-    private final BlockExaminer[] examiners;
-    private final VectorGoal goal;
+    private final PathInfo info;
     Vector location;
 
     public VectorNode(VectorGoal goal, Location location, BlockSource source, BlockExaminer... examiners) {
         this(null, goal, location.toVector(), source, examiners);
     }
 
-    public VectorNode(VectorNode parent, VectorGoal goal, Vector location, BlockSource source,
-            BlockExaminer... examiners) {
+    public VectorNode(VectorNode parent, Vector location, PathInfo info) {
         super(parent);
         this.location = location.setX(location.getBlockX()).setY(location.getBlockY()).setZ(location.getBlockZ());
-        this.blockSource = source;
-        this.examiners = examiners == null ? new BlockExaminer[] {} : examiners;
-        this.goal = goal;
+        this.info = info;
+    }
+
+    public VectorNode(VectorNode parent, VectorGoal goal, Vector location, BlockSource source,
+            BlockExaminer... examiners) {
+        this(parent, location, new PathInfo(source, examiners == null ? new BlockExaminer[] {} : examiners, goal));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public VectorNode createAtOffset(Vector mod) {
-        return new VectorNode(this, goal, mod, blockSource, examiners);
+        return new VectorNode(this, mod, info);
     }
 
     public float distance(VectorNode to) {
@@ -77,8 +77,8 @@ public class VectorNode extends AStarNode implements PathPoint {
     private float getBlockCost() {
         if (blockCost == -1) {
             blockCost = 0;
-            for (BlockExaminer examiner : examiners) {
-                blockCost += examiner.getCost(blockSource, this);
+            for (BlockExaminer examiner : info.examiners) {
+                blockCost += examiner.getCost(info.blockSource, this);
             }
         }
         return blockCost;
@@ -86,20 +86,20 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public Vector getGoal() {
-        return goal.goal;
+        return info.goal.goal;
     }
 
     @Override
     public Iterable<AStarNode> getNeighbours() {
         List<PathPoint> neighbours = null;
-        for (BlockExaminer examiner : examiners) {
+        for (BlockExaminer examiner : info.examiners) {
             if (examiner instanceof NeighbourGeneratorBlockExaminer) {
-                neighbours = ((NeighbourGeneratorBlockExaminer) examiner).getNeighbours(blockSource, this);
+                neighbours = ((NeighbourGeneratorBlockExaminer) examiner).getNeighbours(info.blockSource, this);
                 break;
             }
         }
         if (neighbours == null) {
-            neighbours = getNeighbours(blockSource, this);
+            neighbours = getNeighbours(info.blockSource, this);
         }
         List<AStarNode> nodes = Lists.newArrayList();
         for (PathPoint sub : neighbours) {
@@ -151,8 +151,8 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     private boolean isPassable(PathPoint mod) {
         boolean passable = false;
-        for (BlockExaminer examiner : examiners) {
-            PassableState state = examiner.isPassable(blockSource, mod);
+        for (BlockExaminer examiner : info.examiners) {
+            PassableState state = examiner.isPassable(info.blockSource, mod);
             if (state == PassableState.IGNORE)
                 continue;
             passable |= state == PassableState.PASSABLE ? true : false;
@@ -163,6 +163,18 @@ public class VectorNode extends AStarNode implements PathPoint {
     @Override
     public void setVector(Vector vector) {
         this.location = vector;
+    }
+
+    private static class PathInfo {
+        private final BlockSource blockSource;
+        private final BlockExaminer[] examiners;
+        private final VectorGoal goal;
+
+        private PathInfo(BlockSource source, BlockExaminer[] examiners, VectorGoal goal) {
+            this.blockSource = source;
+            this.examiners = examiners;
+            this.goal = goal;
+        }
     }
 
     private static final float TIEBREAKER = 1.001f;
