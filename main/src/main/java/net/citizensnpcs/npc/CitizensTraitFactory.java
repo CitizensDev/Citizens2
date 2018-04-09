@@ -67,20 +67,29 @@ public class CitizensTraitFactory implements TraitFactory {
         }
     }
 
-    public int getTraits() {
+    /*
+     We are waiting for multiline charts in bStats to implement this
+     *
+    public void addPlotters(Graph graph) {
         for (Map.Entry<String, TraitInfo> entry : registered.entrySet()) {
-            if (INTERNAL_TRAITS.contains(entry.getKey()) || entry.getKey() == null) continue;
+            if (INTERNAL_TRAITS.contains(entry.getKey()) || entry.getKey() == null)
+                continue;
             final Class<? extends Trait> traitClass = entry.getValue().getTraitClass();
-            int numberUsingTrait = 0;
-            for (NPC npc : CitizensAPI.getNPCRegistry()) {
-                if (npc.hasTrait(traitClass)) {
-                    ++numberUsingTrait;
+            graph.addPlotter(new Metrics.Plotter(entry.getKey()) {
+                @Override
+                public int getValue() {
+                    int numberUsingTrait = 0;
+                    for (NPC npc : CitizensAPI.getNPCRegistry()) {
+                        if (npc.hasTrait(traitClass)) {
+                            ++numberUsingTrait;
+                        }
+                    }
+                    return numberUsingTrait;
                 }
-                return numberUsingTrait;
-            }
+            });
         }
-        return 0;
     }
+    */
 
     private <T extends Trait> T create(TraitInfo info) {
         return info.tryCreateInstance();

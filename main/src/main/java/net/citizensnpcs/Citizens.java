@@ -419,19 +419,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     return goalCount;
                 }
             }));
-            // traitFactory.addPlotters(metrics.createGraph("traits"));
 
-            /*
-            metrics.addCustomChart(new Metrics.AdvancedPie("traits", new Callable<Map<String, Integer>>() {
-                @Override
-                public Map<String, Integer> call() {
-                    Map<String, Integer> valueMap = new HashMap<>();
-                    valueMap.put("Apple", getPlayersWithFood(Material.APPLE));
-                    valueMap.put("Bread", getPlayersWithFood(Material.BREAD));
-                    return valueMap;
-                }
-            }));
-            */
+            // Read the comment in CitizensTraitFactory.
+            // traitFactory.addPlotters(metrics.createGraph("traits"));
 
         } catch (Exception e) {
             Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
