@@ -1,16 +1,18 @@
 package net.citizensnpcs.trait.waypoint;
 
-import com.google.common.collect.Maps;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.MemoryNPCDataStore;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
+import java.util.Map;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
-import java.util.Map;
+import com.google.common.collect.Maps;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.MemoryNPCDataStore;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 
 public class EntityMarkers<T> {
     private final Map<T, Entity> markers = Maps.newHashMap();

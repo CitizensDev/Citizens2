@@ -1,17 +1,19 @@
 package net.citizensnpcs.npc.ai;
 
+import java.util.List;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
+
 import com.google.common.collect.Lists;
+
 import net.citizensnpcs.api.ai.AbstractPathStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.util.Vector;
-
-import java.util.List;
 
 public class MCNavigationStrategy extends AbstractPathStrategy {
     private final Entity handle;

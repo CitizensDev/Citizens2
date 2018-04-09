@@ -1,22 +1,29 @@
 package net.citizensnpcs.npc.ai;
 
-import com.google.common.collect.Lists;
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.ai.AbstractPathStrategy;
-import net.citizensnpcs.api.ai.NavigatorParameters;
-import net.citizensnpcs.api.ai.TargetType;
-import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.api.astar.AStarMachine;
-import net.citizensnpcs.api.astar.pathfinder.*;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.NMS;
+import java.util.List;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
-import java.util.List;
+import com.google.common.collect.Lists;
+
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.ai.AbstractPathStrategy;
+import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.ai.TargetType;
+import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.astar.AStarMachine;
+import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
+import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
+import net.citizensnpcs.api.astar.pathfinder.FlyingBlockExaminer;
+import net.citizensnpcs.api.astar.pathfinder.Path;
+import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
+import net.citizensnpcs.api.astar.pathfinder.VectorNode;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.NMS;
 
 public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     private final NPC npc;

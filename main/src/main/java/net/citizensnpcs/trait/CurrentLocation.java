@@ -1,9 +1,10 @@
 package net.citizensnpcs.trait;
 
+import org.bukkit.Location;
+
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import org.bukkit.Location;
 
 @TraitName("location")
 public class CurrentLocation extends Trait {

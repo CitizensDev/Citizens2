@@ -1,18 +1,7 @@
 package net.citizensnpcs.trait.waypoint;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.goals.WanderGoal;
-import net.citizensnpcs.api.command.CommandContext;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.cuboid.QuadCuboid;
-import net.citizensnpcs.api.util.cuboid.QuadTree;
-import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Util;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -24,7 +13,20 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.List;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.goals.WanderGoal;
+import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.cuboid.QuadCuboid;
+import net.citizensnpcs.api.util.cuboid.QuadTree;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Util;
 
 public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTree> {
     private WanderGoal currentGoal;

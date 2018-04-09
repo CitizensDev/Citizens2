@@ -2,6 +2,7 @@ package net.citizensnpcs.trait.text;
 
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
+
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.NumericPrompt;

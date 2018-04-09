@@ -1,26 +1,8 @@
 package net.citizensnpcs.trait.waypoint;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.Goal;
-import net.citizensnpcs.api.ai.GoalSelector;
-import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.api.ai.event.NavigatorCallback;
-import net.citizensnpcs.api.astar.*;
-import net.citizensnpcs.api.command.CommandContext;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.persistence.PersistenceLoader;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.prtree.DistanceResult;
-import net.citizensnpcs.api.util.prtree.PRTree;
-import net.citizensnpcs.api.util.prtree.Region3D;
-import net.citizensnpcs.api.util.prtree.SimplePointND;
-import net.citizensnpcs.trait.waypoint.WaypointProvider.EnumerableWaypointProvider;
-import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Util;
+import java.util.Iterator;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -34,8 +16,32 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
-import java.util.Iterator;
-import java.util.List;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.ai.GoalSelector;
+import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.ai.event.NavigatorCallback;
+import net.citizensnpcs.api.astar.AStarGoal;
+import net.citizensnpcs.api.astar.AStarMachine;
+import net.citizensnpcs.api.astar.AStarNode;
+import net.citizensnpcs.api.astar.Agent;
+import net.citizensnpcs.api.astar.Plan;
+import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.persistence.PersistenceLoader;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.prtree.DistanceResult;
+import net.citizensnpcs.api.util.prtree.PRTree;
+import net.citizensnpcs.api.util.prtree.Region3D;
+import net.citizensnpcs.api.util.prtree.SimplePointND;
+import net.citizensnpcs.trait.waypoint.WaypointProvider.EnumerableWaypointProvider;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Util;
 
 public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     private final List<Waypoint> available = Lists.newArrayList();

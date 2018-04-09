@@ -1,9 +1,10 @@
 package net.citizensnpcs.trait.waypoint;
 
-import net.citizensnpcs.api.event.CitizensEvent;
-import org.bukkit.event.HandlerList;
-
 import java.util.Iterator;
+
+import net.citizensnpcs.api.event.CitizensEvent;
+
+import org.bukkit.event.HandlerList;
 
 public class LinearWaypointsCompleteEvent extends CitizensEvent {
     private Iterator<Waypoint> next;

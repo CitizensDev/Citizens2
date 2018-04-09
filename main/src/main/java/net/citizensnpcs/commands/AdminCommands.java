@@ -1,5 +1,7 @@
 package net.citizensnpcs.commands;
 
+import org.bukkit.command.CommandSender;
+
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
@@ -10,7 +12,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
-import org.bukkit.command.CommandSender;
 
 @Requirements
 public class AdminCommands {

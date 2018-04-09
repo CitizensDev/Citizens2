@@ -1,13 +1,14 @@
 package net.citizensnpcs.editor;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class GenericEquipper implements Equipper {
     @Override

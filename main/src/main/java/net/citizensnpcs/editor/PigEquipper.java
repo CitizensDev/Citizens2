@@ -1,13 +1,14 @@
 package net.citizensnpcs.editor;
 
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.trait.Saddle;
-import net.citizensnpcs.util.Messages;
 import org.bukkit.Material;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.trait.Saddle;
+import net.citizensnpcs.util.Messages;
 
 public class PigEquipper implements Equipper {
     @Override

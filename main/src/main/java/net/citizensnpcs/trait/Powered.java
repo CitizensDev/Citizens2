@@ -1,9 +1,10 @@
 package net.citizensnpcs.trait;
 
+import org.bukkit.entity.Creeper;
+
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import org.bukkit.entity.Creeper;
 
 @TraitName("powered")
 public class Powered extends Trait implements Toggleable {

@@ -2,6 +2,7 @@ package net.citizensnpcs;
 
 import net.citizensnpcs.api.event.NPCEvent;
 import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.Location;
 import org.bukkit.event.HandlerList;
 

@@ -1,9 +1,9 @@
 package net.citizensnpcs.commands;
 
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Command;
@@ -15,10 +15,13 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.npc.Template.TemplateBuilder;
 import net.citizensnpcs.util.Messages;
+
 import org.bukkit.command.CommandSender;
 
-import javax.annotation.Nullable;
-import java.util.List;
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 @Requirements(selected = true, ownership = true)
 public class TemplateCommands {

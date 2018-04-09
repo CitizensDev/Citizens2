@@ -1,10 +1,11 @@
 package net.citizensnpcs.trait;
 
+import org.bukkit.DyeColor;
+import org.bukkit.entity.Wolf;
+
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import org.bukkit.DyeColor;
-import org.bukkit.entity.Wolf;
 
 @TraitName("wolfmodifiers")
 public class WolfModifiers extends Trait {

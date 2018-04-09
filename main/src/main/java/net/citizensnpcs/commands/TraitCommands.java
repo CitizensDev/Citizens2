@@ -1,8 +1,14 @@
 package net.citizensnpcs.commands;
 
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandConfigurable;
@@ -16,10 +22,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-
-import java.util.List;
 
 @Requirements(selected = true, ownership = true)
 public class TraitCommands {

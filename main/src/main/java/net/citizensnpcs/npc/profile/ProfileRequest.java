@@ -1,13 +1,16 @@
 package net.citizensnpcs.npc.profile;
 
-import com.google.common.base.Preconditions;
-import com.mojang.authlib.GameProfile;
-import net.citizensnpcs.api.CitizensAPI;
-import org.bukkit.Bukkit;
-
-import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
+
+import javax.annotation.Nullable;
+
+import org.bukkit.Bukkit;
+
+import com.google.common.base.Preconditions;
+import com.mojang.authlib.GameProfile;
+
+import net.citizensnpcs.api.CitizensAPI;
 
 /**
  * Stores basic information about a single profile used to request profiles from the Mojang servers.

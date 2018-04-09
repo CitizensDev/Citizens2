@@ -1,10 +1,11 @@
 package net.citizensnpcs.npc;
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
+import java.util.Map;
+
 import org.bukkit.entity.EntityType;
 
-import java.util.Map;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 
 public class EntityControllers {
     public static boolean controllerExistsForType(EntityType type) {

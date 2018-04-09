@@ -1,9 +1,10 @@
 package net.citizensnpcs.npc.skin;
 
-import com.google.common.base.Preconditions;
-import net.citizensnpcs.Settings;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.util.NMS;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -13,10 +14,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import com.google.common.base.Preconditions;
+
+import net.citizensnpcs.Settings;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.util.NMS;
 
 /**
  * Handles and synchronizes add and remove packets for Player type NPC's in order to properly apply the NPC skin.

@@ -1,6 +1,25 @@
 package net.citizensnpcs.trait.text;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import org.bukkit.GameMode;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.conversations.ConversationAbandonedListener;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
+
 import com.google.common.collect.Maps;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
@@ -15,19 +34,6 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.Toggleable;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
-import org.bukkit.GameMode;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.conversations.ConversationAbandonedListener;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @TraitName("text")
 public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {

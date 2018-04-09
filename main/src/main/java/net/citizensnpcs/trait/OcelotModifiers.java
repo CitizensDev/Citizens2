@@ -1,10 +1,11 @@
 package net.citizensnpcs.trait;
 
+import org.bukkit.entity.Ocelot;
+
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.util.NMS;
-import org.bukkit.entity.Ocelot;
 
 @TraitName("ocelotmodifiers")
 public class OcelotModifiers extends Trait {

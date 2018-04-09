@@ -1,14 +1,19 @@
 package net.citizensnpcs.npc.ai;
 
-import net.citizensnpcs.api.ai.*;
-import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.BoundingBox;
-import net.citizensnpcs.util.NMS;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
+
+import net.citizensnpcs.api.ai.AttackStrategy;
+import net.citizensnpcs.api.ai.EntityTarget;
+import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.ai.PathStrategy;
+import net.citizensnpcs.api.ai.TargetType;
+import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.BoundingBox;
+import net.citizensnpcs.util.NMS;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final boolean aggro;

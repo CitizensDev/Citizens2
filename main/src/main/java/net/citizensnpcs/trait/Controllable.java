@@ -1,6 +1,23 @@
 package net.citizensnpcs.trait;
 
+import java.lang.reflect.Constructor;
+import java.util.List;
+import java.util.Map;
+
+import org.bukkit.Location;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.util.Vector;
+
 import com.google.common.collect.Maps;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.command.CommandConfigurable;
 import net.citizensnpcs.api.command.CommandContext;
@@ -13,17 +30,6 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import org.bukkit.Location;
-import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.util.Vector;
-
-import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.Map;
 
 @TraitName("controllable")
 public class Controllable extends Trait implements Toggleable, CommandConfigurable {

@@ -1,5 +1,17 @@
 package net.citizensnpcs.trait;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.CommandConfigurable;
@@ -10,17 +22,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.Util;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 @TraitName("lookclose")
 public class LookClose extends Trait implements Toggleable, CommandConfigurable {

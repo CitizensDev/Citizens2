@@ -1,10 +1,7 @@
 package net.citizensnpcs.util;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import net.citizensnpcs.api.event.NPCCollisionEvent;
-import net.citizensnpcs.api.event.NPCPushEvent;
-import net.citizensnpcs.api.npc.NPC;
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,7 +13,12 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
-import java.util.Random;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+
+import net.citizensnpcs.api.event.NPCCollisionEvent;
+import net.citizensnpcs.api.event.NPCPushEvent;
+import net.citizensnpcs.api.npc.NPC;
 
 public class Util {
     // Static class for small (emphasis small) utility methods

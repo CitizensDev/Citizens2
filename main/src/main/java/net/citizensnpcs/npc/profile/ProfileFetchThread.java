@@ -1,11 +1,19 @@
 package net.citizensnpcs.npc.profile;
 
-import com.google.common.base.Preconditions;
-import net.citizensnpcs.api.CitizensAPI;
-import org.bukkit.Bukkit;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
-import java.util.*;
+
+import org.bukkit.Bukkit;
+
+import com.google.common.base.Preconditions;
+
+import net.citizensnpcs.api.CitizensAPI;
 
 /**
  * Thread used to fetch profiles from the Mojang servers.

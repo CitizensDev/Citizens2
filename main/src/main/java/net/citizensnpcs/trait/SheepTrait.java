@@ -1,13 +1,14 @@
 package net.citizensnpcs.trait;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.TraitName;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerShearEntityEvent;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
 
 @TraitName("sheeptrait")
 public class SheepTrait extends Trait {

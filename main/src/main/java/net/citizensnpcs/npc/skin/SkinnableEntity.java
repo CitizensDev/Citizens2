@@ -1,8 +1,10 @@
 package net.citizensnpcs.npc.skin;
 
-import com.mojang.authlib.GameProfile;
-import net.citizensnpcs.npc.ai.NPCHolder;
 import org.bukkit.entity.Player;
+
+import com.mojang.authlib.GameProfile;
+
+import net.citizensnpcs.npc.ai.NPCHolder;
 
 /**
  * Interface for player entities that are skinnable.

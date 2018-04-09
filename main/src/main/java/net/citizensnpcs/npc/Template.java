@@ -1,9 +1,15 @@
 package net.citizensnpcs.npc;
 
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.NPC;
@@ -11,11 +17,6 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.api.util.YamlStorage.YamlKey;
-
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class Template {
     private final String name;

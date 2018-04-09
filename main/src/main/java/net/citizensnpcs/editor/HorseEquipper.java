@@ -1,9 +1,10 @@
 package net.citizensnpcs.editor;
 
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.NMS;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
+
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.NMS;
 
 public class HorseEquipper implements Equipper {
     @Override

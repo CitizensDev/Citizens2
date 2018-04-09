@@ -1,7 +1,24 @@
 package net.citizensnpcs.util;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Wither;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.util.Vector;
+
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
+
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
@@ -12,16 +29,6 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.*;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.util.Vector;
-
-import java.util.Collection;
-import java.util.List;
 
 public interface NMSBridge {
     public boolean addEntityToWorld(Entity entity, SpawnReason custom);
