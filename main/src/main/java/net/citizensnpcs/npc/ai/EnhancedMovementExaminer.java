@@ -1,14 +1,12 @@
 package net.citizensnpcs.npc.ai;
 
-import java.util.List;
-
-import org.bukkit.util.Vector;
-
 import com.google.common.collect.Lists;
-
 import net.citizensnpcs.api.astar.pathfinder.BlockSource;
 import net.citizensnpcs.api.astar.pathfinder.NeighbourGeneratorBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint;
+import org.bukkit.util.Vector;
+
+import java.util.List;
 
 public class EnhancedMovementExaminer implements NeighbourGeneratorBlockExaminer {
     @Override

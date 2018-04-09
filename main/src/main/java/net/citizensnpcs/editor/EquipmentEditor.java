@@ -1,7 +1,13 @@
 package net.citizensnpcs.editor;
 
-import java.util.Map;
-
+import com.google.common.collect.Maps;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -14,15 +20,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.google.common.collect.Maps;
-
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Util;
+import java.util.Map;
 
 public class EquipmentEditor extends Editor {
     private final NPC npc;

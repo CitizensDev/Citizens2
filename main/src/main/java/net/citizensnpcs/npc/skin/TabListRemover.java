@@ -1,22 +1,13 @@
 package net.citizensnpcs.npc.skin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import com.google.common.base.Preconditions;
-
 import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.*;
 
 /**
  * Sends remove packets in batch per player.

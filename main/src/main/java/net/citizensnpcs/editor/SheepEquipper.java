@@ -1,17 +1,16 @@
 package net.citizensnpcs.editor;
 
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.trait.SheepTrait;
+import net.citizensnpcs.trait.WoolColor;
+import net.citizensnpcs.util.Messages;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Dye;
-
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.trait.SheepTrait;
-import net.citizensnpcs.trait.WoolColor;
-import net.citizensnpcs.util.Messages;
 
 public class SheepEquipper implements Equipper {
     @Override

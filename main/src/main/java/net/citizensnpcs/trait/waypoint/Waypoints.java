@@ -1,12 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.bukkit.command.CommandSender;
-
 import com.google.common.collect.Maps;
-
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
@@ -17,6 +11,10 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
+import org.bukkit.command.CommandSender;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 @TraitName("waypoints")
 public class Waypoints extends Trait {

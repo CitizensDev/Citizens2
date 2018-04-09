@@ -1,13 +1,12 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.entity.Pig;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import org.bukkit.entity.Pig;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 @TraitName("saddle")
 public class Saddle extends Trait implements Toggleable {

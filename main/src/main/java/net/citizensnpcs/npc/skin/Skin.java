@@ -1,22 +1,9 @@
 package net.citizensnpcs.npc.skin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.WeakHashMap;
-
-import javax.annotation.Nullable;
-
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
@@ -25,6 +12,11 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.profile.ProfileFetchHandler;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.profile.ProfileRequest;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
+
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * Stores data for a single skin.

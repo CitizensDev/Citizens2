@@ -1,15 +1,14 @@
 package net.citizensnpcs.editor;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public abstract class Editor implements Listener {
     public abstract void begin();

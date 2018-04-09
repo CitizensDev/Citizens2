@@ -1,22 +1,19 @@
 package net.citizensnpcs.npc.profile;
 
-import java.util.Collection;
-
-import javax.annotation.Nullable;
-
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.ProfileLookupCallback;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.NMS;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
+
+import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Fetches game profiles that include skin data from Mojang servers.

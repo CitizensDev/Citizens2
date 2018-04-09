@@ -1,16 +1,14 @@
 package net.citizensnpcs;
 
+import com.google.common.base.Preconditions;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import com.google.common.base.Preconditions;
 
 public class PaymentListener implements Listener {
     private final Economy provider;

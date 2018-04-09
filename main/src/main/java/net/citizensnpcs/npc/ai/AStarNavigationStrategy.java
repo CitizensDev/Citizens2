@@ -1,7 +1,15 @@
 package net.citizensnpcs.npc.ai;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.ai.AbstractPathStrategy;
+import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.ai.TargetType;
+import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.astar.AStarMachine;
+import net.citizensnpcs.api.astar.pathfinder.*;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.NMS;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -9,21 +17,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.material.Door;
 import org.bukkit.util.Vector;
 
-import com.google.common.collect.Lists;
-
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.ai.AbstractPathStrategy;
-import net.citizensnpcs.api.ai.NavigatorParameters;
-import net.citizensnpcs.api.ai.TargetType;
-import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.api.astar.AStarMachine;
-import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
-import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
-import net.citizensnpcs.api.astar.pathfinder.Path;
-import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
-import net.citizensnpcs.api.astar.pathfinder.VectorNode;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.NMS;
+import java.util.List;
 
 public class AStarNavigationStrategy extends AbstractPathStrategy {
     private final Location destination;

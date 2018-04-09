@@ -1,10 +1,9 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import org.bukkit.util.Vector;
 
 @TraitName("gravity")
 public class Gravity extends Trait implements Toggleable {

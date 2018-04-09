@@ -1,30 +1,9 @@
 package net.citizensnpcs.npc.ai;
 
-import java.util.Iterator;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.util.Vector;
-
 import com.google.common.collect.Iterables;
-
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.ai.EntityTarget;
-import net.citizensnpcs.api.ai.Navigator;
-import net.citizensnpcs.api.ai.NavigatorParameters;
-import net.citizensnpcs.api.ai.PathStrategy;
-import net.citizensnpcs.api.ai.StuckAction;
-import net.citizensnpcs.api.ai.TargetType;
-import net.citizensnpcs.api.ai.TeleportStuckAction;
-import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
-import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
-import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
-import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
-import net.citizensnpcs.api.ai.event.NavigationStuckEvent;
-import net.citizensnpcs.api.ai.event.NavigatorCallback;
+import net.citizensnpcs.api.ai.*;
+import net.citizensnpcs.api.ai.event.*;
 import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
@@ -32,6 +11,13 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.Vector;
+
+import java.util.Iterator;
 
 public class CitizensNavigator implements Navigator, Runnable {
     private final NavigatorParameters defaultParams = new NavigatorParameters().baseSpeed(UNINITIALISED_SPEED)

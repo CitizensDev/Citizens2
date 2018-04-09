@@ -2,7 +2,6 @@ package net.citizensnpcs.npc;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 

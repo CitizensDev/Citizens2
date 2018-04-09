@@ -1,16 +1,15 @@
 package net.citizensnpcs;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Settings {
     private final Storage config;

@@ -1,14 +1,13 @@
 package net.citizensnpcs.trait.text;
 
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
-
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
 
 public class TextStartPrompt extends StringPrompt {
     private final Text text;

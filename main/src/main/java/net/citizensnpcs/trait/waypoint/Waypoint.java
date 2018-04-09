@@ -1,13 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-
 import com.google.common.collect.Lists;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
@@ -15,6 +8,11 @@ import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.trait.waypoint.triggers.DelayTrigger;
 import net.citizensnpcs.trait.waypoint.triggers.WaypointTrigger;
 import net.citizensnpcs.trait.waypoint.triggers.WaypointTriggerRegistry;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+
+import java.util.Collections;
+import java.util.List;
 
 public class Waypoint implements Locatable {
     @Persist(required = true)

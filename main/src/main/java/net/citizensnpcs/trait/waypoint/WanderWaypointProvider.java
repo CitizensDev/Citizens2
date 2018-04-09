@@ -1,21 +1,7 @@
 package net.citizensnpcs.trait.waypoint;
 
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.metadata.FixedMetadataValue;
-
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.goals.WanderGoal;
 import net.citizensnpcs.api.command.CommandContext;
@@ -27,6 +13,18 @@ import net.citizensnpcs.api.util.cuboid.QuadCuboid;
 import net.citizensnpcs.api.util.cuboid.QuadTree;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+
+import java.util.List;
 
 public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTree> {
     private WanderGoal currentGoal;

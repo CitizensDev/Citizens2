@@ -1,21 +1,7 @@
 package net.citizensnpcs;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -24,11 +10,7 @@ import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.CommandManager.CommandInfo;
 import net.citizensnpcs.api.command.Injector;
-import net.citizensnpcs.api.event.CitizensDisableEvent;
-import net.citizensnpcs.api.event.CitizensEnableEvent;
-import net.citizensnpcs.api.event.CitizensPreReloadEvent;
-import net.citizensnpcs.api.event.CitizensReloadEvent;
-import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.event.*;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
@@ -38,17 +20,8 @@ import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.NBTStorage;
-import net.citizensnpcs.api.util.Storage;
-import net.citizensnpcs.api.util.Translator;
-import net.citizensnpcs.api.util.YamlStorage;
-import net.citizensnpcs.commands.AdminCommands;
-import net.citizensnpcs.commands.EditorCommands;
-import net.citizensnpcs.commands.NPCCommands;
-import net.citizensnpcs.commands.TemplateCommands;
-import net.citizensnpcs.commands.TraitCommands;
-import net.citizensnpcs.commands.WaypointCommands;
+import net.citizensnpcs.api.util.*;
+import net.citizensnpcs.commands.*;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
@@ -57,12 +30,23 @@ import net.citizensnpcs.npc.ai.speech.Chat;
 import net.citizensnpcs.npc.ai.speech.CitizensSpeechFactory;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.skin.Skin;
-import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.PlayerUpdateTask;
-import net.citizensnpcs.util.StringHelper;
-import net.citizensnpcs.util.Util;
+import net.citizensnpcs.util.*;
 import net.milkbowl.vault.economy.Economy;
+import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CommandManager commands = new CommandManager();
@@ -414,32 +398,42 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void startMetrics() {
         try {
-            Metrics metrics = new Metrics(Citizens.this);
-            if (metrics.isOptOut())
-                return;
-            metrics.addCustomData(new Metrics.Plotter("Total NPCs") {
+            Metrics metrics = new Metrics(this);
+
+            metrics.addCustomChart(new Metrics.SingleLineChart("total_npcs", new Callable<Integer>() {
                 @Override
-                public int getValue() {
-                    if (npcRegistry == null)
-                        return 0;
+                public Integer call() {
+                    if (npcRegistry == null) return 0;
                     return Iterables.size(npcRegistry);
                 }
-            });
-            metrics.addCustomData(new Metrics.Plotter("Total goals") {
+            }));
+
+            metrics.addCustomChart(new Metrics.SingleLineChart("total_goals", new Callable<Integer>() {
                 @Override
-                public int getValue() {
-                    if (npcRegistry == null)
-                        return 0;
+                public Integer call() {
+                    if (npcRegistry == null) return 0;
                     int goalCount = 0;
                     for (NPC npc : npcRegistry) {
                         goalCount += Iterables.size(npc.getDefaultGoalController());
                     }
                     return goalCount;
                 }
-            });
-            traitFactory.addPlotters(metrics.createGraph("traits"));
-            metrics.start();
-        } catch (IOException e) {
+            }));
+            // traitFactory.addPlotters(metrics.createGraph("traits"));
+
+            /*
+            metrics.addCustomChart(new Metrics.AdvancedPie("traits", new Callable<Map<String, Integer>>() {
+                @Override
+                public Map<String, Integer> call() {
+                    Map<String, Integer> valueMap = new HashMap<>();
+                    valueMap.put("Apple", getPlayersWithFood(Material.APPLE));
+                    valueMap.put("Bread", getPlayersWithFood(Material.BREAD));
+                    return valueMap;
+                }
+            }));
+            */
+
+        } catch (Exception e) {
             Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
         }
     }

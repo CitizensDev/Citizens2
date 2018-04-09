@@ -1,11 +1,10 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.util.EulerAngle;
-
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.util.EulerAngle;
 
 @TraitName("armorstandtrait")
 public class ArmorStandTrait extends Trait {

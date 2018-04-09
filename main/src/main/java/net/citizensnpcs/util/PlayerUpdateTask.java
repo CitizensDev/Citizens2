@@ -1,14 +1,9 @@
 package net.citizensnpcs.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.*;
 
 public class PlayerUpdateTask extends BukkitRunnable {
     @Override

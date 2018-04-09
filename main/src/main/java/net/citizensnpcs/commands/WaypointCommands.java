@@ -9,7 +9,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.Messages;
-
 import org.bukkit.command.CommandSender;
 
 @Requirements(ownership = true, selected = true)

@@ -1,20 +1,7 @@
 package net.citizensnpcs.npc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -29,6 +16,11 @@ import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.util.NMS;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+
+import java.util.*;
 
 public class CitizensNPCRegistry implements NPCRegistry {
     private final NPCCollection npcs = TROVE_EXISTS ? new TroveNPCCollection() : new MapNPCCollection();

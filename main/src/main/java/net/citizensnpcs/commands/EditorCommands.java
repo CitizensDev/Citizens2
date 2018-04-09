@@ -9,7 +9,6 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.editor.EquipmentEditor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
