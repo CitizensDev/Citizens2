@@ -300,7 +300,7 @@ public class CitizensNPC extends AbstractNPC {
                         } else {
                             try {
                                 team.setOption(Option.NAME_TAG_VISIBILITY,
-                                        nameVisibility ? OptionStatus.NEVER : OptionStatus.ALWAYS);
+                                        nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER);
                             } catch (NoSuchMethodError e) {
                             } catch (NoClassDefFoundError e) {
                             }
