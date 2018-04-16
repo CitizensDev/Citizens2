@@ -9,6 +9,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
@@ -89,19 +91,25 @@ public class Util {
     }
 
     public static boolean isAlwaysFlyable(EntityType type) {
-        if (type.name().toLowerCase().contains("vex")) // 1.11 compatibility
+        if (type.name().toLowerCase().contains("vex") || type.name().toLowerCase().contains("parrot"))
+            // 1.8.8 compatibility
             return true;
         switch (type) {
             case BAT:
             case BLAZE:
             case ENDER_DRAGON:
             case GHAST:
-            case PARROT:
             case WITHER:
                 return true;
             default:
                 return false;
         }
+    }
+
+    public static boolean isHorse(Entity entity) {
+        String name = entity.getType().name();
+        return entity.getType() == EntityType.HORSE || name.contains("_HORSE") || name.equals("DONKEY")
+                || name.equals("MULE") || name.equals("LLAMA");
     }
 
     public static boolean isLoaded(Location location) {
@@ -112,8 +120,28 @@ public class Util {
         return location.getWorld().isChunkLoaded(chunkX, chunkZ);
     }
 
+    public static boolean isOffHand(PlayerInteractEntityEvent event) {
+        try {
+            return event.getHand() == org.bukkit.inventory.EquipmentSlot.OFF_HAND;
+        } catch (NoSuchMethodError e) {
+            return false;
+        } catch (NoSuchFieldError e) {
+            return false;
+        }
+    }
+
+    public static boolean isOffHand(PlayerInteractEvent event) {
+        try {
+            return event.getHand() == org.bukkit.inventory.EquipmentSlot.OFF_HAND;
+        } catch (NoSuchMethodError e) {
+            return false;
+        } catch (NoSuchFieldError e) {
+            return false;
+        }
+    }
+
     public static String listValuesPretty(Enum<?>[] values) {
-        return "<e>" + Joiner.on("<a>, <e>").join(values).toLowerCase().replace('_', ' ');
+        return "<e>" + Joiner.on("<a>, <e>").join(values).toLowerCase();
     }
 
     public static boolean locationWithinRange(Location current, Location target, double range) {
@@ -150,7 +178,7 @@ public class Util {
         if (parts.contains("*"))
             return true;
         for (String part : Splitter.on(',').split(parts)) {
-            if (Material.matchMaterial(part) == player.getInventory().getItemInMainHand().getType()) {
+            if (Material.matchMaterial(part) == player.getInventory().getItemInHand().getType()) {
                 return true;
             }
         }

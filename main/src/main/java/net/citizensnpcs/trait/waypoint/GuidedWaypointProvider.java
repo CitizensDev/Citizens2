@@ -13,7 +13,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
@@ -60,7 +59,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         }
         final Player player = (Player) sender;
         return new WaypointEditor() {
-            private final WaypointMarkers markers = new WaypointMarkers(player.getWorld());
+            private final EntityMarkers<Waypoint> markers = new EntityMarkers<Waypoint>();
             private boolean showPath;
 
             @Override
@@ -71,12 +70,12 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
             private void createWaypointMarkers() {
                 for (Waypoint waypoint : Iterables.concat(available, helpers)) {
-                    markers.createWaypointMarker(waypoint);
+                    markers.createMarker(waypoint, waypoint.getLocation().clone().add(0, 1, 0));
                 }
             }
 
             private void createWaypointMarkerWithData(Waypoint element) {
-                Entity entity = markers.createWaypointMarker(element);
+                Entity entity = markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
                 if (entity == null)
                     return;
                 entity.setMetadata("citizens.waypointhashcode",
@@ -86,7 +85,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             @Override
             public void end() {
                 Messaging.sendTr(player, Messages.GUIDED_WAYPOINT_EDITOR_END);
-                markers.destroyWaypointMarkers();
+                markers.destroyMarkers();
             }
 
             @EventHandler(ignoreCancelled = true)
@@ -105,7 +104,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                             available.clear();
                             helpers.clear();
                             if (showPath)
-                                markers.destroyWaypointMarkers();
+                                markers.destroyMarkers();
                         }
                     });
                 }
@@ -115,7 +114,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             public void onPlayerInteract(PlayerInteractEvent event) {
                 if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL
                         || event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK
-                        || event.getClickedBlock() == null || event.getHand() == EquipmentSlot.OFF_HAND)
+                        || event.getClickedBlock() == null || Util.isOffHand(event))
                     return;
                 if (event.getPlayer().getWorld() != npc.getEntity().getWorld())
                     return;
@@ -135,8 +134,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
             @EventHandler(ignoreCancelled = true)
             public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-                if (!event.getRightClicked().hasMetadata("citizens.waypointhashcode")
-                        || event.getHand() == EquipmentSlot.OFF_HAND)
+                if (!event.getRightClicked().hasMetadata("citizens.waypointhashcode") || Util.isOffHand(event))
                     return;
                 int hashcode = event.getRightClicked().getMetadata("citizens.waypointhashcode").get(0).asInt();
                 Iterator<Waypoint> itr = Iterables.concat(available, helpers).iterator();
@@ -160,7 +158,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     createWaypointMarkers();
                     Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS);
                 } else {
-                    markers.destroyWaypointMarkers();
+                    markers.destroyMarkers();
                     Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_NOT_SHOWING_MARKERS);
                 }
             }
@@ -273,7 +271,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 return false;
             }
             Waypoint target = available.get(Util.getFastRandom().nextInt(available.size()));
-            plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(new Waypoint(npc.getStoredLocation())));
+            plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(null, new Waypoint(npc.getStoredLocation())));
             return plan != null;
         }
     }
@@ -309,7 +307,8 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     private class GuidedNode extends AStarNode {
         private final Waypoint waypoint;
 
-        public GuidedNode(Waypoint waypoint) {
+        public GuidedNode(GuidedNode parent, Waypoint waypoint) {
+            super(parent);
             this.waypoint = waypoint;
         }
 
@@ -350,7 +349,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             return Iterables.transform(res, new Function<DistanceResult<Region3D<Waypoint>>, AStarNode>() {
                 @Override
                 public AStarNode apply(DistanceResult<Region3D<Waypoint>> arg0) {
-                    return new GuidedNode(arg0.get().getData());
+                    return new GuidedNode(GuidedNode.this, arg0.get().getData());
                 }
             });
         }

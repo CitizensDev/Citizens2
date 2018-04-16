@@ -114,6 +114,7 @@ public class Messages {
     public static final String INVALID_RABBIT_TYPE = "citizens.commands.npc.rabbittype.invalid-type";
     public static final String INVALID_SCRIPT_FILE = "citizens.commands.npc.script.invalid-file";
     public static final String INVALID_SHEEP_COLOR = "citizens.commands.npc.sheep.invalid-color";
+    public static final String INVALID_SHULKER_COLOR = "citizens.commands.npc.shulker.invalid-color";
     public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
     public static final String INVALID_SOUND = "citizens.commands.npc.sound.invalid-sound";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
@@ -139,6 +140,8 @@ public class Messages {
     public static final String LOCALE_NOTIFICATION = "citizens.notifications.locale";
     public static final String LOOKCLOSE_SET = "citizens.commands.npc.lookclose.set";
     public static final String LOOKCLOSE_STOPPED = "citizens.commands.npc.lookclose.stopped";
+    public static final String METADATA_SET = "citizens.commands.npc.metadata.set";
+    public static final String METADATA_UNSET = "citizens.commands.npc.metadata.unset";
     public static final String METRICS_ERROR_NOTIFICATION = "citizens.notifications.metrics-load-error";
     public static final String MINECART_SET = "citizens.commands.npc.minecart.set";
     public static final String MINIMUM_COST_REQUIRED = "citizens.economy.minimum-cost-required";
@@ -167,6 +170,7 @@ public class Messages {
     public static final String NPC_RENAMED = "citizens.commands.npc.rename.renamed";
     public static final String NPC_SPAWNED = "citizens.commands.npc.spawn.spawned";
     public static final String NPC_TELEPORTED = "citizens.commands.npc.tphere.teleported";
+    public static final String NPCS_REMOVED = "citizens.commands.npc.remove.npcs-removed";
     public static final String NUM_LOADED_NOTIFICATION = "citizens.notifications.npcs-loaded";
     public static final String OVER_NPC_LIMIT = "citizens.limits.over-npc-limit";
     public static final String OWNER_SET = "citizens.commands.npc.owner.set";
@@ -204,12 +208,14 @@ public class Messages {
     public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";
     public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
     public static final String SHEEP_COLOR_SET = "citizens.commands.npc.sheep.color-set";
+    public static final String SHULKER_COLOR_SET = "citizens.commands.npc.shulker.color-set";
     public static final String SHULKER_PEEK_SET = "citizens.commands.npc.shulker.peek-set";
     public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.description";
     public static final String SIZE_SET = "citizens.commands.npc.size.set";
     public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";
     public static final String SKIN_CLEARED = "citizens.commands.npc.skin.cleared";
     public static final String SKIN_LAYERS_SET = "citizens.commands.npc.skin.layers-set";
+    public static final String SKIN_REQUIRED = "citizens.commands.npc.skin.missing-skin";
     public static final String SKIN_SET = "citizens.commands.npc.skin.set";
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
     public static final String SKIPPING_INVALID_ANCHOR = "citizens.notifications.skipping-invalid-anchor";
@@ -236,10 +242,12 @@ public class Messages {
     public static final String TEXT_EDITOR_ADDED_ENTRY = "citizens.editors.text.added-entry";
     public static final String TEXT_EDITOR_BEGIN = "citizens.editors.text.begin";
     public static final String TEXT_EDITOR_CLOSE_TALKER_SET = "citizens.editors.text.close-talker-set";
+    public static final String TEXT_EDITOR_DELAY_SET = "citizens.editors.text.delay-set";
     public static final String TEXT_EDITOR_EDIT_BEGIN_PROMPT = "citizens.editors.text.edit-begin-prompt";
     public static final String TEXT_EDITOR_EDIT_PROMPT = "citizens.editors.text.edit-prompt";
     public static final String TEXT_EDITOR_EDITED_TEXT = "citizens.editors.text.edited-text";
     public static final String TEXT_EDITOR_END = "citizens.editors.text.end";
+    public static final String TEXT_EDITOR_INVALID_DELAY = "citizens.editors.text.invalid-delay";
     public static final String TEXT_EDITOR_INVALID_EDIT_TYPE = "citizens.editors.text.invalid-edit-type";
     public static final String TEXT_EDITOR_INVALID_INDEX = "citizens.editors.text.invalid-index";
     public static final String TEXT_EDITOR_INVALID_INPUT = "citizens.editors.text.invalid-input";
@@ -268,9 +276,12 @@ public class Messages {
     public static final String UNKNOWN_MATERIAL = "citizens.commands.npc.item.unknown-material";
     public static final String VULNERABLE_SET = "citizens.commands.npc.vulnerable.set";
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
+    public static final String WANDER_WAYPOINTS_ADDED_REGION = "citizens.editors.waypoints.wander.added-region";
     public static final String WANDER_WAYPOINTS_BEGIN = "citizens.editors.waypoints.wander.begin";
     public static final String WANDER_WAYPOINTS_END = "citizens.editors.waypoints.wander.end";
     public static final String WANDER_WAYPOINTS_RANGE_SET = "citizens.editors.waypoints.wander.range-set";
+    public static final String WANDER_WAYPOINTS_REGION_EDITING_START = "citizens.editors.waypoints.wander.editing-regions";
+    public static final String WANDER_WAYPOINTS_REMOVED_REGION = "citizens.editors.waypoints.wander.removed-region";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
     public static final String WAYPOINT_TRIGGER_ADD_PROMPT = "citizens.editors.waypoints.triggers.add.prompt";

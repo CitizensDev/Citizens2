@@ -10,9 +10,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,6 +28,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -44,7 +45,6 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -91,6 +91,7 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 
 public class EventListen implements Listener {
     private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
@@ -240,7 +241,7 @@ public class EventListen implements Listener {
             event.getDrops().clear();
         }
 
-        final Location location = npc.getEntity().getLocation();
+        final Location location = npc.getStoredLocation();
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);
 
@@ -407,7 +408,7 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = npcRegistry.getNPC(event.getRightClicked());
-        if (npc == null || event.getHand() == EquipmentSlot.OFF_HAND) {
+        if (npc == null || Util.isOffHand(event)) {
             return;
         }
         Player player = event.getPlayer();
@@ -474,6 +475,18 @@ public class EventListen implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void onPotionSplashEvent(PotionSplashEvent event) {
+        for (LivingEntity entity : event.getAffectedEntities()) {
+            NPC npc = npcRegistry.getNPC(entity);
+            if (npc == null)
+                continue;
+            if (npc.isProtected()) {
+                event.setIntensity(entity, 0);
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onProjectileHit(final ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof FishHook))
             return;
@@ -501,12 +514,13 @@ public class EventListen implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onVehicleEnter(VehicleEnterEvent event) {
-        if (!npcRegistry.isNPC(event.getEntered()))
+    public void onVehicleEnter(final VehicleEnterEvent event) {
+        if (!npcRegistry.isNPC(event.getVehicle()))
             return;
-        NPC npc = npcRegistry.getNPC(event.getEntered());
-        if ((npc.getEntity() instanceof AbstractHorse || npc.getEntity().getType() == EntityType.BOAT
-                || npc.getEntity() instanceof Minecart) && !npc.getTrait(Controllable.class).isEnabled()) {
+        NPC npc = npcRegistry.getNPC(event.getVehicle());
+        if ((Util.isHorse(npc.getEntity()) || npc.getEntity().getType() == EntityType.BOAT
+                || npc.getEntity().getType() == EntityType.PIG || npc.getEntity() instanceof Minecart)
+                && (!npc.hasTrait(Controllable.class) || !npc.getTrait(Controllable.class).isEnabled())) {
             event.setCancelled(true);
         }
     }

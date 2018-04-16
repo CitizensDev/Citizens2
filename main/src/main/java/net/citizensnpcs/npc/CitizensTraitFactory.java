@@ -25,7 +25,6 @@ import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
-import net.citizensnpcs.trait.BossBarTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
@@ -39,7 +38,6 @@ import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
-import net.citizensnpcs.trait.ShulkerTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
@@ -57,7 +55,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Age.class));
         registerTrait(TraitInfo.create(ArmorStandTrait.class));
         registerTrait(TraitInfo.create(Anchors.class));
-        registerTrait(TraitInfo.create(BossBarTrait.class));
         registerTrait(TraitInfo.create(Controllable.class));
         registerTrait(TraitInfo.create(Equipment.class));
         registerTrait(TraitInfo.create(Gravity.class));
@@ -73,7 +70,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Saddle.class));
         registerTrait(TraitInfo.create(ScriptTrait.class));
         registerTrait(TraitInfo.create(SheepTrait.class));
-        registerTrait(TraitInfo.create(ShulkerTrait.class));
         registerTrait(TraitInfo.create(SkinLayers.class));
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(SlimeSize.class));
@@ -101,7 +97,7 @@ public class CitizensTraitFactory implements TraitFactory {
 
     public void addPlotters(Graph graph) {
         for (Map.Entry<String, TraitInfo> entry : registered.entrySet()) {
-            if (INTERNAL_TRAITS.contains(entry.getKey()))
+            if (INTERNAL_TRAITS.contains(entry.getKey()) || entry.getKey() == null)
                 continue;
             final Class<? extends Trait> traitClass = entry.getValue().getTraitClass();
             graph.addPlotter(new Metrics.Plotter(entry.getKey()) {
@@ -109,8 +105,9 @@ public class CitizensTraitFactory implements TraitFactory {
                 public int getValue() {
                     int numberUsingTrait = 0;
                     for (NPC npc : CitizensAPI.getNPCRegistry()) {
-                        if (npc.hasTrait(traitClass))
+                        if (npc.hasTrait(traitClass)) {
                             ++numberUsingTrait;
+                        }
                     }
                     return numberUsingTrait;
                 }

@@ -1,14 +1,12 @@
 package net.citizensnpcs.trait.text;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -39,8 +37,9 @@ import net.citizensnpcs.util.Util;
 
 @TraitName("text")
 public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
-    private final Map<UUID, Date> cooldowns = Maps.newHashMap();
+    private final Map<UUID, Long> cooldowns = Maps.newHashMap();
     private int currentIndex;
+    private int delay = -1;
     private String itemInHandPattern = "default";
     private final Plugin plugin;
     private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
@@ -60,7 +59,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     @Override
     public void conversationAbandoned(ConversationAbandonedEvent event) {
-        Bukkit.dispatchCommand((Player) event.getContext().getForWhom(), "npc text");
     }
 
     void edit(int index, String newText) {
@@ -108,6 +106,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         realisticLooker = key.getBoolean("realistic-looking", realisticLooker);
         randomTalker = key.getBoolean("random-talker", randomTalker);
         range = key.getDouble("range", range);
+        delay = key.getInt("delay", delay);
         itemInHandPattern = key.getString("talkitem", itemInHandPattern);
     }
 
@@ -139,9 +138,9 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
                 continue;
             Player player = (Player) search;
             // If the cooldown is not expired, do not send text
-            Date cooldown = cooldowns.get(player.getUniqueId());
+            Long cooldown = cooldowns.get(player.getUniqueId());
             if (cooldown != null) {
-                if (!new Date().after(cooldown)) {
+                if (System.currentTimeMillis() < cooldown) {
                     return;
                 }
                 cooldowns.remove(player.getUniqueId());
@@ -149,19 +148,19 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
             if (!sendText(player))
                 return;
             // Add a cooldown if the text was successfully sent
-            Date wait = new Date();
-            int secondsDelta = RANDOM.nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt())
-                    + Setting.TALK_CLOSE_MINIMUM_COOLDOWN.asInt();
+            int secondsDelta = delay != -1 ? delay
+                    : RANDOM.nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt())
+                            + Setting.TALK_CLOSE_MINIMUM_COOLDOWN.asInt();
             if (secondsDelta <= 0)
                 return;
             long millisecondsDelta = TimeUnit.MILLISECONDS.convert(secondsDelta, TimeUnit.SECONDS);
-            wait.setTime(wait.getTime() + millisecondsDelta);
-            cooldowns.put(player.getUniqueId(), wait);
+            cooldowns.put(player.getUniqueId(), System.currentTimeMillis() + millisecondsDelta);
         }
     }
 
     @Override
     public void save(DataKey key) {
+        key.setInt("delay", delay);
         key.setBoolean("talk-close", talkClose);
         key.setBoolean("random-talker", randomTalker);
         key.setBoolean("realistic-looking", realisticLooker);
@@ -200,6 +199,10 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
         npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
         return true;
+    }
+
+    void setDelay(int delay) {
+        this.delay = delay;
     }
 
     void setItemInHandPattern(String pattern) {

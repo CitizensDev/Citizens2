@@ -16,6 +16,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_11_R1.BlockPosition;
+import net.minecraft.server.v1_11_R1.EntityHuman;
 import net.minecraft.server.v1_11_R1.EntityMagmaCube;
 import net.minecraft.server.v1_11_R1.IBlockData;
 import net.minecraft.server.v1_11_R1.NBTTagCompound;
@@ -81,6 +82,13 @@ public class MagmaCubeController extends MobEntityController {
             super.collide(entity);
             if (npc != null)
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+        }
+
+        @Override
+        public void d(EntityHuman human) {
+            if (npc == null) {
+                super.d(human);
+            }
         }
 
         @Override

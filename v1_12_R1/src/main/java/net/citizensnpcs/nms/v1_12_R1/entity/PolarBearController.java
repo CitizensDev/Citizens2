@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_12_R1.entity; import net.minecraft.server.v1_12_R1.DamageSource;
+package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
@@ -14,6 +14,7 @@ import net.citizensnpcs.nms.v1_12_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.EntityPolarBear;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.SoundEffect;
@@ -61,11 +62,6 @@ public class PolarBearController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect d(DamageSource damagesource) {
-            return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
-        }
-
-        @Override
         public void collide(net.minecraft.server.v1_12_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -76,14 +72,21 @@ public class PolarBearController extends MobEntityController {
         }
 
         @Override
+        protected SoundEffect d(DamageSource damagesource) {
+            return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
+        }
+
+        @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
         }
 
         @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
-            if (npc == null)
+            if (npc == null) {
                 super.enderTeleportTo(d0, d1, d2);
+                return;
+            }
             NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
             Bukkit.getPluginManager().callEvent(event);
             if (!event.isCancelled()) {

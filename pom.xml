@@ -9,7 +9,8 @@
     <artifactId>citizens-parent</artifactId>
     <version>2.0.22-SNAPSHOT</version>
     <modules>
-        <module>main</module> 
+        <module>main</module>  
+        <module>v1_8_R3</module>
         <module>v1_10_R1</module>
         <module>v1_11_R1</module>
         <module>v1_12_R1</module>

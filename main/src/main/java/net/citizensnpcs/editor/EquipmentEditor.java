@@ -22,6 +22,7 @@ import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Util;
 
 public class EquipmentEditor extends Editor {
     private final NPC npc;
@@ -62,7 +63,7 @@ public class EquipmentEditor extends Editor {
             public void run() {
                 if (!event.getPlayer().isValid())
                     return;
-                ItemStack hand = event.getPlayer().getInventory().getItemInMainHand();
+                ItemStack hand = event.getPlayer().getInventory().getItemInHand();
                 if (hand.getType() == Material.AIR || hand.getAmount() <= 0) {
                     return;
                 }
@@ -74,7 +75,7 @@ public class EquipmentEditor extends Editor {
                 newStack.setAmount(1);
                 npc.getTrait(Equipment.class).set(finalSlot, newStack);
                 hand.setAmount(hand.getAmount() - 1);
-                event.getPlayer().getInventory().setItemInMainHand(hand);
+                event.getPlayer().getInventory().setItemInHand(hand);
             }
         });
         event.setCancelled(true);
@@ -89,8 +90,7 @@ public class EquipmentEditor extends Editor {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (!npc.isSpawned() || !event.getPlayer().equals(player)
-                || event.getHand() != org.bukkit.inventory.EquipmentSlot.HAND
+        if (!npc.isSpawned() || !event.getPlayer().equals(player) || Util.isOffHand(event)
                 || !npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
             return;
 

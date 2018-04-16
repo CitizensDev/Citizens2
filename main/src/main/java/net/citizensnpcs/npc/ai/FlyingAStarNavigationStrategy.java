@@ -10,6 +10,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.AbstractPathStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
@@ -95,7 +96,8 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
                 parameters.examiner(new FlyingBlockExaminer());
             }
             setPlan(ASTAR.runFully(goal, new VectorNode(goal, location,
-                    new ChunkBlockSource(location, parameters.range()), parameters.examiners()), 50000));
+                    new ChunkBlockSource(location, parameters.range()), parameters.examiners()),
+                    Setting.MAXIMUM_ASTAR_ITERATIONS.asInt()));
         }
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;

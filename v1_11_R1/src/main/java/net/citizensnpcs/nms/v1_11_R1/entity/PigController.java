@@ -86,6 +86,12 @@ public class PigController extends MobEntityController {
         }
 
         @Override
+        public boolean cR() {
+            // block carrot-on-a-stick behaviour
+            return npc == null ? super.cR() : false;
+        }
+
+        @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
         }

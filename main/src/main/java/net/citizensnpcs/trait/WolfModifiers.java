@@ -26,6 +26,18 @@ public class WolfModifiers extends Trait {
         return collarColor;
     }
 
+    public boolean isAngry() {
+        return angry;
+    }
+
+    public boolean isSitting() {
+        return sitting;
+    }
+
+    public boolean isTamed() {
+        return tamed;
+    }
+
     @Override
     public void onSpawn() {
         updateModifiers();

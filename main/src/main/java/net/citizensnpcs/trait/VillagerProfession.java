@@ -20,7 +20,7 @@ public class VillagerProfession extends Trait {
     public void load(DataKey key) throws NPCLoadException {
         try {
             profession = Profession.valueOf(key.getString(""));
-            if (profession == Profession.NORMAL) {
+            if (profession.name().equals("NORMAL")) {
                 profession = Profession.FARMER;
             }
         } catch (IllegalArgumentException ex) {
@@ -41,7 +41,7 @@ public class VillagerProfession extends Trait {
     }
 
     public void setProfession(Profession profession) {
-        if (profession == Profession.NORMAL) {
+        if (profession.name().equals("NORMAL")) {
             profession = Profession.FARMER;
         }
         this.profession = profession;

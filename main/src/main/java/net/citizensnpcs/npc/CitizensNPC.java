@@ -73,7 +73,7 @@ public class CitizensNPC extends AbstractNPC {
             event.setCancelled(Setting.KEEP_CHUNKS_LOADED.asBoolean());
         }
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
+        if (event.isCancelled() && reason != DespawnReason.DEATH) {
             getEntity().getLocation().getChunk();
             Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Force loaded chunk.",
                     getEntity().isValid());
@@ -91,8 +91,11 @@ public class CitizensNPC extends AbstractNPC {
             trait.onDespawn();
         }
         Messaging.debug("Despawned", getId(), "DespawnReason.", reason);
-        entityController.remove();
-
+        if (reason == DespawnReason.DEATH) {
+            entityController.setEntity(null);
+        } else {
+            entityController.remove();
+        }
         return true;
     }
 
@@ -272,17 +275,19 @@ public class CitizensNPC extends AbstractNPC {
                 NMS.trySwim(getEntity());
             }
             navigator.run();
-
-            getEntity().setGlowing(data().get(NPC.GLOWING_METADATA, false));
+            try {
+                getEntity().setGlowing(data().get(NPC.GLOWING_METADATA, false));
+            } catch (NoSuchMethodError e) {
+            }
             if (!getNavigator().isNavigating() && updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
                 updateCounter = 0;
                 if (getEntity() instanceof LivingEntity) {
-                    OptionStatus nameVisibility = OptionStatus.NEVER;
+                    boolean nameVisibility = false;
                     if (!getEntity().isCustomNameVisible()
                             && !data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("hover")) {
                         getEntity().setCustomName("");
                     } else {
-                        nameVisibility = OptionStatus.ALWAYS;
+                        nameVisibility = true;
                         getEntity().setCustomName(getFullName());
                     }
                     String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
@@ -293,7 +298,12 @@ public class CitizensNPC extends AbstractNPC {
                             team.unregister();
                             data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
                         } else {
-                            team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility);
+                            try {
+                                team.setOption(Option.NAME_TAG_VISIBILITY,
+                                        nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER);
+                            } catch (NoSuchMethodError e) {
+                            } catch (NoClassDefFoundError e) {
+                            }
                             if (data().has(NPC.GLOWING_COLOR_METADATA)) {
                                 if (team.getPrefix() == null || team.getPrefix().length() == 0
                                         || (data().has("previous-glowing-color")
@@ -325,7 +335,10 @@ public class CitizensNPC extends AbstractNPC {
             }
 
             if (data().has(NPC.SILENT_METADATA)) {
-                getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.SILENT_METADATA).toString()));
+                try {
+                    getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.SILENT_METADATA).toString()));
+                } catch (NoSuchMethodError e) {
+                }
             }
         } catch (Exception ex) {
             Throwable error = Throwables.getRootCause(ex);

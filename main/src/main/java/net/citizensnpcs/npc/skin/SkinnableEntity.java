@@ -56,4 +56,6 @@ public interface SkinnableEntity extends NPCHolder {
     void setSkinName(String name);
 
     void setSkinName(String skinName, boolean forceUpdate);
+
+    void setSkinPersistent(String skinName, String signature, String data);
 }

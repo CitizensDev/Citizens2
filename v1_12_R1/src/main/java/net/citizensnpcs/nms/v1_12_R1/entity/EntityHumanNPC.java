@@ -2,7 +2,9 @@ package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.nms.v1_12_R1.network.EmptyNetHandler;
 import net.citizensnpcs.nms.v1_12_R1.network.EmptyNetworkManager;
 import net.citizensnpcs.nms.v1_12_R1.network.EmptySocket;
+import net.citizensnpcs.nms.v1_12_R1.util.EmptyAdvancementDataPlayer;
 import net.citizensnpcs.nms.v1_12_R1.util.NMSImpl;
 import net.citizensnpcs.nms.v1_12_R1.util.PlayerControllerJump;
 import net.citizensnpcs.nms.v1_12_R1.util.PlayerControllerLook;
@@ -42,10 +45,10 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_12_R1.AdvancementProgress;
 import net.minecraft.server.v1_12_R1.AttributeInstance;
 import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.ChatComponentText;
+import net.minecraft.server.v1_12_R1.Criterion;
 import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.Entity;
 import net.minecraft.server.v1_12_R1.EntityHuman;
@@ -122,11 +125,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         super.B_();
         if (npc == null)
             return;
-        if (this.getAdvancementData().data != null) {
-            for (AdvancementProgress progress : this.getAdvancementData().data.values()) {
-                clearProgress(progress);
-            }
-        }
         this.noclip = isSpectator();
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
@@ -156,16 +154,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
 
         npc.update();
-    }
-
-    private void clearProgress(AdvancementProgress progress) {
-        try {
-            PROGRESS_TRACKER_FIELD.set(progress, EMPTY_PROGRESS);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -227,8 +215,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public void enderTeleportTo(double d0, double d1, double d2) {
-        if (npc == null)
+        if (npc == null) {
             super.enderTeleportTo(d0, d1, d2);
+            return;
+        }
         NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
@@ -332,6 +322,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         navigation = new PlayerNavigation(this, world);
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
+        try {
+            ADVANCEMENT_DATA_PLAYER.set(this,
+                    new EmptyAdvancementDataPlayer(minecraftServer, CitizensAPI.getDataFolder().getParentFile(), this));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -411,6 +409,20 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, name.toLowerCase());
         skinTracker.notifySkinChange(forceUpdate);
+    }
+
+    @Override
+    public void setSkinPersistent(String skinName, String signature, String data) {
+        Preconditions.checkNotNull(skinName);
+        Preconditions.checkNotNull(signature);
+        Preconditions.checkNotNull(data);
+
+        npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, skinName.toLowerCase());
+        npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA, signature);
+        npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA, data);
+        npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, false);
+        npc.data().setPersistent("cached-skin-uuid-name", skinName.toLowerCase());
+        skinTracker.notifySkinChange(false);
     }
 
     public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
@@ -519,12 +531,23 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         public void setSkinName(String skinName, boolean forceUpdate) {
             ((SkinnableEntity) this.entity).setSkinName(skinName, forceUpdate);
         }
+
+        @Override
+        public void setSkinPersistent(String skinName, String signature, String data) {
+            ((SkinnableEntity) this.entity).setSkinPersistent(skinName, signature, data);
+        }
     }
 
+    private static Field ADVANCEMENT_DATA_PLAYER = NMS.getField(EntityPlayer.class, "bY");
     private static final String[][] EMPTY_PROGRESS = new String[0][0];
-
+    private static final Map<String, Criterion> EMPTY_PROGRESS_MAP = Collections.emptyMap();
     private static final float EPSILON = 0.005F;
-
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
-    private static final Field PROGRESS_TRACKER_FIELD = NMS.getField(AdvancementProgress.class, "b");
+    static {
+        Field modifiersField = NMS.getField(Field.class, "modifiers");
+        try {
+            modifiersField.setInt(ADVANCEMENT_DATA_PLAYER, ADVANCEMENT_DATA_PLAYER.getModifiers() & ~Modifier.FINAL);
+        } catch (Exception e) {
+        }
+    }
 }

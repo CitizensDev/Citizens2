@@ -17,7 +17,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
 import com.google.common.collect.Lists;
 
@@ -146,13 +145,13 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         Conversation conversation;
         boolean editing = true;
         int editingSlot = waypoints.size() - 1;
-        WaypointMarkers markers;
+        EntityMarkers<Waypoint> markers;
         private final Player player;
         private boolean showPath;
 
         private LinearWaypointEditor(Player player) {
             this.player = player;
-            this.markers = new WaypointMarkers(player.getWorld());
+            this.markers = new EntityMarkers<Waypoint>();
         }
 
         @Override
@@ -164,13 +163,13 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             editingSlot = 0;
             waypoints.clear();
             onWaypointsModified();
-            markers.destroyWaypointMarkers();
+            markers.destroyMarkers();
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED);
         }
 
         private void createWaypointMarkers() {
             for (int i = 0; i < waypoints.size(); i++) {
-                markers.createWaypointMarker(waypoints.get(i));
+                markers.createMarker(waypoints.get(i), waypoints.get(i).getLocation().clone().add(0, 1, 0));
             }
         }
 
@@ -178,13 +177,14 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         public void end() {
             if (!editing)
                 return;
-            if (conversation != null)
+            if (conversation != null) {
                 conversation.abandon();
+            }
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_END);
             editing = false;
             if (!showPath)
                 return;
-            markers.destroyWaypointMarkers();
+            markers.destroyMarkers();
         }
 
         private String formatLoc(Location location) {
@@ -263,8 +263,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         @EventHandler(ignoreCancelled = true)
         public void onPlayerInteract(PlayerInteractEvent event) {
             if (!event.getPlayer().equals(player) || event.getAction() == Action.PHYSICAL || !npc.isSpawned()
-                    || event.getPlayer().getWorld() != npc.getEntity().getWorld()
-                    || event.getHand() == EquipmentSlot.OFF_HAND)
+                    || event.getPlayer().getWorld() != npc.getEntity().getWorld() || Util.isOffHand(event))
                 return;
             if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
                 if (event.getClickedBlock() == null)
@@ -287,7 +286,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 normaliseEditingSlot();
                 waypoints.add(editingSlot, element);
                 if (showPath) {
-                    markers.createWaypointMarker(element);
+                    markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
                 }
                 editingSlot = Math.min(editingSlot + 1, waypoints.size());
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at), editingSlot + 1,
@@ -297,7 +296,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 normaliseEditingSlot();
                 Waypoint waypoint = waypoints.remove(editingSlot);
                 if (showPath) {
-                    markers.removeWaypointMarker(waypoint);
+                    markers.removeMarker(waypoint);
                 }
                 editingSlot = Math.max(0, editingSlot - 1);
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_REMOVED_WAYPOINT, waypoints.size(),
@@ -308,7 +307,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
         @EventHandler(ignoreCancelled = true)
         public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-            if (!player.equals(event.getPlayer()) || !showPath || event.getHand() == EquipmentSlot.OFF_HAND)
+            if (!player.equals(event.getPlayer()) || !showPath || Util.isOffHand(event))
                 return;
             if (!event.getRightClicked().hasMetadata("waypointindex"))
                 return;
@@ -350,7 +349,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 createWaypointMarkers();
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS);
             } else {
-                markers.destroyWaypointMarkers();
+                markers.destroyMarkers();
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_NOT_SHOWING_MARKERS);
             }
         }

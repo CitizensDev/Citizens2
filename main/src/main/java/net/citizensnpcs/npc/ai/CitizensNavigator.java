@@ -1,17 +1,11 @@
 package net.citizensnpcs.npc.ai;
 
 import java.util.Iterator;
-import java.util.ListIterator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.material.Door;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Iterables;
@@ -31,11 +25,9 @@ import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.api.ai.event.NavigationStuckEvent;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
-import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
-import net.citizensnpcs.api.astar.pathfinder.BlockSource;
+import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
-import net.citizensnpcs.api.astar.pathfinder.PathPoint;
-import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
+import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
@@ -59,6 +51,7 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     public CitizensNavigator(NPC npc) {
         this.npc = npc;
+        defaultParams.examiner(new SwimmingExaminer(npc));
         if (Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean()) {
             defaultParams.examiner(new DoorExaminer());
         }
@@ -383,41 +376,6 @@ public class CitizensNavigator implements Navigator, Runnable {
         return false;
     }
 
-    public static class DoorExaminer implements BlockExaminer {
-        @Override
-        public float getCost(BlockSource source, PathPoint point) {
-            return 0F;
-        }
-
-        @Override
-        public PassableState isPassable(BlockSource source, PathPoint point) {
-            Material in = source.getMaterialAt(point.getVector());
-            if (MinecraftBlockExaminer.isDoor(in)) {
-                point.addCallback(new DoorOpener());
-                return PassableState.PASSABLE;
-            }
-            return PassableState.IGNORE;
-        }
-    }
-
-    private static class DoorOpener implements PathCallback {
-        @Override
-        public void run(NPC npc, Block point, ListIterator<Block> path) {
-            BlockState state = point.getState();
-            Door door = (Door) state.getData();
-            if (npc.getStoredLocation().distance(point.getLocation()) < 2) {
-                boolean bottom = !door.isTopHalf();
-                Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
-                state = set.getState();
-                door = (Door) state.getData();
-                door.setOpen(true);
-                state.setData(door);
-                state.update();
-            }
-        }
-    }
-
     private static final Location STATIONARY_LOCATION = new Location(null, 0, 0, 0);
-
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;
 }

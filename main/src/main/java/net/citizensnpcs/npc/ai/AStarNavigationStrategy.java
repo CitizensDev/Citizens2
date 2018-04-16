@@ -4,16 +4,21 @@ import java.util.List;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.material.Door;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.AbstractPathStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.AStarMachine;
 import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
+import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
@@ -82,7 +87,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             VectorGoal goal = new VectorGoal(destination, (float) params.pathDistanceMargin());
             setPlan(ASTAR.runFully(goal,
                     new VectorNode(goal, location, new ChunkBlockSource(location, params.range()), params.examiners()),
-                    50000));
+                    Setting.MAXIMUM_ASTAR_ITERATIONS.asInt()));
         }
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
@@ -108,6 +113,15 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             NMS.setShouldJump(npc.getEntity());
         }
         double destX = vector.getX() + 0.5, destZ = vector.getZ() + 0.5;
+        Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
+        if (MinecraftBlockExaminer.isDoor(block.getType())) {
+            Door door = (Door) block.getState().getData();
+            if (door.isOpen()) {
+                BlockFace targetFace = door.getFacing().getOppositeFace();
+                destX = vector.getX() + targetFace.getModX();
+                destZ = vector.getZ() + targetFace.getModZ();
+            }
+        }
         NMS.setDestination(npc.getEntity(), destX, vector.getY(), destZ, params.speed());
         params.run();
         plan.run(npc);

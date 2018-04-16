@@ -1,4 +1,7 @@
-In this issue, please include:
-- whether this is a bug description or a feature request
-- Link to server log & Citizens config if relevant (using e.g. pastie.org) 
-- Minecraft & Citizens version if relevant
+<!-- 
+Please include:
+- A detailed description of your issue or feature request
+- Link to server log & Citizens config (using e.g. pastie.org) ESPECIALLY if it's a pathfinding issue
+- Minecraft & Citizens version 
+- FOR LAG RELATED ISSUES: please include server specs, number of NPCs, saves.yml and timings from WarmRoast or other profiler (NOT timings by Aikar)
+-->

@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -32,7 +33,6 @@ import org.bukkit.craftbukkit.v1_11_R1.entity.CraftWither;
 import org.bukkit.craftbukkit.v1_11_R1.event.CraftEventFactory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Shulker;
@@ -100,6 +100,7 @@ import net.citizensnpcs.nms.v1_11_R1.entity.PolarBearController;
 import net.citizensnpcs.nms.v1_11_R1.entity.RabbitController;
 import net.citizensnpcs.nms.v1_11_R1.entity.SheepController;
 import net.citizensnpcs.nms.v1_11_R1.entity.ShulkerController;
+import net.citizensnpcs.nms.v1_11_R1.entity.ShulkerController.EntityShulkerNPC;
 import net.citizensnpcs.nms.v1_11_R1.entity.SilverfishController;
 import net.citizensnpcs.nms.v1_11_R1.entity.SkeletonController;
 import net.citizensnpcs.nms.v1_11_R1.entity.SkeletonStrayController;
@@ -151,8 +152,10 @@ import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ThrownPotionController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.TippedArrowController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.WitherSkullController;
 import net.citizensnpcs.nms.v1_11_R1.network.EmptyChannel;
+import net.citizensnpcs.nms.v1_11_R1.trait.BossBarTrait;
 import net.citizensnpcs.nms.v1_11_R1.trait.Commands;
 import net.citizensnpcs.nms.v1_11_R1.trait.LlamaTrait;
+import net.citizensnpcs.nms.v1_11_R1.trait.ShulkerTrait;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -182,6 +185,7 @@ import net.minecraft.server.v1_11_R1.Entity;
 import net.minecraft.server.v1_11_R1.EntityEnderDragon;
 import net.minecraft.server.v1_11_R1.EntityFishingHook;
 import net.minecraft.server.v1_11_R1.EntityHorse;
+import net.minecraft.server.v1_11_R1.EntityHorseAbstract;
 import net.minecraft.server.v1_11_R1.EntityHuman;
 import net.minecraft.server.v1_11_R1.EntityInsentient;
 import net.minecraft.server.v1_11_R1.EntityLiving;
@@ -284,6 +288,9 @@ public class NMSImpl implements NMSBridge {
 
         MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer().az();
 
+        if (!(sessionService instanceof YggdrasilMinecraftSessionService)) {
+            return sessionService.fillProfileProperties(profile, requireSecure);
+        }
         YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
                 .getAuthenticationService();
 
@@ -312,29 +319,6 @@ public class NMSImpl implements NMSBridge {
     public BlockBreaker getBlockBreaker(org.bukkit.entity.Entity entity, org.bukkit.block.Block targetBlock,
             BlockBreakerConfiguration config) {
         return new CitizensBlockBreaker(entity, targetBlock, config);
-    }
-
-    @Override
-    public BossBar getBossBar(org.bukkit.entity.Entity entity) {
-        BossBattleServer bserver = null;
-        try {
-            if (entity.getType() == EntityType.WITHER) {
-                bserver = (BossBattleServer) WITHER_BOSS_BAR_FIELD.get(NMSImpl.getHandle(entity));
-            } else if (entity.getType() == EntityType.ENDER_DRAGON) {
-                bserver = (BossBattleServer) ENDERDRAGON_BATTLE_BAR_FIELD
-                        .get(ENDERDRAGON_BATTLE_FIELD.get(NMSImpl.getHandle(entity)));
-            }
-        } catch (Exception e) {
-        }
-        if (bserver == null) {
-            return null;
-        }
-        BossBar ret = Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SEGMENTED_10);
-        try {
-            CRAFT_BOSSBAR_HANDLE_FIELD.set(ret, bserver);
-        } catch (Exception e) {
-        }
-        return ret;
     }
 
     @Override
@@ -544,6 +528,9 @@ public class NMSImpl implements NMSBridge {
     @Override
     public org.bukkit.entity.Entity getVehicle(org.bukkit.entity.Entity entity) {
         Entity handle = NMSImpl.getHandle(entity);
+        if (handle == null) {
+            return null;
+        }
         Entity e = handle.getVehicle();
         return (e == handle || e == null) ? null : e.getBukkitEntity();
     }
@@ -563,6 +550,8 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BossBarTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LlamaTrait.class));
         manager.register(Commands.class);
     }
@@ -745,14 +734,14 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void openHorseScreen(Horse horse, Player equipper) {
-        EntityLiving handle = NMSImpl.getHandle(horse);
+    public void openHorseScreen(Tameable horse, Player equipper) {
+        EntityLiving handle = NMSImpl.getHandle((LivingEntity) horse);
         EntityLiving equipperHandle = NMSImpl.getHandle(equipper);
         if (handle == null || equipperHandle == null)
             return;
         boolean wasTamed = horse.isTamed();
         horse.setTamed(true);
-        ((EntityHorse) handle).a((EntityHuman) equipperHandle);
+        ((EntityHorseAbstract) handle).f((EntityHuman) equipperHandle);
         horse.setTamed(wasTamed);
     }
 
@@ -911,6 +900,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
+        ((EntityShulker) getHandle(shulker)).a((byte) peek);
+    }
+
+    @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
         if (SKULL_PROFILE_FIELD == null) {
             try {
@@ -937,11 +931,6 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setShouldJump();
         }
-    }
-
-    @Override
-    public void setShulkerPeek(Shulker shulker, int peek) {
-        ((EntityShulker) getHandle(shulker)).a((byte) peek);
     }
 
     @Override
@@ -1333,6 +1322,28 @@ public class NMSImpl implements NMSBridge {
         entity.aH += entity.aG;
     }
 
+    public static BossBar getBossBar(org.bukkit.entity.Entity entity) {
+        BossBattleServer bserver = null;
+        try {
+            if (entity.getType() == EntityType.WITHER) {
+                bserver = (BossBattleServer) WITHER_BOSS_BAR_FIELD.get(NMSImpl.getHandle(entity));
+            } else if (entity.getType() == EntityType.ENDER_DRAGON) {
+                bserver = (BossBattleServer) ENDERDRAGON_BATTLE_BAR_FIELD
+                        .get(ENDERDRAGON_BATTLE_FIELD.get(NMSImpl.getHandle(entity)));
+            }
+        } catch (Exception e) {
+        }
+        if (bserver == null) {
+            return null;
+        }
+        BossBar ret = Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SEGMENTED_10);
+        try {
+            CRAFT_BOSSBAR_HANDLE_FIELD.set(ret, bserver);
+        } catch (Exception e) {
+        }
+        return ret;
+    }
+
     private static EntityLiving getHandle(LivingEntity entity) {
         return (EntityLiving) NMSImpl.getHandle((org.bukkit.entity.Entity) entity);
     }
@@ -1439,6 +1450,10 @@ public class NMSImpl implements NMSBridge {
 
     public static void sendPacketsNearby(Player from, Location location, Packet<?>... packets) {
         NMSImpl.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
+    }
+
+    public static void setShulkerColor(Shulker shulker, DyeColor color) {
+        ((EntityShulkerNPC) getHandle(shulker)).setColor(color);
     }
 
     public static void setSize(Entity entity, float f, float f1, boolean justCreated) {

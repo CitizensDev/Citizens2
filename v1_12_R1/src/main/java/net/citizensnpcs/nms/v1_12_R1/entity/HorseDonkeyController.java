@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_12_R1.entity; import net.minecraft.server.v1_12_R1.DamageSource;
+package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,6 +18,7 @@ import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_12_R1.BlockPosition;
+import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.EntityHorseDonkey;
 import net.minecraft.server.v1_12_R1.IBlockData;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
@@ -75,13 +76,17 @@ public class HorseDonkeyController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cf() {
-            return NMSImpl.getSoundEffect(npc, super.cf(), NPC.DEATH_SOUND_METADATA);
+        public void a(float f, float f1, float f2) {
+            if (npc == null || !npc.isFlyable()) {
+                super.a(f, f1, f2);
+            } else {
+                NMSImpl.flyingMoveLogic(this, f, f1, f2);
+            }
         }
 
         @Override
-        protected SoundEffect d(DamageSource damagesource) {
-            return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
+        protected SoundEffect cf() {
+            return NMSImpl.getSoundEffect(npc, super.cf(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override
@@ -92,6 +97,11 @@ public class HorseDonkeyController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        protected SoundEffect d(DamageSource damagesource) {
+            return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
         }
 
         @Override
@@ -108,8 +118,10 @@ public class HorseDonkeyController extends MobEntityController {
 
         @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
-            if (npc == null)
+            if (npc == null) {
                 super.enderTeleportTo(d0, d1, d2);
+                return;
+            }
             NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
             Bukkit.getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
@@ -137,15 +149,6 @@ public class HorseDonkeyController extends MobEntityController {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
-        }
-
-        @Override
-        public void a(float f, float f1, float f2) {
-            if (npc == null || !npc.isFlyable()) {
-                super.a(f, f1, f2);
-            } else {
-                NMSImpl.flyingMoveLogic(this, f, f1, f2);
-            }
         }
 
         @Override

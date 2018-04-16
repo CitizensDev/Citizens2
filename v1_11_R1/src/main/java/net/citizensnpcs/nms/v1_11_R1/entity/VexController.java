@@ -42,6 +42,7 @@ public class VexController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
             }
+            setNoGravity(true);
         }
 
         @Override

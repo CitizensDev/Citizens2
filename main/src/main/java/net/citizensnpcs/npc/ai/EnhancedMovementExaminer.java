@@ -34,7 +34,7 @@ public class EnhancedMovementExaminer implements NeighbourGeneratorBlockExaminer
                 }
             }
         }
-        return null;
+        return neighbours;
     }
 
     @Override

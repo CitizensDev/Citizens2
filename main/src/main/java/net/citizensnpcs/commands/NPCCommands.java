@@ -2,6 +2,7 @@ package net.citizensnpcs.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -15,8 +16,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarFlag;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -70,7 +69,6 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
-import net.citizensnpcs.trait.BossBarTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
@@ -82,7 +80,6 @@ import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
-import net.citizensnpcs.trait.ShulkerTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SlimeSize;
@@ -119,7 +116,6 @@ public class NPCCommands {
         if (!npc.isSpawned() || (!(npc.getEntity() instanceof Ageable) && !(npc.getEntity() instanceof Zombie)))
             throw new CommandException(Messages.MOBTYPE_CANNOT_BE_AGED, npc.getName());
         Age trait = npc.getTrait(Age.class);
-
         boolean toggleLock = args.hasFlag('l');
         if (toggleLock) {
             Messaging.sendTr(sender, trait.toggle() ? Messages.AGE_LOCKED : Messages.AGE_UNLOCKED);
@@ -255,38 +251,6 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "bossbar --color [color] --title [title] --visible [visible] --flags [flags]",
-            desc = "Edit bossbar properties",
-            modifiers = { "bossbar" },
-            min = 1,
-            max = 1)
-    @Requirements(selected = true, ownership = true, types = { EntityType.WITHER, EntityType.ENDER_DRAGON })
-    public void bossbar(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        BossBarTrait trait = npc.getTrait(BossBarTrait.class);
-        if (args.hasValueFlag("color")) {
-            BarColor color = Util.matchEnum(BarColor.values(), args.getFlag("color"));
-            trait.setColor(color);
-        }
-        if (args.hasValueFlag("title")) {
-            trait.setTitle(args.getFlag("title"));
-        }
-        if (args.hasValueFlag("visible")) {
-            trait.setVisible(Boolean.parseBoolean(args.getFlag("visible")));
-        }
-        if (args.hasValueFlag("flags")) {
-            List<BarFlag> flags = Lists.newArrayList();
-            for (String s : Splitter.on(',').omitEmptyStrings().trimResults().split(args.getFlag("flags"))) {
-                BarFlag flag = Util.matchEnum(BarFlag.values(), s);
-                if (flag != null) {
-                    flags.add(flag);
-                }
-            }
-            trait.setFlags(flags);
-        }
-    }
-
-    @Command(
-            aliases = { "npc" },
             usage = "collidable",
             desc = "Toggles an NPC's collidability",
             modifiers = { "collidable" },
@@ -297,8 +261,9 @@ public class NPCCommands {
     public void collidable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         npc.data().setPersistent(NPC.COLLIDABLE_METADATA, !npc.data().get(NPC.COLLIDABLE_METADATA, true));
         Messaging.sendTr(sender,
-                npc.data().get(NPC.COLLIDABLE_METADATA) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
+                npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
                 npc.getName());
+
     }
 
     @Command(
@@ -380,7 +345,6 @@ public class NPCCommands {
     @Requirements
     public void create(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String name = Colorizer.parseColors(args.getJoinedStrings(1).trim());
-
         EntityType type = EntityType.PLAYER;
         if (args.hasValueFlag("type")) {
             String inputType = args.getFlag("type");
@@ -829,6 +793,41 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "metadata set|get|remove [key] (value) (-t(emporary))",
+            desc = "Manages NPC metadata",
+            modifiers = { "metadata" },
+            flags = "t",
+            min = 2,
+            max = 4,
+            permission = "citizens.npc.metadata")
+    @Requirements(selected = true, ownership = true)
+    public void metadata(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        String command = args.getString(1).toLowerCase();
+        if (command.equals("set")) {
+            if (args.argsLength() != 4)
+                throw new CommandException();
+            if (args.hasFlag('t')) {
+                npc.data().set(args.getString(2), args.getString(3));
+            } else {
+                npc.data().setPersistent(args.getString(2), args.getString(3));
+            }
+            Messaging.sendTr(sender, Messages.METADATA_SET, args.getString(2), args.getString(3));
+        } else if (args.equals("get")) {
+            if (args.argsLength() != 3) {
+                throw new CommandException();
+            }
+            Messaging.send(sender, npc.data().get(args.getString(2), "null"));
+        } else if (args.equals("remove")) {
+            if (args.argsLength() != 3) {
+                throw new CommandException();
+            }
+            npc.data().remove(args.getString(3));
+            Messaging.sendTr(sender, Messages.METADATA_UNSET, args.getString(2));
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "minecart (--item item_name(:data)) (--offset offset)",
             desc = "Sets minecart item",
             modifiers = { "minecart" },
@@ -873,7 +872,7 @@ public class NPCCommands {
             min = 1,
             max = 1,
             permission = "citizens.npc.controllable")
-    public void mount(CommandContext args, Player player, NPC npc) throws CommandException {
+    public void mount(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("onnpc")) {
             NPC mount;
             try {
@@ -893,9 +892,13 @@ public class NPCCommands {
         }
         boolean enabled = npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled();
         if (!enabled) {
-            Messaging.sendTr(player, Messages.NPC_NOT_CONTROLLABLE, npc.getName());
+            Messaging.sendTr(sender, Messages.NPC_NOT_CONTROLLABLE, npc.getName());
             return;
         }
+        if (!(sender instanceof Player)) {
+            throw new CommandException(CommandMessages.MUST_BE_INGAME);
+        }
+        Player player = (Player) sender;
         boolean success = npc.getTrait(Controllable.class).mount(player);
         if (!success) {
             Messaging.sendTr(player, Messages.FAILED_TO_MOUNT_NPC, npc.getName());
@@ -1002,6 +1005,7 @@ public class NPCCommands {
             modifiers = { "ocelot" },
             min = 1,
             max = 1,
+            requiresFlags = true,
             flags = "sn",
             permission = "citizens.npc.ocelot")
     @Requirements(selected = true, ownership = true, types = { EntityType.OCELOT })
@@ -1252,13 +1256,24 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "remove|rem (all|id|name)",
+            usage = "remove|rem (all|id|name|--owner [owner])",
             desc = "Remove a NPC",
             modifiers = { "remove", "rem" },
             min = 1,
             max = 2)
     @Requirements
     public void remove(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
+        if (args.hasValueFlag("owner")) {
+            String owner = args.getFlag("owner");
+            Collection<NPC> npcs = Lists.newArrayList(npcRegistry);
+            for (NPC o : npcs) {
+                if (o.getTrait(Owner.class).isOwnedBy(owner)) {
+                    o.destroy();
+                }
+            }
+            Messaging.sendTr(sender, Messages.NPCS_REMOVED);
+            return;
+        }
         if (args.argsLength() == 2) {
             if (args.getString(1).equalsIgnoreCase("all")) {
                 if (!sender.hasPermission("citizens.admin.remove.all") && !sender.hasPermission("citizens.admin"))
@@ -1444,35 +1459,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "shulker (--peek [peek])",
-            desc = "Sets shulker modifiers.",
-            modifiers = { "shulker" },
-            min = 1,
-            max = 1,
-            permission = "citizens.npc.shulker")
-    @Requirements(selected = true, ownership = true, types = { EntityType.SHULKER })
-    public void shulker(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        ShulkerTrait trait = npc.getTrait(ShulkerTrait.class);
-        boolean hasArg = false;
-        if (args.hasValueFlag("peek")) {
-            int peek = (byte) args.getFlagInteger("peek");
-            trait.setPeek(peek);
-            Messaging.sendTr(sender, Messages.SHULKER_PEEK_SET, npc.getName(), peek);
-            hasArg = true;
-        }
-        if (!hasArg) {
-            throw new CommandException();
-        }
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "skin (-c -p -f) [name]",
-            desc = "Sets an NPC's skin name. Use -p to save a skin snapshot that won't change",
+            usage = "skin (-c -l(atest)) [name]",
+            desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
             modifiers = { "skin" },
             min = 1,
             max = 2,
-            flags = "cp",
+            flags = "cl",
             permission = "citizens.npc.skin")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
     public void skin(final CommandContext args, final CommandSender sender, final NPC npc) throws CommandException {
@@ -1481,10 +1473,10 @@ public class NPCCommands {
             npc.data().remove(NPC.PLAYER_SKIN_UUID_METADATA);
         } else {
             if (args.argsLength() != 2)
-                throw new CommandException();
+                throw new CommandException(Messages.SKIN_REQUIRED);
             npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, args.getString(1));
-            if (args.hasFlag('p')) {
-                npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, false);
+            if (args.hasFlag('l')) {
+                npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, true);
             }
             skinName = args.getString(1);
         }
@@ -1624,11 +1616,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "spawn (id|name)",
+            usage = "spawn (id|name) -l(oad chunks)",
             desc = "Spawn an existing NPC",
             modifiers = { "spawn" },
             min = 1,
             max = 2,
+            flags = "l",
             permission = "citizens.npc.spawn")
     @Requirements(ownership = true)
     public void spawn(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
@@ -1651,6 +1644,9 @@ public class NPCCommands {
                         throw new CommandException(Messages.NO_STORED_SPAWN_LOCATION);
 
                     location = args.getSenderLocation();
+                }
+                if (args.hasFlag('l') && !Util.isLoaded(location)) {
+                    location.getChunk().load();
                 }
                 if (respawn.spawn(location)) {
                     selector.select(sender, respawn);
@@ -1890,36 +1886,39 @@ public class NPCCommands {
             desc = "Sets wither modifiers",
             modifiers = { "wither" },
             min = 1,
+            requiresFlags = true,
             max = 1,
             permission = "citizens.npc.wither")
     @Requirements(selected = true, ownership = true, types = { EntityType.WITHER })
     public void wither(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         WitherTrait trait = npc.getTrait(WitherTrait.class);
-        boolean hasArg = false;
         if (args.hasValueFlag("charged")) {
             trait.setCharged(Boolean.valueOf(args.getFlag("charged")));
-            hasArg = true;
-        }
-        if (!hasArg) {
-            throw new CommandException();
         }
     }
 
     @Command(
             aliases = { "npc" },
-            usage = "wolf (-s(itting) a(ngry) t(amed)) --collar [hex rgb color|name]",
+            usage = "wolf (-s(itting) a(ngry) t(amed) i(nfo)) --collar [hex rgb color|name]",
             desc = "Sets wolf modifiers",
             modifiers = { "wolf" },
             min = 1,
             max = 1,
-            flags = "sat",
+            requiresFlags = true,
+            flags = "sati",
             permission = "citizens.npc.wolf")
     @Requirements(selected = true, ownership = true, types = EntityType.WOLF)
     public void wolf(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         WolfModifiers trait = npc.getTrait(WolfModifiers.class);
-        trait.setAngry(args.hasFlag('a'));
-        trait.setSitting(args.hasFlag('s'));
-        trait.setTamed(args.hasFlag('t'));
+        if (args.hasFlag('a')) {
+            trait.setAngry(!trait.isAngry());
+        }
+        if (args.hasFlag('s')) {
+            trait.setSitting(!trait.isSitting());
+        }
+        if (args.hasFlag('t')) {
+            trait.setTamed(!trait.isTamed());
+        }
         if (args.hasValueFlag("collar")) {
             String unparsed = args.getFlag("collar");
             DyeColor color = null;
@@ -1937,7 +1936,7 @@ public class NPCCommands {
                 throw new CommandException(Messages.COLLAR_COLOUR_NOT_SUPPORTED, unparsed);
             trait.setCollarColor(color);
         }
-        Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), args.hasFlag('a'), args.hasFlag('s'),
-                args.hasFlag('t'), trait.getCollarColor().name());
+        Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), trait.isAngry(), trait.isSitting(),
+                trait.isTamed(), trait.getCollarColor().name());
     }
 }
