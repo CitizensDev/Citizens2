@@ -408,19 +408,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 }
             }));
 
-            metrics.addCustomChart(new Metrics.SingleLineChart("total_goals", new Callable<Integer>() {
-                @Override
-                public Integer call() {
-                    if (npcRegistry == null) return 0;
-                    int goalCount = 0;
-                    for (NPC npc : npcRegistry) {
-                        goalCount += Iterables.size(npc.getDefaultGoalController());
-                    }
-                    return goalCount;
-                }
-            }));
-
-            // Read the comment in CitizensTraitFactory.
+            // todo: Read the comment in CitizensTraitFactory.
             // traitFactory.addPlotters(metrics.createGraph("traits"));
 
         } catch (Exception e) {

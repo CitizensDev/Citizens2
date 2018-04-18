@@ -68,7 +68,7 @@ public class CitizensTraitFactory implements TraitFactory {
     }
 
     /*
-     We are waiting for multiline charts in bStats to implement this
+     TODO: We are waiting for multiline charts in bStats to implement this
      *
     public void addPlotters(Graph graph) {
         for (Map.Entry<String, TraitInfo> entry : registered.entrySet()) {
