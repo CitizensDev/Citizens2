@@ -1459,11 +1459,11 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-c -l(atest)) [name] (or -t [data] [signature])",
+            usage = "skin (-c -l(atest)) [name] (or -t [uuid] [data] [signature])",
             desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
             modifiers = { "skin" },
             min = 1,
-            max = 3,
+            max = 4,
             flags = "ctl",
             permission = "citizens.npc.skin")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
@@ -1472,14 +1472,14 @@ public class NPCCommands {
         if (args.hasFlag('c')) {
             npc.data().remove(NPC.PLAYER_SKIN_UUID_METADATA);
         } else if (args.hasFlag('t')) {
-            if (args.argsLength() != 3)
+            if (args.argsLength() != 4)
                 throw new CommandException(Messages.SKIN_REQUIRED);
             SkinnableEntity skinnable = npc.getEntity() instanceof SkinnableEntity ? (SkinnableEntity) npc.getEntity()
                     : null;
             if (skinnable == null) {
                 throw new CommandException("Must be spawned.");
             }
-            skinnable.setSkinPersistent(skinName, args.getString(1), args.getString(2));
+            skinnable.setSkinPersistent(args.getString(1), args.getString(2), args.getString(3));
             Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), args.getString(1));
             return;
         } else {
