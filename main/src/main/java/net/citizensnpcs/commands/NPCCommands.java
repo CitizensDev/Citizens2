@@ -1463,8 +1463,8 @@ public class NPCCommands {
             desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
             modifiers = { "skin" },
             min = 1,
-            max = 2,
-            flags = "cl",
+            max = 3,
+            flags = "ctl",
             permission = "citizens.npc.skin")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
     public void skin(final CommandContext args, final CommandSender sender, final NPC npc) throws CommandException {
