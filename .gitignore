@@ -1,11 +1,15 @@
-/bin
-target
+# Project files
+.settings/
+.idea/
 .classpath
 .project
-.settings
-Citizens.jar
+*.iml
+
+# Build files
+target/
+bin/
+*.jar
 *.jardesc
 *.lnk
-*.iml
-/.idea
-dependency-reduced-pom.xml
+
+

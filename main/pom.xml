@@ -12,18 +12,19 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<craftbukkit.version>1.12.1-R0.1-SNAPSHOT</craftbukkit.version> 
+		<craftbukkit.version>1.12.1-R0.1-SNAPSHOT</craftbukkit.version>
 		<citizensapi.version>2.0.22-SNAPSHOT</citizensapi.version>
 		<vault.version>1.5.4</vault.version>
 		<powermock.version>1.4.12</powermock.version>
+		<bstats.version>1.2</bstats.version>
 		<build.number>Unknown</build.number>
 		<BUILD_NUMBER>Unknown</BUILD_NUMBER>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>everything</id>
@@ -33,14 +34,11 @@
 			<id>vault-repo</id>
 			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
 		</repository>
+		<repository>
+			<id>bstats-repo</id>
+			<url>https://repo.bstats.org/content/repositories/releases/</url>
+		</repository>
 	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>bukkit-plugins</id>
-			<url>http://repo.bukkit.org/content/groups/public</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<dependencies>
 		<dependency>
@@ -69,6 +67,12 @@
 			<version>${vault.version}</version>
 			<type>jar</type>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.bstats</groupId>
+			<artifactId>bstats-bukkit</artifactId>
+			<version>${bstats.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
@@ -139,6 +143,7 @@
 						</goals>
 						<configuration>
 							<minimizeJar>true</minimizeJar>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<filters>
 								<filter>
 									<artifact>net.citizensnpcs:citizensapi</artifact>
@@ -151,6 +156,10 @@
 								<relocation>
 									<pattern>gnu.trove</pattern>
 									<shadedPattern>lib.trove</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>org.bstats</pattern>
+									<shadedPattern>net.citizensnpcs.util.metrics</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>
