@@ -145,8 +145,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
                 }
                 cooldowns.remove(player.getUniqueId());
             }
-            if (!sendText(player))
-                return;
+            sendText(player);
             // Add a cooldown if the text was successfully sent
             int secondsDelta = delay != -1 ? delay
                     : RANDOM.nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt())
