@@ -15,11 +15,7 @@ public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
     public EmptyAdvancementDataPlayer(MinecraftServer minecraftserver, File file, EntityPlayer entityplayer) {
         super(minecraftserver, file, entityplayer);
         this.b();
-    }
-
-    @Override
-    public void a() {
-    }
+    } 
 
     @Override
     public void a(Advancement advancement) {
