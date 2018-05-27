@@ -18,10 +18,6 @@ public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
     }
 
     @Override
-    public void a() {
-    }
-
-    @Override
     public void a(Advancement advancement) {
     }
 
@@ -31,17 +27,7 @@ public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
 
     @Override
     public void b() {
-        this.a();
-        this.data.clear();
-        try {
-            ((Set) G.get(this)).clear();
-            ((Set) H.get(this)).clear();
-            ((Set) I.get(this)).clear();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        clear(this);
     }
 
     @Override
@@ -65,6 +51,20 @@ public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
     @Override
     public boolean revokeCritera(Advancement advancement, String s) {
         return false;
+    }
+
+    public static void clear(AdvancementDataPlayer data) {
+        data.a();
+        data.data.clear();
+        try {
+            ((Set<?>) G.get(data)).clear();
+            ((Set<?>) H.get(data)).clear();
+            ((Set<?>) I.get(data)).clear();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final Field G = NMS.getField(AdvancementDataPlayer.class, "g");

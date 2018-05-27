@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.Socket;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +47,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_12_R1.AttributeInstance;
 import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.ChatComponentText;
-import net.minecraft.server.v1_12_R1.Criterion;
 import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.Entity;
 import net.minecraft.server.v1_12_R1.EntityHuman;
@@ -322,6 +320,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         navigation = new PlayerNavigation(this, world);
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
+
+        EmptyAdvancementDataPlayer.clear(this.getAdvancementData());
         try {
             ADVANCEMENT_DATA_PLAYER.set(this,
                     new EmptyAdvancementDataPlayer(minecraftServer, CitizensAPI.getDataFolder().getParentFile(), this));
@@ -539,8 +539,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     private static Field ADVANCEMENT_DATA_PLAYER = NMS.getField(EntityPlayer.class, "bY");
-    private static final String[][] EMPTY_PROGRESS = new String[0][0];
-    private static final Map<String, Criterion> EMPTY_PROGRESS_MAP = Collections.emptyMap();
     private static final float EPSILON = 0.005F;
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
     static {
