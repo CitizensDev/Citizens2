@@ -23,6 +23,7 @@ import net.minecraft.server.v1_10_R1.ItemStack;
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import net.minecraft.server.v1_10_R1.SoundEffect;
 import net.minecraft.server.v1_10_R1.World;
+import net.minecraft.server.v1_10_R1.EntityLightning;
 
 public class VillagerController extends MobEntityController {
     public VillagerController() {
@@ -215,6 +216,13 @@ public class VillagerController extends MobEntityController {
                 return super.m_();
             } else {
                 return false;
+            }
+        }
+
+        @Override
+        public void onLightningStrike(EntityLightning entitylightning) {
+            if (npc == null) {
+                super.onLightningStrike(entitylightning);
             }
         }
 
