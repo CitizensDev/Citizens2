@@ -1223,7 +1223,7 @@ public class NPCCommands {
             min = 2,
             max = 2,
             permission = "citizens.npc.profession")
-    @Requirements(selected = true, ownership = true, types = { EntityType.VILLAGER })
+    @Requirements(selected = true, ownership = true, types = { EntityType.VILLAGER, EntityType.ZOMBIE_VILLAGER })
     public void profession(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String profession = args.getString(1);
         Profession parsed = Util.matchEnum(Profession.values(), profession.toUpperCase());
