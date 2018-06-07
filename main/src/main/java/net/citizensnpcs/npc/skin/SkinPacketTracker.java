@@ -249,6 +249,6 @@ public class SkinPacketTracker {
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static PlayerListener LISTENER;
-    private static final int PACKET_DELAY_REMOVE = 1;
+    private static final int PACKET_DELAY_REMOVE = 2;
     private static final TabListRemover TAB_LIST_REMOVER = new TabListRemover();
 }
