@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffectType;
 
 import net.citizensnpcs.Settings.Setting;
@@ -63,6 +64,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         for (Entity entity : nearby) {
             if (entity.getType() != EntityType.PLAYER || ((Player) entity).getGameMode() == GameMode.SPECTATOR
                     || ((Player) entity).hasPotionEffect(PotionEffectType.INVISIBILITY)
+                    || isPluginVanished((Player) entity)
                     || entity.getLocation(CACHE_LOCATION).getWorld() != NPC_LOCATION.getWorld()
                     || CitizensAPI.getNPCRegistry().getNPC(entity) != null)
                 continue;
@@ -79,6 +81,14 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             lookingAt = null;
         }
         return lookingAt == null;
+    }
+
+    private boolean isPluginVanished(Player player) {
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean())
+                return true;
+        }
+        return false;
     }
 
     @Override
