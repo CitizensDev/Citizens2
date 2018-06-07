@@ -20,6 +20,7 @@ import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.EntityVillager;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
+import net.minecraft.server.v1_8_R3.EntityLightning;
 
 public class VillagerController extends MobEntityController {
     public VillagerController() {
@@ -207,6 +208,13 @@ public class VillagerController extends MobEntityController {
                 return super.k_();
             } else {
                 return false;
+            }
+        }
+
+        @Override
+        public void onLightningStrike(EntityLightning entitylightning) {
+            if (npc == null) {
+                super.onLightningStrike(entitylightning);
             }
         }
 
