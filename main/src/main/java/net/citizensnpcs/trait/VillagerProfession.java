@@ -7,6 +7,7 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import org.bukkit.entity.ZombieVillager;
 
 @TraitName("profession")
 public class VillagerProfession extends Trait {
@@ -32,6 +33,8 @@ public class VillagerProfession extends Trait {
     public void onSpawn() {
         if (npc.getEntity() instanceof Villager) {
             ((Villager) npc.getEntity()).setProfession(profession);
+        } else if (npc.getEntity() instanceof ZombieVillager) {
+            ((ZombieVillager) npc.getEntity()).setVillagerProfession(profession);
         }
     }
 
@@ -47,6 +50,8 @@ public class VillagerProfession extends Trait {
         this.profession = profession;
         if (npc.getEntity() instanceof Villager) {
             ((Villager) npc.getEntity()).setProfession(profession);
+        } else if (npc.getEntity() instanceof ZombieVillager) {
+            ((ZombieVillager) npc.getEntity()).setVillagerProfession(profession);
         }
     }
 
