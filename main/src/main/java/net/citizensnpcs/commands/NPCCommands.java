@@ -1459,7 +1459,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-c -l(atest)) [name] (or -t [uuid] [data] [signature])",
+            usage = "skin (-c -l(atest)) [name] (or -t [uuid/name] [data] [signature])",
             desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
             modifiers = { "skin" },
             min = 1,
@@ -1479,7 +1479,7 @@ public class NPCCommands {
             if (skinnable == null) {
                 throw new CommandException("Must be spawned.");
             }
-            skinnable.setSkinPersistent(args.getString(1), args.getString(2), args.getString(3));
+            skinnable.setSkinPersistent(args.getString(1), args.getString(3), args.getString(2));
             Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), args.getString(1));
             return;
         } else {
