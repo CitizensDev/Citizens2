@@ -45,7 +45,7 @@ public class HumanController extends AbstractEntityController {
                     if (coloredName.length() >= 32) {
                         len = 32;
                         name = coloredName.substring(16, 32);
-                    } else if (coloredName.length() == 31) {
+                    } else {
                         len = 31;
                         name = coloredName.substring(16, 31);
                     }
@@ -63,7 +63,6 @@ public class HumanController extends AbstractEntityController {
                     name = name.substring(0, 16);
                 }
             }
-            coloredName = coloredName.substring(0, 16);
         }
 
         final String prefixCapture = prefix, suffixCapture = suffix;
@@ -93,8 +92,7 @@ public class HumanController extends AbstractEntityController {
                     return;
                 boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
                         Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-                NMS.addOrRemoveFromPlayerList(getBukkitEntity(),
-                        npc.data().get("removefromplayerlist", removeFromPlayerList));
+                NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
 
                 if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
                     Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
@@ -103,12 +101,12 @@ public class HumanController extends AbstractEntityController {
                     Team team = scoreboard.getTeam(teamName);
                     if (team == null) {
                         team = scoreboard.registerNewTeam(teamName);
-                        if (prefixCapture != null) {
-                            team.setPrefix(prefixCapture);
-                        }
-                        if (suffixCapture != null) {
-                            team.setSuffix(suffixCapture);
-                        }
+                    }
+                    if (prefixCapture != null) {
+                        team.setPrefix(prefixCapture);
+                    }
+                    if (suffixCapture != null) {
+                        team.setSuffix(suffixCapture);
                     }
                     team.addPlayer(handle.getBukkitEntity());
 
@@ -131,6 +129,18 @@ public class HumanController extends AbstractEntityController {
     public void remove() {
         Player entity = getBukkitEntity();
         if (entity != null) {
+            if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+                String teamName = entity.getUniqueId().toString().substring(0, 16);
+                Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+                Team team = scoreboard.getTeam(teamName);
+                if (team != null && team.hasPlayer(entity)) {
+                    if (team.getSize() == 1) {
+                        team.setPrefix("");
+                        team.setSuffix("");
+                    }
+                    team.removePlayer(entity);
+                }
+            }
             NMS.removeFromWorld(entity);
             SkinnableEntity npc = entity instanceof SkinnableEntity ? (SkinnableEntity) entity : null;
             npc.getSkinTracker().onRemoveNPC();
