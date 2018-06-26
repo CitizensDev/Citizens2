@@ -515,7 +515,7 @@ public class NPCCommands {
             modifiers = { "gamemode" },
             min = 1,
             max = 2,
-            permission = "citizens.npc.gravity")
+            permission = "citizens.npc.gamemode")
     @Requirements(selected = true, ownership = true, types = { EntityType.PLAYER })
     public void gamemode(CommandContext args, CommandSender sender, NPC npc) {
         Player player = (Player) npc.getEntity();
@@ -530,7 +530,7 @@ public class NPCCommands {
             mode = GameMode.getByValue(value);
         } catch (NumberFormatException ex) {
             try {
-                mode = GameMode.valueOf(args.getString(1));
+                mode = GameMode.valueOf(args.getString(1).toUpperCase());
             } catch (IllegalArgumentException e) {
             }
         }

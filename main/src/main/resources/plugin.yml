@@ -229,6 +229,7 @@ permissions:
   citizens.npc.edit.path: {default: false}
   citizens.npc.edit.text: {default: false}
   citizens.npc.gravity: {default: false}
+  citizens.npc.gamemode: {default: false}
   citizens.npc.help: {default: false}
   citizens.npc.help: {default: false}
   citizens.npc.horse: {default: false}
@@ -644,6 +645,7 @@ permissions:
       citizens.npc.edit.path: true
       citizens.npc.edit.text: true
       citizens.npc.gravity: true
+      citizens.npc.gamemode: true
       citizens.npc.help: true
       citizens.npc.help: true
       citizens.npc.horse: true
@@ -1055,6 +1057,7 @@ permissions:
       citizens.npc.edit.path: true
       citizens.npc.edit.text: true
       citizens.npc.gravity: true
+      citizens.npc.gamemode: true
       citizens.npc.help: true
       citizens.npc.help: true
       citizens.npc.horse: true
