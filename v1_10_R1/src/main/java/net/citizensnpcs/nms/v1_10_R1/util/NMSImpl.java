@@ -756,6 +756,9 @@ public class NMSImpl implements NMSBridge {
                 e.printStackTrace();
             }
         }
+        if (getHandle(player) instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) getHandle(player)).setTracked();
+        }
     }
 
     @Override
