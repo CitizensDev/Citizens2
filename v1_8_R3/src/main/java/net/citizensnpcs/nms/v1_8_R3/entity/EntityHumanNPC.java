@@ -68,6 +68,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private final SkinPacketTracker skinTracker;
     private int updateCounter = 0;
+    private boolean isTracked = false;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
             PlayerInteractManager playerInteractManager, NPC npc) {
@@ -81,6 +82,18 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         } else {
             skinTracker = null;
         }
+    }
+
+    public void setTracked() {
+        isTracked = true;
+    }
+
+    @Override
+    public boolean a(EntityPlayer entityplayer) {
+        if (npc != null && !isTracked) {
+            return false;
+        }
+        return super.a(entityplayer);
     }
 
     @Override
