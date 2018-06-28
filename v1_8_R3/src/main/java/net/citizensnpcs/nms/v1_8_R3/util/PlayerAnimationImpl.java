@@ -10,7 +10,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.util.NMS;
@@ -34,7 +36,11 @@ public class PlayerAnimationImpl {
             case SIT:
                 player.getBukkitEntity().setMetadata("citizens.sitting",
                         new FixedMetadataValue(CitizensAPI.getPlugin(), true));
-                final NPC holder = CitizensAPI.getNPCRegistry().createNPC(EntityType.ARMOR_STAND, "");
+                NPCRegistry registry = CitizensAPI.getNamedNPCRegistry("PlayerAnimationImpl");
+                if (registry == null) {
+                    registry = CitizensAPI.createNamedNPCRegistry("PlayerAnimationImpl", new MemoryNPCDataStore());
+                }
+                final NPC holder = registry.createNPC(EntityType.ARMOR_STAND, "");
                 holder.spawn(player.getBukkitEntity().getLocation());
                 ArmorStandTrait trait = holder.getTrait(ArmorStandTrait.class);
                 trait.setGravity(false);
@@ -43,7 +49,6 @@ public class PlayerAnimationImpl {
                 trait.setSmall(true);
                 trait.setMarker(true);
                 trait.setVisible(false);
-                holder.getTrait(ArmorStandTrait.class).setVisible(false);
                 holder.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
                 holder.data().set(NPC.DEFAULT_PROTECTED_METADATA, true);
                 new BukkitRunnable() {
