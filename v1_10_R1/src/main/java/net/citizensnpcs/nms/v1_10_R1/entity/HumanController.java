@@ -37,8 +37,8 @@ public class HumanController extends AbstractEntityController {
 
         String name = coloredName, prefix = null, suffix = null;
         if (coloredName.length() > 16) {
-            prefix = coloredName.substring(0, 16);
             if (coloredName.length() >= 30) {
+                prefix = coloredName.substring(0, 16);
                 int len = 30;
                 name = coloredName.substring(16, 30);
                 if (NON_ALPHABET_MATCHER.matcher(name).matches()) {
@@ -54,7 +54,8 @@ public class HumanController extends AbstractEntityController {
                 }
                 suffix = coloredName.substring(len);
             } else {
-                name = coloredName.substring(16);
+                prefix = coloredName.substring(0, coloredName.length() - 16);
+                name = coloredName.substring(prefix.length());
                 if (!NON_ALPHABET_MATCHER.matcher(name).matches()) {
                     name = ChatColor.RESET + name;
                 }
