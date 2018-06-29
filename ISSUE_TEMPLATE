@@ -1,7 +1,7 @@
 <!-- 
 Please include:
 - A detailed description of your issue or feature request
-- Link to server log & Citizens config (using e.g. pastie.org) ESPECIALLY if it's a pathfinding issue
+- Link to server log & Citizens config (using e.g. pastebin.com) ESPECIALLY if it's a pathfinding issue
 - **Minecraft & Citizens version!** Use in-game commands "/version" and "/version citizens" and screenshot or copy/paste the EXACT output of BOTH commands!
 - FOR LAG RELATED ISSUES: please include server specs, number of NPCs, saves.yml and timings from WarmRoast or other profiler (NOT just Spigot timings, though that can be included as well)
 -->
