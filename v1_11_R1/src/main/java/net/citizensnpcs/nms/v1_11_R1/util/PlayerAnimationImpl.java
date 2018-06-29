@@ -77,6 +77,9 @@ public class PlayerAnimationImpl {
                     }
                 }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
                 break;
+            case START_ELYTRA:
+                player.M();
+                break;
             case SLEEP:
                 PacketPlayOutBed packet = new PacketPlayOutBed(player,
                         new BlockPosition((int) player.locX, (int) player.locY, (int) player.locZ));

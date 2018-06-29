@@ -503,8 +503,7 @@ public class NPCCommands {
     public void flyable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean flyable = args.argsLength() == 2 ? args.getString(1).equals("true") : !npc.isFlyable();
         npc.setFlyable(flyable);
-        flyable = npc.isFlyable(); // may not have applied, eg bats always
-        // flyable
+        flyable = npc.isFlyable(); // may not have applied, eg bats always flyable
         Messaging.sendTr(sender, flyable ? Messages.FLYABLE_SET : Messages.FLYABLE_UNSET, npc.getName());
     }
 

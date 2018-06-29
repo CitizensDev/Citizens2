@@ -201,6 +201,5 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
     };
     private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
-
     private static final Location TARGET_LOCATION = new Location(null, 0, 0, 0);
 }

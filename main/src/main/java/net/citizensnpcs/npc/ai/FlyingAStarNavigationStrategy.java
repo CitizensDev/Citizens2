@@ -4,8 +4,12 @@ import java.util.List;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
@@ -19,11 +23,13 @@ import net.citizensnpcs.api.astar.AStarMachine;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
 import net.citizensnpcs.api.astar.pathfinder.FlyingBlockExaminer;
+import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.PlayerAnimation;
 
 public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     private final NPC npc;
@@ -113,6 +119,18 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         if (parameters.debug()) {
             npc.getEntity().getWorld().playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL,
                     0);
+        }
+        if (npc.getEntity().getType() == EntityType.PLAYER) {
+            ItemStack stack = ((Player) npc.getEntity()).getInventory().getChestplate();
+            if (!MinecraftBlockExaminer.canStandOn(current.getBlock().getRelative(BlockFace.DOWN))) {
+                try {
+                    if (stack != null && stack.getType() == Material.ELYTRA) {
+                        PlayerAnimation.START_ELYTRA.play((Player) npc.getEntity());
+                    }
+                } catch (Exception ex) {
+                    // 1.8 compatibility
+                }
+            }
         }
 
         double d0 = vector.getX() + 0.5D - current.getX();

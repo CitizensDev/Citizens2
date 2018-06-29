@@ -12,6 +12,7 @@ public enum PlayerAnimation {
     SIT,
     SLEEP,
     SNEAK,
+    START_ELYTRA,
     START_USE_MAINHAND_ITEM,
     START_USE_OFFHAND_ITEM,
     STOP_SITTING,

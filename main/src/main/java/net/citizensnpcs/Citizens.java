@@ -256,9 +256,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onEnable() {
+        CitizensAPI.setImplementation(this);
         config = new Settings(getDataFolder());
         setupTranslator();
-        CitizensAPI.setImplementation(this);
         // Disable if the server is not using the compatible Minecraft version
         String mcVersion = Util.getMinecraftRevision();
         compatible = true;
