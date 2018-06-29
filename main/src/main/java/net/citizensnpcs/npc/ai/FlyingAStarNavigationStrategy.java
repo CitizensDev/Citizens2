@@ -143,6 +143,8 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         motX += (Math.signum(d0) * 0.5D - motX) * 0.1;
         motY += (Math.signum(d1) - motY) * 0.1;
         motZ += (Math.signum(d2) * 0.5D - motZ) * 0.1;
+        velocity.setX(motX).setY(motY).setZ(motZ).multiply(parameters.speed());
+
         float targetYaw = (float) (Math.atan2(motZ, motX) * 180.0D / Math.PI) - 90.0F;
         float normalisedTargetYaw = (targetYaw - current.getYaw()) % 360;
         if (normalisedTargetYaw >= 180.0F) {
