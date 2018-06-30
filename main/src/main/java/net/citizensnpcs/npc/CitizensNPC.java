@@ -354,10 +354,6 @@ public class CitizensNPC extends AbstractNPC {
         if (Util.isAlwaysFlyable(type)) {
             data().setPersistent(NPC.FLYABLE_METADATA, true);
         }
-        if (type == EntityType.PLAYER) {
-            Player player = (Player) getEntity();
-            player.getInventory().getExtraContents();
-        }
     }
 
     private static final String NPC_METADATA_MARKER = "NPC";

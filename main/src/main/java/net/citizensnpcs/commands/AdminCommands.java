@@ -1,7 +1,6 @@
 package net.citizensnpcs.commands;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.command.Command;
@@ -29,7 +28,6 @@ public class AdminCommands {
         Messaging.send(sender, "     <7>-- <c>Written by fullwall and aPunch");
         Messaging.send(sender, "     <7>-- <c>Source Code: http://github.com/CitizensDev");
         Messaging.send(sender, "     <7>-- <c>Website: " + plugin.getDescription().getWebsite());
-        Messaging.log(((Player) sender).getInventory().getItemInOffHand());
     }
 
     @Command(
