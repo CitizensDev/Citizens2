@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 public class SwimmingExaminer implements BlockExaminer {
     private boolean canSwimInLava;
@@ -30,7 +31,8 @@ public class SwimmingExaminer implements BlockExaminer {
         }
         Material above = source.getMaterialAt(point.getVector().add(new Vector(0, 1, 0)));
         PassableState canSwim = isSwimmableLiquid(above) || MinecraftBlockExaminer.canStandIn(above)
-                ? PassableState.PASSABLE : PassableState.UNPASSABLE;
+                ? PassableState.PASSABLE
+                : PassableState.UNPASSABLE;
         if (point.getParentPoint() == null) {
             return canSwim;
         }
@@ -44,9 +46,11 @@ public class SwimmingExaminer implements BlockExaminer {
     }
 
     private boolean isSwimmableLiquid(Material material) {
-        if (material == Material.LAVA || material == Material.STATIONARY_LAVA)
+        if (material == Material.LAVA
+                || (!SpigotUtil.isUsing1_13API() && material == Material.valueOf("STATIONARY_LAVA")))
             return canSwimInLava();
-        return material == Material.WATER || material == Material.STATIONARY_WATER;
+        return material == Material.WATER
+                || (!SpigotUtil.isUsing1_13API() && material == Material.valueOf("STATIONARY_WATER"));
     }
 
     public boolean isSwimming() {

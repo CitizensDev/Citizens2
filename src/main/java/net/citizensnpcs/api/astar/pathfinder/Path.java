@@ -21,6 +21,7 @@ import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 public class Path implements Plan {
     private List<Block> blockList;
@@ -53,7 +54,7 @@ public class Path implements Plan {
     public void debug() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             for (PathEntry entry : path) {
-                player.sendBlockChange(entry.vector.toLocation(player.getWorld()), Material.YELLOW_FLOWER, (byte) 0);
+                player.sendBlockChange(entry.vector.toLocation(player.getWorld()), YELLOW_FLOWER, (byte) 0);
             }
         }
     }
@@ -144,4 +145,7 @@ public class Path implements Plan {
             return vector.toString();
         }
     }
+
+    private static Material YELLOW_FLOWER = SpigotUtil.isUsing1_13API() ? Material.SUNFLOWER
+            : Material.valueOf("YELLOW_FLOWER");
 }

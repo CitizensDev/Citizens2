@@ -2,6 +2,7 @@ package net.citizensnpcs.api.astar.pathfinder;
 
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 
 public class ChunkSnapshotBlockSource extends CachingChunkBlockSource<ChunkSnapshot> {
@@ -19,12 +20,12 @@ public class ChunkSnapshotBlockSource extends CachingChunkBlockSource<ChunkSnaps
     }
 
     @Override
-    protected int getId(ChunkSnapshot chunk, int x, int y, int z) {
-        return chunk.getBlockTypeId(x, y, z);
+    protected int getLightLevel(ChunkSnapshot chunk, int x, int y, int z) {
+        return Math.min(15, chunk.getBlockSkyLight(x, y, z) + chunk.getBlockEmittedLight(x, y, z));
     }
 
     @Override
-    protected int getLightLevel(ChunkSnapshot chunk, int x, int y, int z) {
-        return Math.min(15, chunk.getBlockSkyLight(x, y, z) + chunk.getBlockEmittedLight(x, y, z));
+    protected Material getType(ChunkSnapshot chunk, int x, int y, int z) {
+        return chunk.getBlockType(x, y, z);
     }
 }

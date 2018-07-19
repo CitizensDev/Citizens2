@@ -9,6 +9,7 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Banner;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.banner.Pattern;
@@ -59,15 +60,21 @@ public class ItemStorage {
         return colors;
     }
 
+    private static Enchantment deserialiseEnchantment(String string) {
+        Enchantment enchantment = null;
+        if (SpigotUtil.isUsing1_13API()) {
+            enchantment = Enchantment.getByKey(NamespacedKey.minecraft(string));
+        }
+        if (enchantment == null) {
+            enchantment = Enchantment.getByName(string);
+        }
+        return enchantment;
+    }
+
     private static Map<Enchantment, Integer> deserialiseEnchantments(DataKey root, ItemStack res) {
         Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
         for (DataKey subKey : root.getSubKeys()) {
-            Enchantment enchantment = null;
-            try {
-                enchantment = Enchantment.getById(Integer.parseInt(subKey.name()));
-            } catch (NumberFormatException ex) {
-                enchantment = Enchantment.getByName(subKey.name());
-            }
+            Enchantment enchantment = deserialiseEnchantment(subKey.name());
             if (enchantment != null && enchantment.canEnchantItem(res)) {
                 int level = Math.min(subKey.getInt(""), enchantment.getMaxLevel());
                 enchantments.put(enchantment, level);
@@ -147,7 +154,7 @@ public class ItemStorage {
         if (root.keyExists("enchantmentstorage")) {
             EnchantmentStorageMeta meta = ensureMeta(res);
             for (DataKey key : root.getRelative("enchantmentstorage").getSubKeys()) {
-                meta.addStoredEnchant(Enchantment.getByName(key.name()), key.getInt(""), true);
+                meta.addStoredEnchant(deserialiseEnchantment(key.name()), key.getInt(""), true);
             }
             res.setItemMeta(meta);
         }
@@ -217,18 +224,24 @@ public class ItemStorage {
     }
 
     public static ItemStack loadItemStack(DataKey root) {
-        String raw = root.getString("type", root.getString("id"));
-        if (raw == null || raw.length() == 0) {
-            return null;
+        Material material = null;
+        if (root.keyExists("type_key")) {
+            NamespacedKey key = new NamespacedKey(root.getString("type_namespace"), root.getString("type_key"));
+            material = Material.getMaterial(key.getKey(), false);
+        } else {
+            String raw = root.getString("type", root.getString("id"));
+            if (raw == null || raw.length() == 0) {
+                return null;
+            }
+            material = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(raw, true) : Material.matchMaterial(raw);
         }
-        Material material = Material.matchMaterial(raw);
         if (material == null || material == Material.AIR) {
             return null;
         }
         ItemStack res = new ItemStack(material, root.getInt("amount"),
                 (short) (root.getInt("durability", root.getInt("data", 0))));
         if (root.keyExists("mdata") && res.getData() != null) {
-            res.getData().setData((byte) root.getInt("mdata"));
+            res.getData().setData((byte) root.getInt("mdata")); // TODO: what to migrate to?
         }
 
         if (root.keyExists("enchantments")) {
@@ -249,7 +262,12 @@ public class ItemStorage {
             item = new ItemStack(Material.AIR);
         }
         migrateForSave(key);
-        key.setString("type", item.getType().name());
+        if (SpigotUtil.isUsing1_13API()) {
+            key.setString("type_namespace", item.getType().getKey().getNamespace());
+            key.setString("type_key", item.getType().getKey().getKey());
+        } else {
+            key.setString("type", item.getType().name());
+        }
         key.setInt("amount", item.getAmount());
         key.setInt("durability", item.getDurability());
         if (item.getData() != null) {
@@ -290,7 +308,8 @@ public class ItemStorage {
 
     private static void serialiseEnchantments(DataKey key, Map<Enchantment, Integer> enchantments) {
         for (Map.Entry<Enchantment, Integer> enchantment : enchantments.entrySet()) {
-            key.setInt(enchantment.getKey().getName(), enchantment.getValue());
+            key.setInt(SpigotUtil.isUsing1_13API() ? enchantment.getKey().getKey().getKey()
+                    : enchantment.getKey().getName(), enchantment.getValue());
         }
     }
 
@@ -387,7 +406,9 @@ public class ItemStorage {
         if (meta instanceof EnchantmentStorageMeta) {
             EnchantmentStorageMeta ench = (EnchantmentStorageMeta) meta;
             for (Map.Entry<Enchantment, Integer> e : ench.getStoredEnchants().entrySet()) {
-                key.getRelative("enchantmentstorage").setInt(e.getKey().getName(), e.getValue());
+                key.getRelative("enchantmentstorage").setInt(
+                        SpigotUtil.isUsing1_13API() ? e.getKey().getKey().getKey() : e.getKey().getName(),
+                        e.getValue());
             }
         } else {
             key.removeKey("enchantmentstorage");
@@ -435,7 +456,7 @@ public class ItemStorage {
         if (meta instanceof BannerMeta) {
             BannerMeta banner = (BannerMeta) meta;
             DataKey root = key.getRelative("banner");
-            if (banner.getBaseColor() != null) {
+            if (banner.getBaseColor() != null) { // TODO: why is this deprecated?
                 root.setString("basecolor", banner.getBaseColor().name());
             } else {
                 root.removeKey("basecolor");

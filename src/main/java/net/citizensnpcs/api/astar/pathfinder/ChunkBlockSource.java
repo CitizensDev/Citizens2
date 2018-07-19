@@ -2,6 +2,7 @@ package net.citizensnpcs.api.astar.pathfinder;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 
 public class ChunkBlockSource extends CachingChunkBlockSource<Chunk> {
@@ -19,12 +20,12 @@ public class ChunkBlockSource extends CachingChunkBlockSource<Chunk> {
     }
 
     @Override
-    protected int getId(Chunk chunk, int x, int y, int z) {
-        return chunk.getBlock(x, y, z).getTypeId();
+    protected int getLightLevel(Chunk chunk, int x, int y, int z) {
+        return chunk.getBlock(x, y, z).getLightLevel();
     }
 
     @Override
-    protected int getLightLevel(Chunk chunk, int x, int y, int z) {
-        return chunk.getBlock(x, y, z).getLightLevel();
+    protected Material getType(Chunk chunk, int x, int y, int z) {
+        return chunk.getBlock(x, y, z).getType();
     }
 }

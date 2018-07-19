@@ -27,6 +27,7 @@ public class MobType extends Trait {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void load(DataKey key) {
         try {
             type = EntityType.valueOf(key.getString(""));

@@ -10,10 +10,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
+import com.google.common.collect.Lists;
+
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 public class MinecraftBlockExaminer implements BlockExaminer {
     @Override
@@ -22,13 +25,13 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         Material above = source.getMaterialAt(pos.clone().add(UP));
         Material below = source.getMaterialAt(pos.clone().add(DOWN));
         Material in = source.getMaterialAt(pos);
-        if (above == Material.WEB || in == Material.WEB)
+        if (above == WEB || in == WEB)
             return 1F;
         if (below == Material.SOUL_SAND || below == Material.ICE)
             return 1F;
         if (isLiquid(above, below, in))
             return 0.5F;
-        return 0F; // TODO: add light level-specific costs
+        return 0F; // TODO: add light level-specific costs?
     }
 
     private boolean isClimbable(Material mat) {
@@ -117,16 +120,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return !UNWALKABLE.contains(mat) && mat.isSolid();
     }
 
-    private static boolean contains(Material[] search, Material... find) {
-        for (Material haystack : search) {
-            for (Material needle : find) {
-                if (haystack == needle)
-                    return true;
-            }
-        }
-        return false;
-    }
-
     public static Location findValidLocation(Location location, int radius) {
         Block base = location.getBlock();
         if (canStandIn(base.getType()) && canStandOn(base.getRelative(BlockFace.DOWN)))
@@ -150,7 +143,12 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     public static boolean isLiquid(Material... materials) {
-        return contains(materials, Material.WATER, Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA);
+        for (Material mat : materials) {
+            if (LIQUIDS.contains(mat)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean validPosition(Block in) {
@@ -158,14 +156,28 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 && canStandOn(in.getRelative(BlockFace.DOWN));
     }
 
-    private static final Set<Material> DOORS = EnumSet.of(Material.IRON_DOOR_BLOCK, Material.WOODEN_DOOR,
-            Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR,
-            Material.DARK_OAK_DOOR);
+    private static final Set<Material> DOORS = EnumSet.of(Material.SPRUCE_DOOR, Material.BIRCH_DOOR,
+            Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR);
     private static final Vector DOWN = new Vector(0, -1, 0);
-    private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.FENCE, Material.IRON_FENCE,
-            Material.NETHER_FENCE, Material.COBBLE_WALL, Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
+    private static final Set<Material> LIQUIDS = EnumSet.of(Material.WATER, Material.LAVA);
+    private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
             Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
-    private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.STATIONARY_LAVA,
-            Material.CACTUS);
+    private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.CACTUS);
     private static final Vector UP = new Vector(0, 1, 0);
+    private static Material WEB = SpigotUtil.isUsing1_13API() ? Material.COBWEB : Material.valueOf("WEB");
+
+    static {
+        if (!SpigotUtil.isUsing1_13API()) {
+            LIQUIDS.add(Material.valueOf("STATIONARY_LAVA"));
+            LIQUIDS.add(Material.valueOf("STATIONARY_WATER"));
+            UNWALKABLE.add(Material.valueOf("STATIONARY_LAVA"));
+            NOT_JUMPABLE.addAll(Lists.newArrayList(Material.valueOf("FENCE"), Material.valueOf("IRON_FENCE"),
+                    Material.valueOf("NETHER_FENCE"), Material.valueOf("COBBLE_WALL")));
+            DOORS.addAll(Lists.newArrayList(Material.valueOf("IRON_DOOR_BLOCK"), Material.valueOf("WOODEN_DOOR")));
+        } else {
+            NOT_JUMPABLE.addAll(Lists.newArrayList(Material.valueOf("OAK_FENCE"),
+                    Material.valueOf("NETHER_BRICK_FENCE"), Material.valueOf("COBBLESTONE_WALL")));
+            DOORS.addAll(Lists.newArrayList(Material.valueOf("IRON_DOOR"), Material.valueOf("OAK_DOOR")));
+        }
+    }
 }

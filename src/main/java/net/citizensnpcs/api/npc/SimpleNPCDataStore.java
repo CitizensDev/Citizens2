@@ -61,6 +61,11 @@ public class SimpleNPCDataStore implements NPCDataStore {
     }
 
     @Override
+    public void reloadFromSource() {
+        root.load();
+    }
+
+    @Override
     public void saveToDisk() {
         new Thread() {
             @Override
@@ -91,6 +96,7 @@ public class SimpleNPCDataStore implements NPCDataStore {
         return new SimpleNPCDataStore(storage);
     }
 
+    @SuppressWarnings("deprecation")
     private static EntityType matchEntityType(String toMatch) {
         EntityType type;
         try {
@@ -116,11 +122,6 @@ public class SimpleNPCDataStore implements NPCDataStore {
             }
         }
         return type;
-    }
-
-    @Override
-    public void reloadFromSource() {
-        root.load();
     }
 
     private static final String LOAD_NAME_NOT_FOUND = "citizens.notifications.npc-name-not-found";

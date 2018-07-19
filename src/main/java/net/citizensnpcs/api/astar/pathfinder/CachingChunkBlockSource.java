@@ -3,6 +3,7 @@ package net.citizensnpcs.api.astar.pathfinder;
 import java.util.Map;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 
 import com.google.common.collect.Maps;
@@ -36,19 +37,17 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
         }
     }
 
-    @Override
-    public int getBlockTypeIdAt(int x, int y, int z) {
-        T chunk = getSpecific(x, z);
-        if (chunk != null)
-            return getId(chunk, x & 15, y, z & 15);
-        return world.getBlockTypeIdAt(x, y, z);
-    }
-
     protected abstract T getChunkObject(int x, int z);
 
-    protected abstract int getId(T chunk, int x, int y, int z);
-
     protected abstract int getLightLevel(T chunk, int x, int y, int z);
+
+    @Override
+    public Material getMaterialAt(int x, int y, int z) {
+        T chunk = getSpecific(x, z);
+        if (chunk != null)
+            return getType(chunk, x & 15, y, z & 15);
+        return world.getBlockAt(x, y, z).getType();
+    }
 
     @SuppressWarnings("unchecked")
     private T getSpecific(int x, int z) {
@@ -71,6 +70,8 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
         }
         return null;
     }
+
+    protected abstract Material getType(T chunk, int x, int y, int z);
 
     @Override
     public World getWorld() {

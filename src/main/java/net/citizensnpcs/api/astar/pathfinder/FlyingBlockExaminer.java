@@ -7,13 +7,15 @@ import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
 
+import net.citizensnpcs.api.util.SpigotUtil;
+
 public class FlyingBlockExaminer implements NeighbourGeneratorBlockExaminer {
     @Override
     public float getCost(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
         Material above = source.getMaterialAt(pos.clone().add(UP));
         Material in = source.getMaterialAt(pos);
-        if (above == Material.WEB || in == Material.WEB) {
+        if (above == WEB || in == WEB) {
             return 0.5F;
         }
         return 0F;
@@ -46,4 +48,5 @@ public class FlyingBlockExaminer implements NeighbourGeneratorBlockExaminer {
     }
 
     private static final Vector UP = new Vector(0, 1, 0);
+    private static Material WEB = SpigotUtil.isUsing1_13API() ? Material.COBWEB : Material.valueOf("WEB");
 }

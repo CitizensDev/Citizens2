@@ -200,8 +200,9 @@ public class SimpleGoalController implements GoalController {
 
     private void trySelectGoal() {
         int searchPriority = Math.max(executingPriority, 1);
-        if (hasPrioritisableGoal)
+        if (hasPrioritisableGoal) {
             Collections.sort(possibleGoals);
+        }
         for (int i = possibleGoals.size() - 1; i >= 0; --i) {
             GoalEntry entry = possibleGoals.get(i);
             if (searchPriority > entry.getPriority())

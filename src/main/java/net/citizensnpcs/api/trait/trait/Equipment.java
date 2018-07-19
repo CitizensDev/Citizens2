@@ -467,6 +467,7 @@ public class Equipment extends Trait {
         }
 
         @Override
+        @SuppressWarnings("deprecation")
         public ItemStack getItemInHand() {
             return player.getItemInHand();
         }
@@ -542,6 +543,7 @@ public class Equipment extends Trait {
         }
 
         @Override
+        @SuppressWarnings("deprecation")
         public void setItemInHand(ItemStack stack) {
             player.setItemInHand(stack);
         }

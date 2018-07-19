@@ -1,0 +1,21 @@
+package net.citizensnpcs.api.util;
+
+import org.bukkit.enchantments.Enchantment;
+
+public class SpigotUtil {
+    public static boolean isUsing1_13API() {
+        if (using1_13API == null) {
+            try {
+                Enchantment.getByKey(Enchantment.ARROW_DAMAGE.getKey());
+                using1_13API = true;
+            } catch (Exception ex) {
+                using1_13API = false;
+            } catch (NoSuchMethodError ex) {
+                using1_13API = false;
+            }
+        }
+        return using1_13API;
+    }
+
+    private static Boolean using1_13API;
+}

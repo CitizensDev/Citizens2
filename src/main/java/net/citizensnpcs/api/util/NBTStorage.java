@@ -12,6 +12,13 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.zip.GZIPInputStream;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.io.Files;
+
 import net.citizensnpcs.api.jnbt.ByteTag;
 import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.jnbt.DoubleTag;
@@ -24,14 +31,6 @@ import net.citizensnpcs.api.jnbt.NBTUtils;
 import net.citizensnpcs.api.jnbt.ShortTag;
 import net.citizensnpcs.api.jnbt.StringTag;
 import net.citizensnpcs.api.jnbt.Tag;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.io.Closeables;
-import com.google.common.io.Files;
 
 public class NBTStorage implements FileStorage {
     private final File file;
