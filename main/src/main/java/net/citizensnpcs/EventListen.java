@@ -85,6 +85,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
 import net.citizensnpcs.trait.Controllable;
@@ -303,7 +304,8 @@ public class EventListen implements Listener {
                                     property.keyExists("signature") ? property.getString("signature") : null));
                 }
             }
-            SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
+            Material mat = SpigotUtil.isUsing1_13API() ? Material.SKELETON_SKULL : Material.valueOf("SKULL_ITEM");
+            SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(mat);
             NMS.setProfile(meta, profile);
             event.getItemStack().setItemMeta(meta);
         }

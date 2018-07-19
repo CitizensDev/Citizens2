@@ -1,23 +1,48 @@
 package net.citizensnpcs.npc;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.citizensnpcs.api.CitizensAPI;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
-import net.citizensnpcs.api.trait.trait.*;
-import net.citizensnpcs.trait.*;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.trait.trait.Inventory;
+import net.citizensnpcs.api.trait.trait.MobType;
+import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.trait.trait.Spawned;
+import net.citizensnpcs.api.trait.trait.Speech;
+import net.citizensnpcs.trait.Age;
+import net.citizensnpcs.trait.Anchors;
+import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.Controllable;
+import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.Gravity;
+import net.citizensnpcs.trait.HorseModifiers;
+import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.MountTrait;
+import net.citizensnpcs.trait.OcelotModifiers;
+import net.citizensnpcs.trait.Poses;
+import net.citizensnpcs.trait.Powered;
+import net.citizensnpcs.trait.RabbitType;
+import net.citizensnpcs.trait.Saddle;
+import net.citizensnpcs.trait.ScriptTrait;
+import net.citizensnpcs.trait.SheepTrait;
+import net.citizensnpcs.trait.SkinLayers;
+import net.citizensnpcs.trait.SlimeSize;
+import net.citizensnpcs.trait.VillagerProfession;
+import net.citizensnpcs.trait.WitherTrait;
+import net.citizensnpcs.trait.WolfModifiers;
+import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
-import org.bstats.bukkit.Metrics;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class CitizensTraitFactory implements TraitFactory {
     private final List<TraitInfo> defaultTraits = Lists.newArrayList();

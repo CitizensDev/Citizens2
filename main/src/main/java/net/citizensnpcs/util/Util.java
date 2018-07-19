@@ -178,7 +178,7 @@ public class Util {
         if (parts.contains("*"))
             return true;
         for (String part : Splitter.on(',').split(parts)) {
-            if (Material.matchMaterial(part) == player.getInventory().getItemInHand().getType()) {
+            if (Material.matchMaterial(part, true) == player.getInventory().getItemInMainHand().getType()) {
                 return true;
             }
         }

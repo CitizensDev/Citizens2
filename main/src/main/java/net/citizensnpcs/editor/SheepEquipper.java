@@ -9,6 +9,7 @@ import org.bukkit.material.Dye;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.util.Messages;
@@ -21,7 +22,7 @@ public class SheepEquipper implements Equipper {
         if (hand.getType() == Material.SHEARS) {
             Messaging.sendTr(equipper, toEquip.getTrait(SheepTrait.class).toggleSheared() ? Messages.SHEARED_SET
                     : Messages.SHEARED_STOPPED, toEquip.getName());
-        } else if (hand.getType() == Material.INK_SACK) {
+        } else if (hand.getType() == (SpigotUtil.isUsing1_13API() ? Material.INK_SAC : Material.valueOf("INK_SACK"))) {
             Dye dye = (Dye) hand.getData();
             if (sheep.getColor() == dye.getColor())
                 return;

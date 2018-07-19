@@ -129,8 +129,13 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     public boolean mount(Player toMount) {
-        Entity passenger = npc.getEntity().getPassenger();
-        if (passenger != null && passenger != toMount) {
+        boolean found = NMS.getPassengers(npc.getEntity()).size() == 0;
+        for (Entity passenger : NMS.getPassengers(npc.getEntity())) {
+            if (passenger != null && passenger == toMount) {
+                found = true;
+            }
+        }
+        if (!found) {
             return false;
         }
         enterOrLeaveVehicle(toMount);

@@ -47,6 +47,7 @@ import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
+import net.citizensnpcs.api.command.exception.RequirementMissingException;
 import net.citizensnpcs.api.command.exception.ServerCommandException;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
@@ -1222,8 +1223,13 @@ public class NPCCommands {
             min = 2,
             max = 2,
             permission = "citizens.npc.profession")
-    @Requirements(selected = true, ownership = true, types = { EntityType.VILLAGER, EntityType.ZOMBIE_VILLAGER })
+    @Requirements(selected = true, ownership = true)
     public void profession(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        EntityType type = npc.getTrait(MobType.class).getType();
+        if (type != EntityType.VILLAGER && !type.name().equals("ZOMBIE_VILLAGER")) {
+            throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE,
+                    type.name().toLowerCase().replace('_', ' ')));
+        }
         String profession = args.getString(1);
         Profession parsed = Util.matchEnum(Profession.values(), profession.toUpperCase());
         if (parsed == null) {
