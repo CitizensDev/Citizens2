@@ -67,6 +67,13 @@
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency> 
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>citizens-v1_13_R1</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>
