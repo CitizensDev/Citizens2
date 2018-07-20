@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Llama.Color;
 import org.bukkit.entity.Parrot.Variant;
+import org.bukkit.entity.TropicalFish.Pattern;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -116,6 +117,54 @@ public class Commands {
 
     @Command(
             aliases = { "npc" },
+            usage = "phantom (--size size)",
+            desc = "Sets phantom modifiers",
+            modifiers = { "phantom" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.phantom")
+    @Requirements(selected = true, ownership = true, types = EntityType.PHANTOM)
+    public void phantom(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        PhantomTrait trait = npc.getTrait(PhantomTrait.class);
+        String output = "";
+        if (args.hasValueFlag("size")) {
+            if (args.getFlagInteger("size") <= 0) {
+                throw new CommandUsageException();
+            }
+            trait.setSize(args.getFlagInteger("size"));
+            output += Messaging.tr(Messages.PHANTOM_STATE_SET, args.getFlagInteger("size"));
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output);
+        } else {
+            throw new CommandUsageException();
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "pufferfish (--state state)",
+            desc = "Sets pufferfish modifiers",
+            modifiers = { "pufferfish" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.pufferfish")
+    @Requirements(selected = true, ownership = true, types = EntityType.PUFFERFISH)
+    public void pufferfish(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        PufferFishTrait trait = npc.getTrait(PufferFishTrait.class);
+        String output = "";
+        if (args.hasValueFlag("state")) {
+            int state = Math.min(Math.max(args.getFlagInteger("state"), 0), 3);
+            trait.setPuffState(state);
+            output += Messaging.tr(Messages.PUFFERFISH_STATE_SET, state);
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output);
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "shulker (--peek [peek] --color [color])",
             desc = "Sets shulker modifiers.",
             modifiers = { "shulker" },
@@ -143,6 +192,52 @@ public class Commands {
             hasArg = true;
         }
         if (!hasArg) {
+            throw new CommandUsageException();
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "tfish (--body color) (--pattern pattern) (--patterncolor color)",
+            desc = "Sets tropical fish modifiers",
+            modifiers = { "tfish" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.tropicalfish")
+    @Requirements(selected = true, ownership = true, types = EntityType.TROPICAL_FISH)
+    public void tropicalfish(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        TropicalFishTrait trait = npc.getTrait(TropicalFishTrait.class);
+        String output = "";
+        if (args.hasValueFlag("body")) {
+            DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("body"));
+            if (color == null) {
+                throw new CommandException(Messages.INVALID_TROPICALFISH_COLOR,
+                        Util.listValuesPretty(DyeColor.values()));
+            }
+            trait.setBodyColor(color);
+            output += Messaging.tr(Messages.TROPICALFISH_BODY_COLOR_SET, Util.prettyEnum(color));
+        }
+        if (args.hasValueFlag("patterncolor")) {
+            DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("patterncolor"));
+            if (color == null) {
+                throw new CommandException(Messages.INVALID_TROPICALFISH_COLOR,
+                        Util.listValuesPretty(DyeColor.values()));
+            }
+            trait.setPatternColor(color);
+            output += Messaging.tr(Messages.TROPICALFISH_PATTERN_COLOR_SET, Util.prettyEnum(color));
+        }
+        if (args.hasValueFlag("pattern")) {
+            Pattern pattern = Util.matchEnum(Pattern.values(), args.getFlag("pattern"));
+            if (pattern == null) {
+                throw new CommandException(Messages.INVALID_TROPICALFISH_PATTERN,
+                        Util.listValuesPretty(Pattern.values()));
+            }
+            trait.setPattern(pattern);
+            output += Messaging.tr(Messages.TROPICALFISH_PATTERN_SET, Util.prettyEnum(pattern));
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output);
+        } else {
             throw new CommandUsageException();
         }
     }

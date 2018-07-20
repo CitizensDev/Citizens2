@@ -19,6 +19,7 @@ import com.google.common.base.Splitter;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 public class Util {
     // Static class for small (emphasis small) utility methods
@@ -178,7 +179,8 @@ public class Util {
         if (parts.contains("*"))
             return true;
         for (String part : Splitter.on(',').split(parts)) {
-            if (Material.matchMaterial(part, true) == player.getInventory().getItemInMainHand().getType()) {
+            if ((SpigotUtil.isUsing1_13API() ? Material.matchMaterial(part, true)
+                    : Material.matchMaterial(part)) == player.getInventory().getItemInMainHand().getType()) {
                 return true;
             }
         }

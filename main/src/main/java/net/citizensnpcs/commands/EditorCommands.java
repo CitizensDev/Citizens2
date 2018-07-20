@@ -1,5 +1,8 @@
 package net.citizensnpcs.commands;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
@@ -9,9 +12,6 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.editor.EquipmentEditor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 @Requirements(selected = true, ownership = true)
 public class EditorCommands {

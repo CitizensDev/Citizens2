@@ -166,7 +166,10 @@ import net.citizensnpcs.nms.v1_13_R1.trait.BossBarTrait;
 import net.citizensnpcs.nms.v1_13_R1.trait.Commands;
 import net.citizensnpcs.nms.v1_13_R1.trait.LlamaTrait;
 import net.citizensnpcs.nms.v1_13_R1.trait.ParrotTrait;
+import net.citizensnpcs.nms.v1_13_R1.trait.PhantomTrait;
+import net.citizensnpcs.nms.v1_13_R1.trait.PufferFishTrait;
 import net.citizensnpcs.nms.v1_13_R1.trait.ShulkerTrait;
+import net.citizensnpcs.nms.v1_13_R1.trait.TropicalFishTrait;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -566,6 +569,9 @@ public class NMSImpl implements NMSBridge {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BossBarTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TropicalFishTrait.class));
         manager.register(Commands.class);
     }
 

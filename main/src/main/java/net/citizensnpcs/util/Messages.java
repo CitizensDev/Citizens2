@@ -119,6 +119,8 @@ public class Messages {
     public static final String INVALID_SOUND = "citizens.commands.npc.sound.invalid-sound";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
     public static final String INVALID_TRIGGER_TELEPORT_FORMAT = "citizens.editors.waypoints.triggers.teleport.invalid-format";
+    public static final String INVALID_TROPICALFISH_COLOR = "citizens.commands.npc.tropicalfish.invalid-color";
+    public static final String INVALID_TROPICALFISH_PATTERN = "citizens.commands.npc.tropicalfish.invalid-pattern";
     public static final String ITEM_SET = "citizens.commands.npc.item.item-set";
     public static final String LEASHABLE_SET = "citizens.commands.npc.leashable.set";
     public static final String LEASHABLE_STOPPED = "citizens.commands.npc.leashable.stopped";
@@ -184,6 +186,7 @@ public class Messages {
     public static final String PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET = "citizens.commands.npc.pathopt.distance-margin-set";
     public static final String PATHFINDING_OPTIONS_STATIONARY_TICKS_SET = "citizens.commands.npc.pathopt.stationary-ticks-set";
     public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
+    public static final String PHANTOM_STATE_SET = "citizens.commands.npc.phantom.phantom-set";
     public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";
     public static final String POSE_ADDED = "citizens.commands.npc.pose.added";
     public static final String POSE_ALREADY_EXISTS = "citizens.commands.npc.pose.already-exists";
@@ -192,6 +195,7 @@ public class Messages {
     public static final String POWERED_SET = "citizens.commands.npc.powered.set";
     public static final String POWERED_STOPPED = "citizens.commands.npc.powered.stopped";
     public static final String PROFESSION_SET = "citizens.commands.npc.profession.set";
+    public static final String PUFFERFISH_STATE_SET = "citizens.commands.npc.pufferfish.state-set";
     public static final String RABBIT_TYPE_SET = "citizens.commands.npc.rabbittype.type-set";
     public static final String REMOVE_INCORRECT_SYNTAX = "citizens.commands.npc.remove.incorrect-syntax";
     public static final String REMOVED_ALL_NPCS = "citizens.commands.npc.remove.removed-all";
@@ -272,6 +276,9 @@ public class Messages {
     public static final String TRAITS_FAILED_TO_ADD = "citizens.commands.trait.failed-to-add";
     public static final String TRAITS_FAILED_TO_CHANGE = "citizens.commands.trait.failed-to-change";
     public static final String TRAITS_REMOVED = "citizens.commands.trait.removed";
+    public static final String TROPICALFISH_BODY_COLOR_SET = "citizens.commands.npc.tropicalfish.body-color-set";
+    public static final String TROPICALFISH_PATTERN_COLOR_SET = "citizens.commands.npc.tropicalfish.pattern-color-set";
+    public static final String TROPICALFISH_PATTERN_SET = "citizens.commands.npc.tropicalfish.pattern-set";
     public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";
     public static final String UNKNOWN_MATERIAL = "citizens.commands.npc.item.unknown-material";
     public static final String VULNERABLE_SET = "citizens.commands.npc.vulnerable.set";
