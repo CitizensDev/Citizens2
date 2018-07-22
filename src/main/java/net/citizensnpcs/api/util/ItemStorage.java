@@ -63,7 +63,7 @@ public class ItemStorage {
     private static Enchantment deserialiseEnchantment(String string) {
         Enchantment enchantment = null;
         if (SpigotUtil.isUsing1_13API()) {
-            enchantment = Enchantment.getByKey(NamespacedKey.minecraft(string));
+            enchantment = Enchantment.getByKey(NamespacedKey.minecraft(string.toLowerCase()));
         }
         if (enchantment == null) {
             enchantment = Enchantment.getByName(string);

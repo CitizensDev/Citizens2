@@ -303,6 +303,9 @@ public abstract class AbstractNPC implements NPC {
             trait.load(traitKey);
             PersistenceLoader.load(trait, traitKey);
         } catch (Throwable ex) {
+            if (Messaging.isDebugging()) {
+                ex.printStackTrace();
+            }
             Messaging.logTr("citizens.notifications.trait-load-failed", traitKey.name(), getId());
         }
     }
