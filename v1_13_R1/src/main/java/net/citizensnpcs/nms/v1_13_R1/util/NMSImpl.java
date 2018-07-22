@@ -486,10 +486,10 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void stop() {
-                if (navigation.n() != null) {
+                if (navigation.m() != null) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < navigation.n().d(); i++) {
-                            PathPoint pp = navigation.n().a(i);
+                        for (int i = 0; i < navigation.m().d(); i++) {
+                            PathPoint pp = navigation.m().a(i);
                             org.bukkit.block.Block block = new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld())
                                     .getBlock();
                             player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
@@ -520,8 +520,8 @@ public class NMSImpl implements NMSBridge {
                 }
                 if (params.debug() && !NMSImpl.isNavigationFinished(navigation)) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < navigation.n().d(); i++) {
-                            PathPoint pp = navigation.n().a(i);
+                        for (int i = 0; i < navigation.m().d(); i++) {
+                            PathPoint pp = navigation.m().a(i);
                             player.sendBlockChange(new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld()),
                                     Material.SUNFLOWER, (byte) 0);
                         }
@@ -1165,9 +1165,9 @@ public class NMSImpl implements NMSBridge {
 
         @Override
         public Iterator<Vector> iterator() {
-            final int npoints = navigation.n() == null ? 0 : navigation.n().d();
+            final int npoints = navigation.m() == null ? 0 : navigation.m().d();
             return new Iterator<Vector>() {
-                PathPoint curr = npoints > 0 ? navigation.n().a(0) : null;
+                PathPoint curr = npoints > 0 ? navigation.m().a(0) : null;
                 int i = 0;
 
                 @Override
@@ -1178,7 +1178,7 @@ public class NMSImpl implements NMSBridge {
                 @Override
                 public Vector next() {
                     PathPoint old = curr;
-                    curr = i + 1 < npoints ? navigation.n().a(++i) : null;
+                    curr = i + 1 < npoints ? navigation.m().a(++i) : null;
                     return new Vector(old.a, old.b, old.c);
                 }
 
@@ -1204,7 +1204,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void flyingMoveLogic(EntityLiving entity, float f, float f1, float f2) {
-        if ((entity.cO()) || (entity.bT())) {
+        if ((entity.cP()) || (entity.bT())) {
             double d0 = 0.08D;
             if ((entity.motY <= 0.0D) && (entity.hasEffect(MobEffects.SLOW_FALLING))) {
                 d0 = 0.01D;
@@ -1225,7 +1225,7 @@ public class NMSImpl implements NMSBridge {
                 }
                 if (f3 > 0.0F) {
                     f5 += (0.54600006F - f5) * f3 / 3.0F;
-                    f4 += (entity.cJ() - f4) * f3 / 3.0F;
+                    f4 += (entity.cK() - f4) * f3 / 3.0F;
                 }
                 if (entity.hasEffect(MobEffects.DOLPHINS_GRACE)) {
                     f5 = 0.96F;
@@ -1262,7 +1262,7 @@ public class NMSImpl implements NMSBridge {
                         && (entity.c(entity.motX, entity.motY + 0.6000000238418579D - entity.locY + d2, entity.motZ))) {
                     entity.motY = 0.30000001192092896D;
                 }
-            } else if (entity.db()) {
+            } else if (entity.dc()) {
                 if (entity.motY > -0.5D) {
                     entity.fallDistance = 1.0F;
                 }
@@ -1323,7 +1323,7 @@ public class NMSImpl implements NMSBridge {
                     }
                     f4 = 0.16277137F / (f9 * f9 * f9);
                     if (entity.onGround) {
-                        f3 = entity.cJ() * f4;
+                        f3 = entity.cK() * f4;
                     } else {
                         f3 = entity.aU;
                     }
@@ -1476,7 +1476,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static boolean isNavigationFinished(NavigationAbstract navigation) {
-        return navigation.q();
+        return navigation.p();
     }
 
     @SuppressWarnings("deprecation")
@@ -1549,7 +1549,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void stopNavigation(NavigationAbstract navigation) {
-        navigation.r();
+        navigation.q();
     }
 
     public static void updateAI(EntityLiving entity) {

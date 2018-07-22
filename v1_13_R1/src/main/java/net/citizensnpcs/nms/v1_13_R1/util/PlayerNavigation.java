@@ -156,7 +156,7 @@ public class PlayerNavigation extends NavigationAbstract {
     protected void a(Vec3D paramVec3D) {
         if (this.e - this.f > 100) {
             if (paramVec3D.distanceSquared(this.g) < 2.25D) {
-                r();
+                q();
             }
             this.f = this.e;
             this.g = paramVec3D;
@@ -168,13 +168,13 @@ public class PlayerNavigation extends NavigationAbstract {
             } else {
                 this.h = localVec3D;
                 double d1 = paramVec3D.f(this.h);
-                this.k = (this.a.cJ() > 0.0F ? d1 / this.a.cJ() * 1000.0D : 0.0D);
+                this.k = (this.a.cK() > 0.0F ? d1 / this.a.cK() * 1000.0D : 0.0D);
             }
             if ((this.k > 0.0D) && (this.i > this.k * 3.0D)) {
                 this.h = Vec3D.a;
                 this.i = 0L;
                 this.k = 0.0D;
-                r();
+                q();
             }
             this.j = SystemUtils.b();
         }
@@ -242,7 +242,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     protected boolean b() {
-        return (this.a.onGround) || (s()) || (this.a.isPassenger());
+        return (this.a.onGround) || (r()) || (this.a.isPassenger());
     }
 
     @Override
@@ -267,9 +267,9 @@ public class PlayerNavigation extends NavigationAbstract {
                     && (this.b.getType(localBlockPosition).getMaterial().isBuildable())) {
                 localBlockPosition = localBlockPosition.up();
             }
-            return superb(localBlockPosition);
+            return super.b(localBlockPosition);
         }
-        return superb(paramBlockPosition);
+        return super.b(paramBlockPosition);
     }
 
     public void b(boolean paramBoolean) {
@@ -297,20 +297,20 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     public void c(boolean paramBoolean) {
-        this.o.c(paramBoolean);
+        this.pp = paramBoolean;
     }
 
     @Override
     public void d() {
         this.e += 1;
         if (this.m) {
-            m();
+            l();
         }
-        if (q()) {
+        if (p()) {
             return;
         }
         if (b()) {
-            p();
+            o();
         } else if ((this.c != null) && (this.c.e() < this.c.d())) {
             Vec3D localVec3D = c();
             Vec3D localObject = this.c.a(this.a, this.c.e());
@@ -320,8 +320,8 @@ public class PlayerNavigation extends NavigationAbstract {
                 this.c.c(this.c.e() + 1);
             }
         }
-        o();
-        if (q()) {
+        n();
+        if (p()) {
             return;
         }
         Vec3D localVec3D = this.c.a(this.a);
@@ -333,30 +333,14 @@ public class PlayerNavigation extends NavigationAbstract {
                 localVec3D.z, this.d);
     }
 
+    @Override
     public void d(boolean paramBoolean) {
-        this.pp = paramBoolean;
+        this.o.c(paramBoolean);
     }
 
     @Override
     protected void E_() {
-        if (this.c == null) {
-            return;
-        }
-        for (int i1 = 0; i1 < this.c.d(); i1++) {
-            PathPoint localPathPoint = this.c.a(i1);
-            Object localObject = i1 + 1 < this.c.d() ? this.c.a(i1 + 1) : null;
-
-            IBlockData localIBlockData = this.b
-                    .getType(new BlockPosition(localPathPoint.a, localPathPoint.b, localPathPoint.c));
-            Block localBlock = localIBlockData.getBlock();
-            if (localBlock == Blocks.CAULDRON) {
-                this.c.a(i1, localPathPoint.a(localPathPoint.a, localPathPoint.b + 1, localPathPoint.c));
-                if ((localObject != null) && (localPathPoint.b >= ((PathPoint) localObject).b)) {
-                    this.c.a(i1 + 1, ((PathPoint) localObject).a(((PathPoint) localObject).a, localPathPoint.b + 1,
-                            ((PathPoint) localObject).c));
-                }
-            }
-        }
+        superE_();
         if (this.pp) {
             if (this.b.e(new BlockPosition(MathHelper.floor(this.a.locX), (int) (this.a.getBoundingBox().b + 0.5D),
                     MathHelper.floor(this.a.locZ)))) {
@@ -376,27 +360,23 @@ public class PlayerNavigation extends NavigationAbstract {
         return this.o.c();
     }
 
-    public boolean h() {
-        return this.o.e();
-    }
-
     @Override
-    public BlockPosition j() {
+    public BlockPosition i() {
         return this.q;
     }
 
     @Override
-    public float k() {
+    public float j() {
         return (float) this.p.getValue();
     }
 
     @Override
-    public boolean l() {
+    public boolean k() {
         return this.m;
     }
 
     @Override
-    public void m() {
+    public void l() {
         if (this.b.getTime() - this.n > 20L) {
             if (this.q != null) {
                 this.c = null;
@@ -410,16 +390,16 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     @Override
-    public PathEntity n() {
+    public PathEntity m() {
         return this.c;
     }
 
     @Override
-    protected void o() {
+    protected void n() {
     }
 
     @Override
-    protected void p() {
+    protected void o() {
         Vec3D localVec3D1 = c();
 
         int i1 = this.c.d();
@@ -449,18 +429,23 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     @Override
-    public boolean q() {
+    public boolean p() {
         return (this.c == null) || (this.c.b());
     }
 
     @Override
-    public void r() {
+    public void q() {
         this.c = null;
     }
 
     @Override
-    protected boolean s() {
+    protected boolean r() {
         return (this.a.aq()) || (this.a.ax());
+    }
+
+    @Override
+    public PathfinderAbstract s() {
+        return this.o;
     }
 
     public void setRange(float pathfindingRange) {
@@ -476,7 +461,7 @@ public class PlayerNavigation extends NavigationAbstract {
         }
         this.q = paramBlockPosition;
 
-        float f1 = k();
+        float f1 = j();
         this.b.methodProfiler.a("pathfind");
         BlockPosition localBlockPosition = new BlockPosition(this.a);
         int i1 = (int) (f1 + 8.0F);
@@ -488,13 +473,34 @@ public class PlayerNavigation extends NavigationAbstract {
         return localPathEntity;
     }
 
+    protected void superE_() {
+        if (this.c == null) {
+            return;
+        }
+        for (int i1 = 0; i1 < this.c.d(); i1++) {
+            PathPoint localPathPoint = this.c.a(i1);
+            Object localObject = i1 + 1 < this.c.d() ? this.c.a(i1 + 1) : null;
+
+            IBlockData localIBlockData = this.b
+                    .getType(new BlockPosition(localPathPoint.a, localPathPoint.b, localPathPoint.c));
+            Block localBlock = localIBlockData.getBlock();
+            if (localBlock == Blocks.CAULDRON) {
+                this.c.a(i1, localPathPoint.a(localPathPoint.a, localPathPoint.b + 1, localPathPoint.c));
+                if ((localObject != null) && (localPathPoint.b >= ((PathPoint) localObject).b)) {
+                    this.c.a(i1 + 1, ((PathPoint) localObject).a(((PathPoint) localObject).a, localPathPoint.b + 1,
+                            ((PathPoint) localObject).c));
+                }
+            }
+        }
+    }
+
     @Override
-    public PathfinderAbstract t() {
-        return this.o;
+    public boolean t() {
+        return this.o.e();
     }
 
     private int u() {
-        if ((!this.a.isInWater()) || (!h())) {
+        if ((!this.a.isInWater()) || (!t())) {
             return (int) (this.a.getBoundingBox().b + 0.5D);
         }
         int i = (int) this.a.getBoundingBox().b;

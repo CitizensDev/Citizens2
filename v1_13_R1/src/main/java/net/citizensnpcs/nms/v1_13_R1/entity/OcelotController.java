@@ -92,8 +92,8 @@ public class OcelotController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cr() {
-            return NMSImpl.getSoundEffect(npc, super.cr(), NPC.DEATH_SOUND_METADATA);
+        protected SoundEffect cs() {
+            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override
@@ -112,9 +112,9 @@ public class OcelotController extends MobEntityController {
         }
 
         @Override
-        protected void dz() {
+        protected void dA() {
             if (npc == null) {
-                super.dz();
+                super.dA();
             }
         }
 

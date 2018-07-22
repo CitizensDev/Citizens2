@@ -15,8 +15,11 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R1.BlockPosition;
+import net.minecraft.server.v1_13_R1.ControllerLook;
+import net.minecraft.server.v1_13_R1.ControllerMove;
 import net.minecraft.server.v1_13_R1.DamageSource;
 import net.minecraft.server.v1_13_R1.EntityPhantom;
+import net.minecraft.server.v1_13_R1.EnumDifficulty;
 import net.minecraft.server.v1_13_R1.IBlockData;
 import net.minecraft.server.v1_13_R1.NBTTagCompound;
 import net.minecraft.server.v1_13_R1.SoundEffect;
@@ -45,6 +48,9 @@ public class PhantomController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
                 setNoAI(true);
+                this.moveController = new ControllerMove(this);
+                this.lookController = new ControllerLook(this);
+                // TODO: phantom pitch reversed
             }
         }
 
@@ -81,8 +87,8 @@ public class PhantomController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cr() {
-            return NMSImpl.getSoundEffect(npc, super.cr(), NPC.DEATH_SOUND_METADATA);
+        protected SoundEffect cs() {
+            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override
@@ -101,9 +107,9 @@ public class PhantomController extends MobEntityController {
         }
 
         @Override
-        public boolean dq() {
+        public boolean dr() {
             if (npc == null || !npc.isProtected())
-                return super.dq();
+                return super.dr();
             return false;
         }
 
@@ -176,11 +182,25 @@ public class PhantomController extends MobEntityController {
 
         @Override
         public void k() {
-            if (npc == null) {
-                super.k();
-            } else {
-                NMSImpl.updateAI(this);
+            super.k();
+            if (npc != null) {
+                if (npc.isProtected()) {
+                    this.setOnFire(0);
+                }
                 npc.update();
+            }
+        }
+
+        @Override
+        public void tick() {
+            // avoid suicide
+            boolean resetDifficulty = this.world.getDifficulty() == EnumDifficulty.PEACEFUL;
+            if (npc != null && resetDifficulty) {
+                this.world.getWorldData().setDifficulty(EnumDifficulty.NORMAL);
+            }
+            super.tick();
+            if (npc != null && resetDifficulty) {
+                this.world.getWorldData().setDifficulty(EnumDifficulty.PEACEFUL);
             }
         }
 

@@ -45,7 +45,7 @@ public class PlayerControllerLook {
             // this.a.aP = a(this.a.aS, this.a.aQ, 10.0F);
         }
         float f3 = MathHelper.g(this.a.aS - this.a.aQ);
-        if (!this.a.getNavigation().q()) {
+        if (!this.a.getNavigation().p()) {
             if (f3 < -75.0F) {
                 this.a.aS = (this.a.aQ - 75.0F);
             }

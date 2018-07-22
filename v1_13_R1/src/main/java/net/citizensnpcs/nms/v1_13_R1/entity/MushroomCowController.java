@@ -76,8 +76,8 @@ public class MushroomCowController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cr() {
-            return NMSImpl.getSoundEffect(npc, super.cr(), NPC.DEATH_SOUND_METADATA);
+        protected SoundEffect cs() {
+            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override

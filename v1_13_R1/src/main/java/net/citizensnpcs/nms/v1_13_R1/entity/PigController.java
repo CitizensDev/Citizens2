@@ -93,8 +93,8 @@ public class PigController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cr() {
-            return NMSImpl.getSoundEffect(npc, super.cr(), NPC.DEATH_SOUND_METADATA);
+        protected SoundEffect cs() {
+            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override
@@ -113,9 +113,9 @@ public class PigController extends MobEntityController {
         }
 
         @Override
-        public boolean dh() {
+        public boolean di() {
             // block carrot-on-a-stick behaviour
-            return npc == null ? super.dh() : false;
+            return npc == null ? super.di() : false;
         }
 
         @Override
