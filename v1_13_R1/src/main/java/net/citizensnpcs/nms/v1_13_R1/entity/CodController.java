@@ -15,6 +15,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R1.BlockPosition;
+import net.minecraft.server.v1_13_R1.ControllerMove;
 import net.minecraft.server.v1_13_R1.DamageSource;
 import net.minecraft.server.v1_13_R1.EntityCod;
 import net.minecraft.server.v1_13_R1.IBlockData;
@@ -58,6 +59,7 @@ public class CodController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
+                this.moveController = new ControllerMove(this);
             }
         }
 
@@ -182,6 +184,9 @@ public class CodController extends MobEntityController {
 
         @Override
         public void mobTick() {
+            if (npc != null) {
+                t(false);
+            }
             super.mobTick();
             if (npc != null) {
                 npc.update();
