@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
 import org.bukkit.Material;
+import org.bukkit.entity.WaterMob;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -20,6 +21,11 @@ public class SwimmingExaminer implements BlockExaminer {
 
     @Override
     public float getCost(BlockSource source, PathPoint point) {
+        if (SpigotUtil.isUsing1_13API() && npc.getEntity() instanceof WaterMob) {
+            Material in = source.getMaterialAt(point.getVector());
+            if (!MinecraftBlockExaminer.isLiquid(in))
+                return 0.5F;
+        }
         return 0;
     }
 
@@ -28,6 +34,9 @@ public class SwimmingExaminer implements BlockExaminer {
         Material in = source.getMaterialAt(point.getVector());
         if (!MinecraftBlockExaminer.isLiquid(in)) {
             return PassableState.IGNORE;
+        }
+        if (SpigotUtil.isUsing1_13API() && npc.getEntity() instanceof WaterMob) {
+            return PassableState.PASSABLE;
         }
         Material above = source.getMaterialAt(point.getVector().add(new Vector(0, 1, 0)));
         PassableState canSwim = isSwimmableLiquid(above) || MinecraftBlockExaminer.canStandIn(above)
