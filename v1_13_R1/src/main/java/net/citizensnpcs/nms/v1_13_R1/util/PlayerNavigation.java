@@ -254,7 +254,7 @@ public class PlayerNavigation extends NavigationAbstract {
                 localBlockPosition = localBlockPosition.down();
             }
             if (localBlockPosition.getY() > 0) {
-                return super.b(localBlockPosition.up());
+                return superb(localBlockPosition.up());
             }
             while ((localBlockPosition.getY() < this.b.getHeight()) && (this.b.getType(localBlockPosition).isAir())) {
                 localBlockPosition = localBlockPosition.up();
@@ -267,9 +267,9 @@ public class PlayerNavigation extends NavigationAbstract {
                     && (this.b.getType(localBlockPosition).getMaterial().isBuildable())) {
                 localBlockPosition = localBlockPosition.up();
             }
-            return super.b(localBlockPosition);
+            return superb(localBlockPosition);
         }
-        return super.b(paramBlockPosition);
+        return superb(paramBlockPosition);
     }
 
     public void b(boolean paramBoolean) {
