@@ -22,6 +22,7 @@ public class PlayerControllerLook {
         if (!NMSImpl.isNavigationFinished(this.a.getNavigation()))
             return;
         this.a.pitch = 0.0F;
+        this.a.aI = this.a.aK;
         if (this.d) {
             this.d = false;
 
@@ -41,8 +42,9 @@ public class PlayerControllerLook {
             while (this.a.aK < -180F) {
                 this.a.aK += 360F;
             }
+            System.out.println(this.a.aK);
         } else {
-            // this.a.aQ = a(this.a.aQ, this.a.aO, 10.0F);
+            // this.a.aK = a(this.a.aK, this.a.aI, 10.0F);
         }
         float f3 = MathHelper.g(this.a.aK - this.a.aI);
         if (!this.a.getNavigation().m()) {
