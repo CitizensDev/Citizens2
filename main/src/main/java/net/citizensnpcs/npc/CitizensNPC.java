@@ -191,6 +191,10 @@ public class CitizensNPC extends AbstractNPC {
             Messaging.debug("Tried to spawn", getId(), "while already spawned.");
             return false;
         }
+        if (at.getWorld() == null) {
+            Messaging.debug("Tried to spawn", getId(), "but the world was null.");
+            return false;
+        }
         data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
 
         at = at.clone();
