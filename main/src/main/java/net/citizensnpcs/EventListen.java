@@ -530,7 +530,7 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
         for (ChunkCoord chunk : toRespawn.keySet()) {
-            if (!chunk.worldName.equals(event.getWorld().getName())
+            if (!chunk.worldUUID.equals(event.getWorld().getUID())
                     || !event.getWorld().isChunkLoaded(chunk.x, chunk.z))
                 continue;
             respawnAllFromCoord(chunk);
@@ -545,7 +545,7 @@ public class EventListen implements Listener {
             boolean despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
             if (event.isCancelled() || !despawned) {
                 for (ChunkCoord coord : toRespawn.keySet()) {
-                    if (event.getWorld().getName().equals(coord.worldName)) {
+                    if (event.getWorld().getUID().equals(coord.worldUUID)) {
                         respawnAllFromCoord(coord);
                     }
                 }
@@ -605,22 +605,22 @@ public class EventListen implements Listener {
     }
 
     private ChunkCoord toCoord(Location loc) {
-        return new ChunkCoord(loc.getWorld().getName(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
+        return new ChunkCoord(loc.getWorld().getUID(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
     }
 
     private static class ChunkCoord {
-        private final String worldName;
+        private final UUID worldUUID;
         private final int x;
         private final int z;
 
         private ChunkCoord(Chunk chunk) {
-            this(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
+            this(chunk.getWorld().getUID(), chunk.getX(), chunk.getZ());
         }
 
-        private ChunkCoord(String worldName, int x, int z) {
+        private ChunkCoord(UUID worldUUID, int x, int z) {
             this.x = x;
             this.z = z;
-            this.worldName = worldName;
+            this.worldUUID = worldUUID;
         }
 
         @Override
@@ -632,11 +632,11 @@ public class EventListen implements Listener {
                 return false;
             }
             ChunkCoord other = (ChunkCoord) obj;
-            if (worldName == null) {
-                if (other.worldName != null) {
+            if (worldUUID == null) {
+                if (other.worldUUID != null) {
                     return false;
                 }
-            } else if (!worldName.equals(other.worldName)) {
+            } else if (!worldUUID.equals(other.worldUUID)) {
                 return false;
             }
             return x == other.x && z == other.z;
@@ -645,7 +645,7 @@ public class EventListen implements Listener {
         @Override
         public int hashCode() {
             final int prime = 31;
-            return prime * (prime * (prime + ((worldName == null) ? 0 : worldName.hashCode())) + x) + z;
+            return prime * (prime * (prime + ((worldUUID == null) ? 0 : worldUUID.hashCode())) + x) + z;
         }
     }
 }
