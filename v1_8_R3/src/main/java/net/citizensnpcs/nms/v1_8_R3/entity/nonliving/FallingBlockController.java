@@ -12,7 +12,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
 
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCPushEvent;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
@@ -162,8 +164,8 @@ public class FallingBlockController extends AbstractEntityController {
             npc.data().setPersistent(NPC.ITEM_ID_METADATA, material.name());
             npc.data().setPersistent(NPC.ITEM_DATA_METADATA, data);
             if (npc.isSpawned()) {
-                npc.despawn();
-                npc.spawn(npc.getStoredLocation());
+                npc.despawn(DespawnReason.PENDING_RESPAWN);
+                npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
             }
         }
     }

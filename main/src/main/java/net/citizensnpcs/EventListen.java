@@ -80,6 +80,7 @@ import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
@@ -262,7 +263,7 @@ public class EventListen implements Listener {
                 @Override
                 public void run() {
                     if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
-                        npc.spawn(location);
+                        npc.spawn(location, SpawnReason.TIMED_RESPAWN);
                     }
                 }
             }, delay + 2);
@@ -530,8 +531,7 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
         for (ChunkCoord chunk : toRespawn.keySet()) {
-            if (!chunk.worldUUID.equals(event.getWorld().getUID())
-                    || !event.getWorld().isChunkLoaded(chunk.x, chunk.z))
+            if (!chunk.worldUUID.equals(event.getWorld().getUID()) || !event.getWorld().isChunkLoaded(chunk.x, chunk.z))
                 continue;
             respawnAllFromCoord(chunk);
         }

@@ -1,18 +1,5 @@
 package net.citizensnpcs.nms.v1_12_R1.entity.nonliving;
 
-import net.citizensnpcs.api.event.NPCPushEvent;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.npc.AbstractEntityController;
-import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_12_R1.EntityHuman;
-import net.minecraft.server.v1_12_R1.EntityItem;
-import net.minecraft.server.v1_12_R1.ItemStack;
-import net.minecraft.server.v1_12_R1.NBTTagCompound;
-import net.minecraft.server.v1_12_R1.World;
-import net.minecraft.server.v1_12_R1.WorldServer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,6 +11,21 @@ import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
+
+import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.event.NPCPushEvent;
+import net.citizensnpcs.api.event.SpawnReason;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.npc.AbstractEntityController;
+import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_12_R1.EntityHuman;
+import net.minecraft.server.v1_12_R1.EntityItem;
+import net.minecraft.server.v1_12_R1.ItemStack;
+import net.minecraft.server.v1_12_R1.NBTTagCompound;
+import net.minecraft.server.v1_12_R1.World;
+import net.minecraft.server.v1_12_R1.WorldServer;
 
 public class ItemController extends AbstractEntityController {
     public ItemController() {
@@ -59,6 +61,15 @@ public class ItemController extends AbstractEntityController {
         public EntityItemNPC(World world, NPC npc, double x, double y, double z, ItemStack stack) {
             super(world, x, y, z, stack);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void B_() {
+            if (npc != null) {
+                npc.update();
+            } else {
+                super.B_();
+            }
         }
 
         @Override
@@ -117,15 +128,6 @@ public class ItemController extends AbstractEntityController {
         public NPC getNPC() {
             return npc;
         }
-
-        @Override
-        public void B_() {
-            if (npc != null) {
-                npc.update();
-            } else {
-                super.B_();
-            }
-        }
     }
 
     public static class ItemNPC extends CraftItem implements NPCHolder {
@@ -145,8 +147,8 @@ public class ItemController extends AbstractEntityController {
             npc.data().setPersistent(NPC.ITEM_ID_METADATA, material.name());
             npc.data().setPersistent(NPC.ITEM_DATA_METADATA, data);
             if (npc.isSpawned()) {
-                npc.despawn();
-                npc.spawn(npc.getStoredLocation());
+                npc.despawn(DespawnReason.PENDING_RESPAWN);
+                npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
             }
         }
     }

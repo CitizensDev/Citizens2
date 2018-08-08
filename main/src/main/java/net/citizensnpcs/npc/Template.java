@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
@@ -54,7 +55,7 @@ public class Template {
         }
         npc.load(memoryKey);
         if (wasSpawned && npc.getStoredLocation() != null) {
-            npc.spawn(npc.getStoredLocation());
+            npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         }
     }
 

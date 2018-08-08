@@ -12,7 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
@@ -28,6 +28,7 @@ import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
@@ -139,7 +140,7 @@ public class CitizensNPC extends AbstractNPC {
         // Spawn the NPC
         CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
         if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
-            spawn(spawnLocation.getLocation());
+            spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
         }
         if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() == null) {
             Messaging.debug("Tried to spawn", getId(), "on load but world was null");
@@ -174,7 +175,7 @@ public class CitizensNPC extends AbstractNPC {
         }
         entityController = newController;
         if (wasSpawned) {
-            spawn(prev);
+            spawn(prev, SpawnReason.RESPAWN);
         }
     }
 
@@ -186,7 +187,13 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean spawn(Location at) {
+        return spawn(at, SpawnReason.PLUGIN);
+    }
+
+    @Override
+    public boolean spawn(Location at, SpawnReason reason) {
         Preconditions.checkNotNull(at, "location cannot be null");
+        Preconditions.checkNotNull(reason, "reason cannot be null");
         if (isSpawned()) {
             Messaging.debug("Tried to spawn", getId(), "while already spawned.");
             return false;
@@ -203,7 +210,8 @@ public class CitizensNPC extends AbstractNPC {
 
         getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
-        boolean couldSpawn = !Util.isLoaded(at) ? false : NMS.addEntityToWorld(getEntity(), SpawnReason.CUSTOM);
+        boolean couldSpawn = !Util.isLoaded(at) ? false
+                : NMS.addEntityToWorld(getEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
 
         // send skin packets, if applicable, before other NMS packets are sent
         if (couldSpawn) {
@@ -230,7 +238,7 @@ public class CitizensNPC extends AbstractNPC {
         getTrait(CurrentLocation.class).setLocation(at);
         getTrait(Spawned.class).setSpawned(true);
 
-        NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at);
+        NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at, reason);
         Bukkit.getPluginManager().callEvent(spawnEvent);
 
         if (spawnEvent.isCancelled()) {

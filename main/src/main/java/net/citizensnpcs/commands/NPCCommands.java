@@ -52,6 +52,7 @@ import net.citizensnpcs.api.command.exception.ServerCommandException;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
@@ -416,7 +417,7 @@ public class NPCCommands {
         }
 
         if (!args.hasFlag('u')) {
-            npc.spawn(spawnLoc);
+            npc.spawn(spawnLoc, SpawnReason.CREATE);
         }
 
         if (args.hasValueFlag("trait")) {
@@ -687,8 +688,8 @@ public class NPCCommands {
                 break;
         }
         if (npc.isSpawned()) {
-            npc.despawn();
-            npc.spawn(npc.getStoredLocation());
+            npc.despawn(DespawnReason.PENDING_RESPAWN);
+            npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         }
         Messaging.sendTr(sender, Messages.ITEM_SET, Util.prettyEnum(mat));
     }
@@ -915,7 +916,7 @@ public class NPCCommands {
     public void moveto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned()) {
-            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation(), SpawnReason.COMMAND);
         }
         if (!npc.isSpawned()) {
             throw new CommandException("NPC could not be spawned.");
@@ -1144,7 +1145,7 @@ public class NPCCommands {
         npc.data().setPersistent("removefromplayerlist", remove);
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
-            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation(), SpawnReason.RESPAWN);
             NMS.addOrRemoveFromPlayerList(npc.getEntity(), remove);
         }
         Messaging.sendTr(sender, remove ? Messages.REMOVED_FROM_PLAYERLIST : Messages.ADDED_TO_PLAYERLIST,
@@ -1333,7 +1334,7 @@ public class NPCCommands {
         npc.despawn(DespawnReason.PENDING_RESPAWN);
         npc.setName(newName);
         if (prev != null) {
-            npc.spawn(prev);
+            npc.spawn(prev, SpawnReason.RESPAWN);
         }
 
         Messaging.sendTr(sender, Messages.NPC_RENAMED, oldName, newName);
@@ -1664,7 +1665,7 @@ public class NPCCommands {
                 if (args.hasFlag('l') && !Util.isLoaded(location)) {
                     location.getChunk().load();
                 }
-                if (respawn.spawn(location)) {
+                if (respawn.spawn(location, SpawnReason.COMMAND)) {
                     selector.select(sender, respawn);
                     Messaging.sendTr(sender, Messages.NPC_SPAWNED, respawn.getName());
                 }
@@ -1799,7 +1800,7 @@ public class NPCCommands {
             throw new ServerCommandException();
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned()) {
-            npc.spawn(args.getSenderLocation());
+            npc.spawn(args.getSenderLocation(), SpawnReason.COMMAND);
             if (!sender.hasPermission("citizens.npc.tphere.multiworld")
                     && npc.getEntity().getLocation().getWorld() != args.getSenderLocation().getWorld()) {
                 npc.despawn(DespawnReason.REMOVAL);

@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -37,7 +38,7 @@ public class Poses extends Trait {
 
     private void assumePose(float yaw, float pitch) {
         if (!npc.isSpawned()) {
-            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation());
+            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation(), SpawnReason.COMMAND);
         }
         Util.assumePose(npc.getEntity(), yaw, pitch);
     }

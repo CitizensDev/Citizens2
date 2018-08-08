@@ -20,6 +20,7 @@ import com.mojang.authlib.properties.Property;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.profile.ProfileFetchHandler;
@@ -131,7 +132,7 @@ public class Skin {
 
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
-            npc.spawn(npc.getStoredLocation());
+            npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         }
     }
 

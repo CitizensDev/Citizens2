@@ -10,6 +10,7 @@ import org.bukkit.entity.EntityType;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -46,7 +47,7 @@ public class WaypointMarkers {
     public Entity spawnMarker(World world, Location at) {
         NPC npc = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore()).createNPC(EntityType.ENDER_SIGNAL,
                 "");
-        npc.spawn(at);
+        npc.spawn(at, SpawnReason.CREATE);
         return npc.getEntity();
     }
 }
