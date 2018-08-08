@@ -14,6 +14,7 @@ import net.citizensnpcs.api.ai.speech.SpeechController;
 import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
@@ -265,6 +266,17 @@ public interface NPC extends Agent, Cloneable {
      * @return Whether this NPC was able to spawn at the location
      */
     public boolean spawn(Location location);
+
+    /**
+     * Attempts to spawn this NPC.
+     *
+     * @param location
+     *            Location to spawn this NPC
+     * @param reason
+     *            Reason for spawning
+     * @return Whether this NPC was able to spawn at the location
+     */
+    public boolean spawn(Location location, SpawnReason reason);
 
     /**
      * An alternative to {{@link #getBukkitEntity().getLocation()} that teleports passengers as well.
