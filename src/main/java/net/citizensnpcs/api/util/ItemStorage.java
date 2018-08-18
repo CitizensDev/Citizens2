@@ -227,7 +227,7 @@ public class ItemStorage {
         Material material = null;
         if (root.keyExists("type_key")) {
             NamespacedKey key = new NamespacedKey(root.getString("type_namespace"), root.getString("type_key"));
-            material = Material.getMaterial(key.getKey(), false);
+            material = Material.getMaterial(key.getKey().toUpperCase(), false);
         } else {
             String raw = root.getString("type", root.getString("id"));
             if (raw == null || raw.length() == 0) {
