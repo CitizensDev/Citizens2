@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v1_13_R1.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
@@ -1017,10 +1016,8 @@ public class NMSImpl implements NMSBridge {
     public void shutdown() {
         if (ENTITY_REGISTRY == null)
             return;
-        Field field = NMS.getField(EntityTypes.class, "b");
-        Field modifiersField = NMS.getField(Field.class, "modifiers");
+        Field field = NMS.getFinalField(EntityTypes.class, "REGISTRY");
         try {
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
             field.set(null, ENTITY_REGISTRY.getWrapped());
         } catch (Exception e) {
         }
