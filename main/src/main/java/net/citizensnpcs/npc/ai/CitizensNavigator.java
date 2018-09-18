@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -239,7 +240,8 @@ public class CitizensNavigator implements Navigator, Runnable {
         PathStrategy newStrategy;
         if (npc.isFlyable()) {
             newStrategy = new FlyingAStarNavigationStrategy(npc, path, localParams);
-        } else if (localParams.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
+        } else if (localParams.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)
+                || npc.getEntity() instanceof ArmorStand) {
             newStrategy = new AStarNavigationStrategy(npc, path, localParams);
         } else {
             newStrategy = new MCNavigationStrategy(npc, path, localParams);
@@ -260,7 +262,8 @@ public class CitizensNavigator implements Navigator, Runnable {
         PathStrategy newStrategy;
         if (npc.isFlyable()) {
             newStrategy = new FlyingAStarNavigationStrategy(npc, target, localParams);
-        } else if (localParams.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
+        } else if (localParams.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)
+                || npc.getEntity() instanceof ArmorStand) {
             newStrategy = new AStarNavigationStrategy(npc, target, localParams);
         } else {
             newStrategy = new MCNavigationStrategy(npc, target, localParams);
