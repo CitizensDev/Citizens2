@@ -66,6 +66,10 @@ public class NMS {
     }
 
     public static Field getField(Class<?> clazz, String field) {
+        return getField(clazz, field, true);
+    }
+
+    public static Field getField(Class<?> clazz, String field, boolean log) {
         if (clazz == null)
             return null;
         Field f = null;
@@ -73,20 +77,28 @@ public class NMS {
             f = clazz.getDeclaredField(field);
             f.setAccessible(true);
         } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+            if (log) {
+                Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+            }
         }
         return f;
     }
 
     public static Field getFinalField(Class<?> clazz, String field) {
-        Field f = getField(clazz, field);
+        return getFinalField(clazz, field, true);
+    }
+
+    public static Field getFinalField(Class<?> clazz, String field, boolean log) {
+        Field f = getField(clazz, field, log);
         if (f == null) {
             return null;
         }
         try {
             MODIFIERS_FIELD.setInt(f, f.getModifiers() & ~Modifier.FINAL);
         } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+            if (log) {
+                Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+            }
             return null;
         }
         return f;

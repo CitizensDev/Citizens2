@@ -1017,7 +1017,10 @@ public class NMSImpl implements NMSBridge {
     public void shutdown() {
         if (ENTITY_REGISTRY == null)
             return;
-        Field field = NMS.getFinalField(EntityTypes.class, "REGISTRY");
+        Field field = NMS.getFinalField(EntityTypes.class, "REGISTRY", false);
+        if (field == null) {
+            field = NMS.getFinalField(IRegistry.class, "ENTITY_TYPE");
+        }
         try {
             field.set(null, ENTITY_REGISTRY.getWrapped());
         } catch (Exception e) {
@@ -1592,7 +1595,10 @@ public class NMSImpl implements NMSBridge {
 
     static {
         try {
-            Field field = NMS.getFinalField(EntityTypes.class, "REGISTRY");
+            Field field = NMS.getFinalField(EntityTypes.class, "REGISTRY", false);
+            if (field == null) {
+                field = NMS.getFinalField(IRegistry.class, "ENTITY_TYPE");
+            }
             ENTITY_REGISTRY = new CustomEntityRegistry((RegistryMaterials<EntityTypes<?>>) field.get(null));
             field.set(null, ENTITY_REGISTRY);
         } catch (Exception e) {
