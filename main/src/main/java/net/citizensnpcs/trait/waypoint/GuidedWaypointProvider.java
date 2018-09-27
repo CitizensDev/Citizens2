@@ -260,7 +260,9 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(CancelReason cancelReason) {
-                    plan.update(npc);
+                    if (plan != null) {
+                        plan.update(npc);
+                    }
                 }
             });
         }
