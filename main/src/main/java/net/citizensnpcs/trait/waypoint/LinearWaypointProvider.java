@@ -272,7 +272,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 Location at = event.getClickedBlock().getLocation();
                 Location prev = getPreviousWaypoint(editingSlot);
 
-                if (prev != null) {
+                if (prev != null && prev.getWorld() == at.getWorld()) {
                     double distance = at.distanceSquared(prev);
                     double maxDistance = Math.pow(npc.getNavigator().getDefaultParameters().range(), 2);
                     if (distance > maxDistance) {
