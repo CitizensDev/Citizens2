@@ -26,6 +26,7 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
@@ -268,6 +269,17 @@ public class EventListen implements Listener {
                 }
             }, delay + 2);
         }
+    }
+
+    @EventHandler
+    public void onEntityPortal(EntityPortalEvent event) {
+        NPC npc = npcRegistry.getNPC(event.getEntity());
+        if (npc == null && event.getEntityType() != EntityType.PLAYER)
+            return;
+        event.setCancelled(true);
+        npc.despawn(DespawnReason.PENDING_RESPAWN);
+        event.getTo().getChunk();
+        npc.spawn(event.getTo(), SpawnReason.RESPAWN);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
