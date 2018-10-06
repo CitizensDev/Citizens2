@@ -80,6 +80,9 @@ public class Messages {
     public static final String FAILED_TO_REMOVE = "citizens.commands.trait.failed-to-remove";
     public static final String FLYABLE_SET = "citizens.commands.npc.flyable.set";
     public static final String FLYABLE_UNSET = "citizens.commands.npc.flyable.unset";
+    public static final String FOLLOW_PLAYER_NOT_INGAME = "citizens.commands.npc.follow.player-not-ingame";
+    public static final String FOLLOW_SET = "citizens.commands.npc.follow.set";
+    public static final String FOLLOW_UNSET = "citizens.commands.npc.follow.unset";
     public static final String FROM_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.from-not-found";
     public static final String GAMEMODE_DESCRIBE = "citizens.commands.npc.gamemode.describe";
     public static final String GAMEMODE_INVALID = "citizens.commands.npc.gamemode.invalid";

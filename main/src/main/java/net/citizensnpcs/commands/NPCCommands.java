@@ -73,6 +73,7 @@ import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
@@ -507,6 +508,24 @@ public class NPCCommands {
         npc.setFlyable(flyable);
         flyable = npc.isFlyable(); // may not have applied, eg bats always flyable
         Messaging.sendTr(sender, flyable ? Messages.FLYABLE_SET : Messages.FLYABLE_UNSET, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "follow (player name) (-p[rotect])",
+            desc = "Toggles NPC following you",
+            modifiers = { "follow" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.follow")
+    public void follow(CommandContext args, Player sender, NPC npc) throws CommandException {
+        boolean protect = args.hasFlag('p');
+        String name = sender.getName();
+        if (args.argsLength() > 1) {
+            name = args.getString(1);
+        }
+        boolean following = npc.getTrait(FollowTrait.class).toggle(name, protect);
+        Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(), name);
     }
 
     @Command(
