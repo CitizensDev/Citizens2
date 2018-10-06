@@ -1,6 +1,9 @@
 package net.citizensnpcs.trait;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -14,9 +17,9 @@ public class FollowTrait extends Trait {
     @Persist
     private boolean active = false;
     @Persist
-    private String followingName;
+    private UUID followingUUID;
     private Player player;
-    @Persist("protect")
+    @Persist
     private boolean protect;
 
     public FollowTrait() {
@@ -37,9 +40,9 @@ public class FollowTrait extends Trait {
     @Override
     public void run() {
         if (player == null || !player.isValid()) {
-            if (followingName == null)
+            if (followingUUID == null)
                 return;
-            player = Bukkit.getPlayerExact(followingName);
+            player = Bukkit.getPlayer(followingUUID);
             if (player == null) {
                 return;
             }
@@ -52,14 +55,14 @@ public class FollowTrait extends Trait {
         }
     }
 
-    public boolean toggle(String name, boolean protect) {
+    public boolean toggle(OfflinePlayer player, boolean protect) {
         this.protect = protect;
-        if (name.equalsIgnoreCase(this.followingName) || this.followingName == null) {
+        if (player.getUniqueId().equals(this.followingUUID) || this.followingUUID == null) {
             this.active = !active;
         }
-        this.followingName = name;
-        if (npc.getNavigator().isNavigating() && player != null
-                && player == npc.getNavigator().getEntityTarget().getTarget()) {
+        this.followingUUID = player.getUniqueId();
+        if (npc.getNavigator().isNavigating() && this.player != null
+                && this.player == npc.getNavigator().getEntityTarget().getTarget()) {
             npc.getNavigator().cancelNavigation();
         }
         this.player = null;

@@ -15,6 +15,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
@@ -524,8 +525,13 @@ public class NPCCommands {
         if (args.argsLength() > 1) {
             name = args.getString(1);
         }
-        boolean following = npc.getTrait(FollowTrait.class).toggle(name, protect);
-        Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(), name);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+        if (player == null) {
+            throw new CommandException();
+        }
+        boolean following = npc.getTrait(FollowTrait.class).toggle(player, protect);
+        Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
+                player.getName());
     }
 
     @Command(
