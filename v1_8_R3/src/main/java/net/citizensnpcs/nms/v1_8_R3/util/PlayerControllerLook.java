@@ -1,9 +1,8 @@
 package net.citizensnpcs.nms.v1_8_R3.util;
 
 import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.MathHelper;
+import net.minecraft.server.v1_13_R2.EntityLiving;
+import net.minecraft.server.v1_13_R2.MathHelper;
 
 public class PlayerControllerLook {
     private final EntityHumanNPC a;
@@ -42,7 +41,6 @@ public class PlayerControllerLook {
             while (this.a.aK < -180F) {
                 this.a.aK += 360F;
             }
-            System.out.println(this.a.aK);
         } else {
             // this.a.aK = a(this.a.aK, this.a.aI, 10.0F);
         }

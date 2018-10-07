@@ -19,7 +19,7 @@ public class TeleportTrigger implements WaypointTrigger {
 
     @Override
     public String description() {
-        return String.format("Teleport to [%s, %d, %d, %d]", location.getWorld().getName(), location.getBlockX(),
+        return String.format("[[Teleport]] to [%s, %d, %d, %d]", location.getWorld().getName(), location.getBlockX(),
                 location.getBlockY(), location.getBlockZ());
     }
 

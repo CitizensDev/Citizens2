@@ -298,9 +298,11 @@ public class Messages {
     public static final String WAYPOINT_TRIGGER_ADDED_SUCCESSFULLY = "citizens.editors.waypoints.triggers.add.added";
     public static final String WAYPOINT_TRIGGER_CHAT_INVALID_RADIUS = "citizens.editors.waypoints.triggers.chat.invalid-radius";
     public static final String WAYPOINT_TRIGGER_CHAT_NO_RADIUS = "citizens.editors.waypoints.triggers.chat.missing-radius";
+    public static final String WAYPOINT_TRIGGER_EDITOR_EXIT = "citizens.editors.waypoints.triggers.main.exit";
     public static final String WAYPOINT_TRIGGER_EDITOR_INACTIVE = "citizens.editors.waypoints.triggers.main.missing-waypoint";
     public static final String WAYPOINT_TRIGGER_EDITOR_INVALID_TRIGGER = "citizens.editors.waypoints.triggers.add.invalid-trigger";
     public static final String WAYPOINT_TRIGGER_EDITOR_PROMPT = "citizens.editors.waypoints.triggers.main.prompt";
+    public static final String WAYPOINT_TRIGGER_LIST = "citizens.editors.waypoints.triggers.list";
     public static final String WAYPOINT_TRIGGER_REMOVE_INDEX_OUT_OF_RANGE = "citizens.editors.waypoints.triggers.remove.index-out-of-range";
     public static final String WAYPOINT_TRIGGER_REMOVE_INVALID_NUMBER = "citizens.editors.waypoints.triggers.remove.not-a-number";
     public static final String WAYPOINT_TRIGGER_REMOVE_PROMPT = "citizens.editors.waypoints.triggers.remove.prompt";

@@ -1,9 +1,9 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
+import org.bukkit.Location;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
-
-import org.bukkit.Location;
 
 public class SpeedTrigger implements WaypointTrigger {
     @Persist
@@ -18,7 +18,7 @@ public class SpeedTrigger implements WaypointTrigger {
 
     @Override
     public String description() {
-        return String.format("Speed change to %f", speed);
+        return String.format("[[Speed]] change to %f", speed);
     }
 
     public float getSpeed() {

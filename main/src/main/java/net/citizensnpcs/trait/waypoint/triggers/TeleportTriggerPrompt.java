@@ -49,6 +49,11 @@ public class TeleportTriggerPrompt extends RegexPrompt implements WaypointTrigge
     }
 
     @Override
+    public WaypointTrigger createFromShortInput(ConversationContext context, String input) {
+        return null;
+    }
+
+    @Override
     public String getPromptText(ConversationContext context) {
         return Messaging.tr(Messages.WAYPOINT_TRIGGER_TELEPORT_PROMPT);
     }

@@ -2,11 +2,6 @@ package net.citizensnpcs.trait.waypoint.triggers;
 
 import java.util.List;
 
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.PlayerAnimation;
-import net.citizensnpcs.util.Util;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -14,6 +9,11 @@ import org.bukkit.conversations.StringPrompt;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.PlayerAnimation;
+import net.citizensnpcs.util.Util;
 
 public class AnimationTriggerPrompt extends StringPrompt implements WaypointTriggerPrompt {
     private final List<PlayerAnimation> animations = Lists.newArrayList();
@@ -35,6 +35,11 @@ public class AnimationTriggerPrompt extends StringPrompt implements WaypointTrig
         animations.add(animation);
         Messaging.sendTr((CommandSender) context.getForWhom(), Messages.ANIMATION_ADDED, input);
         return this;
+    }
+
+    @Override
+    public WaypointTrigger createFromShortInput(ConversationContext context, String input) {
+        return null;
     }
 
     @Override

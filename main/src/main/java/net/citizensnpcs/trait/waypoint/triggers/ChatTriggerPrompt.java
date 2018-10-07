@@ -2,15 +2,15 @@ package net.citizensnpcs.trait.waypoint.triggers;
 
 import java.util.List;
 
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
 import com.google.common.collect.Lists;
+
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 
 public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPrompt {
     private final List<String> lines = Lists.newArrayList();
@@ -37,6 +37,11 @@ public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPr
         }
         lines.add(input);
         return this;
+    }
+
+    @Override
+    public WaypointTrigger createFromShortInput(ConversationContext context, String input) {
+        return null;
     }
 
     @Override

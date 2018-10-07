@@ -22,7 +22,7 @@ public class DelayTrigger implements WaypointTrigger {
 
     @Override
     public String description() {
-        return String.format("Delay for %d ticks", delay);
+        return String.format("[[Delay]] for [[%d]] ticks", delay);
     }
 
     public int getDelay() {

@@ -3,16 +3,16 @@ package net.citizensnpcs.trait.waypoint.triggers;
 import java.util.Collection;
 import java.util.List;
 
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.util.Messaging;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.util.Messaging;
 
 public class ChatTrigger implements WaypointTrigger {
     @Persist(required = true)
@@ -30,7 +30,7 @@ public class ChatTrigger implements WaypointTrigger {
 
     @Override
     public String description() {
-        return String.format("Chat Trigger [radius %d, %s]", radius, Joiner.on(", ").join(lines));
+        return String.format("[[Chat]] [radius %d, %s]", radius, Joiner.on(", ").join(lines));
     }
 
     @Override

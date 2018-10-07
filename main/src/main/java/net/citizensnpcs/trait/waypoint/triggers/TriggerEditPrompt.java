@@ -2,6 +2,8 @@ package net.citizensnpcs.trait.waypoint.triggers;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
@@ -41,20 +43,26 @@ public class TriggerEditPrompt extends StringPrompt {
         if (context.getSessionData("said") == Boolean.TRUE)
             return "";
         context.setSessionData("said", true);
-        String base = Messaging.tr(Messages.WAYPOINT_TRIGGER_EDITOR_PROMPT);
+        String base = "";
         if (editor.getCurrentWaypoint() != null) {
             Waypoint waypoint = editor.getCurrentWaypoint();
             for (WaypointTrigger trigger : waypoint.getTriggers()) {
                 base += "\n    - " + trigger.description();
             }
         }
-        Messaging.send((CommandSender) context.getForWhom(), base);
+        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_EDITOR_PROMPT, base);
         return "";
     }
 
     public static Conversation start(Player player, WaypointEditor editor) {
         final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin()).withLocalEcho(false)
-                .withEscapeSequence("exit").withEscapeSequence("triggers").withEscapeSequence("/npc path")
+                .addConversationAbandonedListener(new ConversationAbandonedListener() {
+                    @Override
+                    public void conversationAbandoned(ConversationAbandonedEvent event) {
+                        event.getContext().getForWhom()
+                                .sendRawMessage(Messaging.tr(Messages.WAYPOINT_TRIGGER_EDITOR_EXIT));
+                    }
+                }).withEscapeSequence("exit").withEscapeSequence("triggers").withEscapeSequence("/npc path")
                 .withModality(false).withFirstPrompt(new TriggerEditPrompt(editor)).buildConversation(player);
         conversation.begin();
         return conversation;
