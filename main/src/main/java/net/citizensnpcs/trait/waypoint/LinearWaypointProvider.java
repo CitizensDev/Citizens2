@@ -37,6 +37,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.waypoint.WaypointProvider.EnumerableWaypointProvider;
 import net.citizensnpcs.trait.waypoint.triggers.TriggerEditPrompt;
+import net.citizensnpcs.trait.waypoint.triggers.WaypointTrigger;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
@@ -333,6 +334,13 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 editingSlot += diff > 0 ? 1 : -1;
             }
             normaliseEditingSlot();
+            if (conversation != null) {
+                String base = "";
+                for (WaypointTrigger trigger : getCurrentWaypoint().getTriggers()) {
+                    base += "\n    - " + trigger.description();
+                }
+                Messaging.sendTr(player, Messages.WAYPOINT_TRIGGER_LIST, base);
+            }
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
                     formatLoc(waypoints.get(editingSlot).getLocation()));
         }
@@ -340,6 +348,13 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         private void onWaypointsModified() {
             if (currentGoal != null) {
                 currentGoal.onProviderChanged();
+            }
+            if (conversation != null) {
+                String base = "";
+                for (WaypointTrigger trigger : getCurrentWaypoint().getTriggers()) {
+                    base += "\n    - " + trigger.description();
+                }
+                Messaging.sendTr(player, Messages.WAYPOINT_TRIGGER_LIST, base);
             }
         }
 
