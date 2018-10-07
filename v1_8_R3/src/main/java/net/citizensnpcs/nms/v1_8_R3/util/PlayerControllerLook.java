@@ -1,8 +1,8 @@
 package net.citizensnpcs.nms.v1_8_R3.util;
 
 import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
-import net.minecraft.server.v1_13_R2.EntityLiving;
-import net.minecraft.server.v1_13_R2.MathHelper;
+import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.server.v1_8_R3.MathHelper;
 
 public class PlayerControllerLook {
     private final EntityHumanNPC a;
