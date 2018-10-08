@@ -56,12 +56,12 @@ public class TriggerRemovePrompt extends StringPrompt {
         if (context.getSessionData("said") == Boolean.TRUE)
             return "";
         context.setSessionData("said", true);
-        String root = Messaging.tr(Messages.WAYPOINT_TRIGGER_REMOVE_PROMPT);
+        String root = "";
         int i = 1;
         for (WaypointTrigger trigger : editor.getCurrentWaypoint().getTriggers()) {
-            root += String.format("<br>     %d. " + trigger.description(), i++);
+            root += String.format("<br>     [[%d]]. " + trigger.description(), i++);
         }
-        Messaging.send((CommandSender) context.getForWhom(), root);
+        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_REMOVE_PROMPT, root);
         return "";
     }
 }

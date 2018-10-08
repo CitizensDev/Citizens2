@@ -151,7 +151,7 @@ public class Util {
             return false;
         if (current.getWorld() != target.getWorld())
             return false;
-        return current.distanceSquared(target) < Math.pow(range, 2);
+        return current.distanceSquared(target) <= Math.pow(range, 2);
     }
 
     public static EntityType matchEntityType(String toMatch) {

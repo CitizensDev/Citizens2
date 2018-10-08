@@ -37,7 +37,6 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.waypoint.WaypointProvider.EnumerableWaypointProvider;
 import net.citizensnpcs.trait.waypoint.triggers.TriggerEditPrompt;
-import net.citizensnpcs.trait.waypoint.triggers.WaypointTrigger;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
@@ -335,11 +334,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             }
             normaliseEditingSlot();
             if (conversation != null) {
-                String base = "";
-                for (WaypointTrigger trigger : getCurrentWaypoint().getTriggers()) {
-                    base += "\n    - " + trigger.description();
-                }
-                Messaging.sendTr(player, Messages.WAYPOINT_TRIGGER_LIST, base);
+                getCurrentWaypoint().describeTriggers(player);
             }
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
                     formatLoc(waypoints.get(editingSlot).getLocation()));
@@ -350,11 +345,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 currentGoal.onProviderChanged();
             }
             if (conversation != null) {
-                String base = "";
-                for (WaypointTrigger trigger : getCurrentWaypoint().getTriggers()) {
-                    base += "\n    - " + trigger.description();
-                }
-                Messaging.sendTr(player, Messages.WAYPOINT_TRIGGER_LIST, base);
+                getCurrentWaypoint().describeTriggers(player);
             }
         }
 
@@ -452,6 +443,9 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         public void setPaused(boolean pause) {
             if (pause && currentDestination != null) {
                 selector.finish();
+                if (npc != null && npc.getNavigator().isNavigating()) {
+                    npc.getNavigator().cancelNavigation();
+                }
             }
             paused = pause;
         }

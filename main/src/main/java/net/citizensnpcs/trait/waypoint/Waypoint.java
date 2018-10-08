@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 
 import com.google.common.collect.Lists;
 
@@ -12,9 +13,11 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.trait.waypoint.triggers.DelayTrigger;
 import net.citizensnpcs.trait.waypoint.triggers.WaypointTrigger;
 import net.citizensnpcs.trait.waypoint.triggers.WaypointTriggerRegistry;
+import net.citizensnpcs.util.Messages;
 
 public class Waypoint implements Locatable {
     @Persist(required = true)
@@ -30,9 +33,18 @@ public class Waypoint implements Locatable {
     }
 
     public void addTrigger(WaypointTrigger trigger) {
-        if (triggers == null)
+        if (triggers == null) {
             triggers = Lists.newArrayList();
+        }
         triggers.add(trigger);
+    }
+
+    public void describeTriggers(CommandSender sender) {
+        String base = "";
+        for (WaypointTrigger trigger : getTriggers()) {
+            base += "\n    - " + trigger.description();
+        }
+        Messaging.sendTr(sender, Messages.WAYPOINT_TRIGGER_LIST, base);
     }
 
     public double distance(Waypoint dest) {

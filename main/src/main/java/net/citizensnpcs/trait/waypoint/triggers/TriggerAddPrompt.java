@@ -55,11 +55,7 @@ public class TriggerAddPrompt extends StringPrompt {
                 context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY, null);
                 Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_ADDED_SUCCESSFULLY,
                         returned.description());
-                String base = "";
-                for (WaypointTrigger trigger : editor.getCurrentWaypoint().getTriggers()) {
-                    base += "\n    - " + trigger.description();
-                }
-                Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_LIST, base);
+                editor.getCurrentWaypoint().describeTriggers((CommandSender) context.getForWhom());
             } else {
                 Messaging.sendErrorTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
             }
