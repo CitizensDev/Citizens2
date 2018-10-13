@@ -45,6 +45,8 @@ public class EquipmentEditor extends Editor {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(final AsyncPlayerChatEvent event) {
+        if (!event.getPlayer().equals(player))
+            return;
         EquipmentSlot slot = null;
         if (event.getMessage().contains("helmet")
                 && event.getPlayer().hasPermission("citizens.npc.edit.equip.any-helmet")) {
@@ -83,7 +85,7 @@ public class EquipmentEditor extends Editor {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_AIR && Editor.hasEditor(event.getPlayer())) {
+        if (event.getAction() == Action.RIGHT_CLICK_AIR && event.getPlayer().equals(player)) {
             event.setUseItemInHand(Result.DENY);
         }
     }
@@ -93,7 +95,6 @@ public class EquipmentEditor extends Editor {
         if (!npc.isSpawned() || !event.getPlayer().equals(player) || Util.isOffHand(event)
                 || !npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
             return;
-
         Equipper equipper = EQUIPPERS.get(npc.getEntity().getType());
         if (equipper == null) {
             equipper = new GenericEquipper();
