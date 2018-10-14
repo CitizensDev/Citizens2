@@ -181,7 +181,7 @@ public class Util {
             return true;
         for (String part : Splitter.on(',').split(parts)) {
             if ((SpigotUtil.isUsing1_13API() ? Material.matchMaterial(part, true)
-                    : Material.matchMaterial(part)) == player.getInventory().getItemInMainHand().getType()) {
+                    : Material.matchMaterial(part)) == player.getInventory().getItemInHand().getType()) {
                 return true;
             }
         }
