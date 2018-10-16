@@ -37,7 +37,7 @@
 		<repository>
 			<!-- for bstats -->
 			<id>jitpack-repo</id>
-			<url>hhttps://jitpack.io/</url>
+			<url>https://jitpack.io/</url>
 		</repository>
 	</repositories>
 
