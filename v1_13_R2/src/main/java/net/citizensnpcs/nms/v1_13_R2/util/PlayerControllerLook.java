@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
+import net.citizensnpcs.util.BoundingBox;
 import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityLiving;
 import net.minecraft.server.v1_13_R2.MathHelper;
@@ -69,7 +70,8 @@ public class PlayerControllerLook {
         if ((entity instanceof EntityLiving))
             this.f = (entity.locY + entity.getHeadHeight());
         else {
-            this.f = ((entity.getBoundingBox().b + entity.getBoundingBox().e) / 2.0D);
+            BoundingBox bb = NMSBoundingBox.wrap(entity.getBoundingBox());
+            this.f = ((bb.minY + bb.maxY) / 2.0D);
         }
 
         this.g = entity.locZ;

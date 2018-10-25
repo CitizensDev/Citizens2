@@ -197,6 +197,7 @@ import net.minecraft.server.v1_13_R2.EnderDragonBattle;
 import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityBird;
 import net.minecraft.server.v1_13_R2.EntityEnderDragon;
+import net.minecraft.server.v1_13_R2.EntityFish;
 import net.minecraft.server.v1_13_R2.EntityFishingHook;
 import net.minecraft.server.v1_13_R2.EntityHorse;
 import net.minecraft.server.v1_13_R2.EntityHorseAbstract;
@@ -338,8 +339,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
-        AxisAlignedBB bb = NMSImpl.getHandle(handle).getBoundingBox();
-        return new BoundingBox(bb.a, bb.b, bb.c, bb.d, bb.e, bb.f);
+        return NMSBoundingBox.wrap(NMSImpl.getHandle(handle).getBoundingBox());
     }
 
     private float getDragonYaw(Entity handle, double tX, double tZ) {
@@ -1313,8 +1313,8 @@ public class NMSImpl implements NMSBridge {
                 }
             } else {
                 float f9 = 0.91F;
-                BlockPosition.b blockposition_b = BlockPosition.b.d(entity.locX, entity.getBoundingBox().b - 1.0D,
-                        entity.locZ);
+                BoundingBox bb = NMSBoundingBox.wrap(entity.getBoundingBox());
+                BlockPosition.b blockposition_b = BlockPosition.b.d(entity.locX, bb.minY - 1.0D, entity.locZ);
                 Throwable throwable = null;
                 float f4;
                 float f3;
@@ -1331,8 +1331,7 @@ public class NMSImpl implements NMSBridge {
                     entity.a(f, f1, f2, f3);
                     f9 = 0.91F;
                     if (entity.onGround) {
-                        f9 = entity.world
-                                .getType(blockposition_b.e(entity.locX, entity.getBoundingBox().b - 1.0D, entity.locZ))
+                        f9 = entity.world.getType(blockposition_b.e(entity.locX, bb.minY - 1.0D, entity.locZ))
                                 .getBlock().n() * 0.91F;
                     }
                     if (entity.z_()) {
@@ -1531,6 +1530,18 @@ public class NMSImpl implements NMSBridge {
         NMSImpl.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
+    public static void setNotInSchool(EntityFish entity) {
+        try {
+            if (ENTITY_FISH_NUM_IN_SCHOOL != null) {
+                ENTITY_FISH_NUM_IN_SCHOOL.set(entity, 2);
+            } else if (ENTITY_FISH_METHOD != null) {
+                ENTITY_FISH_METHOD.invoke(entity, false);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void setShulkerColor(Shulker shulker, DyeColor color) {
         ((EntityShulker) getHandle(shulker)).getDataWatcher().set(EntityShulker.COLOR, color.getWoolData());
     }
@@ -1541,9 +1552,9 @@ public class NMSImpl implements NMSBridge {
 
             entity.width = f;
             entity.length = f1;
-            entity.a(new AxisAlignedBB(entity.getBoundingBox().a, entity.getBoundingBox().b, entity.getBoundingBox().c,
-                    entity.getBoundingBox().a + entity.width, entity.getBoundingBox().b + entity.length,
-                    entity.getBoundingBox().c + entity.width));
+            BoundingBox bb = NMSBoundingBox.wrap(entity.getBoundingBox());
+            entity.a(new AxisAlignedBB(bb.minX, bb.minY, bb.minZ, bb.minX + entity.width, bb.minY + entity.length,
+                    bb.minZ + entity.width));
             if ((entity.width > f2) && (!justCreated) && (!entity.world.isClientSide))
                 entity.move(EnumMoveType.SELF, (f2 - entity.width) / 2, 0.0D, (f2 - entity.width) / 2);
         }
@@ -1564,11 +1575,11 @@ public class NMSImpl implements NMSBridge {
         } else if (entity instanceof EntityHumanNPC) {
             ((EntityHumanNPC) entity).updateAI();
         }
-    }
+    };
 
     public static void updateNavigation(NavigationAbstract navigation) {
         navigation.d();
-    };
+    }
 
     private static Field ADVANCEMENT_PLAYER_FIELD = NMS.getFinalField(EntityPlayer.class, "cf");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
@@ -1578,6 +1589,8 @@ public class NMSImpl implements NMSBridge {
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c");
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bR");
+    private static Method ENTITY_FISH_METHOD = NMS.getMethod(EntityFish.class, "t", false, boolean.class);
+    private static Field ENTITY_FISH_NUM_IN_SCHOOL;
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     public static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
@@ -1592,8 +1605,14 @@ public class NMSImpl implements NMSBridge {
     private static Field SKULL_PROFILE_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bL");
-
     static {
+        try {
+            ENTITY_FISH_NUM_IN_SCHOOL = NMS.getField(Class.forName("net.minecraft.server.v1_13_R2.EntityFishSchool"),
+                    "b", false);
+        } catch (ClassNotFoundException e) {
+            // 1.13.2
+        }
+
         try {
             Field field = NMS.getFinalField(EntityTypes.class, "REGISTRY", false);
             if (field == null) {

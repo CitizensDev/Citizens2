@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
+import net.citizensnpcs.util.BoundingBox;
 import net.minecraft.server.v1_13_R2.AttributeInstance;
 import net.minecraft.server.v1_13_R2.Block;
 import net.minecraft.server.v1_13_R2.BlockPosition;
@@ -342,7 +343,8 @@ public class PlayerNavigation extends NavigationAbstract {
     protected void E_() {
         superE_();
         if (this.pp) {
-            if (this.b.e(new BlockPosition(MathHelper.floor(this.a.locX), (int) (this.a.getBoundingBox().b + 0.5D),
+            BoundingBox bb = NMSBoundingBox.wrap(this.a.getBoundingBox());
+            if (this.b.e(new BlockPosition(MathHelper.floor(this.a.locX), (int) (bb.minY + 0.5D),
                     MathHelper.floor(this.a.locZ)))) {
                 return;
             }
@@ -500,10 +502,11 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     private int u() {
+        BoundingBox bb = NMSBoundingBox.wrap(this.a.getBoundingBox());
         if ((!this.a.isInWater()) || (!t())) {
-            return (int) (this.a.getBoundingBox().b + 0.5D);
+            return (int) (bb.minY + 0.5D);
         }
-        int i = (int) this.a.getBoundingBox().b;
+        int i = (int) bb.minY;
         Block localBlock = this.b
                 .getType(new BlockPosition(MathHelper.floor(this.a.locX), i, MathHelper.floor(this.a.locZ))).getBlock();
         int j = 0;
@@ -514,7 +517,7 @@ public class PlayerNavigation extends NavigationAbstract {
                     .getBlock();
             j++;
             if (j > 16) {
-                return (int) this.a.getBoundingBox().b;
+                return (int) bb.minY;
             }
         }
         return i;

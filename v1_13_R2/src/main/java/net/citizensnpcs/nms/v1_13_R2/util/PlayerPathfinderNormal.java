@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
+import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -7,6 +8,8 @@ import java.util.Iterator;
 import com.google.common.collect.Sets;
 
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
+import net.citizensnpcs.util.BoundingBox;
+import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_13_R2.AxisAlignedBB;
 import net.minecraft.server.v1_13_R2.Block;
 import net.minecraft.server.v1_13_R2.BlockCobbleWall;
@@ -388,8 +391,9 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     public PathPoint b() {
         int var1;
         BlockPosition var2;
+        BoundingBox bb = NMSBoundingBox.wrap(this.b.getBoundingBox());
         if (this.e() && this.b.isInWater()) {
-            var1 = (int) this.b.getBoundingBox().b;
+            var1 = (int) bb.minY;
             MutableBlockPosition var8 = new MutableBlockPosition(MathHelper.floor(this.b.locX), var1,
                     MathHelper.floor(this.b.locZ));
 
@@ -399,7 +403,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 var8.c(MathHelper.floor(this.b.locX), var1, MathHelper.floor(this.b.locZ));
             }
         } else if (this.b.onGround) {
-            var1 = MathHelper.floor(this.b.getBoundingBox().b + 0.5D);
+            var1 = MathHelper.floor(bb.minY + 0.5D);
         } else {
             for (var2 = new BlockPosition(
                     this.b); (this.a.getType(var2).isAir() || this.a.getType(var2).a(this.a, var2, PathMode.LAND))
@@ -414,10 +418,11 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         PathType var9 = this.a(this.b, var2.getX(), var1, var2.getZ());
         if (this.b.a(var9) < 0.0F) {
             HashSet var4 = Sets.newHashSet();
-            var4.add(new BlockPosition(this.b.getBoundingBox().a, var1, this.b.getBoundingBox().c));
-            var4.add(new BlockPosition(this.b.getBoundingBox().a, var1, this.b.getBoundingBox().f));
-            var4.add(new BlockPosition(this.b.getBoundingBox().d, var1, this.b.getBoundingBox().c));
-            var4.add(new BlockPosition(this.b.getBoundingBox().d, var1, this.b.getBoundingBox().f));
+            bb = NMSBoundingBox.wrap(this.b.getBoundingBox());
+            var4.add(new BlockPosition(bb.minX, var1, bb.minZ));
+            var4.add(new BlockPosition(bb.minX, var1, bb.maxZ));
+            var4.add(new BlockPosition(bb.maxX, var1, bb.minZ));
+            var4.add(new BlockPosition(bb.maxX, var1, bb.maxZ));
             Iterator var5 = var4.iterator();
 
             while (var5.hasNext()) {
@@ -472,7 +477,21 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
 
     public static double a(IBlockAccess var0, BlockPosition var1) {
         BlockPosition var2 = var1.down();
-        VoxelShape var3 = var0.getType(var2).h(var0, var2);
-        return var2.getY() + (var3.b() ? 0.0D : var3.c(EnumAxis.Y));
+        try {
+            VoxelShape var3 = var0.getType(var2).getCollisionShape(var0, var2);
+            return var2.getY() + (var3.isEmpty() ? 0.0D : var3.c(EnumAxis.Y));
+        } catch (NoSuchMethodError ex) {
+            try {
+                VoxelShape var3 = (VoxelShape) GET_COLLISION_SHAPE.invoke(var0.getType(var2), var0, var2);
+                return var2.getY() + (((Boolean) IS_EMPTY.invoke(var3)) ? 0.0D : var3.c(EnumAxis.Y));
+            } catch (Exception ex2) {
+                ex2.printStackTrace();
+                return 0;
+            }
+        }
     }
+
+    private static final Method GET_COLLISION_SHAPE = NMS.getMethod(IBlockData.class, "h", false, IBlockAccess.class,
+            BlockPosition.class);
+    private static final Method IS_EMPTY = NMS.getMethod(VoxelShape.class, "b", false);
 }

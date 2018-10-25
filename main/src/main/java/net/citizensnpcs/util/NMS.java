@@ -1,6 +1,7 @@
 package net.citizensnpcs.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
@@ -114,6 +115,21 @@ public class NMS {
 
     public static float getHorizontalMovement(org.bukkit.entity.Entity bukkitEntity) {
         return BRIDGE.getHorizontalMovement(bukkitEntity);
+    }
+
+    public static Method getMethod(Class<?> clazz, String method, boolean log, Class<?>... params) {
+        if (clazz == null)
+            return null;
+        Method f = null;
+        try {
+            f = clazz.getDeclaredMethod(method, params);
+            f.setAccessible(true);
+        } catch (Exception e) {
+            if (log) {
+                Messaging.logTr(Messages.ERROR_GETTING_METHOD, method, e.getLocalizedMessage());
+            }
+        }
+        return f;
     }
 
     public static NPC getNPC(Entity entity) {

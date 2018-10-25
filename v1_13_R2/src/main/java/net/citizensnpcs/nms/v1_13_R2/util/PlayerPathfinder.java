@@ -5,6 +5,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
+import net.citizensnpcs.util.BoundingBox;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityInsentient;
@@ -46,8 +47,8 @@ public class PlayerPathfinder extends Pathfinder {
 
     public PathEntity a(IBlockAccess paramIBlockAccess, EntityHumanNPC paramEntityInsentient, Entity paramEntity,
             float paramFloat) {
-        return a(paramIBlockAccess, paramEntityInsentient, paramEntity.locX, paramEntity.getBoundingBox().b,
-                paramEntity.locZ, paramFloat);
+        BoundingBox bb = NMSBoundingBox.wrap(paramEntity.getBoundingBox());
+        return a(paramIBlockAccess, paramEntityInsentient, paramEntity.locX, bb.minY, paramEntity.locZ, paramFloat);
     }
 
     @Override
@@ -73,8 +74,8 @@ public class PlayerPathfinder extends Pathfinder {
     @Override
     public PathEntity a(IBlockAccess paramIBlockAccess, EntityInsentient paramEntityInsentient, Entity paramEntity,
             float paramFloat) {
-        return a(paramIBlockAccess, paramEntityInsentient, paramEntity.locX, paramEntity.getBoundingBox().b,
-                paramEntity.locZ, paramFloat);
+        BoundingBox bb = NMSBoundingBox.wrap(paramEntity.getBoundingBox());
+        return a(paramIBlockAccess, paramEntityInsentient, paramEntity.locX, bb.minY, paramEntity.locZ, paramFloat);
     }
 
     private PathEntity a(PathPoint paramPathPoint1, PathPoint paramPathPoint2) {

@@ -66,6 +66,7 @@ public class Messages {
     public static final String ERROR_CLEARING_GOALS = "citizens.nms-errors.clearing-goals";
     public static final String ERROR_GETTING_FIELD = "citizens.nms-errors.getting-field";
     public static final String ERROR_GETTING_ID_MAPPING = "citizens.nms-errors.getting-id-mapping";
+    public static final String ERROR_GETTING_METHOD = "citizens.nms-errors.getting-method";
     public static final String ERROR_INITALISING_SUB_PLUGIN = "citizens.sub-plugins.error-on-load";
     public static final String ERROR_LOADING_ECONOMY = "citizens.economy.error-loading";
     public static final String ERROR_SETTING_ENTITY_PERSISTENT = "citizens.nms-errors.error-setting-persistent";
