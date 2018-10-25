@@ -58,8 +58,7 @@ public class Inventory extends Trait {
             return;
         ItemStack[] contents = event.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
-            this.contents[i] = contents[i];
-            this.view.setItem(i, contents[i]);
+            this.contents[i] = contents[i]; 
             if (i == 0) {
                 npc.getTrait(Equipment.class).setItemInHand(contents[i]);
             }
