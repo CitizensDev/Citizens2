@@ -35,8 +35,9 @@
 			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
 		</repository>
 		<repository>
-			<id>bstats-repo</id>
-			<url>https://repo.bstats.org/content/repositories/releases/</url>
+			<!-- for bstats -->
+			<id>jitpack-repo</id>
+			<url>https://jitpack.io/</url>
 		</repository>
 	</repositories>
 
@@ -48,12 +49,12 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
-            <groupId>net.sf.trove4j</groupId>
-            <artifactId>trove4j</artifactId>
-            <version>3.0.3</version>
-            <scope>compile</scope>
-        </dependency> 
+		<dependency>
+			<groupId>net.sf.trove4j</groupId>
+			<artifactId>trove4j</artifactId>
+			<version>3.0.3</version>
+			<scope>compile</scope>
+		</dependency> 
 		<dependency>
 			<groupId>net.citizensnpcs</groupId>
 			<artifactId>citizensapi</artifactId>
@@ -69,7 +70,7 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.bstats</groupId>
+			<groupId>org.bstats.bStats-Metrics</groupId>
 			<artifactId>bstats-bukkit</artifactId>
 			<version>${bstats.version}</version>
 			<scope>compile</scope>
