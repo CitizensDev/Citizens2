@@ -43,9 +43,6 @@ public class Inventory extends Trait {
      */
     public ItemStack[] getContents() {
         if (view != null) {
-            for (int i = 0; i < view.getSize(); i++) {
-                view.setItem(i, contents[i]);
-            }
             return view.getContents();
         }
         return contents;
@@ -62,6 +59,7 @@ public class Inventory extends Trait {
         ItemStack[] contents = event.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
             this.contents[i] = contents[i];
+            this.view.setItem(i, contents[i]);
             if (i == 0) {
                 npc.getTrait(Equipment.class).setItemInHand(contents[i]);
             }
@@ -93,7 +91,8 @@ public class Inventory extends Trait {
         setContents(contents);
         int size = npc.getEntity() instanceof Player ? 36
                 : npc.getEntity() instanceof InventoryHolder
-                        ? ((InventoryHolder) npc.getEntity()).getInventory().getSize() : contents.length;
+                        ? ((InventoryHolder) npc.getEntity()).getInventory().getSize()
+                        : contents.length;
         int rem = size % 9;
         if (rem != 0) {
             size += 9 - rem; // round up to nearest multiple of 9
@@ -101,6 +100,9 @@ public class Inventory extends Trait {
         view = Bukkit.createInventory(
                 npc.getEntity() instanceof InventoryHolder ? ((InventoryHolder) npc.getEntity()) : null, size,
                 npc.getName() + "'s Inventory");
+        for (int i = 0; i < view.getSize(); i++) {
+            view.setItem(i, contents[i]);
+        }
     }
 
     public void openInventory(Player sender) {
@@ -151,6 +153,11 @@ public class Inventory extends Trait {
             contents = ((Player) entity).getInventory().getContents();
             npc.getTrait(Equipment.class).setItemInHand(contents[0]);
         }
+        if (view != null) {
+            for (int i = 0; i < view.getSize(); i++) {
+                view.setItem(i, contents[i]);
+            }
+        }
     }
 
     /**
@@ -180,6 +187,11 @@ public class Inventory extends Trait {
 
         for (int i = 0; i < maxCopySize; i++) {
             dest.setItem(i, contents[i]);
+        }
+        if (view != null) {
+            for (int i = 0; i < view.getSize(); i++) {
+                view.setItem(i, contents[i]);
+            }
         }
     }
 
