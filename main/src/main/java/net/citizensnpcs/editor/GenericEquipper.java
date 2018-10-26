@@ -79,10 +79,14 @@ public class GenericEquipper implements Equipper {
     private static Set<Material> CHESTPLATES = EnumSet.of(Material.CHAINMAIL_CHESTPLATE, Material.DIAMOND_CHESTPLATE,
             Material.IRON_CHESTPLATE, Material.LEATHER_CHESTPLATE,
             SpigotUtil.isUsing1_13API() ? Material.GOLDEN_CHESTPLATE : Material.valueOf("GOLD_CHESTPLATE"));
-    private static Set<Material> HELMETS = EnumSet.of(Material.PUMPKIN, Material.JACK_O_LANTERN,
-            Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.DIAMOND_HELMET,
-            SpigotUtil.isUsing1_13API() ? Material.TURTLE_HELMET : Material.LEATHER_HELMET,
-            SpigotUtil.isUsing1_13API() ? Material.GOLDEN_HELMET : Material.valueOf("GOLD_HELMET"));
+    private static Set<Material> HELMETS = SpigotUtil.isUsing1_13API()
+            ? EnumSet.of(Material.PUMPKIN, Material.JACK_O_LANTERN, Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET,
+                    Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.TURTLE_HELMET, Material.GOLDEN_HELMET,
+                    Material.CREEPER_HEAD, Material.DRAGON_HEAD, Material.PLAYER_HEAD, Material.SKELETON_SKULL,
+                    Material.ZOMBIE_HEAD, Material.WITHER_SKELETON_SKULL)
+            : EnumSet.of(Material.PUMPKIN, Material.JACK_O_LANTERN, Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET,
+                    Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.valueOf("SKULL_ITEM"),
+                    Material.valueOf("GOLD_HELMET"));
     private static Set<Material> LEGGINGS = EnumSet.of(Material.CHAINMAIL_LEGGINGS, Material.DIAMOND_LEGGINGS,
             Material.IRON_LEGGINGS, Material.LEATHER_LEGGINGS,
             SpigotUtil.isUsing1_13API() ? Material.GOLDEN_LEGGINGS : Material.valueOf("GOLD_LEGGINGS"));
