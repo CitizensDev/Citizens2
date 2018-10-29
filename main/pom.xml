@@ -17,8 +17,6 @@
 		<vault.version>1.5.4</vault.version>
 		<powermock.version>1.4.12</powermock.version>
 		<bstats.version>1.2</bstats.version>
-		<build.number>Unknown</build.number>
-		<BUILD_NUMBER>Unknown</BUILD_NUMBER>
 	</properties>
 
 	<repositories>
