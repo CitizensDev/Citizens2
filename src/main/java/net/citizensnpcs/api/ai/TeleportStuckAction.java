@@ -23,8 +23,8 @@ public class TeleportStuckAction implements StuckAction {
         if (!npc.isSpawned())
             return false;
         Location base = navigator.getTargetAsLocation();
-        if (npc.getEntity().getWorld() == base.getWorld()
-                && npc.getEntity().getLocation().distanceSquared(base) <= RANGE)
+        if (base == null || npc.getEntity().getWorld() == base.getWorld()
+                && npc.getEntity().getLocation(CACHE_LOC).distanceSquared(base) <= RANGE)
             return true;
         Block block = base.getBlock();
         int iterations = 0;
@@ -39,6 +39,7 @@ public class TeleportStuckAction implements StuckAction {
         return false;
     }
 
+    private static final Location CACHE_LOC = new Location(null, 0, 0, 0);
     public static TeleportStuckAction INSTANCE = new TeleportStuckAction();
     private static final int MAX_ITERATIONS = 10;
     private static final double RANGE = 10;
