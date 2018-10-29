@@ -288,10 +288,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     private void stopNavigating(CancelReason reason) {
         if (!isNavigating())
             return;
-        if (executing != null) {
-            executing.stop();
-        }
-        executing = null;
         Iterator<NavigatorCallback> itr = localParams.callbacks().iterator();
         while (itr.hasNext()) {
             itr.next().onCompletion(reason);
