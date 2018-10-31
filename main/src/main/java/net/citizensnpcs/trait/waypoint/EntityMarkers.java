@@ -43,7 +43,7 @@ public class EntityMarkers<T> {
 
     public Entity spawnMarker(World world, Location at) {
         NPC npc = registry.createNPC(EntityType.ENDER_SIGNAL, "");
-        npc.spawn(at, SpawnReason.CREATE);
+        npc.spawn(at.clone().add(0.5, 0, 0.5), SpawnReason.CREATE);
         return npc.getEntity();
     }
 }
