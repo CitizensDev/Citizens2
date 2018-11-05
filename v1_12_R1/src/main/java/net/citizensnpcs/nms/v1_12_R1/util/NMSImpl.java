@@ -474,7 +474,7 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void stop() {
-                if (navigation.l() != null) {
+                if (params.debug() && navigation.l() != null) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         for (int i = 0; i < navigation.l().d(); i++) {
                             PathPoint pp = navigation.l().a(i);
