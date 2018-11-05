@@ -19,6 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -486,13 +487,13 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void stop() {
-                if (navigation.m() != null) {
+                if (params.debug() && navigation.m() != null) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         for (int i = 0; i < navigation.m().d(); i++) {
                             PathPoint pp = navigation.m().a(i);
                             org.bukkit.block.Block block = new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld())
                                     .getBlock();
-                            player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
+                            player.sendBlockChange(block.getLocation(), block.getBlockData());
                         }
                     }
                 }
@@ -519,11 +520,11 @@ public class NMSImpl implements NMSBridge {
                     lastSpeed = params.speed();
                 }
                 if (params.debug() && !NMSImpl.isNavigationFinished(navigation)) {
+                    BlockData data = Material.DANDELION.createBlockData();
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         for (int i = 0; i < navigation.m().d(); i++) {
                             PathPoint pp = navigation.m().a(i);
-                            player.sendBlockChange(new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld()),
-                                    Material.SUNFLOWER, (byte) 0);
+                            player.sendBlockChange(new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld()), data);
                         }
                     }
                 }
