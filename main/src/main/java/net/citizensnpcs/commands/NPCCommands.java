@@ -75,6 +75,7 @@ import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.FollowTrait;
+import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
@@ -564,7 +565,7 @@ public class NPCCommands {
             Messaging.sendErrorTr(sender, Messages.GAMEMODE_INVALID, args.getString(1));
             return;
         }
-        player.setGameMode(mode);
+        npc.getTrait(GameModeTrait.class).setGameMode(mode);
         Messaging.sendTr(sender, Messages.GAMEMODE_SET, mode.name().toLowerCase());
     }
 

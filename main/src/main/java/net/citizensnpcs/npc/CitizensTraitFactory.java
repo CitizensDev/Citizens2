@@ -25,6 +25,7 @@ import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.FollowTrait;
+import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
@@ -57,6 +58,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(CurrentLocation.class));
         registerTrait(TraitInfo.create(Equipment.class));
         registerTrait(TraitInfo.create(FollowTrait.class));
+        registerTrait(TraitInfo.create(GameModeTrait.class));
         registerTrait(TraitInfo.create(Gravity.class));
         registerTrait(TraitInfo.create(HorseModifiers.class));
         registerTrait(TraitInfo.create(Inventory.class));
