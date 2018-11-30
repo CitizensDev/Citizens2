@@ -205,6 +205,9 @@ public class CitizensNPC extends AbstractNPC {
         data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
 
         at = at.clone();
+        if(!at.getChunk().isLoaded())
+            at.getChunk().load(true);
+
         getTrait(CurrentLocation.class).setLocation(at);
         entityController.spawn(at, this);
 
