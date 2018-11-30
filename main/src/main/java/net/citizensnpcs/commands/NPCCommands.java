@@ -518,7 +518,7 @@ public class NPCCommands {
             desc = "Toggles NPC following you",
             modifiers = { "follow" },
             min = 1,
-            max = 1,
+            max = 2,
             permission = "citizens.npc.follow")
     public void follow(CommandContext args, Player sender, NPC npc) throws CommandException {
         boolean protect = args.hasFlag('p');
