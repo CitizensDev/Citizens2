@@ -221,8 +221,6 @@ public class CitizensNPC extends AbstractNPC {
             }
         }
 
-        getEntity().teleport(at);
-
         if (!couldSpawn) {
             Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.",
                     Util.isLoaded(at) ? "Util.isLoaded true" : "Util.isLoaded false");
@@ -231,6 +229,8 @@ public class CitizensNPC extends AbstractNPC {
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
         }
+
+        getEntity().teleport(at);
 
         NMS.setHeadYaw(getEntity(), at.getYaw());
 
