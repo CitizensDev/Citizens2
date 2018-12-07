@@ -94,6 +94,9 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                         return null;
                     }
                 }
+                else {
+                    break;
+                }
             }
             if (n == -2) {
                 return null;
