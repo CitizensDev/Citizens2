@@ -461,7 +461,19 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     || var7 instanceof BlockFenceGate && !var6.get(BlockFenceGate.OPEN).booleanValue()) {
                 return PathType.FENCE;
             } else {
-                Fluid var9 = var1.getFluid(var5);
+                Fluid var9;
+                try {
+                    var9 = var1.getFluid(var5);
+                }
+                catch (NoSuchMethodError ex) {
+                    try {
+                        var9 = (Fluid) GET_FLUID.invoke(var1, var5);
+                    }
+                    catch (Throwable ex2) {
+                        ex2.printStackTrace();
+                        return PathType.BLOCKED;
+                    }
+                }
                 if (var9.a(TagsFluid.WATER)) {
                     return PathType.WATER;
                 } else if (var9.a(TagsFluid.LAVA)) {
@@ -494,4 +506,5 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     private static final Method GET_COLLISION_SHAPE = NMS.getMethod(IBlockData.class, "h", false, IBlockAccess.class,
             BlockPosition.class);
     private static final Method IS_EMPTY = NMS.getMethod(VoxelShape.class, "b", false);
+    private static final Method GET_FLUID = NMS.getMethod(IBlockAccess.class, "b", false, BlockPosition.class);
 }
