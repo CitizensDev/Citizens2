@@ -461,7 +461,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     || var7 instanceof BlockFenceGate && !var6.get(BlockFenceGate.OPEN).booleanValue()) {
                 return PathType.FENCE;
             } else {
-                Fluid var9 = var1.b(var5);
+                Fluid var9 = var1.getFluid(var5);
                 if (var9.a(TagsFluid.WATER)) {
                     return PathType.WATER;
                 } else if (var9.a(TagsFluid.LAVA)) {
