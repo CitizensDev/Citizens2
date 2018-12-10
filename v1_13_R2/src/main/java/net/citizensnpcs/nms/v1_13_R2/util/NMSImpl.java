@@ -1405,10 +1405,20 @@ public class NMSImpl implements NMSBridge {
         BossBattleServer bserver = null;
         try {
             if (entity.getType() == EntityType.WITHER) {
-                bserver = (BossBattleServer) WITHER_BOSS_BAR_FIELD.get(NMSImpl.getHandle(entity));
+                try {
+                    bserver = ((EntityWither) NMSImpl.getHandle(entity)).bossBattle;
+                }
+                catch (NoSuchFieldError ex) {
+                    bserver = (BossBattleServer) WITHER_BOSS_BAR_FIELD.get(NMSImpl.getHandle(entity));
+                }
             } else if (entity.getType() == EntityType.ENDER_DRAGON) {
-                bserver = (BossBattleServer) ENDERDRAGON_BATTLE_BAR_FIELD
-                        .get(ENDERDRAGON_BATTLE_FIELD.get(NMSImpl.getHandle(entity)));
+                try {
+                    bserver = ((EnderDragonBattle) ENDERDRAGON_BATTLE_FIELD.get(NMSImpl.getHandle(entity))).bossBattle;
+                }
+                catch (NoSuchFieldError ex) {
+                    bserver = (BossBattleServer) ENDERDRAGON_BATTLE_BAR_FIELD
+                            .get(ENDERDRAGON_BATTLE_FIELD.get(NMSImpl.getHandle(entity)));
+                }
             }
         } catch (Exception e) {
         }
@@ -1588,7 +1598,7 @@ public class NMSImpl implements NMSBridge {
             EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
-    private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c");
+    private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c", false);
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bR");
     private static Method ENTITY_FISH_METHOD = NMS.getMethod(EntityFish.class, "t", false, boolean.class);
     private static Field ENTITY_FISH_NUM_IN_SCHOOL;
@@ -1605,7 +1615,7 @@ public class NMSImpl implements NMSBridge {
     private static final Random RANDOM = Util.getFastRandom();
     private static Field SKULL_PROFILE_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
-    private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bL");
+    private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bL", false);
     static {
         try {
             ENTITY_FISH_NUM_IN_SCHOOL = NMS.getField(Class.forName("net.minecraft.server.v1_13_R2.EntityFishSchool"),
