@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import net.minecraft.server.v1_13_R2.*;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -182,59 +183,6 @@ import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_13_R2.AttributeInstance;
-import net.minecraft.server.v1_13_R2.AxisAlignedBB;
-import net.minecraft.server.v1_13_R2.Block;
-import net.minecraft.server.v1_13_R2.BlockPosition;
-import net.minecraft.server.v1_13_R2.BossBattleServer;
-import net.minecraft.server.v1_13_R2.ControllerJump;
-import net.minecraft.server.v1_13_R2.CrashReport;
-import net.minecraft.server.v1_13_R2.CrashReportSystemDetails;
-import net.minecraft.server.v1_13_R2.DamageSource;
-import net.minecraft.server.v1_13_R2.DataWatcherObject;
-import net.minecraft.server.v1_13_R2.EnchantmentManager;
-import net.minecraft.server.v1_13_R2.Enchantments;
-import net.minecraft.server.v1_13_R2.EnderDragonBattle;
-import net.minecraft.server.v1_13_R2.Entity;
-import net.minecraft.server.v1_13_R2.EntityBird;
-import net.minecraft.server.v1_13_R2.EntityEnderDragon;
-import net.minecraft.server.v1_13_R2.EntityFish;
-import net.minecraft.server.v1_13_R2.EntityFishingHook;
-import net.minecraft.server.v1_13_R2.EntityHorse;
-import net.minecraft.server.v1_13_R2.EntityHorseAbstract;
-import net.minecraft.server.v1_13_R2.EntityHuman;
-import net.minecraft.server.v1_13_R2.EntityInsentient;
-import net.minecraft.server.v1_13_R2.EntityLiving;
-import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
-import net.minecraft.server.v1_13_R2.EntityPlayer;
-import net.minecraft.server.v1_13_R2.EntityPolarBear;
-import net.minecraft.server.v1_13_R2.EntityRabbit;
-import net.minecraft.server.v1_13_R2.EntityShulker;
-import net.minecraft.server.v1_13_R2.EntityTameableAnimal;
-import net.minecraft.server.v1_13_R2.EntityTracker;
-import net.minecraft.server.v1_13_R2.EntityTrackerEntry;
-import net.minecraft.server.v1_13_R2.EntityTypes;
-import net.minecraft.server.v1_13_R2.EntityWither;
-import net.minecraft.server.v1_13_R2.EnumMoveType;
-import net.minecraft.server.v1_13_R2.GenericAttributes;
-import net.minecraft.server.v1_13_R2.IRegistry;
-import net.minecraft.server.v1_13_R2.MathHelper;
-import net.minecraft.server.v1_13_R2.MinecraftKey;
-import net.minecraft.server.v1_13_R2.MobEffects;
-import net.minecraft.server.v1_13_R2.NavigationAbstract;
-import net.minecraft.server.v1_13_R2.NetworkManager;
-import net.minecraft.server.v1_13_R2.Packet;
-import net.minecraft.server.v1_13_R2.PacketPlayOutEntityTeleport;
-import net.minecraft.server.v1_13_R2.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_13_R2.PathEntity;
-import net.minecraft.server.v1_13_R2.PathPoint;
-import net.minecraft.server.v1_13_R2.PathfinderGoalSelector;
-import net.minecraft.server.v1_13_R2.RegistryMaterials;
-import net.minecraft.server.v1_13_R2.ReportedException;
-import net.minecraft.server.v1_13_R2.SoundEffect;
-import net.minecraft.server.v1_13_R2.SoundEffects;
-import net.minecraft.server.v1_13_R2.Vec3D;
-import net.minecraft.server.v1_13_R2.WorldServer;
 
 @SuppressWarnings("unchecked")
 public class NMSImpl implements NMSBridge {
@@ -1332,7 +1280,7 @@ public class NMSImpl implements NMSBridge {
                     entity.a(f, f1, f2, f3);
                     f9 = 0.91F;
                     if (entity.onGround) {
-                        f9 = entity.world.getType(blockposition_b.e(entity.locX, bb.minY - 1.0D, entity.locZ))
+                        f9 = entity.world.getType(getBlockPositionBE(blockposition_b, entity.locX, bb.minY - 1.0D, entity.locZ))
                                 .getBlock().n() * 0.91F;
                     }
                     if (entity.z_()) {
@@ -1356,7 +1304,7 @@ public class NMSImpl implements NMSBridge {
                                 - entity.motY) * 0.2D;
                         entity.fallDistance = 0.0F;
                     } else {
-                        blockposition_b.e(entity.locX, 0.0D, entity.locZ);
+                        getBlockPositionBE(blockposition_b, entity.locX, 0.0D, entity.locZ);
                         if ((entity.world.isClientSide) && ((!entity.world.isLoaded(blockposition_b))
                                 || (!entity.world.getChunkAtWorldCoords(blockposition_b).y()))) {
                             if (entity.locY > 0.0D) {
@@ -1400,6 +1348,23 @@ public class NMSImpl implements NMSBridge {
         entity.aJ += (f3 - entity.aJ) * 0.4F;
         entity.aK += entity.aJ;
     }
+
+    private static BlockPosition.b getBlockPositionBE(BlockPosition.b blockPos, double x, double y, double z) {
+        try {
+            return blockPos.c(x, y, z);
+        }
+        catch (NoSuchMethodError ex) {
+            try {
+                return (BlockPosition.b) BLOCK_POSITION_B_D.invoke(blockPos, x, y, z);
+            }
+            catch (Throwable ex2) {
+                ex2.printStackTrace();
+                return null;
+            }
+        }
+    }
+
+    private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.b.class, "e", false, double.class, double.class, double.class);
 
     public static BossBar getBossBar(org.bukkit.entity.Entity entity) {
         BossBattleServer bserver = null;

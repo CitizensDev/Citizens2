@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
+import net.citizensnpcs.util.NMS;
+import net.minecraft.server.v1_13_R2.*;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -14,14 +16,8 @@ import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_13_R2.BlockPosition;
-import net.minecraft.server.v1_13_R2.DamageSource;
-import net.minecraft.server.v1_13_R2.EntityAIBodyControl;
-import net.minecraft.server.v1_13_R2.EntityShulker;
-import net.minecraft.server.v1_13_R2.IBlockData;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.SoundEffect;
-import net.minecraft.server.v1_13_R2.World;
+
+import java.lang.reflect.Method;
 
 public class ShulkerController extends MobEntityController {
     public ShulkerController() {
@@ -168,11 +164,23 @@ public class ShulkerController extends MobEntityController {
         }
 
         @Override
-        public void k() {
+        public void movementTick() {
             if (npc == null) {
-                super.k();
+                try {
+                    super.movementTick();
+                }
+                catch (NoSuchMethodError ex) {
+                    try {
+                        MOVEMENT_TICK.invoke(this);
+                    }
+                    catch (Throwable ex2) {
+                        ex2.printStackTrace();
+                    }
+                }
             }
         }
+
+        private static final Method MOVEMENT_TICK = NMS.getMethod(EntityShulker.class, "k", false);
 
         @Override
         protected EntityAIBodyControl o() {

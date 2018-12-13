@@ -185,6 +185,8 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         return var11;
     }
 
+    private static final Method BLOCK_POSITION_B_C = NMS.getMethod(BlockPosition.b.class, "f", false, int.class, int.class, int.class);
+
     public PathType a(IBlockAccess var1, int var2, int var3, int var4, PathType var5) {
         if (var5 == PathType.WALKABLE) {
             BlockPosition.b var6 = BlockPosition.b.r();
@@ -194,7 +196,20 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 for (int var8 = -1; var8 <= 1; ++var8) {
                     for (int var9 = -1; var9 <= 1; ++var9) {
                         if (var8 != 0 || var9 != 0) {
-                            Block var10 = var1.getType(var6.f(var8 + var2, var3, var9 + var4)).getBlock();
+                            BlockPosition blockPos;
+                            try {
+                                blockPos = var6.c(var8 + var2, var3, var9 + var4);
+                            }
+                            catch (NoSuchMethodError ex) {
+                                try {
+                                    blockPos = (BlockPosition.b) BLOCK_POSITION_B_C.invoke(var6, var8 + var2, var3, var9 + var4);
+                                }
+                                catch (Throwable ex2) {
+                                    ex2.printStackTrace();
+                                    return PathType.BLOCKED;
+                                }
+                            }
+                            Block var10 = var1.getType(blockPos).getBlock();
                             if (var10 == Blocks.CACTUS) {
                                 var5 = PathType.DANGER_CACTUS;
                             } else if (var10 == Blocks.FIRE) {

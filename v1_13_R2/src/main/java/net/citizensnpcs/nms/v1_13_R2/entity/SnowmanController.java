@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
+import net.citizensnpcs.util.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -21,6 +22,8 @@ import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.SoundEffect;
 import net.minecraft.server.v1_13_R2.World;
+
+import java.lang.reflect.Method;
 
 public class SnowmanController extends MobEntityController {
     public SnowmanController() {
@@ -167,17 +170,29 @@ public class SnowmanController extends MobEntityController {
         }
 
         @Override
-        public void k() {
+        public void movementTick() {
             boolean allowsGriefing = this.world.getGameRules().getBoolean("mobGriefing");
             if (npc != null) {
                 this.world.getGameRules().set("mobGriefing", "false", this.world.getMinecraftServer());
             }
-            super.k();
+            try {
+                super.movementTick();
+            }
+            catch (NoSuchMethodError ex) {
+                try {
+                    MOVEMENT_TICK.invoke(this);
+                }
+                catch (Throwable ex2) {
+                    ex2.printStackTrace();
+                }
+            }
             if (npc != null) {
                 this.world.getGameRules().set("mobGriefing", Boolean.toString(allowsGriefing),
                         this.world.getMinecraftServer());
             }
         }
+
+        private static final Method MOVEMENT_TICK = NMS.getMethod(EntitySnowman.class, "k", false);
 
         @Override
         public void mobTick() {

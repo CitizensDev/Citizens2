@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
+import net.citizensnpcs.util.NMS;
+import net.minecraft.server.v1_13_R2.*;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEnderDragon;
@@ -14,11 +16,8 @@ import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_13_R2.DamageSource;
-import net.minecraft.server.v1_13_R2.EntityEnderDragon;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.SoundEffect;
-import net.minecraft.server.v1_13_R2.World;
+
+import java.lang.reflect.Method;
 
 public class EnderDragonController extends MobEntityController {
     public EnderDragonController() {
@@ -166,7 +165,7 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
-        public void k() {
+        public void movementTick() {
             if (npc != null) {
                 npc.update();
                 if (motX != 0 || motY != 0 || motZ != 0) {
@@ -177,8 +176,20 @@ public class EnderDragonController extends MobEntityController {
                     setPosition(locX + motX, locY + motY, locZ + motZ);
                 }
             } else {
-                super.k();
+                try {
+                    super.movementTick();
+                }
+                catch (NoSuchMethodError ex) {
+                    try {
+                        MOVEMENT_TICK.invoke(this);
+                    }
+                    catch (Throwable ex2) {
+                        ex2.printStackTrace();
+                    }
+                }
             }
         }
+
+        private static final Method MOVEMENT_TICK = NMS.getMethod(EntityEnderDragon.class, "k", false);
     }
 }

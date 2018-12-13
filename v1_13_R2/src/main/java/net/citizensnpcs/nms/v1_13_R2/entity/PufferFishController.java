@@ -169,11 +169,6 @@ public class PufferFishController extends MobEntityController {
         }
 
         @Override
-        public void k() {
-            super.k();
-        }
-
-        @Override
         public void mobTick() {
             if (npc != null) {
                 NMSImpl.setNotInSchool(this);

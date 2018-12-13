@@ -2,28 +2,10 @@ package net.citizensnpcs.nms.v1_13_R2.util;
 
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
 import net.citizensnpcs.util.BoundingBox;
-import net.minecraft.server.v1_13_R2.AttributeInstance;
-import net.minecraft.server.v1_13_R2.Block;
-import net.minecraft.server.v1_13_R2.BlockPosition;
-import net.minecraft.server.v1_13_R2.Blocks;
-import net.minecraft.server.v1_13_R2.ChunkCache;
-import net.minecraft.server.v1_13_R2.Entity;
-import net.minecraft.server.v1_13_R2.EntityInsentient;
-import net.minecraft.server.v1_13_R2.EntityTypes;
-import net.minecraft.server.v1_13_R2.GenericAttributes;
-import net.minecraft.server.v1_13_R2.IBlockData;
-import net.minecraft.server.v1_13_R2.MathHelper;
-import net.minecraft.server.v1_13_R2.NavigationAbstract;
-import net.minecraft.server.v1_13_R2.PathEntity;
-import net.minecraft.server.v1_13_R2.PathMode;
-import net.minecraft.server.v1_13_R2.PathPoint;
-import net.minecraft.server.v1_13_R2.PathType;
-import net.minecraft.server.v1_13_R2.Pathfinder;
-import net.minecraft.server.v1_13_R2.PathfinderAbstract;
-import net.minecraft.server.v1_13_R2.PathfinderNormal;
-import net.minecraft.server.v1_13_R2.SystemUtils;
-import net.minecraft.server.v1_13_R2.Vec3D;
-import net.minecraft.server.v1_13_R2.World;
+import net.citizensnpcs.util.NMS;
+import net.minecraft.server.v1_13_R2.*;
+
+import java.lang.reflect.Method;
 
 public class PlayerNavigation extends NavigationAbstract {
     protected EntityHumanNPC a;
@@ -165,7 +147,7 @@ public class PlayerNavigation extends NavigationAbstract {
         if ((this.c != null) && (!this.c.b())) {
             Vec3D localVec3D = this.c.f();
             if (localVec3D.equals(this.h)) {
-                this.i += SystemUtils.b() - this.j;
+                this.i += getMonotonicMillis() - this.j;
             } else {
                 this.h = localVec3D;
                 double d1 = paramVec3D.f(this.h);
@@ -177,9 +159,26 @@ public class PlayerNavigation extends NavigationAbstract {
                 this.k = 0.0D;
                 q();
             }
-            this.j = SystemUtils.b();
+            this.j = getMonotonicMillis();
         }
     }
+
+    private static long getMonotonicMillis() {
+        try {
+            return SystemUtils.getMonotonicMillis();
+        }
+        catch (NoSuchMethodError ex) {
+            try {
+                return (long) GET_MONOTONIC_MILLIS.invoke(null);
+            }
+            catch (Throwable ex2) {
+                ex2.printStackTrace();
+                return 0;
+            }
+        }
+    }
+
+    private static final Method GET_MONOTONIC_MILLIS = NMS.getMethod(SystemUtils.class, "b", false);
 
     @Override
     protected boolean a(Vec3D paramVec3D1, Vec3D paramVec3D2, int paramInt1, int paramInt2, int paramInt3) {
@@ -464,16 +463,39 @@ public class PlayerNavigation extends NavigationAbstract {
         this.q = paramBlockPosition;
 
         float f1 = j();
-        this.b.methodProfiler.a("pathfind");
+        try {
+            this.b.methodProfiler.enter("pathfind");
+        }
+        catch (NoSuchMethodError ex) {
+            try {
+                PROFILER_ENTER.invoke(this.b.methodProfiler, "pathfind");
+            }
+            catch (Throwable ex2) {
+                ex2.printStackTrace();
+            }
+        }
         BlockPosition localBlockPosition = new BlockPosition(this.a);
         int i1 = (int) (f1 + 8.0F);
 
         ChunkCache localChunkCache = new ChunkCache(this.b, localBlockPosition.a(-i1, -i1, -i1),
                 localBlockPosition.a(i1, i1, i1), 0);
         PathEntity localPathEntity = this.r.a(localChunkCache, this.a, this.q, f1);
-        this.b.methodProfiler.e();
+        try {
+            this.b.methodProfiler.exit();
+        }
+        catch (NoSuchMethodError ex) {
+            try {
+                PROFILER_EXIT.invoke(this.b.methodProfiler);
+            }
+            catch (Throwable ex2) {
+                ex2.printStackTrace();
+            }
+        }
         return localPathEntity;
     }
+
+    private static final Method PROFILER_ENTER = NMS.getMethod(MethodProfiler.class, "a", false, String.class);
+    private static final Method PROFILER_EXIT = NMS.getMethod(MethodProfiler.class, "e", false);
 
     protected void superE_() {
         if (this.c == null) {
