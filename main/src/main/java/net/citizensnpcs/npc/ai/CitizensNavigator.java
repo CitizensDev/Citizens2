@@ -1,6 +1,8 @@
 package net.citizensnpcs.npc.ai;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -289,9 +291,13 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (!isNavigating())
             return;
         Iterator<NavigatorCallback> itr = localParams.callbacks().iterator();
+        List<NavigatorCallback> callbacks = new ArrayList<NavigatorCallback>();
         while (itr.hasNext()) {
-            itr.next().onCompletion(reason);
+            callbacks.add(itr.next());
             itr.remove();
+        }
+        for (NavigatorCallback callback : callbacks) {
+            callback.onCompletion(reason);
         }
         if (reason == null) {
             stopNavigating();
