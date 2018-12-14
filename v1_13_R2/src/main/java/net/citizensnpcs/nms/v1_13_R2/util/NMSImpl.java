@@ -1437,17 +1437,26 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void initNetworkManager(NetworkManager network) {
-        if (NETWORK_ADDRESS == null)
-            return;
+        network.channel = new EmptyChannel(null);
+        SocketAddress socketAddress = new SocketAddress() {
+            private static final long serialVersionUID = 8207338859896320185L;
+        };
         try {
-            network.channel = new EmptyChannel(null);
-            NETWORK_ADDRESS.set(network, new SocketAddress() {
-                private static final long serialVersionUID = 8207338859896320185L;
-            });
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            network.socketAddress = socketAddress;
+        }
+        catch (NoSuchFieldError ex) {
+            if (NETWORK_ADDRESS == null) {
+                return;
+            }
+            try {
+                NETWORK_ADDRESS.set(network, socketAddress);
+            }
+            catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1573,7 +1582,7 @@ public class NMSImpl implements NMSBridge {
     private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "bg");
     private static Method MAKE_REQUEST;
     private static Field NAVIGATION_WORLD_FIELD = NMS.getField(NavigationAbstract.class, "b");
-    public static Field NETWORK_ADDRESS = NMS.getField(NetworkManager.class, "l");
+    public static Field NETWORK_ADDRESS = NMS.getField(NetworkManager.class, "l", false);
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "p");
     private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bC");
