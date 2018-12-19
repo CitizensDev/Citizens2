@@ -1,10 +1,9 @@
 package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import java.util.UUID;
-import java.util.regex.Pattern;
 
+import net.citizensnpcs.util.Util;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.entity.Entity;
@@ -35,38 +34,10 @@ public class HumanController extends AbstractEntityController {
         final WorldServer nmsWorld = ((CraftWorld) at.getWorld()).getHandle();
         String coloredName = Colorizer.parseColors(npc.getFullName());
 
-        String name = coloredName, prefix = null, suffix = null;
-        if (coloredName.length() > 16) {
-            if (coloredName.length() >= 30) {
-                prefix = coloredName.substring(0, 16);
-                int len = 30;
-                name = coloredName.substring(16, 30);
-                if (NON_ALPHABET_MATCHER.matcher(name).matches()) {
-                    if (coloredName.length() >= 32) {
-                        len = 32;
-                        name = coloredName.substring(16, 32);
-                    } else if (coloredName.length() == 31) {
-                        len = 31;
-                        name = coloredName.substring(16, 31);
-                    }
-                } else {
-                    name = ChatColor.RESET + name;
-                }
-                suffix = coloredName.substring(len);
-            } else {
-                prefix = coloredName.substring(0, coloredName.length() - 16);
-                name = coloredName.substring(prefix.length());
-                if (!NON_ALPHABET_MATCHER.matcher(name).matches()) {
-                    name = ChatColor.RESET + name;
-                }
-                if (name.length() > 16) {
-                    suffix = name.substring(16);
-                    name = name.substring(0, 16);
-                }
-            }
-        }
+        String[] nameSplit = Util.splitPlayerName(coloredName);
+        String name = nameSplit[0];
 
-        final String prefixCapture = prefix, suffixCapture = suffix;
+        final String prefixCapture = nameSplit[1], suffixCapture = nameSplit[2];
 
         UUID uuid = npc.getUniqueId();
         if (uuid.version() == 4) { // clear version
@@ -148,6 +119,4 @@ public class HumanController extends AbstractEntityController {
         }
         super.remove();
     }
-
-    private static Pattern NON_ALPHABET_MATCHER = Pattern.compile(".*[^A-Za-z0-9_].*");
 }
