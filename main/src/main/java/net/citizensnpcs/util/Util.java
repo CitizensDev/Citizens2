@@ -1,8 +1,10 @@
 package net.citizensnpcs.util;
 
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -34,6 +36,61 @@ public class Util {
         if (NPCCollisionEvent.getHandlerList().getRegisteredListeners().length > 0) {
             Bukkit.getPluginManager().callEvent(new NPCCollisionEvent(npc, entity));
         }
+    }
+
+
+    private static Pattern NON_ALPHABET_MATCHER = Pattern.compile(".*[^A-Za-z0-9_].*");
+
+    public static String[] splitPlayerName(String coloredName) {
+        String name = coloredName, prefix = null, suffix = null;
+        if (coloredName.length() > 16) {
+            if (coloredName.length() >= 30) {
+                prefix = coloredName.substring(0, 16);
+                int len = 30;
+                name = coloredName.substring(16, 30);
+                if (NON_ALPHABET_MATCHER.matcher(name).matches()) {
+                    if (coloredName.length() >= 32) {
+                        len = 32;
+                        name = coloredName.substring(16, 32);
+                    } else if (coloredName.length() == 31) {
+                        len = 31;
+                        name = coloredName.substring(16, 31);
+                    }
+                } else {
+                    String prefixColors = ChatColor.getLastColors(prefix);
+                    if (prefixColors.isEmpty()) {
+                        prefixColors = ChatColor.RESET.toString();
+                    }
+                    else if (prefixColors.length() > 2) {
+                        prefixColors = prefixColors.substring(prefixColors.length() - 2);
+                    }
+                    name = prefixColors + name;
+                }
+                suffix = coloredName.substring(len);
+            } else {
+                prefix = coloredName.substring(0, coloredName.length() - 16);
+                name = coloredName.substring(prefix.length());
+                if (prefix.endsWith(String.valueOf(ChatColor.COLOR_CHAR))) {
+                    prefix = prefix.substring(0, prefix.length() - 1);
+                    name = ChatColor.COLOR_CHAR + name;
+                }
+                if (!NON_ALPHABET_MATCHER.matcher(name).matches()) {
+                    String prefixColors = ChatColor.getLastColors(prefix);
+                    if (prefixColors.isEmpty()) {
+                        prefixColors = ChatColor.RESET.toString();
+                    }
+                    else if (prefixColors.length() > 2) {
+                        prefixColors = prefixColors.substring(prefixColors.length() - 2);
+                    }
+                    name = prefixColors + name;
+                }
+                if (name.length() > 16) {
+                    suffix = name.substring(16);
+                    name = name.substring(0, 16);
+                }
+            }
+        }
+        return new String[] { name, prefix, suffix };
     }
 
     public static NPCPushEvent callPushEvent(NPC npc, Vector vector) {
