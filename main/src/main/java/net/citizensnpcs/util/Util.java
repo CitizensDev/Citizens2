@@ -70,6 +70,10 @@ public class Util {
             } else {
                 prefix = coloredName.substring(0, coloredName.length() - 16);
                 name = coloredName.substring(prefix.length());
+                if (prefix.endsWith(String.valueOf(ChatColor.COLOR_CHAR))) {
+                    prefix = prefix.substring(0, prefix.length() - 1);
+                    name = ChatColor.COLOR_CHAR + name;
+                }
                 if (!NON_ALPHABET_MATCHER.matcher(name).matches()) {
                     String prefixColors = ChatColor.getLastColors(prefix);
                     if (prefixColors.isEmpty()) {
