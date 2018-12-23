@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
+import net.minecraft.server.v1_13_R2.*;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -14,14 +15,6 @@ import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_13_R2.BlockPosition;
-import net.minecraft.server.v1_13_R2.ControllerMove;
-import net.minecraft.server.v1_13_R2.DamageSource;
-import net.minecraft.server.v1_13_R2.EntityTurtle;
-import net.minecraft.server.v1_13_R2.IBlockData;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.SoundEffect;
-import net.minecraft.server.v1_13_R2.World;
 
 public class TurtleController extends MobEntityController {
     public TurtleController() {
@@ -35,6 +28,7 @@ public class TurtleController extends MobEntityController {
 
     public static class EntityTurtleNPC extends EntityTurtle implements NPCHolder {
         private final CitizensNPC npc;
+        private ControllerJump replacementJumpController;
 
         public EntityTurtleNPC(World world) {
             this(world, null);
@@ -46,7 +40,28 @@ public class TurtleController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
                 this.moveController = new ControllerMove(this);
+                replacementJumpController = new EmptyControllerJump(this);
             }
+        }
+
+        static class EmptyControllerJump extends ControllerJump {
+
+            public EmptyControllerJump(EntityInsentient var1) {
+                super(var1);
+            }
+
+            @Override
+            public void b() {
+                this.a = false;
+            }
+        }
+
+        @Override
+        public ControllerJump getControllerJump() {
+            if (npc != null) {
+                return replacementJumpController;
+            }
+            return super.getControllerJump();
         }
 
         @Override
