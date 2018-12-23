@@ -28,7 +28,6 @@ public class TurtleController extends MobEntityController {
 
     public static class EntityTurtleNPC extends EntityTurtle implements NPCHolder {
         private final CitizensNPC npc;
-        private ControllerJump replacementJumpController;
 
         public EntityTurtleNPC(World world) {
             this(world, null);
@@ -40,7 +39,7 @@ public class TurtleController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
                 this.moveController = new ControllerMove(this);
-                replacementJumpController = new EmptyControllerJump(this);
+                this.h = new EmptyControllerJump(this);
             }
         }
 
@@ -54,14 +53,6 @@ public class TurtleController extends MobEntityController {
             public void b() {
                 this.a = false;
             }
-        }
-
-        @Override
-        public ControllerJump getControllerJump() {
-            if (npc != null) {
-                return replacementJumpController;
-            }
-            return super.getControllerJump();
         }
 
         @Override
