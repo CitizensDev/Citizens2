@@ -2,13 +2,13 @@ package net.citizensnpcs.api;
 
 import java.io.File;
 
+import org.bukkit.plugin.Plugin;
+
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
 import net.citizensnpcs.api.trait.TraitFactory;
-
-import org.bukkit.plugin.Plugin;
 
 public interface CitizensPlugin extends Plugin {
     /**
@@ -76,4 +76,12 @@ public interface CitizensPlugin extends Plugin {
      * Removes the named NPCRegistry with the given name.
      */
     public void removeNamedNPCRegistry(String name);
+
+    /**
+     * Sets the default NPC data store. Should be set during onEnable.
+     * 
+     * @param The
+     *            new default store
+     */
+    public void setDefaultNPCDataStore(NPCDataStore store);
 }
