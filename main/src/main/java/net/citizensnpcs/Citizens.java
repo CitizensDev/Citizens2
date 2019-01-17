@@ -381,9 +381,14 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void setDefaultNPCDataStore(NPCDataStore store) {
-        saves.storeAll(npcRegistry);
-        saves.saveToDiskImmediate();
-        despawnNPCs();
+        if (store == null) {
+            throw new IllegalArgumentException("must be non-null");
+        }
+        if (saves != null) {
+            saves.storeAll(npcRegistry);
+            saves.saveToDiskImmediate();
+            despawnNPCs();
+        }
         this.saves = store;
         this.npcRegistry = new CitizensNPCRegistry(saves);
     }
