@@ -379,6 +379,15 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }, delay, delay);
     }
 
+    @Override
+    public void setDefaultNPCDataStore(NPCDataStore store) {
+        saves.storeAll(npcRegistry);
+        saves.saveToDiskImmediate();
+        despawnNPCs();
+        this.saves = store;
+        this.npcRegistry = new CitizensNPCRegistry(saves);
+    }
+
     private void setupEconomy() {
         try {
             RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(Economy.class);
