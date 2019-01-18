@@ -97,14 +97,13 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 public class EventListen implements Listener {
-    private final NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
     private final Map<String, NPCRegistry> registries;
     private final SkinUpdateTracker skinUpdateTracker;
     private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create();
 
     EventListen(Map<String, NPCRegistry> registries) {
         this.registries = registries;
-        this.skinUpdateTracker = new SkinUpdateTracker(npcRegistry, registries);
+        this.skinUpdateTracker = new SkinUpdateTracker(registries);
     }
 
     private void checkCreationEvent(CommandSenderCreateNPCEvent event) {
@@ -121,7 +120,7 @@ public class EventListen implements Listener {
         if (limit < 0)
             return;
         int owned = 0;
-        for (NPC npc : npcRegistry) {
+        for (NPC npc : CitizensAPI.getNPCRegistry()) {
             if (!event.getNPC().equals(npc) && npc.hasTrait(Owner.class)
                     && npc.getTrait(Owner.class).isOwnedBy(event.getCreator())) {
                 owned++;
@@ -135,7 +134,7 @@ public class EventListen implements Listener {
     }
 
     private Iterable<NPC> getAllNPCs() {
-        return Iterables.filter(Iterables.<NPC> concat(npcRegistry, Iterables.concat(registries.values())),
+        return Iterables.filter(Iterables.<NPC> concat(CitizensAPI.getNPCRegistry(), Iterables.concat(registries.values())),
                 Predicates.notNull());
     }
 
@@ -202,11 +201,11 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        NPC npc = npcRegistry.getNPC(event.getEntity());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
 
         if (npc == null) {
             if (event instanceof EntityDamageByEntityEvent) {
-                npc = npcRegistry.getNPC(((EntityDamageByEntityEvent) event).getDamager());
+                npc = CitizensAPI.getNPCRegistry().getNPC(((EntityDamageByEntityEvent) event).getDamager());
                 if (npc == null)
                     return;
                 event.setCancelled(!npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true));
@@ -235,7 +234,7 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
-        final NPC npc = npcRegistry.getNPC(event.getEntity());
+        final NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
         if (npc == null) {
             return;
         }
@@ -273,7 +272,7 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onEntityPortal(EntityPortalEvent event) {
-        NPC npc = npcRegistry.getNPC(event.getEntity());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
         if (npc == null && event.getEntityType() != EntityType.PLAYER)
             return;
         event.setCancelled(true);
@@ -284,14 +283,14 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntitySpawn(CreatureSpawnEvent event) {
-        if (event.isCancelled() && npcRegistry.isNPC(event.getEntity())) {
+        if (event.isCancelled() && CitizensAPI.getNPCRegistry().isNPC(event.getEntity())) {
             event.setCancelled(false);
         }
     }
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        NPC npc = npcRegistry.getNPC(event.getTarget());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getTarget());
         if (npc == null)
             return;
         event.setCancelled(
@@ -396,7 +395,7 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        if (npcRegistry.getNPC(event.getPlayer()) == null)
+        if (CitizensAPI.getNPCRegistry().getNPC(event.getPlayer()) == null)
             return;
         NMS.removeFromServerPlayerList(event.getPlayer());
         // on teleport, player NPCs are added to the server player list. this is
@@ -415,14 +414,14 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerFish(PlayerFishEvent event) {
-        if (npcRegistry.isNPC(event.getCaught()) && npcRegistry.getNPC(event.getCaught()).isProtected()) {
+        if (CitizensAPI.getNPCRegistry().isNPC(event.getCaught()) && CitizensAPI.getNPCRegistry().getNPC(event.getCaught()).isProtected()) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        NPC npc = npcRegistry.getNPC(event.getRightClicked());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked());
         if (npc == null || Util.isOffHand(event)) {
             return;
         }
@@ -438,7 +437,7 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerLeashEntity(PlayerLeashEntityEvent event) {
-        NPC npc = npcRegistry.getNPC(event.getEntity());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
         if (npc == null) {
             return;
         }
@@ -458,7 +457,7 @@ public class EventListen implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Editor.leave(event.getPlayer());
         if (event.getPlayer().isInsideVehicle()) {
-            NPC npc = npcRegistry.getNPC(event.getPlayer().getVehicle());
+            NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getPlayer().getVehicle());
             if (npc != null) {
                 event.getPlayer().leaveVehicle();
             }
@@ -474,7 +473,7 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         if (event.getCause() == TeleportCause.PLUGIN && !event.getPlayer().hasMetadata("citizens-force-teleporting")
-                && npcRegistry.getNPC(event.getPlayer()) != null && Setting.TELEPORT_DELAY.asInt() > 0) {
+                && CitizensAPI.getNPCRegistry().getNPC(event.getPlayer()) != null && Setting.TELEPORT_DELAY.asInt() > 0) {
             event.setCancelled(true);
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
@@ -492,7 +491,7 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPotionSplashEvent(PotionSplashEvent event) {
         for (LivingEntity entity : event.getAffectedEntities()) {
-            NPC npc = npcRegistry.getNPC(entity);
+            NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
             if (npc == null)
                 continue;
             if (npc.isProtected()) {
@@ -505,7 +504,7 @@ public class EventListen implements Listener {
     public void onProjectileHit(final ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof FishHook))
             return;
-        NMS.removeHookIfNecessary(npcRegistry, (FishHook) event.getEntity());
+        NMS.removeHookIfNecessary(CitizensAPI.getNPCRegistry(), (FishHook) event.getEntity());
         new BukkitRunnable() {
             int n = 0;
 
@@ -514,14 +513,14 @@ public class EventListen implements Listener {
                 if (n++ > 5) {
                     cancel();
                 }
-                NMS.removeHookIfNecessary(npcRegistry, (FishHook) event.getEntity());
+                NMS.removeHookIfNecessary(CitizensAPI.getNPCRegistry(), (FishHook) event.getEntity());
             }
         }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
     }
 
     @EventHandler
     public void onVehicleDestroy(VehicleDestroyEvent event) {
-        NPC npc = npcRegistry.getNPC(event.getVehicle());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getVehicle());
         if (npc == null) {
             return;
         }
@@ -530,9 +529,9 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onVehicleEnter(final VehicleEnterEvent event) {
-        if (!npcRegistry.isNPC(event.getVehicle()))
+        if (!CitizensAPI.getNPCRegistry().isNPC(event.getVehicle()))
             return;
-        NPC npc = npcRegistry.getNPC(event.getVehicle());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getVehicle());
         if ((Util.isHorse(npc.getEntity()) || npc.getEntity().getType() == EntityType.BOAT
                 || npc.getEntity().getType() == EntityType.PIG || npc.getEntity() instanceof Minecart)
                 && (!npc.hasTrait(Controllable.class) || !npc.getTrait(Controllable.class).isEnabled())) {
