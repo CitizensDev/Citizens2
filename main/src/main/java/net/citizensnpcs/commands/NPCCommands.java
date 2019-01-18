@@ -99,11 +99,9 @@ import net.citizensnpcs.util.Util;
 
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
-    private final NPCRegistry npcRegistry;
     private final NPCSelector selector;
 
     public NPCCommands(Citizens plugin) {
-        npcRegistry = CitizensAPI.getNPCRegistry();
         selector = plugin.getNPCSelector();
     }
 
@@ -373,7 +371,7 @@ public class NPCCommands {
                 && !sender.hasPermission("citizens.npc.create." + type.name().toLowerCase().replace("_", "")))
             throw new NoPermissionsException();
 
-        npc = npcRegistry.createNPC(type, name);
+        npc = CitizensAPI.getNPCRegistry().createNPC(type, name);
         String msg = "You created [[" + npc.getName() + "]]";
 
         int age = 0;
@@ -486,7 +484,7 @@ public class NPCCommands {
             if (args.argsLength() < 2) {
                 throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
             }
-            NPCCommandSelector.startWithCallback(callback, npcRegistry, sender, args, args.getString(1));
+            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args, args.getString(1));
         } else {
             callback.run(npc);
         }
@@ -752,7 +750,7 @@ public class NPCCommands {
     @Requirements
     public void list(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         NPCRegistry source = args.hasValueFlag("registry") ? CitizensAPI.getNamedNPCRegistry(args.getFlag("registry"))
-                : npcRegistry;
+                : CitizensAPI.getNPCRegistry();
         if (source == null)
             throw new CommandException();
         List<NPC> npcs = new ArrayList<NPC>();
@@ -1297,7 +1295,7 @@ public class NPCCommands {
     public void remove(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("owner")) {
             String owner = args.getFlag("owner");
-            Collection<NPC> npcs = Lists.newArrayList(npcRegistry);
+            Collection<NPC> npcs = Lists.newArrayList(CitizensAPI.getNPCRegistry());
             for (NPC o : npcs) {
                 if (o.getTrait(Owner.class).isOwnedBy(owner)) {
                     o.destroy();
@@ -1310,7 +1308,7 @@ public class NPCCommands {
             if (args.getString(1).equalsIgnoreCase("all")) {
                 if (!sender.hasPermission("citizens.admin.remove.all") && !sender.hasPermission("citizens.admin"))
                     throw new NoPermissionsException();
-                npcRegistry.deregisterAll();
+                CitizensAPI.getNPCRegistry().deregisterAll();
                 Messaging.sendTr(sender, Messages.REMOVED_ALL_NPCS);
                 return;
             } else {
@@ -1327,7 +1325,7 @@ public class NPCCommands {
                         Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
                     }
                 };
-                NPCCommandSelector.startWithCallback(callback, npcRegistry, sender, args, args.getString(1));
+                NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args, args.getString(1));
                 return;
             }
         }
@@ -1447,14 +1445,14 @@ public class NPCCommands {
                 }
             });
             for (Entity possibleNPC : search) {
-                NPC test = npcRegistry.getNPC(possibleNPC);
+                NPC test = CitizensAPI.getNPCRegistry().getNPC(possibleNPC);
                 if (test == null)
                     continue;
                 callback.run(test);
                 break;
             }
         } else {
-            NPCCommandSelector.startWithCallback(callback, npcRegistry, sender, args, args.getString(1));
+            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args, args.getString(1));
         }
     }
 
@@ -1698,7 +1696,7 @@ public class NPCCommands {
             }
         };
         if (args.argsLength() > 1) {
-            NPCCommandSelector.startWithCallback(callback, npcRegistry, sender, args, args.getString(1));
+            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args, args.getString(1));
         } else {
             callback.run(npc);
         }

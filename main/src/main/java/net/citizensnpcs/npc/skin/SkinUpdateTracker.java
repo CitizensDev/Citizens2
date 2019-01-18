@@ -37,7 +37,6 @@ import net.citizensnpcs.util.Util;
  */
 public class SkinUpdateTracker {
     private final Map<SkinnableEntity, Void> navigating = new WeakHashMap<SkinnableEntity, Void>(25);
-    private final NPCRegistry npcRegistry;
     private final Map<UUID, PlayerTracker> playerTrackers = new HashMap<UUID, PlayerTracker>(
             Bukkit.getMaxPlayers() / 2);
     private final Map<String, NPCRegistry> registries;
@@ -46,16 +45,12 @@ public class SkinUpdateTracker {
     /**
      * Constructor.
      *
-     * @param npcRegistry
-     *            The primary citizens registry.
      * @param registries
      *            Map of other registries.
      */
-    public SkinUpdateTracker(NPCRegistry npcRegistry, Map<String, NPCRegistry> registries) {
-        Preconditions.checkNotNull(npcRegistry);
+    public SkinUpdateTracker(Map<String, NPCRegistry> registries) {
         Preconditions.checkNotNull(registries);
 
-        this.npcRegistry = npcRegistry;
         this.registries = registries;
 
         updater.runTaskTimer(CitizensAPI.getPlugin(), 1, 1);
@@ -109,7 +104,7 @@ public class SkinUpdateTracker {
     }
 
     private Iterable<NPC> getAllNPCs() {
-        return Iterables.filter(Iterables.concat(npcRegistry, Iterables.concat(registries.values())),
+        return Iterables.filter(Iterables.concat(CitizensAPI.getNPCRegistry(), Iterables.concat(registries.values())),
                 Predicates.notNull());
     }
 
