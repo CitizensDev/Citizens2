@@ -134,7 +134,8 @@ public class EventListen implements Listener {
     }
 
     private Iterable<NPC> getAllNPCs() {
-        return Iterables.filter(Iterables.<NPC> concat(CitizensAPI.getNPCRegistry(), Iterables.concat(registries.values())),
+        return Iterables.filter(
+                Iterables.<NPC> concat(CitizensAPI.getNPCRegistry(), Iterables.concat(registries.values())),
                 Predicates.notNull());
     }
 
@@ -186,7 +187,7 @@ public class EventListen implements Listener {
      */
     @EventHandler
     public void onEntityCombust(EntityCombustEvent event) {
-        NPC npc = npcRegistry.getNPC(event.getEntity());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
         if (npc == null)
             return;
         event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
@@ -414,7 +415,8 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerFish(PlayerFishEvent event) {
-        if (CitizensAPI.getNPCRegistry().isNPC(event.getCaught()) && CitizensAPI.getNPCRegistry().getNPC(event.getCaught()).isProtected()) {
+        if (CitizensAPI.getNPCRegistry().isNPC(event.getCaught())
+                && CitizensAPI.getNPCRegistry().getNPC(event.getCaught()).isProtected()) {
             event.setCancelled(true);
         }
     }
@@ -473,7 +475,8 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         if (event.getCause() == TeleportCause.PLUGIN && !event.getPlayer().hasMetadata("citizens-force-teleporting")
-                && CitizensAPI.getNPCRegistry().getNPC(event.getPlayer()) != null && Setting.TELEPORT_DELAY.asInt() > 0) {
+                && CitizensAPI.getNPCRegistry().getNPC(event.getPlayer()) != null
+                && Setting.TELEPORT_DELAY.asInt() > 0) {
             event.setCancelled(true);
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override

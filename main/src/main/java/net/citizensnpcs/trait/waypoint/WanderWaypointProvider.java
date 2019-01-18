@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -160,6 +161,10 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
         return regionCentres.isEmpty() ? null : tree;
     }
 
+    public List<Location> getRegionCentres() {
+        return new RecalculateList();
+    }
+
     @Override
     public boolean isPaused() {
         return paused;
@@ -199,6 +204,40 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
     @Override
     public void setPaused(boolean paused) {
         this.paused = paused;
+    }
+
+    private class RecalculateList extends ForwardingList<Location> {
+        @Override
+        public void add(int idx, Location loc) {
+            super.add(idx, loc);
+            recalculateTree();
+        }
+
+        @Override
+        public boolean add(Location loc) {
+            boolean val = super.add(loc);
+            recalculateTree();
+            return val;
+        }
+
+        @Override
+        protected List<Location> delegate() {
+            return regionCentres;
+        }
+
+        @Override
+        public Location remove(int idx) {
+            Location val = super.remove(idx);
+            recalculateTree();
+            return val;
+        }
+
+        @Override
+        public Location set(int idx, Location idx2) {
+            Location val = super.set(idx, idx2);
+            recalculateTree();
+            return val;
+        }
     }
 
     private static final int DEFAULT_XRANGE = 3;
