@@ -49,7 +49,7 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
         double minDist = Double.MAX_VALUE;
         for (Location centre : regionCentres) {
             double d = centre.distanceSquared(npc.getStoredLocation());
-            if (d > minDist) {
+            if (d < minDist) {
                 minDist = d;
                 closestCentre = centre;
             }
