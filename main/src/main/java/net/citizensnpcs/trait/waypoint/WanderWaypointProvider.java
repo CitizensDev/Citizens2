@@ -13,12 +13,14 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.goals.WanderGoal;
+import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
@@ -29,7 +31,7 @@ import net.citizensnpcs.api.util.cuboid.QuadTree;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
-public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTree> {
+public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTree>, Function<NPC, Location> {
     private WanderGoal currentGoal;
     private NPC npc;
     private volatile boolean paused;
@@ -40,6 +42,24 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
     public int xrange = DEFAULT_XRANGE;
     @Persist
     public int yrange = DEFAULT_YRANGE;
+
+    @Override
+    public Location apply(NPC npc) {
+        Location closestCentre = null;
+        double minDist = Double.MAX_VALUE;
+        for (Location centre : regionCentres) {
+            double d = centre.distanceSquared(npc.getStoredLocation());
+            if (d > minDist) {
+                minDist = d;
+                closestCentre = centre;
+            }
+        }
+        if (closestCentre != null) {
+            // TODO: should find closest edge block that is valid
+            return MinecraftBlockExaminer.findValidLocation(closestCentre, xrange, yrange);
+        }
+        return null;
+    }
 
     @Override
     public WaypointEditor createEditor(final CommandSender sender, CommandContext args) {
@@ -184,7 +204,8 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {
-            currentGoal = WanderGoal.createWithNPCAndRangeAndTree(npc, xrange, yrange, WanderWaypointProvider.this);
+            currentGoal = WanderGoal.createWithNPCAndRangeAndTreeAndFallback(npc, xrange, yrange,
+                    WanderWaypointProvider.this, WanderWaypointProvider.this);
         }
         npc.getDefaultGoalController().addGoal(currentGoal, 1);
     }
@@ -241,5 +262,6 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
     }
 
     private static final int DEFAULT_XRANGE = 3;
+
     private static final int DEFAULT_YRANGE = 25;
 }
