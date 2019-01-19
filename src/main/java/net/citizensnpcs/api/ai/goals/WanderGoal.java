@@ -4,11 +4,11 @@ import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -20,6 +20,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.cuboid.QuadTree;
 
 public class WanderGoal extends BehaviorGoalAdapter implements Listener {
+    private final Function<NPC, Location> fallback;
     private boolean forceFinish;
     private final NPC npc;
     private boolean paused;
@@ -28,11 +29,12 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private int xrange;
     private int yrange;
 
-    private WanderGoal(NPC npc, int xrange, int yrange, Supplier<QuadTree> tree) {
+    private WanderGoal(NPC npc, int xrange, int yrange, Supplier<QuadTree> tree, Function<NPC, Location> fallback) {
         this.npc = npc;
         this.xrange = xrange;
         this.yrange = yrange;
         this.tree = tree;
+        this.fallback = fallback;
     }
 
     private Location findRandomPosition() {
@@ -43,14 +45,16 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
             int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
             Block block = base.getWorld().getBlockAt(x, y, z);
-            if (MinecraftBlockExaminer.canStandOn(block)
-                    && MinecraftBlockExaminer.canStandIn(block.getRelative(BlockFace.UP).getType())) {
+            if (MinecraftBlockExaminer.canStandOn(block)) {
                 if (tree != null && tree.get() != null && tree.get().search(x, y, z).isEmpty()) {
                     continue;
                 }
                 found = block.getLocation().add(0, 1, 0);
                 break;
             }
+        }
+        if (found == null && fallback != null) {
+            return fallback.apply(npc);
         }
         return found;
     }
@@ -107,6 +111,11 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     }
 
     public static WanderGoal createWithNPCAndRangeAndTree(NPC npc, int xrange, int yrange, Supplier<QuadTree> tree) {
-        return new WanderGoal(npc, xrange, yrange, tree);
+        return createWithNPCAndRangeAndTreeAndFallback(npc, xrange, yrange, tree, null);
+    }
+
+    public static WanderGoal createWithNPCAndRangeAndTreeAndFallback(NPC npc, int xrange, int yrange,
+            Supplier<QuadTree> tree, Function<NPC, Location> fallback) {
+        return new WanderGoal(npc, xrange, yrange, tree, fallback);
     }
 }

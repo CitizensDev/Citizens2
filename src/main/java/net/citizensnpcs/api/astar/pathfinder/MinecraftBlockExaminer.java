@@ -122,14 +122,30 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     public static Location findValidLocation(Location location, int radius) {
         Block base = location.getBlock();
-        if (canStandIn(base.getType()) && canStandOn(base.getRelative(BlockFace.DOWN)))
+        if (canStandOn(base.getRelative(BlockFace.DOWN)))
             return location;
         for (int y = 0; y <= radius; y++) {
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
                     Block relative = base.getRelative(x, y, z);
-                    if (canStandIn(relative.getRelative(BlockFace.UP).getType()) && canStandIn(relative.getType())
-                            && canStandOn(base.getRelative(BlockFace.DOWN))) {
+                    if (canStandOn(base.getRelative(BlockFace.DOWN))) {
+                        return relative.getLocation();
+                    }
+                }
+            }
+        }
+        return location;
+    }
+
+    public static Location findValidLocation(Location location, int radius, int yradius) {
+        Block base = location.getBlock();
+        if (canStandOn(base.getRelative(BlockFace.DOWN)))
+            return location;
+        for (int y = -yradius; y <= yradius; y++) {
+            for (int x = -radius; x <= radius; x++) {
+                for (int z = -radius; z <= radius; z++) {
+                    Block relative = base.getRelative(x, y, z);
+                    if (canStandOn(base.getRelative(BlockFace.DOWN))) {
                         return relative.getLocation();
                     }
                 }
@@ -153,7 +169,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     public static boolean validPosition(Block in) {
         return canStandIn(in.getType()) && canStandIn(in.getRelative(BlockFace.UP).getType())
-                && canStandOn(in.getRelative(BlockFace.DOWN));
+                && canStandOn(in.getRelative(BlockFace.DOWN).getType());
     }
 
     private static final Set<Material> DOORS = EnumSet.of(Material.SPRUCE_DOOR, Material.BIRCH_DOOR,
@@ -164,6 +180,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
     private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.CACTUS);
     private static final Vector UP = new Vector(0, 1, 0);
+
     private static Material WEB = SpigotUtil.isUsing1_13API() ? Material.COBWEB : Material.valueOf("WEB");
 
     static {
