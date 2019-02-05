@@ -137,8 +137,9 @@ public class SkinUpdateTracker {
             if (tracker.fovVisibleSkins.contains(skinnable))
                 continue;
 
-            if (canSee(player, skinnable, true))
+            if (canSee(player, skinnable, true)) {
                 output.add(skinnable);
+            }
         }
     }
 

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import net.minecraft.server.v1_13_R2.*;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -183,6 +182,59 @@ import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_13_R2.AttributeInstance;
+import net.minecraft.server.v1_13_R2.AxisAlignedBB;
+import net.minecraft.server.v1_13_R2.Block;
+import net.minecraft.server.v1_13_R2.BlockPosition;
+import net.minecraft.server.v1_13_R2.BossBattleServer;
+import net.minecraft.server.v1_13_R2.ControllerJump;
+import net.minecraft.server.v1_13_R2.CrashReport;
+import net.minecraft.server.v1_13_R2.CrashReportSystemDetails;
+import net.minecraft.server.v1_13_R2.DamageSource;
+import net.minecraft.server.v1_13_R2.DataWatcherObject;
+import net.minecraft.server.v1_13_R2.EnchantmentManager;
+import net.minecraft.server.v1_13_R2.Enchantments;
+import net.minecraft.server.v1_13_R2.EnderDragonBattle;
+import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.EntityBird;
+import net.minecraft.server.v1_13_R2.EntityEnderDragon;
+import net.minecraft.server.v1_13_R2.EntityFish;
+import net.minecraft.server.v1_13_R2.EntityFishingHook;
+import net.minecraft.server.v1_13_R2.EntityHorse;
+import net.minecraft.server.v1_13_R2.EntityHorseAbstract;
+import net.minecraft.server.v1_13_R2.EntityHuman;
+import net.minecraft.server.v1_13_R2.EntityInsentient;
+import net.minecraft.server.v1_13_R2.EntityLiving;
+import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_13_R2.EntityPlayer;
+import net.minecraft.server.v1_13_R2.EntityPolarBear;
+import net.minecraft.server.v1_13_R2.EntityRabbit;
+import net.minecraft.server.v1_13_R2.EntityShulker;
+import net.minecraft.server.v1_13_R2.EntityTameableAnimal;
+import net.minecraft.server.v1_13_R2.EntityTracker;
+import net.minecraft.server.v1_13_R2.EntityTrackerEntry;
+import net.minecraft.server.v1_13_R2.EntityTypes;
+import net.minecraft.server.v1_13_R2.EntityWither;
+import net.minecraft.server.v1_13_R2.EnumMoveType;
+import net.minecraft.server.v1_13_R2.GenericAttributes;
+import net.minecraft.server.v1_13_R2.IRegistry;
+import net.minecraft.server.v1_13_R2.MathHelper;
+import net.minecraft.server.v1_13_R2.MinecraftKey;
+import net.minecraft.server.v1_13_R2.MobEffects;
+import net.minecraft.server.v1_13_R2.NavigationAbstract;
+import net.minecraft.server.v1_13_R2.NetworkManager;
+import net.minecraft.server.v1_13_R2.Packet;
+import net.minecraft.server.v1_13_R2.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_13_R2.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_13_R2.PathEntity;
+import net.minecraft.server.v1_13_R2.PathPoint;
+import net.minecraft.server.v1_13_R2.PathfinderGoalSelector;
+import net.minecraft.server.v1_13_R2.RegistryMaterials;
+import net.minecraft.server.v1_13_R2.ReportedException;
+import net.minecraft.server.v1_13_R2.SoundEffect;
+import net.minecraft.server.v1_13_R2.SoundEffects;
+import net.minecraft.server.v1_13_R2.Vec3D;
+import net.minecraft.server.v1_13_R2.WorldServer;
 
 @SuppressWarnings("unchecked")
 public class NMSImpl implements NMSBridge {
@@ -749,6 +801,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void remove(org.bukkit.entity.Entity entity) {
+        NMSImpl.getHandle(entity).die();
+    }
+
+    @Override
     public void removeFromServerPlayerList(Player player) {
         EntityPlayer handle = (EntityPlayer) NMSImpl.getHandle(player);
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
@@ -1280,7 +1337,8 @@ public class NMSImpl implements NMSBridge {
                     entity.a(f, f1, f2, f3);
                     f9 = 0.91F;
                     if (entity.onGround) {
-                        f9 = entity.world.getType(getBlockPositionBE(blockposition_b, entity.locX, bb.minY - 1.0D, entity.locZ))
+                        f9 = entity.world
+                                .getType(getBlockPositionBE(blockposition_b, entity.locX, bb.minY - 1.0D, entity.locZ))
                                 .getBlock().n() * 0.91F;
                     }
                     if (entity.z_()) {
@@ -1352,19 +1410,15 @@ public class NMSImpl implements NMSBridge {
     private static BlockPosition.b getBlockPositionBE(BlockPosition.b blockPos, double x, double y, double z) {
         try {
             return blockPos.c(x, y, z);
-        }
-        catch (NoSuchMethodError ex) {
+        } catch (NoSuchMethodError ex) {
             try {
                 return (BlockPosition.b) BLOCK_POSITION_B_D.invoke(blockPos, x, y, z);
-            }
-            catch (Throwable ex2) {
+            } catch (Throwable ex2) {
                 ex2.printStackTrace();
                 return null;
             }
         }
     }
-
-    private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.b.class, "e", false, double.class, double.class, double.class);
 
     public static BossBar getBossBar(org.bukkit.entity.Entity entity) {
         BossBattleServer bserver = null;
@@ -1372,15 +1426,13 @@ public class NMSImpl implements NMSBridge {
             if (entity.getType() == EntityType.WITHER) {
                 try {
                     bserver = ((EntityWither) NMSImpl.getHandle(entity)).bossBattle;
-                }
-                catch (NoSuchFieldError ex) {
+                } catch (NoSuchFieldError ex) {
                     bserver = (BossBattleServer) WITHER_BOSS_BAR_FIELD.get(NMSImpl.getHandle(entity));
                 }
             } else if (entity.getType() == EntityType.ENDER_DRAGON) {
                 try {
                     bserver = ((EnderDragonBattle) ENDERDRAGON_BATTLE_FIELD.get(NMSImpl.getHandle(entity))).bossBattle;
-                }
-                catch (NoSuchFieldError ex) {
+                } catch (NoSuchFieldError ex) {
                     bserver = (BossBattleServer) ENDERDRAGON_BATTLE_BAR_FIELD
                             .get(ENDERDRAGON_BATTLE_FIELD.get(NMSImpl.getHandle(entity)));
                 }
@@ -1443,18 +1495,15 @@ public class NMSImpl implements NMSBridge {
         };
         try {
             network.socketAddress = socketAddress;
-        }
-        catch (NoSuchFieldError ex) {
+        } catch (NoSuchFieldError ex) {
             if (NETWORK_ADDRESS == null) {
                 return;
             }
             try {
                 NETWORK_ADDRESS.set(network, socketAddress);
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
-            }
-            catch (IllegalAccessException e) {
+            } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -1570,6 +1619,8 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
+    private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.b.class, "e", false, double.class,
+            double.class, double.class);
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c", false);

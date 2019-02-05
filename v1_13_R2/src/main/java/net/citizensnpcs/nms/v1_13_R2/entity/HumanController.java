@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v1_13_R2.entity;
 
 import java.util.UUID;
 
-import net.citizensnpcs.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
@@ -21,6 +20,7 @@ import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.PlayerInteractManager;
 import net.minecraft.server.v1_13_R2.WorldServer;
 
@@ -117,6 +117,8 @@ public class HumanController extends AbstractEntityController {
             SkinnableEntity npc = entity instanceof SkinnableEntity ? (SkinnableEntity) entity : null;
             npc.getSkinTracker().onRemoveNPC();
         }
-        super.remove();
+        NMS.remove(entity);
+        // Paper decided to break Spigot compatibility.
+        // super.remove();
     }
 }

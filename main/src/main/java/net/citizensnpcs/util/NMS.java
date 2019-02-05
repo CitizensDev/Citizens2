@@ -222,6 +222,10 @@ public class NMS {
         BRIDGE.registerEntityClass(clazz);
     }
 
+    public static void remove(Entity entity) {
+        BRIDGE.remove(entity);
+    }
+
     public static void removeFromServerPlayerList(Player player) {
         BRIDGE.removeFromServerPlayerList(player);
     }

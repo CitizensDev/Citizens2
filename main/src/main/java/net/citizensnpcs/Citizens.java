@@ -10,16 +10,20 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
+import net.citizensnpcs.api.SkullMetaProvider;
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandManager;
@@ -72,6 +76,18 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private CitizensNPCRegistry npcRegistry;
     private NPCDataStore saves;
     private NPCSelector selector;
+    private final SkullMetaProvider skullMetaProvider = new SkullMetaProvider() {
+        @Override
+        public String getTexture(SkullMeta meta) {
+            return Iterables.getFirst(NMS.getProfile(meta).getProperties().get("textures"), new Property("", ""))
+                    .getValue();
+        }
+
+        @Override
+        public void setTexture(String string, SkullMeta meta) {
+            NMS.setProfile(meta, new GameProfile(meta.getOwningPlayer().getUniqueId(), string));
+        }
+    };
     private CitizensSpeechFactory speechFactory;
     private final Map<String, NPCRegistry> storedRegistries = Maps.newHashMap();
     private CitizensTraitFactory traitFactory;
@@ -210,6 +226,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     @Override
     public File getScriptFolder() {
         return new File(getDataFolder(), "scripts");
+    }
+
+    @Override
+    public SkullMetaProvider getSkullMetaProvider() {
+        return skullMetaProvider;
     }
 
     @Override

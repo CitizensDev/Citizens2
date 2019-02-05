@@ -1,10 +1,10 @@
 package net.citizensnpcs.npc;
 
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.NMS;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.NMS;
 
 public abstract class AbstractEntityController implements EntityController {
     private Entity bukkitEntity;
@@ -24,16 +24,16 @@ public abstract class AbstractEntityController implements EntityController {
     }
 
     @Override
-    public void setEntity(Entity entity) {
-        this.bukkitEntity = entity;
-    }
-
-    @Override
     public void remove() {
         if (bukkitEntity == null)
             return;
         bukkitEntity.remove();
         bukkitEntity = null;
+    }
+
+    @Override
+    public void setEntity(Entity entity) {
+        this.bukkitEntity = entity;
     }
 
     @Override

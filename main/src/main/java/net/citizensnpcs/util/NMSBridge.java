@@ -91,6 +91,8 @@ public interface NMSBridge {
 
     public void registerEntityClass(Class<?> clazz);
 
+    public void remove(Entity entity);
+
     public void removeFromServerPlayerList(Player player);
 
     public void removeFromWorld(org.bukkit.entity.Entity entity);

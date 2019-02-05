@@ -768,6 +768,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void remove(org.bukkit.entity.Entity entity) {
+        NMSImpl.getHandle(entity).die();
+    }
+
+    @Override
     public void removeFromServerPlayerList(Player player) {
         EntityPlayer handle = (EntityPlayer) NMSImpl.getHandle(player);
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
