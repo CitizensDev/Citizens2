@@ -53,6 +53,8 @@ public interface CitizensPlugin extends Plugin {
      */
     public File getScriptFolder();
 
+    public SkullMetaProvider getSkullMetaProvider();
+
     /**
      * Gets the SpeechFactory.
      *
@@ -79,7 +81,7 @@ public interface CitizensPlugin extends Plugin {
 
     /**
      * Sets the default NPC data store. Should be set during onEnable.
-     * 
+     *
      * @param The
      *            new default store
      */

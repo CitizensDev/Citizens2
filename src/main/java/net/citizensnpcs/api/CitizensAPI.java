@@ -120,6 +120,10 @@ public final class CitizensAPI {
         return getImplementation().getScriptFolder();
     }
 
+    public static SkullMetaProvider getSkullMetaProvider() {
+        return instance.getSkullMetaProvider();
+    }
+
     /**
      * Gets the current implementation's {@link SpeechFactory}.
      *

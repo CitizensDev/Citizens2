@@ -35,6 +35,7 @@ import org.bukkit.potion.PotionType;
 
 import com.google.common.collect.Lists;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
 import net.citizensnpcs.api.event.CitizensSerialiseMetaEvent;
 
@@ -163,6 +164,9 @@ public class ItemStorage {
             SkullMeta meta = ensureMeta(res);
             if (root.keyExists("skull.owner") && !root.getString("skull.owner").isEmpty()) {
                 meta.setOwner(root.getString("skull.owner", ""));
+            }
+            if (root.keyExists("skull.texture") && !root.getString("skull.texture").isEmpty()) {
+                CitizensAPI.getSkullMetaProvider().setTexture(root.getString("skull.texture", ""), meta);
             }
             res.setItemMeta(meta);
         }
@@ -371,6 +375,7 @@ public class ItemStorage {
 
         if (meta instanceof SkullMeta) {
             SkullMeta skull = (SkullMeta) meta;
+            key.setString("skull.texture", CitizensAPI.getSkullMetaProvider().getTexture(skull));
             key.setString("skull.owner", skull.getOwner());
         } else {
             key.removeKey("skull");
