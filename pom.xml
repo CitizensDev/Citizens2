@@ -94,10 +94,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>3.0.1</version>
                 <configuration>
                     <author>false</author>
-                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <doclint>none</doclint>
+                    <links>
+                      <link>https://hub.spigotmc.org/javadocs/spigot</link>
+                    </links>
                 </configuration>
             </plugin>
 		</plugins>
