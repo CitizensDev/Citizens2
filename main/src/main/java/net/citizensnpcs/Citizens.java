@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.bstats.bukkit.Metrics;
@@ -79,13 +80,16 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final SkullMetaProvider skullMetaProvider = new SkullMetaProvider() {
         @Override
         public String getTexture(SkullMeta meta) {
+            if (NMS.getProfile(meta) == null)
+                return null;
             return Iterables.getFirst(NMS.getProfile(meta).getProperties().get("textures"), new Property("", ""))
                     .getValue();
         }
 
         @Override
         public void setTexture(String string, SkullMeta meta) {
-            NMS.setProfile(meta, new GameProfile(meta.getOwningPlayer().getUniqueId(), string));
+            UUID uuid = meta.getOwningPlayer() == null ? UUID.randomUUID() : meta.getOwningPlayer().getUniqueId();
+            NMS.setProfile(meta, new GameProfile(uuid, string));
         }
     };
     private CitizensSpeechFactory speechFactory;
