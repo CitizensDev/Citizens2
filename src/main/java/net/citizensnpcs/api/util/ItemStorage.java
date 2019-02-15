@@ -377,7 +377,7 @@ public class ItemStorage {
             SkullMeta skull = (SkullMeta) meta;
             String texture = CitizensAPI.getSkullMetaProvider().getTexture(skull);
             if (texture == null) {
-                key.removeKey(texture);
+                key.removeKey("skull.texture");
             } else {
                 key.setString("skull.texture", CitizensAPI.getSkullMetaProvider().getTexture(skull));
             }
