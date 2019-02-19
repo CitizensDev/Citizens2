@@ -14,7 +14,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<craftbukkit.version>1.13.2-R0.1-SNAPSHOT</craftbukkit.version>
 		<citizensapi.version>${project.version}</citizensapi.version>
-		<vault.version>1.5.4</vault.version>
 		<powermock.version>1.4.12</powermock.version>
 		<bstats.version>1.2</bstats.version>
 	</properties>
@@ -27,10 +26,6 @@
 		<repository>
 			<id>everything</id>
 			<url>http://repo.citizensnpcs.co</url>
-		</repository>
-		<repository>
-			<id>vault-repo</id>
-			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
 		</repository>
 		<repository>
 			<!-- for bstats -->
@@ -63,9 +58,10 @@
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>Vault</artifactId>
-			<version>${vault.version}</version>
+			<version>1.5.6</version>
 			<type>jar</type>
-			<scope>provided</scope>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/Vault.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.bstats.bStats-Metrics</groupId>

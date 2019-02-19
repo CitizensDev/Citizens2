@@ -9,8 +9,5 @@
 target/
 bin/
 dependency-reduced-pom.xml
-*.jar
 *.jardesc
 *.lnk
-
-
