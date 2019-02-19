@@ -15,7 +15,7 @@
 		<craftbukkit.version>1.13.2-R0.1-SNAPSHOT</craftbukkit.version>
 		<citizensapi.version>${project.version}</citizensapi.version>
 		<powermock.version>1.4.12</powermock.version>
-		<bstats.version>1.2</bstats.version>
+		<bstats.version>1.4</bstats.version>
 	</properties>
 
 	<repositories>
@@ -29,8 +29,8 @@
 		</repository>
 		<repository>
 			<!-- for bstats -->
-			<id>jitpack-repo</id>
-			<url>https://jitpack.io/</url>
+			<id>CodeMC</id>
+			<url>https://repo.codemc.org/repository/maven-public</url>
 		</repository>
 	</repositories>
 
@@ -64,7 +64,7 @@
 			<systemPath>${project.basedir}/lib/Vault.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>org.bstats.bStats-Metrics</groupId>
+			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
 			<version>${bstats.version}</version>
 			<scope>compile</scope>
