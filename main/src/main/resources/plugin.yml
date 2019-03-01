@@ -9,24 +9,31 @@ commands:
   traitc:
     aliases: [trc]
     description: Configures traits
+    permission: citizens.trait.help
   trait:
     aliases: [tr]
     description: Trait commands
+    permission: citizens.trait.help
   script:
     aliases: [sc]
     description: Scripting commands
+    permission: citizens.script.help
   citizens:
     aliases: [citizens2]
     description: Administration commands
+    permission: citizens.citizens.help
   npc:
     aliases: [npc2]
     description: Basic commands for all NPC-related things
+    permission: citizens.npc.help
   template:
     aliases: [tpl]
     description: Template commands
+    permission: citizens.templates.help
   waypoint:
     aliases: [waypoints, wp]
     description: Waypoint commands
+    permission: citizens.waypoints.help
 permissions:
 # -------------------------------------------- #
 # THE REAL NODES
