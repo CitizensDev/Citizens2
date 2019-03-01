@@ -79,6 +79,7 @@ import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
@@ -484,7 +485,8 @@ public class NPCCommands {
             if (args.argsLength() < 2) {
                 throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
             }
-            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args, args.getString(1));
+            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
+                    args.getString(1));
         } else {
             callback.run(npc);
         }
@@ -891,11 +893,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "mount (--onnpc <npc id>)",
+            usage = "mount (--onnpc <npc id>) (-c (ancel))",
             desc = "Mounts a controllable NPC",
             modifiers = { "mount" },
             min = 1,
             max = 1,
+            flags = "c",
             permission = "citizens.npc.controllable")
     public void mount(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("onnpc")) {
@@ -913,6 +916,9 @@ public class NPCCommands {
                 throw new CommandException();
             }
             NMS.mount(mount.getEntity(), npc.getEntity());
+            return;
+        } else if (args.hasFlag('c')) {
+            npc.getTrait(MountTrait.class).unmount();
             return;
         }
         boolean enabled = npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled();
@@ -1325,7 +1331,8 @@ public class NPCCommands {
                         Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
                     }
                 };
-                NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args, args.getString(1));
+                NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
+                        args.getString(1));
                 return;
             }
         }
@@ -1452,7 +1459,8 @@ public class NPCCommands {
                 break;
             }
         } else {
-            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args, args.getString(1));
+            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
+                    args.getString(1));
         }
     }
 
@@ -1696,7 +1704,8 @@ public class NPCCommands {
             }
         };
         if (args.argsLength() > 1) {
-            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args, args.getString(1));
+            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
+                    args.getString(1));
         } else {
             callback.run(npc);
         }

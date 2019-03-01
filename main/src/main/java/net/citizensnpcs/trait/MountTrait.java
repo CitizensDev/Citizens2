@@ -67,4 +67,15 @@ public class MountTrait extends Trait {
         }
         checkMount(e);
     }
+
+    public void unmount() {
+        if (mountedOn != null) {
+            Entity e = NMS.getVehicle(npc.getEntity());
+            if (e != null) {
+                npc.getEntity().leaveVehicle();
+            }
+            uuid = null;
+            mountedOn = null;
+        }
+    }
 }
