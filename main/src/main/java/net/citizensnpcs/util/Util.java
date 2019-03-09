@@ -237,8 +237,17 @@ public class Util {
         if (parts.contains("*"))
             return true;
         for (String part : Splitter.on(',').split(parts)) {
-            if ((SpigotUtil.isUsing1_13API() ? Material.matchMaterial(part, true)
-                    : Material.matchMaterial(part)) == player.getInventory().getItemInHand().getType()) {
+            Material matchMaterial = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(part, true)
+                    : Material.matchMaterial(part);
+            if (matchMaterial == null) {
+                if (part.equals("280")) {
+                    matchMaterial = Material.STICK;
+                }
+                else if (part.equals("340")) {
+                    matchMaterial = Material.BOOK;
+                }
+            }
+            if (matchMaterial == player.getInventory().getItemInHand().getType()) {
                 return true;
             }
         }
