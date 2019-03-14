@@ -42,7 +42,7 @@ public class Inventory extends Trait {
      * @return ItemStack array of an NPC's inventory contents
      */
     public ItemStack[] getContents() {
-        if (view != null) {
+        if (view != null && !views.isEmpty()) {
             return view.getContents();
         }
         return contents;
@@ -58,7 +58,7 @@ public class Inventory extends Trait {
             return;
         ItemStack[] contents = event.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
-            this.contents[i] = contents[i]; 
+            this.contents[i] = contents[i];
             if (i == 0) {
                 npc.getTrait(Equipment.class).setItemInHand(contents[i]);
             }
@@ -148,14 +148,14 @@ public class Inventory extends Trait {
     }
 
     private void saveContents(Entity entity) {
-        if (entity instanceof Player) {
-            contents = ((Player) entity).getInventory().getContents();
-            npc.getTrait(Equipment.class).setItemInHand(contents[0]);
+        if (view != null && !views.isEmpty()) {
+            contents = view.getContents();
         }
-        if (view != null) {
-            for (int i = 0; i < view.getSize(); i++) {
-                view.setItem(i, contents[i]);
-            }
+        else if (entity instanceof InventoryHolder) {
+            contents = ((InventoryHolder) entity).getInventory().getContents();
+        }
+        if (entity instanceof Player) {
+            npc.getTrait(Equipment.class).setItemInHand(contents[0]);
         }
     }
 
