@@ -185,11 +185,11 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         return var11;
     }
 
-    private static final Method BLOCK_POSITION_B_C = NMS.getMethod(BlockPosition.b.class, "f", false, int.class, int.class, int.class);
+    private static final Method BLOCK_POSITION_B_C = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "f", false, int.class, int.class, int.class);
 
     public PathType a(IBlockAccess var1, int var2, int var3, int var4, PathType var5) {
         if (var5 == PathType.WALKABLE) {
-            BlockPosition.b var6 = BlockPosition.b.r();
+            BlockPosition.PooledBlockPosition var6 = BlockPosition.PooledBlockPosition.r();
             Throwable var7 = null;
 
             try {
@@ -202,7 +202,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                             }
                             catch (NoSuchMethodError ex) {
                                 try {
-                                    blockPos = (BlockPosition.b) BLOCK_POSITION_B_C.invoke(var6, var8 + var2, var3, var9 + var4);
+                                    blockPos = (BlockPosition.PooledBlockPosition) BLOCK_POSITION_B_C.invoke(var6, var8 + var2, var3, var9 + var4);
                                 }
                                 catch (Throwable ex2) {
                                     ex2.printStackTrace();

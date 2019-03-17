@@ -1320,7 +1320,7 @@ public class NMSImpl implements NMSBridge {
             } else {
                 float f9 = 0.91F;
                 BoundingBox bb = NMSBoundingBox.wrap(entity.getBoundingBox());
-                BlockPosition.b blockposition_b = BlockPosition.b.d(entity.locX, bb.minY - 1.0D, entity.locZ);
+                BlockPosition.PooledBlockPosition blockposition_b = BlockPosition.PooledBlockPosition.d(entity.locX, bb.minY - 1.0D, entity.locZ);
                 Throwable throwable = null;
                 float f4;
                 float f3;
@@ -1407,12 +1407,12 @@ public class NMSImpl implements NMSBridge {
         entity.aK += entity.aJ;
     }
 
-    private static BlockPosition.b getBlockPositionBE(BlockPosition.b blockPos, double x, double y, double z) {
+    private static BlockPosition.PooledBlockPosition getBlockPositionBE(BlockPosition.PooledBlockPosition blockPos, double x, double y, double z) {
         try {
             return blockPos.c(x, y, z);
         } catch (NoSuchMethodError ex) {
             try {
-                return (BlockPosition.b) BLOCK_POSITION_B_D.invoke(blockPos, x, y, z);
+                return (BlockPosition.PooledBlockPosition) BLOCK_POSITION_B_D.invoke(blockPos, x, y, z);
             } catch (Throwable ex2) {
                 ex2.printStackTrace();
                 return null;
@@ -1619,7 +1619,7 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
-    private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.b.class, "e", false, double.class,
+    private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "e", false, double.class,
             double.class, double.class);
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
