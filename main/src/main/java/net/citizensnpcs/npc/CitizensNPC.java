@@ -287,9 +287,12 @@ public class CitizensNPC extends AbstractNPC {
                 NMS.trySwim(getEntity());
             }
             navigator.run();
-            try {
-                getEntity().setGlowing(data().get(NPC.GLOWING_METADATA, false));
-            } catch (NoSuchMethodError e) {
+            if (SUPPORT_GLOWING) {
+                try {
+                    getEntity().setGlowing(data().get(NPC.GLOWING_METADATA, false));
+                } catch (NoSuchMethodError e) {
+                    SUPPORT_GLOWING = false;
+                }
             }
             if (!getNavigator().isNavigating() && updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
                 updateCounter = 0;
@@ -310,11 +313,15 @@ public class CitizensNPC extends AbstractNPC {
                             team.unregister();
                             data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
                         } else {
-                            try {
-                                team.setOption(Option.NAME_TAG_VISIBILITY,
-                                        nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER);
-                            } catch (NoSuchMethodError e) {
-                            } catch (NoClassDefFoundError e) {
+                            if (SUPPORT_TEAM_SETOPTION) {
+                                try {
+                                    team.setOption(Option.NAME_TAG_VISIBILITY,
+                                            nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER);
+                                } catch (NoSuchMethodError e) {
+                                    SUPPORT_TEAM_SETOPTION = false;
+                                } catch (NoClassDefFoundError e) {
+                                    SUPPORT_TEAM_SETOPTION = false;
+                                }
                             }
                             if (data().has(NPC.GLOWING_COLOR_METADATA)) {
                                 if (team.getPrefix() == null || team.getPrefix().length() == 0
@@ -346,10 +353,11 @@ public class CitizensNPC extends AbstractNPC {
                 }
             }
 
-            if (data().has(NPC.SILENT_METADATA)) {
+            if (SUPPORT_SILENT && data().has(NPC.SILENT_METADATA)) {
                 try {
                     getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.SILENT_METADATA).toString()));
                 } catch (NoSuchMethodError e) {
+                    SUPPORT_SILENT = false;
                 }
             }
         } catch (Exception ex) {
@@ -369,4 +377,7 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final String NPC_METADATA_MARKER = "NPC";
+    private static boolean SUPPORT_SILENT = true;
+    private static boolean SUPPORT_GLOWING = true;
+    private static boolean SUPPORT_TEAM_SETOPTION = true;
 }

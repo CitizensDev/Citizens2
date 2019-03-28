@@ -62,6 +62,7 @@ public class FollowTrait extends Trait {
         }
         this.followingUUID = player.getUniqueId();
         if (npc.getNavigator().isNavigating() && this.player != null
+                && npc.getNavigator().getEntityTarget() != null
                 && this.player == npc.getNavigator().getEntityTarget().getTarget()) {
             npc.getNavigator().cancelNavigation();
         }
