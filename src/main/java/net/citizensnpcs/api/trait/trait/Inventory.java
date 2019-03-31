@@ -188,7 +188,7 @@ public class Inventory extends Trait {
             dest.setItem(i, contents[i]);
         }
         if (view != null) {
-            for (int i = 0; i < view.getSize(); i++) {
+            for (int i = 0; i < maxCopySize; i++) {
                 view.setItem(i, contents[i]);
             }
         }
