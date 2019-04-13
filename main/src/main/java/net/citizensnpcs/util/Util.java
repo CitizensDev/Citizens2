@@ -48,24 +48,24 @@ public class Util {
                 prefix = coloredName.substring(0, 16);
                 int len = 30;
                 name = coloredName.substring(16, 30);
-                if (NON_ALPHABET_MATCHER.matcher(name).matches()) {
-                    if (coloredName.length() >= 32) {
-                        len = 32;
-                        name = coloredName.substring(16, 32);
-                    } else if (coloredName.length() == 31) {
-                        len = 31;
-                        name = coloredName.substring(16, 31);
-                    }
-                } else {
-                    String prefixColors = ChatColor.getLastColors(prefix);
-                    if (prefixColors.isEmpty()) {
+                String prefixColors = ChatColor.getLastColors(prefix);
+                if (prefixColors.isEmpty()) {
+                    if (NON_ALPHABET_MATCHER.matcher(name).matches()) {
+                        if (coloredName.length() >= 32) {
+                            len = 32;
+                            name = coloredName.substring(16, 32);
+                        } else if (coloredName.length() == 31) {
+                            len = 31;
+                            name = coloredName.substring(16, 31);
+                        }
+                    } else {
                         prefixColors = ChatColor.RESET.toString();
                     }
-                    else if (prefixColors.length() > 2) {
-                        prefixColors = prefixColors.substring(prefixColors.length() - 2);
-                    }
-                    name = prefixColors + name;
                 }
+                else if (prefixColors.length() > 2) {
+                    prefixColors = prefixColors.substring(prefixColors.length() - 2);
+                }
+                name = prefixColors + name;
                 suffix = coloredName.substring(len);
             } else {
                 prefix = coloredName.substring(0, coloredName.length() - 16);
@@ -74,16 +74,14 @@ public class Util {
                     prefix = prefix.substring(0, prefix.length() - 1);
                     name = ChatColor.COLOR_CHAR + name;
                 }
-                if (!NON_ALPHABET_MATCHER.matcher(name).matches()) {
-                    String prefixColors = ChatColor.getLastColors(prefix);
-                    if (prefixColors.isEmpty()) {
-                        prefixColors = ChatColor.RESET.toString();
-                    }
-                    else if (prefixColors.length() > 2) {
-                        prefixColors = prefixColors.substring(prefixColors.length() - 2);
-                    }
-                    name = prefixColors + name;
+                String prefixColors = ChatColor.getLastColors(prefix);
+                if (prefixColors.isEmpty() && !NON_ALPHABET_MATCHER.matcher(name).matches()) {
+                    prefixColors = ChatColor.RESET.toString();
                 }
+                else if (prefixColors.length() > 2) {
+                    prefixColors = prefixColors.substring(prefixColors.length() - 2);
+                }
+                name = prefixColors + name;
                 if (name.length() > 16) {
                     suffix = name.substring(16);
                     name = name.substring(0, 16);
