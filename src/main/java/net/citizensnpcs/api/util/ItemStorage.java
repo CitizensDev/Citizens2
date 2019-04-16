@@ -76,7 +76,7 @@ public class ItemStorage {
         Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
         for (DataKey subKey : root.getSubKeys()) {
             Enchantment enchantment = deserialiseEnchantment(subKey.name());
-            if (enchantment != null && enchantment.canEnchantItem(res)) {
+            if (enchantment != null) {
                 int level = Math.min(subKey.getInt(""), enchantment.getMaxLevel());
                 enchantments.put(enchantment, level);
             }
@@ -250,7 +250,7 @@ public class ItemStorage {
 
         if (root.keyExists("enchantments")) {
             Map<Enchantment, Integer> enchantments = deserialiseEnchantments(root.getRelative("enchantments"), res);
-            res.addEnchantments(enchantments);
+            res.addUnsafeEnchantments(enchantments);
         }
         deserialiseMeta(root.getRelative("meta"), res);
         return res;
