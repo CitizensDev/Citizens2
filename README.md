@@ -14,4 +14,6 @@ Javadoc: http://jd.citizensnpcs.co
 
 Spigot page: https://www.spigotmc.org/resources/citizens.13811
 
+Developmental builds: https://ci.citizensnpcs.co/job/Citizens2/
+
 For questions/help join our discord at: https://discord.gg/Q6pZGSR
