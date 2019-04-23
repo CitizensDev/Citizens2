@@ -50,8 +50,10 @@ import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
 import net.citizensnpcs.api.command.exception.RequirementMissingException;
 import net.citizensnpcs.api.command.exception.ServerCommandException;
+import net.citizensnpcs.api.event.CommandSenderCloneNPCEvent;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.event.PlayerCloneNPCEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
@@ -323,8 +325,9 @@ public class NPCCommands {
             copy.getTrait(CurrentLocation.class).setLocation(location);
         }
 
-        CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, copy)
-                : new CommandSenderCreateNPCEvent(sender, copy);
+        CommandSenderCreateNPCEvent event = sender instanceof Player
+                ? new PlayerCloneNPCEvent((Player) sender, npc, copy)
+                : new CommandSenderCloneNPCEvent(sender, npc, copy);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
