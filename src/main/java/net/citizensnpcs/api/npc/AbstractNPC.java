@@ -28,6 +28,7 @@ import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
 import net.citizensnpcs.api.ai.speech.SpeechController;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCAddTraitEvent;
+import net.citizensnpcs.api.event.NPCCloneEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRemoveTraitEvent;
 import net.citizensnpcs.api.event.NPCTeleportEvent;
@@ -128,6 +129,7 @@ public abstract class AbstractNPC implements NPC {
         for (Trait trait : copy.getTraits()) {
             trait.onCopy();
         }
+        Bukkit.getPluginManager().callEvent(new NPCCloneEvent(this, copy));
         return copy;
     }
 
