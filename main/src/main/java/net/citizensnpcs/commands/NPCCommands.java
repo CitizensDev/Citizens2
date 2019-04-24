@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -1269,7 +1268,7 @@ public class NPCCommands {
         Profession parsed = Util.matchEnum(Profession.values(), profession.toUpperCase());
         if (parsed == null) {
             throw new CommandException(Messages.INVALID_PROFESSION, args.getString(1),
-                    StringUtils.join(Profession.values(), ","));
+                    Joiner.on(',').join(Profession.values()));
         }
         npc.getTrait(VillagerProfession.class).setProfession(parsed);
         Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), profession);
@@ -1288,7 +1287,7 @@ public class NPCCommands {
         try {
             type = Rabbit.Type.valueOf(args.getString(1).toUpperCase());
         } catch (IllegalArgumentException ex) {
-            throw new CommandException(Messages.INVALID_RABBIT_TYPE, StringUtils.join(Rabbit.Type.values(), ","));
+            throw new CommandException(Messages.INVALID_RABBIT_TYPE, Joiner.on(',').join(Rabbit.Type.values()));
         }
         npc.getTrait(RabbitType.class).setType(type);
         Messaging.sendTr(sender, Messages.RABBIT_TYPE_SET, npc.getName(), type.name());

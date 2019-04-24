@@ -34,6 +34,7 @@ import org.bukkit.craftbukkit.v1_13_R2.event.CraftEventFactory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Tameable;
@@ -982,13 +983,18 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setSitting(Ocelot ocelot, boolean sitting) {
+        setSitting((Tameable) ocelot, sitting);
+    }
+
+    @Override
     public void setSitting(Tameable tameable, boolean sitting) {
         ((EntityTameableAnimal) NMSImpl.getHandle((LivingEntity) tameable)).setSitting(sitting);
     }
 
     @Override
     public void setStepHeight(org.bukkit.entity.Entity entity, float height) {
-        NMSImpl.getHandle(entity).P = height;
+        NMSImpl.getHandle(entity).Q = height;
     }
 
     @Override
@@ -1002,7 +1008,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setWitherCharged(Wither wither, boolean charged) {
         EntityWither handle = ((CraftWither) wither).getHandle();
-        handle.g(charged ? 20 : 0);
+        handle.d(charged ? 20 : 0);
     }
 
     @Override
@@ -1320,7 +1326,8 @@ public class NMSImpl implements NMSBridge {
             } else {
                 float f9 = 0.91F;
                 BoundingBox bb = NMSBoundingBox.wrap(entity.getBoundingBox());
-                BlockPosition.PooledBlockPosition blockposition_b = BlockPosition.PooledBlockPosition.d(entity.locX, bb.minY - 1.0D, entity.locZ);
+                BlockPosition.PooledBlockPosition blockposition_b = BlockPosition.PooledBlockPosition.d(entity.locX,
+                        bb.minY - 1.0D, entity.locZ);
                 Throwable throwable = null;
                 float f4;
                 float f3;
@@ -1407,7 +1414,8 @@ public class NMSImpl implements NMSBridge {
         entity.aK += entity.aJ;
     }
 
-    private static BlockPosition.PooledBlockPosition getBlockPositionBE(BlockPosition.PooledBlockPosition blockPos, double x, double y, double z) {
+    private static BlockPosition.PooledBlockPosition getBlockPositionBE(BlockPosition.PooledBlockPosition blockPos,
+            double x, double y, double z) {
         try {
             return blockPos.c(x, y, z);
         } catch (NoSuchMethodError ex) {
@@ -1596,7 +1604,7 @@ public class NMSImpl implements NMSBridge {
 
     public static void stopNavigation(NavigationAbstract navigation) {
         navigation.q();
-    }
+    };
 
     public static void updateAI(EntityLiving entity) {
         if (entity instanceof EntityInsentient) {
@@ -1609,7 +1617,7 @@ public class NMSImpl implements NMSBridge {
         } else if (entity instanceof EntityHumanNPC) {
             ((EntityHumanNPC) entity).updateAI();
         }
-    };
+    }
 
     public static void updateNavigation(NavigationAbstract navigation) {
         navigation.d();
@@ -1619,8 +1627,8 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
-    private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "e", false, double.class,
-            double.class, double.class);
+    private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "e", false,
+            double.class, double.class, double.class);
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c", false);

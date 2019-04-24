@@ -332,7 +332,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private void moveOnCurrentHeading() {
         if (bg) {
             if (onGround && jumpTicks == 0) {
-                cG();
+                cH();
                 jumpTicks = 10;
             }
         } else {

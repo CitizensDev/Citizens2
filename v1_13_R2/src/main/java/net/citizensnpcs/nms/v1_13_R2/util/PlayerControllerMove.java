@@ -43,7 +43,7 @@ public class PlayerControllerMove extends ControllerMove {
             double d2 = this.c - i;
             double d3 = d0 * d0 + d2 * d2 + d1 * d1;
             if (d3 < 2.500000277905201E-007D) {
-                this.a.bi = (0.0F);
+                this.a.bj = (0.0F); // bi
                 return;
             }
             float f = (float) Math.toDegrees(Math.atan2(d1, d0)) - 90.0F;

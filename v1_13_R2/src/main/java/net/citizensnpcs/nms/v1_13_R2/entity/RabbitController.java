@@ -190,7 +190,9 @@ public class RabbitController extends MobEntityController {
         public void mobTick() {
             if (npc != null) {
                 super.mobTick();
-                NMS.setShouldJump(getBukkitEntity());
+                if (npc.getNavigator().isNavigating()) {
+                    NMS.setShouldJump(getBukkitEntity());
+                }
                 npc.update();
             } else {
                 super.mobTick();

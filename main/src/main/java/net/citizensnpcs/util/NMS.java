@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
@@ -292,6 +293,10 @@ public class NMS {
 
     public static void setShouldJump(org.bukkit.entity.Entity entity) {
         BRIDGE.setShouldJump(entity);
+    }
+
+    public static void setSitting(Ocelot ocelot, boolean sitting) {
+        BRIDGE.setSitting(ocelot, sitting);
     }
 
     public static void setSitting(Tameable tameable, boolean sitting) {

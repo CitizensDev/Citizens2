@@ -21,6 +21,9 @@ public class Messages {
     public static final String BEHAVIOURS_ADDED = "citizens.commands.npc.behaviour.added";
     public static final String BEHAVIOURS_REMOVED = "citizens.commands.npc.behaviour.removed";
     public static final String CANNOT_TELEPORT_ACROSS_WORLDS = "citizens.commands.npc.tphere.multiworld-not-allowed";
+    public static final String CAT_STARTED_SITTING = "citizens.commands.npc.cat.sitting-start";
+    public static final String CAT_STOPPED_SITTING = "citizens.commands.npc.cat.sitting-stop";
+    public static final String CAT_TYPE_SET = "citizens.commands.npc.cat.type-set";
     public static final String CHAT_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.chat.prompt";
     public static final String CITIZENS_IMPLEMENTATION_DISABLED = "citizens.changed-implementation";
     public static final String CITIZENS_INCOMPATIBLE = "citizens.notifications.incompatible-version";
@@ -106,12 +109,14 @@ public class Messages {
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
     public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
     public static final String INVALID_ANIMATION = "citizens.editors.waypoints.triggers.animation.invalid-animation";
+    public static final String INVALID_CAT_TYPE = "citizens.commands.npc.cat.invalid-type";
     public static final String INVALID_ENTITY_TYPE = "citizens.commands.npc.type.invalid";
     public static final String INVALID_HORSE_COLOR = "citizens.commands.npc.horse.invalid-color";
     public static final String INVALID_HORSE_STYLE = "citizens.commands.npc.horse.invalid-style";
     public static final String INVALID_HORSE_VARIANT = "citizens.commands.npc.horse.invalid-variant";
     public static final String INVALID_LLAMA_COLOR = "citizens.commands.npc.llama.invalid-color";
     public static final String INVALID_OCELOT_TYPE = "citizens.commands.npc.ocelot.invalid-type";
+    public static final String INVALID_PANDA_GENE = "citizens.commands.npc.panda.invalid-gene";
     public static final String INVALID_PARROT_VARIANT = "citizens.commands.npc.parrot.invalid-variant";
     public static final String INVALID_POSE_NAME = "citizens.commands.npc.pose.invalid-name";
     public static final String INVALID_PROFESSION = "citizens.commands.npc.profession.invalid-profession";
@@ -181,6 +186,8 @@ public class Messages {
     public static final String OVER_NPC_LIMIT = "citizens.limits.over-npc-limit";
     public static final String OWNER_SET = "citizens.commands.npc.owner.set";
     public static final String OWNER_SET_SERVER = "citizens.commands.npc.owner.set-server";
+    public static final String PANDA_HIDDEN_GENE_SET = "citizens.commands.npc.panda.hidden-gene-set";
+    public static final String PANDA_MAIN_GENE_SET = "citizens.commands.npc.panda.main-gene-set";
     public static final String PARROT_VARIANT_SET = "citizens.commands.npc.parrot.variant-set";
     public static final String PASSIVE_SET = "citizens.commands.npc.passive.set";
     public static final String PASSIVE_UNSET = "citizens.commands.npc.passive.unset";
