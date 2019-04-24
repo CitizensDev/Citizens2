@@ -115,7 +115,7 @@ public class PersistenceLoaderTest {
     public void testTypeInference() {
         root.setString("map.1", "1");
         InferenceTest test = PersistenceLoader.load(InferenceTest.class, root);
-        assertThat(test.map, is(ConcurrentHashMap.class));
+        assertEquals(test.map.getClass(), ConcurrentHashMap.class);
     }
 
     @Test
