@@ -22,6 +22,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 @TraitName("lookclose")
@@ -39,7 +40,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     private boolean canSeeTarget() {
         return realisticLooking && npc.getEntity() instanceof LivingEntity
-                ? ((LivingEntity) npc.getEntity()).hasLineOfSight(lookingAt) : true;
+                ? ((LivingEntity) npc.getEntity()).hasLineOfSight(lookingAt)
+                : true;
     }
 
     @Override
@@ -115,6 +117,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         }
         if (lookingAt != null && canSeeTarget()) {
             Util.faceEntity(npc.getEntity(), lookingAt);
+            if (npc.getEntity().getType().name().toLowerCase().contains("shulker")) {
+                NMS.setPeekShulker(npc.getEntity(), 100 - (int) Math
+                        .floor(npc.getStoredLocation().distanceSquared(lookingAt.getLocation(PLAYER_LOCATION))));
+            }
         }
     }
 
