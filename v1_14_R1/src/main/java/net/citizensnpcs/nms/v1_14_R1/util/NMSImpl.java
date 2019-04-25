@@ -1004,7 +1004,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setSitting(Ocelot ocelot, boolean sitting) {
-        /* TODO */
+        // sitting removed
     }
 
     @Override

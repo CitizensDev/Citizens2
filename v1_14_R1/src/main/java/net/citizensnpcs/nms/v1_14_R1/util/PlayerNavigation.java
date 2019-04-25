@@ -61,7 +61,7 @@ public class PlayerNavigation extends NavigationAbstract {
         this.p = entityinsentient.getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
         this.o = new PlayerPathfinderNormal();
         this.o.a(true);
-        this.r = new PlayerPathfinder(this.o, 100); // TODO: what is this parameter normally?
+        this.r = new PlayerPathfinder(this.o, 768);
         this.setRange(24);
         // this.b.C().a(this);
     }

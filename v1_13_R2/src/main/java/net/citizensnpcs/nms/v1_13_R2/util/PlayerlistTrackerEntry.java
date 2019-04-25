@@ -27,9 +27,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             return;
         Entity tracker = getTracker(this);
         if (entityplayer != tracker && c(entityplayer)) {
-            if (!this.trackedPlayers.contains(entityplayer)
-                    && ((entityplayer.getWorldServer().getPlayerChunkMap().a(entityplayer, getChunkX(tracker), getChunkZ(tracker)))
-                            || (tracker.attachedToPlayer))) {
+            if (!this.trackedPlayers.contains(entityplayer) && ((entityplayer.getWorldServer().getPlayerChunkMap()
+                    .a(entityplayer, getChunkX(tracker), getChunkZ(tracker))) || (tracker.attachedToPlayer))) {
                 if ((tracker instanceof SkinnableEntity)) {
                     SkinnableEntity skinnable = (SkinnableEntity) tracker;
 
@@ -42,6 +41,32 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             }
         }
         super.updatePlayer(entityplayer);
+    }
+
+    private static int getChunkX(Entity tracker) {
+        try {
+            return tracker.chunkX;
+        } catch (NoSuchFieldError ex) {
+            try {
+                return CHUNK_X.getInt(tracker);
+            } catch (Exception ex2) {
+                ex2.printStackTrace();
+                return 0;
+            }
+        }
+    }
+
+    private static int getChunkZ(Entity tracker) {
+        try {
+            return tracker.chunkZ;
+        } catch (NoSuchFieldError ex) {
+            try {
+                return CHUNK_Z.getInt(tracker);
+            } catch (Exception ex2) {
+                ex2.printStackTrace();
+                return 0;
+            }
+        }
     }
 
     private static int getE(EntityTrackerEntry entry) {
@@ -97,36 +122,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             e.printStackTrace();
         }
         return false;
-    }
-
-    private static int getChunkX(Entity tracker) {
-        try {
-            return tracker.chunkX;
-        }
-        catch (NoSuchFieldError ex) {
-            try {
-                return CHUNK_X.getInt(tracker);
-            }
-            catch (Exception ex2) {
-                ex2.printStackTrace();
-                return 0;
-            }
-        }
-    }
-
-    private static int getChunkZ(Entity tracker) {
-        try {
-            return tracker.chunkZ;
-        }
-        catch (NoSuchFieldError ex) {
-            try {
-                return CHUNK_Z.getInt(tracker);
-            }
-            catch (Exception ex2) {
-                ex2.printStackTrace();
-                return 0;
-            }
-        }
     }
 
     private static Field CHUNK_X = NMS.getField(Entity.class, "ae", false);
