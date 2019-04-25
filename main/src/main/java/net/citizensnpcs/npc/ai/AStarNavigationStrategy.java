@@ -94,6 +94,15 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location currLoc = npc.getEntity().getLocation(NPC_LOCATION);
         Vector destVector = new Vector(vector.getX() + 0.5, vector.getY(), vector.getZ() + 0.5);
+        Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
+        if (MinecraftBlockExaminer.isDoor(block.getType())) {
+            Door door = (Door) block.getState().getData();
+            if (door.isOpen()) {
+                BlockFace targetFace = door.getFacing().getOppositeFace();
+                destVector.setX(vector.getX() + targetFace.getModX());
+                destVector.setZ(vector.getZ() + targetFace.getModZ());
+            }
+        }
         if (currLoc.toVector().distanceSquared(destVector) <= params.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
@@ -112,15 +121,6 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         if (distance > 0 && dY > NMS.getStepHeight(npc.getEntity()) && xzDistance <= 2.75) {
             NMS.setShouldJump(npc.getEntity());
-        }
-        Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
-        if (MinecraftBlockExaminer.isDoor(block.getType())) {
-            Door door = (Door) block.getState().getData();
-            if (door.isOpen()) {
-                BlockFace targetFace = door.getFacing().getOppositeFace();
-                destVector.setX(vector.getX() + targetFace.getModX());
-                destVector.setZ(vector.getZ() + targetFace.getModZ());
-            }
         }
         NMS.setDestination(npc.getEntity(), destVector.getX(), destVector.getY(), destVector.getZ(), params.speed());
         params.run();
