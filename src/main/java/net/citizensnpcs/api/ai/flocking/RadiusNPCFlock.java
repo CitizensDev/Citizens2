@@ -2,12 +2,12 @@ package net.citizensnpcs.api.ai.flocking;
 
 import java.util.Collection;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.entity.Entity;
 
 import com.google.common.collect.Lists;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 
 public class RadiusNPCFlock implements NPCFlock {
     private Collection<NPC> cached;
@@ -35,9 +35,7 @@ public class RadiusNPCFlock implements NPCFlock {
         Collection<NPC> ret = Lists.newArrayList();
         for (Entity entity : npc.getEntity().getNearbyEntities(radius, radius, radius)) {
             NPC npc2 = CitizensAPI.getNPCRegistry().getNPC(entity);
-            if (npc2 != null) {
-                if (!npc2.getNavigator().isNavigating())
-                    continue;
+            if (npc2 != null && npc2.getNavigator().isNavigating()) {
                 ret.add(npc2);
             }
         }

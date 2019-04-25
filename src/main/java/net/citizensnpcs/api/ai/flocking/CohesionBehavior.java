@@ -2,10 +2,10 @@ package net.citizensnpcs.api.ai.flocking;
 
 import java.util.Collection;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class CohesionBehavior implements FlockBehavior {
     private final double weight;
@@ -24,7 +24,7 @@ public class CohesionBehavior implements FlockBehavior {
             positions = positions.add(neighbor.getEntity().getLocation(dummy).toVector());
         }
         Vector center = positions.multiply((double) 1 / nearby.size());
-        return npc.getEntity().getLocation(dummy).toVector().subtract(center).multiply(weight);
+        return npc.getEntity().getLocation(dummy).toVector().subtract(center).normalize().multiply(weight);
     }
 
 }
