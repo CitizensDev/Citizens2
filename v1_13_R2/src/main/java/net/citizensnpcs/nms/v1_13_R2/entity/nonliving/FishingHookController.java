@@ -1,11 +1,15 @@
 package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftFishHook;
 import org.bukkit.entity.FishHook;
 import org.bukkit.util.Vector;
+
+import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -14,8 +18,11 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.EntityFishingHook;
+import net.minecraft.server.v1_13_R2.EntityPlayer;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.PlayerInteractManager;
 import net.minecraft.server.v1_13_R2.World;
+import net.minecraft.server.v1_13_R2.WorldServer;
 
 public class FishingHookController extends MobEntityController {
     public FishingHookController() {
@@ -35,7 +42,9 @@ public class FishingHookController extends MobEntityController {
         }
 
         public EntityFishingHookNPC(World world, NPC npc) {
-            super(world, null);
+            super(world, new EntityPlayer(world.getServer().getServer(), (WorldServer) world,
+                    new GameProfile(UUID.randomUUID(), "dummyfishhook"), new PlayerInteractManager(world)) {
+            });
             this.npc = (CitizensNPC) npc;
         }
 

@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
@@ -7,16 +9,24 @@ import org.bukkit.craftbukkit.v1_14_R1.entity.CraftFishHook;
 import org.bukkit.entity.FishHook;
 import org.bukkit.util.Vector;
 
+import com.mojang.authlib.GameProfile;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.entity.MobEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_14_R1.Entity;
 import net.minecraft.server.v1_14_R1.EntityFishingHook;
+import net.minecraft.server.v1_14_R1.EntityPlayer;
 import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_14_R1.ItemStack;
+import net.minecraft.server.v1_14_R1.Items;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
+import net.minecraft.server.v1_14_R1.PlayerInteractManager;
 import net.minecraft.server.v1_14_R1.World;
+import net.minecraft.server.v1_14_R1.WorldServer;
 
 public class FishingHookController extends MobEntityController {
     public FishingHookController() {
@@ -36,7 +46,10 @@ public class FishingHookController extends MobEntityController {
         }
 
         public EntityFishingHookNPC(EntityTypes<? extends EntityFishingHook> types, World world, NPC npc) {
-            super(null, world, 0, 0); // TODO this is totally broken
+            super(new EntityPlayer(world.getServer().getServer(), (WorldServer) world,
+                    new GameProfile(UUID.randomUUID(), "dummyfishhook"),
+                    new PlayerInteractManager((WorldServer) world)) {
+            }, world, 0, 0);
             this.npc = (CitizensNPC) npc;
         }
 
@@ -91,8 +104,20 @@ public class FishingHookController extends MobEntityController {
         }
 
         @Override
+        public double h(Entity entity) {
+            // distance check in k()
+            if (entity == this.owner) {
+                return 0D;
+            }
+            return super.h(entity);
+        }
+
+        @Override
         public void tick() {
             if (npc != null) {
+                this.owner.setHealth(20F);
+                this.owner.dead = false;
+                this.owner.inventory.setCarried(new ItemStack(Items.FISHING_ROD, 1));
                 npc.update();
             } else {
                 super.tick();

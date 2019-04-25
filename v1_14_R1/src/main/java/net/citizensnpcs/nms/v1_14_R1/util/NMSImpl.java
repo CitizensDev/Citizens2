@@ -824,7 +824,7 @@ public class NMSImpl implements NMSBridge {
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
             EntityTypes<?> type = ENTITY_REGISTRY.findType(search);
             MinecraftKey key = ENTITY_REGISTRY.getKey(type);
-            if (key == null)
+            if (key == null || type == null)
                 continue;
             CITIZENS_ENTITY_TYPES.put(clazz, type);
             int code = ENTITY_REGISTRY.a(type);

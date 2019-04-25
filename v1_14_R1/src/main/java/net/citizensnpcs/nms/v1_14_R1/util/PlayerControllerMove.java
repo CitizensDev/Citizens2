@@ -3,7 +3,6 @@ package net.citizensnpcs.nms.v1_14_R1.util;
 import java.util.Random;
 
 import net.citizensnpcs.nms.v1_14_R1.entity.EntityHumanNPC;
-import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_14_R1.AttributeInstance;
 import net.minecraft.server.v1_14_R1.ControllerMove;
@@ -37,8 +36,7 @@ public class PlayerControllerMove extends ControllerMove {
         this.a.bd = 0F;
         if (this.f) {
             this.f = false;
-            BoundingBox bb = NMSBoundingBox.wrap(this.a.getBoundingBox());
-            int i = MathHelper.floor(bb.minY + 0.5D);
+            int i = MathHelper.floor(this.a.getBoundingBox().minY + 0.5D);
             double d0 = this.b - this.a.locX;
             double d1 = this.d - this.a.locZ;
             double d2 = this.c - i;

@@ -96,7 +96,7 @@ public class CustomEntityRegistry extends RegistryBlocks {
         return (Set) wrapped.keySet();
     }
 
-    public void put(int entityId, MinecraftKey key, EntityTypes entityClass) {
+    public void put(int entityId, MinecraftKey key, EntityTypes entityClass) { 
         entities.put(key, entityClass);
         entityIds.put(entityClass, entityId);
     }
@@ -205,5 +205,6 @@ public class CustomEntityRegistry extends RegistryBlocks {
         minecraftClassMap.put(EntityTypes.ZOMBIE_VILLAGER, EntityZombieVillager.class);
         minecraftClassMap.put(EntityTypes.PHANTOM, EntityPhantom.class);
         minecraftClassMap.put(EntityTypes.RAVAGER, EntityRavager.class);
+        minecraftClassMap.put(EntityTypes.FISHING_BOBBER, EntityFishingHook.class);
     }
 }
