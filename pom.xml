@@ -9,7 +9,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.14-pre5-SNAPSHOT</bukkit.version>
+		<bukkit.version>1.14-R0.1-SNAPSHOT</bukkit.version>
 		<powermock.version>1.4.12</powermock.version>
 		<build.number>Unknown</build.number>
 	</properties>
