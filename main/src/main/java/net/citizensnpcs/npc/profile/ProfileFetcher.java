@@ -79,7 +79,7 @@ public class ProfileFetcher {
 
                 try {
                     request.setResult(NMS.fillProfileProperties(profile, true), ProfileFetchResult.SUCCESS);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     if (Messaging.isDebugging()) {
                         Messaging.debug("Profile lookup for player '" + profile.getName() + "' failed: "
                                 + getExceptionMsg(e) + " " + isTooManyRequests(e));
@@ -134,7 +134,7 @@ public class ProfileFetcher {
         return null;
     }
 
-    private static String getExceptionMsg(Exception e) {
+    private static String getExceptionMsg(Throwable e) {
         return Throwables.getRootCause(e).getMessage();
     }
 
@@ -155,8 +155,7 @@ public class ProfileFetcher {
                 || (cause != null && cause.contains("did not find"));
     }
 
-    private static boolean isTooManyRequests(Exception e) {
-
+    private static boolean isTooManyRequests(Throwable e) {
         String message = e.getMessage();
         String cause = e.getCause() != null ? e.getCause().getMessage() : null;
 

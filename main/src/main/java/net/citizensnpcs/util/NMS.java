@@ -1,5 +1,7 @@
 package net.citizensnpcs.util;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -55,7 +57,7 @@ public class NMS {
      * Yggdrasil's default implementation of this method silently fails instead of throwing
      * an Exception like it should.
      */
-    public static GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Exception {
+    public static GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable {
         return BRIDGE.fillProfileProperties(profile, requireSecure);
     }
 
@@ -106,8 +108,42 @@ public class NMS {
         return f;
     }
 
+    public static MethodHandle getFinalSetter(Class<?> clazz, String field) {
+        return getFinalSetter(clazz, field, true);
+    }
+
+    public static MethodHandle getFinalSetter(Class<?> clazz, String field, boolean log) {
+        Field f = getFinalField(clazz, field, log);
+        if (f == null) {
+            return null;
+        }
+        try {
+            return LOOKUP.unreflectSetter(f);
+        } catch (Exception e) {
+            if (log) {
+                Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+            }
+        }
+        return null;
+    }
+
     public static GameProfileRepository getGameProfileRepository() {
         return BRIDGE.getGameProfileRepository();
+    }
+
+    public static MethodHandle getGetter(Class<?> clazz, String name) {
+        return getGetter(clazz, name, true);
+    }
+
+    public static MethodHandle getGetter(Class<?> clazz, String name, boolean log) {
+        try {
+            return LOOKUP.unreflectGetter(getField(clazz, name, log));
+        } catch (Exception e) {
+            if (log) {
+                Messaging.logTr(Messages.ERROR_GETTING_FIELD, name, e.getLocalizedMessage());
+            }
+        }
+        return null;
     }
 
     public static float getHeadYaw(org.bukkit.entity.Entity entity) {
@@ -133,6 +169,19 @@ public class NMS {
         return f;
     }
 
+    public static MethodHandle getMethodHandle(Class<?> clazz, String method, boolean log, Class<?>... params) {
+        if (clazz == null)
+            return null;
+        try {
+            return LOOKUP.unreflect(getMethod(clazz, method, log, params));
+        } catch (Exception e) {
+            if (log) {
+                Messaging.logTr(Messages.ERROR_GETTING_METHOD, method, e.getLocalizedMessage());
+            }
+        }
+        return null;
+    }
+
     public static NPC getNPC(Entity entity) {
         return BRIDGE.getNPC(entity);
     }
@@ -143,6 +192,21 @@ public class NMS {
 
     public static GameProfile getProfile(SkullMeta meta) {
         return BRIDGE.getProfile(meta);
+    }
+
+    public static MethodHandle getSetter(Class<?> clazz, String name) {
+        return getSetter(clazz, name, true);
+    }
+
+    public static MethodHandle getSetter(Class<?> clazz, String name, boolean log) {
+        try {
+            return LOOKUP.unreflectSetter(getField(clazz, name, log));
+        } catch (Exception e) {
+            if (log) {
+                Messaging.logTr(Messages.ERROR_GETTING_FIELD, name, e.getLocalizedMessage());
+            }
+        }
+        return null;
     }
 
     public static String getSound(String flag) throws CommandException {
@@ -344,5 +408,7 @@ public class NMS {
     }
 
     private static NMSBridge BRIDGE;
+
+    private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers");
 }

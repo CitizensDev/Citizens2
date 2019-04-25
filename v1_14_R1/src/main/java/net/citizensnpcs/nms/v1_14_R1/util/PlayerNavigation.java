@@ -1,10 +1,8 @@
 package net.citizensnpcs.nms.v1_14_R1.util;
 
-import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import net.citizensnpcs.nms.v1_14_R1.entity.EntityHumanNPC;
-import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_14_R1.AttributeInstance;
 import net.minecraft.server.v1_14_R1.Block;
 import net.minecraft.server.v1_14_R1.BlockPosition;
@@ -17,7 +15,6 @@ import net.minecraft.server.v1_14_R1.GenericAttributes;
 import net.minecraft.server.v1_14_R1.IBlockAccess;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.MathHelper;
-import net.minecraft.server.v1_14_R1.MethodProfiler;
 import net.minecraft.server.v1_14_R1.NavigationAbstract;
 import net.minecraft.server.v1_14_R1.PathEntity;
 import net.minecraft.server.v1_14_R1.PathMode;
@@ -581,11 +578,4 @@ public class PlayerNavigation extends NavigationAbstract {
         return new EntityInsentient(EntityTypes.VILLAGER, world) {
         };
     }
-
-    private static long getMonotonicMillis() {
-        return SystemUtils.getMonotonicMillis();
-    }
-
-    private static final Method PROFILER_ENTER = NMS.getMethod(MethodProfiler.class, "a", false, String.class);
-    private static final Method PROFILER_EXIT = NMS.getMethod(MethodProfiler.class, "e", false);
 }

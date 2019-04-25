@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
-import java.lang.reflect.Method;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
@@ -15,7 +13,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DamageSource;
@@ -185,15 +182,7 @@ public class GuardianController extends MobEntityController {
         @Override
         public void movementTick() {
             if (npc == null) {
-                try {
-                    super.movementTick();
-                } catch (NoSuchMethodError ex) {
-                    try {
-                        MOVEMENT_TICK.invoke(this);
-                    } catch (Throwable ex2) {
-                        ex2.printStackTrace();
-                    }
-                }
+                super.movementTick();
             } else {
                 NMSImpl.updateAI(this);
                 npc.update();
@@ -208,8 +197,6 @@ public class GuardianController extends MobEntityController {
                 NMSImpl.setSize(this, justCreated);
             }
         }
-
-        private static final Method MOVEMENT_TICK = NMS.getMethod(EntityGuardian.class, "k", false);
     }
 
     public static class GuardianNPC extends CraftGuardian implements NPCHolder {

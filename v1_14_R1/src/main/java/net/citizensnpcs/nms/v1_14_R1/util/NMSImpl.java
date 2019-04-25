@@ -1,8 +1,7 @@
 package net.citizensnpcs.nms.v1_14_R1.util;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
@@ -248,7 +247,6 @@ import net.minecraft.server.v1_14_R1.PlayerChunkMap.EntityTracker;
 import net.minecraft.server.v1_14_R1.RegistryBlocks;
 import net.minecraft.server.v1_14_R1.ReportedException;
 import net.minecraft.server.v1_14_R1.SoundEffect;
-import net.minecraft.server.v1_14_R1.SoundEffects;
 import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.WorldServer;
 
@@ -315,7 +313,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Exception {
+    public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable {
         if (Bukkit.isPrimaryThread())
             throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
 
@@ -407,10 +405,8 @@ public class NMSImpl implements NMSBridge {
     @Override
     public GameProfile getProfile(SkullMeta meta) {
         if (SKULL_PROFILE_FIELD == null) {
-            try {
-                SKULL_PROFILE_FIELD = meta.getClass().getDeclaredField("profile");
-                SKULL_PROFILE_FIELD.setAccessible(true);
-            } catch (Exception e) {
+            SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
+            if (SKULL_PROFILE_FIELD == null) {
                 return null;
             }
         }
@@ -526,20 +522,21 @@ public class NMSImpl implements NMSBridge {
                     Entity handle = getHandle(entity);
                     EntitySize size = null;
                     try {
-                        size = (EntitySize) SIZE_FIELD.get(handle);
+                        size = (EntitySize) SIZE_FIELD_GETTER.invoke(handle);
 
                         if (handle instanceof EntityHorse) {
-                            SIZE_FIELD.set(handle, new EntitySize(Math.min(0.99F, size.width), size.height, false));
+                            SIZE_FIELD_SETTER.invoke(handle,
+                                    new EntitySize(Math.min(0.99F, size.width), size.height, false));
                         }
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         e.printStackTrace();
                     }
                     if (!function.apply(navigation)) {
                         reason = CancelReason.STUCK;
                     }
                     try {
-                        SIZE_FIELD.set(handle, size);
-                    } catch (Exception e) {
+                        SIZE_FIELD_SETTER.invoke(handle, size);
+                    } catch (Throwable e) {
                         e.printStackTrace();
                         // minecraft requires that an entity fit onto both blocks if width >= 1f, but we'd prefer to
                         // make it just fit on 1 so hack around it a bit.
@@ -976,10 +973,8 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
         if (SKULL_PROFILE_FIELD == null) {
-            try {
-                SKULL_PROFILE_FIELD = meta.getClass().getDeclaredField("profile");
-                SKULL_PROFILE_FIELD.setAccessible(true);
-            } catch (Exception e) {
+            SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
+            if (SKULL_PROFILE_FIELD == null) {
                 return;
             }
         }
@@ -1036,10 +1031,8 @@ public class NMSImpl implements NMSBridge {
         if (JUMP_FIELD == null || !(entity instanceof LivingEntity))
             return false;
         try {
-            return JUMP_FIELD.getBoolean(NMSImpl.getHandle(entity));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+            return (boolean) JUMP_FIELD.invoke(NMSImpl.getHandle(entity));
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return false;
@@ -1049,13 +1042,10 @@ public class NMSImpl implements NMSBridge {
     public void shutdown() {
         if (ENTITY_REGISTRY == null)
             return;
-        Field field = NMS.getFinalField(EntityTypes.class, "REGISTRY", false);
-        if (field == null) {
-            field = NMS.getFinalField(IRegistry.class, "ENTITY_TYPE");
-        }
+        MethodHandle field = NMS.getFinalSetter(IRegistry.class, "ENTITY_TYPE");
         try {
-            field.set(null, ENTITY_REGISTRY.getWrapped());
-        } catch (Exception e) {
+            field.invoke(null, ENTITY_REGISTRY.getWrapped());
+        } catch (Throwable e) {
         }
     }
 
@@ -1122,9 +1112,11 @@ public class NMSImpl implements NMSBridge {
         EntityInsentient handle = (EntityInsentient) en;
         WorldServer worldHandle = ((CraftWorld) world).getHandle();
         try {
-            NAVIGATION_WORLD_FIELD.set(handle.getNavigation(), worldHandle);
+            NAVIGATION_WORLD_FIELD.invoke(handle.getNavigation(), worldHandle);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_UPDATING_NAVIGATION_WORLD, e.getMessage());
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 
@@ -1144,11 +1136,9 @@ public class NMSImpl implements NMSBridge {
         EntityInsentient handle = (EntityInsentient) en;
         NavigationAbstract navigation = handle.getNavigation();
         try {
-            AttributeInstance inst = (AttributeInstance) PATHFINDING_RANGE.get(navigation);
+            AttributeInstance inst = (AttributeInstance) PATHFINDING_RANGE.invoke(navigation);
             inst.setValue(pathfindingRange);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -1227,8 +1217,8 @@ public class NMSImpl implements NMSBridge {
     public static void checkAndUpdateHeight(EntityLiving living, DataWatcherObject<?> datawatcherobject) {
         EntitySize size;
         try {
-            size = (EntitySize) SIZE_FIELD.get(living);
-        } catch (Exception e) {
+            size = (EntitySize) SIZE_FIELD_GETTER.invoke(living);
+        } catch (Throwable e) {
             e.printStackTrace();
             living.a(datawatcherobject);
             return;
@@ -1247,9 +1237,11 @@ public class NMSImpl implements NMSBridge {
             return;
         for (PathfinderGoalSelector selector : goalSelectors) {
             try {
-                Collection<?> list = (Collection<?>) GOAL_FIELD.get(selector);
+                Collection<?> list = (Collection<?>) GOAL_FIELD.invoke(selector);
                 list.clear();
             } catch (Exception e) {
+                Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
+            } catch (Throwable e) {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
             }
         }
@@ -1324,10 +1316,11 @@ public class NMSImpl implements NMSBridge {
                         double d6 = d4 - d5;
                         float f4 = (float) (d6 * 10.0D - 3.0D);
                         if (f4 > 0.0F) {
-
-                            entity.a(/* TODO ?implement properly entity.getSoundFall((int) f4)*/f4 > 4
-                                    ? SoundEffects.ENTITY_GENERIC_BIG_FALL
-                                    : SoundEffects.ENTITY_GENERIC_SMALL_FALL, 1.0F, 1.0F);
+                            try {
+                                entity.a((SoundEffect) ENTITY_GET_SOUND_FALL.invoke(entity, (int) f4), 1.0F, 1.0F);
+                            } catch (Throwable e) {
+                                e.printStackTrace();
+                            }
                             entity.damageEntity(DamageSource.FLY_INTO_WALL, f4);
                         }
                     }
@@ -1341,21 +1334,19 @@ public class NMSImpl implements NMSBridge {
                             entity.locZ);
                     float f5 = entity.world.getType(blockposition).getBlock().m();
                     f1 = entity.onGround ? f5 * 0.91F : 0.91F;
-                    entity.a(/* TODO ?implement properly entity.r(f5)*/ entity.onGround
-                            ? entity.da() * (0.21600002F / (f5 * f5 * f5))
-                            : entity.aO, vec3d);
                     try {
+                        entity.a((float) ENTITY_R.invoke(entity, f5), vec3d);
                         entity.setMot((Vec3D) ISCLIMBING_METHOD.invoke(entity, entity.getMot()));
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         e.printStackTrace();
                     }
                     entity.move(EnumMoveType.SELF, entity.getMot());
                     vec3d2 = entity.getMot();
                     try {
-                        if ((entity.positionChanged || JUMP_FIELD.getBoolean(entity)) && entity.isClimbing()) {
+                        if ((entity.positionChanged || (boolean) JUMP_FIELD.invoke(entity)) && entity.isClimbing()) {
                             vec3d2 = new Vec3D(vec3d2.x, 0.2D, vec3d2.z);
                         }
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         e.printStackTrace();
                     }
 
@@ -1457,17 +1448,19 @@ public class NMSImpl implements NMSBridge {
             if (entity.getType() == EntityType.WITHER) {
                 bserver = ((EntityWither) NMSImpl.getHandle(entity)).bossBattle;
             } else if (entity.getType() == EntityType.ENDER_DRAGON) {
-                bserver = ((EnderDragonBattle) ENDERDRAGON_BATTLE_FIELD.get(NMSImpl.getHandle(entity))).bossBattle;
+                bserver = ((EnderDragonBattle) ENDERDRAGON_BATTLE_FIELD.invoke(NMSImpl.getHandle(entity))).bossBattle;
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
         if (bserver == null) {
             return null;
         }
         BossBar ret = Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SEGMENTED_10);
         try {
-            CRAFT_BOSSBAR_HANDLE_FIELD.set(ret, bserver);
-        } catch (Exception e) {
+            CRAFT_BOSSBAR_HANDLE_FIELD.invoke(ret, bserver);
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
         return ret;
     }
@@ -1500,10 +1493,8 @@ public class NMSImpl implements NMSBridge {
         if (RABBIT_FIELD == null)
             return null;
         try {
-            return (DataWatcherObject<Integer>) RABBIT_FIELD.get(null);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+            return (DataWatcherObject<Integer>) RABBIT_FIELD.invoke(null);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;
@@ -1579,10 +1570,8 @@ public class NMSImpl implements NMSBridge {
 
     public static void setAdvancement(Player entity, AdvancementDataPlayer instance) {
         try {
-            ADVANCEMENT_PLAYER_FIELD.set(getHandle(entity), instance);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+            ADVANCEMENT_PLAYER_FIELD.invoke(getHandle(entity), instance);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -1590,9 +1579,9 @@ public class NMSImpl implements NMSBridge {
     public static void setNotInSchool(EntityFish entity) {
         try {
             if (ENTITY_FISH_NUM_IN_SCHOOL != null) {
-                ENTITY_FISH_NUM_IN_SCHOOL.set(entity, 2);
+                ENTITY_FISH_NUM_IN_SCHOOL.invoke(entity, 2);
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             ex.printStackTrace();
         }
     }
@@ -1603,12 +1592,12 @@ public class NMSImpl implements NMSBridge {
 
     public static void setSize(Entity entity, boolean justCreated) {
         try {
-            EntitySize entitysize = (EntitySize) SIZE_FIELD.get(entity);
+            EntitySize entitysize = (EntitySize) SIZE_FIELD_GETTER.invoke(entity);
             EntityPose entitypose = entity.Z();
             EntitySize entitysize1 = entity.a(entitypose);
-            SIZE_FIELD.set(entity, entitysize1);
-            HEAD_HEIGHT.set(entity, HEAD_HEIGHT_METHOD.invoke(entity, entitypose, entitysize1));
-            if (entitysize1.width < entitysize.width && false /* CITIZENS ADDITION ?reason */) {
+            SIZE_FIELD_SETTER.invoke(entity, entitysize1);
+            HEAD_HEIGHT.invoke(entity, HEAD_HEIGHT_METHOD.invoke(entity, entitypose, entitysize1));
+            if (entitysize1.width < entitysize.width && false /* TODO: PREVIOUS CITIZENS ADDITION ?reason */) {
                 double d0 = entitysize1.width / 2.0D;
                 entity.a(new AxisAlignedBB(entity.locX - d0, entity.locY, entity.locZ - d0, entity.locX + d0,
                         entity.locY + entitysize1.height, entity.locZ + d0));
@@ -1622,11 +1611,7 @@ public class NMSImpl implements NMSBridge {
                     entity.move(EnumMoveType.SELF, new Vec3D(f, 0.0D, f));
                 }
             }
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -1652,49 +1637,47 @@ public class NMSImpl implements NMSBridge {
         navigation.c();
     }
 
-    private static Field ADVANCEMENT_PLAYER_FIELD = NMS.getFinalField(EntityPlayer.class, "advancementDataPlayer");
+    private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
+            "advancementDataPlayer");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
-    private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "c", false,
-            double.class, double.class, double.class);
-    private static Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();
-    private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
+    private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
+            "c", false, double.class, double.class, double.class);
+    private static final Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();
+    private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
-    private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bP");
-    private static Field ENTITY_FISH_NUM_IN_SCHOOL = NMS.getField(EntityFishSchool.class, "c", false);
+    private static final MethodHandle ENDERDRAGON_BATTLE_FIELD = NMS.getGetter(EntityEnderDragon.class, "bP");
+    private static final MethodHandle ENTITY_FISH_NUM_IN_SCHOOL = NMS.getSetter(EntityFishSchool.class, "c", false);
+    private static final MethodHandle ENTITY_GET_SOUND_FALL = NMS.getMethodHandle(EntityLiving.class, "getSoundFall",
+            true, int.class);
+    private static final MethodHandle ENTITY_R = NMS.getMethodHandle(EntityLiving.class, "r", true, float.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
-    public static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "d");
-    private static final Field HEAD_HEIGHT = NMS.getField(Entity.class, "headHeight");
-    private static final Method HEAD_HEIGHT_METHOD = NMS.getMethod(Entity.class, "getHeadHeight", true,
+    private static final MethodHandle GOAL_FIELD = NMS.getGetter(PathfinderGoalSelector.class, "d");
+    private static final MethodHandle HEAD_HEIGHT = NMS.getSetter(Entity.class, "headHeight");
+    private static final MethodHandle HEAD_HEIGHT_METHOD = NMS.getMethodHandle(Entity.class, "getHeadHeight", true,
             EntityPose.class, EntitySize.class);
-    private static Method ISCLIMBING_METHOD = NMS.getMethod(EntityLiving.class, "f", true, Vec3D.class);
-    private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "jumping");
-    private static Method MAKE_REQUEST;
-    private static Field NAVIGATION_WORLD_FIELD = NMS.getField(NavigationAbstract.class, "b");
+    private static final MethodHandle ISCLIMBING_METHOD = NMS.getMethodHandle(EntityLiving.class, "f", true,
+            Vec3D.class);
+    private static final MethodHandle JUMP_FIELD = NMS.getGetter(EntityLiving.class, "jumping");
+    private static final MethodHandle MAKE_REQUEST = NMS.getMethodHandle(YggdrasilAuthenticationService.class,
+            "makeRequest", true, URL.class, Object.class, Class.class);
+    private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getSetter(NavigationAbstract.class, "b");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "p");
-    private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bz");
+    private static final MethodHandle PATHFINDING_RANGE = NMS.getGetter(NavigationAbstract.class, "p");
+    private static final MethodHandle RABBIT_FIELD = NMS.getGetter(EntityRabbit.class, "bz");
     private static final Random RANDOM = Util.getFastRandom();
-    private static final Field SIZE_FIELD = NMS.getField(Entity.class, "size");
+    private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
+    private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
     private static Field SKULL_PROFILE_FIELD;
     static {
-
         try {
             Field field = NMS.getFinalField(IRegistry.class, "ENTITY_TYPE");
             ENTITY_REGISTRY = new CustomEntityRegistry((RegistryBlocks<EntityTypes<?>>) field.get(null));
             field.set(null, ENTITY_REGISTRY);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
-        }
-
-        try {
-            MAKE_REQUEST = YggdrasilAuthenticationService.class.getDeclaredMethod("makeRequest", URL.class,
-                    Object.class, Class.class);
-            MAKE_REQUEST.setAccessible(true);
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 }

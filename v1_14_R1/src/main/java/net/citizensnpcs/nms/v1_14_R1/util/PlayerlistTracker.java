@@ -1,8 +1,6 @@
 package net.citizensnpcs.nms.v1_14_R1.util;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
 
 import org.bukkit.entity.Player;
 
@@ -38,10 +36,8 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     private int getA(PlayerChunkMap map2) {
         try {
-            return A.getInt(map2);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+            return (int) A.invoke(map2);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return 0;
@@ -49,12 +45,8 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     private int getb(ChunkCoordIntPair chunkcoordintpair, EntityPlayer entityplayer, boolean b) {
         try {
-            return (int) B.invoke(map, chunkcoordintpair, entityplayer, b);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+            return (int) B.invoke(chunkcoordintpair, entityplayer, b);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return 0;
@@ -63,11 +55,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
     private PlayerChunk getVisibleChunk(long pair) {
         try {
             return (PlayerChunk) GET_VISIBLE_CHUNK.invoke(map, pair);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;
@@ -107,10 +95,8 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     private static int getD(EntityTracker entry) {
         try {
-            return D.getInt(TRACKER_ENTRY.get(entry));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+            return (int) D.invoke(TRACKER_ENTRY.invoke(entry));
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return 0;
@@ -118,10 +104,8 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     private static boolean getE(EntityTracker entry) {
         try {
-            return E.getBoolean(TRACKER_ENTRY.get(entry));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+            return (boolean) E.invoke(TRACKER_ENTRY.invoke(entry));
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return false;
@@ -129,10 +113,8 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     private static int getI(EntityTracker entry) {
         try {
-            return (Integer) I.get(entry);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+            return (Integer) I.invoke(entry);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return 0;
@@ -140,10 +122,8 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     private static Entity getTracker(EntityTracker entry) {
         try {
-            return (Entity) TRACKER.get(entry);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+            return (Entity) TRACKER.invoke(entry);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;
@@ -151,23 +131,21 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     private static EntityTrackerEntry getTrackerEntry(EntityTracker entry) {
         try {
-            return (EntityTrackerEntry) TRACKER_ENTRY.get(entry);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+            return (EntityTrackerEntry) TRACKER_ENTRY.invoke(entry);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static Field A = NMS.getField(PlayerChunkMap.class, "A");
-    private static Method B = NMS.getMethod(PlayerChunkMap.class, "b", true, ChunkCoordIntPair.class,
+    private static final MethodHandle A = NMS.getGetter(PlayerChunkMap.class, "A");
+    private static final MethodHandle B = NMS.getMethodHandle(PlayerChunkMap.class, "b", true, ChunkCoordIntPair.class,
             EntityPlayer.class, boolean.class);
-    private static Field D = NMS.getField(EntityTrackerEntry.class, "d");
-    private static Field E = NMS.getField(EntityTrackerEntry.class, "e");
-    private static final Method GET_VISIBLE_CHUNK = NMS.getMethod(PlayerChunkMap.class, "getVisibleChunk", true,
-            long.class);
-    private static Field I = NMS.getField(EntityTracker.class, "trackingDistance");
-    private static Field TRACKER = NMS.getField(EntityTracker.class, "tracker");
-    private static Field TRACKER_ENTRY = NMS.getField(EntityTracker.class, "trackerEntry");
+    private static final MethodHandle D = NMS.getGetter(EntityTrackerEntry.class, "d");
+    private static final MethodHandle E = NMS.getGetter(EntityTrackerEntry.class, "e");
+    private static final MethodHandle GET_VISIBLE_CHUNK = NMS.getMethodHandle(PlayerChunkMap.class, "getVisibleChunk",
+            true, long.class);
+    private static final MethodHandle I = NMS.getGetter(EntityTracker.class, "trackingDistance");
+    private static final MethodHandle TRACKER = NMS.getGetter(EntityTracker.class, "tracker");
+    private static final MethodHandle TRACKER_ENTRY = NMS.getGetter(EntityTracker.class, "trackerEntry");
 }

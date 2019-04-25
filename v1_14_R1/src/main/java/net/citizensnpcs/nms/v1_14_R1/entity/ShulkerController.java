@@ -1,9 +1,5 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
-import net.minecraft.server.v1_14_R1.Vec3D;
-
-import java.lang.reflect.Method;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
@@ -17,7 +13,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DamageSource;
@@ -27,6 +22,7 @@ import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.SoundEffect;
+import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
 
 public class ShulkerController extends MobEntityController {
@@ -62,15 +58,6 @@ public class ShulkerController extends MobEntityController {
         }
 
         @Override
-        public void e(Vec3D vec3d) {
-            if (npc == null || !npc.isFlyable()) {
-                super.e(vec3d);
-            } else {
-                NMSImpl.flyingMoveLogic(this, vec3d);
-            }
-        }
-
-        @Override
         public void b(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
@@ -96,6 +83,15 @@ public class ShulkerController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public void e(Vec3D vec3d) {
+            if (npc == null || !npc.isFlyable()) {
+                super.e(vec3d);
+            } else {
+                NMSImpl.flyingMoveLogic(this, vec3d);
+            }
         }
 
         @Override
@@ -161,6 +157,15 @@ public class ShulkerController extends MobEntityController {
         }
 
         @Override
+        public boolean isClimbing() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.isClimbing();
+            } else {
+                return false;
+            }
+        }
+
+        @Override
         public boolean isLeashed() {
             if (npc == null)
                 return super.isLeashed();
@@ -176,30 +181,13 @@ public class ShulkerController extends MobEntityController {
         @Override
         public void movementTick() {
             if (npc == null) {
-                try {
-                    super.movementTick();
-                } catch (NoSuchMethodError ex) {
-                    try {
-                        MOVEMENT_TICK.invoke(this);
-                    } catch (Throwable ex2) {
-                        ex2.printStackTrace();
-                    }
-                }
+                super.movementTick();
             }
         }
 
         @Override
         protected EntityAIBodyControl o() {
             return new EntityAIBodyControl(this);
-        }
-
-        @Override
-        public void updateSize() {
-            if (npc == null) {
-                super.updateSize();
-            } else {
-                NMSImpl.setSize(this, justCreated);
-            }
         }
 
         @Override
@@ -212,15 +200,13 @@ public class ShulkerController extends MobEntityController {
         }
 
         @Override
-        public boolean isClimbing() {
-            if (npc == null || !npc.isFlyable()) {
-                return super.isClimbing();
+        public void updateSize() {
+            if (npc == null) {
+                super.updateSize();
             } else {
-                return false;
+                NMSImpl.setSize(this, justCreated);
             }
         }
-
-        private static final Method MOVEMENT_TICK = NMS.getMethod(EntityShulker.class, "k", false);
     }
 
     public static class ShulkerNPC extends CraftShulker implements NPCHolder {

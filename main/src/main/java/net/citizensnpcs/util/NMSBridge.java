@@ -38,7 +38,7 @@ public interface NMSBridge {
 
     public void attack(LivingEntity attacker, LivingEntity target);
 
-    public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Exception;
+    public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable;
 
     public BlockBreaker getBlockBreaker(Entity entity, Block targetBlock, BlockBreakerConfiguration config);
 
