@@ -16,6 +16,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.entity.MobEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.Entity;
 import net.minecraft.server.v1_14_R1.EntityFishingHook;
@@ -117,7 +118,15 @@ public class FishingHookController extends MobEntityController {
             if (npc != null) {
                 this.owner.setHealth(20F);
                 this.owner.dead = false;
-                this.owner.inventory.setCarried(new ItemStack(Items.FISHING_ROD, 1));
+                this.owner.inventory.items.set(this.owner.inventory.itemInHandIndex,
+                        new ItemStack(Items.FISHING_ROD, 1));
+                try {
+                    NMS.getField(EntityFishingHook.class, "e").set(this, 0);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
                 npc.update();
             } else {
                 super.tick();
