@@ -192,7 +192,11 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                     Material.valueOf("NETHER_FENCE"), Material.valueOf("COBBLE_WALL")));
             DOORS.addAll(Lists.newArrayList(Material.valueOf("IRON_DOOR_BLOCK"), Material.valueOf("WOODEN_DOOR")));
         } else {
-            UNWALKABLE.add(Material.valueOf("CAMPFIRE"));
+            try {
+                UNWALKABLE.add(Material.valueOf("CAMPFIRE"));
+            } catch (IllegalArgumentException e) {
+                // 1.13
+            }
             NOT_JUMPABLE.addAll(Lists.newArrayList(Material.valueOf("OAK_FENCE"),
                     Material.valueOf("NETHER_BRICK_FENCE"), Material.valueOf("COBBLESTONE_WALL")));
             DOORS.addAll(Lists.newArrayList(Material.valueOf("IRON_DOOR"), Material.valueOf("OAK_DOOR")));
