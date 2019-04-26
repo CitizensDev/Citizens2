@@ -43,6 +43,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             .attackRange(Setting.NPC_ATTACK_DISTANCE.asDouble())
             .updatePathRate(Setting.DEFAULT_PATHFINDER_UPDATE_PATH_RATE.asInt())
             .distanceMargin(Setting.DEFAULT_DISTANCE_MARGIN.asDouble())
+            .pathDistanceMargin(Setting.DEFAULT_PATH_DISTANCE_MARGIN.asDouble())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt()).stuckAction(TeleportStuckAction.INSTANCE)
             .examiner(new MinecraftBlockExaminer()).useNewPathfinder(Setting.USE_NEW_PATHFINDER.asBoolean());
     private PathStrategy executing;

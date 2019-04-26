@@ -195,6 +195,7 @@ public class Messages {
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_SET = "citizens.commands.npc.pathopt.avoid-water-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_UNSET = "citizens.commands.npc.pathopt.avoid-water-unset";
     public static final String PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET = "citizens.commands.npc.pathopt.distance-margin-set";
+    public static final String PATHFINDING_OPTIONS_PATH_DISTANCE_MARGIN_SET = "citizens.commands.npc.pathopt.path-distance-margin-set";
     public static final String PATHFINDING_OPTIONS_STATIONARY_TICKS_SET = "citizens.commands.npc.pathopt.stationary-ticks-set";
     public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
     public static final String PHANTOM_STATE_SET = "citizens.commands.npc.phantom.phantom-set";

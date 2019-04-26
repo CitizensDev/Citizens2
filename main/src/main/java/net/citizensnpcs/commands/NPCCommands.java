@@ -1131,6 +1131,14 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET, npc.getName(), distance);
             found = true;
         }
+        if (args.hasValueFlag("path-distance-margin")) {
+            double distance = Double.parseDouble(args.getFlag("distance-margin"));
+            if (distance < 0)
+                throw new CommandException();
+            npc.getNavigator().getDefaultParameters().pathDistanceMargin(Math.pow(distance, 2));
+            Messaging.sendTr(sender, Messages.PATHFINDING_OPTIONS_PATH_DISTANCE_MARGIN_SET, npc.getName(), distance);
+            found = true;
+        }
         if (args.hasValueFlag("attack-range")) {
             double range = Double.parseDouble(args.getFlag("attack-range"));
             if (range < 0)
