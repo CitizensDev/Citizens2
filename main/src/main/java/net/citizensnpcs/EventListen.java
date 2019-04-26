@@ -15,6 +15,7 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -156,7 +157,11 @@ public class EventListen implements Listener {
             if (!sameChunkCoordinates || !event.getWorld().equals(loc.getWorld()))
                 continue;
             if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
-                event.setCancelled(true);
+                try {
+                    ((Cancellable) event).setCancelled(true);
+                } catch (Throwable e) {
+                    // TODO: event.getChunk().setForceLoaded(true);
+                }
                 if (Messaging.isDebugging()) {
                     Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
                 }

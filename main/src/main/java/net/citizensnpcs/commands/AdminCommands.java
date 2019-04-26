@@ -1,6 +1,8 @@
 package net.citizensnpcs.commands;
 
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.command.Command;
@@ -28,6 +30,14 @@ public class AdminCommands {
         Messaging.send(sender, "     <7>-- <c>Written by fullwall and aPunch");
         Messaging.send(sender, "     <7>-- <c>Source Code: http://github.com/CitizensDev");
         Messaging.send(sender, "     <7>-- <c>Website: " + plugin.getDescription().getWebsite());
+        ChunkSnapshot cs = ((Player) sender).getLocation().getChunk().getChunkSnapshot();
+        for (int y = 79; y < 79 + 16; y++) {
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    System.out.println(x + " " + y + " " + z + " " + cs.getBlockType(x, y, z));
+                }
+            }
+        }
     }
 
     @Command(
