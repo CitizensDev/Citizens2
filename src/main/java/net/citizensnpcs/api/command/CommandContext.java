@@ -253,6 +253,15 @@ public class CommandContext {
         return valueFlags.size() > 0 || flags.size() > 0;
     }
 
+    public boolean hasAnyValueFlag(String... strings) {
+        for (String s : strings) {
+            if (hasValueFlag(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean hasFlag(char ch) {
         return flags.contains(ch);
     }
@@ -314,6 +323,5 @@ public class CommandContext {
 
     private static final Pattern FLAG = Pattern.compile("^-[a-zA-Z]+$");
     private static final Splitter LOCATION_SPLITTER = Splitter.on(Pattern.compile("[,]|[:]")).omitEmptyStrings();
-
     private static final Pattern VALUE_FLAG = Pattern.compile("^--[a-zA-Z0-9-]+$");
 }
