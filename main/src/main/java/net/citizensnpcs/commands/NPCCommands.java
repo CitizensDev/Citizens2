@@ -808,16 +808,62 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "lookclose",
+            usage = "lookclose --(random|r)look [true|false] --(random|r)pitchrange [min,max] --(random|r)yawrange [min,max]",
             desc = "Toggle whether a NPC will look when a player is near",
             modifiers = { "lookclose", "look", "rotate" },
             min = 1,
             max = 1,
             permission = "citizens.npc.lookclose")
-    public void lookClose(CommandContext args, CommandSender sender, NPC npc) {
-        Messaging.sendTr(sender,
-                npc.getTrait(LookClose.class).toggle() ? Messages.LOOKCLOSE_SET : Messages.LOOKCLOSE_STOPPED,
-                npc.getName());
+    public void lookClose(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        boolean toggle = true;
+        if (args.hasAnyValueFlag("randomlook", "rlook")) {
+            boolean enableRandomLook = Boolean.parseBoolean(args.getFlag("randomlook", args.getFlag("rlook")));
+            npc.getTrait(LookClose.class).setRandomLook(enableRandomLook);
+            Messaging.sendTr(sender,
+                    enableRandomLook ? Messages.LOOKCLOSE_RANDOM_SET : Messages.LOOKCLOSE_RANDOM_STOPPED,
+                    npc.getName());
+            toggle = false;
+        }
+        if (args.hasAnyValueFlag("randomlookdelay", "rlookdelay")) {
+            int delay = Integer.parseInt(args.getFlag("randomlookdelay", args.getFlag("rlookdelay")));
+            delay = Math.max(1, delay);
+            npc.getTrait(LookClose.class).setRandomLookDelay(delay);
+            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANDOM_DELAY_SET, npc.getName(), delay);
+            toggle = false;
+        }
+        if (args.hasAnyValueFlag("randompitchrange", "rpitchrange")) {
+            String flag = args.getFlag("randompitchrange", args.getFlag("rpitchrange"));
+            try {
+                String[] parts = flag.split(",");
+                float min = Float.parseFloat(parts[0]), max = Float.parseFloat(parts[1]);
+                if (min > max)
+                    throw new IllegalArgumentException();
+                npc.getTrait(LookClose.class).setRandomLookPitchRange(min, max);
+            } catch (Exception e) {
+                throw new CommandException(Messaging.tr(Messages.ERROR_SETTING_LOOKCLOSE_RANGE, flag));
+            }
+            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANDOM_PITCH_RANGE_SET, npc.getName(), flag);
+            toggle = false;
+        }
+        if (args.hasAnyValueFlag("randomyawrange", "ryawrange")) {
+            String flag = args.getFlag("randomyawrange", args.getFlag("ryawrange"));
+            try {
+                String[] parts = flag.split(",");
+                float min = Float.parseFloat(parts[0]), max = Float.parseFloat(parts[1]);
+                if (min > max)
+                    throw new IllegalArgumentException();
+                npc.getTrait(LookClose.class).setRandomLookYawRange(min, max);
+            } catch (Exception e) {
+                throw new CommandException(Messaging.tr(Messages.ERROR_SETTING_LOOKCLOSE_RANGE, flag));
+            }
+            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANDOM_YAW_RANGE_SET, npc.getName(), flag);
+            toggle = false;
+        }
+        if (toggle) {
+            Messaging.sendTr(sender,
+                    npc.getTrait(LookClose.class).toggle() ? Messages.LOOKCLOSE_SET : Messages.LOOKCLOSE_STOPPED,
+                    npc.getName());
+        }
     }
 
     @Command(
@@ -1747,7 +1793,7 @@ public class NPCCommands {
                 if (target != null)
                     context.addRecipient(target.getEntity());
             } else {
-                Player player = Bukkit.getPlayer(args.getFlag("target"));
+                Player player = Bukkit.getPlayerExact(args.getFlag("target"));
                 if (player != null) {
                     context.addRecipient((Entity) player);
                 }

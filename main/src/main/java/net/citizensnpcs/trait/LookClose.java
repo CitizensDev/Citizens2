@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -17,7 +18,6 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.CommandConfigurable;
 import net.citizensnpcs.api.command.CommandContext;
-import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -29,10 +29,19 @@ import net.citizensnpcs.util.Util;
 public class LookClose extends Trait implements Toggleable, CommandConfigurable {
     @Persist("enabled")
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
+    @Persist
+    private boolean enableRandomLook = Setting.DEFAULT_RANDOM_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
+    @Persist
+    private int randomLookDelay = Setting.DEFAULT_RANDOM_LOOK_DELAY.asInt();
+    @Persist
+    private float[] randomPitchRange = { -10, 0 };
+    @Persist
+    private float[] randomYawRange = { 0, 360 };
     private double range = Setting.DEFAULT_LOOK_CLOSE_RANGE.asDouble();
     @Persist("realisticlooking")
     private boolean realisticLooking = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
+    private int t;
 
     public LookClose() {
         super("lookclose");
@@ -94,8 +103,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     @Override
-    public void load(DataKey key) throws NPCLoadException {
-        range = key.getDouble("range", range);
+    public void load(DataKey key) {
+        range = key.getDouble("range");
     }
 
     public void lookClose(boolean lookClose) {
@@ -107,6 +116,13 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         lookingAt = null;
     }
 
+    private void randomLook() {
+        Random rand = new Random();
+        float pitch = rand.doubles(randomPitchRange[0], randomPitchRange[1]).iterator().next().floatValue(),
+                yaw = rand.doubles(randomYawRange[0], randomYawRange[1]).iterator().next().floatValue();
+        Util.assumePose(npc.getEntity(), yaw, pitch);
+    }
+
     @Override
     public void run() {
         if (!enabled || !npc.isSpawned() || npc.getNavigator().isNavigating())
@@ -115,6 +131,11 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         if (hasInvalidTarget()) {
             findNewTarget();
         }
+        if (lookingAt == null && enableRandomLook && t <= 0) {
+            randomLook();
+            t = randomLookDelay;
+        }
+        t--;
         if (lookingAt != null && canSeeTarget()) {
             Util.faceEntity(npc.getEntity(), lookingAt);
             if (npc.getEntity().getType().name().toLowerCase().contains("shulker")) {
@@ -127,6 +148,22 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     @Override
     public void save(DataKey key) {
         key.setDouble("range", range);
+    }
+
+    public void setRandomLook(boolean enableRandomLook) {
+        this.enableRandomLook = enableRandomLook;
+    }
+
+    public void setRandomLookDelay(int delay) {
+        this.randomLookDelay = delay;
+    }
+
+    public void setRandomLookPitchRange(float min, float max) {
+        this.randomPitchRange = new float[] { min, max };
+    }
+
+    public void setRandomLookYawRange(float min, float max) {
+        this.randomYawRange = new float[] { min, max };
     }
 
     public void setRange(int range) {

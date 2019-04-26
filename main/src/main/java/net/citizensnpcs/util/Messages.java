@@ -73,6 +73,7 @@ public class Messages {
     public static final String ERROR_INITALISING_SUB_PLUGIN = "citizens.sub-plugins.error-on-load";
     public static final String ERROR_LOADING_ECONOMY = "citizens.economy.error-loading";
     public static final String ERROR_SETTING_ENTITY_PERSISTENT = "citizens.nms-errors.error-setting-persistent";
+    public static final String ERROR_SETTING_LOOKCLOSE_RANGE = "citizens.commands.npc.lookclose.error-random-range";
     public static final String ERROR_SPAWNING_CUSTOM_ENTITY = "citizens.nms-errors.spawning-custom-entity";
     public static final String ERROR_STOPPING_NETWORK_THREADS = "citizens.nms-errors.stopping-network-threads";
     public static final String ERROR_UPDATING_NAVIGATION_WORLD = "citizens.nms-errors.updating-navigation-world";
@@ -149,6 +150,11 @@ public class Messages {
     public static final String LOAD_UNKNOWN_NPC_TYPE = "citizens.notifications.unknown-npc-type";
     public static final String LOADING_SUB_PLUGIN = "citizens.sub-plugins.load";
     public static final String LOCALE_NOTIFICATION = "citizens.notifications.locale";
+    public static final String LOOKCLOSE_RANDOM_DELAY_SET = "citizens.commands.npc.lookclose.random-look-delay-set";
+    public static final String LOOKCLOSE_RANDOM_PITCH_RANGE_SET = "citizens.commands.npc.lookclose.random-pitch-range-set";
+    public static final String LOOKCLOSE_RANDOM_SET = "citizens.commands.npc.lookclose.random-set";
+    public static final String LOOKCLOSE_RANDOM_STOPPED = "citizens.commands.npc.lookclose.random-stopped";
+    public static final String LOOKCLOSE_RANDOM_YAW_RANGE_SET = "citizens.commands.npc.lookclose.random-yaw-range-set";
     public static final String LOOKCLOSE_SET = "citizens.commands.npc.lookclose.set";
     public static final String LOOKCLOSE_STOPPED = "citizens.commands.npc.lookclose.stopped";
     public static final String METADATA_SET = "citizens.commands.npc.metadata.set";

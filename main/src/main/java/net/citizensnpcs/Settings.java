@@ -79,6 +79,8 @@ public class Settings {
         DEFAULT_PATH_DISTANCE_MARGIN("npc.pathfinding.default-path-distance-margin", 1),
         DEFAULT_PATHFINDER_UPDATE_PATH_RATE("npc.pathfinding.update-path-rate", 20),
         DEFAULT_PATHFINDING_RANGE("npc.default.pathfinding.range", 25F),
+        DEFAULT_RANDOM_LOOK_CLOSE("npc.default.look-close.random-look-enabled", false),
+        DEFAULT_RANDOM_LOOK_DELAY("npc.default.look-close.random-look-delay", 60),
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", true),
         DEFAULT_REALISTIC_LOOKING("npc.default.realistic-looking", false),
         DEFAULT_STATIONARY_TICKS("npc.default.stationary-ticks", -1),
