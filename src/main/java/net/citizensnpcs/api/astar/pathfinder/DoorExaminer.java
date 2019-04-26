@@ -8,10 +8,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.material.Door;
 
-import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
-import net.citizensnpcs.api.astar.pathfinder.BlockSource;
-import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
-import net.citizensnpcs.api.astar.pathfinder.PathPoint;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -36,7 +32,7 @@ public class DoorExaminer implements BlockExaminer {
         public void run(NPC npc, Block point, ListIterator<Block> path) {
             BlockState state = point.getState();
             Door door = (Door) state.getData();
-            if (npc.getStoredLocation().distance(point.getLocation()) < 2) {
+            if (npc.getStoredLocation().distanceSquared(point.getLocation()) < 4) {
                 boolean bottom = !door.isTopHalf();
                 Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
                 state = set.getState();

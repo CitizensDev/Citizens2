@@ -180,7 +180,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
     private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.CACTUS);
     private static final Vector UP = new Vector(0, 1, 0);
-
     private static Material WEB = SpigotUtil.isUsing1_13API() ? Material.COBWEB : Material.valueOf("WEB");
 
     static {
