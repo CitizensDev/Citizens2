@@ -6,19 +6,19 @@
 	    <groupId>net.citizensnpcs</groupId>
 	    <artifactId>citizens-parent</artifactId>
 	    <version>2.0.25-SNAPSHOT</version>
-	</parent> 
-	<artifactId>citizens-v1_14_R1</artifactId> 
+	</parent>
+	<artifactId>citizens-v1_14_R1</artifactId>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<craftbukkit.version>1.14-R0.1-SNAPSHOT</craftbukkit.version>
 	</properties>
 
-	<repositories> 
+	<repositories>
 		<repository>
 			<id>everything</id>
 			<url>http://repo.citizensnpcs.co</url>
-		</repository> 
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -35,7 +35,7 @@
             <version>${craftbukkit.version}</version>
             <type>jar</type>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -46,29 +46,37 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.8.0</version>
 				<configuration>
+					<compilerId>eclipse</compilerId>
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.plexus</groupId>
+						<artifactId>plexus-compiler-eclipse</artifactId>
+						<version>2.8.1</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.1.1</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.1</version>
+				<version>3.2.1</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
-						</goals> 
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

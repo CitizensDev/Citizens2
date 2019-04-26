@@ -6,19 +6,19 @@
 	    <groupId>net.citizensnpcs</groupId>
 	    <artifactId>citizens-parent</artifactId>
 	    <version>2.0.25-SNAPSHOT</version>
-	</parent> 
-	<artifactId>citizens-v1_13_R2</artifactId> 
+	</parent>
+	<artifactId>citizens-v1_13_R2</artifactId>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<craftbukkit.version>1.13.2-R0.1-SNAPSHOT</craftbukkit.version>
 	</properties>
 
-	<repositories> 
+	<repositories>
 		<repository>
 			<id>everything</id>
 			<url>http://repo.citizensnpcs.co</url>
-		</repository> 
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -35,7 +35,7 @@
             <version>${craftbukkit.version}</version>
             <type>jar</type>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -46,7 +46,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.8.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -56,19 +56,19 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.1.1</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.1</version>
+				<version>3.2.1</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
-						</goals> 
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

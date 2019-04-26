@@ -6,19 +6,19 @@
 	    <groupId>net.citizensnpcs</groupId>
 	    <artifactId>citizens-parent</artifactId>
 	    <version>2.0.25-SNAPSHOT</version>
-	</parent> 
-	<artifactId>citizens-v1_10_R1</artifactId> 
+	</parent>
+	<artifactId>citizens-v1_10_R1</artifactId>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<craftbukkit.version>1.10.2-R0.1-SNAPSHOT</craftbukkit.version>
 	</properties>
 
-	<repositories> 
+	<repositories>
 		<repository>
 			<id>everything</id>
 			<url>http://repo.citizensnpcs.co</url>
-		</repository> 
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -35,7 +35,7 @@
             <version>${craftbukkit.version}</version>
             <type>jar</type>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -68,7 +68,7 @@
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
-						</goals> 
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

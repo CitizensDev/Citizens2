@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.citizensnpcs</groupId>
-        <artifactId>citizens-parent</artifactId> 
+        <artifactId>citizens-parent</artifactId>
         <version>2.0.25-SNAPSHOT</version>
     </parent>
     <artifactId>citizens</artifactId>
@@ -17,7 +17,7 @@
                     <finalName>Citizens-${CITIZENS_VERSION}-b${BUILD_NUMBER}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
-                <version>2.2</version>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <id>package-all</id>
@@ -43,48 +43,48 @@
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>citizens-v1_8_R3</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>citizens-v1_10_R1</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>citizens-v1_11_R1</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>citizens-v1_12_R1</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>citizens-v1_13_R2</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency>         
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>citizens-v1_14_R1</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency> 
+        </dependency>
     </dependencies>
 </project>
