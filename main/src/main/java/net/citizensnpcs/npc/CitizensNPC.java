@@ -294,52 +294,18 @@ public class CitizensNPC extends AbstractNPC {
                     SUPPORT_GLOWING = false;
                 }
             }
+
             if (!getNavigator().isNavigating() && updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
                 updateCounter = 0;
-                if (getEntity() instanceof LivingEntity) {
-                    boolean nameVisibility = false;
-                    if (!getEntity().isCustomNameVisible()
-                            && !data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("hover")) {
-                        getEntity().setCustomName("");
-                    } else {
-                        nameVisibility = true;
-                        getEntity().setCustomName(getFullName());
-                    }
-                    String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
-                    if (getEntity() instanceof Player && teamName.length() > 0
-                            && Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName) != null) {
-                        Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
-                        if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-                            team.unregister();
-                            data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-                        } else {
-                            if (SUPPORT_TEAM_SETOPTION) {
-                                try {
-                                    team.setOption(Option.NAME_TAG_VISIBILITY,
-                                            nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER);
-                                } catch (NoSuchMethodError e) {
-                                    SUPPORT_TEAM_SETOPTION = false;
-                                } catch (NoClassDefFoundError e) {
-                                    SUPPORT_TEAM_SETOPTION = false;
-                                }
-                            }
-                            if (data().has(NPC.GLOWING_COLOR_METADATA)) {
-                                if (team.getPrefix() == null || team.getPrefix().length() == 0
-                                        || (data().has("previous-glowing-color")
-                                                && !team.getPrefix().equals(data().get("previous-glowing-color")))) {
-                                    team.setPrefix(ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA))
-                                            .toString());
-                                    data().set("previous-glowing-color", team.getPrefix());
-                                }
-                            }
-                        }
-                    }
-                }
-                Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
+
+                Player player = getEntity().getType() == EntityType.PLAYER ? (Player) getEntity() : null;
                 NMS.sendPositionUpdate(player, getEntity(), getStoredLocation());
             }
 
             if (getEntity() instanceof LivingEntity) {
+                if (updateCounter == 0) {
+                    updateCustomName();
+                }
                 String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
                 if (nameplateVisible.equals("hover")) {
                     ((LivingEntity) getEntity()).setCustomNameVisible(false);
@@ -367,6 +333,48 @@ public class CitizensNPC extends AbstractNPC {
         }
     }
 
+    private void updateCustomName() {
+        boolean nameVisibility = false;
+
+        if (!getEntity().isCustomNameVisible()
+                && !data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("hover")) {
+            getEntity().setCustomName("");
+        } else {
+            nameVisibility = true;
+            getEntity().setCustomName(getFullName());
+        }
+
+        String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+        Team team = null;
+        if (!(getEntity() instanceof Player) || teamName.length() == 0
+                || (team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)) == null)
+            return;
+
+        if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+            team.unregister();
+            data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+            return;
+        }
+
+        if (SUPPORT_TEAM_SETOPTION) {
+            try {
+                team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER);
+            } catch (NoSuchMethodError e) {
+                SUPPORT_TEAM_SETOPTION = false;
+            } catch (NoClassDefFoundError e) {
+                SUPPORT_TEAM_SETOPTION = false;
+            }
+        }
+
+        if (data().has(NPC.GLOWING_COLOR_METADATA)) {
+            if (team.getPrefix() == null || team.getPrefix().length() == 0 || (data().has("previous-glowing-color")
+                    && !team.getPrefix().equals(data().get("previous-glowing-color")))) {
+                team.setPrefix(ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA)).toString());
+                data().set("previous-glowing-color", team.getPrefix());
+            }
+        }
+    }
+
     private void updateFlyableState() {
         EntityType type = isSpawned() ? getEntity().getType() : getTrait(MobType.class).getType();
         if (type == null)
@@ -377,7 +385,7 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final String NPC_METADATA_MARKER = "NPC";
-    private static boolean SUPPORT_SILENT = true;
     private static boolean SUPPORT_GLOWING = true;
+    private static boolean SUPPORT_SILENT = true;
     private static boolean SUPPORT_TEAM_SETOPTION = true;
 }
