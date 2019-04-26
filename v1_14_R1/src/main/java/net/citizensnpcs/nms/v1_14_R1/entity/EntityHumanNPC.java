@@ -418,7 +418,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         updatePackets(navigating);
         if (!navigating && getBukkitEntity() != null && npc.getTrait(Gravity.class).hasGravity()
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            a(0, 0, 0);
+            e(new Vec3D(0, 0, 0));
         }
         Vec3D mot = getMot();
         if (Math.abs(mot.getX()) < EPSILON && Math.abs(mot.getY()) < EPSILON && Math.abs(mot.getZ()) < EPSILON) {

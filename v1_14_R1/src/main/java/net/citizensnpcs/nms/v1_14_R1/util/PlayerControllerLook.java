@@ -23,16 +23,15 @@ public class PlayerControllerLook {
         if (!NMSImpl.isNavigationFinished(this.a.getNavigation()))
             return;
         if (this.b()) {
-            this.a.pitch = 0.0F;
+            // this.a.pitch = 0.0F;
         }
-
         if (this.d) {
             this.d = false;
             this.a.aM = this.a(this.a.aM, this.h(), this.b);
             this.a.yaw = this.a.aM;
             this.a.pitch = this.a(this.a.pitch, this.g(), this.c);
         } else {
-            this.a.aM = this.a(this.a.aM, this.a.aK, 10.0F);
+            // this.a.aM = this.a(this.a.aM, this.a.aK, 10.0F);
         }
 
         if (!this.a.getNavigation().n()) {
