@@ -15,7 +15,7 @@ public class SimpleAStarStorage implements AStarStorage {
     @Override
     public void close(AStarNode node) {
         open.remove(node);
-        closed.put(node, node.f);
+        closed.put(node, node.g);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class SimpleAStarStorage implements AStarStorage {
     @Override
     public void open(AStarNode node) {
         queue.offer(node);
-        open.put(node, node.f);
+        open.put(node, node.g);
         closed.remove(node);
     }
 
@@ -37,17 +37,17 @@ public class SimpleAStarStorage implements AStarStorage {
 
     @Override
     public boolean shouldExamine(AStarNode neighbour) {
-        Float openF = open.get(neighbour);
-        if (openF != null && openF > neighbour.f) {
+        Float openG = open.get(neighbour);
+        if (openG != null && openG > neighbour.g) {
             open.remove(neighbour);
-            openF = null;
+            openG = null;
         }
-        Float closedF = closed.get(neighbour);
-        if (closedF != null && closedF > neighbour.f) {
+        Float closedG = closed.get(neighbour);
+        if (closedG != null && closedG > neighbour.g) {
             closed.remove(neighbour);
-            closedF = null;
+            closedG = null;
         }
-        return closedF == null && openF == null;
+        return closedG == null && openG == null;
     }
 
     @Override
