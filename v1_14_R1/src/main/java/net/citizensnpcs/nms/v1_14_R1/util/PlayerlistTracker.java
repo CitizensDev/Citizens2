@@ -24,6 +24,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     public PlayerlistTracker(PlayerChunkMap map, Entity entity, int i, int j, boolean flag) {
         map.super(entity, i, j, flag);
+        System.out.println(entity + " " + i + " " + j + " " + flag);
         this.map = map;
         this.tracker = getTracker(this);
         this.trackerEntry = getTrackerEntry(this);
@@ -63,24 +64,23 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
-        // prevent updates to NPC "viewers"
         if (entityplayer instanceof EntityHumanNPC)
-            return;
+            return; // prevent updates to NPC "viewers"
         Entity tracker = getTracker(this);
         final Vec3D vec3d = new Vec3D(entityplayer.locX, entityplayer.locY, entityplayer.locZ).d(this.trackerEntry.b());
         final int i = Math.min(this.trackingDistance, (getA(map) - 1) * 16);
         final boolean flag = vec3d.x >= -i && vec3d.x <= i && vec3d.z >= -i && vec3d.z <= i
                 && this.tracker.a(entityplayer);
         if (entityplayer != tracker && flag && tracker instanceof SkinnableEntity) {
-            boolean flag1 = this.tracker.attachedToPlayer;
+            /* boolean flag1 = this.tracker.attachedToPlayer;
             if (!flag1) {
                 ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(this.tracker.chunkX, this.tracker.chunkZ);
                 PlayerChunk playerchunk = getVisibleChunk(chunkcoordintpair.pair());
                 if (playerchunk.getChunk() != null) {
                     flag1 = getb(chunkcoordintpair, entityplayer, false) <= getA(map);
                 }
-            }
-            if (flag1) {
+            }*/
+            if (!this.trackedPlayers.contains(entityplayer)) {
                 SkinnableEntity skinnable = (SkinnableEntity) tracker;
 
                 Player player = skinnable.getBukkitEntity();
