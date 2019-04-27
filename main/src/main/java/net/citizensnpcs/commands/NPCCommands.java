@@ -1145,7 +1145,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathopt --avoid-water|aw [true|false] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin]",
+            usage = "pathopt --avoid-water|aw [true|false] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin]",
             desc = "Sets an NPC's pathfinding options",
             modifiers = { "pathopt", "po", "patho" },
             min = 1,
@@ -1178,7 +1178,7 @@ public class NPCCommands {
             found = true;
         }
         if (args.hasValueFlag("path-distance-margin")) {
-            double distance = Double.parseDouble(args.getFlag("distance-margin"));
+            double distance = Double.parseDouble(args.getFlag("path-distance-margin"));
             if (distance < 0)
                 throw new CommandException();
             npc.getNavigator().getDefaultParameters().pathDistanceMargin(Math.pow(distance, 2));
