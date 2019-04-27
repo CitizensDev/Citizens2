@@ -24,7 +24,6 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     public PlayerlistTracker(PlayerChunkMap map, Entity entity, int i, int j, boolean flag) {
         map.super(entity, i, j, flag);
-        System.out.println(entity + " " + i + " " + j + " " + flag);
         this.map = map;
         this.tracker = getTracker(this);
         this.trackerEntry = getTrackerEntry(this);
