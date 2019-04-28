@@ -187,7 +187,6 @@ public class SkinPacketTracker {
 
             if (location.distanceSquared(CACHE_LOCATION) > radius)
                 continue;
-
             updateViewer(player);
         }
     }

@@ -146,7 +146,7 @@ public class EventListen implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onChunkUnload(ChunkUnloadEvent event) {
+    public void onChunkUnload(final ChunkUnloadEvent event) {
         ChunkCoord coord = toCoord(event.getChunk());
         Location loc = new Location(null, 0, 0, 0);
         for (NPC npc : getAllNPCs()) {
@@ -160,7 +160,17 @@ public class EventListen implements Listener {
                 try {
                     ((Cancellable) event).setCancelled(true);
                 } catch (Throwable e) {
-                    // TODO: event.getChunk().setForceLoaded(true);
+                    // TODO: event.getChunk().setForceLoaded(true); ?
+                    toRespawn.put(coord, npc);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!event.getChunk().isLoaded()) {
+                                event.getChunk().load();
+                            }
+                        }
+                    }, 10);
+                    return;
                 }
                 if (Messaging.isDebugging()) {
                     Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
