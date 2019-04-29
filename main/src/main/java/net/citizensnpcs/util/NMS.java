@@ -408,7 +408,6 @@ public class NMS {
     }
 
     private static NMSBridge BRIDGE;
-
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers");
 }

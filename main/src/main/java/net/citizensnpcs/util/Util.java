@@ -38,59 +38,6 @@ public class Util {
         }
     }
 
-
-    private static Pattern NON_ALPHABET_MATCHER = Pattern.compile(".*[^A-Za-z0-9_].*");
-
-    public static String[] splitPlayerName(String coloredName) {
-        String name = coloredName, prefix = null, suffix = null;
-        if (coloredName.length() > 16) {
-            if (coloredName.length() >= 30) {
-                prefix = coloredName.substring(0, 16);
-                int len = 30;
-                name = coloredName.substring(16, 30);
-                String prefixColors = ChatColor.getLastColors(prefix);
-                if (prefixColors.isEmpty()) {
-                    if (NON_ALPHABET_MATCHER.matcher(name).matches()) {
-                        if (coloredName.length() >= 32) {
-                            len = 32;
-                            name = coloredName.substring(16, 32);
-                        } else if (coloredName.length() == 31) {
-                            len = 31;
-                            name = coloredName.substring(16, 31);
-                        }
-                    } else {
-                        prefixColors = ChatColor.RESET.toString();
-                    }
-                }
-                else if (prefixColors.length() > 2) {
-                    prefixColors = prefixColors.substring(prefixColors.length() - 2);
-                }
-                name = prefixColors + name;
-                suffix = coloredName.substring(len);
-            } else {
-                prefix = coloredName.substring(0, coloredName.length() - 16);
-                name = coloredName.substring(prefix.length());
-                if (prefix.endsWith(String.valueOf(ChatColor.COLOR_CHAR))) {
-                    prefix = prefix.substring(0, prefix.length() - 1);
-                    name = ChatColor.COLOR_CHAR + name;
-                }
-                String prefixColors = ChatColor.getLastColors(prefix);
-                if (prefixColors.isEmpty() && !NON_ALPHABET_MATCHER.matcher(name).matches()) {
-                    prefixColors = ChatColor.RESET.toString();
-                }
-                else if (prefixColors.length() > 2) {
-                    prefixColors = prefixColors.substring(prefixColors.length() - 2);
-                }
-                name = prefixColors + name;
-                if (name.length() > 16) {
-                    suffix = name.substring(16);
-                    name = name.substring(0, 16);
-                }
-            }
-        }
-        return new String[] { name, prefix, suffix };
-    }
-
     public static NPCPushEvent callPushEvent(NPC npc, Vector vector) {
         NPCPushEvent event = new NPCPushEvent(npc, vector);
         event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
@@ -142,8 +89,10 @@ public class Util {
     }
 
     public static String getMinecraftRevision() {
-        String raw = Bukkit.getServer().getClass().getPackage().getName();
-        return raw.substring(raw.lastIndexOf('.') + 2);
+        if (MINECRAFT_REVISION == null) {
+            MINECRAFT_REVISION = Bukkit.getServer().getClass().getPackage().getName();
+        }
+        return MINECRAFT_REVISION.substring(MINECRAFT_REVISION.lastIndexOf('.') + 2);
     }
 
     public static boolean isAlwaysFlyable(EntityType type) {
@@ -240,8 +189,7 @@ public class Util {
             if (matchMaterial == null) {
                 if (part.equals("280")) {
                     matchMaterial = Material.STICK;
-                }
-                else if (part.equals("340")) {
+                } else if (part.equals("340")) {
                     matchMaterial = Material.BOOK;
                 }
             }
@@ -256,5 +204,55 @@ public class Util {
         return e.name().toLowerCase().replace('_', ' ');
     }
 
+    public static String[] splitPlayerName(String coloredName) {
+        String name = coloredName, prefix = null, suffix = null;
+        if (coloredName.length() > 16) {
+            if (coloredName.length() >= 30) {
+                prefix = coloredName.substring(0, 16);
+                int len = 30;
+                name = coloredName.substring(16, 30);
+                String prefixColors = ChatColor.getLastColors(prefix);
+                if (prefixColors.isEmpty()) {
+                    if (NON_ALPHABET_MATCHER.matcher(name).matches()) {
+                        if (coloredName.length() >= 32) {
+                            len = 32;
+                            name = coloredName.substring(16, 32);
+                        } else if (coloredName.length() == 31) {
+                            len = 31;
+                            name = coloredName.substring(16, 31);
+                        }
+                    } else {
+                        prefixColors = ChatColor.RESET.toString();
+                    }
+                } else if (prefixColors.length() > 2) {
+                    prefixColors = prefixColors.substring(prefixColors.length() - 2);
+                }
+                name = prefixColors + name;
+                suffix = coloredName.substring(len);
+            } else {
+                prefix = coloredName.substring(0, coloredName.length() - 16);
+                name = coloredName.substring(prefix.length());
+                if (prefix.endsWith(String.valueOf(ChatColor.COLOR_CHAR))) {
+                    prefix = prefix.substring(0, prefix.length() - 1);
+                    name = ChatColor.COLOR_CHAR + name;
+                }
+                String prefixColors = ChatColor.getLastColors(prefix);
+                if (prefixColors.isEmpty() && !NON_ALPHABET_MATCHER.matcher(name).matches()) {
+                    prefixColors = ChatColor.RESET.toString();
+                } else if (prefixColors.length() > 2) {
+                    prefixColors = prefixColors.substring(prefixColors.length() - 2);
+                }
+                name = prefixColors + name;
+                if (name.length() > 16) {
+                    suffix = name.substring(16);
+                    name = name.substring(0, 16);
+                }
+            }
+        }
+        return new String[] { name, prefix, suffix };
+    }
+
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
+    private static String MINECRAFT_REVISION;
+    private static final Pattern NON_ALPHABET_MATCHER = Pattern.compile(".*[^A-Za-z0-9_].*");
 }

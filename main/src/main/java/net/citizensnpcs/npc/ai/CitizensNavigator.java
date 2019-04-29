@@ -148,7 +148,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     @Override
     public void run() {
         updateMountedStatus();
-        if (!isNavigating() || !npc.isSpawned() || paused)
+        if (!isNavigating() || !npc.isSpawned() || isPaused())
             return;
         if (!npc.getStoredLocation().getWorld().equals(getTargetAsLocation().getWorld())
                 || Math.pow(localParams.range(), 2) < npc.getStoredLocation().distanceSquared(getTargetAsLocation())) {

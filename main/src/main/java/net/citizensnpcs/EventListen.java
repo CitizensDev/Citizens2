@@ -147,21 +147,41 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChunkUnload(final ChunkUnloadEvent event) {
-        ChunkCoord coord = toCoord(event.getChunk());
-        Location loc = new Location(null, 0, 0, 0);
-        for (NPC npc : getAllNPCs()) {
-            if (npc == null || !npc.isSpawned())
-                continue;
-            loc = npc.getEntity().getLocation(loc);
-            boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
-            if (!sameChunkCoordinates || !event.getWorld().equals(loc.getWorld()))
-                continue;
-            if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
-                try {
-                    ((Cancellable) event).setCancelled(true);
-                } catch (Throwable e) {
-                    // TODO: event.getChunk().setForceLoaded(true); ?
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                ChunkCoord coord = toCoord(event.getChunk());
+                Location loc = new Location(null, 0, 0, 0);
+                boolean loadChunk = false;
+                for (NPC npc : getAllNPCs()) {
+                    if (npc == null || !npc.isSpawned())
+                        continue;
+                    loc = npc.getEntity().getLocation(loc);
+                    boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
+                    if (!sameChunkCoordinates || !event.getWorld().equals(loc.getWorld()))
+                        continue;
+                    if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
+                        try {
+                            ((Cancellable) event).setCancelled(true);
+                        } catch (Throwable e) {
+                            // TODO: event.getChunk().setForceLoaded(true); ?
+                            loadChunk = true;
+                            toRespawn.put(coord, npc);
+                            continue;
+                        }
+                        if (Messaging.isDebugging()) {
+                            Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
+                        }
+                        respawnAllFromCoord(coord);
+                        return;
+                    }
                     toRespawn.put(coord, npc);
+                    if (Messaging.isDebugging()) {
+                        Messaging.debug("Despawned id", npc.getId(),
+                                "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+                    }
+                }
+                if (loadChunk) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                         @Override
                         public void run() {
@@ -170,19 +190,13 @@ public class EventListen implements Listener {
                             }
                         }
                     }, 10);
-                    return;
                 }
-                if (Messaging.isDebugging()) {
-                    Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
-                }
-                respawnAllFromCoord(coord);
-                return;
             }
-            toRespawn.put(coord, npc);
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Despawned id", npc.getId(),
-                        "due to chunk unload at [" + coord.x + "," + coord.z + "]");
-            }
+        };
+        if (Util.getMinecraftRevision().contains("1_14")) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable);
+        } else {
+            runnable.run();
         }
     }
 
