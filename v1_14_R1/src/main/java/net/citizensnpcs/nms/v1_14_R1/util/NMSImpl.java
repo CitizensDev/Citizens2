@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -197,6 +198,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.AdvancementDataPlayer;
 import net.minecraft.server.v1_14_R1.AttributeInstance;
 import net.minecraft.server.v1_14_R1.AxisAlignedBB;
+import net.minecraft.server.v1_14_R1.BehaviorController;
 import net.minecraft.server.v1_14_R1.Block;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.BossBattleServer;
@@ -1428,6 +1430,15 @@ public class NMSImpl implements NMSBridge {
         entity.aG += entity.aF;
     }
 
+    public static TreeMap<?, ?> getBehaviorMap(EntityLiving entity) {
+        try {
+            return (TreeMap<?, ?>) BEHAVIOR_MAP.invoke(entity.getBehaviorController());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private static BlockPosition.PooledBlockPosition getBlockPositionBE(BlockPosition.PooledBlockPosition blockPos,
             double x, double y, double z) {
         try {
@@ -1642,6 +1653,7 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
+    private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "c");
     private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
             "c", false, double.class, double.class, double.class);
     private static final Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();

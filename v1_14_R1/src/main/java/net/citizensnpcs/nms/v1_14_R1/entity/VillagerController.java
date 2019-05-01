@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
 import java.util.List;
+import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
@@ -42,10 +43,11 @@ public class VillagerController extends MobEntityController {
     }
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
+        private TreeMap<?, ?> behaviorMap;
         private boolean blockingATrade;
         private boolean blockTrades = true;
-        boolean calledNMSHeight = false;
 
+        boolean calledNMSHeight = false;
         private final CitizensNPC npc;
 
         public EntityVillagerNPC(EntityTypes<? extends EntityVillager> types, World world) {
@@ -227,6 +229,14 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public void mobTick() {
+            if (npc != null) {
+                if (this.behaviorMap == null) {
+                    this.behaviorMap = NMSImpl.getBehaviorMap(this);
+                }
+                if (this.behaviorMap.size() > 0) {
+                    this.behaviorMap.clear();
+                }
+            }
             super.mobTick();
             if (npc != null) {
                 npc.update();

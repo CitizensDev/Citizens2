@@ -96,7 +96,7 @@ public class CustomEntityRegistry extends RegistryBlocks {
         return (Set) wrapped.keySet();
     }
 
-    public void put(int entityId, MinecraftKey key, EntityTypes entityClass) { 
+    public void put(int entityId, MinecraftKey key, EntityTypes entityClass) {
         entities.put(key, entityClass);
         entityIds.put(entityClass, entityId);
     }
