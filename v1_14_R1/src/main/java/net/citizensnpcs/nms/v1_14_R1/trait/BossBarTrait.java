@@ -41,6 +41,9 @@ public class BossBarTrait extends Trait {
         if (!npc.isSpawned() || !isBoss(npc.getEntity()))
             return;
         BossBar bar = NMSImpl.getBossBar(npc.getEntity());
+        if (bar == null) {
+            return;
+        }
         bar.setVisible(visible);
         if (color != null) {
             bar.setColor(color);
