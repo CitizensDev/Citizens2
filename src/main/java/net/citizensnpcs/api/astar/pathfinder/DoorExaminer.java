@@ -30,17 +30,19 @@ public class DoorExaminer implements BlockExaminer {
     static class DoorOpener implements PathCallback {
         @Override
         public void run(NPC npc, Block point, ListIterator<Block> path) {
+            if (!MinecraftBlockExaminer.isDoor(point.getType()))
+                return;
+            if (npc.getStoredLocation().distanceSquared(point.getLocation()) > 4)
+                return;
             BlockState state = point.getState();
             Door door = (Door) state.getData();
-            if (npc.getStoredLocation().distanceSquared(point.getLocation()) < 4) {
-                boolean bottom = !door.isTopHalf();
-                Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
-                state = set.getState();
-                door = (Door) state.getData();
-                door.setOpen(true);
-                state.setData(door);
-                state.update();
-            }
+            boolean bottom = !door.isTopHalf();
+            Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
+            state = set.getState();
+            door = (Door) state.getData();
+            door.setOpen(true);
+            state.setData(door);
+            state.update();
         }
     }
 }
