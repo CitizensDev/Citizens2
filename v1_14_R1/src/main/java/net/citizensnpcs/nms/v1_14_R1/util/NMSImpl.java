@@ -1460,7 +1460,11 @@ public class NMSImpl implements NMSBridge {
             if (entity.getType() == EntityType.WITHER) {
                 bserver = ((EntityWither) NMSImpl.getHandle(entity)).bossBattle;
             } else if (entity.getType() == EntityType.ENDER_DRAGON) {
-                bserver = ((EnderDragonBattle) ENDERDRAGON_BATTLE_FIELD.invoke(NMSImpl.getHandle(entity))).bossBattle;
+                Object battleObject = ENDERDRAGON_BATTLE_FIELD.invoke(NMSImpl.getHandle(entity));
+                if (battleObject == null) {
+                    return null;
+                }
+                bserver = ((EnderDragonBattle) battleObject).bossBattle;
             }
         } catch (Throwable e) {
             e.printStackTrace();
