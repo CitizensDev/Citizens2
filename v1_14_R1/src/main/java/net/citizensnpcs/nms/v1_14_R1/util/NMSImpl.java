@@ -176,6 +176,7 @@ import net.citizensnpcs.nms.v1_14_R1.network.EmptyChannel;
 import net.citizensnpcs.nms.v1_14_R1.trait.BossBarTrait;
 import net.citizensnpcs.nms.v1_14_R1.trait.CatTrait;
 import net.citizensnpcs.nms.v1_14_R1.trait.Commands;
+import net.citizensnpcs.nms.v1_14_R1.trait.FoxTrait;
 import net.citizensnpcs.nms.v1_14_R1.trait.LlamaTrait;
 import net.citizensnpcs.nms.v1_14_R1.trait.PandaTrait;
 import net.citizensnpcs.nms.v1_14_R1.trait.ParrotTrait;
