@@ -8,6 +8,7 @@ import org.bukkit.boss.BarFlag;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fox;
 import org.bukkit.entity.Llama.Color;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot.Variant;
@@ -41,6 +42,7 @@ public class Commands {
             BarColor color = Util.matchEnum(BarColor.values(), args.getFlag("color"));
             trait.setColor(color);
         }
+
         if (args.hasValueFlag("title")) {
             trait.setTitle(args.getFlag("title"));
         }
@@ -61,7 +63,7 @@ public class Commands {
 
     @Command(
             aliases = { "npc" },
-            usage = "cat (-s/-n) --type type",
+            usage = "cat (-s/-n) --type type --ccolor collar color",
             desc = "Sets cat modifiers",
             modifiers = { "cat" },
             min = 1,
@@ -72,9 +74,6 @@ public class Commands {
         CatTrait trait = npc.getTrait(CatTrait.class);
         String output = "";
         if (args.hasValueFlag("type")) {
-            if (args.getFlagInteger("size") <= 0) {
-                throw new CommandUsageException();
-            }
             Cat.Type type = Util.matchEnum(Cat.Type.values(), args.getFlag("type"));
             if (type == null) {
                 throw new CommandUsageException(Messages.INVALID_CAT_TYPE, Util.listValuesPretty(Cat.Type.values()));
@@ -82,12 +81,63 @@ public class Commands {
             trait.setType(type);
             output += ' ' + Messaging.tr(Messages.CAT_TYPE_SET, args.getFlag("type"));
         }
+        if (args.hasValueFlag("ccolor")) {
+            DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("ccolor"));
+            if (color == null) {
+                throw new CommandUsageException(Messages.INVALID_CAT_COLLAR_COLOR,
+                        Util.listValuesPretty(DyeColor.values()));
+            }
+            trait.setCollarColor(color);
+            output += ' ' + Messaging.tr(Messages.CAT_COLLAR_COLOR_SET, args.getFlag("ccolor"));
+        }
         if (args.hasFlag('s')) {
             trait.setSitting(true);
             output += ' ' + Messaging.tr(Messages.CAT_STARTED_SITTING);
         } else if (args.hasFlag('n')) {
             trait.setSitting(false);
             output += ' ' + Messaging.tr(Messages.CAT_STOPPED_SITTING);
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output.trim());
+        } else {
+            throw new CommandUsageException();
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "fox --type type --sleeping [true|false] --sitting [true|false] --crouching [true|false]",
+            desc = "Sets fox modifiers",
+            modifiers = { "fox" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.fox")
+    @Requirements(selected = true, ownership = true, types = EntityType.FOX)
+    public void fox(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        FoxTrait trait = npc.getTrait(FoxTrait.class);
+        String output = "";
+        if (args.hasValueFlag("type")) {
+            Fox.Type type = Util.matchEnum(Fox.Type.values(), args.getFlag("type"));
+            if (type == null) {
+                throw new CommandUsageException(Messages.INVALID_FOX_TYPE, Util.listValuesPretty(Fox.Type.values()));
+            }
+            trait.setType(type);
+            output += ' ' + Messaging.tr(Messages.FOX_TYPE_SET, args.getFlag("type"));
+        }
+        if (args.hasValueFlag("sleeping")) {
+            boolean sleeping = Boolean.parseBoolean(args.getFlag("sleeping"));
+            trait.setSleeping(sleeping);
+            output += ' ' + Messaging.tr(sleeping ? Messages.FOX_SLEEPING_SET : Messages.FOX_SLEEPING_UNSET);
+        }
+        if (args.hasValueFlag("sitting")) {
+            boolean sitting = Boolean.parseBoolean(args.getFlag("sitting"));
+            trait.setSitting(sitting);
+            output += ' ' + Messaging.tr(sitting ? Messages.FOX_SITTING_SET : Messages.FOX_SITTING_UNSET);
+        }
+        if (args.hasValueFlag("crouching")) {
+            boolean crouching = Boolean.parseBoolean(args.getFlag("crouching"));
+            trait.setCrouching(crouching);
+            output += ' ' + Messaging.tr(crouching ? Messages.FOX_CROUCHING_SET : Messages.FOX_CROUCHING_UNSET);
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());

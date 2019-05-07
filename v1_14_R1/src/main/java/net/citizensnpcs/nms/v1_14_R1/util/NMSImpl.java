@@ -593,6 +593,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void load(CommandManager manager) {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(CatTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FoxTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LlamaTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BossBarTrait.class));

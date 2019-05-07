@@ -21,6 +21,7 @@ public class Messages {
     public static final String BEHAVIOURS_ADDED = "citizens.commands.npc.behaviour.added";
     public static final String BEHAVIOURS_REMOVED = "citizens.commands.npc.behaviour.removed";
     public static final String CANNOT_TELEPORT_ACROSS_WORLDS = "citizens.commands.npc.tphere.multiworld-not-allowed";
+    public static final String CAT_COLLAR_COLOR_SET = "citizens.commands.npc.cat.collar-color-set";
     public static final String CAT_STARTED_SITTING = "citizens.commands.npc.cat.sitting-start";
     public static final String CAT_STOPPED_SITTING = "citizens.commands.npc.cat.sitting-stop";
     public static final String CAT_TYPE_SET = "citizens.commands.npc.cat.type-set";
@@ -88,6 +89,13 @@ public class Messages {
     public static final String FOLLOW_PLAYER_NOT_INGAME = "citizens.commands.npc.follow.player-not-ingame";
     public static final String FOLLOW_SET = "citizens.commands.npc.follow.set";
     public static final String FOLLOW_UNSET = "citizens.commands.npc.follow.unset";
+    public static final String FOX_CROUCHING_SET = "citizens.commands.npc.fox.crouching-set";
+    public static final String FOX_CROUCHING_UNSET = "citizens.commands.npc.fox.crouching-unset";
+    public static final String FOX_SITTING_SET = "citizens.commands.npc.fox.sitting-set";
+    public static final String FOX_SITTING_UNSET = "citizens.commands.npc.fox.sitting-unset";
+    public static final String FOX_SLEEPING_SET = "citizens.commands.npc.fox.sleeping-set";
+    public static final String FOX_SLEEPING_UNSET = "citizens.commands.npc.fox.sleeping-unset";
+    public static final String FOX_TYPE_SET = "citizens.commands.npc.fox.fox-type-set";
     public static final String FROM_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.from-not-found";
     public static final String GAMEMODE_DESCRIBE = "citizens.commands.npc.gamemode.describe";
     public static final String GAMEMODE_INVALID = "citizens.commands.npc.gamemode.invalid";
@@ -110,8 +118,10 @@ public class Messages {
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
     public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
     public static final String INVALID_ANIMATION = "citizens.editors.waypoints.triggers.animation.invalid-animation";
+    public static final String INVALID_CAT_COLLAR_COLOR = "citizens.commands.npc.cat.invalid-collar-color";
     public static final String INVALID_CAT_TYPE = "citizens.commands.npc.cat.invalid-type";
     public static final String INVALID_ENTITY_TYPE = "citizens.commands.npc.type.invalid";
+    public static final String INVALID_FOX_TYPE = "citizens.commands.npc.fox.invalid-fox-type";
     public static final String INVALID_HORSE_COLOR = "citizens.commands.npc.horse.invalid-color";
     public static final String INVALID_HORSE_STYLE = "citizens.commands.npc.horse.invalid-style";
     public static final String INVALID_HORSE_VARIANT = "citizens.commands.npc.horse.invalid-variant";

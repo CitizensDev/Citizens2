@@ -281,8 +281,9 @@ public class CitizensNPC extends AbstractNPC {
     public void update() {
         try {
             super.update();
-            if (!isSpawned())
+            if (!isSpawned()) {
                 return;
+            }
             if (data().get(NPC.SWIMMING_METADATA, true)) {
                 NMS.trySwim(getEntity());
             }
