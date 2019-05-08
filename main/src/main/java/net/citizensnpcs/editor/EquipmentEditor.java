@@ -47,16 +47,13 @@ public class EquipmentEditor extends Editor {
     public void onPlayerChat(final AsyncPlayerChatEvent event) {
         if (!event.getPlayer().equals(player))
             return;
-        EquipmentSlot slot = null;
-        if (event.getMessage().contains("helmet")
-                && event.getPlayer().hasPermission("citizens.npc.edit.equip.any-helmet")) {
-            slot = EquipmentSlot.HELMET;
-        }
-        if (event.getMessage().contains("offhand")
-                && event.getPlayer().hasPermission("citizens.npc.edit.equip.offhand")) {
-            slot = EquipmentSlot.OFF_HAND;
-        }
+        EquipmentSlot slot = Util.matchEnum(EquipmentSlot.values(), event.getMessage());
         if (slot == null) {
+            return;
+        }
+        if (!event.getPlayer().hasPermission("citizens.npc.edit.equip." + slot.name().toLowerCase().replace(" ", ""))
+                && (slot != EquipmentSlot.HELMET
+                        || !event.getPlayer().hasPermission("citizens.npc.edit.equip.any-helmet"))) {
             return;
         }
         final EquipmentSlot finalSlot = slot;
