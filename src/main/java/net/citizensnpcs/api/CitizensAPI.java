@@ -172,7 +172,7 @@ public final class CitizensAPI {
      *
      * @since 2.0.8
      * @param name
-     *            The name previously given to {@link #createNamedNPCRegistry(String)}
+     *            The name previously given to {@link #createNamedNPCRegistry(String, NPCDataStore)}
      */
     public static void removeNamedNPCRegistry(String name) {
         getImplementation().removeNamedNPCRegistry(name);

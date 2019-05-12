@@ -1,16 +1,16 @@
 package net.citizensnpcs.api.ai.speech.event;
 
-import net.citizensnpcs.api.ai.speech.SpeechContext;
-import net.citizensnpcs.api.ai.speech.Talkable;
-import net.citizensnpcs.api.ai.speech.VocalChord;
-
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import net.citizensnpcs.api.ai.speech.SpeechContext;
+import net.citizensnpcs.api.ai.speech.Talkable;
+import net.citizensnpcs.api.ai.speech.VocalChord;
+
 /**
  * Represents an event where a {@link Talkable} entity speaks at/near a {@link Talkable} entity.
- * 
+ *
  */
 public class SpeechEvent extends Event implements Cancellable {
 
@@ -30,7 +30,7 @@ public class SpeechEvent extends Event implements Cancellable {
 
     /**
      * Gets the {@link SpeechContext} associated with the SpeechEvent.
-     * 
+     *
      * @return the SpeechContext
      */
     public SpeechContext getContext() {
@@ -45,7 +45,7 @@ public class SpeechEvent extends Event implements Cancellable {
     /**
      * The final message to be sent to the bystander. Note: This may differ from the message contained in the
      * SpeechContext, as formatting may have occurred.
-     * 
+     *
      * @return the message to be sent to the {@link Talkable} bystander.
      */
     public String getMessage() {
@@ -54,7 +54,7 @@ public class SpeechEvent extends Event implements Cancellable {
 
     /**
      * Returns the name of the {@link VocalChord} that called this event.
-     * 
+     *
      * @return name of the VocalChord being used
      */
     public String getVocalChordName() {
@@ -74,16 +74,14 @@ public class SpeechEvent extends Event implements Cancellable {
     /**
      * Sets the message to be sent to the bystander. Note: This may differ from the message contained in the
      * SpeechContext, as formatting may have occurred.
-     * 
-     * @return the message to be sent
      */
     public void setMessage(String formattedMessage) {
         this.message = formattedMessage;
     }
 
-    private static final HandlerList handlers = new HandlerList();
-
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    private static final HandlerList handlers = new HandlerList();
 }

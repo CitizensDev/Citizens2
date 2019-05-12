@@ -29,8 +29,6 @@ public class Speech extends Trait {
 
     /**
      * Sets the name of the default {@link VocalChord} for this NPC.
-     *
-     * @return The name of the VocalChord
      */
     public void setDefaultVocalChord(Class<VocalChord> clazz) {
         defaultVocalChord = CitizensAPI.getSpeechFactory().getVocalChordName(clazz);

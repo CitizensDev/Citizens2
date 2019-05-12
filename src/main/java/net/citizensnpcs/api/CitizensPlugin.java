@@ -43,8 +43,6 @@ public interface CitizensPlugin extends Plugin {
 
     /**
      * Get all registered {@link NPCRegistry}s.
-     *
-     * @return
      */
     public Iterable<NPCRegistry> getNPCRegistries();
 

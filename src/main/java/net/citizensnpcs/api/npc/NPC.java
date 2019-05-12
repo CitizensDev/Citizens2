@@ -281,7 +281,7 @@ public interface NPC extends Agent, Cloneable {
     public boolean spawn(Location location, SpawnReason reason);
 
     /**
-     * An alternative to {{@link #getBukkitEntity().getLocation()} that teleports passengers as well.
+     * An alternative to <code>npc.getEntity().getLocation()</code> that teleports passengers as well.
      *
      * @param location
      *            The destination location

@@ -80,8 +80,8 @@ public class ScriptCompiler {
     /**
      * Create a builder to compile the given files.
      *
-     * @param files
-     *            The files to compile
+     * @param file
+     *            The file to compile
      * @return The {@link CompileTaskBuilder}
      */
     public CompileTaskBuilder compile(File file) {

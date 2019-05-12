@@ -60,7 +60,7 @@ public class NPCSpeechEvent extends NPCEvent implements Cancellable {
     /**
      * Sets the name of the {@link VocalChord} to be used.
      *
-     * @param vocalChordName
+     * @param name
      *            A valid registered VocalChord name
      */
     public void setVocalChord(String name) {

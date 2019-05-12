@@ -16,7 +16,7 @@ public interface MetadataStore {
     <T> T get(String key);
 
     /**
-     * Fetches metadata from the given key. Sets the default value provided via {@link #set(String, Object) if the
+     * Fetches metadata from the given key. Sets the default value provided via {@link #set(String, Object)} if the
      * metadata is not already stored.
      *
      * @param key
@@ -25,7 +25,7 @@ public interface MetadataStore {
      *            The default value to return
      * @return The metadata at the given key, or def if not found
      */
-    <T> T get(String string, T def);
+    <T> T get(String key, T def);
 
     /**
      * Returns whether the metadata exists.
