@@ -1,22 +1,23 @@
 package net.citizensnpcs.api.ai.speech.event;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.speech.SpeechContext;
-import net.citizensnpcs.api.event.NPCEvent;
-
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.speech.SpeechContext;
+import net.citizensnpcs.api.ai.speech.VocalChord;
+import net.citizensnpcs.api.event.NPCEvent;
+
 /**
  * Represents an event where an NPC speaks, with {@link SpeechContext}. This event takes place before being sent to the
- * {@link VocalChord}.
- * 
+ * {@link VocalChord}
+ *
  */
 public class NPCSpeechEvent extends NPCEvent implements Cancellable {
 
     private boolean cancelled = false;
 
-    private SpeechContext context;
+    private final SpeechContext context;
     private String vocalChordName;
 
     public NPCSpeechEvent(SpeechContext context, String vocalChordName) {
@@ -27,7 +28,7 @@ public class NPCSpeechEvent extends NPCEvent implements Cancellable {
 
     /**
      * Returns the {@link SpeechContext} that will be sent to the VocalChord.
-     * 
+     *
      * @return the SpeechContext
      */
     public SpeechContext getContext() {
@@ -58,7 +59,7 @@ public class NPCSpeechEvent extends NPCEvent implements Cancellable {
 
     /**
      * Sets the name of the {@link VocalChord} to be used.
-     * 
+     *
      * @param vocalChordName
      *            A valid registered VocalChord name
      */
@@ -66,9 +67,9 @@ public class NPCSpeechEvent extends NPCEvent implements Cancellable {
         this.vocalChordName = name;
     }
 
-    private static final HandlerList handlers = new HandlerList();
-
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    private static final HandlerList handlers = new HandlerList();
 }

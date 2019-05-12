@@ -39,7 +39,7 @@ public class Selectors {
     }
 
     /**
-     * @see {@link #prioritySelector(Comparator, Collection)}
+     * @see #prioritySelector(Comparator, Collection)
      */
     public static Selector.Builder prioritySelector(Comparator<Behavior> comparator, Behavior... behaviors) {
         return prioritySelector(comparator, Arrays.asList(behaviors));

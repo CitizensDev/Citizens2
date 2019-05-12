@@ -24,9 +24,9 @@ import com.google.common.primitives.Primitives;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
- * The main registry for managing reflective, recursive {@link NPC} persistence.
+ * The main registry for managing reflective, recursive {@link net.citizensnpcs.api.npc.NPC} persistence.
  *
- * @see {@link Persist}
+ * @see Persist
  * @see #registerPersistDelegate(Class, Class)
  */
 public class PersistenceLoader {

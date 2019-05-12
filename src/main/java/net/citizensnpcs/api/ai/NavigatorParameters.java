@@ -2,7 +2,6 @@ package net.citizensnpcs.api.ai;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -300,7 +299,7 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * @see #lookAtFunction(Callable)
+     * @see #lookAtFunction(Function)
      */
     public Function<Navigator, Location> lookAtFunction() {
         return this.lookAtFunction;

@@ -4,20 +4,20 @@ import org.bukkit.entity.Entity;
 
 /**
  * Talkable provides an interface for talking to Players, Entities and NPCs.
- * 
+ *
  */
 public interface Talkable extends Comparable<Object> {
 
     /**
      * Gets the LivingEntity associated with this Talkable
-     * 
+     *
      * @return a LivingEntity
      */
     public Entity getEntity();
 
     /**
      * Gets the name of the Talkable LivingEntity
-     * 
+     *
      * @return name
      */
     public String getName();
@@ -25,12 +25,14 @@ public interface Talkable extends Comparable<Object> {
     /**
      * Called by a {@link VocalChord} when talking near this Talkable Entity to provide a universal method to getting an
      * event/output.
-     * 
-     * @param talker
-     *            The {@link Talkable} entity doing the talking
-     * @param text
-     *            The message to talk
-     * 
+     *
+     * @param context
+     *            the Speech context
+     * @param message
+     *            The message to send
+     * @param vocalChord
+     *            The chord to use
+     *
      */
     public void talkNear(SpeechContext context, String message, VocalChord vocalChord);
 
@@ -38,11 +40,12 @@ public interface Talkable extends Comparable<Object> {
      * Called by a {@link VocalChord} when talking to this Talkable Entity to provide a universal method to getting an
      * event/output.
      * 
-     * @param talker
-     *            The {@link Talkable} entity doing the talking
+     * @param context
+     *            the Speech context
      * @param message
-     *            The text to talk
-     * 
+     *            The message to send
+     * @param vocalChord
+     *            The chord to use
      */
     public void talkTo(SpeechContext context, String message, VocalChord vocalChord);
 

@@ -28,7 +28,7 @@ public final class CitizensAPI {
      * @since 2.0.8
      * @param store
      *            The {@link NPCDataStore} to use with the registry
-     * @return A new anonymous NPCRegistry that is not accessible via {@link #getPluginNPCRegistry(String)}
+     * @return A new anonymous NPCRegistry that is not accessible via {@link #getNamedNPCRegistry(String)}
      */
     public static NPCRegistry createAnonymousNPCRegistry(NPCDataStore store) {
         return getImplementation().createAnonymousNPCRegistry(store);
@@ -43,7 +43,7 @@ public final class CitizensAPI {
      * @param store
      *            The {@link NPCDataStore} to use with the registry
      * @since 2.0.8
-     * @return A new NPCRegistry, that can also be retrieved via {@link #getPluginNPCRegistry(String)}
+     * @return A new NPCRegistry, that can also be retrieved via {@link #getNamedNPCRegistry(String)}
      */
     public static NPCRegistry createNamedNPCRegistry(String name, NPCDataStore store) {
         return getImplementation().createNamedNPCRegistry(name, store);
@@ -74,13 +74,14 @@ public final class CitizensAPI {
     }
 
     /**
-     * Retrieves the {@link NPCRegistry} previously created via {@link #createNamedNPCRegistry(String)} with the given
-     * name, or null if not found.
+     * Retrieves the {@link NPCRegistry} previously created via {@link #createNamedNPCRegistry(String, NPCDataStore)}
+     * with the given name, or null if not found.
      *
      * @param name
      *            The registry name
      * @since 2.0.8
-     * @return A NPCRegistry previously created via {@link #createNamedNPCRegistry(String)}, or null if not found
+     * @return A NPCRegistry previously created via {@link #createNamedNPCRegistry(String, NPCDataStore)}, or null if
+     *         not found
      */
     public static NPCRegistry getNamedNPCRegistry(String name) {
         return getImplementation().getNamedNPCRegistry(name);

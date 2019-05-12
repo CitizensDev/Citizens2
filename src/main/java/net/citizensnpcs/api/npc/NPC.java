@@ -359,19 +359,19 @@ public interface NPC extends Agent, Cloneable {
      */
     public static final String NAMEPLATE_VISIBLE_METADATA = "nameplate-visible";
     /**
-     * @see {@link Skinnable}
+     * @see Skinnable
      */
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA = "player-skin-textures";
     /**
-     * @see {@link Skinnable}
+     * @see Skinnable
      */
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA = "player-skin-signature";
     /**
-     * @see {@link Skinnable}
+     * @see Skinnable
      */
     public static final String PLAYER_SKIN_USE_LATEST = "player-skin-use-latest-skin";
     /**
-     * @see {@link Skinnable}
+     * @see Skinnable
      */
     public static final String PLAYER_SKIN_UUID_METADATA = "player-skin-name";
     /**

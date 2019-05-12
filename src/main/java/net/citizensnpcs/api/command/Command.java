@@ -24,8 +24,8 @@ public @interface Command {
     String flags() default "";
 
     /**
-     * A longer description of the command and any flags it uses which will be displayed in addition to {@link desc} in
-     * help commands. Translatable.
+     * A longer description of the command and any flags it uses which will be displayed in addition to {@link #desc()}
+     * in help commands. Translatable.
      */
     String help() default "";
 

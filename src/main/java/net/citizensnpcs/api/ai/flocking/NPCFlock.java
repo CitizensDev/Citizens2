@@ -7,8 +7,8 @@ import net.citizensnpcs.api.npc.NPC;
 /**
  * Represents a 'flock' of NPCs to be used as input to a {@link Flocker}.
  *
- * @see {@link RadiusNPCFlock}
- * @see {@link GroupNPCFlock}
+ * @see RadiusNPCFlock
+ * @see GroupNPCFlock
  */
 public interface NPCFlock {
     /**

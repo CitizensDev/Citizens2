@@ -13,8 +13,8 @@ import net.citizensnpcs.api.trait.Trait;
  * Implements a simple flocking controller as a {@link Runnable}. This should be run every tick, for example as part of
  * an overridden {@link Trait#run}.
  *
- * @see {@link NPCFlock}
- * @see {@link FlockBehavior}
+ * @see NPCFlock
+ * @see FlockBehavior
  * @see <a href=
  *      "https://en.wikipedia.org/wiki/Flocking_(behavior)">https://en.wikipedia.org/wiki/Flocking_(behavior)</a>
  */

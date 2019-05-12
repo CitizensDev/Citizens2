@@ -54,7 +54,7 @@ public class SpeechContext implements Iterable<Talkable> {
      * Adds a direct {@link Talkable} recipient. The {@link VocalChord} should use this information to correctly direct
      * the message. Note: depending on the VocalChord, this list may not be inclusive as to who gets the message.
      *
-     * @param talkable
+     * @param entity
      *            Talkable entity
      * @return the speech context
      *
@@ -75,8 +75,8 @@ public class SpeechContext implements Iterable<Talkable> {
      * Adds a list of {@link Talkable} recipients. The {@link VocalChord} should use this information to correctly
      * direct the message. Note: depending on the VocalChord, this list may not be inclusive as to who gets the message.
      *
-     * @param talkable
-     *            Talkable entity
+     * @param talkables
+     *            Talkable entities
      * @return the Tongue
      *
      */

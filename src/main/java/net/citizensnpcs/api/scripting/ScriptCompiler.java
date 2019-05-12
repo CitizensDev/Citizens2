@@ -37,7 +37,7 @@ import com.google.common.io.Closeables;
 import net.citizensnpcs.api.util.Messaging;
 
 /**
- * Compiles files into {@link ScriptFactory}s. Intended for use as a separate thread - {@link ScriptCompiler#run()} will
+ * Compiles files into {@link ScriptFactory}s. Intended for use as a separate thread - {@link #run(String, String)} will
  * block while waiting for new tasks to compile.
  */
 public class ScriptCompiler {
@@ -301,7 +301,6 @@ public class ScriptCompiler {
 
     private static final Map<String, ScriptFactory> CACHE = new MapMaker().weakValues().makeMap();
     private static boolean CLASSLOADER_OVERRIDE_ENABLED;
-
     private static Method GET_APPLICATION_CLASS_LOADER, GET_GLOBAL, INIT_APPLICATION_CLASS_LOADER;
 
     static {

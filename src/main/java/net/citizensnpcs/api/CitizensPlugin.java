@@ -12,14 +12,14 @@ import net.citizensnpcs.api.trait.TraitFactory;
 
 public interface CitizensPlugin extends Plugin {
     /**
-     * @param The
-     *            data store of the registry
+     * @param store
+     *            The data store of the registry
      * @return A new anonymous NPCRegistry that is not accessible via {@link #getNamedNPCRegistry(String)}
      */
     public NPCRegistry createAnonymousNPCRegistry(NPCDataStore store);
 
     /**
-     * @param pluginName
+     * @param name
      *            The plugin name
      * @param store
      *            The data store for the registry
@@ -27,16 +27,25 @@ public interface CitizensPlugin extends Plugin {
      */
     public NPCRegistry createNamedNPCRegistry(String name, NPCDataStore store);
 
+    /**
+     * @return The default {@link NPCSelector} for managing player/server NPC selection
+     */
     public NPCSelector getDefaultNPCSelector();
 
     /**
      *
-     * @param pluginName
+     * @param name
      *            The plugin name
-     * @return A NPCRegistry previously created via {@link #createNamedNPCRegistry(String)}, or null if not found
+     * @return A NPCRegistry previously created via {@link #createNamedNPCRegistry(String, NPCDataStore)}, or null if
+     *         not found
      */
     public NPCRegistry getNamedNPCRegistry(String name);
 
+    /**
+     * Get all registered {@link NPCRegistry}s.
+     *
+     * @return
+     */
     public Iterable<NPCRegistry> getNPCRegistries();
 
     /**
@@ -53,6 +62,9 @@ public interface CitizensPlugin extends Plugin {
      */
     public File getScriptFolder();
 
+    /**
+     * @return The Skull ItemMeta provider
+     */
     public SkullMetaProvider getSkullMetaProvider();
 
     /**
@@ -82,8 +94,8 @@ public interface CitizensPlugin extends Plugin {
     /**
      * Sets the default NPC data store. Should be set during onEnable.
      *
-     * @param The
-     *            new default store
+     * @param store
+     *            The new default store
      */
     public void setDefaultNPCDataStore(NPCDataStore store);
 }
