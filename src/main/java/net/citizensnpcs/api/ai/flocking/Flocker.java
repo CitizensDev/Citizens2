@@ -59,4 +59,13 @@ public class Flocker implements Runnable {
         }
         return vector;
     }
+
+    /**
+     * Sample weight indicating high amount of influence from flocking.
+     */
+    public static double HIGH_INFLUENCE = 1.0 / 20.0;
+    /**
+     * Sample weight indicating low amount of influence from flocking.
+     */
+    public static double LOW_INFLUENCE = 1.0 / 200.0;
 }
