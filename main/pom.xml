@@ -94,7 +94,7 @@
 		<url>https://github.com/CitizensDev/Citizens2/tree/master/</url>
 	</scm>
 	<build>
-		<defaultGoal>clean package install</defaultGoal>
+		<defaultGoal>clean package install javadoc:javadoc</defaultGoal>
 		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 
 		<resources>
@@ -161,6 +161,18 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <author>false</author>
+                    <doclint>none</doclint>
+                    <links>
+                      <link>https://hub.spigotmc.org/javadocs/spigot</link>
+                    </links>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 </project>
