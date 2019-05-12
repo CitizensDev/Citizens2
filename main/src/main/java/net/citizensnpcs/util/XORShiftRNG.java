@@ -22,24 +22,21 @@ import java.util.concurrent.locks.ReentrantLock;
  * <p>
  * Very fast pseudo random number generator. See
  * <a href= "http://school.anhb.uwa.edu.au/personalpages/kwessen/shared/Marsaglia03.html" >this page</a> for a
- * description. This RNG has a period of about 2^160, which is not as long as the {@link MersenneTwisterRNG} but it is
- * faster.
+ * description. This RNG has a period of about 2^160, which is not as long as the MersenneTwisterRNG but it is faster.
  * </p>
- * 
+ *
  * <p>
- * <em>NOTE: Because instances of this class require 160-bit seeds, it is not
- * possible to seed this RNG using the {@link #setSeed(long)} method inherited
- * from {@link Random}.  Calls to this method will have no effect.
- * Instead the seed must be set by a constructor.</em>
+ * <em>NOTE: Because instances of this class require 160-bit seeds, it is not possible to seed this RNG using the
+ * {@link #setSeed(long)} method inherited from {@link Random}. Calls to this method will have no effect. Instead the
+ * seed must be set by a constructor.</em>
  * </p>
- * 
+ *
  * @author Daniel Dyer
  * @since 1.2
  */
 public class XORShiftRNG extends Random {
     // Lock to prevent concurrent modification of the RNG's internal state.
     private final ReentrantLock lock = new ReentrantLock();
-
     private final byte[] seed;
 
     // Previously used an array for state but using separate fields proved to be
@@ -52,9 +49,7 @@ public class XORShiftRNG extends Random {
 
     /**
      * Creates an RNG and seeds it with the specified seed data.
-     * 
-     * @param seed
-     *            The seed data used to initialise the RNG.
+     *
      */
     public XORShiftRNG() {
         this.seed = new byte[SEED_SIZE_BYTES];
@@ -67,16 +62,10 @@ public class XORShiftRNG extends Random {
         this.state5 = state[4];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public byte[] getSeed() {
         return seed.clone();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected int next(int bits) {
         try {
@@ -94,18 +83,10 @@ public class XORShiftRNG extends Random {
         }
     }
 
-    // Mask for casting a byte to an int, bit-by-bit (with
-    // bitwise AND) with no special consideration for the sign bit.
-    private static final int BITWISE_BYTE_TO_INT = 0x000000FF;
-
-    private static Random SEED_GENERATOR = new Random();
-    private static final int SEED_SIZE_BYTES = 20; // Needs 5 32-bit integers.
-    private static final long serialVersionUID = -1843001897066722618L;
-
     /**
      * Take four bytes from the specified position in the specified block and convert them into a 32-bit int, using the
      * big-endian convention.
-     * 
+     *
      * @param bytes
      *            The data to read from.
      * @param offset
@@ -120,7 +101,7 @@ public class XORShiftRNG extends Random {
     /**
      * Convert an array of bytes into an array of ints. 4 bytes from the input data map to a single int in the output
      * data.
-     * 
+     *
      * @param bytes
      *            The data to read from.
      * @return An array of 32-bit integers constructed from the data.
@@ -136,4 +117,11 @@ public class XORShiftRNG extends Random {
         }
         return ints;
     }
+
+    // Mask for casting a byte to an int, bit-by-bit (with
+    // bitwise AND) with no special consideration for the sign bit.
+    private static final int BITWISE_BYTE_TO_INT = 0x000000FF;
+    private static Random SEED_GENERATOR = new Random();
+    private static final int SEED_SIZE_BYTES = 20; // Needs 5 32-bit integers.
+    private static final long serialVersionUID = -1843001897066722618L;
 }

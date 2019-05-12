@@ -1,12 +1,13 @@
 <!-- Citizens build file -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-	    <groupId>net.citizensnpcs</groupId>
-	    <artifactId>citizens-parent</artifactId>
-	    <version>2.0.25-SNAPSHOT</version>
+		<groupId>net.citizensnpcs</groupId>
+		<artifactId>citizens-parent</artifactId>
+		<version>2.0.25-SNAPSHOT</version>
 	</parent>
 	<artifactId>citizens-main</artifactId>
 
@@ -162,17 +163,24 @@
 				</executions>
 			</plugin>
 			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
-                <configuration>
-                    <author>false</author>
-                    <doclint>none</doclint>
-                    <links>
-                      <link>https://hub.spigotmc.org/javadocs/spigot</link>
-                    </links>
-                </configuration>
-            </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+					<includeDependencySources>true</includeDependencySources>
+
+					<dependencySourceIncludes> 
+						<dependencySourceInclude>net.citizensnpcs.api:*</dependencySourceInclude>
+					</dependencySourceIncludes>
+					
+					<source>8</source>
+					<author>false</author>
+					<doclint>none</doclint>
+					<links>
+						<link>https://hub.spigotmc.org/javadocs/spigot</link>
+					</links>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
