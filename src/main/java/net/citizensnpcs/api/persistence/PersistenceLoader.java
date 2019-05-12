@@ -23,6 +23,12 @@ import com.google.common.primitives.Primitives;
 
 import net.citizensnpcs.api.util.DataKey;
 
+/**
+ * The main registry for managing reflective, recursive {@link NPC} persistence.
+ *
+ * @see {@link Persist}
+ * @see #registerPersistDelegate(Class, Class)
+ */
 public class PersistenceLoader {
     private static class PersistField {
         private final Persister<?> delegate;
@@ -120,7 +126,8 @@ public class PersistenceLoader {
                     set = EnumSet.noneOf((Class<? extends Enum>) field.getType());
                 } else {
                     set = (Set<Object>) (field.get() != null && Set.class.isAssignableFrom(field.get().getClass())
-                            ? field.get().getClass().newInstance() : Sets.newHashSet());
+                            ? field.get().getClass().newInstance()
+                            : Sets.newHashSet());
                 }
             }
             Object raw = root.getRaw(field.key);

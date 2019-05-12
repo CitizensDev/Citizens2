@@ -12,13 +12,18 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
+import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.cuboid.QuadTree;
 
+/**
+ * A sample {@link Goal}/{@link Behavior} that will wander within a certain radius or {@link QuadTree}.
+ */
 public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private final Function<NPC, Location> fallback;
     private boolean forceFinish;
@@ -114,6 +119,21 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         return createWithNPCAndRangeAndTreeAndFallback(npc, xrange, yrange, tree, null);
     }
 
+    /**
+     * The full builder method.
+     *
+     * @param npc
+     *            the NPC to wander
+     * @param xrange
+     *            x/z range, in blocks
+     * @param yrange
+     *            y range, in blocks
+     * @param tree
+     *            an optional {@link QuadTree} supplier to allow only wandering within a certain {@link QuadTree}
+     * @param fallback
+     *            an optional fallback location
+     * @return the built goal
+     */
     public static WanderGoal createWithNPCAndRangeAndTreeAndFallback(NPC npc, int xrange, int yrange,
             Supplier<QuadTree> tree, Function<NPC, Location> fallback) {
         return new WanderGoal(npc, xrange, yrange, tree, fallback);

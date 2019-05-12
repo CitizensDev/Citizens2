@@ -7,7 +7,17 @@ import java.util.List;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.Trait;
 
+/**
+ * Implements a simple flocking controller as a {@link Runnable}. This should be run every tick, for example as part of
+ * an overridden {@link Trait#run}.
+ *
+ * @see {@link NPCFlock}
+ * @see {@link FlockBehavior}
+ * @see <a href=
+ *      "https://en.wikipedia.org/wiki/Flocking_(behavior)">https://en.wikipedia.org/wiki/Flocking_(behavior)</a>
+ */
 public class Flocker implements Runnable {
     private final List<FlockBehavior> behaviors;
     private final NPCFlock flock;
@@ -33,6 +43,12 @@ public class Flocker implements Runnable {
         npc.getEntity().setVelocity(npc.getEntity().getVelocity().add(base));
     }
 
+    /**
+     * Sets the maximum length of the resultant flocking vector.
+     *
+     * @param maxForce
+     *            the new maximum length
+     */
     public void setMaxForce(double maxForce) {
         this.maxForce = maxForce;
     }
@@ -43,7 +59,4 @@ public class Flocker implements Runnable {
         }
         return vector;
     }
-
-    public static double HIGH_INFLUENCE = 1.0 / 20.0;
-    public static double LOW_INFLUENCE = 1.0 / 200.0;
 }

@@ -6,6 +6,12 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 
+/**
+ * Implements separation flocking with a particular weight i.e. steering a flock of NPCs away from each other.
+ *
+ * @see <a href=
+ *      "https://en.wikipedia.org/wiki/Flocking_(behavior)">https://en.wikipedia.org/wiki/Flocking_(behavior)</a>
+ */
 public class SeparationBehavior implements FlockBehavior {
     private final double decayCoef = 0.5D;
     private final double maxAcceleration = 2D;

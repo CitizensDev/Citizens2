@@ -7,7 +7,10 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
- * Represents a Trait that can be loaded and saved.
+ * Represents a Trait linked to an {@link NPC} that can be loaded and saved. This will be kept persisted inside a
+ * {@link NPC} across server restarts. Traits must be registered in Citizens' {@link TraitFactory}.
+ *
+ * All traits should have a default constructor with no arguments for persistence purposes.
  */
 public abstract class Trait implements Listener, Runnable {
     private final String name;
@@ -88,6 +91,9 @@ public abstract class Trait implements Listener, Runnable {
     public void onSpawn() {
     }
 
+    /**
+     * Called every tick if overridden.
+     */
     @Override
     public void run() {
         runImplemented = false;

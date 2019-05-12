@@ -12,6 +12,9 @@ import net.citizensnpcs.api.ai.Goal;
  *
  * This can be represented as shouldExecute() returning true -> RUNNING -> FAILURE | SUCCESS. The graph is made up of
  * many {@link Selector}s and {@link Sequence}s, with the leaf nodes being concrete actions.
+ *
+ * @see <a href=
+ *      "https://en.wikipedia.org/wiki/Behavior_tree_(artificial_intelligence,_robotics_and_control)">https://en.wikipedia.org/wiki/Behavior_tree_(artificial_intelligence,_robotics_and_control)</a>
  */
 public interface Behavior {
     /**

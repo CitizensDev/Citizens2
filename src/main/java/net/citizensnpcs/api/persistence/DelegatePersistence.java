@@ -7,9 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * Delegates persistence to a given {@link Persister}, which will be used to create and save instances.
- * 
- * @see Persist
- * @see Persister
+ *
+ * @see {@link Persist}
+ * @see {@link Persister}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

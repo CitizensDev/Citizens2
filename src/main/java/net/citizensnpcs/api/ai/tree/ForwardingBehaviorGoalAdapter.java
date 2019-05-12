@@ -1,5 +1,8 @@
 package net.citizensnpcs.api.ai.tree;
 
+/**
+ * Forwards all calls to a secondary {@link Behavior}.
+ */
 public class ForwardingBehaviorGoalAdapter extends BehaviorGoalAdapter {
     private final Behavior behavior;
 

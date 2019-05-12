@@ -1,5 +1,8 @@
 package net.citizensnpcs.api.ai.tree;
 
+/**
+ * An empty leaf {@link Behavior}.
+ */
 public class Empty extends BehaviorGoalAdapter {
     private Empty() {
     }

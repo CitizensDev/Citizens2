@@ -7,6 +7,12 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 
+/**
+ * Implements cohesion flocking with a particular weight i.e. steering a flock of NPCs towards each other.
+ *
+ * @see <a href=
+ *      "https://en.wikipedia.org/wiki/Flocking_(behavior)">https://en.wikipedia.org/wiki/Flocking_(behavior)</a>
+ */
 public class CohesionBehavior implements FlockBehavior {
     private final double weight;
 

@@ -9,6 +9,9 @@ import java.util.List;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
+/**
+ * Static helper class for creating common {@link Selector}s.
+ */
 public class Selectors {
     private Selectors() {
     }
@@ -27,23 +30,33 @@ public class Selectors {
         }
     }
 
+    /**
+     * Returns a default priority selection function that assumes the input {@link Behavior}s implement
+     * {@link Comparable}.
+     */
     public static Function<List<Behavior>, Behavior> prioritySelectionFunction() {
-        return prioritySelectionFunction0(BEHAVIOR_COMPARATOR);
+        return new PrioritySelection(BEHAVIOR_COMPARATOR);
     }
 
-    private static Function<List<Behavior>, Behavior> prioritySelectionFunction0(
-            final Comparator<Behavior> comparator) {
-        return new PrioritySelection(comparator);
-    }
-
+    /**
+     * @see {@link #prioritySelector(Comparator, Collection)}
+     */
     public static Selector.Builder prioritySelector(Comparator<Behavior> comparator, Behavior... behaviors) {
         return prioritySelector(comparator, Arrays.asList(behaviors));
     }
 
+    /**
+     * Builds a {@link Selector} that <i>prioritises</i> certain {@link Behavior}s based on a comparison function.
+     *
+     * @param comparator
+     *            The comparison function
+     * @param behaviors
+     *            The behaviors to select from
+     */
     public static Selector.Builder prioritySelector(final Comparator<Behavior> comparator,
             Collection<Behavior> behaviors) {
         Preconditions.checkArgument(behaviors.size() > 0, "must have at least one behavior for comparison");
-        return Selector.selecting(behaviors).selectionFunction(prioritySelectionFunction0(comparator));
+        return Selector.selecting(behaviors).selectionFunction(new PrioritySelection(comparator));
     }
 
     private static final Comparator<Behavior> BEHAVIOR_COMPARATOR = new Comparator<Behavior>() {

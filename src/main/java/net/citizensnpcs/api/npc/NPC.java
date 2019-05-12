@@ -2,10 +2,12 @@ package net.citizensnpcs.api.npc;
 
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Minecart;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import net.citizensnpcs.api.ai.GoalController;
@@ -288,31 +290,113 @@ public interface NPC extends Agent, Cloneable {
      */
     public void teleport(Location location, TeleportCause cause);
 
+    /**
+     * The Minecraft ambient sound played. String - Minecraft sound name
+     */
     public static final String AMBIENT_SOUND_METADATA = "ambient-sound";
+    /**
+     * Whether the NPC is collidable with Players or not. Boolean.
+     */
     public static final String COLLIDABLE_METADATA = "collidable";
+    /**
+     * Whether the NPC can damage other Entities. Boolean.
+     */
     public static final String DAMAGE_OTHERS_METADATA = "damage-others";
+    /**
+     * The Minecraft sound played when the NPC dies. String - Minecraft sound name.
+     */
     public static final String DEATH_SOUND_METADATA = "death-sound";
+    /**
+     * Whether the NPC is 'protected' i.e. invulnerable to damage. Boolean.
+     */
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
+    /**
+     * Whether the NPC drops its inventory after death. Boolean.
+     */
     public static final String DROPS_ITEMS_METADATA = "drops-items";
+    /**
+     * Whether the NPC is 'flyable' i.e. will fly when pathfinding. Boolean.
+     */
     public static final String FLYABLE_METADATA = "flyable";
+    /**
+     * The color to glow using Minecraft's scoreboard glowing feature. Should be a {@link ChatColor#name()}
+     */
     public static final String GLOWING_COLOR_METADATA = "glowing-color";
+    /**
+     * Whether the NPC is currently glowing. Boolean.
+     */
     public static final String GLOWING_METADATA = "glowing";
+    /**
+     * The Minecraft sound to play when hurt. String - Minecraft sound name.
+     */
     public static final String HURT_SOUND_METADATA = "hurt-sound";
+    /**
+     * The Item data. Byte.
+     */
     public static final String ITEM_DATA_METADATA = "item-type-data";
+    /**
+     * The Item ID. Integer.
+     */
     public static final String ITEM_ID_METADATA = "item-type-id";
+    /**
+     * Whether the NPC is leashable. Boolean.
+     */
     public static final String LEASH_PROTECTED_METADATA = "protected-leash";
+    /**
+     * The Minecart item data. Byte.
+     */
     public static final String MINECART_ITEM_DATA_METADATA = "minecart-item-data";
+    /**
+     * The Minecart item name.
+     */
     public static final String MINECART_ITEM_METADATA = "minecart-item-name";
+    /**
+     * The Minecart item offset as defined by Minecraft. {@link Minecart#setDisplayBlockOffset(int)}
+     */
     public static final String MINECART_OFFSET_METADATA = "minecart-item-offset";
+    /**
+     * Whether the NPC's nameplate should be visible. Boolean.
+     */
     public static final String NAMEPLATE_VISIBLE_METADATA = "nameplate-visible";
+    /**
+     * @see {@link Skinnable}
+     */
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA = "player-skin-textures";
+    /**
+     * @see {@link Skinnable}
+     */
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA = "player-skin-signature";
+    /**
+     * @see {@link Skinnable}
+     */
     public static final String PLAYER_SKIN_USE_LATEST = "player-skin-use-latest-skin";
+    /**
+     * @see {@link Skinnable}
+     */
     public static final String PLAYER_SKIN_UUID_METADATA = "player-skin-name";
+    /**
+     * The Integer delay to respawn in ticks after death. Only works if non-zero.
+     */
     public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
+    /**
+     * The fake NPC scoreboard team name because Minecraft requires a team name. Usually will be a random UUID in String
+     * form.
+     */
     public static final String SCOREBOARD_FAKE_TEAM_NAME_METADATA = "fake-scoreboard-team-name";
+    /**
+     * Whether to save / persist across server restarts. Boolean.
+     */
     public static final String SHOULD_SAVE_METADATA = "should-save";
+    /**
+     * Whether to suppress sounds. Boolean.
+     */
     public static final String SILENT_METADATA = "silent-sounds";
+    /**
+     * Whether to allow swimming. Boolean.
+     */
     public static final String SWIMMING_METADATA = "swim";
+    /**
+     * Whether to prevent NPC being targeted by hostile mobs. Boolean.
+     */
     public static final String TARGETABLE_METADATA = "protected-target";
 }

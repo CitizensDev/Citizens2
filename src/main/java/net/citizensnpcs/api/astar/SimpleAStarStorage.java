@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.astar;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -7,6 +8,10 @@ import java.util.Queue;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 
+/**
+ * A base implementation of {@link AStarStorage} that uses a {@link PriorityQueue} for the frontier and {@link HashMap}s
+ * for the open/closed sets.
+ */
 public class SimpleAStarStorage implements AStarStorage {
     private final Map<AStarNode, Float> closed = Maps.newHashMap();
     private final Map<AStarNode, Float> open = Maps.newHashMap();

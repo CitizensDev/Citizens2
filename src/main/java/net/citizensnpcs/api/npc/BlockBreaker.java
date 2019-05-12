@@ -1,7 +1,18 @@
 package net.citizensnpcs.api.npc;
 
+import org.bukkit.entity.Player;
+
+import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 
+/**
+ * A {@link Runnable} task that will break a block over time just as a normal Minecraft {@link Player} would. Should be
+ * run every tick until completed.
+ *
+ * This class also implements the {@link Behavior} interface for ease of use.
+ *
+ * Due to NMS constraints, this is currently implemented inside Citizens2.
+ */
 public abstract class BlockBreaker extends BehaviorGoalAdapter {
     public static class BlockBreakerConfiguration {
         private Runnable callback;
@@ -13,6 +24,10 @@ public abstract class BlockBreaker extends BehaviorGoalAdapter {
             return modifier;
         }
 
+        /**
+         * @param modifier
+         *            The block strength modifier
+         */
         public BlockBreakerConfiguration blockStrengthModifier(float modifier) {
             this.modifier = modifier;
             return this;
@@ -22,6 +37,10 @@ public abstract class BlockBreaker extends BehaviorGoalAdapter {
             return callback;
         }
 
+        /**
+         * @param callback
+         *            A callback that is run on completion
+         */
         public BlockBreakerConfiguration callback(Runnable callback) {
             this.callback = callback;
             return this;
@@ -31,11 +50,21 @@ public abstract class BlockBreaker extends BehaviorGoalAdapter {
             return itemStack;
         }
 
+        /**
+         *
+         * @param stack
+         *            The item to simulate the NPC using to break the block (e.g. an axe for wood)
+         */
         public BlockBreakerConfiguration item(org.bukkit.inventory.ItemStack stack) {
             itemStack = stack;
             return this;
         }
 
+        /**
+         * @param radius
+         *            The maximum radius to be from the target block. The NPC will attempt to pathfind towards the
+         *            target block if this is specified and it is outside of the radius.
+         */
         public BlockBreakerConfiguration radius(double radius) {
             this.radius = radius;
             return this;

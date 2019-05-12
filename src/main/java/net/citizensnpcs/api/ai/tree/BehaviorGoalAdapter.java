@@ -4,7 +4,7 @@ import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
 
 /**
- * An adapter between {@link Goal} and {@link Behavior}, forwarding the calls correctly.
+ * An adapter between {@link Goal} and {@link Behavior}, forwarding the calls correctly between them.
  */
 public abstract class BehaviorGoalAdapter implements Goal, Behavior {
     @Override

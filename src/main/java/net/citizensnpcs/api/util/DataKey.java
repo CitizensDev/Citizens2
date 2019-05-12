@@ -2,9 +2,14 @@ package net.citizensnpcs.api.util;
 
 import java.util.Map;
 
+import org.bukkit.configuration.ConfigurationSection;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
+/**
+ * A hierarchical abstract storage class. Similar to Bukkit's {@link ConfigurationSection}.
+ */
 public abstract class DataKey {
     protected final String path;
 

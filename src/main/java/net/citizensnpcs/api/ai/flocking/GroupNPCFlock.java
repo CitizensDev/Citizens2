@@ -8,6 +8,10 @@ import java.util.stream.Collectors;
 
 import net.citizensnpcs.api.npc.NPC;
 
+/**
+ * Defines a static flock of NPCs with an optional radius. If the radius is positive then NPCs will only be considered
+ * part of the flock if they are within the base NPC's radius currently.
+ */
 public class GroupNPCFlock implements NPCFlock {
     private final List<NPC> npcs;
     private final double radius;

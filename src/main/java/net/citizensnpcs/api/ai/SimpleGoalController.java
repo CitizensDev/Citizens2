@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.ai;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,10 @@ import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.ForwardingBehaviorGoalAdapter;
 
+/**
+ * A simple {@link GoalController} implementation that stores goals as a {@link ArrayList}. It works with both
+ * {@link Behavior}, {@link Goal} and will also consider {@link PrioritisableGoal}s if implemented.
+ */
 public class SimpleGoalController implements GoalController {
     private final List<Goal> executingGoals = Lists.newArrayList();
     private int executingPriority = -1;
@@ -59,7 +64,8 @@ public class SimpleGoalController implements GoalController {
             public Behavior getBehavior() {
                 return goal instanceof Behavior ? (Behavior) goal
                         : goal instanceof ForwardingBehaviorGoalAdapter
-                                ? ((ForwardingBehaviorGoalAdapter) goal).getWrapped() : null;
+                                ? ((ForwardingBehaviorGoalAdapter) goal).getWrapped()
+                                : null;
             }
 
             @Override
@@ -262,8 +268,9 @@ public class SimpleGoalController implements GoalController {
 
         @Override
         public void selectAdditional(Goal... goals) {
-            for (Goal goal : goals)
+            for (Goal goal : goals) {
                 addGoalToExecution(goal);
+            }
         }
     }
 }

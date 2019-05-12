@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Runs each {@link Behavior} in sequence.
+ */
 public class Sequence extends Composite {
     private final boolean continueRunning;
     private Behavior executing;
@@ -95,6 +98,10 @@ public class Sequence extends Composite {
         return createRetryingSequence(Arrays.asList(behaviors));
     }
 
+    /**
+     * Creates a <code>retrying</code> sequence that will continue from the current {@link Behavior} if it returns
+     * {@link BehaviorStatus#FAILURE} instead of propagating the failure up to its parent.
+     */
     public static Sequence createRetryingSequence(Collection<Behavior> behaviors) {
         return new Sequence(true, behaviors);
     }
@@ -103,6 +110,9 @@ public class Sequence extends Composite {
         return createSequence(Arrays.asList(behaviors));
     }
 
+    /**
+     * Creates sequence that will stop executing if the current {@link Behavior} returns {@link BehaviorStatus#FAILURE}.
+     */
     public static Sequence createSequence(Collection<Behavior> behaviors) {
         return new Sequence(false, behaviors);
     }

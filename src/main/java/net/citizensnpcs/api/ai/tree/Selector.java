@@ -9,7 +9,7 @@ import com.google.common.base.Function;
 
 /**
  * A selector of sub-goals, that chooses a single {@link Behavior} to execute from a list. The default selection
- * function is a random selection.
+ * function is a random selection but this can be specified in the builder.
  */
 public class Selector extends Composite {
     private Behavior executing;

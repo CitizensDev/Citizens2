@@ -56,6 +56,9 @@ public final class CitizensAPI {
         return getImplementation().getDataFolder();
     }
 
+    /**
+     * @return The default NPC selector
+     */
     public static NPCSelector getDefaultNPCSelector() {
         return getImplementation().getDefaultNPCSelector();
     }

@@ -5,20 +5,19 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent;
 import net.citizensnpcs.api.npc.NPC;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-
 /**
  * SpeechContext contains information about a {@link NPCSpeechEvent}, including the {@link Talkable} talker, recipients,
  * and message.
- * 
+ *
  */
 public class SpeechContext implements Iterable<Talkable> {
-
     private String message;
     private List<Talkable> recipients = Collections.emptyList();
     private Talkable talker = null;
@@ -54,11 +53,11 @@ public class SpeechContext implements Iterable<Talkable> {
     /**
      * Adds a direct {@link Talkable} recipient. The {@link VocalChord} should use this information to correctly direct
      * the message. Note: depending on the VocalChord, this list may not be inclusive as to who gets the message.
-     * 
+     *
      * @param talkable
      *            Talkable entity
      * @return the speech context
-     * 
+     *
      */
     public SpeechContext addRecipient(Entity entity) {
         if (recipients.isEmpty())
@@ -75,11 +74,11 @@ public class SpeechContext implements Iterable<Talkable> {
     /**
      * Adds a list of {@link Talkable} recipients. The {@link VocalChord} should use this information to correctly
      * direct the message. Note: depending on the VocalChord, this list may not be inclusive as to who gets the message.
-     * 
+     *
      * @param talkable
      *            Talkable entity
      * @return the Tongue
-     * 
+     *
      */
     public SpeechContext addRecipients(List<Talkable> talkables) {
         if (recipients.isEmpty())
@@ -90,7 +89,7 @@ public class SpeechContext implements Iterable<Talkable> {
 
     /**
      * Gets the text message sent.
-     * 
+     *
      */
     public String getMessage() {
         return message;
@@ -98,9 +97,9 @@ public class SpeechContext implements Iterable<Talkable> {
 
     /**
      * Gets the talker.
-     * 
+     *
      * @return NPC doing the talking
-     * 
+     *
      */
     public Talkable getTalker() {
         return talker;
@@ -108,7 +107,7 @@ public class SpeechContext implements Iterable<Talkable> {
 
     /**
      * Checks if there are any recipients. If none, this {@link SpeechContext} is not targeted.
-     * 
+     *
      * @return true if recipients are specified.
      */
     public boolean hasRecipients() {
@@ -117,9 +116,9 @@ public class SpeechContext implements Iterable<Talkable> {
 
     /**
      * Gets direct recipients, if any.
-     * 
+     *
      * @return recipients Iterator
-     * 
+     *
      */
     @Override
     public Iterator<Talkable> iterator() {
@@ -129,10 +128,10 @@ public class SpeechContext implements Iterable<Talkable> {
 
     /**
      * Sets the text message sent. Overrides text set with the constructor.
-     * 
+     *
      * @param message
      *            The text to send.
-     * 
+     *
      */
     public void setMessage(String message) {
         this.message = message;
@@ -140,10 +139,10 @@ public class SpeechContext implements Iterable<Talkable> {
 
     /**
      * Sets the talker.
-     * 
+     *
      * @param entity
      *            NPC doing the talking
-     * 
+     *
      */
     public void setTalker(Entity entity) {
         this.talker = CitizensAPI.getSpeechFactory().newTalkableEntity(entity);

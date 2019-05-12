@@ -2,6 +2,9 @@ package net.citizensnpcs.api.ai.tree;
 
 import com.google.common.base.Supplier;
 
+/**
+ * Wraps an {@link Behavior} and returns a supplied {@link BehaviorStatus} instead of the actual status.
+ */
 public class StatusCoercer extends BehaviorGoalAdapter {
     private final Supplier<BehaviorStatus> to;
     private final Behavior wrapping;

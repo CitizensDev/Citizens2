@@ -1,13 +1,18 @@
 package net.citizensnpcs.api.ai.goals;
 
+import org.bukkit.Location;
+
+import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
+import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 
-import org.bukkit.Location;
-
+/**
+ * A sample {@link Goal}/{@link Behavior} that simply moves an {@link NPC} to a specified {@link Location}.
+ */
 public class MoveToGoal extends BehaviorGoalAdapter {
     private boolean finished;
     private final NPC npc;

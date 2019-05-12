@@ -2,10 +2,16 @@ package net.citizensnpcs.api.ai.flocking;
 
 import java.util.Collection;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.util.Vector;
 
+import net.citizensnpcs.api.npc.NPC;
+
+/**
+ * Implements alignment flocking with a particular weight i.e. steering a flock of NPCs in line with each other.
+ *
+ * @see <a href=
+ *      "https://en.wikipedia.org/wiki/Flocking_(behavior)">https://en.wikipedia.org/wiki/Flocking_(behavior)</a>
+ */
 public class AlignmentBehavior implements FlockBehavior {
     private final double weight;
 

@@ -19,7 +19,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 
 /**
- * Represents an NPC's equipment. This only is applicable to human and enderman NPCs.
+ * Represents an NPC's equipment.
  */
 @TraitName("equipment")
 public class Equipment extends Trait {

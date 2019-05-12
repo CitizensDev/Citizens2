@@ -1,5 +1,9 @@
 package net.citizensnpcs.api.ai.tree;
 
+/**
+ * A simple if-then-else {@link Behavior} which will execute a different {@link Behavior} depending on an
+ * {@link Condition} function.
+ */
 public class IfElse extends BehaviorGoalAdapter {
     private final Condition condition;
     private Behavior executing;
