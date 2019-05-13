@@ -1,11 +1,12 @@
 <!-- Citizens build file -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-	    <groupId>net.citizensnpcs</groupId>
-	    <artifactId>citizens-parent</artifactId>
-	    <version>2.0.25-SNAPSHOT</version>
+		<groupId>net.citizensnpcs</groupId>
+		<artifactId>citizens-parent</artifactId>
+		<version>2.0.25-SNAPSHOT</version>
 	</parent>
 	<artifactId>citizens-v1_14_R1</artifactId>
 
@@ -30,12 +31,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>${craftbukkit.version}</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit</artifactId>
+			<version>${craftbukkit.version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -79,7 +80,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> 
 		</plugins>
 	</build>
 </project>

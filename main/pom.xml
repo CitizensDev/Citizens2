@@ -16,7 +16,7 @@
 		<craftbukkit.version>1.14-R0.1-SNAPSHOT</craftbukkit.version>
 		<citizensapi.version>${project.version}</citizensapi.version>
 		<powermock.version>1.4.12</powermock.version>
-		<bstats.version>1.4</bstats.version>
+		<bstats.version>1.5</bstats.version>
 	</properties>
 
 	<repositories>
@@ -164,33 +164,24 @@
 					</execution>
 				</executions>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.0.1</version>
-				<executions>
-					<execution>
-						<id>javadoc-jar</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<includeDependencySources>true</includeDependencySources>
+				<configuration>
+					<source>8</source>
+					<author>false</author>
+					<doclint>none</doclint>
+					<links>
+						<link>https://hub.spigotmc.org/javadocs/spigot</link>
+					</links>
+					<includeDependencySources>true</includeDependencySources>
 
-							<dependencySourceIncludes>
-								<dependencySourceInclude>net.citizensnpcs.api:*</dependencySourceInclude>
-							</dependencySourceIncludes>
-
-							<source>8</source>
-							<author>false</author>
-							<doclint>none</doclint>
-							<links>
-								<link>https://hub.spigotmc.org/javadocs/spigot</link>
-							</links>
-						</configuration>
-					</execution>
-				</executions>
+					<dependencySourceIncludes>
+						<dependencySourceInclude>net.citizensnpcs:citizensapi</dependencySourceInclude>
+					</dependencySourceIncludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
