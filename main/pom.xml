@@ -181,7 +181,7 @@
 					<dependencySourceIncludes>
 						<dependencySourceInclude>net.citizensnpcs:citizensapi</dependencySourceInclude>
 					</dependencySourceIncludes>
-					<excludePackageNames>net.citizensnpcs:net.citizensnpcs.commands</excludePackageNames>
+					<excludePackageNames>net.citizensnpcs.commands</excludePackageNames>
 				</configuration>
 			</plugin>
 		</plugins>
