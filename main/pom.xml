@@ -33,10 +33,10 @@
 			<id>CodeMC</id>
 			<url>https://repo.codemc.org/repository/maven-public</url>
 		</repository>
-        <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
-        </repository>
+		<repository>
+			<id>vault-repo</id>
+			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -168,20 +168,29 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.0.1</version>
-				<configuration>
-					<includeDependencySources>true</includeDependencySources>
+				<executions>
+					<execution>
+						<id>javadoc-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<includeDependencySources>true</includeDependencySources>
 
-					<dependencySourceIncludes>
-						<dependencySourceInclude>net.citizensnpcs.api:*</dependencySourceInclude>
-					</dependencySourceIncludes>
+							<dependencySourceIncludes>
+								<dependencySourceInclude>net.citizensnpcs.api:*</dependencySourceInclude>
+							</dependencySourceIncludes>
 
-					<source>8</source>
-					<author>false</author>
-					<doclint>none</doclint>
-					<links>
-						<link>https://hub.spigotmc.org/javadocs/spigot</link>
-					</links>
-				</configuration>
+							<source>8</source>
+							<author>false</author>
+							<doclint>none</doclint>
+							<links>
+								<link>https://hub.spigotmc.org/javadocs/spigot</link>
+							</links>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
