@@ -32,7 +32,6 @@ import net.minecraft.server.v1_14_R1.PathType;
 import net.minecraft.server.v1_14_R1.TagsBlock;
 import net.minecraft.server.v1_14_R1.TagsFluid;
 import net.minecraft.server.v1_14_R1.VoxelShape;
-import net.minecraft.server.v1_14_R1.World;
 
 public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     protected float j;
@@ -271,7 +270,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                                 var15 + var13,
                                 this.b.getHeight() + a(this.a, (new BlockPosition(var7.a, var7.b, var7.c))) - 0.002D,
                                 var17 + var13);
-                        if (!((World) this.a).getCubes(this.b, var19)) {
+                        if (!(this.a).getCubes(this.b, var19)) {
                             var7 = null;
                         }
                     }
@@ -298,7 +297,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 if (var11 == PathType.OPEN) {
                     AxisAlignedBB var15 = new AxisAlignedBB(var0 - var13 + 0.5D, var1 + 0.001D, var2 - var13 + 0.5D,
                             var0 + var13 + 0.5D, var1 + this.b.getHeight(), var2 + var13 + 0.5D);
-                    if (!((World) this.a).getCubes(this.b, var15)) {
+                    if (!(this.a).getCubes(this.b, var15)) {
                         return null;
                     }
 
