@@ -23,9 +23,9 @@ public interface SpeechController {
      *
      * @param message
      *            The message to speak
-     * @param vocalChord
+     * @param vocalChordName
+     *            the registered {@link VocalChord} name
      *
      */
     public void speak(SpeechContext message, String vocalChordName);
-
 }
