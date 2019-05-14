@@ -181,7 +181,7 @@ public class CustomEntityRegistry extends RegistryBlocks {
         minecraftClassMap.put(EntityTypes.SPIDER, EntitySpider.class);
         minecraftClassMap.put(EntityTypes.SQUID, EntitySquid.class);
         minecraftClassMap.put(EntityTypes.STRAY, EntitySkeletonStray.class);
-        minecraftClassMap.put(EntityTypes.TRADER_LLAMA, EntityLLamaTrader.class);
+        minecraftClassMap.put(EntityTypes.TRADER_LLAMA, EntityLlamaTrader.class);
         minecraftClassMap.put(EntityTypes.TROPICAL_FISH, EntityTropicalFish.class);
         minecraftClassMap.put(EntityTypes.TURTLE, EntityTurtle.class);
         minecraftClassMap.put(EntityTypes.EGG, EntityEgg.class);

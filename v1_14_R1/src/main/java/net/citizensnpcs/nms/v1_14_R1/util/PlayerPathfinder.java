@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 
 import net.citizensnpcs.nms.v1_14_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_14_R1.EntityInsentient;
-import net.minecraft.server.v1_14_R1.IBlockAccess;
+import net.minecraft.server.v1_14_R1.IWorldReader;
 import net.minecraft.server.v1_14_R1.Path;
 import net.minecraft.server.v1_14_R1.PathEntity;
 import net.minecraft.server.v1_14_R1.PathPoint;
@@ -28,7 +28,7 @@ public class PlayerPathfinder extends Pathfinder {
 
     }
 
-    public PathEntity a(IBlockAccess var0, EntityHumanNPC var1, double var2, double var4, double var6, float var8) {
+    public PathEntity a(IWorldReader var0, EntityHumanNPC var1, double var2, double var4, double var6, float var8) {
         this.a.a();
         this.e.a(var0, var1);
         PathPoint var9 = this.e.b();
@@ -39,7 +39,7 @@ public class PlayerPathfinder extends Pathfinder {
     }
 
     @Override
-    public PathEntity a(IBlockAccess var0, EntityInsentient var1, double var2, double var4, double var6, float var8) {
+    public PathEntity a(IWorldReader var0, EntityInsentient var1, double var2, double var4, double var6, float var8) {
         this.a.a();
         this.e.a(var0, var1);
         PathPoint var9 = this.e.b();
@@ -50,7 +50,7 @@ public class PlayerPathfinder extends Pathfinder {
     }
 
     private PathEntity a(PathPoint var0) {
-        List<PathPoint> var1 = Lists.newArrayList();
+        List var1 = Lists.newArrayList();
         PathPoint var2 = var0;
         var1.add(0, var0);
 
@@ -64,7 +64,7 @@ public class PlayerPathfinder extends Pathfinder {
 
     private PathEntity a(PathPoint var0, PathPoint var1, float var2) {
         var0.e = 0.0F;
-        var0.f = var0.c(var1);
+        var0.f = var0.a(var1);
         var0.g = var0.f;
         this.a.a();
         this.b.clear();
@@ -79,44 +79,44 @@ public class PlayerPathfinder extends Pathfinder {
             }
 
             PathPoint var5 = this.a.c();
+            var5.i = true;
             if (var5.equals(var1)) {
                 var3 = var1;
                 break;
             }
 
-            if (var5.c(var1) < var3.c(var1)) {
+            if (var5.a(var1) < var3.a(var1)) {
                 var3 = var5;
             }
 
-            var5.i = true;
-            int var6 = this.e.a(this.c, var5, var1, var2);
+            if (var5.a(var1) < var2) {
+                int var6 = this.e.a(this.c, var5);
 
-            for (int var7 = 0; var7 < var6; ++var7) {
-                PathPoint var8 = this.c[var7];
-                float var9 = var5.c(var8);
-                var8.j = var5.j + var9;
-                var8.k = var9 + var8.l;
-                float var10 = var5.e + var8.k;
-                if (var8.j < var2 && (!var8.c() || var10 < var8.e)) {
-                    var8.h = var5;
-                    var8.e = var10;
-                    var8.f = var8.c(var1) + var8.l;
-                    if (var8.c()) {
-                        this.a.a(var8, var8.e + var8.f);
-                    } else {
-                        var8.g = var8.e + var8.f;
-                        this.a.a(var8);
+                for (int var7 = 0; var7 < var6; ++var7) {
+                    PathPoint var8 = this.c[var7];
+                    float var9 = var5.a(var8);
+                    var8.j = var5.j + var9;
+                    float var10 = var5.e + var9 + var8.k;
+                    if (var8.j < var2 && (!var8.c() || var10 < var8.e)) {
+                        var8.h = var5;
+                        var8.e = var10;
+                        var8.f = var8.a(var1) * 1.5F + var8.k;
+                        if (var8.c()) {
+                            this.a.a(var8, var8.e + var8.f);
+                        } else {
+                            var8.g = var8.e + var8.f;
+                            this.a.a(var8);
+                        }
                     }
                 }
             }
         }
 
-        if (var3 == var0) {
+        if (var3.equals(var0)) {
             return null;
         } else {
             PathEntity var5 = this.a(var3);
             return var5;
         }
     }
-
 }

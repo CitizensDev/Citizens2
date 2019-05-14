@@ -12,8 +12,8 @@ import net.minecraft.server.v1_14_R1.Entity;
 import net.minecraft.server.v1_14_R1.EntityInsentient;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.GenericAttributes;
-import net.minecraft.server.v1_14_R1.IBlockAccess;
 import net.minecraft.server.v1_14_R1.IBlockData;
+import net.minecraft.server.v1_14_R1.IWorldReader;
 import net.minecraft.server.v1_14_R1.MathHelper;
 import net.minecraft.server.v1_14_R1.NavigationAbstract;
 import net.minecraft.server.v1_14_R1.PathEntity;
@@ -81,16 +81,17 @@ public class PlayerNavigation extends NavigationAbstract {
         } else if (this.c != null && !this.c.b() && var0.equals(this.q)) {
             return this.c;
         } else {
-            this.q = var0;
+            this.q = var0.immutableCopy();
             float var9 = this.i();
             this.b.getMethodProfiler().enter("pathfind");
             BlockPosition var10 = var8 ? (new BlockPosition(this.a)).up() : new BlockPosition(this.a);
             int var11 = (int) (var9 + var7);
-            IBlockAccess var12 = new ChunkCache(this.b, var10.b(-var11, -var11, -var11), var10.b(var11, var11, var11));
+            IWorldReader var12 = new ChunkCache(this.b, var10.b(-var11, -var11, -var11), var10.b(var11, var11, var11));
             PathEntity var13 = this.r.a(var12, this.a, var1, var3, var5, var9);
             this.b.getMethodProfiler().exit();
             return var13;
         }
+
     }
 
     public void a(boolean var0) {

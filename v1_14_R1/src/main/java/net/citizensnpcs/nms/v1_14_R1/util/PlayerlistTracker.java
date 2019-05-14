@@ -34,18 +34,18 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         this(map, getTracker(entry), getI(entry), getD(entry), getE(entry));
     }
 
-    private int getA(PlayerChunkMap map2) {
+    private int getb(ChunkCoordIntPair chunkcoordintpair, EntityPlayer entityplayer, boolean b) {
         try {
-            return (int) A.invoke(map2);
+            return (int) B.invoke(chunkcoordintpair, entityplayer, b);
         } catch (Throwable e) {
             e.printStackTrace();
         }
         return 0;
     }
 
-    private int getb(ChunkCoordIntPair chunkcoordintpair, EntityPlayer entityplayer, boolean b) {
+    private int getViewDistance(PlayerChunkMap map2) {
         try {
-            return (int) B.invoke(chunkcoordintpair, entityplayer, b);
+            return (int) VIEW_DISTANCE.invoke(map2);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -67,7 +67,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
             return; // prevent updates to NPC "viewers"
         Entity tracker = getTracker(this);
         final Vec3D vec3d = new Vec3D(entityplayer.locX, entityplayer.locY, entityplayer.locZ).d(this.trackerEntry.b());
-        final int i = Math.min(this.trackingDistance, (getA(map) - 1) * 16);
+        final int i = Math.min(this.trackingDistance, (getViewDistance(map) - 1) * 16);
         final boolean flag = vec3d.x >= -i && vec3d.x <= i && vec3d.z >= -i && vec3d.z <= i
                 && this.tracker.a(entityplayer);
         if (entityplayer != tracker && flag && tracker instanceof SkinnableEntity) {
@@ -76,7 +76,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
                 ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(this.tracker.chunkX, this.tracker.chunkZ);
                 PlayerChunk playerchunk = getVisibleChunk(chunkcoordintpair.pair());
                 if (playerchunk.getChunk() != null) {
-                    flag1 = getb(chunkcoordintpair, entityplayer, false) <= getA(map);
+                    flag1 = getb(chunkcoordintpair, entityplayer, false) <= getViewDistance(map);
                 }
             }*/
             if (!this.trackedPlayers.contains(entityplayer)) {
@@ -137,7 +137,6 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         return null;
     }
 
-    private static final MethodHandle A = NMS.getGetter(PlayerChunkMap.class, "A");
     private static final MethodHandle B = NMS.getMethodHandle(PlayerChunkMap.class, "b", true, ChunkCoordIntPair.class,
             EntityPlayer.class, boolean.class);
     private static final MethodHandle D = NMS.getGetter(EntityTrackerEntry.class, "d");
@@ -147,4 +146,5 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
     private static final MethodHandle I = NMS.getGetter(EntityTracker.class, "trackingDistance");
     private static final MethodHandle TRACKER = NMS.getGetter(EntityTracker.class, "tracker");
     private static final MethodHandle TRACKER_ENTRY = NMS.getGetter(EntityTracker.class, "trackerEntry");
+    private static final MethodHandle VIEW_DISTANCE = NMS.getGetter(PlayerChunkMap.class, "viewDistance");
 }

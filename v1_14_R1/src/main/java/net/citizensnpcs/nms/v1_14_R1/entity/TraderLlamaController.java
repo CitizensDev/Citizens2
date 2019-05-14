@@ -20,7 +20,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.DataWatcherObject;
-import net.minecraft.server.v1_14_R1.EntityLLamaTrader;
+import net.minecraft.server.v1_14_R1.EntityLlamaTrader;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
@@ -44,16 +44,16 @@ public class TraderLlamaController extends MobEntityController {
         super.spawn(at, npc);
     }
 
-    public static class EntityTraderLlamaNPC extends EntityLLamaTrader implements NPCHolder {
+    public static class EntityTraderLlamaNPC extends EntityLlamaTrader implements NPCHolder {
         boolean calledNMSHeight = false;
 
         private final CitizensNPC npc;
 
-        public EntityTraderLlamaNPC(EntityTypes<? extends EntityLLamaTrader> types, World world) {
+        public EntityTraderLlamaNPC(EntityTypes<? extends EntityLlamaTrader> types, World world) {
             this(types, world, null);
         }
 
-        public EntityTraderLlamaNPC(EntityTypes<? extends EntityLLamaTrader> types, World world, NPC npc) {
+        public EntityTraderLlamaNPC(EntityTypes<? extends EntityLlamaTrader> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
@@ -209,6 +209,7 @@ public class TraderLlamaController extends MobEntityController {
             if (npc == null) {
                 super.mobTick();
             } else {
+                v(10);
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }

@@ -1610,7 +1610,7 @@ public class NMSImpl implements NMSBridge {
     public static void setSize(Entity entity, boolean justCreated) {
         try {
             EntitySize entitysize = (EntitySize) SIZE_FIELD_GETTER.invoke(entity);
-            EntityPose entitypose = entity.Z();
+            EntityPose entitypose = entity.getPose();
             EntitySize entitysize1 = entity.a(entitypose);
             SIZE_FIELD_SETTER.invoke(entity, entitysize1);
             HEAD_HEIGHT.invoke(entity, HEAD_HEIGHT_METHOD.invoke(entity, entitypose, entitysize1));

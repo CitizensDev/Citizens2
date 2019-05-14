@@ -122,12 +122,12 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
-        public boolean dX() {
+        public boolean dY() {
             if (blockingATrade) {
                 blockingATrade = false;
                 return true;
             }
-            return super.dX();
+            return super.dY();
         }
 
         @Override
