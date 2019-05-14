@@ -14,14 +14,7 @@
 		<powermock.version>1.4.12</powermock.version>
 		<build.number>Unknown</build.number>
 	</properties>
-
-	<repositories>
-		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
-		</repository>
-	</repositories>
-
+ 
 	<dependencies>
 		<dependency>
 			<groupId>org.bukkit</groupId>
