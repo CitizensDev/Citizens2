@@ -118,21 +118,21 @@ public class PersistenceLoader {
             }
             value = list;
         } else if (Set.class.isAssignableFrom(type)) {
-            Set<Object> set;
+            Set set;
             if (Set.class.isAssignableFrom(collectionType)) {
-                set = (Set<Object>) collectionType.newInstance();
+                set = (Set) collectionType.newInstance();
             } else {
                 if (field.getType().isEnum()) {
                     set = EnumSet.noneOf((Class<? extends Enum>) field.getType());
                 } else {
-                    set = (Set<Object>) (field.get() != null && Set.class.isAssignableFrom(field.get().getClass())
+                    set = (Set) (field.get() != null && Set.class.isAssignableFrom(field.get().getClass())
                             ? field.get().getClass().newInstance()
                             : Sets.newHashSet());
                 }
             }
             Object raw = root.getRaw(field.key);
             if (raw instanceof Set && collectionType.isAssignableFrom(raw.getClass())) {
-                set = (Set<Object>) raw;
+                set = (Set) raw;
             } else
                 deserialiseCollection(set, root, field);
             value = set;
