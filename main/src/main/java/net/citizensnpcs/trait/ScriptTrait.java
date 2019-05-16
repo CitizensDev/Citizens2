@@ -13,11 +13,17 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.scripting.CompileCallback;
 import net.citizensnpcs.api.scripting.Script;
+import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.scripting.ScriptFactory;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 
+/**
+ * Stores a list of scripts, which are pieces of arbitrary code that can be run every tick.
+ *
+ * @see ScriptCompiler
+ */
 @TraitName("scripttrait")
 public class ScriptTrait extends Trait {
     @Persist
@@ -28,6 +34,11 @@ public class ScriptTrait extends Trait {
         super("scripttrait");
     }
 
+    /**
+     * Add and load all given script file names
+     * 
+     * @see #loadScript(String)
+     */
     public void addScripts(List<String> scripts) {
         for (String f : scripts) {
             if (!files.contains(f) && validateFile(f)) {
@@ -50,6 +61,13 @@ public class ScriptTrait extends Trait {
         }
     }
 
+    /**
+     * Compile and load a script given by the file name.
+     *
+     * @param file
+     *            the script file name relative to the script folder
+     * @see Citizens#getScriptFolder()
+     */
     public void loadScript(final String file) {
         File f = new File(JavaPlugin.getPlugin(Citizens.class).getScriptFolder(), file);
         CitizensAPI.getScriptCompiler().compile(f).cache(true).withCallback(new CompileCallback() {
@@ -73,6 +91,9 @@ public class ScriptTrait extends Trait {
         }).beginWithFuture();
     }
 
+    /**
+     * Removes the given script file names.
+     */
     public void removeScripts(List<String> scripts) {
         files.removeAll(scripts);
         Iterator<RunnableScript> itr = runnableScripts.iterator();
@@ -99,6 +120,9 @@ public class ScriptTrait extends Trait {
         }
     }
 
+    /**
+     * Whether the file exists and can be compiled by the system {@link ScriptCompiler}.
+     */
     public boolean validateFile(String file) {
         File f = new File(JavaPlugin.getPlugin(Citizens.class).getScriptFolder(), file);
         if (!f.exists() || !f.getParentFile().equals(JavaPlugin.getPlugin(Citizens.class).getScriptFolder())) {

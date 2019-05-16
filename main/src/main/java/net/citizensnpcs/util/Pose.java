@@ -56,5 +56,4 @@ public class Pose {
     public String toString() {
         return "Pose{Name='" + name + "';Pitch='" + pitch + "';Yaw='" + yaw + "';}";
     }
-
 }

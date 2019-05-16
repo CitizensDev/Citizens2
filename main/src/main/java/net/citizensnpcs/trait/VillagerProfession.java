@@ -2,13 +2,18 @@ package net.citizensnpcs.trait;
 
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
+import org.bukkit.entity.ZombieVillager;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
-import org.bukkit.entity.ZombieVillager;
 
+/**
+ * Persists the Villager profession metadata.
+ *
+ * @see Profession
+ */
 @TraitName("profession")
 public class VillagerProfession extends Trait {
     private Profession profession = Profession.FARMER;

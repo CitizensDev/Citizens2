@@ -9,6 +9,11 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Persists various {@link Horse} metadata.
+ *
+ * @see Horse
+ */
 @TraitName("horsemodifiers")
 public class HorseModifiers extends Trait {
     @Persist("armor")
@@ -30,6 +35,9 @@ public class HorseModifiers extends Trait {
         return armor;
     }
 
+    /**
+     * @see Horse#getColor()
+     */
     public Color getColor() {
         return color;
     }
@@ -38,6 +46,9 @@ public class HorseModifiers extends Trait {
         return saddle;
     }
 
+    /**
+     * @see Horse#getStyle()
+     */
     public Style getStyle() {
         return style;
     }
@@ -60,11 +71,17 @@ public class HorseModifiers extends Trait {
         this.armor = armor;
     }
 
+    /**
+     * @see Horse#setCarryingChest(boolean)
+     */
     public void setCarryingChest(boolean carryingChest) {
         this.carryingChest = carryingChest;
         updateModifiers();
     }
 
+    /**
+     * @see Horse#setColor(Color)
+     */
     public void setColor(Horse.Color color) {
         this.color = color;
         updateModifiers();
@@ -74,6 +91,9 @@ public class HorseModifiers extends Trait {
         this.saddle = saddle;
     }
 
+    /**
+     * @see Horse#setStyle(Style)
+     */
     public void setStyle(Horse.Style style) {
         this.style = style;
         updateModifiers();

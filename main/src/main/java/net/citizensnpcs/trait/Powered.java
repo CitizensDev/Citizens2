@@ -6,6 +6,11 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Persists {@link Creeper} powered status.
+ *
+ * @see Creeper#setPowered(boolean)
+ */
 @TraitName("powered")
 public class Powered extends Trait implements Toggleable {
     @Persist("")

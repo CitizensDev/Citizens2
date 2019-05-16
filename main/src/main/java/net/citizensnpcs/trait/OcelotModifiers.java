@@ -7,6 +7,11 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.util.NMS;
 
+/**
+ * Persists Ocelot metadata.
+ *
+ * @see Ocelot
+ */
 @TraitName("ocelotmodifiers")
 public class OcelotModifiers extends Trait {
     @Persist("sitting")

@@ -7,6 +7,11 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.util.NMS;
 
+/**
+ * Persists {@link Wither} metadata.
+ *
+ * @see Wither
+ */
 @TraitName("withertrait")
 public class WitherTrait extends Trait {
     @Persist("charged")
@@ -18,10 +23,6 @@ public class WitherTrait extends Trait {
 
     public boolean isCharged() {
         return charged;
-    }
-
-    @Override
-    public void onSpawn() {
     }
 
     @Override

@@ -5,23 +5,15 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-/*
- * Anchor object which holds a Location with a name to identify.
+/**
+ * A named {@link Location}.
  */
-
 public class Anchor {
     private Location location;
     private final String name;
 
     // Needed for Anchors defined that can't currently have a valid 'Location'
     private final String unloaded_value;
-
-    // Allow construction of anchor for unloaded worlds
-    public Anchor(String name, String unloaded_value) {
-        this.location = null;
-        this.unloaded_value = unloaded_value;
-        this.name = name;
-    }
 
     public Anchor(String name, Location location) {
         this.location = location;
@@ -30,19 +22,11 @@ public class Anchor {
                 + location.getZ();
     }
 
-    public boolean isLoaded() {
-        return location != null;
-    }
-
-    public boolean load() {
-        try {
-            String[] parts = getUnloadedValue();
-            this.location = new Location(Bukkit.getWorld(parts[0]), Double.valueOf(parts[1]), Double.valueOf(parts[2]),
-                    Double.valueOf(parts[3]));
-        } catch (Exception e) {
-            // Still not able to be loaded
-        }
-        return location != null;
+    // Allow construction of anchor for unloaded worlds
+    public Anchor(String name, String unloaded_value) {
+        this.location = null;
+        this.unloaded_value = unloaded_value;
+        this.name = name;
     }
 
     @Override
@@ -81,7 +65,30 @@ public class Anchor {
         return new HashCodeBuilder(13, 21).append(name).toHashCode();
     }
 
-    // A friendly representation for use in saves.yml
+    public boolean isLoaded() {
+        return location != null;
+    }
+
+    /**
+     * Attempts to load the unloaded value of the stored {@link Location}.
+     *
+     * @see #getUnloadedValue()
+     * @return whether the unloaded value could be loaded
+     */
+    public boolean load() {
+        try {
+            String[] parts = getUnloadedValue();
+            this.location = new Location(Bukkit.getWorld(parts[0]), Double.valueOf(parts[1]), Double.valueOf(parts[2]),
+                    Double.valueOf(parts[3]));
+        } catch (Exception e) {
+            // Still not able to be loaded
+        }
+        return location != null;
+    }
+
+    /**
+     * @return A string representation for use in saves.yml
+     */
     public String stringValue() {
         return name + ';' + unloaded_value;
     }

@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,6 +44,12 @@ import net.citizensnpcs.trait.waypoint.WaypointProvider.EnumerableWaypointProvid
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
+/**
+ * Stores guided waypoint info. Guided waypoints are a list of {@link Waypoint}s that will be navigated between
+ * randomly. Helper waypoints can be used to guide navigation between the random waypoints i.e. navigating between guide
+ * waypoints. For example, you might have a "realistic" NPC that walks between houses using helper waypoints placed
+ * along the roads.
+ */
 public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     private final List<Waypoint> available = Lists.newArrayList();
     private GuidedAIGoal currentGoal;
@@ -50,6 +57,26 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     private NPC npc;
     private boolean paused;
     private PRTree<Region3D<Waypoint>> tree = PRTree.create(new Region3D.Converter<Waypoint>(), 30);
+
+    public void addHelperWaypoint(Waypoint helper) {
+        helpers.add(helper);
+        rebuildTree();
+    }
+
+    public void addHelperWaypoints(Collection<Waypoint> helper) {
+        helpers.addAll(helper);
+        rebuildTree();
+    }
+
+    public void addWaypoint(Waypoint waypoint) {
+        available.add(waypoint);
+        rebuildTree();
+    }
+
+    public void addWaypoints(Collection<Waypoint> waypoint) {
+        available.addAll(waypoint);
+        rebuildTree();
+    }
 
     @Override
     public WaypointEditor createEditor(final CommandSender sender, CommandContext args) {
@@ -233,6 +260,9 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         this.paused = paused;
     }
 
+    /**
+     * Returns available and helper waypoints.
+     */
     @Override
     public Iterable<Waypoint> waypoints() {
         return Iterables.concat(available, helpers);

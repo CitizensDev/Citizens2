@@ -9,6 +9,11 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 
+/**
+ * Persists Slime size.
+ *
+ * @see Slime#setSize(int)
+ */
 @TraitName("slimesize")
 public class SlimeSize extends Trait {
     @Persist
@@ -33,6 +38,9 @@ public class SlimeSize extends Trait {
         slime = true;
     }
 
+    /**
+     * @see Slime#setSize(int)
+     */
     public void setSize(int size) {
         this.size = size;
         if (slime)

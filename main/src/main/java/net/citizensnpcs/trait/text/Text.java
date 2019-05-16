@@ -35,6 +35,9 @@ import net.citizensnpcs.trait.Toggleable;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
+/**
+ * Persists text metadata, i.e. text that will be said by an NPC on certain triggers.
+ */
 @TraitName("text")
 public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
     private final Map<UUID, Long> cooldowns = Maps.newHashMap();
@@ -53,7 +56,13 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         this.plugin = CitizensAPI.getPlugin();
     }
 
-    void add(String string) {
+    /**
+     * Adds a piece of text that will be said by the NPC.
+     *
+     * @param string
+     *            the text to say
+     */
+    public void add(String string) {
         text.add(string);
     }
 
@@ -61,10 +70,21 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     public void conversationAbandoned(ConversationAbandonedEvent event) {
     }
 
-    void edit(int index, String newText) {
+    /**
+     * Edit the text at a given index to a new text.
+     *
+     * @param index
+     *            the text's index
+     * @param newText
+     *            the new text to use
+     */
+    public void edit(int index, String newText) {
         text.set(index, newText);
     }
 
+    /**
+     * Builds a text editor in game for the supplied {@link Player}.
+     */
     public Editor getEditor(final Player player) {
         final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
                 .withLocalEcho(false).withEscapeSequence("/npc text").withEscapeSequence("exit").withModality(false)
@@ -84,7 +104,10 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         };
     }
 
-    boolean hasIndex(int index) {
+    /**
+     * @return whether there is text at a certain index
+     */
+    public boolean hasIndex(int index) {
         return index >= 0 && text.size() > index;
     }
 
@@ -111,7 +134,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     }
 
     @EventHandler
-    public void onRightClick(NPCRightClickEvent event) {
+    private void onRightClick(NPCRightClickEvent event) {
         if (!event.getNPC().equals(npc))
             return;
         String localPattern = itemInHandPattern.equals("default") ? Setting.TALK_ITEM.asString() : itemInHandPattern;
@@ -124,7 +147,10 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         text.addAll(Setting.DEFAULT_TEXT.asList());
     }
 
-    void remove(int index) {
+    /**
+     * Remove text at a given index.
+     */
+    public void remove(int index) {
         text.remove(index);
     }
 
@@ -200,7 +226,13 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         return true;
     }
 
-    void setDelay(int delay) {
+    /**
+     * Set the text delay between messages.
+     *
+     * @param delay
+     *            the delay in ticks
+     */
+    public void setDelay(int delay) {
         this.delay = delay;
     }
 
@@ -208,7 +240,12 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         itemInHandPattern = pattern;
     }
 
-    void setRange(double range) {
+    /**
+     * Set the range in blocks before text will be sent.
+     *
+     * @param range
+     */
+    public void setRange(double range) {
         this.range = range;
     }
 
@@ -216,16 +253,25 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         return talkClose;
     }
 
+    /**
+     * Toggles talking to nearby Players.
+     */
     @Override
     public boolean toggle() {
         return (talkClose = !talkClose);
     }
 
-    boolean toggleRandomTalker() {
+    /**
+     * Toggles talking at random intervals.
+     */
+    public boolean toggleRandomTalker() {
         return (randomTalker = !randomTalker);
     }
 
-    boolean toggleRealisticLooking() {
+    /**
+     * Toggles requiring line of sight before talking.
+     */
+    public boolean toggleRealisticLooking() {
         return (realisticLooker = !realisticLooker);
     }
 

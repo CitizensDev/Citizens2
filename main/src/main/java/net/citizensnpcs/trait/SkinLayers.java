@@ -5,6 +5,11 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 
+/**
+ * Persists skin layers that should/should not be visible on the NPC skin.
+ *
+ * @see Layer
+ */
 @TraitName("skinlayers")
 public class SkinLayers extends Trait {
     @Persist("cape")

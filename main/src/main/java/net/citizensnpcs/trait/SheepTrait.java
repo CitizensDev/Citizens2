@@ -10,6 +10,9 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Persists {@link Sheep} metadata.
+ */
 @TraitName("sheeptrait")
 public class SheepTrait extends Trait {
     @Persist("color")
@@ -22,14 +25,10 @@ public class SheepTrait extends Trait {
     }
 
     @EventHandler
-    public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
+    private void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
         if (npc != null && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity()))) {
             event.setCancelled(true);
         }
-    }
-
-    @Override
-    public void onSpawn() {
     }
 
     @Override
@@ -41,10 +40,16 @@ public class SheepTrait extends Trait {
         }
     }
 
+    /**
+     * @see Sheep#setColor(DyeColor)
+     */
     public void setColor(DyeColor color) {
         this.color = color;
     }
 
+    /**
+     * @see Sheep#setSheared(boolean)
+     */
     public void setSheared(boolean sheared) {
         this.sheared = sheared;
     }

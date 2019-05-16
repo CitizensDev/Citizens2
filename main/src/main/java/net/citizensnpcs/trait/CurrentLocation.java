@@ -6,6 +6,9 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Persists the current {@link Location} of the {@link NPC}. Will cache last known location if despawned.
+ */
 @TraitName("location")
 public class CurrentLocation extends Trait {
     @Persist(value = "", required = true)

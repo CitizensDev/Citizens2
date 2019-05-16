@@ -6,6 +6,9 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Enable/disable gravity. Without gravity the y velocity of the NPC is always set to <code>0</code>
+ */
 @TraitName("gravity")
 public class Gravity extends Trait implements Toggleable {
     @Persist
@@ -15,6 +18,12 @@ public class Gravity extends Trait implements Toggleable {
         super("gravity");
     }
 
+    /**
+     * Set whether to disable gravity or not
+     *
+     * @param gravitate
+     *            true = disable gravity, false = enable gravity
+     */
     public void gravitate(boolean gravitate) {
         enabled = gravitate;
     }

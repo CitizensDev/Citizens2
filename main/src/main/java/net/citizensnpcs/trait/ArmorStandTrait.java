@@ -7,6 +7,9 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Persists data related to {@link ArmorStand} NPCs.
+ */
 @TraitName("armorstandtrait")
 public class ArmorStandTrait extends Trait {
     @Persist
@@ -82,26 +85,44 @@ public class ArmorStandTrait extends Trait {
         }
     }
 
+    /**
+     * @see ArmorStand#setGravity(boolean)
+     */
     public void setGravity(boolean gravity) {
         this.gravity = gravity;
     }
 
+    /**
+     * @see ArmorStand#setArms(boolean)
+     */
     public void setHasArms(boolean arms) {
         this.hasarms = arms;
     }
 
+    /**
+     * @see ArmorStand#setBasePlate(boolean)
+     */
     public void setHasBaseplate(boolean baseplate) {
         this.hasbaseplate = baseplate;
     }
 
+    /**
+     * @see ArmorStand#setMarker(boolean)
+     */
     public void setMarker(boolean marker) {
         this.marker = marker;
     }
 
+    /**
+     * @see ArmorStand#setSmall(boolean)
+     */
     public void setSmall(boolean small) {
         this.small = small;
     }
 
+    /**
+     * @see ArmorStand#setVisible(boolean)
+     */
     public void setVisible(boolean visible) {
         this.visible = visible;
     }

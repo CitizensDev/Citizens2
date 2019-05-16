@@ -38,7 +38,7 @@ public class Waypoints extends Trait {
 
     public void describeProviders(CommandSender sender) {
         Messaging.sendTr(sender, Messages.AVAILABLE_WAYPOINT_PROVIDERS);
-        for (String name : providers.keySet()) {
+        for (String name : PROVIDERS.keySet()) {
             Messaging.send(sender, "    - " + StringHelper.wrap(name));
         }
     }
@@ -67,7 +67,7 @@ public class Waypoints extends Trait {
     public void load(DataKey key) throws NPCLoadException {
         provider = null;
         providerName = key.getString("provider", "linear");
-        for (Entry<String, Class<? extends WaypointProvider>> entry : providers.entrySet()) {
+        for (Entry<String, Class<? extends WaypointProvider>> entry : PROVIDERS.entrySet()) {
             if (entry.getKey().equals(providerName)) {
                 provider = create(entry.getValue());
                 break;
@@ -102,7 +102,7 @@ public class Waypoints extends Trait {
      */
     public boolean setWaypointProvider(String name) {
         name = name.toLowerCase();
-        Class<? extends WaypointProvider> clazz = providers.get(name);
+        Class<? extends WaypointProvider> clazz = PROVIDERS.get(name);
         if (provider != null) {
             provider.onRemove();
         }
@@ -124,14 +124,14 @@ public class Waypoints extends Trait {
      *            The name of the waypoint provider
      */
     public static void registerWaypointProvider(Class<? extends WaypointProvider> clazz, String name) {
-        providers.put(name, clazz);
+        PROVIDERS.put(name, clazz);
     }
 
-    private static final Map<String, Class<? extends WaypointProvider>> providers = Maps.newHashMap();
+    private static final Map<String, Class<? extends WaypointProvider>> PROVIDERS = Maps.newHashMap();
 
     static {
-        providers.put("linear", LinearWaypointProvider.class);
-        providers.put("wander", WanderWaypointProvider.class);
-        providers.put("guided", GuidedWaypointProvider.class);
+        PROVIDERS.put("linear", LinearWaypointProvider.class);
+        PROVIDERS.put("wander", WanderWaypointProvider.class);
+        PROVIDERS.put("guided", GuidedWaypointProvider.class);
     }
 }

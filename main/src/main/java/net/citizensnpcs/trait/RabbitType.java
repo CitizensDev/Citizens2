@@ -6,6 +6,11 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Persists Rabbit metadata.
+ *
+ * @see Rabbit#getRabbitType()
+ */
 @TraitName("rabbittype")
 public class RabbitType extends Trait {
     private Rabbit rabbit;

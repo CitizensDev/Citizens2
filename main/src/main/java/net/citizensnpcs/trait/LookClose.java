@@ -25,6 +25,10 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
+/**
+ * Persists the /npc lookclose metadata
+ *
+ */
 @TraitName("lookclose")
 public class LookClose extends Trait implements Toggleable, CommandConfigurable {
     @Persist("enabled")
@@ -47,10 +51,14 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         super("lookclose");
     }
 
-    private boolean canSeeTarget() {
+    /**
+     * Returns whether the target can be seen. Will use realistic line of sight if {@link #setRealisticLooking(boolean)}
+     * is true.
+     */
+    public boolean canSeeTarget() {
         return realisticLooking && npc.getEntity() instanceof LivingEntity
                 ? ((LivingEntity) npc.getEntity()).hasLineOfSight(lookingAt)
-                : true;
+                : lookingAt != null && lookingAt.isValid();
     }
 
     @Override
@@ -59,7 +67,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         realisticLooking = args.hasFlag('r');
     }
 
-    private void findNewTarget() {
+    /**
+     * Finds a new look-close target
+     */
+    public void findNewTarget() {
         List<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
         Collections.sort(nearby, new Comparator<Entity>() {
             @Override
@@ -107,6 +118,9 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         range = key.getDouble("range");
     }
 
+    /**
+     * Enables/disables the trait
+     */
     public void lookClose(boolean lookClose) {
         enabled = lookClose;
     }
@@ -150,10 +164,16 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         key.setDouble("range", range);
     }
 
+    /**
+     * Enables random looking - will look at a random {@link Location} every so often if enabled.
+     */
     public void setRandomLook(boolean enableRandomLook) {
         this.enableRandomLook = enableRandomLook;
     }
 
+    /**
+     * Sets the delay between random looking in ticks
+     */
     public void setRandomLookDelay(int delay) {
         this.randomLookDelay = delay;
     }
@@ -166,10 +186,16 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         this.randomYawRange = new float[] { min, max };
     }
 
+    /**
+     * Sets the maximum range in blocks to look at other Entities
+     */
     public void setRange(int range) {
         this.range = range;
     }
 
+    /**
+     * Enables/disables realistic looking (using line of sight checks). More computationally expensive.
+     */
     public void setRealisticLooking(boolean realistic) {
         this.realisticLooking = realistic;
     }

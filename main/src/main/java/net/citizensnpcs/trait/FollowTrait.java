@@ -12,10 +12,13 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Persists a {@link Player} to follow while spawned. Optionally allows protecting of the player as well.
+ */
 @TraitName("followtrait")
 public class FollowTrait extends Trait {
-    @Persist
-    private boolean active = false;
+    @Persist("active")
+    private boolean enabled = false;
     @Persist
     private UUID followingUUID;
     private Player player;
@@ -26,12 +29,19 @@ public class FollowTrait extends Trait {
         super("followtrait");
     }
 
-    private boolean isActive() {
-        return active && npc.isSpawned() && player != null && npc.getEntity().getWorld().equals(player.getWorld());
+    /**
+     * Returns whether the trait is actively following a {@link Player}.
+     */
+    public boolean isActive() {
+        return enabled && npc.isSpawned() && player != null && npc.getEntity().getWorld().equals(player.getWorld());
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @EventHandler
-    public void onEntityDamage(EntityDamageByEntityEvent event) {
+    private void onEntityDamage(EntityDamageByEntityEvent event) {
         if (isActive() && event.getEntity().equals(player)) {
             npc.getNavigator().setTarget(event.getDamager(), true);
         }
@@ -55,18 +65,29 @@ public class FollowTrait extends Trait {
         }
     }
 
+    /**
+     * Toggles and/or sets the {@link OfflinePlayer} to follow and whether to protect them (similar to wolves in
+     * Minecraft, attack whoever attacks the player).
+     *
+     * Will toggle if the {@link OfflinePlayer} is the player currently being followed.
+     *
+     * @param player
+     *            the player to follow
+     * @param protect
+     *            whether to protect the player
+     * @return whether the trait is enabled
+     */
     public boolean toggle(OfflinePlayer player, boolean protect) {
         this.protect = protect;
         if (player.getUniqueId().equals(this.followingUUID) || this.followingUUID == null) {
-            this.active = !active;
+            this.enabled = !enabled;
         }
         this.followingUUID = player.getUniqueId();
-        if (npc.getNavigator().isNavigating() && this.player != null
-                && npc.getNavigator().getEntityTarget() != null
+        if (npc.getNavigator().isNavigating() && this.player != null && npc.getNavigator().getEntityTarget() != null
                 && this.player == npc.getNavigator().getEntityTarget().getTarget()) {
             npc.getNavigator().cancelNavigation();
         }
         this.player = null;
-        return this.active;
+        return this.enabled;
     }
 }

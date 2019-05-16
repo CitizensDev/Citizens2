@@ -15,10 +15,22 @@ import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 
+/**
+ * A helper class for storing a number of entity markers. By default an entity marker is a non-persisted EnderSignal.
+ */
 public class EntityMarkers<T> {
     private final Map<T, Entity> markers = Maps.newHashMap();
     private final NPCRegistry registry = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
 
+    /**
+     * Creates and persists (in memory) an {@link Entity} marker.
+     *
+     * @param marker
+     *            the storage marker
+     * @param at
+     *            the spawn location
+     * @return the created entity
+     */
     public Entity createMarker(T marker, Location at) {
         Entity entity = spawnMarker(at.getWorld(), at);
         if (entity == null)
@@ -41,6 +53,15 @@ public class EntityMarkers<T> {
         }
     }
 
+    /**
+     * Spawns a marker {@link Entity} without storing it for later use.
+     *
+     * @param world
+     *            the world (unused currently)
+     * @param at
+     *            the location
+     * @return the spawned entity
+     */
     public Entity spawnMarker(World world, Location at) {
         NPC npc = registry.createNPC(EntityType.ENDER_SIGNAL, "");
         npc.spawn(at.clone().add(0.5, 0, 0.5), SpawnReason.CREATE);

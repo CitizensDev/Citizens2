@@ -19,12 +19,18 @@ import net.citizensnpcs.trait.waypoint.triggers.WaypointTrigger;
 import net.citizensnpcs.trait.waypoint.triggers.WaypointTriggerRegistry;
 import net.citizensnpcs.util.Messages;
 
+/**
+ * Represents a {@link Location} with a number of {@link WaypointTriggers} that activate on reaching the location.
+ */
 public class Waypoint implements Locatable {
     @Persist(required = true)
     private Location location;
     @Persist
     private List<WaypointTrigger> triggers;
 
+    /**
+     * For persistence - avoid using otherwise.
+     */
     public Waypoint() {
     }
 
@@ -47,6 +53,9 @@ public class Waypoint implements Locatable {
         Messaging.sendTr(sender, Messages.WAYPOINT_TRIGGER_LIST, base);
     }
 
+    /**
+     * Returns the distance in blocks to another waypoint.
+     */
     public double distance(Waypoint dest) {
         return location.distance(dest.location);
     }
@@ -93,6 +102,9 @@ public class Waypoint implements Locatable {
         return prime * result + ((triggers == null) ? 0 : triggers.hashCode());
     }
 
+    /**
+     * Runs waypoint triggers for the given NPC.
+     */
     public void onReach(NPC npc) {
         if (triggers == null)
             return;

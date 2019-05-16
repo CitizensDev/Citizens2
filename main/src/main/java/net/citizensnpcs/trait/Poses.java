@@ -19,6 +19,9 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Pose;
 import net.citizensnpcs.util.Util;
 
+/**
+ * Persists named {@link Pose}s.
+ */
 @TraitName("poses")
 public class Poses extends Trait {
     private final Map<String, Pose> poses = Maps.newHashMap();
@@ -27,6 +30,11 @@ public class Poses extends Trait {
         super("poses");
     }
 
+    /**
+     * Add a {@link Pose}
+     *
+     * @return whether the pose has already been added
+     */
     public boolean addPose(String name, Location location) {
         name = name.toLowerCase();
         Pose newPose = new Pose(name, location.getPitch(), location.getYaw());
@@ -43,10 +51,16 @@ public class Poses extends Trait {
         Util.assumePose(npc.getEntity(), yaw, pitch);
     }
 
+    /**
+     * Sets the yaw/pitch to the supplied {@link Location}.
+     */
     public void assumePose(Location location) {
         assumePose(location.getYaw(), location.getPitch());
     }
 
+    /**
+     * Sets the yaw/pitch to the stored pose, looked up by name.
+     */
     public void assumePose(String flag) {
         Pose pose = poses.get(flag.toLowerCase());
         assumePose(pose.getYaw(), pose.getPitch());

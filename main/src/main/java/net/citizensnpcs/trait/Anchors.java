@@ -16,6 +16,9 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
 
+/**
+ * Persists a list of {@link Anchor}s.
+ */
 @TraitName("anchors")
 public class Anchors extends Trait {
     private final List<Anchor> anchors = new ArrayList<Anchor>();
@@ -33,10 +36,12 @@ public class Anchors extends Trait {
     }
 
     @EventHandler
-    public void checkWorld(WorldLoadEvent event) {
-        for (Anchor anchor : anchors)
-            if (!anchor.isLoaded())
+    private void checkWorld(WorldLoadEvent event) {
+        for (Anchor anchor : anchors) {
+            if (!anchor.isLoaded()) {
                 anchor.load();
+            }
+        }
     }
 
     public Anchor getAnchor(String name) {

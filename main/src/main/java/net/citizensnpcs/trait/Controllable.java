@@ -31,6 +31,12 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
+/**
+ * Persists the controllable status for /npc controllable
+ *
+ * A controllable {@link NPC} can be mounted by a {@link Player} using right click or /npc mount and moved around using
+ * e.g. arrow keys.
+ */
 @TraitName("controllable")
 public class Controllable extends Trait implements Toggleable, CommandConfigurable {
     private MovementController controller = new GroundController();
@@ -49,6 +55,11 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         this.enabled = enabled;
     }
 
+    /**
+     * Configures the explicit type parameter.
+     *
+     * @see #setExplicitType(EntityType)
+     */
     @Override
     public void configure(CommandContext args) {
         if (args.hasFlag('f')) {
@@ -103,22 +114,14 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             controller = new LookAirController();
             return;
         }
-        Class<? extends MovementController> clazz = controllerTypes.get(type);
-        if (clazz == null) {
+        Constructor<? extends MovementController> innerConstructor = CONTROLLER_TYPES.get(type);
+        if (innerConstructor == null) {
             controller = new GroundController();
             return;
         }
-        Constructor<? extends MovementController> innerConstructor = null;
         try {
-            innerConstructor = clazz.getConstructor(Controllable.class);
-            innerConstructor.setAccessible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (innerConstructor == null) {
-                controller = clazz.newInstance();
+            if (innerConstructor.getParameterCount() == 0) {
+                controller = innerConstructor.newInstance();
             } else {
                 controller = innerConstructor.newInstance(this);
             }
@@ -128,6 +131,13 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         }
     }
 
+    /**
+     * Attempts to mount the {@link NPC} onto the supplied {@link Player}.
+     *
+     * @param toMount
+     *            the player to mount
+     * @return whether the mount was successful
+     */
     public boolean mount(Player toMount) {
         boolean found = NMS.getPassengers(npc.getEntity()).size() == 0;
         for (Entity passenger : NMS.getPassengers(npc.getEntity())) {
@@ -143,7 +153,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void onPlayerInteract(PlayerInteractEvent event) {
+    private void onPlayerInteract(PlayerInteractEvent event) {
         if (!npc.isSpawned() || !enabled)
             return;
         Action performed = event.getAction();
@@ -164,7 +174,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     @EventHandler
-    public void onRightClick(NPCRightClickEvent event) {
+    private void onRightClick(NPCRightClickEvent event) {
         if (!enabled || !npc.isSpawned() || !event.getNPC().equals(npc))
             return;
         controller.rightClickEntity(event);
@@ -199,6 +209,16 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return enabled;
     }
 
+    /**
+     * Configures the explicit typei.e. whether the NPC should be controlled as if it was a certain {@link EntityType}.
+     *
+     * @param type
+     *            the explicit type
+     */
+    public void setExplicitType(EntityType type) {
+        this.explicitType = type;
+    }
+
     private void setMountedYaw(Entity entity) {
         if (entity instanceof EnderDragon || !Setting.USE_BOAT_CONTROLS.asBoolean())
             return; // EnderDragon handles this separately
@@ -218,6 +238,12 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         NMS.look(entity, loc.getYaw(), loc.getPitch());
     }
 
+    /**
+     * Sets whether the {@link Player} attempting to mount the {@link NPC} must actually own the {@link NPC} to mount
+     * it.
+     *
+     * @see Owner#isOwnedBy(org.bukkit.command.CommandSender)
+     */
     public void setOwnerRequired(boolean ownerRequired) {
         this.ownerRequired = ownerRequired;
     }
@@ -378,19 +404,47 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         }
     }
 
+    /**
+     * Register a movement controller for a certain {@link EntityType} to be used for {@link NPC}s with that type.
+     *
+     * Default controllers are registered for BAT, BLAZE, ENDER_DRAGON, GHAST, WITHER and PARROT using
+     * {@link PlayerInputAirController}.
+     *
+     * @param type
+     *            the entity type
+     * @param clazz
+     *            the controller class
+     */
     public static void registerControllerType(EntityType type, Class<? extends MovementController> clazz) {
-        controllerTypes.put(type, clazz);
+        try {
+            Constructor<? extends MovementController> constructor = clazz.getConstructor(Controllable.class);
+            constructor.setAccessible(true);
+            CONTROLLER_TYPES.put(type, constructor);
+            return;
+        } catch (Exception e) {
+            try {
+                Constructor<? extends MovementController> constructor = clazz.getConstructor();
+                constructor.setAccessible(true);
+                CONTROLLER_TYPES.put(type, constructor);
+            } catch (Exception e2) {
+                throw new RuntimeException(e2);
+            }
+        }
     }
 
-    private static final Map<EntityType, Class<? extends MovementController>> controllerTypes = Maps
+    private static final Map<EntityType, Constructor<? extends MovementController>> CONTROLLER_TYPES = Maps
             .newEnumMap(EntityType.class);
 
     static {
-        controllerTypes.put(EntityType.BAT, PlayerInputAirController.class);
-        controllerTypes.put(EntityType.BLAZE, PlayerInputAirController.class);
-        controllerTypes.put(EntityType.ENDER_DRAGON, PlayerInputAirController.class);
-        controllerTypes.put(EntityType.GHAST, PlayerInputAirController.class);
-        controllerTypes.put(EntityType.WITHER, PlayerInputAirController.class);
-        controllerTypes.put(EntityType.UNKNOWN, LookAirController.class);
+        registerControllerType(EntityType.BAT, PlayerInputAirController.class);
+        registerControllerType(EntityType.BLAZE, PlayerInputAirController.class);
+        registerControllerType(EntityType.ENDER_DRAGON, PlayerInputAirController.class);
+        registerControllerType(EntityType.GHAST, PlayerInputAirController.class);
+        registerControllerType(EntityType.WITHER, PlayerInputAirController.class);
+        try {
+            registerControllerType(EntityType.valueOf("PARROT"), PlayerInputAirController.class);
+        } catch (IllegalArgumentException ex) {
+        }
+        registerControllerType(EntityType.UNKNOWN, LookAirController.class);
     }
 }

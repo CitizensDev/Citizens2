@@ -7,6 +7,11 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Persists the {@link GameMode} of a {@link Player} NPC.
+ * 
+ * @see Player#setGameMode(GameMode)
+ */
 @TraitName("gamemodetrait")
 public class GameModeTrait extends Trait {
     @Persist

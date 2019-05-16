@@ -12,6 +12,9 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 
+/**
+ * Persists the NPC's mounted on entity, if any. Will attempt to respawn on mount.
+ */
 @TraitName("mounttrait")
 public class MountTrait extends Trait {
     private UUID mountedOn;

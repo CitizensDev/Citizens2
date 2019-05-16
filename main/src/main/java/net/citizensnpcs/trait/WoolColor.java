@@ -11,6 +11,11 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 
+/**
+ * Persists {@link Sheep} wool color metadata.
+ *
+ * @see Sheep
+ */
 @TraitName("woolcolor")
 public class WoolColor extends Trait {
     private DyeColor color = DyeColor.WHITE;
@@ -30,9 +35,10 @@ public class WoolColor extends Trait {
     }
 
     @EventHandler
-    public void onSheepDyeWool(SheepDyeWoolEvent event) {
-        if (npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity())))
+    private void onSheepDyeWool(SheepDyeWoolEvent event) {
+        if (npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity()))) {
             event.setCancelled(true);
+        }
     }
 
     @Override

@@ -9,6 +9,11 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Persists saddle metadata.
+ *
+ * @see Pig#hasSaddle()
+ */
 @TraitName("saddle")
 public class Saddle extends Trait implements Toggleable {
     private boolean pig;

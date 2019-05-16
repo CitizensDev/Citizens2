@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -31,6 +32,10 @@ import net.citizensnpcs.api.util.cuboid.QuadTree;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
+/**
+ * A wandering waypoint provider that wanders between either a box centered at the current location or inside a region
+ * defined by a list of boxes.
+ */
 public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTree>, Function<NPC, Location> {
     private WanderGoal currentGoal;
     private NPC npc;
@@ -42,6 +47,16 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
     public int xrange = DEFAULT_XRANGE;
     @Persist
     public int yrange = DEFAULT_YRANGE;
+
+    public void addRegionCentre(Location centre) {
+        regionCentres.add(centre);
+        recalculateTree();
+    }
+
+    public void addRegionCentres(Collection<Location> centre) {
+        regionCentres.addAll(centre);
+        recalculateTree();
+    }
 
     @Override
     public Location apply(NPC npc) {
@@ -218,6 +233,16 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
         }
     }
 
+    public void removeRegionCentre(Location centre) {
+        regionCentres.remove(centre);
+        recalculateTree();
+    }
+
+    public void removeRegionCentres(Collection<Location> centre) {
+        regionCentres.removeAll(centre);
+        recalculateTree();
+    }
+
     @Override
     public void save(DataKey key) {
     }
@@ -262,6 +287,5 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
     }
 
     private static final int DEFAULT_XRANGE = 3;
-
     private static final int DEFAULT_YRANGE = 25;
 }

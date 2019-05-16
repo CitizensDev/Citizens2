@@ -7,6 +7,11 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
+/**
+ * Persists {@link Wolf} metadata.
+ *
+ * @see Wolf
+ */
 @TraitName("wolfmodifiers")
 public class WolfModifiers extends Trait {
     @Persist("angry")

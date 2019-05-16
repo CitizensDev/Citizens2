@@ -40,6 +40,9 @@ import net.citizensnpcs.trait.waypoint.triggers.TriggerEditPrompt;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
+/**
+ * An ordered list of {@link Waypoint}s to walk between.
+ */
 public class LinearWaypointProvider implements EnumerableWaypointProvider {
     private LinearWaypointGoal currentGoal;
     private NPC npc;
@@ -136,6 +139,9 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         }
     }
 
+    /**
+     * Returns the modifiable list of waypoints.
+     */
     @Override
     public Iterable<Waypoint> waypoints() {
         return waypoints;

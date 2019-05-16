@@ -10,6 +10,11 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 
+/**
+ * Persists the Minecraft age variable for {@link Ageable}s. Will also set baby for {@link Zombie}s.
+ *
+ * @see Ageable
+ */
 @TraitName("age")
 public class Age extends Trait implements Toggleable {
     @Persist
@@ -22,6 +27,9 @@ public class Age extends Trait implements Toggleable {
         super("age");
     }
 
+    /**
+     * Send a brief description of the current state of the trait to the supplied {@link CommandSender}.
+     */
     public void describe(CommandSender sender) {
         Messaging.sendTr(sender, Messages.AGE_TRAIT_DESCRIPTION, npc.getName(), age, locked);
     }
@@ -61,6 +69,9 @@ public class Age extends Trait implements Toggleable {
         }
     }
 
+    /**
+     * Toggles the age lock variable and returns whether the age is currently locked.
+     */
     @Override
     public boolean toggle() {
         locked = !locked;
