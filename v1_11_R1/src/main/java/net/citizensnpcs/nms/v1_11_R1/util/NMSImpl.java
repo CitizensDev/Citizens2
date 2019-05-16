@@ -1,8 +1,8 @@
 package net.citizensnpcs.nms.v1_11_R1.util;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
@@ -989,13 +989,10 @@ public class NMSImpl implements NMSBridge {
     public void shutdown() {
         if (ENTITY_REGISTRY == null)
             return;
-        Field field = NMS.getField(EntityTypes.class, "b");
-        Field modifiersField = NMS.getField(Field.class, "modifiers");
         try {
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-            field.set(null, ENTITY_REGISTRY.getWrapped());
-        } catch (Exception e) {
-
+            MethodHandle setter = NMS.getFinalSetter(EntityTypes.class, "b");
+            setter.invoke(ENTITY_REGISTRY.getWrapped());
+        } catch (Throwable e) {
         }
     }
 
@@ -1530,12 +1527,11 @@ public class NMSImpl implements NMSBridge {
     static {
         try {
             Field field = NMS.getField(EntityTypes.class, "b");
-            Field modifiersField = NMS.getField(Field.class, "modifiers");
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
             ENTITY_REGISTRY = new CustomEntityRegistry(
                     (RegistryMaterials<MinecraftKey, Class<? extends Entity>>) field.get(null));
-            field.set(null, ENTITY_REGISTRY);
-        } catch (Exception e) {
+            MethodHandle setter = NMS.getFinalSetter(EntityTypes.class, "b");
+            setter.invoke(ENTITY_REGISTRY);
+        } catch (Throwable e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
 

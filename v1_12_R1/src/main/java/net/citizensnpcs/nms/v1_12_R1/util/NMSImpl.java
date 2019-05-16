@@ -1,8 +1,8 @@
 package net.citizensnpcs.nms.v1_12_R1.util;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
@@ -890,10 +890,8 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setDummyAdvancement(Player entity) {
         try {
-            ADVANCEMENT_PLAYER_FIELD.set(getHandle(entity), DummyPlayerAdvancementData.INSTANCE);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+            ADVANCEMENT_PLAYER_FIELD.invoke(getHandle(entity), DummyPlayerAdvancementData.INSTANCE);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -1003,12 +1001,10 @@ public class NMSImpl implements NMSBridge {
     public void shutdown() {
         if (ENTITY_REGISTRY == null)
             return;
-        Field field = NMS.getField(EntityTypes.class, "b");
-        Field modifiersField = NMS.getField(Field.class, "modifiers");
         try {
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-            field.set(null, ENTITY_REGISTRY.getWrapped());
-        } catch (Exception e) {
+            MethodHandle setter = NMS.getFinalSetter(EntityTypes.class, "b");
+            setter.invoke(ENTITY_REGISTRY.getWrapped());
+        } catch (Throwable e) {
         }
     }
 
@@ -1518,7 +1514,7 @@ public class NMSImpl implements NMSBridge {
         navigation.d();
     };
 
-    private static Field ADVANCEMENT_PLAYER_FIELD = NMS.getFinalField(EntityPlayer.class, "bY");
+    private static MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class, "bY");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
@@ -1543,11 +1539,12 @@ public class NMSImpl implements NMSBridge {
 
     static {
         try {
-            Field field = NMS.getFinalField(EntityTypes.class, "b");
+            Field field = NMS.getField(EntityTypes.class, "b");
             ENTITY_REGISTRY = new CustomEntityRegistry(
                     (RegistryMaterials<MinecraftKey, Class<? extends Entity>>) field.get(null));
-            field.set(null, ENTITY_REGISTRY);
-        } catch (Exception e) {
+            MethodHandle setter = NMS.getFinalSetter(EntityTypes.class, "b");
+            setter.invoke(ENTITY_REGISTRY);
+        } catch (Throwable e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
 

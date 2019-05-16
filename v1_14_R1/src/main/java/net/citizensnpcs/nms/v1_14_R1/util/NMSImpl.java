@@ -1510,7 +1510,7 @@ public class NMSImpl implements NMSBridge {
         if (RABBIT_FIELD == null)
             return null;
         try {
-            return (DataWatcherObject<Integer>) RABBIT_FIELD.invoke(null);
+            return (DataWatcherObject<Integer>) RABBIT_FIELD.invoke();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1691,10 +1691,10 @@ public class NMSImpl implements NMSBridge {
     private static Field SKULL_PROFILE_FIELD;
     static {
         try {
-            Field field = NMS.getFinalField(IRegistry.class, "ENTITY_TYPE");
-            ENTITY_REGISTRY = new CustomEntityRegistry((RegistryBlocks<EntityTypes<?>>) field.get(null));
-            field.set(null, ENTITY_REGISTRY);
-        } catch (Exception e) {
+            ENTITY_REGISTRY = new CustomEntityRegistry(
+                    (RegistryBlocks<EntityTypes<?>>) NMS.getGetter(IRegistry.class, "ENTITY_TYPE").invoke());
+            NMS.getFinalSetter(IRegistry.class, "ENTITY_TYPE").invoke(ENTITY_REGISTRY);
+        } catch (Throwable e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
     }

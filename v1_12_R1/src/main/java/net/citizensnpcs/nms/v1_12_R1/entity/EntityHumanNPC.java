@@ -1,8 +1,7 @@
 package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.invoke.MethodHandle;
 import java.net.Socket;
 import java.util.List;
 import java.util.Map;
@@ -73,13 +72,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private PlayerControllerJump controllerJump;
     private PlayerControllerLook controllerLook;
     private PlayerControllerMove controllerMove;
+    private boolean isTracked = false;
     private int jumpTicks = 0;
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private final SkinPacketTracker skinTracker;
     private int updateCounter = 0;
-    private boolean isTracked = false;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
             PlayerInteractManager playerInteractManager, NPC npc) {
@@ -95,8 +94,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
     }
 
-    public void setTracked() {
-        isTracked = true;
+    @Override
+    protected void a(double d0, boolean flag, IBlockData block, BlockPosition blockposition) {
+        if (npc == null || !npc.isFlyable()) {
+            super.a(d0, flag, block, blockposition);
+        }
     }
 
     @Override
@@ -105,13 +107,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             return false;
         }
         return super.a(entityplayer);
-    }
-
-    @Override
-    protected void a(double d0, boolean flag, IBlockData block, BlockPosition blockposition) {
-        if (npc == null || !npc.isFlyable()) {
-            super.a(d0, flag, block, blockposition);
-        }
     }
 
     @Override
@@ -336,11 +331,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         EmptyAdvancementDataPlayer.clear(this.getAdvancementData());
         try {
-            ADVANCEMENT_DATA_PLAYER.set(this,
+            ADVANCEMENT_DATA_PLAYER.invoke(this,
                     new EmptyAdvancementDataPlayer(minecraftServer, CitizensAPI.getDataFolder().getParentFile(), this));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -444,6 +437,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     public void setTargetLook(Location target) {
         controllerLook.a(target.getX(), target.getY(), target.getZ(), 10, 40);
+    }
+
+    public void setTracked() {
+        isTracked = true;
     }
 
     public void updateAI() {
@@ -551,14 +548,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
     }
 
-    private static Field ADVANCEMENT_DATA_PLAYER = NMS.getField(EntityPlayer.class, "bY");
+    private static MethodHandle ADVANCEMENT_DATA_PLAYER = NMS.getFinalSetter(EntityPlayer.class, "bY");
     private static final float EPSILON = 0.005F;
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
-    static {
-        Field modifiersField = NMS.getField(Field.class, "modifiers");
-        try {
-            modifiersField.setInt(ADVANCEMENT_DATA_PLAYER, ADVANCEMENT_DATA_PLAYER.getModifiers() & ~Modifier.FINAL);
-        } catch (Exception e) {
-        }
-    }
 }

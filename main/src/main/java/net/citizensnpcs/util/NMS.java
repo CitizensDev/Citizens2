@@ -88,12 +88,49 @@ public class NMS {
         return f;
     }
 
-    public static Field getFinalField(Class<?> clazz, String field) {
-        return getFinalField(clazz, field, true);
+    public static MethodHandle getFinalSetter(Class<?> clazz, String field) {
+        return getFinalSetter(clazz, field, true);
     }
 
-    public static Field getFinalField(Class<?> clazz, String field, boolean log) {
-        Field f = getField(clazz, field, log);
+    public static MethodHandle getFinalSetter(Class<?> clazz, String field, boolean log) {
+        Field f;
+        if (MODIFIERS_FIELD == null) {
+            if (UNSAFE == null) {
+                try {
+                    UNSAFE = NMS.getField(Class.forName("sun.misc.Unsafe"), "theUnsafe").get(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (log) {
+                        Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+                    }
+                    return null;
+                }
+                UNSAFE_STATIC_FIELD_OFFSET = NMS
+                        .getMethodHandle(UNSAFE.getClass(), "staticFieldOffset", true, Field.class).bindTo(UNSAFE);
+                UNSAFE_FIELD_OFFSET = NMS.getMethodHandle(UNSAFE.getClass(), "objectFieldOffset", true, Field.class)
+                        .bindTo(UNSAFE);
+                UNSAFE_PUT_OBJECT = NMS
+                        .getMethodHandle(UNSAFE.getClass(), "putObject", true, Object.class, long.class, Object.class)
+                        .bindTo(UNSAFE);
+            }
+            f = NMS.getField(clazz, field, log);
+            if (f == null) {
+                return null;
+            }
+            try {
+                boolean isStatic = Modifier.isStatic(f.getModifiers());
+                long offset = (long) (isStatic ? UNSAFE_STATIC_FIELD_OFFSET.invoke(f) : UNSAFE_FIELD_OFFSET.invoke(f));
+                return isStatic ? MethodHandles.insertArguments(UNSAFE_PUT_OBJECT, 0, clazz, offset)
+                        : MethodHandles.insertArguments(UNSAFE_PUT_OBJECT, 1, offset);
+            } catch (Throwable t) {
+                t.printStackTrace();
+                if (log) {
+                    Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, t.getLocalizedMessage());
+                }
+                return null;
+            }
+        }
+        f = getField(clazz, field, log);
         if (f == null) {
             return null;
         }
@@ -103,18 +140,6 @@ public class NMS {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
             }
-            return null;
-        }
-        return f;
-    }
-
-    public static MethodHandle getFinalSetter(Class<?> clazz, String field) {
-        return getFinalSetter(clazz, field, true);
-    }
-
-    public static MethodHandle getFinalSetter(Class<?> clazz, String field, boolean log) {
-        Field f = getFinalField(clazz, field, log);
-        if (f == null) {
             return null;
         }
         try {
@@ -409,5 +434,9 @@ public class NMS {
 
     private static NMSBridge BRIDGE;
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-    private static Field MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers");
+    private static Field MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers", false);
+    private static Object UNSAFE;
+    private static MethodHandle UNSAFE_FIELD_OFFSET;
+    private static MethodHandle UNSAFE_PUT_OBJECT;
+    private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 }

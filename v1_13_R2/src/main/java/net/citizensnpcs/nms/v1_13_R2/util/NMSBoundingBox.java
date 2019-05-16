@@ -34,10 +34,10 @@ public class NMSBoundingBox {
         return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
-    private static final Field a = NMS.getFinalField(AxisAlignedBB.class, "a", false);
-    private static final Field b = NMS.getFinalField(AxisAlignedBB.class, "b", false);
-    private static final Field c = NMS.getFinalField(AxisAlignedBB.class, "c", false);
-    private static final Field d = NMS.getFinalField(AxisAlignedBB.class, "d", false);
-    private static final Field e = NMS.getFinalField(AxisAlignedBB.class, "e", false);
-    private static final Field f = NMS.getFinalField(AxisAlignedBB.class, "f", false);
+    private static final Field a = NMS.getField(AxisAlignedBB.class, "a", false);
+    private static final Field b = NMS.getField(AxisAlignedBB.class, "b", false);
+    private static final Field c = NMS.getField(AxisAlignedBB.class, "c", false);
+    private static final Field d = NMS.getField(AxisAlignedBB.class, "d", false);
+    private static final Field e = NMS.getField(AxisAlignedBB.class, "e", false);
+    private static final Field f = NMS.getField(AxisAlignedBB.class, "f", false);
 }
