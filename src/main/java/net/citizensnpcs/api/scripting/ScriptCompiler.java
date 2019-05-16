@@ -39,6 +39,10 @@ import net.citizensnpcs.api.util.Messaging;
 /**
  * Compiles files into {@link ScriptFactory}s. Intended for use as a separate thread - {@link #run(String, String)} will
  * block while waiting for new tasks to compile.
+ *
+ * Works with all installed system {@link ScriptEngine}s. By default compatible with js via Nashorn/Rhino.
+ *
+ * @see ScriptEngineManager
  */
 public class ScriptCompiler {
     private final WeakReference<ClassLoader> classLoader;
@@ -110,6 +114,9 @@ public class ScriptCompiler {
         return new CompileTaskBuilder(new ScriptSource(src, identifier, loadEngine(extension)));
     }
 
+    /**
+     * Cancel all running compile tasks.
+     */
     public void interrupt() {
         executor.shutdownNow();
     }
@@ -150,10 +157,23 @@ public class ScriptCompiler {
         }
     }
 
+    /**
+     * @see #run(String, String, Map)
+     */
     public void run(String code, String extension) throws ScriptException {
         run(code, extension, null);
     }
 
+    /**
+     * Run the given source code.
+     *
+     * @param code
+     *            the source code to compile/run
+     * @param extension
+     *            the code extension e.g. js
+     * @param vars
+     *            variables to pass to the script
+     */
     public void run(String code, String extension, Map<String, Object> vars) throws ScriptException {
         ScriptEngine engine = loadEngine(extension);
         if (engine == null)
