@@ -80,12 +80,13 @@ public class NMS {
         try {
             f = clazz.getDeclaredField(field);
             f.setAccessible(true);
+            return f;
         } catch (Exception e) {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
             }
+            return null;
         }
-        return f;
     }
 
     public static MethodHandle getFinalSetter(Class<?> clazz, String field) {
