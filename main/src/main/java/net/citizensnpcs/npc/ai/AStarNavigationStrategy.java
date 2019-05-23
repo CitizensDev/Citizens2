@@ -4,9 +4,6 @@ import java.util.List;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.material.Door;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
@@ -18,7 +15,6 @@ import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.AStarMachine;
 import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
-import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
@@ -94,15 +90,15 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location currLoc = npc.getEntity().getLocation(NPC_LOCATION);
         Vector destVector = new Vector(vector.getX() + 0.5, vector.getY(), vector.getZ() + 0.5);
-        Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
-        if (MinecraftBlockExaminer.isDoor(block.getType())) {
+        /*Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
+          if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();
             if (door.isOpen()) {
                 BlockFace targetFace = door.getFacing().getOppositeFace();
                 destVector.setX(vector.getX() + targetFace.getModX());
                 destVector.setZ(vector.getZ() + targetFace.getModZ());
             }
-        }
+        }*/
         if (currLoc.toVector().distanceSquared(destVector) <= params.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
