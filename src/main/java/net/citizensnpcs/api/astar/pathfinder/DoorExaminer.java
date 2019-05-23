@@ -32,7 +32,7 @@ public class DoorExaminer implements BlockExaminer {
         public void run(NPC npc, Block point, ListIterator<Block> path) {
             if (!MinecraftBlockExaminer.isDoor(point.getType()))
                 return;
-            if (npc.getStoredLocation().distanceSquared(point.getLocation()) > 4)
+            if (npc.getStoredLocation().distanceSquared(point.getLocation().add(0.5, 0, 0.5)) > 4)
                 return;
             BlockState state = point.getState();
             Door door = (Door) state.getData();
