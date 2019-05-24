@@ -476,9 +476,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void storeNPCs() {
         if (saves == null)
             return;
-        for (NPC npc : npcRegistry) {
-            saves.store(npc);
-        }
+        saves.storeAll(npcRegistry);
     }
 
     public void storeNPCs(CommandContext args) {

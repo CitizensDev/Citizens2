@@ -1,5 +1,8 @@
 package net.citizensnpcs.trait;
 
+import java.lang.invoke.MethodHandle;
+
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
@@ -8,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.util.NMS;
 
 /**
  * Persists various {@link Horse} metadata.
@@ -106,6 +110,24 @@ public class HorseModifiers extends Trait {
             horse.setStyle(style);
             horse.getInventory().setArmor(armor);
             horse.getInventory().setSaddle(saddle);
+        }
+        EntityType type = npc.getEntity().getType();
+        if (type.name().equals("LLAMA") || type.name().equals("TRADER_LLAMA") || type.name().equals("DONKEY")
+                || type.name().equals("MULE")) {
+            try {
+                CARRYING_CHEST_METHOD.invoke(npc.getEntity(), carryingChest);
+            } catch (Throwable e) {
+            }
+        }
+    }
+
+    private static MethodHandle CARRYING_CHEST_METHOD;
+
+    static {
+        try {
+            CARRYING_CHEST_METHOD = NMS.getMethodHandle(Class.forName("org.bukkit.entity.ChestedHorse"),
+                    "setCarryingChest", false, boolean.class);
+        } catch (Throwable e) {
         }
     }
 }

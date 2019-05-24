@@ -1,6 +1,8 @@
 package net.citizensnpcs.util;
 
+import java.util.EnumSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -198,6 +200,17 @@ public class Util {
             }
         }
         return false;
+    }
+
+    public static Set<EntityType> optionalEntitySet(String... types) {
+        Set<EntityType> list = EnumSet.noneOf(EntityType.class);
+        for (String type : types) {
+            try {
+                list.add(EntityType.valueOf(type));
+            } catch (IllegalArgumentException e) {
+            }
+        }
+        return list;
     }
 
     public static String prettyEnum(Enum<?> e) {

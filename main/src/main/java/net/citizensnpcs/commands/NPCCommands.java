@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -615,16 +616,21 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "horse (--color color) (--type type) (--style style) (-cb)",
-            desc = "Sets horse modifiers",
-            help = "Use the -c flag to make the horse have a chest, or the -b flag to stop them from having a chest.",
-            modifiers = { "horse" },
+            usage = "horse|llama|donkey|mule (--color color) (--type type) (--style style) (-cb)",
+            desc = "Sets horse and horse-like entity modifiers",
+            help = "Use the -c flag to make the NPC have a chest, or the -b flag to stop them from having a chest.",
+            modifiers = { "horse", "llama", "donkey", "mule" },
             min = 1,
             max = 1,
             flags = "cb",
             permission = "citizens.npc.horse")
-    @Requirements(selected = true, ownership = true, types = EntityType.HORSE)
+    @Requirements(selected = true, ownership = true)
     public void horse(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        Set<EntityType> allowedTypes = Util.optionalEntitySet("HORSE", "LLAMA", "DONKEY", "MULE", "TRADER_LLAMA");
+        EntityType type = npc.getTrait(MobType.class).getType();
+        if (!allowedTypes.contains(type)) {
+            throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
+        }
         HorseModifiers horse = npc.getTrait(HorseModifiers.class);
         String output = "";
         if (args.hasFlag('c')) {
@@ -634,7 +640,8 @@ public class NPCCommands {
             horse.setCarryingChest(false);
             output += Messaging.tr(Messages.HORSE_CHEST_UNSET) + " ";
         }
-        if (args.hasValueFlag("color") || args.hasValueFlag("colour")) {
+
+        if (type == EntityType.HORSE && (args.hasValueFlag("color") || args.hasValueFlag("colour"))) {
             String colorRaw = args.getFlag("color", args.getFlag("colour"));
             Color color = Util.matchEnum(Color.values(), colorRaw);
             if (color == null) {
@@ -644,7 +651,7 @@ public class NPCCommands {
             horse.setColor(color);
             output += Messaging.tr(Messages.HORSE_COLOR_SET, Util.prettyEnum(color));
         }
-        if (args.hasValueFlag("style")) {
+        if (type == EntityType.HORSE && args.hasValueFlag("style")) {
             Style style = Util.matchEnum(Style.values(), args.getFlag("style"));
             if (style == null) {
                 String valid = Util.listValuesPretty(Style.values());
@@ -654,8 +661,8 @@ public class NPCCommands {
             output += Messaging.tr(Messages.HORSE_STYLE_SET, Util.prettyEnum(style));
         }
         if (output.isEmpty()) {
-            Messaging.sendTr(sender, Messages.HORSE_DESCRIBE, Util.prettyEnum(horse.getColor()),
-                    Util.prettyEnum(horse.getNPC().getEntity().getType()), Util.prettyEnum(horse.getStyle()));
+            Messaging.sendTr(sender, Messages.HORSE_DESCRIBE, Util.prettyEnum(horse.getColor()), Util.prettyEnum(type),
+                    Util.prettyEnum(horse.getStyle()));
         } else {
             sender.sendMessage(output);
         }
