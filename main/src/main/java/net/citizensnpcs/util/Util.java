@@ -117,7 +117,7 @@ public class Util {
     public static boolean isHorse(Entity entity) {
         String name = entity.getType().name();
         return entity.getType() == EntityType.HORSE || name.contains("_HORSE") || name.equals("DONKEY")
-                || name.equals("MULE") || name.equals("LLAMA");
+                || name.equals("MULE") || name.equals("LLAMA") || name.equals("TRADER_LLAMA");
     }
 
     public static boolean isLoaded(Location location) {

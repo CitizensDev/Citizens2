@@ -313,7 +313,9 @@ public class Messages {
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
     public static final String WANDER_WAYPOINTS_ADDED_REGION = "citizens.editors.waypoints.wander.added-region";
     public static final String WANDER_WAYPOINTS_BEGIN = "citizens.editors.waypoints.wander.begin";
+    public static final String WANDER_WAYPOINTS_DELAY_SET = "citizens.editors.waypoints.wander.delay-set";
     public static final String WANDER_WAYPOINTS_END = "citizens.editors.waypoints.wander.end";
+    public static final String WANDER_WAYPOINTS_INVALID_DELAY = "citizens.editors.waypoints.wander.invalid-delay";
     public static final String WANDER_WAYPOINTS_RANGE_SET = "citizens.editors.waypoints.wander.range-set";
     public static final String WANDER_WAYPOINTS_REGION_EDITING_START = "citizens.editors.waypoints.wander.editing-regions";
     public static final String WANDER_WAYPOINTS_REMOVED_REGION = "citizens.editors.waypoints.wander.removed-region";

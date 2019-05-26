@@ -561,9 +561,9 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onVehicleEnter(final VehicleEnterEvent event) {
-        if (!CitizensAPI.getNPCRegistry().isNPC(event.getVehicle()))
-            return;
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getVehicle());
+        if (npc == null)
+            return;
         if ((Util.isHorse(npc.getEntity()) || npc.getEntity().getType() == EntityType.BOAT
                 || npc.getEntity().getType() == EntityType.PIG || npc.getEntity() instanceof Minecart)
                 && (!npc.hasTrait(Controllable.class) || !npc.getTrait(Controllable.class).isEnabled())) {

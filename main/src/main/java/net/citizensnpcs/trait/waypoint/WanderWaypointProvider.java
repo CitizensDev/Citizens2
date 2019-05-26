@@ -38,6 +38,8 @@ import net.citizensnpcs.util.Util;
  */
 public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTree>, Function<NPC, Location> {
     private WanderGoal currentGoal;
+    @Persist
+    public int delay = -1;
     private NPC npc;
     private volatile boolean paused;
     @Persist
@@ -152,6 +154,27 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
                     } else {
                         markers.destroyMarkers();
                     }
+                } else if (message.startsWith("delay")) {
+                    event.setCancelled(true);
+                    try {
+                        delay = Integer.parseInt(message.split(" ")[1]);
+                        if (currentGoal != null) {
+                            currentGoal.setDelay(delay);
+                        }
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                            @Override
+                            public void run() {
+                                Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay);
+                            }
+                        });
+                    } catch (Exception e) {
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                            @Override
+                            public void run() {
+                                Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_INVALID_DELAY);
+                            }
+                        });
+                    }
                 }
             }
 
@@ -221,6 +244,7 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
         if (currentGoal == null) {
             currentGoal = WanderGoal.createWithNPCAndRangeAndTreeAndFallback(npc, xrange, yrange,
                     WanderWaypointProvider.this, WanderWaypointProvider.this);
+            currentGoal.setDelay(delay);
         }
         npc.getDefaultGoalController().addGoal(currentGoal, 1);
     }
