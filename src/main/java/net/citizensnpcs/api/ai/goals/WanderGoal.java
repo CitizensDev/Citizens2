@@ -25,6 +25,8 @@ import net.citizensnpcs.api.util.cuboid.QuadTree;
  * A sample {@link Goal}/{@link Behavior} that will wander within a certain radius or {@link QuadTree}.
  */
 public class WanderGoal extends BehaviorGoalAdapter implements Listener {
+    private int delay;
+    private int delayedTicks;
     private final Function<NPC, Location> fallback;
     private boolean forceFinish;
     private final NPC npc;
@@ -75,6 +77,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
 
     @Override
     public void reset() {
+        delayedTicks = delay;
         forceFinish = false;
         HandlerList.unregisterAll(this);
     }
@@ -86,6 +89,11 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         return BehaviorStatus.RUNNING;
     }
 
+    public void setDelay(int delay) {
+        this.delay = delay;
+        this.delayedTicks = delay;
+    }
+
     public void setXYRange(int xrange, int yrange) {
         this.xrange = xrange;
         this.yrange = yrange;
@@ -95,6 +103,9 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     public boolean shouldExecute() {
         if (!npc.isSpawned() || npc.getNavigator().isNavigating() || paused)
             return false;
+        if (delayedTicks-- > 0) {
+            return false;
+        }
         Location dest = findRandomPosition();
         if (dest == null)
             return false;
