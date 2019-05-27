@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
+import ch.ethz.globis.phtree.PhTreeSolid;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
@@ -19,7 +20,6 @@ import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.cuboid.QuadTree;
 
 /**
  * A sample {@link Goal}/{@link Behavior} that will wander within a certain radius or {@link QuadTree}.
@@ -32,11 +32,12 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private final NPC npc;
     private boolean paused;
     private final Random random = new Random();
-    private final Supplier<QuadTree> tree;
+    private final Supplier<PhTreeSolid<Boolean>> tree;
     private int xrange;
     private int yrange;
 
-    private WanderGoal(NPC npc, int xrange, int yrange, Supplier<QuadTree> tree, Function<NPC, Location> fallback) {
+    private WanderGoal(NPC npc, int xrange, int yrange, Supplier<PhTreeSolid<Boolean>> tree,
+            Function<NPC, Location> fallback) {
         this.npc = npc;
         this.xrange = xrange;
         this.yrange = yrange;
@@ -53,7 +54,8 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
             Block block = base.getWorld().getBlockAt(x, y, z);
             if (MinecraftBlockExaminer.canStandOn(block)) {
-                if (tree != null && tree.get() != null && tree.get().search(x, y, z).isEmpty()) {
+                long[] pt = { x, y, z };
+                if (tree != null && tree.get() != null && !tree.get().contains(pt, pt)) {
                     continue;
                 }
                 found = block.getLocation().add(0, 1, 0);
@@ -126,7 +128,8 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         return createWithNPCAndRangeAndTree(npc, xrange, yrange, null);
     }
 
-    public static WanderGoal createWithNPCAndRangeAndTree(NPC npc, int xrange, int yrange, Supplier<QuadTree> tree) {
+    public static WanderGoal createWithNPCAndRangeAndTree(NPC npc, int xrange, int yrange,
+            Supplier<PhTreeSolid<Boolean>> tree) {
         return createWithNPCAndRangeAndTreeAndFallback(npc, xrange, yrange, tree, null);
     }
 
@@ -140,13 +143,13 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
      * @param yrange
      *            y range, in blocks
      * @param tree
-     *            an optional {@link QuadTree} supplier to allow only wandering within a certain {@link QuadTree}
+     *            an optional {@link PhTreeSolid} supplier to allow only wandering within a certain {@link PhTreeSolid}
      * @param fallback
      *            an optional fallback location
      * @return the built goal
      */
     public static WanderGoal createWithNPCAndRangeAndTreeAndFallback(NPC npc, int xrange, int yrange,
-            Supplier<QuadTree> tree, Function<NPC, Location> fallback) {
+            Supplier<PhTreeSolid<Boolean>> tree, Function<NPC, Location> fallback) {
         return new WanderGoal(npc, xrange, yrange, tree, fallback);
     }
 }

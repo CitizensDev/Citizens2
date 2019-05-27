@@ -13,23 +13,30 @@ import org.bukkit.Material;
 
 import com.google.common.collect.Lists;
 
+import ch.ethz.globis.phtree.PhTree;
 import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.astar.pathfinder.BlockSource;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.Path;
 
 public class HPAGraph {
-    // TODO: y-clusters
     private final BlockSource blockSource;
     public List<List<HPACluster>> clusters = Lists.newArrayList();
+    // TODO: y-clusters
+    private final int cx, cy, cz;
+    private final List<PhTree<HPACluster>> phtrees = Lists.newArrayList();
 
-    public HPAGraph(BlockSource blockSource) {
+    public HPAGraph(BlockSource blockSource, int cx, int cy, int cz) {
         this.blockSource = blockSource;
+        this.cx = cx;
+        this.cy = cy;
+        this.cz = cz;
     }
 
     public void addClustersAtDepth(int depth, List<HPACluster> other) {
         while (clusters.size() <= depth) {
             clusters.add(new ArrayList<HPACluster>());
+            // phtrees.add(new ArrayList<PhTree<HPACluster>>());
         }
         clusters.get(depth).addAll(other);
     }
