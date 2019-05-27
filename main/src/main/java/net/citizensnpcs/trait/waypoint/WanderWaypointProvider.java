@@ -19,6 +19,7 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
 
+import ch.ethz.globis.phtree.PhTreeSolid;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.goals.WanderGoal;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
@@ -27,8 +28,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.cuboid.QuadCuboid;
-import net.citizensnpcs.api.util.cuboid.QuadTree;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
@@ -36,7 +35,8 @@ import net.citizensnpcs.util.Util;
  * A wandering waypoint provider that wanders between either a box centered at the current location or inside a region
  * defined by a list of boxes.
  */
-public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTree>, Function<NPC, Location> {
+public class WanderWaypointProvider
+        implements WaypointProvider, Supplier<PhTreeSolid<Boolean>>, Function<NPC, Location> {
     private WanderGoal currentGoal;
     @Persist
     public int delay = -1;
@@ -44,7 +44,7 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
     private volatile boolean paused;
     @Persist
     private final List<Location> regionCentres = Lists.newArrayList();
-    private QuadTree tree = new QuadTree();
+    private PhTreeSolid<Boolean> tree = PhTreeSolid.create(3);
     @Persist
     public int xrange = DEFAULT_XRANGE;
     @Persist
@@ -162,12 +162,15 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
                             currentGoal.setDelay(delay);
                         }
                         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+
                             @Override
                             public void run() {
                                 Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay);
                             }
                         });
-                    } catch (Exception e) {
+                    } catch (
+
+                    Exception e) {
                         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                             @Override
                             public void run() {
@@ -211,11 +214,12 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
                         regionCentres.size());
                 recalculateTree();
             }
+
         };
     }
 
     @Override
-    public QuadTree get() {
+    public PhTreeSolid<Boolean> get() {
         return regionCentres.isEmpty() ? null : tree;
     }
 
@@ -250,10 +254,11 @@ public class WanderWaypointProvider implements WaypointProvider, Supplier<QuadTr
     }
 
     private void recalculateTree() {
-        tree = new QuadTree();
+        tree = PhTreeSolid.create(3);
         for (Location loc : regionCentres) {
-            tree.insert(new QuadCuboid(loc.getBlockX() - xrange, loc.getBlockY() - yrange, loc.getBlockZ() - xrange,
-                    loc.getBlockX() + xrange, loc.getBlockY() + yrange, loc.getBlockZ() + xrange));
+            long[] lower = { loc.getBlockX() - xrange, loc.getBlockY() - yrange, loc.getBlockZ() - xrange };
+            long[] upper = { loc.getBlockX() + xrange, loc.getBlockY() + yrange, loc.getBlockZ() + xrange };
+            tree.put(lower, upper, true);
         }
     }
 

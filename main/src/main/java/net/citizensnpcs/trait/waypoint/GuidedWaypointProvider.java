@@ -3,6 +3,7 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,12 +16,15 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import ch.ethz.globis.phtree.PhDistanceL;
+import ch.ethz.globis.phtree.PhFilterDistance;
+import ch.ethz.globis.phtree.PhTree;
+import ch.ethz.globis.phtree.PhTree.PhKnnQuery;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
@@ -36,10 +40,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.prtree.DistanceResult;
-import net.citizensnpcs.api.util.prtree.PRTree;
-import net.citizensnpcs.api.util.prtree.Region3D;
-import net.citizensnpcs.api.util.prtree.SimplePointND;
 import net.citizensnpcs.trait.waypoint.WaypointProvider.EnumerableWaypointProvider;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
@@ -56,7 +56,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     private final List<Waypoint> helpers = Lists.newArrayList();
     private NPC npc;
     private boolean paused;
-    private PRTree<Region3D<Waypoint>> tree = PRTree.create(new Region3D.Converter<Waypoint>(), 30);
+    private PhTree<Waypoint> tree = PhTree.create(3);
 
     public void addHelperWaypoint(Waypoint helper) {
         helpers.add(helper);
@@ -229,16 +229,11 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     }
 
     private void rebuildTree() {
-        tree = PRTree.create(new Region3D.Converter<Waypoint>(), 30);
-        tree.load(Lists.newArrayList(Iterables.transform(Iterables.<Waypoint> concat(available, helpers),
-                new Function<Waypoint, Region3D<Waypoint>>() {
-                    @Override
-                    public Region3D<Waypoint> apply(Waypoint arg0) {
-                        Location loc = arg0.getLocation();
-                        Vector root = new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-                        return new Region3D<Waypoint>(root, root, arg0);
-                    }
-                })));
+        tree = PhTree.create(3);
+        for (Waypoint waypoint : waypoints()) {
+            tree.put(new long[] { waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
+                    waypoint.getLocation().getBlockZ() }, waypoint);
+        }
     }
 
     @Override
@@ -374,16 +369,19 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
         @Override
         public Iterable<AStarNode> getNeighbours() {
-            List<DistanceResult<Region3D<Waypoint>>> res = tree.nearestNeighbour(
-                    Region3D.<Waypoint> distanceCalculator(), Region3D.<Waypoint> alwaysAcceptNodeFilter(), 15,
-                    new SimplePointND(waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
-                            waypoint.getLocation().getBlockZ()));
-            return Iterables.transform(res, new Function<DistanceResult<Region3D<Waypoint>>, AStarNode>() {
+            PhFilterDistance filter = new PhFilterDistance();
+            filter.set(new long[] { waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
+                    waypoint.getLocation().getBlockZ() }, new PhDistanceL(), 15);
+            PhKnnQuery<Waypoint> res = tree.nearestNeighbour(0, null, filter, waypoint.getLocation().getBlockX(),
+                    waypoint.getLocation().getBlockY(), waypoint.getLocation().getBlockZ());
+            List<AStarNode> resList = Lists.newArrayList();
+            res.forEachRemaining(new Consumer<Waypoint>() {
                 @Override
-                public AStarNode apply(DistanceResult<Region3D<Waypoint>> arg0) {
-                    return new GuidedNode(GuidedNode.this, arg0.get().getData());
+                public void accept(Waypoint t) {
+                    resList.add(new GuidedNode(null, t));
                 }
             });
+            return resList;
         }
 
         @Override
