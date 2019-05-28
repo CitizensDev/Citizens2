@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
+import java.lang.invoke.MethodHandle;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
@@ -209,11 +211,18 @@ public class TraderLlamaController extends MobEntityController {
             if (npc == null) {
                 super.mobTick();
             } else {
-                v(10);
+                try {
+                    if (bJ != null) {
+                        bJ.invoke(this, 10); // DespawnDelay
+                    }
+                } catch (Throwable e) {
+                }
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
         }
+
+        private static final MethodHandle bJ = NMS.getSetter(EntityLlamaTrader.class, "bJ");
     }
 
     public static class TraderLlamaNPC extends CraftTraderLlama implements NPCHolder {
