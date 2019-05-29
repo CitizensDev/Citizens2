@@ -20,6 +20,8 @@ import org.bukkit.scoreboard.Team.OptionStatus;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 import net.citizensnpcs.NPCNeedsRespawnEvent;
 import net.citizensnpcs.Settings.Setting;
@@ -42,11 +44,13 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 public class CitizensNPC extends AbstractNPC {
+    private ChunkCoord cachedCoord;
     private EntityController entityController;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
@@ -75,8 +79,7 @@ public class CitizensNPC extends AbstractNPC {
         }
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() && reason != DespawnReason.DEATH) {
-            getEntity().getLocation().getChunk();
-            Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Force loaded chunk.",
+            Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Will load chunk.",
                     getEntity().isValid());
             return false;
         }
@@ -98,6 +101,12 @@ public class CitizensNPC extends AbstractNPC {
             entityController.remove();
         }
         return true;
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        resetCachedCoord();
     }
 
     @Override
@@ -147,6 +156,17 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         navigator.load(root.getRelative("navigator"));
+    }
+
+    private void resetCachedCoord() {
+        if (cachedCoord != null) {
+            CHUNK_LOADERS.remove(NPC_METADATA_MARKER, CHUNK_LOADERS);
+            CHUNK_LOADERS.remove(cachedCoord, this);
+            if (CHUNK_LOADERS.get(cachedCoord).size() == 0) {
+                cachedCoord.setForceLoaded(false);
+            }
+            cachedCoord = null;
+        }
     }
 
     @Override
@@ -205,6 +225,7 @@ public class CitizensNPC extends AbstractNPC {
         data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
 
         at = at.clone();
+
         getTrait(CurrentLocation.class).setLocation(at);
         entityController.spawn(at, this);
 
@@ -282,6 +303,7 @@ public class CitizensNPC extends AbstractNPC {
         try {
             super.update();
             if (!isSpawned()) {
+                resetCachedCoord();
                 return;
             }
             if (data().get(NPC.SWIMMING_METADATA, true)) {
@@ -297,6 +319,15 @@ public class CitizensNPC extends AbstractNPC {
             }
 
             if (!getNavigator().isNavigating() && updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
+                if (Setting.KEEP_CHUNKS_LOADED.asBoolean()) {
+                    ChunkCoord currentCoord = new ChunkCoord(getStoredLocation());
+                    if (!currentCoord.equals(cachedCoord)) {
+                        resetCachedCoord();
+                        currentCoord.setForceLoaded(true);
+                        CHUNK_LOADERS.put(currentCoord, this);
+                        cachedCoord = currentCoord;
+                    }
+                }
                 updateCounter = 0;
 
                 Player player = getEntity().getType() == EntityType.PLAYER ? (Player) getEntity() : null;
@@ -385,6 +416,7 @@ public class CitizensNPC extends AbstractNPC {
         }
     }
 
+    private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
     private static final String NPC_METADATA_MARKER = "NPC";
     private static boolean SUPPORT_GLOWING = true;
     private static boolean SUPPORT_SILENT = true;

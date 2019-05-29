@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -93,6 +92,7 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -142,7 +142,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
-        respawnAllFromCoord(toCoord(event.getChunk()));
+        respawnAllFromCoord(new ChunkCoord(event.getChunk()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -150,7 +150,7 @@ public class EventListen implements Listener {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                ChunkCoord coord = toCoord(event.getChunk());
+                ChunkCoord coord = new ChunkCoord(event.getChunk());
                 Location loc = new Location(null, 0, 0, 0);
                 boolean loadChunk = false;
                 for (NPC npc : getAllNPCs()) {
@@ -161,14 +161,12 @@ public class EventListen implements Listener {
                     if (!sameChunkCoordinates || !event.getWorld().equals(loc.getWorld()))
                         continue;
                     if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
-                        try {
-                            ((Cancellable) event).setCancelled(true);
-                        } catch (Throwable e) {
-                            // TODO: event.getChunk().setForceLoaded(true); ?
+                        if (!(event instanceof Cancellable)) {
                             loadChunk = true;
                             toRespawn.put(coord, npc);
                             continue;
                         }
+                        ((Cancellable) event).setCancelled(true);
                         if (Messaging.isDebugging()) {
                             Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
                         }
@@ -193,10 +191,10 @@ public class EventListen implements Listener {
                 }
             }
         };
-        if (Util.getMinecraftRevision().contains("1_14")) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable);
-        } else {
+        if (event instanceof Cancellable) {
             runnable.run();
+        } else {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable);
         }
     }
 
@@ -395,7 +393,7 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onNeedsRespawn(NPCNeedsRespawnEvent event) {
-        ChunkCoord coord = toCoord(event.getSpawnLocation());
+        ChunkCoord coord = new ChunkCoord(event.getSpawnLocation());
         if (toRespawn.containsEntry(coord, event.getNPC()))
             return;
         Messaging.debug("Stored", event.getNPC().getId(), "for respawn from NPCNeedsRespawnEvent");
@@ -409,7 +407,7 @@ public class EventListen implements Listener {
             Messaging.debug("Preventing further respawns of " + event.getNPC().getId() + " due to DespawnReason."
                     + event.getReason().name());
             if (event.getNPC().getStoredLocation() != null) {
-                toRespawn.remove(toCoord(event.getNPC().getStoredLocation()), event.getNPC());
+                toRespawn.remove(new ChunkCoord(event.getNPC().getStoredLocation()), event.getNPC());
             }
         } else {
             Messaging.debug("Removing " + event.getNPC().getId() + " from skin tracker due to DespawnReason."
@@ -640,55 +638,6 @@ public class EventListen implements Listener {
     }
 
     private void storeForRespawn(NPC npc) {
-        toRespawn.put(toCoord(npc.getEntity().getLocation()), npc);
-    }
-
-    private ChunkCoord toCoord(Chunk chunk) {
-        return new ChunkCoord(chunk);
-    }
-
-    private ChunkCoord toCoord(Location loc) {
-        return new ChunkCoord(loc.getWorld().getUID(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
-    }
-
-    private static class ChunkCoord {
-        private final UUID worldUUID;
-        private final int x;
-        private final int z;
-
-        private ChunkCoord(Chunk chunk) {
-            this(chunk.getWorld().getUID(), chunk.getX(), chunk.getZ());
-        }
-
-        private ChunkCoord(UUID worldUUID, int x, int z) {
-            this.x = x;
-            this.z = z;
-            this.worldUUID = worldUUID;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
-                return false;
-            }
-            ChunkCoord other = (ChunkCoord) obj;
-            if (worldUUID == null) {
-                if (other.worldUUID != null) {
-                    return false;
-                }
-            } else if (!worldUUID.equals(other.worldUUID)) {
-                return false;
-            }
-            return x == other.x && z == other.z;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            return prime * (prime * (prime + ((worldUUID == null) ? 0 : worldUUID.hashCode())) + x) + z;
-        }
+        toRespawn.put(new ChunkCoord(npc.getEntity().getLocation()), npc);
     }
 }
