@@ -119,8 +119,8 @@ public class EnderDragonController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new EnderDragonNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new EnderDragonNPC(this));
             }
             return super.getBukkitEntity();
         }

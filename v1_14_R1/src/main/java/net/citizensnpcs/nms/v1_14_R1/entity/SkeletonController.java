@@ -131,8 +131,9 @@ public class SkeletonController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new SkeletonNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new SkeletonNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

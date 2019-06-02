@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
 
+import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftAreaEffectCloud;
@@ -93,8 +94,8 @@ public class AreaEffectCloudController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new AreaEffectCloudNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new AreaEffectCloudNPC(this));
             }
             return super.getBukkitEntity();
         }

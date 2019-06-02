@@ -156,8 +156,8 @@ public class HorseSkeletonController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new HorseSkeletonNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new HorseSkeletonNPC(this));
             }
             return super.getBukkitEntity();
         }

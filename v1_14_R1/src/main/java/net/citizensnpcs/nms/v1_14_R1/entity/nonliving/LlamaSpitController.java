@@ -99,8 +99,8 @@ public class LlamaSpitController extends AbstractEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new LlamaSpitNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new LlamaSpitNPC(this));
             }
             return super.getBukkitEntity();
         }

@@ -113,8 +113,8 @@ public class FallingBlockController extends AbstractEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new FallingBlockNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new FallingBlockNPC(this));
             }
             return super.getBukkitEntity();
         }

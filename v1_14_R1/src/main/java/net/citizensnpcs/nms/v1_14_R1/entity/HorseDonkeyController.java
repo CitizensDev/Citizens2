@@ -155,8 +155,8 @@ public class HorseDonkeyController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new HorseDonkeyNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new HorseDonkeyNPC(this));
             }
             return super.getBukkitEntity();
         }

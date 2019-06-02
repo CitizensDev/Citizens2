@@ -131,8 +131,8 @@ public class GuardianElderController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new GuardianElderNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new GuardianElderNPC(this));
             }
             return super.getBukkitEntity();
         }

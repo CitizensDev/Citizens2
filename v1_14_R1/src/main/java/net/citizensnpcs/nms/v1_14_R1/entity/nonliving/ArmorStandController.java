@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
 
+import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftArmorStand;
@@ -110,8 +111,8 @@ public class ArmorStandController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new ArmorStandNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new ArmorStandNPC(this));
             }
             return super.getBukkitEntity();
         }

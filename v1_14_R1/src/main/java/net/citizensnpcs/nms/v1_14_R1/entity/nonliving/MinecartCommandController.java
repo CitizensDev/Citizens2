@@ -88,8 +88,8 @@ public class MinecartCommandController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new MinecartCommandNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new MinecartCommandNPC(this));
             }
             return super.getBukkitEntity();
         }

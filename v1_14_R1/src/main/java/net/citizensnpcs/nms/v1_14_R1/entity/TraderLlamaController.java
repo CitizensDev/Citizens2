@@ -158,8 +158,8 @@ public class TraderLlamaController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new TraderLlamaNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new TraderLlamaNPC(this));
             }
             return super.getBukkitEntity();
         }

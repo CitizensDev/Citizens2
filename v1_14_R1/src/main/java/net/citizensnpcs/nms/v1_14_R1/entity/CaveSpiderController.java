@@ -145,8 +145,8 @@ public class CaveSpiderController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new CaveSpiderNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new CaveSpiderNPC(this));
             }
             return super.getBukkitEntity();
         }

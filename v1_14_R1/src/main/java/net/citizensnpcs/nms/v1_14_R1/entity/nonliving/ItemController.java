@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
 
+import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -103,8 +104,8 @@ public class ItemController extends AbstractEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new ItemNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new ItemNPC(this));
             }
             return super.getBukkitEntity();
         }

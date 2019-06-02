@@ -135,8 +135,9 @@ public class TurtleController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new TurtleNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new TurtleNPC(this));
+            }
             return super.getBukkitEntity();
         }
 
