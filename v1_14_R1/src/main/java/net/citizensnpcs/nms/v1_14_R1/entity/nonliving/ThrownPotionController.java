@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
 
+import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
@@ -80,11 +81,11 @@ public class ThrownPotionController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 if (getItem() != null && getItem().getItem().equals(Items.LINGERING_POTION)) {
-                    bukkitEntity = new LingeringThrownPotionNPC(this);
+                    NMSImpl.setBukkitEntity(this, new LingeringThrownPotionNPC(this));
                 } else {
-                    bukkitEntity = new SplashThrownPotionNPC(this);
+                    NMSImpl.setBukkitEntity(this, new SplashThrownPotionNPC(this));
                 }
             }
             return super.getBukkitEntity();

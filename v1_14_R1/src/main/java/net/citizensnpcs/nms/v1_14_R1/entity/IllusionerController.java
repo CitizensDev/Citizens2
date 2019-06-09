@@ -132,8 +132,9 @@ public class IllusionerController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new IllusionerNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new IllusionerNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

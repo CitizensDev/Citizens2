@@ -144,8 +144,8 @@ public class EndermiteController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new EndermiteNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new EndermiteNPC(this));
             }
             return super.getBukkitEntity();
         }

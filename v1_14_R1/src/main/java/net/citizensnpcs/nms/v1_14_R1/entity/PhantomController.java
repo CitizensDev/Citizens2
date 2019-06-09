@@ -144,8 +144,9 @@ public class PhantomController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new PhantomNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new PhantomNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

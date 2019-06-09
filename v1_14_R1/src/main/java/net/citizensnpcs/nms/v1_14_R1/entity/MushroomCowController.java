@@ -145,8 +145,8 @@ public class MushroomCowController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new MushroomCowNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new MushroomCowNPC(this));
             }
             return super.getBukkitEntity();
         }

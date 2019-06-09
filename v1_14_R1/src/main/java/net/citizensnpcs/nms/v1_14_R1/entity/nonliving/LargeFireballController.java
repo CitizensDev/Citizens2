@@ -80,8 +80,8 @@ public class LargeFireballController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new LargeFireballNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new LargeFireballNPC(this));
             }
             return super.getBukkitEntity();
         }

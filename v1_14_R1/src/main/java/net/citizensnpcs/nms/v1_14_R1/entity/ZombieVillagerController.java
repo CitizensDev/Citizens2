@@ -131,8 +131,9 @@ public class ZombieVillagerController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new ZombieVillagerNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new ZombieVillagerNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

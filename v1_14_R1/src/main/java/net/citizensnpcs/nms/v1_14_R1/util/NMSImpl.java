@@ -1654,6 +1654,14 @@ public class NMSImpl implements NMSBridge {
         navigation.c();
     }
 
+    public static void setBukkitEntity(Entity entity, CraftEntity bukkitEntity) {
+        try {
+            BUKKITENTITY_FIELD_SETTER.invoke(entity, bukkitEntity);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
             "advancementDataPlayer");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
@@ -1688,6 +1696,7 @@ public class NMSImpl implements NMSBridge {
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
+    private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static Field SKULL_PROFILE_FIELD;
     static {
         try {

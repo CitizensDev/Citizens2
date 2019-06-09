@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
 
 import java.util.UUID;
 
+import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
@@ -93,8 +94,8 @@ public class FishingHookController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new FishingHookNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new FishingHookNPC(this));
             }
             return super.getBukkitEntity();
         }

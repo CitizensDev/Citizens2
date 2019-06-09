@@ -175,8 +175,9 @@ public class WanderingTraderController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new WanderingTraderNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new WanderingTraderNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

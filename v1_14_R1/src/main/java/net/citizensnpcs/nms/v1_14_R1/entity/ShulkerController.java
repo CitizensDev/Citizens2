@@ -131,8 +131,9 @@ public class ShulkerController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new ShulkerNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new ShulkerNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

@@ -88,8 +88,8 @@ public class MinecartFurnaceController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-                bukkitEntity = new MinecartFurnaceNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new MinecartFurnaceNPC(this));
             }
             return super.getBukkitEntity();
         }

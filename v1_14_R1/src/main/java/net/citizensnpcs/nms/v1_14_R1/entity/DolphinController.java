@@ -146,8 +146,9 @@ public class DolphinController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new DolphinNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new DolphinNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

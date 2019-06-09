@@ -133,8 +133,9 @@ public class PufferFishController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new PufferFishNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new PufferFishNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

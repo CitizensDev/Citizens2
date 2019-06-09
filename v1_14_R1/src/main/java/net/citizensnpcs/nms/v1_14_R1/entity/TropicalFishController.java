@@ -133,8 +133,9 @@ public class TropicalFishController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new TropicalFishNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new TropicalFishNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

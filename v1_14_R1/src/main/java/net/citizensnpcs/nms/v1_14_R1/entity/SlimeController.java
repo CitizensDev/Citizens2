@@ -135,8 +135,9 @@ public class SlimeController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new SlimeNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new SlimeNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

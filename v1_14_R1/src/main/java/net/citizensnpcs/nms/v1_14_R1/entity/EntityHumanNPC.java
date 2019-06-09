@@ -221,8 +221,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public CraftPlayer getBukkitEntity() {
-        if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
-            bukkitEntity = new PlayerNPC(this);
+        if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+            NMSImpl.setBukkitEntity(this, new PlayerNPC(this));
         }
         return super.getBukkitEntity();
     }
@@ -411,7 +411,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
         }
-        Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", bukkitEntity);
+        Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
         livingEntityBaseTick();
 
         boolean navigating = npc.getNavigator().isNavigating();

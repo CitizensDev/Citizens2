@@ -145,8 +145,9 @@ public class DrownedController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new DrownedNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new DrownedNPC(this));
+            }
             return super.getBukkitEntity();
         }
 

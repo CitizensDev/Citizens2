@@ -129,8 +129,9 @@ public class SilverfishController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
-                bukkitEntity = new SilverfishNPC(this);
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new SilverfishNPC(this));
+            }
             return super.getBukkitEntity();
         }
 
