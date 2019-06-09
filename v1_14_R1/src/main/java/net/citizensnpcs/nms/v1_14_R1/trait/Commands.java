@@ -190,9 +190,6 @@ public class Commands {
         PandaTrait trait = npc.getTrait(PandaTrait.class);
         String output = "";
         if (args.hasValueFlag("gene")) {
-            if (args.getFlagInteger("size") <= 0) {
-                throw new CommandUsageException();
-            }
             Panda.Gene gene = Util.matchEnum(Panda.Gene.values(), args.getFlag("gene"));
             if (gene == null) {
                 throw new CommandUsageException(Messages.INVALID_PANDA_GENE,
@@ -202,9 +199,6 @@ public class Commands {
             output += ' ' + Messaging.tr(Messages.PANDA_MAIN_GENE_SET, args.getFlag("gene"));
         }
         if (args.hasValueFlag("hgene")) {
-            if (args.getFlagInteger("size") <= 0) {
-                throw new CommandUsageException();
-            }
             Panda.Gene gene = Util.matchEnum(Panda.Gene.values(), args.getFlag("hgene"));
             if (gene == null) {
                 throw new CommandUsageException(Messages.INVALID_PANDA_GENE,

@@ -62,7 +62,6 @@ public class CowController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
-
             }
         }
 

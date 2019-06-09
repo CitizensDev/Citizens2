@@ -46,7 +46,6 @@ public class VillagerController extends MobEntityController {
         private TreeMap<?, ?> behaviorMap;
         private boolean blockingATrade;
         private boolean blockTrades = true;
-
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
 
