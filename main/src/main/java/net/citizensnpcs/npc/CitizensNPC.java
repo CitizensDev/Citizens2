@@ -226,6 +226,10 @@ public class CitizensNPC extends AbstractNPC {
 
         at = at.clone();
 
+        if (reason == SpawnReason.CHUNK_LOAD) {
+            at.getChunk().load();
+        }
+
         getTrait(CurrentLocation.class).setLocation(at);
         entityController.spawn(at, this);
 

@@ -634,7 +634,7 @@ public class EventListen implements Listener {
             }
             return false;
         }
-        return npc.spawn(spawn);
+        return npc.spawn(spawn, SpawnReason.CHUNK_LOAD);
     }
 
     private void storeForRespawn(NPC npc) {

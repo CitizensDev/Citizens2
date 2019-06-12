@@ -954,7 +954,7 @@ public class NPCCommands {
             min = 1,
             max = 1,
             flags = "c",
-            permission = "citizens.npc.controllable")
+            permission = "citizens.npc.mount")
     public void mount(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("onnpc")) {
             NPC mount;
