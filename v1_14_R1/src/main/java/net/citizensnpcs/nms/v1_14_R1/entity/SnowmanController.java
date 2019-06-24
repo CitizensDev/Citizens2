@@ -18,6 +18,7 @@ import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.EntitySnowman;
 import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_14_R1.GameRules;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.SoundEffect;
@@ -188,14 +189,13 @@ public class SnowmanController extends MobEntityController {
 
         @Override
         public void movementTick() {
-            boolean allowsGriefing = this.world.getGameRules().getBoolean("mobGriefing");
+            boolean allowsGriefing = this.world.getGameRules().get(GameRules.MOB_GRIEFING).a();
             if (npc != null) {
-                this.world.getGameRules().set("mobGriefing", "false", this.world.getMinecraftServer());
+                this.world.getGameRules().get(GameRules.MOB_GRIEFING).setValue("false");
             }
             super.movementTick();
             if (npc != null) {
-                this.world.getGameRules().set("mobGriefing", Boolean.toString(allowsGriefing),
-                        this.world.getMinecraftServer());
+                this.world.getGameRules().get(GameRules.MOB_GRIEFING).setValue(Boolean.toString(allowsGriefing));
             }
         }
 

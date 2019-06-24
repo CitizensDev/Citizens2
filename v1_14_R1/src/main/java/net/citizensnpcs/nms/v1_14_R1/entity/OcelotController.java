@@ -99,9 +99,9 @@ public class OcelotController extends MobEntityController {
         }
 
         @Override
-        protected void dV() {
+        protected void dW() {
             if (npc == null) {
-                super.dV();
+                super.dW();
             }
         }
 

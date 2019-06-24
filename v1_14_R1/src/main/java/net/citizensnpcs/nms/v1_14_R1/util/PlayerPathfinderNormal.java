@@ -325,7 +325,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                         }
 
                         var18 = this.a(var0, var1, var2);
-                        if (var16++ >= this.b.bu()) {
+                        if (var16++ >= this.b.bv()) {
                             var18.l = PathType.BLOCKED;
                             var18.k = -1.0F;
                             return var18;

@@ -1101,7 +1101,7 @@ public class NMSImpl implements NMSBridge {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null)
             return;
-        if (RANDOM.nextFloat() < 0.8F && (handle.at() || handle.ax())) {
+        if (RANDOM.nextFloat() < 0.8F && (handle.isInWaterOrRain() || handle.ay())) {
             handle.setMot(handle.getMot().getX(), handle.getMot().getY() + power, handle.getMot().getZ());
         }
     }
@@ -1254,7 +1254,7 @@ public class NMSImpl implements NMSBridge {
     public static void flyingMoveLogic(EntityLiving entity, Vec3D vec3d) {
         double d0;
         float f;
-        if (entity.de() || entity.bZ()) {
+        if (entity.df() || entity.ca()) {
             d0 = 0.08D;
             boolean flag = entity.getMot().y <= 0.0D;
             if (flag && entity.hasEffect(MobEffects.SLOW_FALLING)) {
@@ -1269,7 +1269,7 @@ public class NMSImpl implements NMSBridge {
             Vec3D vec3d2;
             if (!entity.isInWater() || entity instanceof EntityHuman && ((EntityHuman) entity).abilities.isFlying) {
                 Vec3D vec3d4;
-                if (entity.aC() && (!(entity instanceof EntityHuman) || !((EntityHuman) entity).abilities.isFlying)) {
+                if (entity.aD() && (!(entity instanceof EntityHuman) || !((EntityHuman) entity).abilities.isFlying)) {
                     d1 = entity.locY;
                     entity.a(0.02F, vec3d);
                     entity.move(EnumMoveType.SELF, entity.getMot());
@@ -1385,7 +1385,7 @@ public class NMSImpl implements NMSBridge {
 
                 if (f2 > 0.0F) {
                     f1 += (0.54600006F - f1) * f2 / 3.0F;
-                    f += (entity.da() - f) * f2 / 3.0F;
+                    f += (entity.db() - f) * f2 / 3.0F;
                 }
 
                 if (entity.hasEffect(MobEffects.DOLPHINS_GRACE)) {
@@ -1593,6 +1593,14 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static void setBukkitEntity(Entity entity, CraftEntity bukkitEntity) {
+        try {
+            BUKKITENTITY_FIELD_SETTER.invoke(entity, bukkitEntity);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void setNotInSchool(EntityFish entity) {
         try {
             if (ENTITY_FISH_NUM_IN_SCHOOL != null) {
@@ -1654,14 +1662,6 @@ public class NMSImpl implements NMSBridge {
         navigation.c();
     }
 
-    public static void setBukkitEntity(Entity entity, CraftEntity bukkitEntity) {
-        try {
-            BUKKITENTITY_FIELD_SETTER.invoke(entity, bukkitEntity);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
     private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
             "advancementDataPlayer");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
@@ -1670,6 +1670,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "c");
     private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
             "c", false, double.class, double.class, double.class);
+    private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
@@ -1696,7 +1697,6 @@ public class NMSImpl implements NMSBridge {
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
-    private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static Field SKULL_PROFILE_FIELD;
     static {
         try {

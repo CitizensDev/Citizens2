@@ -208,7 +208,7 @@ public class PlayerNavigation extends NavigationAbstract {
             } else {
                 this.h = var1;
                 double var2 = var0.f(this.h);
-                this.k = this.a.da() > 0.0F ? var2 / this.a.da() * 1000.0D : 0.0D;
+                this.k = this.a.db() > 0.0F ? var2 / this.a.db() * 1000.0D : 0.0D;
             }
 
             if (this.k > 0.0D && this.i > this.k * 3.0D) {
@@ -499,7 +499,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     protected boolean p() {
-        return this.a.au() || this.a.aC();
+        return this.a.au() || this.a.aD();
     }
 
     @Override
