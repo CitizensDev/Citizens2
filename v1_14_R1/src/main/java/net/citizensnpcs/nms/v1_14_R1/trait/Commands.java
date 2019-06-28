@@ -204,7 +204,7 @@ public class Commands {
                 throw new CommandUsageException(Messages.INVALID_PANDA_GENE,
                         Util.listValuesPretty(Panda.Gene.values()));
             }
-            trait.setMainGene(gene);
+            trait.setHiddenGene(gene);
             output += ' ' + Messaging.tr(Messages.PANDA_HIDDEN_GENE_SET, args.getFlag("hgene"));
         }
         if (!output.isEmpty()) {
