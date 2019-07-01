@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.CrossbowMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -201,6 +202,20 @@ public class ItemStorage {
                 meta.addCustomEffect(new PotionEffect(type, duration, amplifier, ambient), true);
             }
             res.setItemMeta(meta);
+        }
+
+        if (root.keyExists("crossbow")) {
+            CrossbowMeta meta = null;
+            try {
+                meta = ensureMeta(res);
+            } catch (Throwable t) {
+                // old MC version
+            }
+            if (meta != null) {
+                for (DataKey key : root.getRelative("crossbow.projectiles").getSubKeys()) {
+                    meta.addChargedProjectile(ItemStorage.loadItemStack(key));
+                }
+            }
         }
 
         if (root.keyExists("repaircost") && res.getItemMeta() instanceof Repairable) {
@@ -481,6 +496,23 @@ public class ItemStorage {
             }
         } else {
             key.removeKey("banner");
+        }
+
+        List<ItemStack> chargedProjectiles = null;
+        try {
+            if (meta instanceof CrossbowMeta) {
+                chargedProjectiles = ((CrossbowMeta) meta).getChargedProjectiles();
+            } else {
+                key.removeKey("crossbow");
+            }
+        } catch (Throwable t) {
+            // old MC version?
+        }
+        if (chargedProjectiles != null) {
+            for (int i = 0; i < chargedProjectiles.size(); i++) {
+                ItemStack stack = chargedProjectiles.get(i);
+                ItemStorage.saveItem(key.getRelative("crossbow.projectiles." + i), stack);
+            }
         }
 
         Bukkit.getPluginManager().callEvent(new CitizensSerialiseMetaEvent(key, meta));
