@@ -182,8 +182,8 @@ public class DolphinController extends MobEntityController {
         }
 
         @Override
-        public void mobTick() {
-            super.mobTick();
+        public void tick() {
+            super.tick();
             if (npc != null) {
                 npc.update();
             }

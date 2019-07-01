@@ -706,7 +706,8 @@ public class NMSImpl implements NMSBridge {
             double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
 
             double yaw = Math.toDegrees(Math.acos(xDiff / distanceXZ));
-            double pitch = Math.toDegrees(Math.acos(yDiff / distanceY)) - 90;
+            double pitch = Math.toDegrees(Math.acos(yDiff / distanceY))
+                    - (handle.getBukkitEntity().getType() == EntityType.PHANTOM ? 45 : 90);
             if (zDiff < 0.0)
                 yaw += Math.abs(180 - yaw) * 2;
             if (handle instanceof EntityEnderDragon) {
@@ -739,7 +740,6 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void look(org.bukkit.entity.Entity from, org.bukkit.entity.Entity to) {
         Entity handle = NMSImpl.getHandle(from), target = NMSImpl.getHandle(to);
-        BAD_CONTROLLER_LOOK.add(EntityType.SHULKER);
         if (BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())) {
             if (to instanceof LivingEntity) {
                 look(from, ((LivingEntity) to).getEyeLocation(), false, true);
@@ -1625,7 +1625,8 @@ public class NMSImpl implements NMSBridge {
     private static MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class, "cf");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
-            EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
+            EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST, EntityType.SHULKER,
+            EntityType.PHANTOM);
     private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "e", false,
             double.class, double.class, double.class);
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
