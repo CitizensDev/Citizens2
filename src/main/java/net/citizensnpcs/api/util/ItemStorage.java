@@ -204,11 +204,12 @@ public class ItemStorage {
             res.setItemMeta(meta);
         }
 
-        if (root.keyExists("crossbow")) {
+        if (root.keyExists("crossbow") && SUPPORTS_1_14_API) {
             CrossbowMeta meta = null;
             try {
                 meta = ensureMeta(res);
             } catch (Throwable t) {
+                SUPPORTS_1_14_API = false;
                 // old MC version
             }
             if (meta != null) {
@@ -499,14 +500,17 @@ public class ItemStorage {
         }
 
         List<ItemStack> chargedProjectiles = null;
-        try {
-            if (meta instanceof CrossbowMeta) {
-                chargedProjectiles = ((CrossbowMeta) meta).getChargedProjectiles();
-            } else {
-                key.removeKey("crossbow");
+        if (SUPPORTS_1_14_API) {
+            try {
+                if (meta instanceof CrossbowMeta) {
+                    chargedProjectiles = ((CrossbowMeta) meta).getChargedProjectiles();
+                } else {
+                    key.removeKey("crossbow");
+                }
+            } catch (Throwable t) {
+                SUPPORTS_1_14_API = false;
+                // old MC version?
             }
-        } catch (Throwable t) {
-            // old MC version?
         }
         if (chargedProjectiles != null) {
             for (int i = 0; i < chargedProjectiles.size(); i++) {
@@ -517,4 +521,6 @@ public class ItemStorage {
 
         Bukkit.getPluginManager().callEvent(new CitizensSerialiseMetaEvent(key, meta));
     }
+
+    private static boolean SUPPORTS_1_14_API = true;
 }
