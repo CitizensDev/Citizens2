@@ -14,6 +14,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -22,6 +23,7 @@ import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.DataWatcherObject;
 import net.minecraft.server.v1_14_R1.EntityHorseSkeleton;
 import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_14_R1.GenericAttributes;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.SoundEffect;
@@ -45,9 +47,13 @@ public class HorseSkeletonController extends MobEntityController {
     }
 
     public static class EntityHorseSkeletonNPC extends EntityHorseSkeleton implements NPCHolder {
+        private double baseMovementSpeed;
+
         boolean calledNMSHeight = false;
 
         private final CitizensNPC npc;
+
+        private boolean riding;
 
         public EntityHorseSkeletonNPC(EntityTypes<? extends EntityHorseSkeleton> types, World world) {
             this(types, world, null);
@@ -60,6 +66,7 @@ public class HorseSkeletonController extends MobEntityController {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
                 ((SkeletonHorse) getBukkitEntity())
                         .setDomestication(((SkeletonHorse) getBukkitEntity()).getMaxDomestication());
+                baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
         }
 
@@ -86,6 +93,14 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
             }
+        }
+
+        @Override
+        public boolean ca() {
+            if (npc != null && riding) {
+                return true;
+            }
+            return super.ca();
         }
 
         @Override
@@ -208,6 +223,16 @@ public class HorseSkeletonController extends MobEntityController {
         public void mobTick() {
             super.mobTick();
             if (npc != null) {
+                if (npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled()) {
+                    riding = getBukkitEntity().getPassengers().size() > 0;
+                    getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
+                            .setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());
+                } else {
+                    riding = false;
+                }
+                if (riding) {
+                    d(4, true); // datawatcher method
+                }
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
