@@ -13,7 +13,10 @@ import org.bukkit.entity.Llama.Color;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot.Variant;
 import org.bukkit.entity.TropicalFish.Pattern;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Villager.Profession;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -24,6 +27,7 @@ import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
@@ -360,6 +364,50 @@ public class Commands {
             }
             trait.setPattern(pattern);
             output += Messaging.tr(Messages.TROPICALFISH_PATTERN_SET, Util.prettyEnum(pattern));
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output);
+        } else {
+            throw new CommandUsageException();
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "villager (--level level) (--type type) (--profession profession)",
+            desc = "Sets phantom modifiers",
+            modifiers = { "phantom" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.villager")
+    @Requirements(selected = true, ownership = true, types = EntityType.VILLAGER)
+    public void villager(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        VillagerTrait trait = npc.getTrait(VillagerTrait.class);
+        String output = "";
+        if (args.hasValueFlag("level")) {
+            if (args.getFlagInteger("level") < 0) {
+                throw new CommandUsageException();
+            }
+            trait.setLevel(args.getFlagInteger("level"));
+            output += Messaging.tr(Messages.VILLAGER_LEVEL_SET, args.getFlagInteger("level"));
+        }
+        if (args.hasValueFlag("type")) {
+            Villager.Type type = Util.matchEnum(Villager.Type.values(), args.getFlag("type"));
+            if (type == null) {
+                throw new CommandException(Messages.INVALID_VILLAGER_TYPE,
+                        Util.listValuesPretty(Villager.Type.values()));
+            }
+            trait.setLevel(args.getFlagInteger("type"));
+            output += Messaging.tr(Messages.VILLAGER_TYPE_SET, args.getFlagInteger("type"));
+        }
+        if (args.hasValueFlag("profession")) {
+            Profession parsed = Util.matchEnum(Profession.values(), args.getFlag("profession"));
+            if (parsed == null) {
+                throw new CommandException(Messages.INVALID_PROFESSION, args.getString(1),
+                        Joiner.on(',').join(Profession.values()));
+            }
+            npc.getTrait(VillagerProfession.class).setProfession(parsed);
+            output += Messaging.tr(Messages.PROFESSION_SET, npc.getName(), args.getFlag("profession"));
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);

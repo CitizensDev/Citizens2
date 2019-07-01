@@ -141,6 +141,7 @@ public class Messages {
     public static final String INVALID_TRIGGER_TELEPORT_FORMAT = "citizens.editors.waypoints.triggers.teleport.invalid-format";
     public static final String INVALID_TROPICALFISH_COLOR = "citizens.commands.npc.tropicalfish.invalid-color";
     public static final String INVALID_TROPICALFISH_PATTERN = "citizens.commands.npc.tropicalfish.invalid-pattern";
+    public static final String INVALID_VILLAGER_TYPE = "citizens.commands.npc.villager.invalid-type";
     public static final String ITEM_SET = "citizens.commands.npc.item.item-set";
     public static final String LEASHABLE_SET = "citizens.commands.npc.leashable.set";
     public static final String LEASHABLE_STOPPED = "citizens.commands.npc.leashable.stopped";
@@ -309,6 +310,8 @@ public class Messages {
     public static final String TROPICALFISH_PATTERN_SET = "citizens.commands.npc.tropicalfish.pattern-set";
     public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";
     public static final String UNKNOWN_MATERIAL = "citizens.commands.npc.item.unknown-material";
+    public static final String VILLAGER_LEVEL_SET = "citizens.commands.npc.villager.level-set";
+    public static final String VILLAGER_TYPE_SET = "citizens.commands.npc.villager.type-set";
     public static final String VULNERABLE_SET = "citizens.commands.npc.vulnerable.set";
     public static final String VULNERABLE_STOPPED = "citizens.commands.npc.vulnerable.stopped";
     public static final String WANDER_WAYPOINTS_ADDED_REGION = "citizens.editors.waypoints.wander.added-region";

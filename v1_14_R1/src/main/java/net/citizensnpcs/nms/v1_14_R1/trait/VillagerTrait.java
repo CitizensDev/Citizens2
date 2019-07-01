@@ -1,0 +1,37 @@
+package net.citizensnpcs.nms.v1_14_R1.trait;
+
+import org.bukkit.entity.Villager;
+
+import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitName;
+
+@TraitName("villagertrait")
+public class VillagerTrait extends Trait {
+    @Persist
+    private int level;
+    @Persist
+    private Villager.Type type;
+
+    public VillagerTrait() {
+        super("villagertrait");
+    }
+
+    @Override
+    public void run() {
+        if (!(npc.getEntity() instanceof Villager))
+            return;
+        if (type != null) {
+            ((Villager) npc.getEntity()).setVillagerType(type);
+        }
+        ((Villager) npc.getEntity()).setVillagerLevel(level);
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setType(Villager.Type type) {
+        this.type = type;
+    }
+}
