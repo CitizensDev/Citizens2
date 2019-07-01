@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
-import net.minecraft.server.v1_14_R1.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
@@ -24,6 +22,7 @@ import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.SoundEffect;
+import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
 
 public class SalmonController extends MobEntityController {
@@ -60,15 +59,6 @@ public class SalmonController extends MobEntityController {
         }
 
         @Override
-        public void e(Vec3D vec3d) {
-            if (npc == null || !npc.isFlyable()) {
-                super.e(vec3d);
-            } else {
-                NMSImpl.flyingMoveLogic(this, vec3d);
-            }
-        }
-
-        @Override
         public void b(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
@@ -94,6 +84,15 @@ public class SalmonController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public void e(Vec3D vec3d) {
+            if (npc == null || !npc.isFlyable()) {
+                super.e(vec3d);
+            } else {
+                NMSImpl.flyingMoveLogic(this, vec3d);
+            }
         }
 
         @Override
@@ -160,6 +159,15 @@ public class SalmonController extends MobEntityController {
         }
 
         @Override
+        public boolean isClimbing() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.isClimbing();
+            } else {
+                return false;
+            }
+        }
+
+        @Override
         public boolean isLeashed() {
             if (npc == null)
                 return super.isLeashed();
@@ -184,11 +192,14 @@ public class SalmonController extends MobEntityController {
         }
 
         @Override
-        public boolean isClimbing() {
-            if (npc == null || !npc.isFlyable()) {
-                return super.isClimbing();
-            } else {
-                return false;
+        public void movementTick() {
+            boolean lastInWater = this.y;
+            if (npc != null) {
+                this.y = false;
+            }
+            super.movementTick();
+            if (npc != null) {
+                this.y = lastInWater;
             }
         }
     }

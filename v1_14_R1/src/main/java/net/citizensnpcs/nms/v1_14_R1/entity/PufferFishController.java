@@ -187,6 +187,18 @@ public class PufferFishController extends MobEntityController {
                 npc.update();
             }
         }
+
+        @Override
+        public void movementTick() {
+            boolean lastInWater = this.y;
+            if (npc != null) {
+                this.y = false;
+            }
+            super.movementTick();
+            if (npc != null) {
+                this.y = lastInWater;
+            }
+        }
     }
 
     public static class PufferFishNPC extends CraftPufferFish implements NPCHolder {

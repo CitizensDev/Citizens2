@@ -194,6 +194,18 @@ public class CodController extends MobEntityController {
         }
 
         @Override
+        public void movementTick() {
+            boolean lastInWater = this.C;
+            if (npc != null) {
+                this.C = false;
+            }
+            super.movementTick();
+            if (npc != null) {
+                this.C = lastInWater;
+            }
+        }
+
+        @Override
         public boolean z_() {
             if (npc == null || !npc.isFlyable()) {
                 return super.z_();
