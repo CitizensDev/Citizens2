@@ -375,8 +375,8 @@ public class Commands {
     @Command(
             aliases = { "npc" },
             usage = "villager (--level level) (--type type) (--profession profession)",
-            desc = "Sets phantom modifiers",
-            modifiers = { "phantom" },
+            desc = "Sets villager modifiers",
+            modifiers = { "villager" },
             min = 1,
             max = 1,
             permission = "citizens.npc.villager")
