@@ -142,7 +142,17 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
-        respawnAllFromCoord(new ChunkCoord(event.getChunk()));
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                respawnAllFromCoord(new ChunkCoord(event.getChunk()));
+            }
+        };
+        if (event instanceof Cancellable) {
+            runnable.run();
+        } else {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
