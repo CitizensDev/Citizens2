@@ -227,6 +227,7 @@ import net.minecraft.server.v1_14_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_14_R1.EntityPlayer;
 import net.minecraft.server.v1_14_R1.EntityPolarBear;
 import net.minecraft.server.v1_14_R1.EntityPose;
+import net.minecraft.server.v1_14_R1.EntityPufferFish;
 import net.minecraft.server.v1_14_R1.EntityRabbit;
 import net.minecraft.server.v1_14_R1.EntityShulker;
 import net.minecraft.server.v1_14_R1.EntitySize;
@@ -1551,6 +1552,14 @@ public class NMSImpl implements NMSBridge {
         minecart.setDisplayBlockOffset(offset);
     }
 
+    public static void resetPuffTicks(EntityPufferFish fish) {
+        try {
+            PUFFERFISH_C.invoke(fish, 0);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void sendPacket(Player player, Packet<?> packet) {
         if (packet == null)
             return;
@@ -1696,6 +1705,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getSetter(NavigationAbstract.class, "b");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle PATHFINDING_RANGE = NMS.getGetter(NavigationAbstract.class, "p");
+    private static final MethodHandle PUFFERFISH_C = NMS.getSetter(EntityPufferFish.class, "c");
     private static final MethodHandle RABBIT_FIELD = NMS.getGetter(EntityRabbit.class, "bz");
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");

@@ -191,12 +191,27 @@ public class PufferFishController extends MobEntityController {
         @Override
         public void movementTick() {
             boolean lastInWater = this.y;
+            int lastPuffState = getPuffState();
             if (npc != null) {
                 this.y = false;
+                setPuffState(0);
             }
             super.movementTick();
             if (npc != null) {
                 this.y = lastInWater;
+                setPuffState(lastPuffState);
+            }
+        }
+
+        @Override
+        public void tick() {
+            int lastPuffState = getPuffState();
+            if (npc != null) {
+                NMSImpl.resetPuffTicks(this);
+            }
+            super.tick();
+            if (npc != null) {
+                setPuffState(lastPuffState);
             }
         }
     }
