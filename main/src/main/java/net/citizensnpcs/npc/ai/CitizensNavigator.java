@@ -56,9 +56,6 @@ public class CitizensNavigator implements Navigator, Runnable {
     public CitizensNavigator(NPC npc) {
         this.npc = npc;
         defaultParams.examiner(new SwimmingExaminer(npc));
-        if (Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean()) {
-            defaultParams.examiner(new DoorExaminer());
-        }
     }
 
     @Override
@@ -329,6 +326,10 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     private void switchParams() {
         localParams = defaultParams.clone();
+        if (!npc.data().has(NPC.PATHFINDER_OPEN_DOORS_METADATA) ? Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean()
+                : npc.data().<Boolean> get(NPC.PATHFINDER_OPEN_DOORS_METADATA)) {
+            localParams.examiner(new DoorExaminer());
+        }
     }
 
     private void switchStrategyTo(PathStrategy newStrategy) {

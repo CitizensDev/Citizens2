@@ -208,6 +208,8 @@ public class Messages {
     public static final String PARROT_VARIANT_SET = "citizens.commands.npc.parrot.variant-set";
     public static final String PASSIVE_SET = "citizens.commands.npc.passive.set";
     public static final String PASSIVE_UNSET = "citizens.commands.npc.passive.unset";
+    public static final String PATHFINDER_OPEN_DOORS_DISABLED = "citizens.commands.waypoints.opendoors.disabled";
+    public static final String PATHFINDER_OPEN_DOORS_ENABLED = "citizens.commands.waypoints.opendoors.enabled";
     public static final String PATHFINDING_OPTIONS_ATTACK_RANGE_SET = "citizens.commands.npc.pathopt.attack-range-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_SET = "citizens.commands.npc.pathopt.avoid-water-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_UNSET = "citizens.commands.npc.pathopt.avoid-water-unset";

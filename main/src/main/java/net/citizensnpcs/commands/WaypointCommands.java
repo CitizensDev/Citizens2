@@ -1,5 +1,7 @@
 package net.citizensnpcs.commands;
 
+import org.bukkit.command.CommandSender;
+
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
@@ -9,8 +11,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.Messages;
-
-import org.bukkit.command.CommandSender;
 
 @Requirements(ownership = true, selected = true)
 public class WaypointCommands {
@@ -29,6 +29,21 @@ public class WaypointCommands {
     public void disableTeleporting(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         npc.getNavigator().getDefaultParameters().stuckAction(null);
         Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_DISABLED);
+    }
+
+    @Command(
+            aliases = { "waypoints", "waypoint", "wp" },
+            usage = "opendoors",
+            desc = "Enables opening doors when pathfinding (temporary command)",
+            modifiers = { "opendoors" },
+            min = 1,
+            max = 1,
+            permission = "citizens.waypoints.opendoors")
+    public void openDoors(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        boolean opensDoors = !npc.data().get(NPC.PATHFINDER_OPEN_DOORS_METADATA, false);
+        npc.data().setPersistent(NPC.PATHFINDER_OPEN_DOORS_METADATA, opensDoors);
+        Messaging.sendTr(sender,
+                opensDoors ? Messages.PATHFINDER_OPEN_DOORS_ENABLED : Messages.PATHFINDER_OPEN_DOORS_DISABLED);
     }
 
     @Command(
