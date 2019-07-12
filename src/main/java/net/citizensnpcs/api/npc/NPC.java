@@ -319,7 +319,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public static final String FLYABLE_METADATA = "flyable";
     /**
-     * The color to glow using Minecraft's scoreboard glowing feature. Should be a {@link ChatColor#name()}
+     * The color to glow using Minecraft's scoreboard glowing feature. Should be a {@link ChatColor#name()}. DEPRECATED:
+     * use ScoreboardTrait instead
      */
     public static final String GLOWING_COLOR_METADATA = "glowing-color";
     /**

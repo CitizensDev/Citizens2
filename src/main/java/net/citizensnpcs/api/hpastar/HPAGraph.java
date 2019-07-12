@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import com.google.common.collect.Lists;
 
 import ch.ethz.globis.phtree.PhTreeSolid;
+import ch.ethz.globis.phtree.PhTreeSolid.PhQueryS;
 import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.astar.pathfinder.BlockSource;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
@@ -23,6 +24,7 @@ public class HPAGraph {
     private final BlockSource blockSource;
     public List<List<HPACluster>> clusters = Lists.newArrayList();
     // TODO: y-clusters
+    // TODO: make nodes updateable properly
     private final int cx, cy, cz;
     private final List<PhTreeSolid<HPACluster>> phtrees = Lists.newArrayList();
 
@@ -33,6 +35,85 @@ public class HPAGraph {
         this.cz = cz;
     }
 
+    public void addClusters(int x, int z) {
+        int baseX = MAX_CLUSTER_SIZE * ((x - cx) / MAX_CLUSTER_SIZE) + cx;
+        int baseZ = MAX_CLUSTER_SIZE * ((z - cz) / MAX_CLUSTER_SIZE) + cz;
+        List<HPACluster> newClusters = new ArrayList<>();
+        PhTreeSolid<HPACluster> baseTree = phtrees.get(0);
+
+        // build clusters
+        int clusterSize = BASE_CLUSTER_SIZE / 2;
+        for (int y = 0; y < 128; y++) {
+            for (int ci = 0; ci < MAX_CLUSTER_SIZE; ci += clusterSize) {
+                for (int cj = 0; cj < MAX_CLUSTER_SIZE; cj += clusterSize) {
+                    HPACluster cluster = new HPACluster(this, 0, clusterSize, y, baseX + ci, baseZ + cj);
+                    newClusters.add(cluster);
+                    baseTree.put(
+                            new long[] { cluster.clusterX, cluster.clusterY, cluster.clusterZ }, new long[] {
+                                    cluster.clusterX + clusterSize, cluster.clusterY, cluster.clusterZ + clusterSize },
+                            cluster);
+                }
+            }
+        }
+
+        Map<HPACluster, List<HPACluster>> clusterMap = new IdentityHashMap<>();
+        for (HPACluster cluster : newClusters) {
+            PhQueryS<HPACluster> q = baseTree.queryIntersect(
+                    new long[] { cluster.clusterX - clusterSize, cluster.clusterY, cluster.clusterZ - clusterSize },
+                    new long[] { cluster.clusterX + clusterSize, cluster.clusterY, cluster.clusterZ + clusterSize });
+            while (q.hasNext()) {
+                HPACluster neighbour = q.nextValue();
+                if (neighbour == cluster || clusterMap.get(cluster).contains(neighbour))
+                    continue;
+                // TODO: diagonal connections using length=sqrt(2)
+                if (neighbour.clusterX - cluster.clusterX != 0 && neighbour.clusterZ - cluster.clusterZ != 0)
+                    continue;
+                int dx = neighbour.clusterX - cluster.clusterX;
+                int dz = neighbour.clusterZ - cluster.clusterZ;
+                Direction direction = null;
+                if (dx > 0)
+                    direction = Direction.EAST;
+                if (dx < 0)
+                    direction = Direction.WEST;
+                if (dz > 0)
+                    direction = Direction.NORTH;
+                if (dz < 0)
+                    direction = Direction.SOUTH;
+                cluster.connect(neighbour, direction);
+                clusterMap.putIfAbsent(cluster, new ArrayList<HPACluster>());
+                clusterMap.putIfAbsent(neighbour, new ArrayList<HPACluster>());
+                clusterMap.get(cluster).add(neighbour);
+                clusterMap.get(neighbour).add(cluster);
+            }
+        }
+        for (HPACluster cluster : newClusters) {
+            cluster.connectIntra();
+        }
+        addClustersAtDepth(0, newClusters);
+
+        for (int depth = 1; depth <= MAX_DEPTH; depth++) {
+            newClusters = new ArrayList<HPACluster>();
+            clusterSize = (int) (2 * Math.pow(2, depth));
+
+            for (int y = 0; y < 128; y++) {
+                for (int ci = 0; ci < MAX_CLUSTER_SIZE; ci += clusterSize) {
+                    for (int cj = 0; cj < MAX_CLUSTER_SIZE; cj += clusterSize) {
+                        HPACluster cluster = new HPACluster(this, depth, clusterSize, y, baseX + ci, baseZ + cj);
+                        PhTreeSolid<HPACluster> lowerDepth = this.phtrees.get(depth - 1);
+                        cluster.buildFrom(Lists.newArrayList(lowerDepth.queryInclude(
+                                new long[] { cluster.clusterX - clusterSize, cluster.clusterY,
+                                        cluster.clusterZ - clusterSize },
+                                new long[] { cluster.clusterX + clusterSize, cluster.clusterY,
+                                        cluster.clusterZ + clusterSize })));
+                        newClusters.add(cluster);
+                    }
+                }
+            }
+
+            addClustersAtDepth(depth, newClusters);
+        }
+    }
+
     public void addClustersAtDepth(int depth, List<HPACluster> other) {
         while (clusters.size() <= depth) {
             clusters.add(new ArrayList<HPACluster>());
@@ -41,135 +122,16 @@ public class HPAGraph {
         clusters.get(depth).addAll(other);
     }
 
-    public void buildClusters(Tile[][][] tiles, int depth) {
-        // TODO: convert this to flood-fill
-        int clusterSize = (int) (2 * Math.pow(2, depth));
-        HPACluster[][][] clusters = new HPACluster[16][16 / clusterSize][16 / clusterSize];
-        if (depth > 0) {
-            List<HPACluster> newClusters = new ArrayList<>();
-            for (int y = 0; y < tiles.length; y++) {
-                for (int ci = 0; ci < 16; ci += clusterSize) {
-                    for (int cj = 0; cj < 16; cj += clusterSize) {
-                        HPACluster cluster = new HPACluster(this, depth, clusterSize, y, ci, cj);
-                        List<HPACluster> subClusters = new ArrayList<>();
-                        for (HPACluster other : this.clusters.get(depth - 1)) {
-                            if (cluster.contains(other)) {
-                                subClusters.add(other);
-                            }
-                        }
-                        cluster.buildFrom(subClusters);
-                        newClusters.add(cluster);
-                    }
-                }
-            }
-            addClustersAtDepth(depth, newClusters);
-            return;
-        }
-        // build clusters
-        for (int y = 0; y < tiles.length; y++) {
-            Tile[][] ylevel = tiles[y];
-            for (int ci = 0; ci < 16; ci += clusterSize) {
-                for (int cj = 0; cj < 16; cj += clusterSize) {
-                    HPACluster cluster = new HPACluster(this, depth, clusterSize, y, ci, cj);
-                    boolean add = false;
-                    /* for (int j = 0; j < clusterSize; j++) {
-                        for (int k = 0; k < clusterSize; k++) {
-                            Tile in = ylevel[ci + j][cj + k];
-                            if (in.y < 14) { // TODO
-                                Tile on = tiles[in.y + 1][ci + j][cj + k];
-                                Tile above = tiles[in.y + 2][ci + j][cj + k];
-                                if (isWalkable(in.type, on.type, above.type)) {
-                                    in.cluster = cluster;
-                                    add = true;
-                                }
-                            }
-                        }
-                    }*/
-                    if (add || true) {
-                        clusters[y][ci / clusterSize][cj / clusterSize] = cluster;
-                    } // TODO: can this optimisation be done
-                }
-            }
-        }
-        // build nodes
-        List<HPACluster> clusterList = new ArrayList<HPACluster>();
-        Map<HPACluster, List<HPACluster>> clusterMap = new IdentityHashMap<>();
-        int[][] moves = { { 0, 1 }, { 1, 0 }, { -1, 0 }, { 0, -1 } };
-
-        // TODO: diagonal connections using length=sqrt(2)
-        for (int y = 0; y < clusters.length; y++) {
-            for (int x = 0; x < 16 / clusterSize; x++) {
-                for (int z = 0; z < 16 / clusterSize; z++) {
-                    HPACluster base = clusters[y][x][z];
-                    if (base == null)
-                        continue;
-                    clusterList.add(base);
-                    for (int dy = -1; dy <= 1; dy++) {
-                        for (int[] move : moves) {
-                            int dx = move[0], dz = move[1];
-                            if (y + dy < 0 || x + dx < 0 || z + dz < 0 || y + dy >= 16 || x + dx >= 16 / clusterSize
-                                    || z + dz >= 16 / clusterSize)
-                                continue;
-                            HPACluster other = clusters[y + dy][x + dx][z + dz];
-                            if (other == null)
-                                continue;
-                            if (clusterMap.containsKey(base) && clusterMap.get(base).contains(other)) {
-                                continue;
-                            }
-                            Direction direction = null;
-                            if (dx > 0)
-                                direction = Direction.EAST;
-                            if (dx < 0)
-                                direction = Direction.WEST;
-                            if (dz > 0)
-                                direction = Direction.NORTH;
-                            if (dz < 0)
-                                direction = Direction.SOUTH;
-                            base.connect(other, direction);
-
-                            clusterMap.putIfAbsent(base, new ArrayList<HPACluster>());
-                            clusterMap.putIfAbsent(other, new ArrayList<HPACluster>());
-                            clusterMap.get(base).add(other);
-                            clusterMap.get(other).add(base);
-                        }
-                    }
-                }
-            }
-        }
-        for (HPACluster cluster : clusterList) {
-            cluster.connectIntra();
-        }
-        addClustersAtDepth(depth, clusterList);
-    }
-
-    private double dist(Location start, HPACluster cluster) {
-        return Math.sqrt(Math.pow(start.getBlockX() - (cluster.clusterX), 2)
-                + Math.pow(start.getBlockZ() - (cluster.clusterZ), 2)
-                + Math.pow(start.getBlockY() - cluster.clusterY, 2));
-    }
-
     public Plan findPath(Location start, Location goal) {
         // insert into each layer
         List<HPACluster> clustersToClean = new ArrayList<HPACluster>();
         HPAGraphNode startNode = new HPAGraphNode(start.getBlockX(), start.getBlockY(), start.getBlockZ()),
                 goalNode = new HPAGraphNode(goal.getBlockX(), goal.getBlockY(), goal.getBlockZ());
-        for (List<HPACluster> clusterLayer : clusters) {
-            double minDistStart = Double.MAX_VALUE, minDistGoal = Double.MAX_VALUE;
-            HPACluster startCluster = null, goalCluster = null;
-            // TODO: optimise this
-            for (HPACluster cluster : clusterLayer) {
-                double distStart = dist(start, cluster);
-                double distGoal = dist(goal, cluster);
-                if (minDistStart > distStart) {
-                    startCluster = cluster;
-                    minDistStart = distStart;
-
-                }
-                if (minDistGoal > distGoal) {
-                    goalCluster = cluster;
-                    minDistGoal = distGoal;
-                }
-            }
+        for (PhTreeSolid<HPACluster> phtree : phtrees) {
+            HPACluster startCluster = phtree.get(new long[] { start.getBlockX(), start.getBlockY(), start.getBlockZ() },
+                    new long[] { start.getBlockX(), start.getBlockY(), start.getBlockZ() });
+            HPACluster goalCluster = phtree.get(new long[] { goal.getBlockX(), goal.getBlockY(), goal.getBlockZ() },
+                    new long[] { goal.getBlockX(), goal.getBlockY(), goal.getBlockZ() });
             startCluster.insert(startNode);
             goalCluster.insert(goalNode);
             clustersToClean.add(startCluster);
@@ -227,4 +189,8 @@ public class HPAGraph {
         return MinecraftBlockExaminer.canStandOn(in) && MinecraftBlockExaminer.canStandIn(on)
                 && MinecraftBlockExaminer.canStandIn(above);
     }
+
+    private static int BASE_CLUSTER_SIZE = (int) (2 * Math.pow(2, 1));
+    private static int MAX_CLUSTER_SIZE = (int) (2 * Math.pow(2, 7));
+    private static int MAX_DEPTH = 3;
 }
