@@ -86,6 +86,7 @@ import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
+import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.SkinLayers;
@@ -586,11 +587,7 @@ public class NPCCommands {
             ChatColor chatColor = Util.matchEnum(ChatColor.values(), args.getFlag("color"));
             if (!(npc.getEntity() instanceof Player))
                 throw new CommandException();
-            if (chatColor == null) {
-                npc.data().remove(NPC.GLOWING_COLOR_METADATA);
-            } else {
-                npc.data().setPersistent(NPC.GLOWING_COLOR_METADATA, chatColor.name());
-            }
+            npc.getTrait(ScoreboardTrait.class).setColor(chatColor);
             Messaging.sendTr(sender, Messages.GLOWING_COLOR_SET, npc.getName(),
                     chatColor == null ? ChatColor.WHITE + "white" : chatColor + Util.prettyEnum(chatColor));
             return;
@@ -1450,6 +1447,34 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_SET, delay);
         } else {
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1));
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "scoreboard --addtag [tags] --removetag [tags]",
+            desc = "Controls an NPC's scoreboard",
+            modifiers = { "scoreboard" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.scoreboard")
+    public void scoreboard(CommandContext args, CommandSender sender, NPC npc) {
+        ScoreboardTrait trait = npc.getTrait(ScoreboardTrait.class);
+        String output = "";
+        if (args.hasValueFlag("addtag")) {
+            for (String tag : args.getFlag("addtag").split(",")) {
+                trait.addTag(tag);
+            }
+            output += " " + Messaging.tr(Messages.ADDED_SCOREBOARD_TAGS, args.getFlag("addtag"));
+        }
+        if (args.hasValueFlag("removetag")) {
+            for (String tag : args.getFlag("removetag").split(",")) {
+                trait.removeTag(tag);
+            }
+            output += " " + Messaging.tr(Messages.REMOVED_SCOREBOARD_TAGS, args.getFlag("removetag"));
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output.trim());
         }
     }
 

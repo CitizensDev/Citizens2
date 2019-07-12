@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -15,8 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scoreboard.Team;
-import org.bukkit.scoreboard.Team.Option;
-import org.bukkit.scoreboard.Team.OptionStatus;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -44,6 +41,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -392,34 +390,7 @@ public class CitizensNPC extends AbstractNPC {
             return;
         }
 
-        if (SUPPORT_TEAM_SETOPTION) {
-            try {
-                team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER);
-            } catch (NoSuchMethodError e) {
-                SUPPORT_TEAM_SETOPTION = false;
-            } catch (NoClassDefFoundError e) {
-                SUPPORT_TEAM_SETOPTION = false;
-            }
-        }
-
-        if (data().has(NPC.GLOWING_COLOR_METADATA)) {
-            if (SUPPORT_GLOWING_COLOR) {
-                try {
-                    if (team.getColor() == null || (data().has("previous-glowing-color")
-                            && !team.getColor().name().equals(data().get("previous-glowing-color")))) {
-                        team.setColor(ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA)));
-                    }
-                } catch (NoSuchMethodError err) {
-                    SUPPORT_GLOWING_COLOR = false;
-                }
-            } else {
-                if (team.getPrefix() == null || team.getPrefix().length() == 0 || (data().has("previous-glowing-color")
-                        && !team.getPrefix().equals(data().get("previous-glowing-color")))) {
-                    team.setPrefix(ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA)).toString());
-                    data().set("previous-glowing-color", team.getPrefix());
-                }
-            }
-        }
+        getTrait(ScoreboardTrait.class).apply(team, nameVisibility);
     }
 
     private void updateFlyableState() {
