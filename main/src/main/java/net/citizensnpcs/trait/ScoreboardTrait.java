@@ -54,21 +54,24 @@ public class ScoreboardTrait extends Trait {
             color = ChatColor.valueOf(npc.data().get(NPC.GLOWING_COLOR_METADATA));
             npc.data().remove(NPC.GLOWING_COLOR_METADATA);
         }
-        if (SUPPORT_GLOWING_COLOR && color != null) {
-            try {
-                if (team.getColor() == null || previousGlowingColor == null
-                        || (previousGlowingColor != null && color != previousGlowingColor)) {
-                    team.setColor(color);
+        if (color != null) {
+            if (SUPPORT_GLOWING_COLOR) {
+                try {
+                    if (team.getColor() == null || previousGlowingColor == null
+                            || (previousGlowingColor != null && color != previousGlowingColor)) {
+                        team.setColor(color);
+                        previousGlowingColor = color;
+                    }
+                } catch (NoSuchMethodError err) {
+                    SUPPORT_GLOWING_COLOR = false;
+                }
+            } else {
+                if (team.getPrefix() == null || team.getPrefix().length() == 0 || previousGlowingColor == null
+                        || (previousGlowingColor != null
+                                && !team.getPrefix().equals(previousGlowingColor.toString()))) {
+                    team.setPrefix(color.toString());
                     previousGlowingColor = color;
                 }
-            } catch (NoSuchMethodError err) {
-                SUPPORT_GLOWING_COLOR = false;
-            }
-        } else {
-            if (team.getPrefix() == null || team.getPrefix().length() == 0 || previousGlowingColor == null
-                    || (previousGlowingColor != null && !team.getPrefix().equals(previousGlowingColor.toString()))) {
-                team.setPrefix(color.toString());
-                previousGlowingColor = color;
             }
         }
     }
