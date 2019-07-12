@@ -72,6 +72,7 @@ public class Commands {
             modifiers = { "cat" },
             min = 1,
             max = 1,
+            flags = "sn",
             permission = "citizens.npc.cat")
     @Requirements(selected = true, ownership = true, types = EntityType.CAT)
     public void cat(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
