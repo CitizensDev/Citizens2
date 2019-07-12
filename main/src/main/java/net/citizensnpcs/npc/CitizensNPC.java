@@ -403,10 +403,21 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         if (data().has(NPC.GLOWING_COLOR_METADATA)) {
-            if (team.getPrefix() == null || team.getPrefix().length() == 0 || (data().has("previous-glowing-color")
-                    && !team.getPrefix().equals(data().get("previous-glowing-color")))) {
-                team.setPrefix(ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA)).toString());
-                data().set("previous-glowing-color", team.getPrefix());
+            if (SUPPORT_GLOWING_COLOR) {
+                try {
+                    if (team.getColor() == null || (data().has("previous-glowing-color")
+                            && !team.getColor().name().equals(data().get("previous-glowing-color")))) {
+                        team.setColor(ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA)));
+                    }
+                } catch (NoSuchMethodError err) {
+                    SUPPORT_GLOWING_COLOR = false;
+                }
+            } else {
+                if (team.getPrefix() == null || team.getPrefix().length() == 0 || (data().has("previous-glowing-color")
+                        && !team.getPrefix().equals(data().get("previous-glowing-color")))) {
+                    team.setPrefix(ChatColor.valueOf(data().<String> get(NPC.GLOWING_COLOR_METADATA)).toString());
+                    data().set("previous-glowing-color", team.getPrefix());
+                }
             }
         }
     }
@@ -421,8 +432,10 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
+
     private static final String NPC_METADATA_MARKER = "NPC";
     private static boolean SUPPORT_GLOWING = true;
+    private static boolean SUPPORT_GLOWING_COLOR = true;
     private static boolean SUPPORT_SILENT = true;
     private static boolean SUPPORT_TEAM_SETOPTION = true;
 }
