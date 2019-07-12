@@ -359,6 +359,10 @@ public interface NPC extends Agent, Cloneable {
      */
     public static final String NAMEPLATE_VISIBLE_METADATA = "nameplate-visible";
     /**
+     * Whether to open doors while pathfinding. Boolean.
+     */
+    public static final String PATHFINDER_OPEN_DOORS_METADATA = "pathfinder-open-doors";
+    /**
      * @see Skinnable
      */
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA = "player-skin-textures";

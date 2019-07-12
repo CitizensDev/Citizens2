@@ -112,6 +112,8 @@ public class Inventory extends Trait {
 
     public void openInventory(Player sender) {
         for (int i = 0; i < view.getSize(); i++) {
+            if (i >= contents.length)
+                break;
             view.setItem(i, contents[i]);
         }
         views.add(sender.openInventory(view));
