@@ -398,8 +398,8 @@ public class Commands {
                 throw new CommandException(Messages.INVALID_VILLAGER_TYPE,
                         Util.listValuesPretty(Villager.Type.values()));
             }
-            trait.setLevel(args.getFlagInteger("type"));
-            output += Messaging.tr(Messages.VILLAGER_TYPE_SET, args.getFlagInteger("type"));
+            trait.setType(type);
+            output += Messaging.tr(Messages.VILLAGER_TYPE_SET, args.getFlag("type"));
         }
         if (args.hasValueFlag("profession")) {
             Profession parsed = Util.matchEnum(Profession.values(), args.getFlag("profession"));
