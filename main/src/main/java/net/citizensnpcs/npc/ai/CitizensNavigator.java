@@ -283,9 +283,8 @@ public class CitizensNavigator implements Navigator, Runnable {
             velocity.setX(0).setY(0).setZ(0);
             npc.getEntity().setVelocity(velocity);
         }
-        Location pitch = npc.getEntity().getLocation();
-        pitch.setPitch(0);
-        npc.getEntity().teleport(pitch);
+        Location loc = npc.getEntity().getLocation(STATIONARY_LOCATION);
+        NMS.look(npc.getEntity(), loc.getYaw(), 0);
     }
 
     private void stopNavigating(CancelReason reason) {
