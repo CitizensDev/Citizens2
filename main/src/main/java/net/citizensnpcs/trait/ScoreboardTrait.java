@@ -31,13 +31,13 @@ public class ScoreboardTrait extends Trait {
 
     public void apply(Team team, boolean nameVisibility) {
         Set<String> newTags = new HashSet<String>(tags);
-        for (String oldTag : team.getEntries()) {
+        for (String oldTag : npc.getEntity().getScoreboardTags()) {
             if (!newTags.remove(oldTag)) {
-                team.removeEntry(oldTag);
+                npc.getEntity().removeScoreboardTag(oldTag);
             }
         }
         for (String tag : newTags) {
-            team.addEntry(tag);
+            npc.getEntity().addScoreboardTag(tag);
         }
 
         if (SUPPORT_TEAM_SETOPTION) {

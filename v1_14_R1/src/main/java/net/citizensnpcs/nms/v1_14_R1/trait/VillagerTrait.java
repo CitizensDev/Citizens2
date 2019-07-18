@@ -9,7 +9,7 @@ import net.citizensnpcs.api.trait.TraitName;
 @TraitName("villagertrait")
 public class VillagerTrait extends Trait {
     @Persist
-    private int level;
+    private int level = 1;
     @Persist
     private Villager.Type type;
 
@@ -24,6 +24,7 @@ public class VillagerTrait extends Trait {
         if (type != null) {
             ((Villager) npc.getEntity()).setVillagerType(type);
         }
+        level = Math.min(5, Math.max(1, level));
         ((Villager) npc.getEntity()).setVillagerLevel(level);
     }
 
