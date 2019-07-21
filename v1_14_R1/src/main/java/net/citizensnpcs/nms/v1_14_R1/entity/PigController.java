@@ -101,9 +101,9 @@ public class PigController extends MobEntityController {
         }
 
         @Override
-        public boolean dE() {
+        public boolean dD() {
             // block carrot-on-a-stick behaviour
-            return npc == null ? super.dE() : false;
+            return npc == null ? super.dD() : false;
         }
 
         @Override

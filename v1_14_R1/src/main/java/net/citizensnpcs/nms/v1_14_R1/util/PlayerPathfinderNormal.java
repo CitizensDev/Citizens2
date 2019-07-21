@@ -21,11 +21,12 @@ import net.minecraft.server.v1_14_R1.EntityInsentient;
 import net.minecraft.server.v1_14_R1.EnumDirection;
 import net.minecraft.server.v1_14_R1.EnumDirection.EnumAxis;
 import net.minecraft.server.v1_14_R1.Fluid;
+import net.minecraft.server.v1_14_R1.FluidTypes;
 import net.minecraft.server.v1_14_R1.IBlockAccess;
 import net.minecraft.server.v1_14_R1.IBlockData;
-import net.minecraft.server.v1_14_R1.IWorldReader;
 import net.minecraft.server.v1_14_R1.Material;
 import net.minecraft.server.v1_14_R1.MathHelper;
+import net.minecraft.server.v1_14_R1.PathDestination;
 import net.minecraft.server.v1_14_R1.PathMode;
 import net.minecraft.server.v1_14_R1.PathPoint;
 import net.minecraft.server.v1_14_R1.PathType;
@@ -43,8 +44,8 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     }
 
     @Override
-    public PathPoint a(double var0, double var2, double var4) {
-        return this.a(MathHelper.floor(var0), MathHelper.floor(var2), MathHelper.floor(var4));
+    public PathDestination a(double var0, double var2, double var4) {
+        return new PathDestination(this.a(MathHelper.floor(var0), MathHelper.floor(var2), MathHelper.floor(var4)));
     }
 
     private PathType a(EntityHumanNPC var0, BlockPosition var1) {
@@ -121,16 +122,16 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             return PathType.FENCE;
         } else {
             PathType var15 = PathType.BLOCKED;
-            Iterator var16 = var10.iterator();
+            Iterator var17 = var10.iterator();
 
-            while (var16.hasNext()) {
-                PathType var17 = (PathType) var16.next();
-                if (var4.a(var17) < 0.0F) {
-                    return var17;
+            while (var17.hasNext()) {
+                PathType var16 = (PathType) var17.next();
+                if (var4.a(var16) < 0.0F) {
+                    return var16;
                 }
 
-                if (var4.a(var17) >= var4.a(var15)) {
-                    var15 = var17;
+                if (var4.a(var16) >= var4.a(var15)) {
+                    var15 = var16;
                 }
             }
 
@@ -154,16 +155,16 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             return PathType.FENCE;
         } else {
             PathType var15 = PathType.BLOCKED;
-            Iterator var16 = var10.iterator();
+            Iterator var17 = var10.iterator();
 
-            while (var16.hasNext()) {
-                PathType var17 = (PathType) var16.next();
-                if (var4.a(var17) < 0.0F) {
-                    return var17;
+            while (var17.hasNext()) {
+                PathType var16 = (PathType) var17.next();
+                if (var4.a(var16) < 0.0F) {
+                    return var16;
                 }
 
-                if (var4.a(var17) >= var4.a(var15)) {
-                    var15 = var17;
+                if (var4.a(var16) >= var4.a(var15)) {
+                    var15 = var16;
                 }
             }
 
@@ -200,7 +201,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     public PathType a(IBlockAccess var0, int var1, int var2, int var3, PathType var4) {
         if (var4 == PathType.WALKABLE) {
             PooledBlockPosition var5 = PooledBlockPosition.r();
-            Throwable var6 = null;
+            Throwable tt = null;
 
             try {
                 for (int var7 = -1; var7 <= 1; ++var7) {
@@ -218,15 +219,15 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     }
                 }
             } catch (Throwable var18) {
-                var6 = var18;
+                tt = var18;
                 throw var18;
             } finally {
                 if (var5 != null) {
-                    if (var6 != null) {
+                    if (tt != null) {
                         try {
                             var5.close();
                         } catch (Throwable var17) {
-                            var6.addSuppressed(var17);
+                            tt.addSuppressed(var17);
                         }
                     } else {
                         var5.close();
@@ -270,7 +271,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                                 var15 + var13,
                                 this.b.getHeight() + a(this.a, (new BlockPosition(var7.a, var7.b, var7.c))) - 0.002D,
                                 var17 + var13);
-                        if (!(this.a).getCubes(this.b, var19)) {
+                        if (!this.a.getCubes(this.b, var19)) {
                             var7 = null;
                         }
                     }
@@ -297,7 +298,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 if (var11 == PathType.OPEN) {
                     AxisAlignedBB var15 = new AxisAlignedBB(var0 - var13 + 0.5D, var1 + 0.001D, var2 - var13 + 0.5D,
                             var0 + var13 + 0.5D, var1 + this.b.getHeight(), var2 + var13 + 0.5D);
-                    if (!(this.a).getCubes(this.b, var15)) {
+                    if (!this.a.getCubes(this.b, var15)) {
                         return null;
                     }
 
@@ -353,15 +354,18 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         }
     }
 
-    @Override
-    public void a(IWorldReader var0, EntityInsentient var1) {
-        super.a(var0, var1);
-        this.j = var1.a(PathType.WATER);
-    }
-
     private boolean a(PathPoint var0, PathPoint var1, PathPoint var2, PathPoint var3) {
-        return var3 != null && !var3.i && var2 != null && var2.k >= 0.0F && var2.b <= var0.b && var1 != null
-                && var1.k >= 0.0F && var1.b <= var0.b;
+        if (var3 != null && var2 != null && var1 != null) {
+            if (var3.i) {
+                return false;
+            } else if (var2.b <= var0.b && var1.b <= var0.b) {
+                return var3.k >= 0.0F && (var2.b < var0.b || var2.k >= 0.0F) && (var1.b < var0.b || var1.k >= 0.0F);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -425,8 +429,8 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             var0 = MathHelper.floor(this.b.getBoundingBox().minY);
             var1 = new MutableBlockPosition(this.b.locX, var0, this.b.locZ);
 
-            for (Block var2 = this.a.getType(var1).getBlock(); var2 == Blocks.WATER; var2 = this.a.getType(var1)
-                    .getBlock()) {
+            for (IBlockData var2 = this.a.getType(var1); var2.getBlock() == Blocks.WATER
+                    || var2.p() == FluidTypes.WATER.a(false); var2 = this.a.getType(var1)) {
                 ++var0;
                 ((MutableBlockPosition) var1).c(this.b.locX, var0, this.b.locZ);
             }
@@ -451,13 +455,13 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             var3.add(new BlockPosition(this.b.getBoundingBox().minX, var0, this.b.getBoundingBox().maxZ));
             var3.add(new BlockPosition(this.b.getBoundingBox().maxX, var0, this.b.getBoundingBox().minZ));
             var3.add(new BlockPosition(this.b.getBoundingBox().maxX, var0, this.b.getBoundingBox().maxZ));
-            Iterator var4 = var3.iterator();
+            Iterator var5 = var3.iterator();
 
-            while (var4.hasNext()) {
-                BlockPosition var5 = (BlockPosition) var4.next();
-                PathType var6 = this.a(this.b, var5);
+            while (var5.hasNext()) {
+                BlockPosition var4 = (BlockPosition) var5.next();
+                PathType var6 = this.a(this.b, var4);
                 if (this.b.a(var6) >= 0.0F) {
-                    return this.a(var5.getX(), var5.getY(), var5.getZ());
+                    return this.a(var4.getX(), var4.getY(), var4.getZ());
                 }
             }
         }
@@ -512,4 +516,5 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         VoxelShape var3 = var0.getType(var2).getCollisionShape(var0, var2);
         return var2.getY() + (var3.isEmpty() ? 0.0D : var3.c(EnumAxis.Y));
     }
+
 }

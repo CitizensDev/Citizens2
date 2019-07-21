@@ -1,6 +1,11 @@
 package net.citizensnpcs.nms.v1_14_R1.util;
 
 import java.util.Iterator;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.google.common.collect.ImmutableSet;
 
 import net.citizensnpcs.nms.v1_14_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_14_R1.AttributeInstance;
@@ -28,6 +33,7 @@ import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
 
 public class PlayerNavigation extends NavigationAbstract {
+
     protected EntityHumanNPC a;
     protected final World b;
     protected PathEntity c;
@@ -46,7 +52,8 @@ public class PlayerNavigation extends NavigationAbstract {
     private final AttributeInstance p;
     private boolean pp;
     private BlockPosition q;
-    private final PlayerPathfinder r;
+    private int r;
+    private final PlayerPathfinder s;
 
     public PlayerNavigation(EntityHumanNPC entityinsentient, World world) {
         super(getDummyInsentient(entityinsentient, world), world);
@@ -58,7 +65,7 @@ public class PlayerNavigation extends NavigationAbstract {
         this.p = entityinsentient.getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
         this.o = new PlayerPathfinderNormal();
         this.o.a(true);
-        this.r = new PlayerPathfinder(this.o, 768);
+        this.s = new PlayerPathfinder(this.o, 768);
         this.setRange(24);
         // this.b.C().a(this);
     }
@@ -75,23 +82,32 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     @Override
-    protected PathEntity a(BlockPosition var0, double var1, double var3, double var5, int var7, boolean var8) {
-        if (!this.a()) {
-            return null;
-        } else if (this.c != null && !this.c.b() && var0.equals(this.q)) {
-            return this.c;
-        } else {
-            this.q = var0.immutableCopy();
-            float var9 = this.i();
-            this.b.getMethodProfiler().enter("pathfind");
-            BlockPosition var10 = var8 ? (new BlockPosition(this.a)).up() : new BlockPosition(this.a);
-            int var11 = (int) (var9 + var7);
-            IWorldReader var12 = new ChunkCache(this.b, var10.b(-var11, -var11, -var11), var10.b(var11, var11, var11));
-            PathEntity var13 = this.r.a(var12, this.a, var1, var3, var5, var9);
-            this.b.getMethodProfiler().exit();
-            return var13;
+    public PathEntity a(BlockPosition var0, int var1) {
+        BlockPosition var2;
+        if (this.b.getType(var0).isAir()) {
+            for (var2 = var0.down(); var2.getY() > 0 && this.b.getType(var2).isAir(); var2 = var2.down()) {
+            }
+
+            if (var2.getY() > 0) {
+                return supera(var2.up(), var1);
+            }
+
+            while (var2.getY() < this.b.getBuildHeight() && this.b.getType(var2).isAir()) {
+                var2 = var2.up();
+            }
+
+            var0 = var2;
         }
 
+        if (!this.b.getType(var0).getMaterial().isBuildable()) {
+            return supera(var0, var1);
+        } else {
+            for (var2 = var0.up(); var2.getY() < this.b.getBuildHeight()
+                    && this.b.getType(var2).getMaterial().isBuildable(); var2 = var2.up()) {
+            }
+
+            return supera(var2, var1);
+        }
     }
 
     public void a(boolean var0) {
@@ -105,22 +121,22 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     public boolean a(double var0, double var2, double var4, double var6) {
-        return this.a(this.a(var0, var2, var4), var6);
-    }
-
-    @Override
-    public PathEntity a(Entity var0) {
-        return this.b(new BlockPosition(var0));
+        return this.a(this.a(var0, var2, var4, 1), var6);
     }
 
     @Override
     public boolean a(Entity var0, double var1) {
-        PathEntity var3 = this.a(var0);
+        PathEntity var3 = this.a(var0, 1);
         return var3 != null && this.a(var3, var1);
     }
 
     @Override
-    protected Pathfinder a(int var0) {
+    public PathEntity a(Entity var0, int var1) {
+        return this.a(ImmutableSet.of(new BlockPosition(var0)), 16, true, var1);
+    }
+
+    @Override
+    protected Pathfinder a(int var1) {
         return null;
     }
 
@@ -191,6 +207,38 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     @Override
+    protected PathEntity a(Set var0, int var1, boolean var2, int var3) {
+        if (var0.isEmpty()) {
+            return null;
+        } else if (this.a.locY < 0.0D) {
+            return null;
+        } else if (!this.a()) {
+            return null;
+        } else if (this.c != null && !this.c.b() && var0.contains(this.q)) {
+            return this.c;
+        } else {
+            this.b.getMethodProfiler().enter("pathfind");
+            float var4 = this.i();
+            BlockPosition var5 = var2 ? (new BlockPosition(this.a)).up() : new BlockPosition(this.a);
+            int var6 = (int) (var4 + var1);
+            IWorldReader var7 = new ChunkCache(this.b, var5.b(-var6, -var6, -var6), var5.b(var6, var6, var6));
+            PathEntity var8 = this.s.a(var7, this.a, var0, var4, var3);
+            this.b.getMethodProfiler().exit();
+            if (var8 != null && var8.k() != null) {
+                this.q = var8.k();
+                this.r = var3;
+            }
+
+            return var8;
+        }
+    }
+
+    @Override
+    public PathEntity a(Stream var0, int var1) {
+        return this.a((Set) var0.collect(Collectors.toSet()), 8, false, var1);
+    }
+
+    @Override
     protected void a(Vec3D var0) {
         if (this.e - this.f > 100) {
             if (var0.distanceSquared(this.g) < 2.25D) {
@@ -238,7 +286,7 @@ public class PlayerNavigation extends NavigationAbstract {
             var9 *= var13;
             var2 += 2;
             var4 += 2;
-            if (!this.a(var5, (int) var0.y, var6, var2, var3, var4, var0, var7, var9)) {
+            if (!this.a(var5, MathHelper.floor(var0.y), var6, var2, var3, var4, var0, var7, var9)) {
                 return false;
             } else {
                 var2 -= 2;
@@ -278,7 +326,7 @@ public class PlayerNavigation extends NavigationAbstract {
                         var6 += var24;
                         var28 = var26 - var6;
                     }
-                } while (this.a(var5, (int) var0.y, var6, var2, var3, var4, var0, var7, var9));
+                } while (this.a(var5, MathHelper.floor(var0.y), var6, var2, var3, var4, var0, var7, var9));
 
                 return false;
             }
@@ -287,37 +335,19 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     protected Vec3D b() {
-        return new Vec3D(this.a.locX, this.s(), this.a.locZ);
+        return new Vec3D(this.a.locX, this.t(), this.a.locZ);
     }
 
     @Override
-    public PathEntity b(BlockPosition var0) {
-        BlockPosition var1;
-        if (this.b.getType(var0).isAir()) {
-            for (var1 = var0.down(); var1.getY() > 0 && this.b.getType(var1).isAir(); var1 = var1.down()) {
-                ;
+    public void b(BlockPosition var0) {
+        if (this.c != null && !this.c.b() && this.c.e() != 0) {
+            PathPoint var1 = this.c.c();
+            Vec3D var2 = new Vec3D((var1.a + this.a.locX) / 2.0D, (var1.b + this.a.locY) / 2.0D,
+                    (var1.c + this.a.locZ) / 2.0D);
+            if (var0.a(var2, this.c.e() - this.c.f())) {
+                this.k();
             }
 
-            if (var1.getY() > 0) {
-                return superb(var1.up());
-            }
-
-            while (var1.getY() < this.b.getHeight() && this.b.getType(var1).isAir()) {
-                var1 = var1.up();
-            }
-
-            var0 = var1;
-        }
-
-        if (!this.b.getType(var0).getMaterial().isBuildable()) {
-            return superb(var0);
-        } else {
-            for (var1 = var0.up(); var1.getY() < this.b.getHeight()
-                    && this.b.getType(var1).getMaterial().isBuildable(); var1 = var1.up()) {
-                ;
-            }
-
-            return superb(var1);
         }
     }
 
@@ -325,6 +355,7 @@ public class PlayerNavigation extends NavigationAbstract {
             double var9) {
         Iterator var12 = BlockPosition.a(new BlockPosition(var0, var1, var2),
                 new BlockPosition(var0 + var3 - 1, var1 + var4 - 1, var2 + var5 - 1)).iterator();
+
         BlockPosition var14;
         double var13;
         double var15;
@@ -371,19 +402,6 @@ public class PlayerNavigation extends NavigationAbstract {
         }
     }
 
-    @Override
-    public void c(BlockPosition var0) {
-        if (this.c != null && !this.c.b() && this.c.e() != 0) {
-            PathPoint var1 = this.c.c();
-            Vec3D var2 = new Vec3D((var1.a + this.a.locX) / 2.0D, (var1.b + this.a.locY) / 2.0D,
-                    (var1.c + this.a.locZ) / 2.0D);
-            if (var0.a(var2, this.c.e() - this.c.f())) {
-                this.k();
-            }
-
-        }
-    }
-
     public void c(boolean var0) {
         this.pp = var0;
     }
@@ -397,8 +415,7 @@ public class PlayerNavigation extends NavigationAbstract {
     protected void D_() {
         superD_();
         if (this.pp) {
-            if (this.b.f(new BlockPosition(MathHelper.floor(this.a.locX), (int) (this.a.getBoundingBox().minY + 0.5D),
-                    MathHelper.floor(this.a.locZ)))) {
+            if (this.b.f(new BlockPosition(this.a.locX, this.a.getBoundingBox().minY + 0.5D, this.a.locZ))) {
                 return;
             }
 
@@ -437,7 +454,7 @@ public class PlayerNavigation extends NavigationAbstract {
         if (this.b.getTime() - this.n > 20L) {
             if (this.q != null) {
                 this.c = null;
-                this.c = this.b(this.q);
+                this.c = this.a(this.q, this.r);
                 this.n = this.b.getTime();
                 this.m = false;
             }
@@ -455,33 +472,11 @@ public class PlayerNavigation extends NavigationAbstract {
     @Override
     protected void m() {
         Vec3D var0 = this.b();
-        int var1 = this.c.e();
-
-        for (int var2 = this.c.f(); var2 < this.c.e(); ++var2) {
-            if (this.c.a(var2).b != Math.floor(var0.y)) {
-                var1 = var2;
-                break;
-            }
-        }
-
         this.l = this.a.getWidth() > 0.75F ? this.a.getWidth() / 2.0F : 0.75F - this.a.getWidth() / 2.0F;
-        Vec3D var2 = this.c.g();
-        if (Math.abs(this.a.locX - (var2.x + 0.5D)) < this.l && Math.abs(this.a.locZ - (var2.z + 0.5D)) < this.l
-                && Math.abs(this.a.locY - var2.y) < 1.0D) {
+        Vec3D var1 = this.c.g();
+        if (Math.abs(this.a.locX - (var1.x + 0.5D)) < this.l && Math.abs(this.a.locZ - (var1.z + 0.5D)) < this.l
+                && Math.abs(this.a.locY - var1.y) < 1.0D) {
             this.c.c(this.c.f() + 1);
-        }
-
-        if (this.a.world.getTime() % 5L == 0L) {
-            int var3 = MathHelper.f(this.a.getWidth());
-            int var4 = MathHelper.f(this.a.getHeight());
-            int var5 = var3;
-
-            for (int var6 = var1 - 1; var6 >= this.c.f(); --var6) {
-                if (this.a(var0, this.c.a(this.a, var6), var3, var4, var5)) {
-                    this.c.c(var6);
-                    break;
-                }
-            }
         }
 
         this.a(var0);
@@ -499,7 +494,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     protected boolean p() {
-        return this.a.au() || this.a.aD();
+        return this.a.av() || this.a.aD();
     }
 
     @Override
@@ -512,49 +507,12 @@ public class PlayerNavigation extends NavigationAbstract {
         return this.o.e();
     }
 
-    private int s() {
-        if (this.a.isInWater() && this.r()) {
-            int var0 = (int) this.a.getBoundingBox().minY;
-            Block var1 = this.b
-                    .getType(new BlockPosition(MathHelper.floor(this.a.locX), var0, MathHelper.floor(this.a.locZ)))
-                    .getBlock();
-            int var2 = 0;
-
-            do {
-                if (var1 != Blocks.WATER) {
-                    return var0;
-                }
-
-                ++var0;
-                var1 = this.b
-                        .getType(new BlockPosition(MathHelper.floor(this.a.locX), var0, MathHelper.floor(this.a.locZ)))
-                        .getBlock();
-                ++var2;
-            } while (var2 <= 16);
-
-            return (int) this.a.getBoundingBox().minY;
-        } else {
-            return (int) (this.a.getBoundingBox().minY + 0.5D);
-        }
-    }
-
     public void setRange(float pathfindingRange) {
         this.p.setValue(pathfindingRange);
     }
 
-    public PathEntity supera(Entity var0) {
-        BlockPosition var1 = new BlockPosition(var0);
-        double var2 = var0.locX;
-        double var4 = var0.getBoundingBox().minY;
-        double var6 = var0.locZ;
-        return this.a(var1, var2, var4, var6, 16, true);
-    }
-
-    public PathEntity superb(BlockPosition var0) {
-        float var1 = var0.getX() + 0.5F;
-        float var2 = var0.getY() + 0.5F;
-        float var3 = var0.getZ() + 0.5F;
-        return this.a(var0, var1, var2, var3, 8, false);
+    public PathEntity supera(BlockPosition var0, int var1) {
+        return this.a(ImmutableSet.of(var0), 8, false, var1);
     }
 
     protected void superD_() {
@@ -572,6 +530,28 @@ public class PlayerNavigation extends NavigationAbstract {
                 }
             }
 
+        }
+    }
+
+    private int t() {
+        if (this.a.isInWater() && this.r()) {
+            int var0 = MathHelper.floor(this.a.getBoundingBox().minY);
+            Block var1 = this.b.getType(new BlockPosition(this.a.locX, var0, this.a.locZ)).getBlock();
+            int var2 = 0;
+
+            do {
+                if (var1 != Blocks.WATER) {
+                    return var0;
+                }
+
+                ++var0;
+                var1 = this.b.getType(new BlockPosition(this.a.locX, var0, this.a.locZ)).getBlock();
+                ++var2;
+            } while (var2 <= 16);
+
+            return MathHelper.floor(this.a.getBoundingBox().minY);
+        } else {
+            return MathHelper.floor(this.a.getBoundingBox().minY + 0.5D);
         }
     }
 

@@ -454,13 +454,16 @@ public class NMSImpl implements NMSBridge {
     @Override
     public MCNavigator getTargetNavigator(org.bukkit.entity.Entity entity, Iterable<Vector> dest,
             final NavigatorParameters params) {
-        final PathEntity path = new PathEntity(Lists.<PathPoint> newArrayList(
+        List<PathPoint> list = Lists.<PathPoint> newArrayList(
                 Iterables.<Vector, PathPoint> transform(dest, new Function<Vector, PathPoint>() {
                     @Override
                     public PathPoint apply(Vector input) {
                         return new PathPoint(input.getBlockX(), input.getBlockY(), input.getBlockZ());
                     }
-                })));
+                }));
+        PathPoint last = list.size() > 0 ? list.get(list.size() - 1) : null;
+        final PathEntity path = new PathEntity(list, last != null ? new BlockPosition(last.a, last.b, last.c) : null,
+                true);
         return getTargetNavigator(entity, params, new Function<NavigationAbstract, Boolean>() {
             @Override
             public Boolean apply(NavigationAbstract input) {

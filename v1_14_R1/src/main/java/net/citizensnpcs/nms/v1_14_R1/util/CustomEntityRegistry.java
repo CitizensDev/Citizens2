@@ -20,7 +20,7 @@ public class CustomEntityRegistry extends RegistryBlocks {
     private final RegistryMaterials<EntityTypes<?>> wrapped;
 
     public CustomEntityRegistry(RegistryBlocks<EntityTypes<?>> original) {
-        super(original.a().b());
+        super(original.a().getNamespace());
         this.wrapped = original;
     }
 
