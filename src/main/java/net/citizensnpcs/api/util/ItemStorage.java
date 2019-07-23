@@ -96,11 +96,23 @@ public class ItemStorage {
     }
 
     private static void deserialiseMeta(DataKey root, ItemStack res) {
+        if (SUPPORTS_CUSTOM_MODEL_DATA) {
+            try {
+                if (root.keyExists("custommodel")) {
+                    ItemMeta meta = ensureMeta(res);
+                    meta.setCustomModelData(root.getInt("custommodel"));
+                    res.setItemMeta(meta);
+                }
+            } catch (Throwable t) {
+                SUPPORTS_CUSTOM_MODEL_DATA = false;
+            }
+        }
         if (root.keyExists("flags")) {
             ItemMeta meta = ensureMeta(res);
             for (DataKey key : root.getRelative("flags").getIntegerSubKeys()) {
                 meta.addItemFlags(ItemFlag.valueOf(key.getString("")));
             }
+            res.setItemMeta(meta);
         }
         if (root.keyExists("lore")) {
             ItemMeta meta = ensureMeta(res);
@@ -184,6 +196,7 @@ public class ItemStorage {
                     meta.addPattern(pattern);
                 }
             }
+            res.setItemMeta(meta);
         }
 
         if (root.keyExists("potion")) {
@@ -216,11 +229,14 @@ public class ItemStorage {
                 for (DataKey key : root.getRelative("crossbow.projectiles").getSubKeys()) {
                     meta.addChargedProjectile(ItemStorage.loadItemStack(key));
                 }
+                res.setItemMeta(meta);
             }
         }
 
         if (root.keyExists("repaircost") && res.getItemMeta() instanceof Repairable) {
-            ((Repairable) res.getItemMeta()).setRepairCost(root.getInt("repaircost"));
+            ItemMeta meta = ensureMeta(res);
+            ((Repairable) meta).setRepairCost(root.getInt("repaircost"));
+            res.setItemMeta(meta);
         }
         ItemMeta meta = res.getItemMeta();
         if (meta != null) {
@@ -342,6 +358,17 @@ public class ItemStorage {
     }
 
     private static void serialiseMeta(DataKey key, ItemMeta meta) {
+        if (SUPPORTS_CUSTOM_MODEL_DATA) {
+            try {
+                if (meta.hasCustomModelData()) {
+                    key.setInt("custommodel", meta.getCustomModelData());
+                } else {
+                    key.removeKey("custommodel");
+                }
+            } catch (Throwable t) {
+                SUPPORTS_CUSTOM_MODEL_DATA = false;
+            }
+        }
         key.removeKey("flags");
         try {
             key.setBoolean("unbreakable", meta.isUnbreakable());
@@ -523,4 +550,5 @@ public class ItemStorage {
     }
 
     private static boolean SUPPORTS_1_14_API = true;
+    private static boolean SUPPORTS_CUSTOM_MODEL_DATA = true;
 }
