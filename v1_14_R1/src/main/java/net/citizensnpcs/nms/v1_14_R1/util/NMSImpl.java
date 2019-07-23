@@ -1656,7 +1656,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void stopNavigation(NavigationAbstract navigation) {
-        navigation.q();
+        navigation.o();
     }
 
     public static void updateAI(EntityLiving entity) {

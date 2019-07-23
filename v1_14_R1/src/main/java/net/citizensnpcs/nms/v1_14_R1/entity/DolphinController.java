@@ -15,11 +15,14 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.BlockPosition;
+import net.minecraft.server.v1_14_R1.ControllerMove;
 import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.EntityDolphin;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
+import net.minecraft.server.v1_14_R1.Navigation;
+import net.minecraft.server.v1_14_R1.NavigationAbstract;
 import net.minecraft.server.v1_14_R1.SoundEffect;
 import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
@@ -60,7 +63,7 @@ public class DolphinController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
-                this.setNoAI(true);
+                this.moveController = new ControllerMove(this);
             }
         }
 
@@ -72,10 +75,20 @@ public class DolphinController extends MobEntityController {
         }
 
         @Override
+        public boolean au() {
+            return npc == null ? super.au() : true;
+        }
+
+        @Override
         public void b(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
             }
+        }
+
+        @Override
+        protected NavigationAbstract b(World world) {
+            return new Navigation(this, world);
         }
 
         @Override
@@ -178,6 +191,11 @@ public class DolphinController extends MobEntityController {
             } else {
                 return false;
             }
+        }
+
+        @Override
+        public boolean isInWater() {
+            return npc == null ? super.isInWater() : false;
         }
 
         @Override

@@ -406,7 +406,5 @@ public class CitizensNPC extends AbstractNPC {
 
     private static final String NPC_METADATA_MARKER = "NPC";
     private static boolean SUPPORT_GLOWING = true;
-    private static boolean SUPPORT_GLOWING_COLOR = true;
     private static boolean SUPPORT_SILENT = true;
-    private static boolean SUPPORT_TEAM_SETOPTION = true;
 }
