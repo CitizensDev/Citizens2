@@ -1732,7 +1732,7 @@ public class NPCCommands {
             npc.data().setPersistent(NPC.HURT_SOUND_METADATA, hurtSound);
         }
         if (ambientSound == null) {
-            npc.data().remove(ambientSound);
+            npc.data().remove(NPC.AMBIENT_SOUND_METADATA);
         } else {
             npc.data().setPersistent(NPC.AMBIENT_SOUND_METADATA, ambientSound);
         }
