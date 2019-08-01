@@ -66,6 +66,7 @@ public class DoorExaminer implements BlockExaminer {
                     return;
                 }
                 door.setOpen(true);
+                state.setData(door);
                 state.update();
             }
         }
