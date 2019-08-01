@@ -2,6 +2,7 @@ package net.citizensnpcs.api.astar.pathfinder;
 
 import java.util.ListIterator;
 
+import net.citizensnpcs.api.util.SpigotUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -36,26 +37,37 @@ public class DoorExaminer implements BlockExaminer {
                 return;
             if (npc.getStoredLocation().distanceSquared(point.getLocation().add(0.5, 0, 0.5)) > 4)
                 return;
-            /*BlockState state = point.getState();
-            Door door = (Door) state.getData();
-            boolean bottom = !door.isTopHalf();
-            Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
-            state = set.getState();
-            door = (Door) state.getData();
-            if (door.isOpen()) {
-                return;
-            }*/
-            Door door = (Door) point.getBlockData();
-            if(door.isOpen()) {
-                return;
+
+            if(SpigotUtil.isUsing1_13API()) {
+                Door door = (Door) point.getBlockData();
+                if(door.isOpen()) {
+                    return;
+                }
+                NPCOpenDoorEvent event = new NPCOpenDoorEvent(npc, point);
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    return;
+                }
+                door.setOpen(true);
+                point.setBlockData(door);
+            } else {
+                BlockState state = point.getState();
+                org.bukkit.material.Door door = (org.bukkit.material.Door) state.getData();
+                boolean bottom = !door.isTopHalf();
+                Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
+                state = set.getState();
+                door = (org.bukkit.material.Door) state.getData();
+                if (door.isOpen()) {
+                    return;
+                }
+                NPCOpenDoorEvent event = new NPCOpenDoorEvent(npc, point);
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    return;
+                }
+                door.setOpen(true);
+                state.update();
             }
-            NPCOpenDoorEvent event = new NPCOpenDoorEvent(npc, point);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return;
-            }
-            door.setOpen(true);
-            point.setBlockData(door);
         }
     }
 }
