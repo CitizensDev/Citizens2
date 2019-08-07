@@ -20,7 +20,7 @@ import net.citizensnpcs.util.StringHelper;
 
 @TraitName("waypoints")
 public class Waypoints extends Trait {
-    private WaypointProvider provider = new LinearWaypointProvider();
+    private WaypointProvider provider = new LinearWaypointProvider(npc);
     private String providerName = "linear";
 
     public Waypoints() {

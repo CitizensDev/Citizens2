@@ -48,6 +48,13 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
     private NPC npc;
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
+    public LinearWaypointProvider() {
+    }
+
+    public LinearWaypointProvider(NPC npc) {
+        this.npc = npc;
+    }
+
     @Override
     public WaypointEditor createEditor(CommandSender sender, CommandContext args) {
         if (args.hasFlag('h')) {
