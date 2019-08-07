@@ -235,6 +235,7 @@ public class VillagerController extends MobEntityController {
                 }
                 if (this.behaviorMap.size() > 0) {
                     this.behaviorMap.clear();
+                    NMSImpl.clearGoals(goalSelector, targetSelector);
                 }
             }
             super.mobTick();

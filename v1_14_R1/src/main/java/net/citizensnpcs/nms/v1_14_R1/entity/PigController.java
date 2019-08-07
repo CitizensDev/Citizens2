@@ -38,7 +38,6 @@ public class PigController extends MobEntityController {
 
     public static class EntityPigNPC extends EntityPig implements NPCHolder {
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityPigNPC(EntityTypes<? extends EntityPig> types, World world) {
