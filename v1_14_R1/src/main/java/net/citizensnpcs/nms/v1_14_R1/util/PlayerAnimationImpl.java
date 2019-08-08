@@ -17,6 +17,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
+import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.EntityPlayer;
 import net.minecraft.server.v1_14_R1.EnumHand;
 import net.minecraft.server.v1_14_R1.Packet;
@@ -74,7 +75,8 @@ public class PlayerAnimationImpl {
                 }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
                 break;
             case SLEEP:
-                throw new UnsupportedOperationException(); // TODO
+                player.sleep(new BlockPosition(player));
+                break;
             case SNEAK:
                 player.getBukkitEntity().setSneaking(true);
                 sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
