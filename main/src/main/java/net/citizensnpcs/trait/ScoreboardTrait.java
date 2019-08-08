@@ -31,16 +31,24 @@ public class ScoreboardTrait extends Trait {
 
     public void apply(Team team, boolean nameVisibility) {
         Set<String> newTags = new HashSet<String>(tags);
-        for (String oldTag : npc.getEntity().getScoreboardTags()) {
-            if (!newTags.remove(oldTag)) {
-                npc.getEntity().removeScoreboardTag(oldTag);
+        if (SUPPORT_TAGS) {
+            try {
+                for (String oldTag : npc.getEntity().getScoreboardTags()) {
+                    if (!newTags.remove(oldTag)) {
+                        npc.getEntity().removeScoreboardTag(oldTag);
+                    }
+                }
+                for (String tag : newTags) {
+                    npc.getEntity().addScoreboardTag(tag);
+                }
+            } catch (NoSuchMethodError e) {
+                SUPPORT_TAGS = false;
             }
         }
-        for (String tag : newTags) {
-            npc.getEntity().addScoreboardTag(tag);
-        }
 
-        if (SUPPORT_TEAM_SETOPTION) {
+        if (SUPPORT_TEAM_SETOPTION)
+
+        {
             try {
                 team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER);
             } catch (NoSuchMethodError e) {
@@ -85,5 +93,6 @@ public class ScoreboardTrait extends Trait {
     }
 
     private static boolean SUPPORT_GLOWING_COLOR = true;
+    private static boolean SUPPORT_TAGS = true;
     private static boolean SUPPORT_TEAM_SETOPTION = true;
 }
