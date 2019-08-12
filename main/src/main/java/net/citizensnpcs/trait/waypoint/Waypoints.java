@@ -75,6 +75,9 @@ public class Waypoints extends Trait {
         }
         if (provider == null)
             return;
+        if (npc != null) {
+            provider.onSpawn(npc);
+        }
         PersistenceLoader.load(provider, key.getRelative(providerName));
     }
 
