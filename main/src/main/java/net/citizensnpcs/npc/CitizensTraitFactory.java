@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -130,6 +131,11 @@ public class CitizensTraitFactory implements TraitFactory {
     public void deregisterTrait(TraitInfo info) {
         Preconditions.checkNotNull(info, "info cannot be null");
         registered.remove(info.getTraitName());
+    }
+
+    @Override
+    public Collection<TraitInfo> getRegisteredTraits() {
+        return registered.values();
     }
 
     @Override
