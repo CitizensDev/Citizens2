@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.trait;
 
+import java.util.Collection;
+
 import net.citizensnpcs.api.npc.NPC;
 
 public interface TraitFactory {
@@ -19,6 +21,13 @@ public interface TraitFactory {
      *            The TraitInfo to deregister
      */
     void deregisterTrait(TraitInfo info);
+
+    /**
+     * Returns all currently registered traits, including <em>internal</em> traits
+     * 
+     * @return
+     */
+    Collection<TraitInfo> getRegisteredTraits();
 
     /**
      * Gets a trait with the given class.
