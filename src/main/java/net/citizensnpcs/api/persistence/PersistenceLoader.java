@@ -146,6 +146,33 @@ public class PersistenceLoader {
             }
             deserialiseMap(map, root, field);
             value = map;
+        } else if (float[].class.isAssignableFrom(type)) {
+            List<Float> floats = Lists.newArrayList();
+            for (DataKey sub : root.getRelative(field.key).getIntegerSubKeys()) {
+                floats.add((float) sub.getDouble(""));
+            }
+            value = new float[floats.size()];
+            for (int i = 0; i < floats.size(); i++) {
+                ((float[]) value)[i] = floats.get(i);
+            }
+        } else if (double[].class.isAssignableFrom(type)) {
+            List<Double> doubles = Lists.newArrayList();
+            for (DataKey sub : root.getRelative(field.key).getIntegerSubKeys()) {
+                doubles.add(sub.getDouble(""));
+            }
+            value = new double[doubles.size()];
+            for (int i = 0; i < doubles.size(); i++) {
+                ((double[]) value)[i] = doubles.get(i);
+            }
+        } else if (int[].class.isAssignableFrom(type)) {
+            List<Integer> ints = Lists.newArrayList();
+            for (DataKey sub : root.getRelative(field.key).getIntegerSubKeys()) {
+                ints.add(sub.getInt(""));
+            }
+            value = new int[ints.size()];
+            for (int i = 0; i < ints.size(); i++) {
+                ((int[]) value)[i] = ints.get(i);
+            }
         } else
             value = deserialiseValue(field, root.getRelative(field.key));
         if (value == null && field.isRequired())
@@ -398,6 +425,27 @@ public class PersistenceLoader {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 String key = createRelativeKey(field.key, entry.getKey());
                 serialiseValue(field, root.getRelative(key), entry.getValue());
+            }
+        } else if (float[].class.isAssignableFrom(field.getType())) {
+            float[] floats = field.get();
+            root.removeKey(field.key);
+            for (int i = 0; i < floats.length; i++) {
+                String key = createRelativeKey(field.key, i);
+                serialiseValue(field, root.getRelative(key), floats[i]);
+            }
+        } else if (double[].class.isAssignableFrom(field.getType())) {
+            double[] doubles = field.get();
+            root.removeKey(field.key);
+            for (int i = 0; i < doubles.length; i++) {
+                String key = createRelativeKey(field.key, i);
+                serialiseValue(field, root.getRelative(key), doubles[i]);
+            }
+        } else if (int[].class.isAssignableFrom(field.getType())) {
+            int[] ints = field.get();
+            root.removeKey(field.key);
+            for (int i = 0; i < ints.length; i++) {
+                String key = createRelativeKey(field.key, i);
+                serialiseValue(field, root.getRelative(key), ints[i]);
             }
         } else {
             serialiseValue(field, root.getRelative(field.key), field.get());

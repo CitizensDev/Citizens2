@@ -35,6 +35,13 @@ public class PersistenceLoaderTest {
     }
 
     @Test
+    public void floatArrays() {
+        root.setDouble("array.0", 1.2);
+        root.setDouble("array.1", 2.4);
+        assertThat(PersistenceLoader.load(SaveLoadTest.class, root).array, is(new float[] { 1.2F, 2.4F }));
+    }
+
+    @Test
     public void illegalCollectionClass() {
         assertThat(PersistenceLoader.load(IllegalCollectionClassTest.class, root), is(nullValue()));
     }
@@ -157,6 +164,9 @@ public class PersistenceLoaderTest {
     }
 
     public static class SaveLoadTest implements Cloneable {
+        @Persist
+        public float[] array = {};
+
         @Persist
         public double d = 0.5;
 
