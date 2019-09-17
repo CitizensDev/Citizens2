@@ -1747,8 +1747,9 @@ public class NPCCommands {
         if (deathSound != null && deathSound.isEmpty()) {
             deathSound = "none";
         }
-        if (!StringUtils.isNullOrEmpty(ambientSound) || !StringUtils.isNullOrEmpty(deathSound)
-                || !StringUtils.isNullOrEmpty(hurtSound)) {
+        if ((!StringUtils.isNullOrEmpty(ambientSound) && !ambientSound.equals("none"))
+                || (!StringUtils.isNullOrEmpty(deathSound) && !deathSound.equals("none"))
+                || (!StringUtils.isNullOrEmpty(hurtSound) && !hurtSound.equals("none"))) {
             npc.data().setPersistent(NPC.SILENT_METADATA, false);
         }
         Messaging.sendTr(sender, Messages.SOUND_SET, npc.getName(), ambientSound, hurtSound, deathSound);
