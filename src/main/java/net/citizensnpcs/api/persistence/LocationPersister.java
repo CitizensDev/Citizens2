@@ -21,15 +21,18 @@ public class LocationPersister implements Persister<Location> {
                 : new Location(world, x, y, z, yaw, pitch);
     }
 
-    private float normalise(double double1) {
-        return (float) (!Double.isFinite(double1) ? 0 : double1);
+    private float normalise(double d) {
+        if (Double.isNaN(d)) {
+            return 0F;
+        }
+        return (float) (!Double.isFinite(d) ? 0 : d);
     }
 
     private double round(double z) {
         if (Double.isInfinite(z) || Double.isNaN(z)) {
-            return z;
+            return 0F;
         }
-        return new BigDecimal(z).setScale(4, RoundingMode.DOWN).doubleValue();
+        return new BigDecimal(z).setScale(4, RoundingMode.HALF_DOWN).doubleValue();
     }
 
     @Override
@@ -40,8 +43,8 @@ public class LocationPersister implements Persister<Location> {
         root.setDouble("x", round(location.getX()));
         root.setDouble("y", round(location.getY()));
         root.setDouble("z", round(location.getZ()));
-        root.setDouble("yaw", location.getYaw());
-        root.setDouble("pitch", location.getPitch());
+        root.setDouble("yaw", round(location.getYaw()));
+        root.setDouble("pitch", round(location.getPitch()));
     }
 
     public static class LazilyLoadedLocation extends Location {

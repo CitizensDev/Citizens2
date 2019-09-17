@@ -36,9 +36,10 @@ public class PersistenceLoaderTest {
 
     @Test
     public void floatArrays() {
-        root.setDouble("array.0", 1.2);
-        root.setDouble("array.1", 2.4);
-        assertThat(PersistenceLoader.load(SaveLoadTest.class, root).array, is(new float[] { 1.2F, 2.4F }));
+        root.setDouble("array.0", -10.0);
+        root.setDouble("array.1", 0.0);
+        root.setDouble("array.2", 360.0);
+        assertThat(PersistenceLoader.load(SaveLoadTest.class, root).array, is(new float[] { -10.0F, 0.0F, 360.0F }));
     }
 
     @Test
@@ -165,7 +166,7 @@ public class PersistenceLoaderTest {
 
     public static class SaveLoadTest implements Cloneable {
         @Persist
-        public float[] array = {};
+        public float[] array = { -10, 0, 360 };
 
         @Persist
         public double d = 0.5;
