@@ -37,6 +37,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.mysql.jdbc.StringUtils;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
@@ -1746,7 +1747,8 @@ public class NPCCommands {
         if (deathSound != null && deathSound.isEmpty()) {
             deathSound = "none";
         }
-        if (ambientSound != null || deathSound != null || hurtSound != null) {
+        if (!StringUtils.isNullOrEmpty(ambientSound) || !StringUtils.isNullOrEmpty(deathSound)
+                || !StringUtils.isNullOrEmpty(hurtSound)) {
             npc.data().setPersistent(NPC.SILENT_METADATA, false);
         }
         Messaging.sendTr(sender, Messages.SOUND_SET, npc.getName(), ambientSound, hurtSound, deathSound);
