@@ -101,6 +101,7 @@ public class Messages {
     public static final String GAMEMODE_DESCRIBE = "citizens.commands.npc.gamemode.describe";
     public static final String GAMEMODE_INVALID = "citizens.commands.npc.gamemode.invalid";
     public static final String GAMEMODE_SET = "citizens.commands.npc.gamemode.set";
+    public static final String GLOWING_COLOR_PLAYER_ONLY = "citizens.commands.npc.glowing.player-only";
     public static final String GLOWING_COLOR_SET = "citizens.commands.npc.glowing.color-set";
     public static final String GLOWING_SET = "citizens.commands.npc.glowing.set";
     public static final String GLOWING_UNSET = "citizens.commands.npc.glowing.unset";

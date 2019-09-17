@@ -587,7 +587,7 @@ public class NPCCommands {
         if (args.hasValueFlag("color")) {
             ChatColor chatColor = Util.matchEnum(ChatColor.values(), args.getFlag("color"));
             if (!(npc.getEntity() instanceof Player))
-                throw new CommandException();
+                throw new CommandException(Messages.GLOWING_COLOR_PLAYER_ONLY);
             npc.getTrait(ScoreboardTrait.class).setColor(chatColor);
             Messaging.sendTr(sender, Messages.GLOWING_COLOR_SET, npc.getName(),
                     chatColor == null ? ChatColor.WHITE + "white" : chatColor + Util.prettyEnum(chatColor));
