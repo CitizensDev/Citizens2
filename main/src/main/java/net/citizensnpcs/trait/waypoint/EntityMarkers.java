@@ -21,6 +21,16 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 public class EntityMarkers<T> {
     private final Map<T, Entity> markers = Maps.newHashMap();
     private final NPCRegistry registry = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
+    private EntityType type;
+
+    public EntityMarkers() {
+        this(EntityType.ENDER_SIGNAL);
+    }
+
+    public EntityMarkers(EntityType type) {
+        this.type = type;
+
+    }
 
     /**
      * Creates and persists (in memory) an {@link Entity} marker.
@@ -63,7 +73,7 @@ public class EntityMarkers<T> {
      * @return the spawned entity
      */
     public Entity spawnMarker(World world, Location at) {
-        NPC npc = registry.createNPC(EntityType.ENDER_SIGNAL, "");
+        NPC npc = registry.createNPC(type, "");
         npc.spawn(at.clone().add(0.5, 0, 0.5), SpawnReason.CREATE);
         return npc.getEntity();
     }
