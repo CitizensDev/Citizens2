@@ -130,8 +130,9 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                         public void run() {
                             available.clear();
                             helpers.clear();
-                            if (showPath)
+                            if (showPath) {
                                 markers.destroyMarkers();
+                            }
                         }
                     });
                 }
@@ -155,7 +156,9 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     helpers.add(element);
                     Messaging.send(player, Messages.GUIDED_WAYPOINT_EDITOR_ADDED_GUIDE);
                 }
-                createWaypointMarkerWithData(element);
+                if (showPath) {
+                    createWaypointMarkerWithData(element);
+                }
                 rebuildTree();
             }
 
@@ -371,9 +374,10 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         public Iterable<AStarNode> getNeighbours() {
             PhFilterDistance filter = new PhFilterDistance();
             filter.set(new long[] { waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
-                    waypoint.getLocation().getBlockZ() }, new PhDistanceL(), 15);
-            PhKnnQuery<Waypoint> res = tree.nearestNeighbour(0, null, filter, waypoint.getLocation().getBlockX(),
-                    waypoint.getLocation().getBlockY(), waypoint.getLocation().getBlockZ());
+                    waypoint.getLocation().getBlockZ() }, PhDistanceL.THIS, 10);
+            PhKnnQuery<Waypoint> res = tree.nearestNeighbour(100, PhDistanceL.THIS, filter,
+                    waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
+                    waypoint.getLocation().getBlockZ());
             List<AStarNode> resList = Lists.newArrayList();
             res.forEachRemaining(new Consumer<Waypoint>() {
                 @Override
