@@ -142,10 +142,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         if (!enabled || !npc.isSpawned() || npc.getNavigator().isNavigating())
             return;
         // TODO: remove in a later version, defaults weren't saving properly
-        if (randomPitchRange == null) {
+        if (randomPitchRange == null || randomPitchRange.length != 2) {
             randomPitchRange = new float[] { -10, 0 };
         }
-        if (randomYawRange == null) {
+        if (randomYawRange == null || randomYawRange.length != 2) {
             randomYawRange = new float[] { 0, 360 };
         }
         npc.getEntity().getLocation(NPC_LOCATION);
