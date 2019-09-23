@@ -116,13 +116,6 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     @Override
     public void load(DataKey key) {
         range = key.getDouble("range");
-        // TODO: remove in a later version, defaults weren't saving properly
-        if (randomPitchRange == null) {
-            randomPitchRange = new float[] { -10, 0 };
-        }
-        if (randomYawRange == null) {
-            randomYawRange = new float[] { 0, 360 };
-        }
     }
 
     /**
@@ -148,6 +141,13 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     public void run() {
         if (!enabled || !npc.isSpawned() || npc.getNavigator().isNavigating())
             return;
+        // TODO: remove in a later version, defaults weren't saving properly
+        if (randomPitchRange == null) {
+            randomPitchRange = new float[] { -10, 0 };
+        }
+        if (randomYawRange == null) {
+            randomYawRange = new float[] { 0, 360 };
+        }
         npc.getEntity().getLocation(NPC_LOCATION);
         if (hasInvalidTarget()) {
             findNewTarget();
