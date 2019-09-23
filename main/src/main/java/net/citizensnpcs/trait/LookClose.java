@@ -116,6 +116,13 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     @Override
     public void load(DataKey key) {
         range = key.getDouble("range");
+        // TODO: remove in a later version, defaults weren't saving properly
+        if (randomPitchRange == null) {
+            randomPitchRange = new float[] { -10, 0 };
+        }
+        if (randomYawRange == null) {
+            randomYawRange = new float[] { 0, 360 };
+        }
     }
 
     /**

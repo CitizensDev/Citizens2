@@ -48,6 +48,7 @@ import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.command.exception.CommandUsageException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
 import net.citizensnpcs.api.command.exception.RequirementMissingException;
 import net.citizensnpcs.api.command.exception.ServerCommandException;
@@ -75,6 +76,7 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.FollowTrait;
@@ -272,6 +274,38 @@ public class NPCCommands {
                 npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
                 npc.getName());
 
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "command|cmd (add [command] | remove [id]) (-l/-r)",
+            desc = "Controls commands which will be run when clicking on an NPC",
+            modifiers = { "command", "cmd" },
+            min = 1,
+            flags = "lr",
+            permission = "citizens.npc.command")
+    public void command(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        CommandTrait commands = npc.getTrait(CommandTrait.class);
+        if (args.argsLength() == 1) {
+            commands.describe(sender);
+        } else if (args.getString(1).equalsIgnoreCase("add")) {
+            if (args.argsLength() == 2)
+                throw new CommandUsageException();
+            String command = args.getJoinedStrings(2);
+            CommandTrait.Hand hand = args.hasFlag('l') ? CommandTrait.Hand.LEFT : CommandTrait.Hand.RIGHT;
+            int id = commands.addCommand(command, hand);
+            Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
+        } else if (args.getString(1).equalsIgnoreCase("remove")) {
+            if (args.argsLength() == 2)
+                throw new CommandUsageException();
+            int id = args.getInteger(2);
+            if (!commands.hasCommandId(id))
+                throw new CommandException(Messages.COMMAND_UNKNOWN_COMMAND_ID, id);
+            commands.removeCommandById(id);
+            Messaging.sendTr(sender, Messages.COMMAND_REMOVED, id);
+        } else {
+            throw new CommandUsageException();
+        }
     }
 
     @Command(

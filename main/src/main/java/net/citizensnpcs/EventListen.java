@@ -90,6 +90,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
+import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.util.ChunkCoord;
@@ -263,6 +264,9 @@ public class EventListen implements Listener {
 
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
             Bukkit.getPluginManager().callEvent(leftClickEvent);
+            if (npc.hasTrait(CommandTrait.class)) {
+                npc.getTrait(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
+            }
         } else if (event instanceof EntityDamageByBlockEvent) {
             Bukkit.getPluginManager().callEvent(new NPCDamageByBlockEvent(npc, (EntityDamageByBlockEvent) event));
         } else {
@@ -467,6 +471,9 @@ public class EventListen implements Listener {
         Player player = event.getPlayer();
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
         Bukkit.getPluginManager().callEvent(rightClickEvent);
+        if (npc.hasTrait(CommandTrait.class)) {
+            npc.getTrait(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
