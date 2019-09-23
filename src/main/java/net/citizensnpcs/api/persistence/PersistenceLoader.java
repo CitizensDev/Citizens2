@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.persistence;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -254,7 +255,9 @@ public class PersistenceLoader {
         if (loadedDelegates.containsKey(delegateClass))
             return;
         try {
-            loadedDelegates.put(delegateClass, delegateClass.newInstance());
+            Constructor<? extends Persister<?>> constructor = delegateClass.getConstructor();
+            constructor.setAccessible(true);
+            loadedDelegates.put(delegateClass, constructor.newInstance());
         } catch (Exception e) {
             e.printStackTrace();
             loadedDelegates.put(delegateClass, null);
