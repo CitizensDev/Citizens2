@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 
 import com.google.common.collect.Maps;
 
@@ -67,7 +68,7 @@ public class Poses extends Trait {
     }
 
     public void describe(CommandSender sender, int page) throws CommandException {
-        Paginator paginator = new Paginator().header("Pose");
+        Paginator paginator = new Paginator().header("Pose").console(sender instanceof ConsoleCommandSender);
         paginator.addLine("<e>Key: <a>ID  <b>Name  <c>Pitch/Yaw");
         int i = 0;
         for (Pose pose : poses.values()) {

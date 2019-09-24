@@ -201,7 +201,7 @@ public class NPCCommands {
             else
                 throw new CommandException(Messages.ANCHOR_MISSING, args.getFlag("remove"));
         } else if (!args.hasFlag('a')) {
-            Paginator paginator = new Paginator().header("Anchors");
+            Paginator paginator = new Paginator().header("Anchors").console(sender instanceof ConsoleCommandSender);
             paginator.addLine("<e>Key: <a>ID  <b>Name  <c>World  <d>Location (X,Y,Z)");
             for (int i = 0; i < trait.getAnchors().size(); i++) {
                 if (trait.getAnchors().get(i).isLoaded()) {
@@ -831,7 +831,7 @@ public class NPCCommands {
             }
         }
 
-        Paginator paginator = new Paginator().header("NPCs");
+        Paginator paginator = new Paginator().header("NPCs").console(sender instanceof ConsoleCommandSender);
         paginator.addLine("<e>Key: <a>ID  <b>Name");
         for (int i = 0; i < npcs.size(); i += 2) {
             String line = "<a>" + npcs.get(i).getId() + "<b>  " + npcs.get(i).getName();

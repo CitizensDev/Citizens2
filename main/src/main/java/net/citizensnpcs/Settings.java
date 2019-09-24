@@ -53,7 +53,7 @@ public class Settings {
             file = new File(CitizensAPI.getPlugin().getDataFolder(), Setting.DEBUG_FILE.asString());
         }
         Messaging.configure(file, Setting.DEBUG_MODE.asBoolean(), Setting.MESSAGE_COLOUR.asString(),
-                Setting.HIGHLIGHT_COLOUR.asString());
+                Setting.HIGHLIGHT_COLOUR.asString(), Setting.ERROR_COLOUR.asString());
     }
 
     public enum Setting {
@@ -96,6 +96,7 @@ public class Settings {
             }
         },
         DISABLE_TABLIST("npc.tablist.disable", true),
+        ERROR_COLOUR("general.color-scheme.message-error", "<c>"),
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<e>"),
         KEEP_CHUNKS_LOADED("npc.chunks.always-keep-loaded", false),
         LOCALE("general.translation.locale", ""),
