@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -293,6 +294,7 @@ public class CommandManager {
                 processed.add(info);
             }
         }
+        Collections.sort(lines);
         return lines;
     }
 
@@ -420,14 +422,18 @@ public class CommandManager {
     }
 
     private void sendHelp(CommandSender sender, String name, int page) throws CommandException {
-        if (name.equalsIgnoreCase("npc"))
+        if (name.equalsIgnoreCase("npc")) {
             name = "NPC";
+        }
         Paginator paginator = new Paginator()
-                .header(ChatColor.GREEN + capitalize(name) + " " + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER));
-        for (String line : getLines(sender, name.toLowerCase()))
+                .header(ChatColor.GREEN + capitalize(name) + " " + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER))
+                .console(sender instanceof ConsoleCommandSender);
+        for (String line : getLines(sender, name.toLowerCase())) {
             paginator.addLine(line);
-        if (!paginator.sendPage(sender, page))
+        }
+        if (!paginator.sendPage(sender, page)) {
             throw new CommandException(CommandMessages.COMMAND_PAGE_MISSING, page);
+        }
     }
 
     private void sendSpecificHelp(CommandSender sender, String rootCommand, String modifier) throws CommandException {
@@ -541,8 +547,7 @@ public class CommandManager {
         return p[n];
     }
 
-    private static final String COMMAND_FORMAT = "<7>/<c>%s%s <7>- <e>%s";
-
+    private static final String COMMAND_FORMAT = "<7>/{{%s%s <7>- [[%s";
     // Logger for general errors.
     private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
 }

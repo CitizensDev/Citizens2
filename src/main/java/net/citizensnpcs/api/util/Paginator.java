@@ -6,11 +6,17 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 public class Paginator {
+    private boolean console;
     private String header;
     private final List<String> lines = new ArrayList<String>();
 
     public void addLine(String line) {
         lines.add(line);
+    }
+
+    public Paginator console(boolean console) {
+        this.console = console;
+        return this;
     }
 
     public Paginator header(String header) {
@@ -19,26 +25,27 @@ public class Paginator {
     }
 
     public boolean sendPage(CommandSender sender, int page) {
-        int pages = (int) (Math.ceil((double) lines.size() / LINES_PER_PAGE) == 0 ? 1
-                : Math.ceil((double) lines.size() / LINES_PER_PAGE));
+        int linesPerPage = console ? 200 : LINES_PER_PAGE;
+        int pages = (int) (Math.ceil((double) lines.size() / linesPerPage) == 0 ? 1
+                : Math.ceil((double) lines.size() / linesPerPage));
         if (page <= 0 || page > pages)
             return false;
 
-        int startIndex = LINES_PER_PAGE * page - LINES_PER_PAGE;
-        int endIndex = page * LINES_PER_PAGE;
+        int startIndex = linesPerPage * page - linesPerPage;
+        int endIndex = page * linesPerPage;
 
-        Messaging.send(sender, wrapHeader("<e>" + header + " <f>" + page + "/" + pages));
+        Messaging.send(sender, wrapHeader("[[" + header + " <f>" + page + "/" + pages));
 
         if (lines.size() < endIndex)
             endIndex = lines.size();
-        for (String line : lines.subList(startIndex, endIndex))
+        for (String line : lines.subList(startIndex, endIndex)) {
             Messaging.send(sender, line);
+        }
         return true;
     }
 
     public static String wrapHeader(Object string) {
-        String highlight = "<e>";
-        return highlight + "=====[ " + string.toString() + highlight + " ]=====";
+        return "[[=====[ " + string.toString() + " [[]=====";
     }
 
     private static final int LINES_PER_PAGE = 9;

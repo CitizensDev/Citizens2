@@ -47,10 +47,12 @@ public class Messaging {
         }
     }
 
-    public static void configure(File debugFile, boolean debug, String messageColour, String highlightColour) {
+    public static void configure(File debugFile, boolean debug, String messageColour, String highlightColour,
+            String errorColour) {
         DEBUG = debug;
-        MESSAGE_COLOUR = messageColour;
-        HIGHLIGHT_COLOUR = highlightColour;
+        MESSAGE_COLOUR = Colorizer.parseColors(messageColour);
+        HIGHLIGHT_COLOUR = Colorizer.parseColors(highlightColour);
+        ERROR_COLOUR = Colorizer.parseColors(errorColour);
 
         if (Bukkit.getLogger() != null) {
             LOGGER = Bukkit.getLogger();
@@ -95,7 +97,7 @@ public class Messaging {
 
     private static String prettify(String message) {
         String trimmed = message.trim();
-        String messageColour = Colorizer.parseColors(MESSAGE_COLOUR);
+        String messageColour = MESSAGE_COLOUR;
         if (!trimmed.isEmpty()) {
             if (trimmed.charAt(0) == ChatColor.COLOR_CHAR) {
                 ChatColor test = ChatColor.getByChar(trimmed.substring(1, 2));
@@ -107,7 +109,8 @@ public class Messaging {
                 message = messageColour + message;
             }
         }
-        message = message.replace("[[", Colorizer.parseColors(HIGHLIGHT_COLOUR));
+        message = message.replace("[[", HIGHLIGHT_COLOUR);
+        message = message.replace("{{", ERROR_COLOUR);
         return CHAT_NEWLINE.matcher(message).replaceAll("<n>]]").replace("]]", messageColour);
     }
 
@@ -116,7 +119,7 @@ public class Messaging {
     }
 
     public static void sendError(CommandSender sender, Object... msg) {
-        send(sender, ChatColor.RED.toString() + SPACE.join(msg));
+        send(sender, ERROR_COLOUR + SPACE.join(msg));
     }
 
     public static void sendErrorTr(CommandSender sender, String key, Object... msg) {
@@ -176,6 +179,7 @@ public class Messaging {
     private static final Splitter CHAT_NEWLINE_SPLITTER = Splitter.on(CHAT_NEWLINE);
     private static boolean DEBUG = false;
     private static Logger DEBUG_LOGGER;
+    private static String ERROR_COLOUR = ChatColor.RED.toString();
     private static String HIGHLIGHT_COLOUR = ChatColor.YELLOW.toString();
     private static Logger LOGGER = Logger.getLogger("Citizens");
     private static String MESSAGE_COLOUR = ChatColor.GREEN.toString();
