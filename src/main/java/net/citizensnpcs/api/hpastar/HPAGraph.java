@@ -23,7 +23,7 @@ import net.citizensnpcs.api.astar.pathfinder.Path;
 public class HPAGraph {
     private final BlockSource blockSource;
     public List<List<HPACluster>> clusters = Lists.newArrayList();
-    // TODO: y-clusters
+    // TODO: y-clusters?
     // TODO: make nodes updateable properly
     private final int cx, cy, cz;
     private final List<PhTreeSolid<HPACluster>> phtrees = Lists.newArrayList();
@@ -39,6 +39,9 @@ public class HPAGraph {
         int baseX = MAX_CLUSTER_SIZE * ((x - cx) / MAX_CLUSTER_SIZE) + cx;
         int baseZ = MAX_CLUSTER_SIZE * ((z - cz) / MAX_CLUSTER_SIZE) + cz;
         List<HPACluster> newClusters = new ArrayList<>();
+        if (phtrees.size() == 0) {
+            phtrees.add(PhTreeSolid.create(3));
+        }
         PhTreeSolid<HPACluster> baseTree = phtrees.get(0);
 
         // build clusters
@@ -59,8 +62,10 @@ public class HPAGraph {
         Map<HPACluster, List<HPACluster>> clusterMap = new IdentityHashMap<>();
         for (HPACluster cluster : newClusters) {
             PhQueryS<HPACluster> q = baseTree.queryIntersect(
-                    new long[] { cluster.clusterX - clusterSize, cluster.clusterY, cluster.clusterZ - clusterSize },
-                    new long[] { cluster.clusterX + clusterSize, cluster.clusterY, cluster.clusterZ + clusterSize });
+                    new long[] { cluster.clusterX - clusterSize, cluster.clusterY - 1, cluster.clusterZ - clusterSize },
+                    new long[] { cluster.clusterX + clusterSize, cluster.clusterY + 1,
+                            cluster.clusterZ + clusterSize });
+            clusterMap.putIfAbsent(cluster, new ArrayList<HPACluster>());
             while (q.hasNext()) {
                 HPACluster neighbour = q.nextValue();
                 if (neighbour == cluster || clusterMap.get(cluster).contains(neighbour))
@@ -79,8 +84,9 @@ public class HPAGraph {
                     direction = Direction.NORTH;
                 if (dz < 0)
                     direction = Direction.SOUTH;
+                if (direction == null)
+                    continue;
                 cluster.connect(neighbour, direction);
-                clusterMap.putIfAbsent(cluster, new ArrayList<HPACluster>());
                 clusterMap.putIfAbsent(neighbour, new ArrayList<HPACluster>());
                 clusterMap.get(cluster).add(neighbour);
                 clusterMap.get(neighbour).add(cluster);
@@ -117,7 +123,9 @@ public class HPAGraph {
     public void addClustersAtDepth(int depth, List<HPACluster> other) {
         while (clusters.size() <= depth) {
             clusters.add(new ArrayList<HPACluster>());
-            phtrees.add(PhTreeSolid.<HPACluster> create(3));
+            if (clusters.size() != phtrees.size()) {
+                phtrees.add(PhTreeSolid.create(3));
+            }
         }
         clusters.get(depth).addAll(other);
     }
@@ -184,6 +192,9 @@ public class HPAGraph {
     }
 
     public boolean walkable(int x, int y, int z) {
+        if (y == 0) {
+            return false;
+        }
         Material in = blockSource.getMaterialAt(x, y, z), on = blockSource.getMaterialAt(x, y - 1, z),
                 above = blockSource.getMaterialAt(x, y + 2, z);
         return MinecraftBlockExaminer.canStandOn(in) && MinecraftBlockExaminer.canStandIn(on)
