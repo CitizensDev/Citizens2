@@ -11,8 +11,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.persistence.DelegatePersistence;
 import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.persistence.Persister;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -23,6 +23,7 @@ import net.citizensnpcs.util.Messages;
 @TraitName("commandtrait")
 public class CommandTrait extends Trait {
     @Persist
+    @DelegatePersistence(NPCCommandPersister.class)
     private final Map<String, NPCCommand> commands = Maps.newHashMap();
 
     public CommandTrait() {
@@ -91,7 +92,7 @@ public class CommandTrait extends Trait {
         commands.remove(String.valueOf(id));
     }
 
-    public enum Hand {
+    public static enum Hand {
         LEFT,
         RIGHT;
     }
@@ -127,9 +128,5 @@ public class CommandTrait extends Trait {
             root.setString("command", instance.command);
             root.setString("hand", instance.hand.name());
         }
-    }
-
-    static {
-        PersistenceLoader.registerPersistDelegate(NPCCommand.class, NPCCommandPersister.class);
     }
 }

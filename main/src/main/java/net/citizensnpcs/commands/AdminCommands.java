@@ -23,8 +23,7 @@ public class AdminCommands {
 
     @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "citizens.admin")
     public void citizens(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        Messaging.send(sender,
-                "          " + StringHelper.wrapHeader("<e>Citizens v" + plugin.getDescription().getVersion()));
+        Messaging.send(sender, StringHelper.wrapHeader("<e>Citizens v" + plugin.getDescription().getVersion()));
         Messaging.send(sender, "     <7>-- <c>Author: fullwall");
         Messaging.send(sender, "     <7>-- <c>Source Code: http://github.com/CitizensDev");
         Messaging.send(sender, "     <7>-- <c>Website: " + plugin.getDescription().getWebsite());
