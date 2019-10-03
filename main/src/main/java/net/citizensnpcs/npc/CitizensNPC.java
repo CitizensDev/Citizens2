@@ -92,7 +92,7 @@ public class CitizensNPC extends AbstractNPC {
         for (Trait trait : new ArrayList<Trait>(traits.values())) {
             trait.onDespawn();
         }
-        Messaging.debug("Despawned", getId(), "DespawnReason.", reason);
+        Messaging.debug("Despawned", getId(), "DespawnReason." + reason);
         if (reason == DespawnReason.DEATH) {
             entityController.setEntity(null);
         } else {

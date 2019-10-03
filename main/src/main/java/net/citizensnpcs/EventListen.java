@@ -202,7 +202,7 @@ public class EventListen implements Listener {
                 }
             }
         };
-        if (event instanceof Cancellable) {
+        if (event instanceof Cancellable || true) {
             runnable.run();
         } else {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable);
