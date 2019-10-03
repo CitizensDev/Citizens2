@@ -57,6 +57,13 @@ public interface NPCRegistry extends Iterable<NPC> {
      */
     public NPC getById(int id);
 
+    /**
+     * Gets the {@link NPC} with the given unique ID if it exists.
+     *
+     * @param uuid
+     *            UUID of the NPC
+     * @return NPC with the given ID (may or may not be spawned)
+     */
     public NPC getByUniqueId(UUID uuid);
 
     /**

@@ -266,11 +266,6 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public boolean isSpawned() {
-        return getEntity() != null && getEntity().isValid();
-    }
-
-    @Override
     public void load(final DataKey root) {
         name = root.getString("name");
         metadata.loadFrom(root.getRelative("metadata"));

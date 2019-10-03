@@ -271,10 +271,12 @@ public class PersistenceLoader {
             persister = loadedDelegates.get(persistRedirects.get(fallback));
             if (persister == null)
                 return null;
-        } else
+        } else {
             persister = loadedDelegates.get(delegate.value());
-        if (persister == null)
+        }
+        if (persister == null) {
             persister = loadedDelegates.get(persistRedirects.get(fallback));
+        }
         return persister;
     }
 
