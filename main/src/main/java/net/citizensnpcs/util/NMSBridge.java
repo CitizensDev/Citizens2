@@ -74,6 +74,8 @@ public interface NMSBridge {
 
     public boolean isOnGround(Entity entity);
 
+    public boolean isValid(Entity entity);
+
     public void load(CommandManager commands);
 
     public void loadPlugins();

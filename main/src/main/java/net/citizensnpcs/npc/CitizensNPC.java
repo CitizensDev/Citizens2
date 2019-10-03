@@ -141,6 +141,11 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public boolean isSpawned() {
+        return getEntity() != null && NMS.isValid(getEntity());
+    }
+
+    @Override
     public void load(final DataKey root) {
         super.load(root);
 

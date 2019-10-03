@@ -621,6 +621,13 @@ public class EventListen implements Listener {
         List<NPC> ids = toRespawn.get(coord);
         for (int i = 0; i < ids.size(); i++) {
             NPC npc = ids.get(i);
+            if (npc.getOwningRegistry().getById(npc.getId()) != npc) {
+                ids.remove(i--);
+                if (Messaging.isDebugging()) {
+                    Messaging.debug("Prevented deregistered NPC from respawning", npc.getId());
+                }
+                continue;
+            }
             boolean success = spawn(npc);
             if (!success) {
                 if (Messaging.isDebugging()) {

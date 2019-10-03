@@ -567,6 +567,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public boolean isValid(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        return handle.valid && handle.isAlive();
+    }
+
+    @Override
     public void load(CommandManager manager) {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LlamaTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));

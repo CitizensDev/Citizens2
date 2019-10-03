@@ -272,6 +272,10 @@ public class NMS {
         return BRIDGE.isOnGround(entity);
     }
 
+    public static boolean isValid(Entity entity) {
+        return BRIDGE.isValid(entity);
+    }
+
     public static void load(CommandManager commands) {
         BRIDGE.load(commands);
     }
