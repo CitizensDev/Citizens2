@@ -38,10 +38,6 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         this.navigator = NMS.getTargetNavigator(npc.getEntity(), dest, params);
     }
 
-    private double distanceSquared() {
-        return handle.getLocation(HANDLE_LOCATION).distanceSquared(target);
-    }
-
     @Override
     public Iterable<Vector> getPath() {
         return navigator.getPath();
@@ -76,7 +72,12 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
             return true;
         boolean wasFinished = navigator.update();
         parameters.run();
-        if (distanceSquared() < parameters.distanceMargin()) {
+        handle.getLocation(HANDLE_LOCATION);
+        double dX = target.getBlockX() + 0.5 - HANDLE_LOCATION.getX();
+        double dZ = target.getBlockZ() + 0.5 - HANDLE_LOCATION.getZ();
+        double dY = target.getY() - HANDLE_LOCATION.getY();
+        double xzDistance = dX * dX + dZ * dZ;
+        if ((dY * dY) < 1 && xzDistance <= parameters.distanceMargin()) {
             stop();
             return true;
         }

@@ -99,22 +99,22 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                 destVector.setZ(vector.getZ() + targetFace.getModZ());
             }
         }*/
-        if (currLoc.toVector().distanceSquared(destVector) <= params.distanceMargin()) {
+        double dX = vector.getBlockX() - currLoc.getX();
+        double dZ = vector.getBlockZ() - currLoc.getZ();
+        double dY = vector.getY() - currLoc.getY();
+        double xzDistance = dX * dX + dZ * dZ;
+        if ((dY * dY) < 1 && xzDistance <= params.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
                 return true;
             }
             vector = plan.getCurrentVector();
         }
-        double dX = vector.getBlockX() - currLoc.getX();
-        double dZ = vector.getBlockZ() - currLoc.getZ();
-        double dY = vector.getY() - currLoc.getY();
-        double xzDistance = dX * dX + dZ * dZ;
-        double distance = xzDistance + dY * dY;
         if (params.debug()) {
             npc.getEntity().getWorld().playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL,
                     0);
         }
+        double distance = xzDistance + dY * dY;
         if (distance > 0 && dY > NMS.getStepHeight(npc.getEntity()) && xzDistance <= 2.75) {
             NMS.setShouldJump(npc.getEntity());
         }
