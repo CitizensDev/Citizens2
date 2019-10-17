@@ -109,6 +109,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                 return true;
             }
             vector = plan.getCurrentVector();
+            return false;
         }
         if (params.debug()) {
             npc.getEntity().getWorld().playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL,
