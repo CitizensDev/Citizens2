@@ -99,9 +99,9 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                 destVector.setZ(vector.getZ() + targetFace.getModZ());
             }
         }*/
-        double dX = vector.getBlockX() - currLoc.getX();
-        double dZ = vector.getBlockZ() - currLoc.getZ();
-        double dY = vector.getY() - currLoc.getY();
+        double dX = destVector.getX() - currLoc.getX();
+        double dZ = destVector.getZ() - currLoc.getZ();
+        double dY = destVector.getY() - currLoc.getY();
         double xzDistance = dX * dX + dZ * dZ;
         if ((dY * dY) < 1 && xzDistance <= params.distanceMargin()) {
             plan.update(npc);
@@ -112,8 +112,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             return false;
         }
         if (params.debug()) {
-            npc.getEntity().getWorld().playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL,
-                    0);
+            npc.getEntity().getWorld().playEffect(destVector.toLocation(npc.getEntity().getWorld()),
+                    Effect.ENDER_SIGNAL, 0);
         }
         double distance = xzDistance + dY * dY;
         if (distance > 0 && dY > NMS.getStepHeight(npc.getEntity()) && xzDistance <= 2.75) {
