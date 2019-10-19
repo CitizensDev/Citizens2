@@ -1981,24 +1981,32 @@ public class NPCCommands {
             usage = "tpto [player name|npc id] [player name|npc id]",
             desc = "Teleport an NPC or player to another NPC or player",
             modifiers = { "tpto" },
-            min = 3,
+            min = 2,
             max = 3,
             permission = "citizens.npc.tpto")
     @Requirements
     public void tpto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Entity from = null, to = null;
+        boolean firstWasPlayer = false;
         if (npc != null) {
             from = npc.getEntity();
         }
-        boolean firstWasPlayer = false;
         try {
             int id = args.getInteger(1);
             NPC fromNPC = CitizensAPI.getNPCRegistry().getById(id);
             if (fromNPC != null) {
-                from = fromNPC.getEntity();
+                if (args.argsLength() == 2) {
+                    from = fromNPC.getEntity();
+                } else {
+                    to = fromNPC.getEntity();
+                }
             }
         } catch (NumberFormatException e) {
-            from = Bukkit.getPlayerExact(args.getString(1));
+            if (args.argsLength() == 2) {
+                to = Bukkit.getPlayerExact(args.getString(1));
+            } else {
+                from = Bukkit.getPlayerExact(args.getString(1));
+            }
             firstWasPlayer = true;
         }
         try {
