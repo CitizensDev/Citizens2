@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
@@ -33,9 +34,10 @@ public class ScoreboardTrait extends Trait {
         Set<String> newTags = new HashSet<String>(tags);
         if (SUPPORT_TAGS) {
             try {
-                for (String oldTag : npc.getEntity().getScoreboardTags()) {
+                for (Iterator<String> iterator = npc.getEntity().getScoreboardTags().iterator(); iterator.hasNext();) {
+                    String oldTag = iterator.next();
                     if (!newTags.remove(oldTag)) {
-                        npc.getEntity().removeScoreboardTag(oldTag);
+                        iterator.remove();
                     }
                 }
                 for (String tag : newTags) {
