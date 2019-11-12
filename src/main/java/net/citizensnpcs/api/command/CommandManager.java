@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -351,7 +352,27 @@ public class CommandManager implements TabCompleter {
             }
             return results;
         }
-        // TODO should we implement arg prefilling?
+        CommandInfo internalCommand = getCommand(command.getName().toLowerCase(), args[0]);
+        if (internalCommand == null) {
+            return results;
+        }
+        String[] newArgs = new String[args.length + 1];
+        System.arraycopy(args, 0, newArgs, 1, args.length);
+        newArgs[0] = command.getName().toLowerCase();
+        CommandContext context = new CommandContext(sender, newArgs); // partial parse
+        String flags = internalCommand.commandAnnotation.flags();
+        for (int i = 0; i < flags.length(); i++) {
+            char c = flags.charAt(i);
+            if (!context.hasFlag(c)) {
+                results.add("-" + c);
+            }
+        }
+        Collection<String> valueFlags = internalCommand.valueFlags();
+        for (String valueFlag : valueFlags) {
+            if (!context.hasValueFlag(valueFlag.replace("--", ""))) {
+                results.add(valueFlag);
+            }
+        }
         return results;
     }
 
@@ -484,9 +505,21 @@ public class CommandManager implements TabCompleter {
 
     public static class CommandInfo {
         private final Command commandAnnotation;
+        private List<String> valueFlags;
 
         public CommandInfo(Command commandAnnotation) {
             this.commandAnnotation = commandAnnotation;
+        }
+
+        private Collection<String> calculateValueFlags() {
+            valueFlags = new ArrayList<String>();
+            String[] usage = commandAnnotation.usage().split(" ");
+            for (String part : usage) {
+                if (part.startsWith("--")) {
+                    valueFlags.add(part);
+                }
+            }
+            return valueFlags;
         }
 
         @Override
@@ -515,6 +548,10 @@ public class CommandManager implements TabCompleter {
         @Override
         public int hashCode() {
             return 31 + ((commandAnnotation == null) ? 0 : commandAnnotation.hashCode());
+        }
+
+        public Collection<String> valueFlags() {
+            return valueFlags == null ? calculateValueFlags() : valueFlags;
         }
     }
 
