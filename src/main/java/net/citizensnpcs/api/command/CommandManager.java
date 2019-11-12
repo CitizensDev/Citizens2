@@ -369,7 +369,7 @@ public class CommandManager implements TabCompleter {
         }
         Collection<String> valueFlags = internalCommand.valueFlags();
         for (String valueFlag : valueFlags) {
-            if (!context.hasValueFlag(valueFlag.replace("--", ""))) {
+            if (!context.hasValueFlag(valueFlag)) {
                 results.add(valueFlag);
             }
         }
@@ -516,7 +516,7 @@ public class CommandManager implements TabCompleter {
             String[] usage = commandAnnotation.usage().split(" ");
             for (String part : usage) {
                 if (part.startsWith("--")) {
-                    valueFlags.add(part);
+                    valueFlags.add(part.replace("--", ""));
                 }
             }
             return valueFlags;
