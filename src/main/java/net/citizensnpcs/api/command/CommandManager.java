@@ -19,7 +19,9 @@ import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
@@ -37,7 +39,7 @@ import net.citizensnpcs.api.command.exception.WrappedCommandException;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 
-public class CommandManager {
+public class CommandManager implements TabCompleter {
     private final Map<Class<? extends Annotation>, CommandAnnotationProcessor> annotationProcessors = Maps.newHashMap();
 
     /*
@@ -331,6 +333,28 @@ public class CommandManager {
         return false;
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String alias,
+            String[] args) {
+        List<String> results = new ArrayList<String>();
+        if (args.length <= 1) {
+            String search = args.length == 1 ? args[0] : "";
+            for (String base : commands.keySet()) {
+                String[] parts = base.split(" ");
+                String cmd = parts[0];
+                if (!cmd.equalsIgnoreCase(command.getName()) || parts.length < 2)
+                    continue;
+                String modifier = parts[1];
+                if (modifier.startsWith(search)) {
+                    results.add(modifier);
+                }
+            }
+            return results;
+        }
+        // TODO should we implement arg prefilling?
+        return results;
+    }
+
     /**
      * Register a class that contains commands (methods annotated with {@link Command}). If no dependency
      * {@link Injector} is specified, then only static methods of the class will be registered. Otherwise, new instances
@@ -412,12 +436,19 @@ public class CommandManager {
                 annotations.add(annotation);
             }
 
-            if (annotations.size() > 0)
+            if (annotations.size() > 0) {
                 registeredAnnotations.putAll(method, annotations);
+            }
 
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (parameterTypes.length <= 1 || parameterTypes[1] == CommandSender.class)
                 serverCommands.add(method);
+        }
+    }
+
+    public void registerTabCompletion(JavaPlugin plugin) {
+        for (String string : commands.keySet()) {
+            plugin.getCommand(string.split(" ")[0]).setTabCompleter(this);
         }
     }
 
@@ -548,6 +579,7 @@ public class CommandManager {
     }
 
     private static final String COMMAND_FORMAT = "<7>/{{%s%s <7>- [[%s";
+
     // Logger for general errors.
     private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
 }
