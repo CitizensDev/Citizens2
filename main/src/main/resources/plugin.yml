@@ -13,11 +13,7 @@ commands:
   trait:
     aliases: [tr]
     description: Trait commands
-    permission: citizens.trait.help
-  script:
-    aliases: [sc]
-    description: Scripting commands
-    permission: citizens.script.help
+    permission: citizens.trait.help 
   citizens:
     aliases: [citizens2]
     description: Administration commands

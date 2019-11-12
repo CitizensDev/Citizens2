@@ -322,6 +322,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         registerCommands();
         enableSubPlugins();
         NMS.load(commands);
+        commands.registerTabCompletion(this);
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)
