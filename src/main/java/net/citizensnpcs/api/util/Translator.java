@@ -41,7 +41,7 @@ public class Translator {
                     new FileClassLoader(Translator.class.getClassLoader(), resourceFile));
         } catch (MissingResourceException e) {
             preferredBundle = getDefaultBundle();
-            Messaging.severe("Missing preferred location bundle.");
+            Messaging.severe("Missing translation for system language (" + defaultLocale + "): defaulting to English");
         }
     }
 
@@ -311,8 +311,6 @@ public class Translator {
     }
 
     private static ResourceBundle defaultBundle;
-
     private static Translator instance;
-
     public static final String PREFIX = "messages";
 }
