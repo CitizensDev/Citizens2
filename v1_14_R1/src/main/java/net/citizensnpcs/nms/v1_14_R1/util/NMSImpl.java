@@ -204,6 +204,7 @@ import net.minecraft.server.v1_14_R1.BehaviorController;
 import net.minecraft.server.v1_14_R1.Block;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.BossBattleServer;
+import net.minecraft.server.v1_14_R1.ChunkProviderServer;
 import net.minecraft.server.v1_14_R1.ControllerJump;
 import net.minecraft.server.v1_14_R1.CrashReport;
 import net.minecraft.server.v1_14_R1.CrashReportSystemDetails;
@@ -248,6 +249,7 @@ import net.minecraft.server.v1_14_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_14_R1.PathEntity;
 import net.minecraft.server.v1_14_R1.PathPoint;
 import net.minecraft.server.v1_14_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_14_R1.PlayerChunkMap;
 import net.minecraft.server.v1_14_R1.PlayerChunkMap.EntityTracker;
 import net.minecraft.server.v1_14_R1.RegistryBlocks;
 import net.minecraft.server.v1_14_R1.ReportedException;
@@ -263,7 +265,26 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public boolean addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom) {
-        return getHandle(entity).world.addEntity(getHandle(entity), custom);
+        int viewDistance = -1;
+        PlayerChunkMap chunkMap = null;
+        try {
+            if (entity instanceof Player) {
+                chunkMap = (PlayerChunkMap) PLAYER_CHUNK_MAP_GETTER.invoke(getHandle(entity).world.getChunkProvider());
+                viewDistance = (int) PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER.invoke(chunkMap);
+                PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, -1);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        boolean success = getHandle(entity).world.addEntity(getHandle(entity), custom);
+        try {
+            if (chunkMap != null) {
+                PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, viewDistance);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return success;
     }
 
     @Override
@@ -1714,6 +1735,12 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getSetter(NavigationAbstract.class, "b");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle PATHFINDING_RANGE = NMS.getGetter(NavigationAbstract.class, "p");
+    private static final MethodHandle PLAYER_CHUNK_MAP_GETTER = NMS.getGetter(ChunkProviderServer.class,
+            "playerChunkMap");
+    private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getGetter(PlayerChunkMap.class,
+            "viewDistance");
+    private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(PlayerChunkMap.class,
+            "viewDistance");
     private static final MethodHandle PUFFERFISH_C = NMS.getSetter(EntityPufferFish.class, "c");
     private static final MethodHandle RABBIT_FIELD = NMS.getGetter(EntityRabbit.class, "bz");
     private static final Random RANDOM = Util.getFastRandom();
