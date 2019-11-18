@@ -555,6 +555,7 @@ public class NPCCommands {
             aliases = { "npc" },
             usage = "follow (player name) (-p[rotect])",
             desc = "Toggles NPC following you",
+            flags = "p",
             modifiers = { "follow" },
             min = 1,
             max = 2,
