@@ -102,7 +102,7 @@ public class Inventory extends Trait {
         if (size < 9) {
             size = 9;
         }
-        String name = npc.getName().length() >= 18 ? npc.getName().substring(0, 19) + "~" : npc.getName();
+        String name = npc.getName().length() >= 19 ? npc.getName().substring(0, 19) + "~" : npc.getName();
         view = Bukkit.createInventory(
                 npc.getEntity() instanceof InventoryHolder ? ((InventoryHolder) npc.getEntity()) : null, size,
                 name + "'s Inventory");
