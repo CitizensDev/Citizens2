@@ -1997,9 +1997,9 @@ public class NPCCommands {
             NPC fromNPC = CitizensAPI.getNPCRegistry().getById(id);
             if (fromNPC != null) {
                 if (args.argsLength() == 2) {
-                    from = fromNPC.getEntity();
-                } else {
                     to = fromNPC.getEntity();
+                } else {
+                    from = fromNPC.getEntity();
                 }
             }
         } catch (NumberFormatException e) {
