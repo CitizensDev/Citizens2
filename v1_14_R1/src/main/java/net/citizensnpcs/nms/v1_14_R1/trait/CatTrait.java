@@ -6,11 +6,14 @@ import org.bukkit.entity.Cat;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 
 @TraitName("cattrait")
 public class CatTrait extends Trait {
     @Persist
     private DyeColor collarColor = null;
+    @Persist
+    private boolean lying = false;
     @Persist
     private boolean sitting = false;
     @Persist
@@ -18,6 +21,10 @@ public class CatTrait extends Trait {
 
     public CatTrait() {
         super("cattrait");
+    }
+
+    public boolean isLyingDown() {
+        return lying;
     }
 
     @Override
@@ -29,11 +36,16 @@ public class CatTrait extends Trait {
             if (collarColor != null) {
                 cat.setCollarColor(collarColor);
             }
+            NMSImpl.setLyingDown(cat, lying);
         }
     }
 
     public void setCollarColor(DyeColor color) {
         this.collarColor = color;
+    }
+
+    public void setLyingDown(boolean lying) {
+        this.lying = lying;
     }
 
     public void setSitting(boolean sitting) {

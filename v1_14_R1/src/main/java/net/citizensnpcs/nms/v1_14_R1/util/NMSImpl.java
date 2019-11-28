@@ -33,6 +33,7 @@ import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftWither;
 import org.bukkit.craftbukkit.v1_14_R1.event.CraftEventFactory;
+import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
@@ -178,6 +179,7 @@ import net.citizensnpcs.nms.v1_14_R1.trait.CatTrait;
 import net.citizensnpcs.nms.v1_14_R1.trait.Commands;
 import net.citizensnpcs.nms.v1_14_R1.trait.FoxTrait;
 import net.citizensnpcs.nms.v1_14_R1.trait.LlamaTrait;
+import net.citizensnpcs.nms.v1_14_R1.trait.MushroomCowTrait;
 import net.citizensnpcs.nms.v1_14_R1.trait.PandaTrait;
 import net.citizensnpcs.nms.v1_14_R1.trait.ParrotTrait;
 import net.citizensnpcs.nms.v1_14_R1.trait.PhantomTrait;
@@ -195,7 +197,6 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.AdvancementDataPlayer;
 import net.minecraft.server.v1_14_R1.AttributeInstance;
@@ -215,6 +216,7 @@ import net.minecraft.server.v1_14_R1.Enchantments;
 import net.minecraft.server.v1_14_R1.EnderDragonBattle;
 import net.minecraft.server.v1_14_R1.Entity;
 import net.minecraft.server.v1_14_R1.EntityBird;
+import net.minecraft.server.v1_14_R1.EntityCat;
 import net.minecraft.server.v1_14_R1.EntityEnderDragon;
 import net.minecraft.server.v1_14_R1.EntityFish;
 import net.minecraft.server.v1_14_R1.EntityFishSchool;
@@ -299,7 +301,7 @@ public class NMSImpl implements NMSBridge {
         } else if (!handle.world.getPlayers().contains(handle)) {
             ((List) handle.world.getPlayers()).add(handle);
         }
-        PlayerUpdateTask.addOrRemove(entity, remove);
+        // PlayerUpdateTask.addOrRemove(entity, remove);
     }
 
     @Override
@@ -625,15 +627,16 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BossBarTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(CatTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FoxTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LlamaTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MushroomCowTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BossBarTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PandaTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TropicalFishTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(VillagerTrait.class));
         manager.register(Commands.class);
@@ -1060,7 +1063,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setWitherCharged(Wither wither, boolean charged) {
         EntityWither handle = ((CraftWither) wither).getHandle();
-        handle.q(charged ? 20 : 0);
+        handle.r(charged ? 20 : 0);
     }
 
     @Override
@@ -1640,6 +1643,10 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    public static void setLyingDown(Cat cat, boolean lying) {
+        ((EntityCat) getHandle(cat)).u(lying);
     }
 
     public static void setNotInSchool(EntityFish entity) {

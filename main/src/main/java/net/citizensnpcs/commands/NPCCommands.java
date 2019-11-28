@@ -2010,15 +2010,17 @@ public class NPCCommands {
             }
             firstWasPlayer = true;
         }
-        try {
-            int id = args.getInteger(2);
-            NPC toNPC = CitizensAPI.getNPCRegistry().getById(id);
-            if (toNPC != null) {
-                to = toNPC.getEntity();
-            }
-        } catch (NumberFormatException e) {
-            if (!firstWasPlayer) {
-                to = Bukkit.getPlayerExact(args.getString(2));
+        if (args.argsLength() == 3) {
+            try {
+                int id = args.getInteger(2);
+                NPC toNPC = CitizensAPI.getNPCRegistry().getById(id);
+                if (toNPC != null) {
+                    to = toNPC.getEntity();
+                }
+            } catch (NumberFormatException e) {
+                if (!firstWasPlayer) {
+                    to = Bukkit.getPlayerExact(args.getString(2));
+                }
             }
         }
         if (from == null)

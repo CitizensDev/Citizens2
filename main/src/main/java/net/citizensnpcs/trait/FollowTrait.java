@@ -4,7 +4,9 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
@@ -43,7 +45,14 @@ public class FollowTrait extends Trait {
     @EventHandler
     private void onEntityDamage(EntityDamageByEntityEvent event) {
         if (isActive() && event.getEntity().equals(player)) {
-            npc.getNavigator().setTarget(event.getDamager(), true);
+            Entity damager = event.getDamager();
+            if (event.getEntity() instanceof Projectile) {
+                Projectile projectile = (Projectile) event.getEntity();
+                if (projectile.getShooter() instanceof Entity) {
+                    damager = (Entity) projectile.getShooter();
+                }
+            }
+            npc.getNavigator().setTarget(damager, true);
         }
     }
 

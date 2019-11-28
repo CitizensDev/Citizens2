@@ -20,6 +20,7 @@ import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
@@ -40,7 +41,7 @@ public class Commands {
             trait.setColor(color);
         }
         if (args.hasValueFlag("title")) {
-            trait.setTitle(args.getFlag("title"));
+            trait.setTitle(Colorizer.parseColors(args.getFlag("title")));
         }
         if (args.hasValueFlag("visible")) {
             trait.setVisible(Boolean.parseBoolean(args.getFlag("visible")));

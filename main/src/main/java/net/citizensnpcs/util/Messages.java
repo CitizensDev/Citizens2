@@ -23,7 +23,9 @@ public class Messages {
     public static final String BEHAVIOURS_REMOVED = "citizens.commands.npc.behaviour.removed";
     public static final String CANNOT_TELEPORT_ACROSS_WORLDS = "citizens.commands.npc.tphere.multiworld-not-allowed";
     public static final String CAT_COLLAR_COLOR_SET = "citizens.commands.npc.cat.collar-color-set";
+    public static final String CAT_STARTED_LYING = "citizens.commands.npc.cat.lying-start";
     public static final String CAT_STARTED_SITTING = "citizens.commands.npc.cat.sitting-start";
+    public static final String CAT_STOPPED_LYING = "citizens.commands.npc.cat.lying-stop";
     public static final String CAT_STOPPED_SITTING = "citizens.commands.npc.cat.sitting-stop";
     public static final String CAT_TYPE_SET = "citizens.commands.npc.cat.type-set";
     public static final String CHAT_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.chat.prompt";
@@ -135,6 +137,7 @@ public class Messages {
     public static final String INVALID_HORSE_STYLE = "citizens.commands.npc.horse.invalid-style";
     public static final String INVALID_HORSE_VARIANT = "citizens.commands.npc.horse.invalid-variant";
     public static final String INVALID_LLAMA_COLOR = "citizens.commands.npc.llama.invalid-color";
+    public static final String INVALID_MUSHROOM_COW_VARIANT = "citizens.commands.npc.mushroomcow.invalid-variant";
     public static final String INVALID_OCELOT_TYPE = "citizens.commands.npc.ocelot.invalid-type";
     public static final String INVALID_PANDA_GENE = "citizens.commands.npc.panda.invalid-gene";
     public static final String INVALID_PARROT_VARIANT = "citizens.commands.npc.parrot.invalid-variant";
@@ -188,6 +191,7 @@ public class Messages {
     public static final String MOUNT_NPC_MUST_BE_SPAWNED = "citizens.commands.npc.mount.must-be-spawned";
     public static final String MOVETO_FORMAT = "citizens.commands.npc.moveto.format";
     public static final String MOVETO_TELEPORTED = "citizens.commands.npc.moveto.teleported";
+    public static final String MUSHROOM_COW_VARIANT_SET = "citizens.commands.npc.mushroomcow.variant-set";
     public static final String NAMEPLATE_VISIBILITY_TOGGLED = "citizens.commands.npc.nameplate.toggled";
     public static final String NO_HORSE_MODIFIERS_GIVEN = "citizens.commands.npc.horse.no-modifiers";
     public static final String NO_NPC_WITH_ID_FOUND = "citizens.commands.npc.spawn.missing-npc-id";
