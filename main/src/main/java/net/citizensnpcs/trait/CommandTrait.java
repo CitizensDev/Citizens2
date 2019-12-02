@@ -30,9 +30,9 @@ public class CommandTrait extends Trait {
         super("commandtrait");
     }
 
-    public int addCommand(String command, Hand hand) {
+    public int addCommand(String command, Hand hand, boolean player) {
         int id = getNewId();
-        commands.put(String.valueOf(id), new NPCCommand(String.valueOf(id), command, hand));
+        commands.put(String.valueOf(id), new NPCCommand(String.valueOf(id), command, hand, player));
         return id;
     }
 
@@ -101,16 +101,22 @@ public class CommandTrait extends Trait {
         String command;
         Hand hand;
         String id;
+        boolean player;
 
-        public NPCCommand(String id, String command, Hand hand) {
+        public NPCCommand(String id, String command, Hand hand, boolean player) {
             this.id = id;
             this.command = command;
             this.hand = hand;
+            this.player = player;
         }
 
         public void run(NPC npc, Player clicker) {
             String interpolatedCommand = command.replace("<npc>", npc.getName()).replace("<p>", clicker.getName());
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
+            if (player) {
+                clicker.performCommand(interpolatedCommand);
+            } else {
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
+            }
         }
     }
 
@@ -120,13 +126,15 @@ public class CommandTrait extends Trait {
 
         @Override
         public NPCCommand create(DataKey root) {
-            return new NPCCommand(root.name(), root.getString("command"), Hand.valueOf(root.getString("hand")));
+            return new NPCCommand(root.name(), root.getString("command"), Hand.valueOf(root.getString("hand")),
+                    Boolean.valueOf(root.getString("player")));
         }
 
         @Override
         public void save(NPCCommand instance, DataKey root) {
             root.setString("command", instance.command);
             root.setString("hand", instance.hand.name());
+            root.setBoolean("player", instance.player);
         }
     }
 }
