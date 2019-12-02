@@ -282,7 +282,7 @@ public class NPCCommands {
             desc = "Controls commands which will be run when clicking on an NPC",
             modifiers = { "command", "cmd" },
             min = 1,
-            flags = "lr",
+            flags = "lrp",
             permission = "citizens.npc.command")
     public void command(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         CommandTrait commands = npc.getTrait(CommandTrait.class);
