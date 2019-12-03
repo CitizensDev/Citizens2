@@ -450,6 +450,7 @@ public class NPCCommands {
 
         if (args.hasValueFlag("at")) {
             spawnLoc = CommandContext.parseLocation(args.getSenderLocation(), args.getFlag("at"));
+            spawnLoc.getChunk().load();
         }
 
         if (spawnLoc == null) {
