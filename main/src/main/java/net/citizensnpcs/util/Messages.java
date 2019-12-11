@@ -18,6 +18,11 @@ public class Messages {
     public static final String ANIMATION_ADDED = "citizens.editors.waypoints.triggers.animation.added";
     public static final String ANIMATION_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.animation.prompt";
     public static final String AVAILABLE_WAYPOINT_PROVIDERS = "citizens.waypoints.available-providers-header";
+    public static final String BEE_ANGER_SET = "citizens.commands.npc.bee.anger-set";
+    public static final String BEE_HAS_NECTAR = "citizens.commands.npc.bee.has-nectar";
+    public static final String BEE_NO_NECTAR = "citizens.commands.npc.bee.no-nectar";
+    public static final String BEE_NOT_STUNG = "citizens.commands.npc.bee.not-stung";
+    public static final String BEE_STUNG = "citizens.commands.npc.bee.bee-stung";
     public static final String BEHAVIOUR_HELP = "citizens.commands.npc.behaviour.help";
     public static final String BEHAVIOURS_ADDED = "citizens.commands.npc.behaviour.added";
     public static final String BEHAVIOURS_REMOVED = "citizens.commands.npc.behaviour.removed";
@@ -129,6 +134,7 @@ public class Messages {
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
     public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
     public static final String INVALID_ANIMATION = "citizens.editors.waypoints.triggers.animation.invalid-animation";
+    public static final String INVALID_BEE_ANGER = "citizens.commands.npc.bee.invalid-anger";
     public static final String INVALID_CAT_COLLAR_COLOR = "citizens.commands.npc.cat.invalid-collar-color";
     public static final String INVALID_CAT_TYPE = "citizens.commands.npc.cat.invalid-type";
     public static final String INVALID_ENTITY_TYPE = "citizens.commands.npc.type.invalid";

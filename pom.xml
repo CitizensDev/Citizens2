@@ -7,10 +7,10 @@
 	<packaging>pom</packaging>
 	<groupId>net.citizensnpcs</groupId>
 	<artifactId>citizens-parent</artifactId>
-	<version>2.0.25-SNAPSHOT</version>
+	<version>2.0.26-SNAPSHOT</version>
 	<properties>
 		<BUILD_NUMBER>Unknown</BUILD_NUMBER>
-		<CITIZENS_VERSION>2.0.25</CITIZENS_VERSION>
+		<CITIZENS_VERSION>2.0.26</CITIZENS_VERSION>
 	</properties>
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
@@ -22,7 +22,8 @@
 		<module>v1_11_R1</module>
 		<module>v1_12_R1</module>
 		<module>v1_13_R2</module>
-		<module>v1_14_R1</module>
+        <module>v1_14_R1</module>
+        <module>v1_15_R1</module>
 		<module>dist</module>
 	</modules>
 </project>
