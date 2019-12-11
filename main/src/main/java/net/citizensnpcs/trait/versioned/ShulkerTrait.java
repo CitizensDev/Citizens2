@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_13_R2.trait;
+package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Shulker;
@@ -6,7 +6,6 @@ import org.bukkit.entity.Shulker;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.util.NMS;
 
 @TraitName("shulkertrait")
@@ -33,10 +32,10 @@ public class ShulkerTrait extends Trait {
         }
         if (npc.getEntity() instanceof Shulker) {
             if (peek != lastPeekSet) {
-                NMS.setPeekShulker((Shulker) npc.getEntity(), peek);
+                NMS.setPeekShulker(npc.getEntity(), peek);
                 lastPeekSet = peek;
             }
-            NMSImpl.setShulkerColor((Shulker) npc.getEntity(), color);
+            NMS.setShulkerColor((Shulker) npc.getEntity(), color);
         }
     }
 

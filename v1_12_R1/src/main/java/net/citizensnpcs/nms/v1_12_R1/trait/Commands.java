@@ -21,6 +21,10 @@ import net.citizensnpcs.api.command.exception.CommandUsageException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.trait.versioned.BossBarTrait;
+import net.citizensnpcs.trait.versioned.LlamaTrait;
+import net.citizensnpcs.trait.versioned.ParrotTrait;
+import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 

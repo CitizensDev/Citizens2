@@ -3,6 +3,7 @@ package net.citizensnpcs.util;
 import java.util.Collection;
 import java.util.List;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -41,6 +42,8 @@ public interface NMSBridge {
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable;
 
     public BlockBreaker getBlockBreaker(Entity entity, Block targetBlock, BlockBreakerConfiguration config);
+
+    public Object getBossBar(Entity entity);
 
     public BoundingBox getBoundingBox(Entity handle);
 
@@ -120,6 +123,8 @@ public interface NMSBridge {
 
     public void setKnockbackResistance(LivingEntity entity, double d);
 
+    public void setLyingDown(Entity cat, boolean lying);
+
     public void setNavigationTarget(Entity handle, Entity target, float speed);
 
     public void setPeekShulker(Entity entity, int peek);
@@ -127,6 +132,8 @@ public interface NMSBridge {
     public void setProfile(SkullMeta meta, GameProfile profile);
 
     public void setShouldJump(Entity entity);
+
+    public void setShulkerColor(Entity entity, DyeColor color);
 
     public void setSitting(Ocelot ocelot, boolean sitting);
 

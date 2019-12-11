@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.trait;
+package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.MushroomCow.Variant;

@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.trait;
+package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Cat;
@@ -6,7 +6,7 @@ import org.bukkit.entity.Cat;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
+import net.citizensnpcs.util.NMS;
 
 @TraitName("cattrait")
 public class CatTrait extends Trait {
@@ -36,7 +36,7 @@ public class CatTrait extends Trait {
             if (collarColor != null) {
                 cat.setCollarColor(collarColor);
             }
-            NMSImpl.setLyingDown(cat, lying);
+            NMS.setLyingDown(cat, lying);
         }
     }
 

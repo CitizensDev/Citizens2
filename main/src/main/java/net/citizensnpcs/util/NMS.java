@@ -8,6 +8,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -63,6 +64,10 @@ public class NMS {
 
     public static BlockBreaker getBlockBreaker(Entity entity, Block targetBlock, BlockBreakerConfiguration config) {
         return BRIDGE.getBlockBreaker(entity, targetBlock, config);
+    }
+
+    public static Object getBossBar(Entity entity) {
+        return BRIDGE.getBossBar(entity);
     }
 
     public static BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
@@ -369,6 +374,10 @@ public class NMS {
         BRIDGE.setKnockbackResistance(entity, d);
     }
 
+    public static void setLyingDown(Entity cat, boolean lying) {
+        BRIDGE.setLyingDown(cat, lying);
+    }
+
     public static void setNavigationTarget(org.bukkit.entity.Entity handle, org.bukkit.entity.Entity target,
             float speed) {
         BRIDGE.setNavigationTarget(handle, target, speed);
@@ -387,6 +396,10 @@ public class NMS {
 
     public static void setShouldJump(org.bukkit.entity.Entity entity) {
         BRIDGE.setShouldJump(entity);
+    }
+
+    public static void setShulkerColor(Entity entity, DyeColor color) {
+        BRIDGE.setShulkerColor(entity, color);
     }
 
     public static void setSitting(Ocelot ocelot, boolean sitting) {

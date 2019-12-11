@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_14_R1.trait;
+package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.entity.Panda;
 

@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_12_R1.trait;
+package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.Llama.Color;

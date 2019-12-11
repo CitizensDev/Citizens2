@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_12_R1.trait;
+package net.citizensnpcs.trait.versioned;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.nms.v1_12_R1.util.NMSImpl;
+import net.citizensnpcs.util.NMS;
 
 @TraitName("bossbar")
 public class BossBarTrait extends Trait {
@@ -40,7 +40,10 @@ public class BossBarTrait extends Trait {
     public void run() {
         if (!npc.isSpawned() || !isBoss(npc.getEntity()))
             return;
-        BossBar bar = NMSImpl.getBossBar(npc.getEntity());
+        BossBar bar = (BossBar) NMS.getBossBar(npc.getEntity());
+        if (bar == null) {
+            return;
+        }
         bar.setVisible(visible);
         if (color != null) {
             bar.setColor(color);

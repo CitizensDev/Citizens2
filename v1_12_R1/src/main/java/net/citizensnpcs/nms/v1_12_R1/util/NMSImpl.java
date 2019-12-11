@@ -154,16 +154,16 @@ import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.ThrownPotionController;
 import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.TippedArrowController;
 import net.citizensnpcs.nms.v1_12_R1.entity.nonliving.WitherSkullController;
 import net.citizensnpcs.nms.v1_12_R1.network.EmptyChannel;
-import net.citizensnpcs.nms.v1_12_R1.trait.BossBarTrait;
 import net.citizensnpcs.nms.v1_12_R1.trait.Commands;
-import net.citizensnpcs.nms.v1_12_R1.trait.LlamaTrait;
-import net.citizensnpcs.nms.v1_12_R1.trait.ParrotTrait;
-import net.citizensnpcs.nms.v1_12_R1.trait.ShulkerTrait;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.versioned.BossBarTrait;
+import net.citizensnpcs.trait.versioned.LlamaTrait;
+import net.citizensnpcs.trait.versioned.ParrotTrait;
+import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -323,6 +323,29 @@ public class NMSImpl implements NMSBridge {
     public BlockBreaker getBlockBreaker(org.bukkit.entity.Entity entity, org.bukkit.block.Block targetBlock,
             BlockBreakerConfiguration config) {
         return new CitizensBlockBreaker(entity, targetBlock, config);
+    }
+
+    @Override
+    public BossBar getBossBar(org.bukkit.entity.Entity entity) {
+        BossBattleServer bserver = null;
+        try {
+            if (entity.getType() == EntityType.WITHER) {
+                bserver = (BossBattleServer) WITHER_BOSS_BAR_FIELD.get(NMSImpl.getHandle(entity));
+            } else if (entity.getType() == EntityType.ENDER_DRAGON) {
+                bserver = (BossBattleServer) ENDERDRAGON_BATTLE_BAR_FIELD
+                        .get(ENDERDRAGON_BATTLE_FIELD.get(NMSImpl.getHandle(entity)));
+            }
+        } catch (Exception e) {
+        }
+        if (bserver == null) {
+            return null;
+        }
+        BossBar ret = Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SEGMENTED_10);
+        try {
+            CRAFT_BOSSBAR_HANDLE_FIELD.set(ret, bserver);
+        } catch (Exception e) {
+        }
+        return ret;
     }
 
     @Override
@@ -922,6 +945,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setLyingDown(org.bukkit.entity.Entity cat, boolean lying) {
+    }
+
+    @Override
     public void setNavigationTarget(org.bukkit.entity.Entity handle, org.bukkit.entity.Entity target, float speed) {
         NMSImpl.getNavigation(handle).a(NMSImpl.getHandle(target), speed);
     }
@@ -958,6 +985,10 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setShouldJump();
         }
+    }
+
+    @Override
+    public void setShulkerColor(org.bukkit.entity.Entity entity, DyeColor color) {
     }
 
     @Override
@@ -1351,28 +1382,6 @@ public class NMSImpl implements NMSBridge {
         entity.aH += entity.aG;
     }
 
-    public static BossBar getBossBar(org.bukkit.entity.Entity entity) {
-        BossBattleServer bserver = null;
-        try {
-            if (entity.getType() == EntityType.WITHER) {
-                bserver = (BossBattleServer) WITHER_BOSS_BAR_FIELD.get(NMSImpl.getHandle(entity));
-            } else if (entity.getType() == EntityType.ENDER_DRAGON) {
-                bserver = (BossBattleServer) ENDERDRAGON_BATTLE_BAR_FIELD
-                        .get(ENDERDRAGON_BATTLE_FIELD.get(NMSImpl.getHandle(entity)));
-            }
-        } catch (Exception e) {
-        }
-        if (bserver == null) {
-            return null;
-        }
-        BossBar ret = Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SEGMENTED_10);
-        try {
-            CRAFT_BOSSBAR_HANDLE_FIELD.set(ret, bserver);
-        } catch (Exception e) {
-        }
-        return ret;
-    }
-
     private static EntityLiving getHandle(LivingEntity entity) {
         return (EntityLiving) NMSImpl.getHandle((org.bukkit.entity.Entity) entity);
     }
@@ -1497,7 +1506,7 @@ public class NMSImpl implements NMSBridge {
             if ((entity.width > f2) && (!justCreated) && (!entity.world.isClientSide))
                 entity.move(EnumMoveType.SELF, (f2 - entity.width) / 2, 0.0D, (f2 - entity.width) / 2);
         }
-    }
+    };
 
     public static void stopNavigation(NavigationAbstract navigation) {
         navigation.p();
@@ -1518,7 +1527,7 @@ public class NMSImpl implements NMSBridge {
 
     public static void updateNavigation(NavigationAbstract navigation) {
         navigation.d();
-    };
+    }
 
     private static MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class, "bY");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
@@ -1539,8 +1548,11 @@ public class NMSImpl implements NMSBridge {
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "i");
     private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bx");
     private static final Random RANDOM = Util.getFastRandom();
+
     private static Field SKULL_PROFILE_FIELD;
+
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
+
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bG");
 
     static {
