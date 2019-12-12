@@ -31,10 +31,10 @@ public class PlayerControllerLook {
             this.a.yaw = this.a.aK;
             this.a.pitch = this.a(this.a.pitch, this.g(), this.c);
         } else {
-            // this.a.K = this.a(this.a.aK, this.a.aI, 10.0F);
+            // this.a.aK = this.a(this.a.aK, this.a.aI, 10.0F);
         }
 
-        if (!this.a.getNavigation().n()) {
+        if (!this.a.getNavigation().m()) {
             this.a.aK = MathHelper.b(this.a.aK, this.a.aI, 75);
         }
     }
