@@ -89,7 +89,7 @@ public class PlayerNavigation extends NavigationAbstract {
             }
 
             if (var2.getY() > 0) {
-                return super.a(var2.up(), var1);
+                return supera(var2.up(), var1);
             }
 
             while (var2.getY() < this.b.getBuildHeight() && this.b.getType(var2).isAir()) {
@@ -100,13 +100,13 @@ public class PlayerNavigation extends NavigationAbstract {
         }
 
         if (!this.b.getType(var0).getMaterial().isBuildable()) {
-            return super.a(var0, var1);
+            return supera(var0, var1);
         } else {
             for (var2 = var0.up(); var2.getY() < this.b.getBuildHeight()
                     && this.b.getType(var2).getMaterial().isBuildable(); var2 = var2.up()) {
             }
 
-            return super.a(var2, var1);
+            return supera(var2, var1);
         }
     }
 
