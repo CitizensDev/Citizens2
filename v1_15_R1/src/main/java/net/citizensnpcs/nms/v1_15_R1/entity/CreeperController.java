@@ -124,14 +124,14 @@ public class CreeperController extends MobEntityController {
         }
 
         @Override
-        public void f(double x, double y, double z) {
+        public void h(double x, double y, double z) {
             if (npc == null) {
-                super.f(x, y, z);
+                super.h(x, y, z);
                 return;
             }
             if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
                 if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
-                    super.f(x, y, z);
+                    super.h(x, y, z);
                 }
                 return;
             }
@@ -139,7 +139,7 @@ public class CreeperController extends MobEntityController {
             NPCPushEvent event = Util.callPushEvent(npc, vector);
             if (!event.isCancelled()) {
                 vector = event.getCollisionVector();
-                super.f(vector.getX(), vector.getY(), vector.getZ());
+                super.h(vector.getX(), vector.getY(), vector.getZ());
             }
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
