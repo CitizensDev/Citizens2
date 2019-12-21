@@ -20,121 +20,124 @@ import net.citizensnpcs.util.StringHelper;
 
 @TraitName("waypoints")
 public class Waypoints extends Trait {
-    private WaypointProvider provider = new LinearWaypointProvider(npc);
-    private String providerName = "linear";
+	private WaypointProvider provider;
+	private String providerName = "linear";
 
-    public Waypoints() {
-        super("waypoints");
-    }
+	public Waypoints() {
+		super("waypoints");
+	}
 
-    private WaypointProvider create(Class<? extends WaypointProvider> clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
+	private WaypointProvider create(Class<? extends WaypointProvider> clazz) {
+		try {
+			return clazz.newInstance();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
 
-    public void describeProviders(CommandSender sender) {
-        Messaging.sendTr(sender, Messages.AVAILABLE_WAYPOINT_PROVIDERS);
-        for (String name : PROVIDERS.keySet()) {
-            Messaging.send(sender, "    - " + StringHelper.wrap(name));
-        }
-    }
+	public void onAttach() {
+		provider = new LinearWaypointProvider(npc);
+	}
 
-    /**
-     * Returns the current {@link WaypointProvider}. May be null during initialisation.
-     *
-     * @return The current provider
-     */
-    public WaypointProvider getCurrentProvider() {
-        return provider;
-    }
+	public void describeProviders(CommandSender sender) {
+		Messaging.sendTr(sender, Messages.AVAILABLE_WAYPOINT_PROVIDERS);
+		for (String name : PROVIDERS.keySet()) {
+			Messaging.send(sender, "    - " + StringHelper.wrap(name));
+		}
+	}
 
-    /**
-     * @return The current provider name
-     */
-    public String getCurrentProviderName() {
-        return providerName;
-    }
+	/**
+	 * Returns the current {@link WaypointProvider}. May be null during
+	 * initialisation.
+	 *
+	 * @return The current provider
+	 */
+	public WaypointProvider getCurrentProvider() {
+		return provider;
+	}
 
-    public Editor getEditor(CommandSender player, CommandContext args) {
-        return provider.createEditor(player, args);
-    }
+	/**
+	 * @return The current provider name
+	 */
+	public String getCurrentProviderName() {
+		return providerName;
+	}
 
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        provider = null;
-        providerName = key.getString("provider", "linear");
-        for (Entry<String, Class<? extends WaypointProvider>> entry : PROVIDERS.entrySet()) {
-            if (entry.getKey().equals(providerName)) {
-                provider = create(entry.getValue());
-                break;
-            }
-        }
-        if (provider == null)
-            return;
-        if (npc != null) {
-            provider.onSpawn(npc);
-        }
-        PersistenceLoader.load(provider, key.getRelative(providerName));
-    }
+	public Editor getEditor(CommandSender player, CommandContext args) {
+		return provider.createEditor(player, args);
+	}
 
-    @Override
-    public void onSpawn() {
-        if (provider != null) {
-            provider.onSpawn(getNPC());
-        }
-    }
+	@Override
+	public void load(DataKey key) throws NPCLoadException {
+		provider = null;
+		providerName = key.getString("provider", "linear");
+		for (Entry<String, Class<? extends WaypointProvider>> entry : PROVIDERS.entrySet()) {
+			if (entry.getKey().equals(providerName)) {
+				provider = create(entry.getValue());
+				break;
+			}
+		}
+		if (provider == null)
+			return;
+		if (npc != null) {
+			provider.onSpawn(npc);
+		}
+		PersistenceLoader.load(provider, key.getRelative(providerName));
+	}
 
-    @Override
-    public void save(DataKey key) {
-        if (provider == null)
-            return;
-        PersistenceLoader.save(provider, key.getRelative(providerName));
-        key.setString("provider", providerName);
-    }
+	@Override
+	public void onSpawn() {
+		if (provider != null) {
+			provider.onSpawn(getNPC());
+		}
+	}
 
-    /**
-     * Sets the current {@link WaypointProvider} using the given name.
-     *
-     * @param name
-     *            The name of the waypoint provider, registered using {@link #registerWaypointProvider(Class, String)}
-     * @return Whether the operation succeeded
-     */
-    public boolean setWaypointProvider(String name) {
-        name = name.toLowerCase();
-        Class<? extends WaypointProvider> clazz = PROVIDERS.get(name);
-        if (provider != null) {
-            provider.onRemove();
-        }
-        if (clazz == null || (provider = create(clazz)) == null)
-            return false;
-        providerName = name;
-        if (npc != null && npc.isSpawned()) {
-            provider.onSpawn(npc);
-        }
-        return true;
-    }
+	@Override
+	public void save(DataKey key) {
+		if (provider == null)
+			return;
+		PersistenceLoader.save(provider, key.getRelative(providerName));
+		key.setString("provider", providerName);
+	}
 
-    /**
-     * Registers a {@link WaypointProvider}, which can be subsequently used by NPCs.
-     *
-     * @param clazz
-     *            The class of the waypoint provider
-     * @param name
-     *            The name of the waypoint provider
-     */
-    public static void registerWaypointProvider(Class<? extends WaypointProvider> clazz, String name) {
-        PROVIDERS.put(name, clazz);
-    }
+	/**
+	 * Sets the current {@link WaypointProvider} using the given name.
+	 *
+	 * @param name The name of the waypoint provider, registered using
+	 *             {@link #registerWaypointProvider(Class, String)}
+	 * @return Whether the operation succeeded
+	 */
+	public boolean setWaypointProvider(String name) {
+		name = name.toLowerCase();
+		Class<? extends WaypointProvider> clazz = PROVIDERS.get(name);
+		if (provider != null) {
+			provider.onRemove();
+		}
+		if (clazz == null || (provider = create(clazz)) == null)
+			return false;
+		providerName = name;
+		if (npc != null && npc.isSpawned()) {
+			provider.onSpawn(npc);
+		}
+		return true;
+	}
 
-    private static final Map<String, Class<? extends WaypointProvider>> PROVIDERS = Maps.newHashMap();
+	/**
+	 * Registers a {@link WaypointProvider}, which can be subsequently used by NPCs.
+	 *
+	 * @param clazz The class of the waypoint provider
+	 * @param name  The name of the waypoint provider
+	 */
+	public static void registerWaypointProvider(Class<? extends WaypointProvider> clazz, String name) {
+		PROVIDERS.put(name, clazz);
+	}
 
-    static {
-        PROVIDERS.put("linear", LinearWaypointProvider.class);
-        PROVIDERS.put("wander", WanderWaypointProvider.class);
-        PROVIDERS.put("guided", GuidedWaypointProvider.class);
-    }
+	private static final Map<String, Class<? extends WaypointProvider>> PROVIDERS = Maps.newHashMap();
+
+	static {
+		PROVIDERS.put("linear", LinearWaypointProvider.class);
+		PROVIDERS.put("wander", WanderWaypointProvider.class);
+		PROVIDERS.put("guided", GuidedWaypointProvider.class);
+	}
 }
