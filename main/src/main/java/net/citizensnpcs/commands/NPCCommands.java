@@ -928,12 +928,12 @@ public class NPCCommands {
                 npc.data().setPersistent(args.getString(2), args.getString(3));
             }
             Messaging.sendTr(sender, Messages.METADATA_SET, args.getString(2), args.getString(3));
-        } else if (args.equals("get")) {
+        } else if (command.equals("get")) {
             if (args.argsLength() != 3) {
                 throw new CommandException();
             }
             Messaging.send(sender, npc.data().get(args.getString(2), "null"));
-        } else if (args.equals("remove")) {
+        } else if (command.equals("remove")) {
             if (args.argsLength() != 3) {
                 throw new CommandException();
             }
