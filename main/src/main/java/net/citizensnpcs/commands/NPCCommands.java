@@ -937,7 +937,7 @@ public class NPCCommands {
             if (args.argsLength() != 3) {
                 throw new CommandException();
             }
-            npc.data().remove(args.getString(3));
+            npc.data().remove(args.getString(2));
             Messaging.sendTr(sender, Messages.METADATA_UNSET, args.getString(2));
         }
     }
