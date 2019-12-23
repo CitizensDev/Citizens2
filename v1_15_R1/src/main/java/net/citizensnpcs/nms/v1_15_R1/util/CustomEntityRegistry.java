@@ -79,7 +79,7 @@ public class CustomEntityRegistry extends RegistryBlocks {
             return Optional.of(entities.get(var0));
         }
 
-        return Optional.ofNullable(this.wrapped.get(var0));
+        return this.wrapped.getOptional(var0);
     }
 
     public RegistryMaterials<EntityTypes<?>> getWrapped() {
