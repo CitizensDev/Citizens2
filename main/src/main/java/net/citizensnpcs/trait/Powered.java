@@ -19,6 +19,10 @@ public class Powered extends Trait implements Toggleable {
     public Powered() {
         super("powered");
     }
+    
+    public boolean getPowered() {
+        return powered;
+    }
 
     @Override
     public void onSpawn() {
