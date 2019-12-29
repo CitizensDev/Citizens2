@@ -30,9 +30,9 @@ public class CommandTrait extends Trait {
         super("commandtrait");
     }
 
-    public int addCommand(String command, Hand hand, boolean player) {
+    public int addCommand(String command, Hand hand, boolean player, boolean op) {
         int id = getNewId();
-        commands.put(String.valueOf(id), new NPCCommand(String.valueOf(id), command, hand, player));
+        commands.put(String.valueOf(id), new NPCCommand(String.valueOf(id), command, hand, player, op));
         return id;
     }
 
@@ -102,18 +102,27 @@ public class CommandTrait extends Trait {
         Hand hand;
         String id;
         boolean player;
+        boolean op;
 
-        public NPCCommand(String id, String command, Hand hand, boolean player) {
+        public NPCCommand(String id, String command, Hand hand, boolean player, boolean op) {
             this.id = id;
             this.command = command;
             this.hand = hand;
             this.player = player;
+            this.op = op;
         }
 
         public void run(NPC npc, Player clicker) {
             String interpolatedCommand = command.replace("<npc>", npc.getName()).replace("<p>", clicker.getName());
             if (player) {
+            	boolean wasOp = clicker.isOp();
+            	if (op) {
+            		clicker.setOp(true);
+            	}
                 clicker.performCommand(interpolatedCommand);
+                if (op) {
+                	clicker.setOp(wasOp);
+                }
             } else {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
             }
@@ -127,7 +136,7 @@ public class CommandTrait extends Trait {
         @Override
         public NPCCommand create(DataKey root) {
             return new NPCCommand(root.name(), root.getString("command"), Hand.valueOf(root.getString("hand")),
-                    Boolean.valueOf(root.getString("player")));
+                    Boolean.valueOf(root.getString("player")), Boolean.valueOf(root.getString("op")));
         }
 
         @Override
@@ -135,6 +144,7 @@ public class CommandTrait extends Trait {
             root.setString("command", instance.command);
             root.setString("hand", instance.hand.name());
             root.setBoolean("player", instance.player);
+            root.setBoolean("op", instance.op);
         }
     }
 }

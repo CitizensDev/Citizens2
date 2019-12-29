@@ -278,11 +278,11 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer])",
+            usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer] -o[p])",
             desc = "Controls commands which will be run when clicking on an NPC",
             modifiers = { "command", "cmd" },
             min = 1,
-            flags = "lrp",
+            flags = "lrpo",
             permission = "citizens.npc.command")
     public void command(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         CommandTrait commands = npc.getTrait(CommandTrait.class);
@@ -293,7 +293,7 @@ public class NPCCommands {
                 throw new CommandUsageException();
             String command = args.getJoinedStrings(2);
             CommandTrait.Hand hand = args.hasFlag('l') ? CommandTrait.Hand.LEFT : CommandTrait.Hand.RIGHT;
-            int id = commands.addCommand(command, hand, args.hasFlag('p'));
+            int id = commands.addCommand(command, hand, args.hasFlag('p'), args.hasFlag('o'));
             Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
         } else if (args.getString(1).equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
