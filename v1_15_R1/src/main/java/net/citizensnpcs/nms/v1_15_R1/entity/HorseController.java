@@ -94,11 +94,11 @@ public class HorseController extends MobEntityController {
         }
 
         @Override
-        public boolean ca() {
+        public boolean cj() {
             if (npc != null && riding) {
                 return true;
             }
-            return super.ca();
+            return super.cj();
         }
 
         @Override
