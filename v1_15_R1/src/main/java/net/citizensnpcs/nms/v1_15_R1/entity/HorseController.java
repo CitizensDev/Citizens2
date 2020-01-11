@@ -31,223 +31,223 @@ import net.minecraft.server.v1_15_R1.Vec3D;
 import net.minecraft.server.v1_15_R1.World;
 
 public class HorseController extends MobEntityController {
-    public HorseController() {
-        super(EntityHorseNPC.class);
-    }
+	public HorseController() {
+		super(EntityHorseNPC.class);
+	}
 
-    @Override
-    public Horse getBukkitEntity() {
-        return (Horse) super.getBukkitEntity();
-    }
+	@Override
+	public Horse getBukkitEntity() {
+		return (Horse) super.getBukkitEntity();
+	}
 
-    @Override
-    public void spawn(Location at, NPC npc) {
-        npc.getTrait(HorseModifiers.class);
-        super.spawn(at, npc);
-    }
+	@Override
+	public void spawn(Location at, NPC npc) {
+		npc.getTrait(HorseModifiers.class);
+		super.spawn(at, npc);
+	}
 
-    public static class EntityHorseNPC extends EntityHorse implements NPCHolder {
-        private double baseMovementSpeed;
-        private boolean calledNMSHeight = false;
-        private final CitizensNPC npc;
-        private boolean riding;
+	public static class EntityHorseNPC extends EntityHorse implements NPCHolder {
+		private double baseMovementSpeed;
+		private boolean calledNMSHeight = false;
+		private final CitizensNPC npc;
+		private boolean riding;
 
-        public EntityHorseNPC(EntityTypes<? extends EntityHorse> types, World world) {
-            this(types, world, null);
-        }
+		public EntityHorseNPC(EntityTypes<? extends EntityHorse> types, World world) {
+			this(types, world, null);
+		}
 
-        public EntityHorseNPC(EntityTypes<? extends EntityHorse> types, World world, NPC npc) {
-            super(types, world);
-            this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-                Horse horse = (Horse) getBukkitEntity();
-                horse.setDomestication(horse.getMaxDomestication());
-                baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
-            }
-        }
+		public EntityHorseNPC(EntityTypes<? extends EntityHorse> types, World world, NPC npc) {
+			super(types, world);
+			this.npc = (CitizensNPC) npc;
+			if (npc != null) {
+				NMSImpl.clearGoals(goalSelector, targetSelector);
+				Horse horse = (Horse) getBukkitEntity();
+				horse.setDomestication(horse.getMaxDomestication());
+				baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
+			}
+		}
 
-        @Override
-        public void a(DataWatcherObject<?> datawatcherobject) {
-            if (npc != null && !calledNMSHeight) {
-                calledNMSHeight = true;
-                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
-                calledNMSHeight = false;
-            }
+		@Override
+		public void a(DataWatcherObject<?> datawatcherobject) {
+			if (npc != null && !calledNMSHeight) {
+				calledNMSHeight = true;
+				NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
+				calledNMSHeight = false;
+			}
 
-            super.a(datawatcherobject);
-        }
+			super.a(datawatcherobject);
+		}
 
-        @Override
-        protected void a(double d0, boolean flag, IBlockData block, BlockPosition blockposition) {
-            if (npc == null || !npc.isFlyable()) {
-                super.a(d0, flag, block, blockposition);
-            }
-        }
+		@Override
+		protected void a(double d0, boolean flag, IBlockData block, BlockPosition blockposition) {
+			if (npc == null || !npc.isFlyable()) {
+				super.a(d0, flag, block, blockposition);
+			}
+		}
 
-        @Override
-        public boolean b(float f, float f1) {
-            if (npc == null || !npc.isFlyable()) {
-                return super.b(f, f1);
-            }
-            return false;
-        }
+		@Override
+		public boolean b(float f, float f1) {
+			if (npc == null || !npc.isFlyable()) {
+				return super.b(f, f1);
+			}
+			return false;
+		}
 
-        @Override
-        public boolean cj() {
-            if (npc != null && riding) {
-                return true;
-            }
-            return super.cj();
-        }
+		@Override
+		public boolean cj() {
+			if (npc != null && riding) {
+				return true;
+			}
+			return super.cj();
+		}
 
-        @Override
-        public void checkDespawn() {
-            if (npc == null) {
-                super.checkDespawn();
-            }
-        }
+		@Override
+		public void checkDespawn() {
+			if (npc == null) {
+				super.checkDespawn();
+			}
+		}
 
-        @Override
-        public void collide(net.minecraft.server.v1_15_R1.Entity entity) {
-            // this method is called by both the entities involved - cancelling
-            // it will not stop the NPC from moving.
-            super.collide(entity);
-            if (npc != null) {
-                Util.callCollisionEvent(npc, entity.getBukkitEntity());
-            }
-        }
+		@Override
+		public void collide(net.minecraft.server.v1_15_R1.Entity entity) {
+			// this method is called by both the entities involved - cancelling
+			// it will not stop the NPC from moving.
+			super.collide(entity);
+			if (npc != null) {
+				Util.callCollisionEvent(npc, entity.getBukkitEntity());
+			}
+		}
 
-        @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
-        }
+		@Override
+		public boolean d(NBTTagCompound save) {
+			return npc == null ? super.d(save) : false;
+		}
 
-        @Override
-        public void e(Vec3D vec3d) {
-            if (npc == null || !npc.isFlyable()) {
-                super.e(vec3d);
-            } else {
-                NMSImpl.flyingMoveLogic(this, vec3d);
-            }
-        }
+		@Override
+		public void e(Vec3D vec3d) {
+			if (npc == null || !npc.isFlyable()) {
+				super.e(vec3d);
+			} else {
+				NMSImpl.flyingMoveLogic(this, vec3d);
+			}
+		}
 
-        @Override
-        public void enderTeleportTo(double d0, double d1, double d2) {
-            if (npc == null) {
-                super.enderTeleportTo(d0, d1, d2);
-                return;
-            }
-            NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
-            Bukkit.getPluginManager().callEvent(event);
-            if (!event.isCancelled()) {
-                super.enderTeleportTo(d0, d1, d2);
-            }
-        }
+		@Override
+		public void enderTeleportTo(double d0, double d1, double d2) {
+			if (npc == null) {
+				super.enderTeleportTo(d0, d1, d2);
+				return;
+			}
+			NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
+			Bukkit.getPluginManager().callEvent(event);
+			if (!event.isCancelled()) {
+				super.enderTeleportTo(d0, d1, d2);
+			}
+		}
 
-        @Override
-        public void h(double x, double y, double z) {
-            if (npc == null) {
-                super.h(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.h(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
-        }
+		@Override
+		public void h(double x, double y, double z) {
+			if (npc == null) {
+				super.h(x, y, z);
+				return;
+			}
+			if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
+				if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+					super.h(x, y, z);
+				return;
+			}
+			Vector vector = new Vector(x, y, z);
+			NPCPushEvent event = Util.callPushEvent(npc, vector);
+			if (!event.isCancelled()) {
+				vector = event.getCollisionVector();
+				super.h(vector.getX(), vector.getY(), vector.getZ());
+			}
+			// when another entity collides, this method is called to push the
+			// NPC so we prevent it from doing anything if the event is
+			// cancelled.
+		}
 
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
-                NMSImpl.setBukkitEntity(this, new HorseNPC(this));
-            }
-            return super.getBukkitEntity();
-        }
+		@Override
+		public CraftEntity getBukkitEntity() {
+			if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+				NMSImpl.setBukkitEntity(this, new HorseNPC(this));
+			}
+			return super.getBukkitEntity();
+		}
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
+		@Override
+		public NPC getNPC() {
+			return npc;
+		}
 
-        @Override
-        protected SoundEffect getSoundAmbient() {
-            return NMSImpl.getSoundEffect(npc, super.getSoundAmbient(), NPC.AMBIENT_SOUND_METADATA);
-        }
+		@Override
+		protected SoundEffect getSoundAmbient() {
+			return NMSImpl.getSoundEffect(npc, super.getSoundAmbient(), NPC.AMBIENT_SOUND_METADATA);
+		}
 
-        @Override
-        protected SoundEffect getSoundDeath() {
-            return NMSImpl.getSoundEffect(npc, super.getSoundDeath(), NPC.DEATH_SOUND_METADATA);
-        }
+		@Override
+		protected SoundEffect getSoundDeath() {
+			return NMSImpl.getSoundEffect(npc, super.getSoundDeath(), NPC.DEATH_SOUND_METADATA);
+		}
 
-        @Override
-        protected SoundEffect getSoundHurt(DamageSource damagesource) {
-            return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
-        }
+		@Override
+		protected SoundEffect getSoundHurt(DamageSource damagesource) {
+			return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
+		}
 
-        @Override
-        public boolean isClimbing() {
-            if (npc == null || !npc.isFlyable()) {
-                return super.isClimbing();
-            } else {
-                return false;
-            }
-        }
+		@Override
+		public boolean isClimbing() {
+			if (npc == null || !npc.isFlyable()) {
+				return super.isClimbing();
+			} else {
+				return false;
+			}
+		}
 
-        @Override
-        public boolean isLeashed() {
-            if (npc == null)
-                return super.isLeashed();
-            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
-            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.isLeashed();
-            if (super.isLeashed()) {
-                unleash(true, false); // clearLeash with client update
-            }
-            return false; // shouldLeash
-        }
+		@Override
+		public boolean isLeashed() {
+			if (npc == null)
+				return super.isLeashed();
+			boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+			if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
+				return super.isLeashed();
+			if (super.isLeashed()) {
+				unleash(true, false); // clearLeash with client update
+			}
+			return false; // shouldLeash
+		}
 
-        @Override
-        public void mobTick() {
-            super.mobTick();
-            if (npc != null) {
-                if (npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled()) {
-                    riding = getBukkitEntity().getPassengers().size() > 0;
-                    getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
-                            .setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());
-                } else {
-                    riding = false;
-                }
-                if (riding) {
-                    d(4, true); // datawatcher method
-                }
-                NMS.setStepHeight(getBukkitEntity(), 1);
-                npc.update();
-            }
-        }
-    }
+		@Override
+		public void mobTick() {
+			super.mobTick();
+			if (npc != null) {
+				if (npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled()) {
+					riding = getBukkitEntity().getPassengers().size() > 0;
+					getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
+							.setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());
+				} else {
+					riding = false;
+				}
+				if (riding) {
+					d(4, true); // datawatcher method
+				}
+				NMS.setStepHeight(getBukkitEntity(), 1);
+				npc.update();
+			}
+		}
+	}
 
-    public static class HorseNPC extends CraftHorse implements NPCHolder {
-        private final CitizensNPC npc;
+	public static class HorseNPC extends CraftHorse implements NPCHolder {
+		private final CitizensNPC npc;
 
-        public HorseNPC(EntityHorseNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
+		public HorseNPC(EntityHorseNPC entity) {
+			super((CraftServer) Bukkit.getServer(), entity);
+			this.npc = entity.npc;
+		}
 
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-    }
+		@Override
+		public NPC getNPC() {
+			return npc;
+		}
+	}
 }
