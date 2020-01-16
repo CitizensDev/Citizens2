@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.HandlerList;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -79,8 +80,9 @@ public class CitizensNPCRegistry implements NPCRegistry {
             NPC npc = itr.next();
             npc.despawn(DespawnReason.REMOVAL);
             for (Trait t : npc.getTraits()) {
+                HandlerList.unregisterAll(t);
                 t.onRemove();
-            }
+            } 
             itr.remove();
             if (saves != null) {
                 saves.clearData(npc);

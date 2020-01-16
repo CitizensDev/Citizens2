@@ -103,14 +103,14 @@ public class Util {
             // 1.8.8 compatibility
             return true;
         switch (type) {
-            case BAT:
-            case BLAZE:
-            case ENDER_DRAGON:
-            case GHAST:
-            case WITHER:
-                return true;
-            default:
-                return false;
+        case BAT:
+        case BLAZE:
+        case ENDER_DRAGON:
+        case GHAST:
+        case WITHER:
+            return true;
+        default:
+            return false;
         }
     }
 
@@ -183,7 +183,7 @@ public class Util {
 
     public static boolean matchesItemInHand(Player player, String setting) {
         String parts = setting;
-        if (parts.contains("*"))
+        if (parts.contains("*") || parts.isEmpty())
             return true;
         for (String part : Splitter.on(',').split(parts)) {
             Material matchMaterial = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(part, true)
