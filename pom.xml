@@ -12,8 +12,16 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<bukkit.version>1.15.1-R0.1-SNAPSHOT</bukkit.version>
 		<powermock.version>1.4.12</powermock.version>
+		<placeholderapi.version>2.10.4</placeholderapi.version>
 		<build.number>Unknown</build.number>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>placeholderapi</id>
+			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -38,6 +46,12 @@
 			<groupId>ch.ethz.globis.phtree</groupId>
 			<artifactId>phtree</artifactId>
 			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>${placeholderapi.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
