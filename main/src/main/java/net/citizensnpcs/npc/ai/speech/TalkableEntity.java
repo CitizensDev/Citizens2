@@ -67,8 +67,9 @@ public class TalkableEntity implements Talkable {
     }
 
     private void talk(String message) {
-        if (entity instanceof Player && !CitizensAPI.getNPCRegistry().isNPC(entity))
+        if (entity instanceof Player && !CitizensAPI.getNPCRegistry().isNPC(entity)) {
             Messaging.send((Player) entity, message);
+        }
     }
 
     @Override

@@ -18,6 +18,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.util.Messages;
 
 @TraitName("commandtrait")
@@ -113,7 +114,7 @@ public class CommandTrait extends Trait {
         }
 
         public void run(NPC npc, Player clicker) {
-            String interpolatedCommand = command.replace("<npc>", npc.getName()).replace("<p>", clicker.getName());
+            String interpolatedCommand = Placeholders.replace(command, clicker, npc);
             if (player) {
             	boolean wasOp = clicker.isOp();
             	if (op) {
