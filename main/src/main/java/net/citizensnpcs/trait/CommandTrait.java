@@ -121,7 +121,11 @@ public class CommandTrait extends Trait {
                 if (op) {
                     clicker.setOp(true);
                 }
-                clicker.performCommand(interpolatedCommand);
+                try {
+                    clicker.performCommand(interpolatedCommand);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
                 if (op) {
                     clicker.setOp(wasOp);
                 }
