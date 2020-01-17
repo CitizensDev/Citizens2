@@ -38,15 +38,17 @@ public class CommandTrait extends Trait {
     }
 
     /**
-     * Send a brief description of the current state of the trait to the supplied {@link CommandSender}.
+     * Send a brief description of the current state of the trait to the supplied
+     * {@link CommandSender}.
      */
     public void describe(CommandSender sender) {
         List<NPCCommand> left = Lists.newArrayList();
         List<NPCCommand> right = Lists.newArrayList();
         for (NPCCommand command : commands.values()) {
-            if (command.hand == Hand.LEFT) {
+            if (command.hand == Hand.LEFT || command.hand == Hand.BOTH) {
                 left.add(command);
-            } else {
+            }
+            if (command.hand == Hand.RIGHT || command.hand == Hand.BOTH) {
                 right.add(command);
             }
         }
@@ -71,7 +73,7 @@ public class CommandTrait extends Trait {
 
     public void dispatch(Player player, Hand hand) {
         for (NPCCommand command : commands.values()) {
-            if (command.hand != hand)
+            if (command.hand != hand && command.hand != Hand.BOTH)
                 continue;
             command.run(npc, player);
         }
@@ -94,8 +96,7 @@ public class CommandTrait extends Trait {
     }
 
     public static enum Hand {
-        LEFT,
-        RIGHT;
+        BOTH, LEFT, RIGHT;
     }
 
     private static class NPCCommand {
@@ -116,13 +117,13 @@ public class CommandTrait extends Trait {
         public void run(NPC npc, Player clicker) {
             String interpolatedCommand = Placeholders.replace(command, clicker, npc);
             if (player) {
-            	boolean wasOp = clicker.isOp();
-            	if (op) {
-            		clicker.setOp(true);
-            	}
+                boolean wasOp = clicker.isOp();
+                if (op) {
+                    clicker.setOp(true);
+                }
                 clicker.performCommand(interpolatedCommand);
                 if (op) {
-                	clicker.setOp(wasOp);
+                    clicker.setOp(wasOp);
                 }
             } else {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
