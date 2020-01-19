@@ -235,7 +235,6 @@ permissions:
   citizens.npc.gravity: {default: false}
   citizens.npc.gamemode: {default: false}
   citizens.npc.help: {default: false}
-  citizens.npc.help: {default: false}
   citizens.npc.horse: {default: false}
   citizens.npc.ignore-cost: {default: false}
   citizens.npc.info: {default: false}
@@ -651,7 +650,6 @@ permissions:
       citizens.npc.gravity: true
       citizens.npc.gamemode: true
       citizens.npc.help: true
-      citizens.npc.help: true
       citizens.npc.horse: true
       citizens.npc.ignore-cost: true
       citizens.npc.info: true
@@ -1062,7 +1060,6 @@ permissions:
       citizens.npc.edit.text: true
       citizens.npc.gravity: true
       citizens.npc.gamemode: true
-      citizens.npc.help: true
       citizens.npc.help: true
       citizens.npc.horse: true
       citizens.npc.ignore-cost: true
