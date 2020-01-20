@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_15_R1.util;
 
+import java.lang.invoke.MethodHandle;
 import java.util.EnumMap;
 
 import org.bukkit.entity.EntityType;
@@ -17,8 +18,9 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.minecraft.server.v1_15_R1.BlockPosition;
+import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
+import net.minecraft.server.v1_15_R1.EntityPose;
 import net.minecraft.server.v1_15_R1.EnumHand;
 import net.minecraft.server.v1_15_R1.Packet;
 import net.minecraft.server.v1_15_R1.PacketPlayOutAnimation;
@@ -75,7 +77,11 @@ public class PlayerAnimationImpl {
                 }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
                 break;
             case SLEEP:
-                player.sleep(new BlockPosition(player));
+                try {
+                    ENTITY_SETPOSE_METHOD.invoke(player, EntityPose.SLEEPING);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
                 break;
             case SNEAK:
                 player.getBukkitEntity().setSneaking(true);
@@ -101,7 +107,11 @@ public class PlayerAnimationImpl {
                 NMS.mount(player.getBukkitEntity(), null);
                 break;
             case STOP_SLEEPING:
-                playDefaultAnimation(player, radius, 2);
+                try {
+                    ENTITY_SETPOSE_METHOD.invoke(player, EntityPose.STANDING);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
                 break;
             case STOP_SNEAKING:
                 player.getBukkitEntity().setSneaking(false);
@@ -127,6 +137,8 @@ public class PlayerAnimationImpl {
         NMSImpl.sendPacketNearby(player.getBukkitEntity(), player.getBukkitEntity().getLocation(), packet, radius);
     }
 
+    private static final MethodHandle ENTITY_SETPOSE_METHOD = NMS.getMethodHandle(Entity.class, "setPose", true,
+            EntityPose.class);
     private static EnumMap<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);
     static {
         DEFAULTS.put(PlayerAnimation.ARM_SWING, 0);
