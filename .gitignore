@@ -11,3 +11,6 @@ bin/
 dependency-reduced-pom.xml
 *.jardesc
 *.lnk
+
+# Build Tools files
+.buildtools/
