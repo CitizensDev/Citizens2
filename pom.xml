@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.15.1-R0.1-SNAPSHOT</bukkit.version>
+		<bukkit.version>1.15.2-R0.1-SNAPSHOT</bukkit.version>
 		<powermock.version>1.4.12</powermock.version>
 		<placeholderapi.version>2.10.4</placeholderapi.version>
 		<build.number>Unknown</build.number>
@@ -25,8 +25,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
 			<version>${bukkit.version}</version>
 			<scope>provided</scope>
 		</dependency>
