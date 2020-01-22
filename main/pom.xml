@@ -13,7 +13,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<craftbukkit.version>1.15.1-R0.1-SNAPSHOT</craftbukkit.version>
+		<craftbukkit.version>1.15.2-R0.1-SNAPSHOT</craftbukkit.version>
 		<citizensapi.version>${project.version}</citizensapi.version>
 		<powermock.version>1.4.12</powermock.version>
 		<bstats.version>1.5</bstats.version>
@@ -41,8 +41,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot</artifactId>
 			<version>${craftbukkit.version}</version>
 			<type>jar</type>
 			<scope>provided</scope>
