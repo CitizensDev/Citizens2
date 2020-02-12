@@ -55,7 +55,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             Block block = base.getWorld().getBlockAt(x, y, z);
             if (MinecraftBlockExaminer.canStandOn(block)) {
                 long[] pt = { x, y, z };
-                if (tree != null && tree.get() != null && !tree.get().contains(pt, pt)) {
+                if (tree != null && tree.get() != null && !tree.get().queryIntersect(pt, pt).hasNext()) {
                     continue;
                 }
                 found = block.getLocation().add(0, 1, 0);
