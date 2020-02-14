@@ -16,7 +16,6 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.HorseModifiers;
-import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.DamageSource;
@@ -231,7 +230,6 @@ public class HorseController extends MobEntityController {
                 if (riding) {
                     d(4, true); // datawatcher method
                 }
-                NMS.setStepHeight(getBukkitEntity(), 2);
                 npc.update();
             }
         }

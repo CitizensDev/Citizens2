@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -309,7 +310,9 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             boolean onGround = NMS.isOnGround(npc.getEntity());
             float speedMod = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
-            speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, speedMod);
+            if (!(npc.getEntity() instanceof Horse)) { // just use minecraft horse physics
+                speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, speedMod);
+            }
 
             boolean shouldJump = NMS.shouldJump(rider);
             if (shouldJump) {
