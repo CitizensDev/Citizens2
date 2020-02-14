@@ -22,7 +22,6 @@ import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.DamageSource;
 import net.minecraft.server.v1_15_R1.DataWatcherObject;
 import net.minecraft.server.v1_15_R1.EntityHorse;
-import net.minecraft.server.v1_15_R1.EntityHorseAbstract;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.GenericAttributes;
 import net.minecraft.server.v1_15_R1.IBlockData;
@@ -95,18 +94,18 @@ public class HorseController extends MobEntityController {
         }
 
         @Override
+        public void checkDespawn() {
+            if (npc == null) {
+                super.checkDespawn();
+            }
+        }
+
+        @Override
         public boolean cj() {
             if (npc != null && riding) {
                 return true;
             }
             return super.cj();
-        }
-
-        @Override
-        public void checkDespawn() {
-            if (npc == null) {
-                super.checkDespawn();
-            }
         }
 
         @Override
@@ -147,28 +146,6 @@ public class HorseController extends MobEntityController {
         }
 
         @Override
-        public void h(double x, double y, double z) {
-            if (npc == null) {
-                super.h(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.h(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new HorseNPC(this));
@@ -194,6 +171,28 @@ public class HorseController extends MobEntityController {
         @Override
         protected SoundEffect getSoundHurt(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
+        }
+
+        @Override
+        public void h(double x, double y, double z) {
+            if (npc == null) {
+                super.h(x, y, z);
+                return;
+            }
+            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+                    super.h(x, y, z);
+                return;
+            }
+            Vector vector = new Vector(x, y, z);
+            NPCPushEvent event = Util.callPushEvent(npc, vector);
+            if (!event.isCancelled()) {
+                vector = event.getCollisionVector();
+                super.h(vector.getX(), vector.getY(), vector.getZ());
+            }
+            // when another entity collides, this method is called to push the
+            // NPC so we prevent it from doing anything if the event is
+            // cancelled.
         }
 
         @Override
@@ -232,7 +231,7 @@ public class HorseController extends MobEntityController {
                 if (riding) {
                     d(4, true); // datawatcher method
                 }
-                NMS.setStepHeight(getBukkitEntity(), 1);
+                NMS.setStepHeight(getBukkitEntity(), 2);
                 npc.update();
             }
         }

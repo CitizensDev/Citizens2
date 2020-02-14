@@ -100,6 +100,7 @@ public class Settings {
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<e>"),
         KEEP_CHUNKS_LOADED("npc.chunks.always-keep-loaded", false),
         LOCALE("general.translation.locale", ""),
+        MAX_CONTROLLABLE_GROUND_SPEED("npc.controllable.max-ground-speed", 0.5),
         MAX_NPC_LIMIT_CHECKS("npc.limits.max-permission-checks", 100),
         MAX_NPC_SKIN_RETRIES("npc.skins.max-retries", -1),
         MAX_PACKET_ENTRIES("npc.limits.max-packet-entries", 15),

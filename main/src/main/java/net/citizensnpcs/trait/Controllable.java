@@ -34,8 +34,8 @@ import net.citizensnpcs.util.Util;
 /**
  * Persists the controllable status for /npc controllable
  *
- * A controllable {@link NPC} can be mounted by a {@link Player} using right
- * click or /npc mount and moved around using e.g. arrow keys.
+ * A controllable {@link NPC} can be mounted by a {@link Player} using right click or /npc mount and moved around using
+ * e.g. arrow keys.
  */
 @TraitName("controllable")
 public class Controllable extends Trait implements Toggleable, CommandConfigurable {
@@ -134,7 +134,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     /**
      * Attempts to mount the {@link NPC} onto the supplied {@link Player}.
      *
-     * @param toMount the player to mount
+     * @param toMount
+     *            the player to mount
      * @return whether the mount was successful
      */
     public boolean mount(Player toMount) {
@@ -159,16 +160,16 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         if (NMS.getPassengers(npc.getEntity()).contains(npc.getEntity()))
             return;
         switch (performed) {
-        case RIGHT_CLICK_BLOCK:
-        case RIGHT_CLICK_AIR:
-            controller.rightClick(event);
-            break;
-        case LEFT_CLICK_BLOCK:
-        case LEFT_CLICK_AIR:
-            controller.leftClick(event);
-            break;
-        default:
-            break;
+            case RIGHT_CLICK_BLOCK:
+            case RIGHT_CLICK_AIR:
+                controller.rightClick(event);
+                break;
+            case LEFT_CLICK_BLOCK:
+            case LEFT_CLICK_AIR:
+                controller.leftClick(event);
+                break;
+            default:
+                break;
         }
     }
 
@@ -209,10 +210,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     /**
-     * Configures the explicit typei.e. whether the NPC should be controlled as if
-     * it was a certain {@link EntityType}.
+     * Configures the explicit typei.e. whether the NPC should be controlled as if it was a certain {@link EntityType}.
      *
-     * @param type the explicit type
+     * @param type
+     *            the explicit type
      */
     public void setExplicitType(EntityType type) {
         this.explicitType = type;
@@ -238,8 +239,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     /**
-     * Sets whether the {@link Player} attempting to mount the {@link NPC} must
-     * actually own the {@link NPC} to mount it.
+     * Sets whether the {@link Player} attempting to mount the {@link NPC} must actually own the {@link NPC} to mount
+     * it.
      *
      * @see Owner#isOwnedBy(org.bukkit.command.CommandSender)
      */
@@ -257,6 +258,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     private double updateHorizontalSpeed(Entity handle, Entity passenger, double speed, float speedMod) {
+        double maxSpeed = Setting.MAX_CONTROLLABLE_GROUND_SPEED.asDouble();
         Vector vel = handle.getVelocity();
         double oldSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
         double horizontal = NMS.getHorizontalMovement(passenger);
@@ -271,17 +273,17 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                 new Vector(passenger.getVelocity().getX() * speedMod, 0D, passenger.getVelocity().getZ() * speedMod));
 
         double newSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
-        if (newSpeed > 0.5D) {
-            double movementFactor = 0.5D / newSpeed;
+        if (newSpeed > maxSpeed) {
+            double movementFactor = maxSpeed / newSpeed;
             vel = vel.multiply(new Vector(movementFactor, 1, movementFactor));
-            newSpeed = 0.5D;
+            newSpeed = maxSpeed;
         }
         handle.setVelocity(vel);
 
-        if (newSpeed > oldSpeed && speed < 0.5D) {
-            return (float) Math.min(0.5D, (speed + ((0.5D - speed) / 50.0D)));
+        if (newSpeed > oldSpeed && speed < maxSpeed) {
+            return (float) Math.min(maxSpeed, (speed + ((maxSpeed - speed) / 50.0D)));
         } else {
-            return (float) Math.max(0.07D, (speed - ((speed - 0.07D) / 50.0D)));
+            return (float) Math.max(0, (speed - ((speed) / 50.0D)));
         }
     }
 
@@ -404,14 +406,15 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     /**
-     * Register a movement controller for a certain {@link EntityType} to be used
-     * for {@link NPC}s with that type.
+     * Register a movement controller for a certain {@link EntityType} to be used for {@link NPC}s with that type.
      *
-     * Default controllers are registered for BAT, BLAZE, ENDER_DRAGON, GHAST,
-     * WITHER and PARROT using {@link PlayerInputAirController}.
+     * Default controllers are registered for BAT, BLAZE, ENDER_DRAGON, GHAST, WITHER and PARROT using
+     * {@link PlayerInputAirController}.
      *
-     * @param type  the entity type
-     * @param clazz the controller class
+     * @param type
+     *            the entity type
+     * @param clazz
+     *            the controller class
      */
     public static void registerControllerType(EntityType type, Class<? extends MovementController> clazz) {
         try {
