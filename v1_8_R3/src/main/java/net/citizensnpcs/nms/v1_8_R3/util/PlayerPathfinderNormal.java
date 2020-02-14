@@ -93,8 +93,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     } else {
                         return null;
                     }
-                }
-                else {
+                } else {
                     break;
                 }
             }

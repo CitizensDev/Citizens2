@@ -103,14 +103,14 @@ public class Util {
             // 1.8.8 compatibility
             return true;
         switch (type) {
-        case BAT:
-        case BLAZE:
-        case ENDER_DRAGON:
-        case GHAST:
-        case WITHER:
-            return true;
-        default:
-            return false;
+            case BAT:
+            case BLAZE:
+            case ENDER_DRAGON:
+            case GHAST:
+            case WITHER:
+                return true;
+            default:
+                return false;
         }
     }
 

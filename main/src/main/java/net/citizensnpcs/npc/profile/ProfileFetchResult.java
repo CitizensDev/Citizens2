@@ -17,13 +17,11 @@ public enum ProfileFetchResult {
      */
     FAILED,
     /**
-     * The profile request failed because the profile
-     * was not found.
+     * The profile request failed because the profile was not found.
      */
     NOT_FOUND,
     /**
-     * The profile request failed because too many requests
-     * were sent.
+     * The profile request failed because too many requests were sent.
      */
     TOO_MANY_REQUESTS
 }

@@ -38,8 +38,7 @@ public class CommandTrait extends Trait {
     }
 
     /**
-     * Send a brief description of the current state of the trait to the supplied
-     * {@link CommandSender}.
+     * Send a brief description of the current state of the trait to the supplied {@link CommandSender}.
      */
     public void describe(CommandSender sender) {
         List<NPCCommand> left = Lists.newArrayList();
@@ -96,7 +95,9 @@ public class CommandTrait extends Trait {
     }
 
     public static enum Hand {
-        BOTH, LEFT, RIGHT;
+        BOTH,
+        LEFT,
+        RIGHT;
     }
 
     private static class NPCCommand {

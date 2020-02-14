@@ -82,7 +82,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
             for (Trait t : npc.getTraits()) {
                 HandlerList.unregisterAll(t);
                 t.onRemove();
-            } 
+            }
             itr.remove();
             if (saves != null) {
                 saves.clearData(npc);

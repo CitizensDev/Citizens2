@@ -26,9 +26,9 @@ public class Powered extends Trait implements Toggleable {
             ((Creeper) npc.getEntity()).setPowered(powered);
         }
     }
-    
+
     public boolean isPowered() {
-    	return powered;
+        return powered;
     }
 
     @Override

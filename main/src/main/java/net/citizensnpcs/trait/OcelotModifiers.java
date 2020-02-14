@@ -15,42 +15,42 @@ import net.citizensnpcs.util.NMS;
  */
 @TraitName("ocelotmodifiers")
 public class OcelotModifiers extends Trait {
-	@Persist("sitting")
-	private boolean sitting;
-	@Persist("type")
-	private Ocelot.Type type = Ocelot.Type.WILD_OCELOT;
+    @Persist("sitting")
+    private boolean sitting;
+    @Persist("type")
+    private Ocelot.Type type = Ocelot.Type.WILD_OCELOT;
 
-	public OcelotModifiers() {
-		super("ocelotmodifiers");
-	}
+    public OcelotModifiers() {
+        super("ocelotmodifiers");
+    }
 
-	@Override
-	public void onSpawn() {
-		updateModifiers();
-	}
+    @Override
+    public void onSpawn() {
+        updateModifiers();
+    }
 
-	public void setSitting(boolean sit) {
-		this.sitting = sit;
-		updateModifiers();
-	}
+    public void setSitting(boolean sit) {
+        this.sitting = sit;
+        updateModifiers();
+    }
 
-	public void setType(Ocelot.Type type) {
-		this.type = type;
-		updateModifiers();
-	}
+    public void setType(Ocelot.Type type) {
+        this.type = type;
+        updateModifiers();
+    }
 
-	private void updateModifiers() {
-		if (npc.getEntity() instanceof Ocelot) {
-			Ocelot ocelot = (Ocelot) npc.getEntity();
-			try {
-				ocelot.setCatType(type);
-			} catch (UnsupportedOperationException ex) {
-				npc.getTrait(CatTrait.class).setSitting(sitting);
-				npc.getTrait(CatTrait.class).setType(type);
-				npc.removeTrait(OcelotModifiers.class);
-				return;
-			}
-			NMS.setSitting(ocelot, sitting);
-		}
-	}
+    private void updateModifiers() {
+        if (npc.getEntity() instanceof Ocelot) {
+            Ocelot ocelot = (Ocelot) npc.getEntity();
+            try {
+                ocelot.setCatType(type);
+            } catch (UnsupportedOperationException ex) {
+                npc.getTrait(CatTrait.class).setSitting(sitting);
+                npc.getTrait(CatTrait.class).setType(type);
+                npc.removeTrait(OcelotModifiers.class);
+                return;
+            }
+            NMS.setSitting(ocelot, sitting);
+        }
+    }
 }

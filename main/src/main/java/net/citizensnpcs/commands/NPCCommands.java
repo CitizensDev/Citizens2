@@ -112,9 +112,16 @@ public class NPCCommands {
         selector = plugin.getNPCSelector();
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "age [age] (-l)", desc = "Set the age of a NPC", help = Messages.COMMAND_AGE_HELP, flags = "l", modifiers = {
-                    "age" }, min = 1, max = 2, permission = "citizens.npc.age")
+    @Command(
+            aliases = { "npc" },
+            usage = "age [age] (-l)",
+            desc = "Set the age of a NPC",
+            help = Messages.COMMAND_AGE_HELP,
+            flags = "l",
+            modifiers = { "age" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.age")
     public void age(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (!npc.isSpawned() || (!(npc.getEntity() instanceof Ageable) && !(npc.getEntity() instanceof Zombie)))
             throw new CommandException(Messages.MOBTYPE_CANNOT_BE_AGED, npc.getName());
@@ -149,9 +156,15 @@ public class NPCCommands {
         trait.setAge(age);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "anchor (--save [name]|--assume [name]|--remove [name]) (-a)(-c)", desc = "Changes/Saves/Lists NPC's location anchor(s)", flags = "ac", modifiers = {
-                    "anchor" }, min = 1, max = 3, permission = "citizens.npc.anchor")
+    @Command(
+            aliases = { "npc" },
+            usage = "anchor (--save [name]|--assume [name]|--remove [name]) (-a)(-c)",
+            desc = "Changes/Saves/Lists NPC's location anchor(s)",
+            flags = "ac",
+            modifiers = { "anchor" },
+            min = 1,
+            max = 3,
+            permission = "citizens.npc.anchor")
     public void anchor(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Anchors trait = npc.getTrait(Anchors.class);
         if (args.hasValueFlag("save")) {
@@ -219,9 +232,13 @@ public class NPCCommands {
         npc.teleport(args.getSenderLocation(), TeleportCause.COMMAND);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "armorstand --visible [visible] --small [small] --gravity [gravity] --arms [arms] --baseplate [baseplate]", desc = "Edit armorstand properties", modifiers = {
-                    "armorstand" }, min = 1, max = 1)
+    @Command(
+            aliases = { "npc" },
+            usage = "armorstand --visible [visible] --small [small] --gravity [gravity] --arms [arms] --baseplate [baseplate]",
+            desc = "Edit armorstand properties",
+            modifiers = { "armorstand" },
+            min = 1,
+            max = 1)
     @Requirements(selected = true, ownership = true, types = EntityType.ARMOR_STAND)
     public void armorstand(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         ArmorStandTrait trait = npc.getTrait(ArmorStandTrait.class);
@@ -242,20 +259,31 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = { "npc" }, usage = "collidable", desc = "Toggles an NPC's collidability", modifiers = {
-            "collidable" }, min = 1, max = 1, permission = "citizens.npc.collidable")
+    @Command(
+            aliases = { "npc" },
+            usage = "collidable",
+            desc = "Toggles an NPC's collidability",
+            modifiers = { "collidable" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.collidable")
     @Requirements(ownership = true, selected = true, types = { EntityType.PLAYER })
     public void collidable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         npc.data().setPersistent(NPC.COLLIDABLE_METADATA, !npc.data().get(NPC.COLLIDABLE_METADATA, true));
         Messaging.sendTr(sender,
-                npc.data().<Boolean>get(NPC.COLLIDABLE_METADATA) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
+                npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
                 npc.getName());
 
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer] -o[p])", desc = "Controls commands which will be run when clicking on an NPC", modifiers = {
-                    "command", "cmd" }, min = 1, flags = "lrpo", permission = "citizens.npc.command")
+    @Command(
+            aliases = { "npc" },
+            usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer] -o[p])",
+            desc = "Controls commands which will be run when clicking on an NPC",
+            modifiers = { "command", "cmd" },
+            min = 1,
+            flags = "lrpo",
+            permission = "citizens.npc.command")
     public void command(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         CommandTrait commands = npc.getTrait(CommandTrait.class);
         if (args.argsLength() == 1) {
@@ -281,9 +309,14 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "controllable|control (-m(ount),-y,-n,-o)", desc = "Toggles whether the NPC can be ridden and controlled", modifiers = {
-                    "controllable", "control" }, min = 1, max = 1, flags = "myno")
+    @Command(
+            aliases = { "npc" },
+            usage = "controllable|control (-m(ount),-y,-n,-o)",
+            desc = "Toggles whether the NPC can be ridden and controlled",
+            modifiers = { "controllable", "control" },
+            min = 1,
+            max = 1,
+            flags = "myno")
     public void controllable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if ((npc.isSpawned() && !sender.hasPermission(
                 "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase().replace("_", "")))
@@ -307,8 +340,14 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = { "npc" }, usage = "copy (--name newname)", desc = "Copies an NPC", modifiers = {
-            "copy" }, min = 1, max = 1, permission = "citizens.npc.copy")
+    @Command(
+            aliases = { "npc" },
+            usage = "copy (--name newname)",
+            desc = "Copies an NPC",
+            modifiers = { "copy" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.copy")
     public void copy(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String name = args.getFlag("name", npc.getFullName());
         NPC copy = npc.clone();
@@ -339,9 +378,14 @@ public class NPCCommands {
         selector.select(sender, copy);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "create [name] ((-b,u) --at (x:y:z:world) --type (type) --trait ('trait1, trait2...') --b (behaviours))", desc = "Create a new NPC", flags = "bu", modifiers = {
-                    "create" }, min = 2, permission = "citizens.npc.create")
+    @Command(
+            aliases = { "npc" },
+            usage = "create [name] ((-b,u) --at (x:y:z:world) --type (type) --trait ('trait1, trait2...') --b (behaviours))",
+            desc = "Create a new NPC",
+            flags = "bu",
+            modifiers = { "create" },
+            min = 2,
+            permission = "citizens.npc.create")
     @Requirements
     public void create(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String name = Colorizer.parseColors(args.getJoinedStrings(1).trim());
@@ -457,8 +501,14 @@ public class NPCCommands {
         Messaging.send(sender, msg + '.');
     }
 
-    @Command(aliases = { "npc" }, usage = "despawn (id)", desc = "Despawn a NPC", modifiers = {
-            "despawn" }, min = 1, max = 2, permission = "citizens.npc.despawn")
+    @Command(
+            aliases = { "npc" },
+            usage = "despawn (id)",
+            desc = "Despawn a NPC",
+            modifiers = { "despawn" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.despawn")
     @Requirements
     public void despawn(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
@@ -483,11 +533,19 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "flyable (true|false)", desc = "Toggles or sets an NPC's flyable status", modifiers = {
-                    "flyable" }, min = 1, max = 2, permission = "citizens.npc.flyable")
-    @Requirements(selected = true, ownership = true, excludedTypes = { EntityType.BAT, EntityType.BLAZE,
-            EntityType.ENDER_DRAGON, EntityType.GHAST, EntityType.WITHER })
+    @Command(
+            aliases = { "npc" },
+            usage = "flyable (true|false)",
+            desc = "Toggles or sets an NPC's flyable status",
+            modifiers = { "flyable" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.flyable")
+    @Requirements(
+            selected = true,
+            ownership = true,
+            excludedTypes = { EntityType.BAT, EntityType.BLAZE, EntityType.ENDER_DRAGON, EntityType.GHAST,
+                    EntityType.WITHER })
     public void flyable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean flyable = args.argsLength() == 2 ? args.getString(1).equals("true") : !npc.isFlyable();
         npc.setFlyable(flyable);
@@ -495,9 +553,15 @@ public class NPCCommands {
         Messaging.sendTr(sender, flyable ? Messages.FLYABLE_SET : Messages.FLYABLE_UNSET, npc.getName());
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "follow (player name) (-p[rotect])", desc = "Toggles NPC following you", flags = "p", modifiers = {
-                    "follow" }, min = 1, max = 2, permission = "citizens.npc.follow")
+    @Command(
+            aliases = { "npc" },
+            usage = "follow (player name) (-p[rotect])",
+            desc = "Toggles NPC following you",
+            flags = "p",
+            modifiers = { "follow" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.follow")
     public void follow(CommandContext args, Player sender, NPC npc) throws CommandException {
         boolean protect = args.hasFlag('p');
         String name = sender.getName();
@@ -513,8 +577,14 @@ public class NPCCommands {
                 player.getName());
     }
 
-    @Command(aliases = { "npc" }, usage = "gamemode [gamemode]", desc = "Changes the gamemode", modifiers = {
-            "gamemode" }, min = 1, max = 2, permission = "citizens.npc.gamemode")
+    @Command(
+            aliases = { "npc" },
+            usage = "gamemode [gamemode]",
+            desc = "Changes the gamemode",
+            modifiers = { "gamemode" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.gamemode")
     @Requirements(selected = true, ownership = true, types = { EntityType.PLAYER })
     public void gamemode(CommandContext args, CommandSender sender, NPC npc) {
         Player player = (Player) npc.getEntity();
@@ -541,9 +611,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.GAMEMODE_SET, mode.name().toLowerCase());
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "glowing --color [minecraft chat color]", desc = "Toggles an NPC's glowing status", modifiers = {
-                    "glowing" }, min = 1, max = 1, permission = "citizens.npc.glowing")
+    @Command(
+            aliases = { "npc" },
+            usage = "glowing --color [minecraft chat color]",
+            desc = "Toggles an NPC's glowing status",
+            modifiers = { "glowing" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.glowing")
     @Requirements(selected = true, ownership = true)
     public void glowing(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("color")) {
@@ -560,18 +635,30 @@ public class NPCCommands {
         Messaging.sendTr(sender, glowing ? Messages.GLOWING_SET : Messages.GLOWING_UNSET, npc.getName());
     }
 
-    @Command(aliases = { "npc" }, usage = "gravity", desc = "Toggles gravity", modifiers = {
-            "gravity" }, min = 1, max = 1, permission = "citizens.npc.gravity")
+    @Command(
+            aliases = { "npc" },
+            usage = "gravity",
+            desc = "Toggles gravity",
+            modifiers = { "gravity" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.gravity")
     public void gravity(CommandContext args, CommandSender sender, NPC npc) {
         boolean enabled = npc.getTrait(Gravity.class).toggle();
         String key = !enabled ? Messages.GRAVITY_ENABLED : Messages.GRAVITY_DISABLED;
         Messaging.sendTr(sender, key, npc.getName());
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "horse|llama|donkey|mule (--color color) (--type type) (--style style) (-cb)", desc = "Sets horse and horse-like entity modifiers", help = "Use the -c flag to make the NPC have a chest, or the -b flag to stop them from having a chest.", modifiers = {
-                    "horse", "llama", "donkey",
-                    "mule" }, min = 1, max = 1, flags = "cb", permission = "citizens.npc.horse")
+    @Command(
+            aliases = { "npc" },
+            usage = "horse|llama|donkey|mule (--color color) (--type type) (--style style) (-cb)",
+            desc = "Sets horse and horse-like entity modifiers",
+            help = "Use the -c flag to make the NPC have a chest, or the -b flag to stop them from having a chest.",
+            modifiers = { "horse", "llama", "donkey", "mule" },
+            min = 1,
+            max = 1,
+            flags = "cb",
+            permission = "citizens.npc.horse")
     @Requirements(selected = true, ownership = true)
     public void horse(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Set<EntityType> allowedTypes = Util.optionalEntitySet("HORSE", "LLAMA", "DONKEY", "MULE", "TRADER_LLAMA");
@@ -616,22 +703,43 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = { "npc" }, usage = "id", desc = "Sends the selected NPC's ID to the sender", modifiers = {
-            "id" }, min = 1, max = 1, permission = "citizens.npc.id")
+    @Command(
+            aliases = { "npc" },
+            usage = "id",
+            desc = "Sends the selected NPC's ID to the sender",
+            modifiers = { "id" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.id")
     public void id(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, npc.getId());
     }
 
-    @Command(aliases = { "npc" }, usage = "inventory", desc = "Show's an NPC's inventory", modifiers = {
-            "inventory" }, min = 1, max = 1, permission = "citizens.npc.inventory")
+    @Command(
+            aliases = { "npc" },
+            usage = "inventory",
+            desc = "Show's an NPC's inventory",
+            modifiers = { "inventory" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.inventory")
     public void inventory(CommandContext args, CommandSender sender, NPC npc) {
         npc.getTrait(Inventory.class).openInventory((Player) sender);
     }
 
-    @Command(aliases = { "npc" }, usage = "item [item] (data)", desc = "Sets the NPC's item", modifiers = {
-            "item", }, min = 2, max = 3, flags = "", permission = "citizens.npc.item")
-    @Requirements(selected = true, ownership = true, types = { EntityType.DROPPED_ITEM, EntityType.ITEM_FRAME,
-            EntityType.FALLING_BLOCK })
+    @Command(
+            aliases = { "npc" },
+            usage = "item [item] (data)",
+            desc = "Sets the NPC's item",
+            modifiers = { "item", },
+            min = 2,
+            max = 3,
+            flags = "",
+            permission = "citizens.npc.item")
+    @Requirements(
+            selected = true,
+            ownership = true,
+            types = { EntityType.DROPPED_ITEM, EntityType.ITEM_FRAME, EntityType.FALLING_BLOCK })
     public void item(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Material mat = Material.matchMaterial(args.getString(1));
         if (mat == null)
@@ -640,14 +748,14 @@ public class NPCCommands {
         npc.data().setPersistent(NPC.ITEM_ID_METADATA, mat.name());
         npc.data().setPersistent(NPC.ITEM_DATA_METADATA, data);
         switch (npc.getEntity().getType()) {
-        case DROPPED_ITEM:
-            ((org.bukkit.entity.Item) npc.getEntity()).getItemStack().setType(mat);
-            break;
-        case ITEM_FRAME:
-            ((ItemFrame) npc.getEntity()).getItem().setType(mat);
-            break;
-        default:
-            break;
+            case DROPPED_ITEM:
+                ((org.bukkit.entity.Item) npc.getEntity()).getItemStack().setType(mat);
+                break;
+            case ITEM_FRAME:
+                ((ItemFrame) npc.getEntity()).getItem().setType(mat);
+                break;
+            default:
+                break;
         }
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
@@ -656,8 +764,15 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.ITEM_SET, Util.prettyEnum(mat));
     }
 
-    @Command(aliases = { "npc" }, usage = "leashable", desc = "Toggles leashability", modifiers = {
-            "leashable" }, min = 1, max = 1, flags = "t", permission = "citizens.npc.leashable")
+    @Command(
+            aliases = { "npc" },
+            usage = "leashable",
+            desc = "Toggles leashability",
+            modifiers = { "leashable" },
+            min = 1,
+            max = 1,
+            flags = "t",
+            permission = "citizens.npc.leashable")
     public void leashable(CommandContext args, CommandSender sender, NPC npc) {
         boolean vulnerable = !npc.data().get(NPC.LEASH_PROTECTED_METADATA, true);
         if (args.hasFlag('t')) {
@@ -669,9 +784,15 @@ public class NPCCommands {
         Messaging.sendTr(sender, key, npc.getName());
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "list (page) ((-a) --owner (owner) --type (type) --char (char) --registry (name))", desc = "List NPCs", flags = "a", modifiers = {
-                    "list" }, min = 1, max = 2, permission = "citizens.npc.list")
+    @Command(
+            aliases = { "npc" },
+            usage = "list (page) ((-a) --owner (owner) --type (type) --char (char) --registry (name))",
+            desc = "List NPCs",
+            flags = "a",
+            modifiers = { "list" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.list")
     @Requirements
     public void list(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         NPCRegistry source = args.hasValueFlag("registry") ? CitizensAPI.getNamedNPCRegistry(args.getFlag("registry"))
@@ -727,9 +848,14 @@ public class NPCCommands {
             throw new CommandException(Messages.COMMAND_PAGE_MISSING);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "lookclose --(random|r)look [true|false] --(random|r)pitchrange [min,max] --(random|r)yawrange [min,max]", desc = "Toggle whether a NPC will look when a player is near", modifiers = {
-                    "lookclose", "look", "rotate" }, min = 1, max = 1, permission = "citizens.npc.lookclose")
+    @Command(
+            aliases = { "npc" },
+            usage = "lookclose --(random|r)look [true|false] --(random|r)pitchrange [min,max] --(random|r)yawrange [min,max]",
+            desc = "Toggle whether a NPC will look when a player is near",
+            modifiers = { "lookclose", "look", "rotate" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.lookclose")
     public void lookClose(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean toggle = true;
         if (args.hasAnyValueFlag("randomlook", "rlook")) {
@@ -782,9 +908,15 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "metadata set|get|remove [key] (value) (-t(emporary))", desc = "Manages NPC metadata", modifiers = {
-                    "metadata" }, flags = "t", min = 2, max = 4, permission = "citizens.npc.metadata")
+    @Command(
+            aliases = { "npc" },
+            usage = "metadata set|get|remove [key] (value) (-t(emporary))",
+            desc = "Manages NPC metadata",
+            modifiers = { "metadata" },
+            flags = "t",
+            min = 2,
+            max = 4,
+            permission = "citizens.npc.metadata")
     @Requirements(selected = true, ownership = true)
     public void metadata(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String command = args.getString(1).toLowerCase();
@@ -811,12 +943,21 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "minecart (--item item_name(:data)) (--offset offset)", desc = "Sets minecart item", modifiers = {
-                    "minecart" }, min = 1, max = 1, flags = "", permission = "citizens.npc.minecart")
-    @Requirements(selected = true, ownership = true, types = { EntityType.MINECART, EntityType.MINECART_CHEST,
-            EntityType.MINECART_COMMAND, EntityType.MINECART_FURNACE, EntityType.MINECART_HOPPER,
-            EntityType.MINECART_MOB_SPAWNER, EntityType.MINECART_TNT })
+    @Command(
+            aliases = { "npc" },
+            usage = "minecart (--item item_name(:data)) (--offset offset)",
+            desc = "Sets minecart item",
+            modifiers = { "minecart" },
+            min = 1,
+            max = 1,
+            flags = "",
+            permission = "citizens.npc.minecart")
+    @Requirements(
+            selected = true,
+            ownership = true,
+            types = { EntityType.MINECART, EntityType.MINECART_CHEST, EntityType.MINECART_COMMAND,
+                    EntityType.MINECART_FURNACE, EntityType.MINECART_HOPPER, EntityType.MINECART_MOB_SPAWNER,
+                    EntityType.MINECART_TNT })
     public void minecart(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("item")) {
             String raw = args.getFlag("item");
@@ -840,9 +981,15 @@ public class NPCCommands {
                 npc.data().get(NPC.MINECART_ITEM_DATA_METADATA, 0), npc.data().get(NPC.MINECART_OFFSET_METADATA, 0));
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "mount (--onnpc <npc id>) (-c (ancel))", desc = "Mounts a controllable NPC", modifiers = {
-                    "mount" }, min = 1, max = 1, flags = "c", permission = "citizens.npc.mount")
+    @Command(
+            aliases = { "npc" },
+            usage = "mount (--onnpc <npc id>) (-c (ancel))",
+            desc = "Mounts a controllable NPC",
+            modifiers = { "mount" },
+            min = 1,
+            max = 1,
+            flags = "c",
+            permission = "citizens.npc.mount")
     public void mount(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("onnpc")) {
             NPC mount;
@@ -879,8 +1026,13 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "moveto x:y:z:world | x y z world", desc = "Teleports a NPC to a given location", modifiers = "moveto", min = 1, permission = "citizens.npc.moveto")
+    @Command(
+            aliases = { "npc" },
+            usage = "moveto x:y:z:world | x y z world",
+            desc = "Teleports a NPC to a given location",
+            modifiers = "moveto",
+            min = 1,
+            permission = "citizens.npc.moveto")
     public void moveto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned()) {
@@ -927,11 +1079,18 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.MOVETO_TELEPORTED, npc.getName(), to);
     }
 
-    @Command(aliases = { "npc" }, modifiers = {
-            "name" }, usage = "name", desc = "Toggle nameplate visibility", min = 1, max = 1, flags = "h", permission = "citizens.npc.name")
+    @Command(
+            aliases = { "npc" },
+            modifiers = { "name" },
+            usage = "name",
+            desc = "Toggle nameplate visibility",
+            min = 1,
+            max = 1,
+            flags = "h",
+            permission = "citizens.npc.name")
     @Requirements(selected = true, ownership = true, livingEntity = true)
     public void name(CommandContext args, CommandSender sender, NPC npc) {
-        String old = npc.data().<Object>get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+        String old = npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
         if (args.hasFlag('h')) {
             old = "hover";
         } else {
@@ -961,9 +1120,16 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "ocelot (--type type) (-s(itting), -n(ot sitting))", desc = "Set the ocelot type of an NPC and whether it is sitting", modifiers = {
-                    "ocelot" }, min = 1, max = 1, requiresFlags = true, flags = "sn", permission = "citizens.npc.ocelot")
+    @Command(
+            aliases = { "npc" },
+            usage = "ocelot (--type type) (-s(itting), -n(ot sitting))",
+            desc = "Set the ocelot type of an NPC and whether it is sitting",
+            modifiers = { "ocelot" },
+            min = 1,
+            max = 1,
+            requiresFlags = true,
+            flags = "sn",
+            permission = "citizens.npc.ocelot")
     @Requirements(selected = true, ownership = true, types = { EntityType.OCELOT })
     public void ocelot(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         OcelotModifiers trait = npc.getTrait(OcelotModifiers.class);
@@ -982,8 +1148,14 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = { "npc" }, usage = "owner [name]", desc = "Set the owner of an NPC", modifiers = {
-            "owner" }, min = 1, max = 2, permission = "citizens.npc.owner")
+    @Command(
+            aliases = { "npc" },
+            usage = "owner [name]",
+            desc = "Set the owner of an NPC",
+            modifiers = { "owner" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.owner")
     public void owner(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Owner ownerTrait = npc.getTrait(Owner.class);
         if (args.argsLength() == 1) {
@@ -998,9 +1170,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, serverOwner ? Messages.OWNER_SET_SERVER : Messages.OWNER_SET, npc.getName(), name);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "passive (--set [true|false])", desc = "Sets whether an NPC damages other entities or not", modifiers = {
-                    "passive" }, min = 1, max = 1, permission = "citizens.npc.passive")
+    @Command(
+            aliases = { "npc" },
+            usage = "passive (--set [true|false])",
+            desc = "Sets whether an NPC damages other entities or not",
+            modifiers = { "passive" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.passive")
     public void passive(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean passive = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("set"))
                 : npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true);
@@ -1008,9 +1185,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, passive ? Messages.PASSIVE_SET : Messages.PASSIVE_UNSET, npc.getName());
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "pathopt --avoid-water|aw [true|false] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin]", desc = "Sets an NPC's pathfinding options", modifiers = {
-                    "pathopt", "po", "patho" }, min = 1, max = 1, permission = "citizens.npc.pathfindingoptions")
+    @Command(
+            aliases = { "npc" },
+            usage = "pathopt --avoid-water|aw [true|false] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin]",
+            desc = "Sets an NPC's pathfinding options",
+            modifiers = { "pathopt", "po", "patho" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.pathfindingoptions")
     public void pathfindingOptions(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean found = false;
         if (args.hasValueFlag("avoid-water") || args.hasValueFlag("aw")) {
@@ -1058,17 +1240,29 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = { "npc" }, usage = "pathrange [range]", desc = "Sets an NPC's pathfinding range", modifiers = {
-            "pathrange", "pathfindingrange", "prange" }, min = 2, max = 2, permission = "citizens.npc.pathfindingrange")
+    @Command(
+            aliases = { "npc" },
+            usage = "pathrange [range]",
+            desc = "Sets an NPC's pathfinding range",
+            modifiers = { "pathrange", "pathfindingrange", "prange" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.pathfindingrange")
     public void pathfindingRange(CommandContext args, CommandSender sender, NPC npc) {
         double range = Math.max(1, args.getDouble(1));
         npc.getNavigator().getDefaultParameters().range((float) range);
         Messaging.sendTr(sender, Messages.PATHFINDING_RANGE_SET, range);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "playerlist (-a,r)", desc = "Sets whether the NPC is put in the playerlist", modifiers = {
-                    "playerlist" }, min = 1, max = 1, flags = "ar", permission = "citizens.npc.playerlist")
+    @Command(
+            aliases = { "npc" },
+            usage = "playerlist (-a,r)",
+            desc = "Sets whether the NPC is put in the playerlist",
+            modifiers = { "playerlist" },
+            min = 1,
+            max = 1,
+            flags = "ar",
+            permission = "citizens.npc.playerlist")
     @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
     public void playerlist(CommandContext args, CommandSender sender, NPC npc) {
         boolean remove = !npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
@@ -1087,9 +1281,15 @@ public class NPCCommands {
                 npc.getName());
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "pose (--save [name]|--assume [name]|--remove [name]) (-a)", desc = "Changes/Saves/Lists NPC's head pose(s)", flags = "a", modifiers = {
-                    "pose" }, min = 1, max = 2, permission = "citizens.npc.pose")
+    @Command(
+            aliases = { "npc" },
+            usage = "pose (--save [name]|--assume [name]|--remove [name]) (-a)",
+            desc = "Changes/Saves/Lists NPC's head pose(s)",
+            flags = "a",
+            modifiers = { "pose" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.pose")
     public void pose(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Poses trait = npc.getTrait(Poses.class);
         if (args.hasValueFlag("save")) {
@@ -1131,16 +1331,28 @@ public class NPCCommands {
         trait.assumePose(location);
     }
 
-    @Command(aliases = { "npc" }, usage = "power", desc = "Toggle a creeper NPC as powered", modifiers = {
-            "power" }, min = 1, max = 1, permission = "citizens.npc.power")
+    @Command(
+            aliases = { "npc" },
+            usage = "power",
+            desc = "Toggle a creeper NPC as powered",
+            modifiers = { "power" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.power")
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
     public void power(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.sendTr(sender,
                 npc.getTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
-    @Command(aliases = { "npc" }, usage = "profession|prof [profession]", desc = "Set a NPC's profession", modifiers = {
-            "profession", "prof" }, min = 2, max = 2, permission = "citizens.npc.profession")
+    @Command(
+            aliases = { "npc" },
+            usage = "profession|prof [profession]",
+            desc = "Set a NPC's profession",
+            modifiers = { "profession", "prof" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.profession")
     @Requirements(selected = true, ownership = true)
     public void profession(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         EntityType type = npc.getTrait(MobType.class).getType();
@@ -1158,8 +1370,13 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), profession);
     }
 
-    @Command(aliases = { "npc" }, usage = "rabbittype [type]", desc = "Set the Type of a Rabbit NPC", modifiers = {
-            "rabbittype", "rbtype" }, min = 2, permission = "citizens.npc.rabbittype")
+    @Command(
+            aliases = { "npc" },
+            usage = "rabbittype [type]",
+            desc = "Set the Type of a Rabbit NPC",
+            modifiers = { "rabbittype", "rbtype" },
+            min = 2,
+            permission = "citizens.npc.rabbittype")
     @Requirements(selected = true, ownership = true, types = { EntityType.RABBIT })
     public void rabbitType(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Rabbit.Type type;
@@ -1172,9 +1389,13 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.RABBIT_TYPE_SET, npc.getName(), type.name());
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "remove|rem (all|id|name|--owner [owner])", desc = "Remove a NPC", modifiers = { "remove",
-                    "rem" }, min = 1, max = 2)
+    @Command(
+            aliases = { "npc" },
+            usage = "remove|rem (all|id|name|--owner [owner])",
+            desc = "Remove a NPC",
+            modifiers = { "remove", "rem" },
+            min = 1,
+            max = 2)
     @Requirements
     public void remove(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("owner")) {
@@ -1224,8 +1445,13 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
     }
 
-    @Command(aliases = { "npc" }, usage = "rename [name]", desc = "Rename a NPC", modifiers = {
-            "rename" }, min = 2, permission = "citizens.npc.rename")
+    @Command(
+            aliases = { "npc" },
+            usage = "rename [name]",
+            desc = "Rename a NPC",
+            modifiers = { "rename" },
+            min = 2,
+            permission = "citizens.npc.rename")
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
         String newName = Colorizer.parseColors(args.getJoinedStrings(1));
@@ -1244,9 +1470,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.NPC_RENAMED, oldName, newName);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "respawn [delay in ticks]", desc = "Sets an NPC's respawn delay in ticks", modifiers = {
-                    "respawn" }, min = 1, max = 2, permission = "citizens.npc.respawn")
+    @Command(
+            aliases = { "npc" },
+            usage = "respawn [delay in ticks]",
+            desc = "Sets an NPC's respawn delay in ticks",
+            modifiers = { "respawn" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.respawn")
     public void respawn(CommandContext args, CommandSender sender, NPC npc) {
         if (args.argsLength() > 1) {
             int delay = args.getInteger(1);
@@ -1257,9 +1488,14 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "scoreboard --addtag [tags] --removetag [tags]", desc = "Controls an NPC's scoreboard", modifiers = {
-                    "scoreboard" }, min = 1, max = 1, permission = "citizens.npc.scoreboard")
+    @Command(
+            aliases = { "npc" },
+            usage = "scoreboard --addtag [tags] --removetag [tags]",
+            desc = "Controls an NPC's scoreboard",
+            modifiers = { "scoreboard" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.scoreboard")
     public void scoreboard(CommandContext args, CommandSender sender, NPC npc) {
         ScoreboardTrait trait = npc.getTrait(ScoreboardTrait.class);
         String output = "";
@@ -1280,9 +1516,14 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "script --add [files] --remove [files]", desc = "Controls an NPC's scripts", modifiers = {
-                    "script" }, min = 1, max = 1, permission = "citizens.npc.script")
+    @Command(
+            aliases = { "npc" },
+            usage = "script --add [files] --remove [files]",
+            desc = "Controls an NPC's scripts",
+            modifiers = { "script" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.script")
     public void script(CommandContext args, CommandSender sender, NPC npc) {
         ScriptTrait trait = npc.getTrait(ScriptTrait.class);
         if (args.hasValueFlag("add")) {
@@ -1302,9 +1543,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.CURRENT_SCRIPTS, npc.getName(), Joiner.on("]],[[ ").join(trait.getScripts()));
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "select|sel [id|name] (--r range)", desc = "Select a NPC with the given ID or name", modifiers = {
-                    "select", "sel" }, min = 1, max = 2, permission = "citizens.npc.select")
+    @Command(
+            aliases = { "npc" },
+            usage = "select|sel [id|name] (--r range)",
+            desc = "Select a NPC with the given ID or name",
+            modifiers = { "select", "sel" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.select")
     @Requirements
     public void select(CommandContext args, final CommandSender sender, final NPC npc) throws CommandException {
         NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
@@ -1345,9 +1591,14 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "sheep (--color [color]) (--sheared [sheared])", desc = "Sets sheep modifiers", modifiers = {
-                    "sheep" }, min = 1, max = 1, permission = "citizens.npc.sheep")
+    @Command(
+            aliases = { "npc" },
+            usage = "sheep (--color [color]) (--sheared [sheared])",
+            desc = "Sets sheep modifiers",
+            modifiers = { "sheep" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.sheep")
     @Requirements(selected = true, ownership = true, types = { EntityType.SHEEP })
     public void sheep(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         SheepTrait trait = npc.getTrait(SheepTrait.class);
@@ -1371,9 +1622,15 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "skin (-c -l(atest)) [name] (or -t [uuid/name] [data] [signature])", desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest", modifiers = {
-                    "skin" }, min = 1, max = 4, flags = "ctl", permission = "citizens.npc.skin")
+    @Command(
+            aliases = { "npc" },
+            usage = "skin (-c -l(atest)) [name] (or -t [uuid/name] [data] [signature])",
+            desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
+            modifiers = { "skin" },
+            min = 1,
+            max = 4,
+            flags = "ctl",
+            permission = "citizens.npc.skin")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
     public void skin(final CommandContext args, final CommandSender sender, final NPC npc) throws CommandException {
         String skinName = npc.getName();
@@ -1409,9 +1666,14 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "skinlayers (--cape [true|false]) (--hat [true|false]) (--jacket [true|false]) (--sleeves [true|false]) (--pants [true|false])", desc = "Sets an NPC's skin layers visibility.", modifiers = {
-                    "skinlayers" }, min = 1, max = 5, permission = "citizens.npc.skinlayers")
+    @Command(
+            aliases = { "npc" },
+            usage = "skinlayers (--cape [true|false]) (--hat [true|false]) (--jacket [true|false]) (--sleeves [true|false]) (--pants [true|false])",
+            desc = "Sets an NPC's skin layers visibility.",
+            modifiers = { "skinlayers" },
+            min = 1,
+            max = 5,
+            permission = "citizens.npc.skinlayers")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
     public void skinLayers(final CommandContext args, final CommandSender sender, final NPC npc)
             throws CommandException {
@@ -1441,8 +1703,14 @@ public class NPCCommands {
                 trait.isVisible(Layer.LEFT_PANTS) || trait.isVisible(Layer.RIGHT_PANTS));
     }
 
-    @Command(aliases = { "npc" }, usage = "size [size]", desc = "Sets the NPC's size", modifiers = {
-            "size" }, min = 1, max = 2, permission = "citizens.npc.size")
+    @Command(
+            aliases = { "npc" },
+            usage = "size [size]",
+            desc = "Sets the NPC's size",
+            modifiers = { "size" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.size")
     @Requirements(selected = true, ownership = true, types = { EntityType.MAGMA_CUBE, EntityType.SLIME })
     public void slimeSize(CommandContext args, CommandSender sender, NPC npc) {
         SlimeSize trait = npc.getTrait(SlimeSize.class);
@@ -1455,9 +1723,15 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.SIZE_SET, npc.getName(), size);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "sound (--death [death sound|d]) (--ambient [ambient sound|d]) (--hurt [hurt sound|d]) (-n(one)) (-d(efault))", desc = "Sets an NPC's played sounds", modifiers = {
-                    "sound" }, flags = "dns", min = 1, max = 1, permission = "citizens.npc.sound")
+    @Command(
+            aliases = { "npc" },
+            usage = "sound (--death [death sound|d]) (--ambient [ambient sound|d]) (--hurt [hurt sound|d]) (-n(one)) (-d(efault))",
+            desc = "Sets an NPC's played sounds",
+            modifiers = { "sound" },
+            flags = "dns",
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.sound")
     @Requirements(selected = true, ownership = true, livingEntity = true, excludedTypes = { EntityType.PLAYER })
     public void sound(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String ambientSound = npc.data().get(NPC.AMBIENT_SOUND_METADATA);
@@ -1518,9 +1792,15 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.SOUND_SET, npc.getName(), ambientSound, hurtSound, deathSound);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "spawn (id|name) -l(oad chunks)", desc = "Spawn an existing NPC", modifiers = {
-                    "spawn" }, min = 1, max = 2, flags = "l", permission = "citizens.npc.spawn")
+    @Command(
+            aliases = { "npc" },
+            usage = "spawn (id|name) -l(oad chunks)",
+            desc = "Spawn an existing NPC",
+            modifiers = { "spawn" },
+            min = 1,
+            max = 2,
+            flags = "l",
+            permission = "citizens.npc.spawn")
     @Requirements(ownership = true)
     public void spawn(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
@@ -1560,9 +1840,13 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "speak message to speak --target npcid|player_name --type vocal_type", desc = "Uses the NPCs SpeechController to talk", modifiers = {
-                    "speak" }, min = 2, permission = "citizens.npc.speak")
+    @Command(
+            aliases = { "npc" },
+            usage = "speak message to speak --target npcid|player_name --type vocal_type",
+            desc = "Uses the NPCs SpeechController to talk",
+            modifiers = { "speak" },
+            min = 2,
+            permission = "citizens.npc.speak")
     public void speak(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String type = npc.getTrait(Speech.class).getDefaultVocalChord();
         String message = Colorizer.parseColors(args.getJoinedStrings(1));
@@ -1596,9 +1880,14 @@ public class NPCCommands {
         npc.getDefaultSpeechController().speak(context, type);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "speed [speed]", desc = "Sets the movement speed of an NPC as a percentage", modifiers = {
-                    "speed" }, min = 2, max = 2, permission = "citizens.npc.speed")
+    @Command(
+            aliases = { "npc" },
+            usage = "speed [speed]",
+            desc = "Sets the movement speed of an NPC as a percentage",
+            modifiers = { "speed" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.speed")
     public void speed(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         float newSpeed = (float) Math.abs(args.getDouble(1));
         if (newSpeed >= Setting.MAX_SPEED.asDouble())
@@ -1608,9 +1897,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.SPEED_MODIFIER_SET, newSpeed);
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "swim (--set [true|false])", desc = "Sets an NPC to swim or not", modifiers = {
-                    "swim" }, min = 1, max = 1, permission = "citizens.npc.swim")
+    @Command(
+            aliases = { "npc" },
+            usage = "swim (--set [true|false])",
+            desc = "Sets an NPC to swim or not",
+            modifiers = { "swim" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.swim")
     public void swim(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean swim = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("set"))
                 : !npc.data().get(NPC.SWIMMING_METADATA, true);
@@ -1618,8 +1912,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, swim ? Messages.SWIMMING_SET : Messages.SWIMMING_UNSET, npc.getName());
     }
 
-    @Command(aliases = { "npc" }, usage = "targetable", desc = "Toggles an NPC's targetability", modifiers = {
-            "targetable" }, min = 1, max = 1, permission = "citizens.npc.targetable")
+    @Command(
+            aliases = { "npc" },
+            usage = "targetable",
+            desc = "Toggles an NPC's targetability",
+            modifiers = { "targetable" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.targetable")
     public void targetable(CommandContext args, CommandSender sender, NPC npc) {
         boolean targetable = !npc.data().get(NPC.TARGETABLE_METADATA,
                 npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
@@ -1631,8 +1931,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, targetable ? Messages.TARGETABLE_SET : Messages.TARGETABLE_UNSET, npc.getName());
     }
 
-    @Command(aliases = { "npc" }, usage = "tp", desc = "Teleport to a NPC", modifiers = { "tp",
-            "teleport" }, min = 1, max = 1, permission = "citizens.npc.tp")
+    @Command(
+            aliases = { "npc" },
+            usage = "tp",
+            desc = "Teleport to a NPC",
+            modifiers = { "tp", "teleport" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.tp")
     public void tp(CommandContext args, Player player, NPC npc) {
         Location to = npc.getTrait(CurrentLocation.class).getLocation();
         if (to == null) {
@@ -1643,8 +1949,14 @@ public class NPCCommands {
         Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());
     }
 
-    @Command(aliases = { "npc" }, usage = "tphere", desc = "Teleport a NPC to your location", modifiers = { "tphere",
-            "tph", "move" }, min = 1, max = 1, permission = "citizens.npc.tphere")
+    @Command(
+            aliases = { "npc" },
+            usage = "tphere",
+            desc = "Teleport a NPC to your location",
+            modifiers = { "tphere", "tph", "move" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.tphere")
     public void tphere(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.getSenderLocation() == null)
             throw new ServerCommandException();
@@ -1667,9 +1979,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.NPC_TELEPORTED, npc.getName());
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "tpto [player name|npc id] [player name|npc id]", desc = "Teleport an NPC or player to another NPC or player", modifiers = {
-                    "tpto" }, min = 2, max = 3, permission = "citizens.npc.tpto")
+    @Command(
+            aliases = { "npc" },
+            usage = "tpto [player name|npc id] [player name|npc id]",
+            desc = "Teleport an NPC or player to another NPC or player",
+            modifiers = { "tpto" },
+            min = 2,
+            max = 3,
+            permission = "citizens.npc.tpto")
     @Requirements
     public void tpto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Entity from = null, to = null;
@@ -1716,8 +2033,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.TPTO_SUCCESS);
     }
 
-    @Command(aliases = { "npc" }, usage = "type [type]", desc = "Sets an NPC's entity type", modifiers = {
-            "type" }, min = 2, max = 2, permission = "citizens.npc.type")
+    @Command(
+            aliases = { "npc" },
+            usage = "type [type]",
+            desc = "Sets an NPC's entity type",
+            modifiers = { "type" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.type")
     public void type(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         EntityType type = Util.matchEntityType(args.getString(1));
         if (type == null)
@@ -1726,8 +2049,15 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.ENTITY_TYPE_SET, npc.getName(), args.getString(1));
     }
 
-    @Command(aliases = { "npc" }, usage = "vulnerable (-t)", desc = "Toggles an NPC's vulnerability", modifiers = {
-            "vulnerable" }, min = 1, max = 1, flags = "t", permission = "citizens.npc.vulnerable")
+    @Command(
+            aliases = { "npc" },
+            usage = "vulnerable (-t)",
+            desc = "Toggles an NPC's vulnerability",
+            modifiers = { "vulnerable" },
+            min = 1,
+            max = 1,
+            flags = "t",
+            permission = "citizens.npc.vulnerable")
     public void vulnerable(CommandContext args, CommandSender sender, NPC npc) {
         boolean vulnerable = !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
         if (args.hasFlag('t')) {
@@ -1739,8 +2069,15 @@ public class NPCCommands {
         Messaging.sendTr(sender, key, npc.getName());
     }
 
-    @Command(aliases = { "npc" }, usage = "wither (--charged [charged])", desc = "Sets wither modifiers", modifiers = {
-            "wither" }, min = 1, requiresFlags = true, max = 1, permission = "citizens.npc.wither")
+    @Command(
+            aliases = { "npc" },
+            usage = "wither (--charged [charged])",
+            desc = "Sets wither modifiers",
+            modifiers = { "wither" },
+            min = 1,
+            requiresFlags = true,
+            max = 1,
+            permission = "citizens.npc.wither")
     @Requirements(selected = true, ownership = true, types = { EntityType.WITHER })
     public void wither(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         WitherTrait trait = npc.getTrait(WitherTrait.class);
@@ -1749,9 +2086,16 @@ public class NPCCommands {
         }
     }
 
-    @Command(aliases = {
-            "npc" }, usage = "wolf (-s(itting) a(ngry) t(amed) i(nfo)) --collar [hex rgb color|name]", desc = "Sets wolf modifiers", modifiers = {
-                    "wolf" }, min = 1, max = 1, requiresFlags = true, flags = "sati", permission = "citizens.npc.wolf")
+    @Command(
+            aliases = { "npc" },
+            usage = "wolf (-s(itting) a(ngry) t(amed) i(nfo)) --collar [hex rgb color|name]",
+            desc = "Sets wolf modifiers",
+            modifiers = { "wolf" },
+            min = 1,
+            max = 1,
+            requiresFlags = true,
+            flags = "sati",
+            permission = "citizens.npc.wolf")
     @Requirements(selected = true, ownership = true, types = EntityType.WOLF)
     public void wolf(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         WolfModifiers trait = npc.getTrait(WolfModifiers.class);

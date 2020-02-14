@@ -11,66 +11,66 @@ import net.citizensnpcs.util.NMS;
 
 @TraitName("cattrait")
 public class CatTrait extends Trait {
-	@Persist
-	private DyeColor collarColor = null;
-	@Persist
-	private boolean lying = false;
-	@Persist
-	private boolean sitting = false;
-	@Persist
-	private Cat.Type type = Cat.Type.BLACK;
+    @Persist
+    private DyeColor collarColor = null;
+    @Persist
+    private boolean lying = false;
+    @Persist
+    private boolean sitting = false;
+    @Persist
+    private Cat.Type type = Cat.Type.BLACK;
 
-	public CatTrait() {
-		super("cattrait");
-	}
+    public CatTrait() {
+        super("cattrait");
+    }
 
-	public boolean isLyingDown() {
-		return lying;
-	}
+    public boolean isLyingDown() {
+        return lying;
+    }
 
-	@Override
-	public void run() {
-		if (npc.isSpawned() && npc.getEntity() instanceof Cat) {
-			Cat cat = (Cat) npc.getEntity();
-			cat.setSitting(sitting);
-			cat.setCatType(type);
-			if (collarColor != null) {
-				cat.setCollarColor(collarColor);
-			}
-			NMS.setLyingDown(cat, lying);
-		}
-	}
+    @Override
+    public void run() {
+        if (npc.isSpawned() && npc.getEntity() instanceof Cat) {
+            Cat cat = (Cat) npc.getEntity();
+            cat.setSitting(sitting);
+            cat.setCatType(type);
+            if (collarColor != null) {
+                cat.setCollarColor(collarColor);
+            }
+            NMS.setLyingDown(cat, lying);
+        }
+    }
 
-	public void setCollarColor(DyeColor color) {
-		this.collarColor = color;
-	}
+    public void setCollarColor(DyeColor color) {
+        this.collarColor = color;
+    }
 
-	public void setLyingDown(boolean lying) {
-		this.lying = lying;
-	}
+    public void setLyingDown(boolean lying) {
+        this.lying = lying;
+    }
 
-	public void setSitting(boolean sitting) {
-		this.sitting = sitting;
-	}
+    public void setSitting(boolean sitting) {
+        this.sitting = sitting;
+    }
 
-	public void setType(Cat.Type type) {
-		this.type = type;
-	}
+    public void setType(Cat.Type type) {
+        this.type = type;
+    }
 
-	public void setType(Type type2) {
-		switch (type2) {
-		case WILD_OCELOT:
-			this.type = Cat.Type.CALICO;
-			break;
-		case BLACK_CAT:
-			this.type = Cat.Type.BLACK;
-			break;
-		case RED_CAT:
-			this.type = Cat.Type.RED;
-			break;
-		case SIAMESE_CAT:
-			this.type = Cat.Type.SIAMESE;
-			break;
-		}
-	}
+    public void setType(Type type2) {
+        switch (type2) {
+            case WILD_OCELOT:
+                this.type = Cat.Type.CALICO;
+                break;
+            case BLACK_CAT:
+                this.type = Cat.Type.BLACK;
+                break;
+            case RED_CAT:
+                this.type = Cat.Type.RED;
+                break;
+            case SIAMESE_CAT:
+                this.type = Cat.Type.SIAMESE;
+                break;
+        }
+    }
 }
