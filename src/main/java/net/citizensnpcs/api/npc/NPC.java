@@ -47,7 +47,7 @@ public interface NPC extends Agent, Cloneable {
      * @return A clone of the NPC. May not be an exact copy depending on the {@link Trait}s installed.
      */
     public NPC clone();
-    
+
     /**
      * @return A clone of the NPC. May not be an exact copy depending on the {@link Trait}s installed.
      */

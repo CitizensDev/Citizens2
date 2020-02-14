@@ -38,9 +38,9 @@ public class DoorExaminer implements BlockExaminer {
             if (npc.getStoredLocation().distanceSquared(point.getLocation().add(0.5, 0, 0.5)) > 4)
                 return;
 
-            if(SpigotUtil.isUsing1_13API()) {
+            if (SpigotUtil.isUsing1_13API()) {
                 Door door = (Door) point.getBlockData();
-                if(door.isOpen()) {
+                if (door.isOpen()) {
                     return;
                 }
                 NPCOpenDoorEvent event = new NPCOpenDoorEvent(npc, point);

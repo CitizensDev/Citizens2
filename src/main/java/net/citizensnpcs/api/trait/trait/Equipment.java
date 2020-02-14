@@ -403,6 +403,7 @@ public class Equipment extends Trait {
         HELMET(1),
         LEGGINGS(3),
         OFF_HAND(5);
+
         private int index;
 
         EquipmentSlot(int index) {

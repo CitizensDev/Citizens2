@@ -123,7 +123,7 @@ public abstract class AbstractNPC implements NPC {
     public NPC clone() {
         return copy();
     }
-    
+
     @Override
     public NPC copy() {
         NPC copy = registry.createNPC(getTrait(MobType.class).getType(), getFullName());
@@ -137,7 +137,6 @@ public abstract class AbstractNPC implements NPC {
         Bukkit.getPluginManager().callEvent(new NPCCloneEvent(this, copy));
         return copy;
     }
-
 
     @Override
     public MetadataStore data() {

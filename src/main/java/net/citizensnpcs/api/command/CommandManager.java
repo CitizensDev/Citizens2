@@ -370,7 +370,7 @@ public class CommandManager implements TabCompleter {
         Collection<String> valueFlags = internalCommand.valueFlags();
         for (String valueFlag : valueFlags) {
             if (!context.hasValueFlag(valueFlag)) {
-                results.add(valueFlag);
+                results.add("--" + valueFlag);
             }
         }
         return results;
