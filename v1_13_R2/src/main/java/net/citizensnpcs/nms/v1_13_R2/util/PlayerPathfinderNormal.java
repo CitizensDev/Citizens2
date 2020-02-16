@@ -185,7 +185,8 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         return var11;
     }
 
-    private static final Method BLOCK_POSITION_B_C = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "f", false, int.class, int.class, int.class);
+    private static final Method BLOCK_POSITION_B_C = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "f", false,
+            int.class, int.class, int.class);
 
     public PathType a(IBlockAccess var1, int var2, int var3, int var4, PathType var5) {
         if (var5 == PathType.WALKABLE) {
@@ -199,12 +200,11 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                             BlockPosition blockPos;
                             try {
                                 blockPos = var6.c(var8 + var2, var3, var9 + var4);
-                            }
-                            catch (NoSuchMethodError ex) {
+                            } catch (NoSuchMethodError ex) {
                                 try {
-                                    blockPos = (BlockPosition.PooledBlockPosition) BLOCK_POSITION_B_C.invoke(var6, var8 + var2, var3, var9 + var4);
-                                }
-                                catch (Throwable ex2) {
+                                    blockPos = (BlockPosition.PooledBlockPosition) BLOCK_POSITION_B_C.invoke(var6,
+                                            var8 + var2, var3, var9 + var4);
+                                } catch (Throwable ex2) {
                                     ex2.printStackTrace();
                                     return PathType.BLOCKED;
                                 }
@@ -479,12 +479,10 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 Fluid var9;
                 try {
                     var9 = var1.getFluid(var5);
-                }
-                catch (NoSuchMethodError ex) {
+                } catch (NoSuchMethodError ex) {
                     try {
                         var9 = (Fluid) GET_FLUID.invoke(var1, var5);
-                    }
-                    catch (Throwable ex2) {
+                    } catch (Throwable ex2) {
                         ex2.printStackTrace();
                         return PathType.BLOCKED;
                     }

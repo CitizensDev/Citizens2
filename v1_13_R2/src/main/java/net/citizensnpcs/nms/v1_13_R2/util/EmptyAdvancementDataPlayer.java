@@ -14,8 +14,8 @@ import net.minecraft.server.v1_13_R2.MinecraftServer;
 public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
     public EmptyAdvancementDataPlayer(MinecraftServer minecraftserver, File file, EntityPlayer entityplayer) {
         super(minecraftserver, file, entityplayer);
-        this.b(); 
-    } 
+        this.b();
+    }
 
     @Override
     public void a(Advancement advancement) {

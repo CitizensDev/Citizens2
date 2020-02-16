@@ -1,4 +1,6 @@
-package net.citizensnpcs.nms.v1_13_R2.entity; import net.minecraft.server.v1_13_R2.DamageSource;
+package net.citizensnpcs.nms.v1_13_R2.entity;
+
+import net.minecraft.server.v1_13_R2.DamageSource;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;

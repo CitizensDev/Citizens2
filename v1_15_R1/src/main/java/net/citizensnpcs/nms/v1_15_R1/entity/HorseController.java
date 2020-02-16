@@ -62,7 +62,7 @@ public class HorseController extends MobEntityController {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
                 Horse horse = (Horse) getBukkitEntity();
                 horse.setDomestication(horse.getMaxDomestication());
-                baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
+                baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() * 0.8;
             }
         }
 

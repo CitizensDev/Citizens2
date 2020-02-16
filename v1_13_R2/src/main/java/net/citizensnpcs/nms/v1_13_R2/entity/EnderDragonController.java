@@ -178,12 +178,10 @@ public class EnderDragonController extends MobEntityController {
             } else {
                 try {
                     super.movementTick();
-                }
-                catch (NoSuchMethodError ex) {
+                } catch (NoSuchMethodError ex) {
                     try {
                         MOVEMENT_TICK.invoke(this);
-                    }
-                    catch (Throwable ex2) {
+                    } catch (Throwable ex2) {
                         ex2.printStackTrace();
                     }
                 }

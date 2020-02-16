@@ -166,12 +166,10 @@ public class PlayerNavigation extends NavigationAbstract {
     private static long getMonotonicMillis() {
         try {
             return SystemUtils.getMonotonicMillis();
-        }
-        catch (NoSuchMethodError ex) {
+        } catch (NoSuchMethodError ex) {
             try {
                 return (long) GET_MONOTONIC_MILLIS.invoke(null);
-            }
-            catch (Throwable ex2) {
+            } catch (Throwable ex2) {
                 ex2.printStackTrace();
                 return 0;
             }
@@ -465,12 +463,10 @@ public class PlayerNavigation extends NavigationAbstract {
         float f1 = j();
         try {
             this.b.methodProfiler.enter("pathfind");
-        }
-        catch (NoSuchMethodError ex) {
+        } catch (NoSuchMethodError ex) {
             try {
                 PROFILER_ENTER.invoke(this.b.methodProfiler, "pathfind");
-            }
-            catch (Throwable ex2) {
+            } catch (Throwable ex2) {
                 ex2.printStackTrace();
             }
         }
@@ -482,12 +478,10 @@ public class PlayerNavigation extends NavigationAbstract {
         PathEntity localPathEntity = this.r.a(localChunkCache, this.a, this.q, f1);
         try {
             this.b.methodProfiler.exit();
-        }
-        catch (NoSuchMethodError ex) {
+        } catch (NoSuchMethodError ex) {
             try {
                 PROFILER_EXIT.invoke(this.b.methodProfiler);
-            }
-            catch (Throwable ex2) {
+            } catch (Throwable ex2) {
                 ex2.printStackTrace();
             }
         }
