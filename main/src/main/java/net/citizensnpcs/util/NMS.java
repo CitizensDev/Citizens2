@@ -383,6 +383,10 @@ public class NMS {
         BRIDGE.setNavigationTarget(handle, target, speed);
     }
 
+    public static void setPandaSitting(Entity entity, boolean sitting) {
+        BRIDGE.setPandaSitting(entity, sitting);
+    }
+
     public static void setPeekShulker(org.bukkit.entity.Entity entity, int peek) {
         if (!entity.getType().name().equals("SHULKER")) {
             throw new IllegalArgumentException("entity must be a shulker");

@@ -229,6 +229,7 @@ import net.minecraft.server.v1_15_R1.EntityHuman;
 import net.minecraft.server.v1_15_R1.EntityInsentient;
 import net.minecraft.server.v1_15_R1.EntityLiving;
 import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
+import net.minecraft.server.v1_15_R1.EntityPanda;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
 import net.minecraft.server.v1_15_R1.EntityPose;
 import net.minecraft.server.v1_15_R1.EntityPufferFish;
@@ -1038,6 +1039,11 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setNavigationTarget(org.bukkit.entity.Entity handle, org.bukkit.entity.Entity target, float speed) {
         NMSImpl.getNavigation(handle).a(NMSImpl.getHandle(target), speed);
+    }
+
+    @Override
+    public void setPandaSitting(org.bukkit.entity.Entity entity, boolean sitting) {
+        ((EntityPanda) getHandle(entity)).r(sitting);
     }
 
     @Override

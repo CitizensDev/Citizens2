@@ -821,6 +821,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPandaSitting(org.bukkit.entity.Entity entity, boolean sitting) {
+    }
+
+    @Override
     public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
         throw new UnsupportedOperationException();
     }

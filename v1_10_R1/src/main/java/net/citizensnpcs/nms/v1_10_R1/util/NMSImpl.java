@@ -883,6 +883,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPandaSitting(org.bukkit.entity.Entity entity, boolean sitting) {
+    }
+
+    @Override
     public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
         ((EntityShulker) getHandle(shulker)).a((byte) peek);
     }
@@ -1472,6 +1476,7 @@ public class NMSImpl implements NMSBridge {
     private static final Random RANDOM = Util.getFastRandom();
     private static Field SKULL_PROFILE_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
+
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bG");
 
     static {

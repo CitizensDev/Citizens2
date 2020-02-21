@@ -270,9 +270,10 @@ public class Commands {
 
     @Command(
             aliases = { "npc" },
-            usage = "panda --gene (main gene) --hgene (hidden gene)",
+            usage = "panda --gene (main gene) --hgene (hidden gene) -s(itting)",
             desc = "Sets panda modifiers",
             modifiers = { "panda" },
+            flags = "s",
             min = 1,
             max = 1,
             permission = "citizens.npc.panda")
@@ -297,6 +298,10 @@ public class Commands {
             }
             trait.setHiddenGene(gene);
             output += ' ' + Messaging.tr(Messages.PANDA_HIDDEN_GENE_SET, args.getFlag("hgene"));
+        }
+        if (args.hasFlag('s')) {
+            boolean isSitting = trait.toggleSitting();
+            output += ' ' + Messaging.tr(isSitting ? Messages.PANDA_SITTING : Messages.PANDA_STOPPED_SITTING);
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());

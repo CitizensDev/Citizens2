@@ -224,6 +224,8 @@ public class Messages {
     public static final String OWNER_SET_SERVER = "citizens.commands.npc.owner.set-server";
     public static final String PANDA_HIDDEN_GENE_SET = "citizens.commands.npc.panda.hidden-gene-set";
     public static final String PANDA_MAIN_GENE_SET = "citizens.commands.npc.panda.main-gene-set";
+    public static final String PANDA_SITTING = "citizens.commands.npc.panda.sitting";
+    public static final String PANDA_STOPPED_SITTING = "citizens.commands.npc.panda.stopped-sitting";
     public static final String PARROT_VARIANT_SET = "citizens.commands.npc.parrot.variant-set";
     public static final String PASSIVE_SET = "citizens.commands.npc.passive.set";
     public static final String PASSIVE_UNSET = "citizens.commands.npc.passive.unset";
