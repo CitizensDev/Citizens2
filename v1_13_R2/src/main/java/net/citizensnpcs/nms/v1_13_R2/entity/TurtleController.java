@@ -1,6 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
-import net.minecraft.server.v1_13_R2.*;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -15,6 +14,18 @@ import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_13_R2.BlockPosition;
+import net.minecraft.server.v1_13_R2.ControllerJump;
+import net.minecraft.server.v1_13_R2.ControllerMove;
+import net.minecraft.server.v1_13_R2.DamageSource;
+import net.minecraft.server.v1_13_R2.EntityInsentient;
+import net.minecraft.server.v1_13_R2.EntityTurtle;
+import net.minecraft.server.v1_13_R2.IBlockData;
+import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.Navigation;
+import net.minecraft.server.v1_13_R2.NavigationAbstract;
+import net.minecraft.server.v1_13_R2.SoundEffect;
+import net.minecraft.server.v1_13_R2.World;
 
 public class TurtleController extends MobEntityController {
     public TurtleController() {
@@ -43,18 +54,6 @@ public class TurtleController extends MobEntityController {
             }
         }
 
-        static class EmptyControllerJump extends ControllerJump {
-
-            public EmptyControllerJump(EntityInsentient var1) {
-                super(var1);
-            }
-
-            @Override
-            public void b() {
-                this.a = false;
-            }
-        }
-
         @Override
         protected void a(double d0, boolean flag, IBlockData block, BlockPosition blockposition) {
             if (npc == null || !npc.isFlyable()) {
@@ -69,6 +68,14 @@ public class TurtleController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }
+        }
+
+        @Override
+        protected NavigationAbstract b(World world) {
+            if (npc == null) {
+                return super.b(world);
+            }
+            return new Navigation(this, world);
         }
 
         @Override
@@ -188,6 +195,17 @@ public class TurtleController extends MobEntityController {
                 return super.z_();
             } else {
                 return false;
+            }
+        }
+
+        static class EmptyControllerJump extends ControllerJump {
+            public EmptyControllerJump(EntityInsentient var1) {
+                super(var1);
+            }
+
+            @Override
+            public void b() {
+                this.a = false;
             }
         }
     }

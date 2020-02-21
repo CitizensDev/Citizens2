@@ -276,6 +276,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             executing.stop();
         }
         executing = null;
+
         localParams = defaultParams;
         stationaryTicks = 0;
         if (npc.isSpawned()) {

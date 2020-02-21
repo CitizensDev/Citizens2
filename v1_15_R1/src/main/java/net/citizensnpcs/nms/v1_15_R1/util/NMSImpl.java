@@ -578,7 +578,8 @@ public class NMSImpl implements NMSBridge {
                 if (params.speed() != lastSpeed) {
                     if (Messaging.isDebugging()) {
                         Messaging.debug(
-                                "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change");
+                                "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change from",
+                                lastSpeed, "to", params.speed());
                     }
                     Entity handle = getHandle(entity);
                     EntitySize size = null;

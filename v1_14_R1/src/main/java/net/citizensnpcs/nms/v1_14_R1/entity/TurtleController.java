@@ -23,6 +23,8 @@ import net.minecraft.server.v1_14_R1.EntityTurtle;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
+import net.minecraft.server.v1_14_R1.Navigation;
+import net.minecraft.server.v1_14_R1.NavigationAbstract;
 import net.minecraft.server.v1_14_R1.SoundEffect;
 import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
@@ -66,6 +68,14 @@ public class TurtleController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
             }
+        }
+
+        @Override
+        protected NavigationAbstract b(World world) {
+            if (npc == null) {
+                return super.b(world);
+            }
+            return new Navigation(this, world);
         }
 
         @Override
