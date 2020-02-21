@@ -402,7 +402,7 @@ public class NPCCommands {
 
         int nameLength = type == EntityType.PLAYER ? 46 : 64;
         if (name.length() > nameLength) {
-            Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
+            Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
             name = name.substring(0, nameLength);
         }
         if (name.length() == 0)
