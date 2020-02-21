@@ -78,8 +78,7 @@ public class ItemStorage {
         for (DataKey subKey : root.getSubKeys()) {
             Enchantment enchantment = deserialiseEnchantment(subKey.name());
             if (enchantment != null) {
-                int level = Math.min(subKey.getInt(""), enchantment.getMaxLevel());
-                enchantments.put(enchantment, level);
+                enchantments.put(enchantment, subKey.getInt(""));
             }
         }
         return enchantments;
