@@ -99,7 +99,7 @@ public class Util {
 
     public static boolean isAlwaysFlyable(EntityType type) {
         if (type.name().toLowerCase().equals("vex") || type.name().toLowerCase().equals("parrot")
-                || type.name().toLowerCase().equals("phantom"))
+                || type.name().toLowerCase().equals("bee") || type.name().toLowerCase().equals("phantom"))
             // 1.8.8 compatibility
             return true;
         switch (type) {
