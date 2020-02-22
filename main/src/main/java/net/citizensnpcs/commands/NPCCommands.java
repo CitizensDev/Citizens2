@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -278,7 +277,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer] -o[p])",
+            usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds]",
             desc = "Controls commands which will be run when clicking on an NPC",
             modifiers = { "command", "cmd" },
             min = 1,
@@ -294,7 +293,8 @@ public class NPCCommands {
             String command = args.getJoinedStrings(2);
             CommandTrait.Hand hand = args.hasFlag('l') && args.hasFlag('r') ? CommandTrait.Hand.BOTH
                     : args.hasFlag('l') ? CommandTrait.Hand.LEFT : CommandTrait.Hand.RIGHT;
-            int id = commands.addCommand(command, hand, args.hasFlag('p'), args.hasFlag('o'));
+            int id = commands.addCommand(command, hand, args.hasFlag('p'), args.hasFlag('o'),
+                    args.getFlagInteger("cooldown", 0));
             Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
         } else if (args.getString(1).equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
@@ -661,9 +661,8 @@ public class NPCCommands {
             permission = "citizens.npc.horse")
     @Requirements(selected = true, ownership = true)
     public void horse(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        Set<EntityType> allowedTypes = Util.optionalEntitySet("HORSE", "LLAMA", "DONKEY", "MULE", "TRADER_LLAMA");
         EntityType type = npc.getTrait(MobType.class).getType();
-        if (!allowedTypes.contains(type)) {
+        if (!Util.isHorse(type)) {
             throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
         }
         HorseModifiers horse = npc.getTrait(HorseModifiers.class);
