@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -161,7 +160,6 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
             float newYaw = current.getYaw() + normalisedTargetYaw;
             current.setYaw(newYaw);
             NMS.setHeadYaw(npc.getEntity(), newYaw);
-            npc.teleport(current, TeleportCause.PLUGIN);
         }
         parameters.run();
         plan.run(npc);
