@@ -52,8 +52,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     /**
-     * Returns whether the target can be seen. Will use realistic line of sight if {@link #setRealisticLooking(boolean)}
-     * is true.
+     * Returns whether the target can be seen. Will use realistic line of sight if
+     * {@link #setRealisticLooking(boolean)} is true.
      */
     public boolean canSeeTarget() {
         return realisticLooking && npc.getEntity() instanceof LivingEntity
@@ -107,8 +107,9 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     private boolean isPluginVanished(Player player) {
         for (MetadataValue meta : player.getMetadata("vanished")) {
-            if (meta.asBoolean())
+            if (meta.asBoolean()) {
                 return true;
+            }
         }
         return false;
     }
@@ -139,8 +140,12 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     @Override
     public void run() {
-        if (!enabled || !npc.isSpawned() || npc.getNavigator().isNavigating())
+        if (!enabled || !npc.isSpawned()) {
             return;
+        }
+        if (npc.getNavigator().isNavigating() && Setting.DISABLE_LOOKCLOSE_WHILE_NAVIGATING.asBoolean()) {
+            return;
+        }
         // TODO: remove in a later version, defaults weren't saving properly
         if (randomPitchRange == null || randomPitchRange.length != 2) {
             randomPitchRange = new float[] { -10, 0 };
@@ -152,7 +157,9 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         if (hasInvalidTarget()) {
             findNewTarget();
         }
-        if (lookingAt == null && enableRandomLook && t <= 0) {
+        if (npc.getNavigator().isNavigating()) {
+            npc.getNavigator().setPaused(lookingAt != null);
+        } else if (lookingAt == null && enableRandomLook && t <= 0) {
             randomLook();
             t = randomLookDelay;
         }
@@ -172,7 +179,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     /**
-     * Enables random looking - will look at a random {@link Location} every so often if enabled.
+     * Enables random looking - will look at a random {@link Location} every so
+     * often if enabled.
      */
     public void setRandomLook(boolean enableRandomLook) {
         this.enableRandomLook = enableRandomLook;
@@ -201,7 +209,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     /**
-     * Enables/disables realistic looking (using line of sight checks). More computationally expensive.
+     * Enables/disables realistic looking (using line of sight checks). More
+     * computationally expensive.
      */
     public void setRealisticLooking(boolean realistic) {
         this.realisticLooking = realistic;
