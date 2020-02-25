@@ -28,6 +28,7 @@ import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
+import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
@@ -246,6 +247,29 @@ public class Commands {
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
         } else {
+            throw new CommandUsageException();
+        }
+    }
+    
+    @Command(
+            aliases = { "npc" },
+            usage = "snowman (-d[erp])",
+            desc = "Sets snowman modifiers.",
+            modifiers = { "snowman" },
+            min = 1,
+            max = 1,
+            flags = "d",
+            permission = "citizens.npc.snowman")
+    @Requirements(selected = true, ownership = true, types = { EntityType.SNOWMAN })
+    public void snowman(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        SnowmanTrait trait = npc.getTrait(SnowmanTrait.class);
+        boolean hasArg = false;
+        if (args.hasFlag('d')) {
+            boolean isDerp = trait.toggleDerp();
+            Messaging.sendTr(sender, isDerp ? Messages.SNOWMAN_DERP_SET : Messages.SNOWMAN_DERP_STOPPED, npc.getName());
+            hasArg = true;
+        }
+        if (!hasArg) {
             throw new CommandUsageException();
         }
     }
