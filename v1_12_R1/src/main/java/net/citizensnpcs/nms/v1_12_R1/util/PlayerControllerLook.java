@@ -21,7 +21,7 @@ public class PlayerControllerLook {
     public void a() {
         if (!NMSImpl.isNavigationFinished(this.a.getNavigation()))
             return;
-        this.a.pitch = 0.0F;
+        // this.a.pitch = 0.0F;
         if (this.d) {
             this.d = false;
 
