@@ -15,7 +15,6 @@ import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -36,7 +35,6 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -1490,10 +1488,6 @@ public class NMSImpl implements NMSBridge {
 
     public static void sendPacketsNearby(Player from, Location location, Packet<?>... packets) {
         NMSImpl.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
-    }
-
-    public static void setShulkerColor(Shulker shulker, DyeColor color) {
-        ((EntityShulker) getHandle(shulker)).getDataWatcher().set(EntityShulker.COLOR, color.getWoolData());
     }
 
     public static void setSize(Entity entity, float f, float f1, boolean justCreated) {

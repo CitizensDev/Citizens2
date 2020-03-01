@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -39,7 +38,6 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -192,7 +190,6 @@ import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
-import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.trait.versioned.VillagerTrait;
 import net.citizensnpcs.util.BoundingBox;
@@ -670,7 +667,6 @@ public class NMSImpl implements NMSBridge {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SnowmanTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TropicalFishTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(VillagerTrait.class));
         manager.register(Commands.class);
@@ -1662,10 +1658,6 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    public static void setShulkerColor(Shulker shulker, DyeColor color) {
-        ((EntityShulker) getHandle(shulker)).getDataWatcher().set(EntityShulker.COLOR, color.getWoolData());
-    }
-
     public static void setSize(Entity entity, boolean justCreated) {
         try {
             EntitySize entitysize = (EntitySize) SIZE_FIELD_GETTER.invoke(entity);
@@ -1720,8 +1712,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "c");
-    private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
-            "c", false, double.class, double.class, double.class);
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
