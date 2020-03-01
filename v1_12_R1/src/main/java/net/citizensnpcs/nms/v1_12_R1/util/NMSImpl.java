@@ -992,10 +992,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setShulkerColor(org.bukkit.entity.Entity entity, DyeColor color) {
-    }
-
-    @Override
     public void setSitting(Ocelot ocelot, boolean sitting) {
         setSitting((Tameable) ocelot, sitting);
     }

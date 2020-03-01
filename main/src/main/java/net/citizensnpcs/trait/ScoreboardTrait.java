@@ -48,9 +48,7 @@ public class ScoreboardTrait extends Trait {
             }
         }
 
-        if (SUPPORT_TEAM_SETOPTION)
-
-        {
+        if (SUPPORT_TEAM_SETOPTION) {
             try {
                 team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER);
             } catch (NoSuchMethodError e) {

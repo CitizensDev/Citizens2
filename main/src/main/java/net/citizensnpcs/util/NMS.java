@@ -8,7 +8,6 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -400,10 +399,6 @@ public class NMS {
 
     public static void setShouldJump(org.bukkit.entity.Entity entity) {
         BRIDGE.setShouldJump(entity);
-    }
-
-    public static void setShulkerColor(Entity entity, DyeColor color) {
-        BRIDGE.setShulkerColor(entity, color);
     }
 
     public static void setSitting(Ocelot ocelot, boolean sitting) {

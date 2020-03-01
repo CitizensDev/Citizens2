@@ -35,7 +35,7 @@ public class ShulkerTrait extends Trait {
                 NMS.setPeekShulker(npc.getEntity(), peek);
                 lastPeekSet = peek;
             }
-            NMS.setShulkerColor((Shulker) npc.getEntity(), color);
+            ((Shulker) npc.getEntity()).setColor(color);
         }
     }
 

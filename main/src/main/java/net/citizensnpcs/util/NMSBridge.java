@@ -3,7 +3,6 @@ package net.citizensnpcs.util;
 import java.util.Collection;
 import java.util.List;
 
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -134,8 +133,6 @@ public interface NMSBridge {
     public void setProfile(SkullMeta meta, GameProfile profile);
 
     public void setShouldJump(Entity entity);
-
-    public void setShulkerColor(Entity entity, DyeColor color);
 
     public void setSitting(Ocelot ocelot, boolean sitting);
 

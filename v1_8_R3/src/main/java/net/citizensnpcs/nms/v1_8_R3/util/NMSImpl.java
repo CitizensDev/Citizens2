@@ -16,7 +16,6 @@ import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -856,10 +855,6 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setShouldJump();
         }
-    }
-
-    @Override
-    public void setShulkerColor(org.bukkit.entity.Entity entity, DyeColor color) {
     }
 
     @Override

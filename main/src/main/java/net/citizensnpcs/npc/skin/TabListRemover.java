@@ -150,8 +150,9 @@ public class TabListRemover {
                     entity.getSkinTracker().notifyRemovePacketSent(entry.player.getUniqueId());
                 }
 
-                if (sendAll)
+                if (sendAll) {
                     entryIterator.remove();
+                }
             }
         }
     }

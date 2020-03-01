@@ -346,11 +346,8 @@ public class CitizensNPC extends AbstractNPC {
                     updateCustomName();
                 }
                 String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
-                if (nameplateVisible.equals("hover")) {
-                    ((LivingEntity) getEntity()).setCustomNameVisible(false);
-                } else {
-                    ((LivingEntity) getEntity()).setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
-                }
+                ((LivingEntity) getEntity()).setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
+
                 if (data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
                     NMS.setKnockbackResistance((LivingEntity) getEntity(), 1D);
                 } else {
@@ -408,7 +405,6 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
-
     private static final String NPC_METADATA_MARKER = "NPC";
     private static boolean SUPPORT_GLOWING = true;
     private static boolean SUPPORT_SILENT = true;
