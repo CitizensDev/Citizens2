@@ -145,6 +145,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
+import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -542,6 +543,7 @@ public class NMSImpl implements NMSBridge {
     public void load(CommandManager commands) {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BossBarTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SnowmanTrait.class));
         commands.register(Commands.class);
     }
 

@@ -176,6 +176,7 @@ import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
+import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.Messages;
@@ -609,6 +610,7 @@ public class NMSImpl implements NMSBridge {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BossBarTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SnowmanTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TropicalFishTrait.class));

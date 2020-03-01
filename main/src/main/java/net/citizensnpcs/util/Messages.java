@@ -370,4 +370,6 @@ public class Messages {
     public static final String ZOMBIE_VILLAGER_PROFESSION_SET = "citizens.commands.npc.zombiemod.villager-profession-set";
     public static final String ZOMBIE_VILLAGER_SET = "citizens.commands.npc.zombiemod.villager-set";
     public static final String ZOMBIE_VILLAGER_UNSET = "citizens.commands.npc.zombiemod.villager-unset";
+    public static final String SNOWMAN_DERP_SET = "citizens.commands.npc.snowman.derp-set";
+    public static final String SNOWMAN_DERP_STOPPED = "citizens.commands.npc.snowman.derp-stopped";
 }
