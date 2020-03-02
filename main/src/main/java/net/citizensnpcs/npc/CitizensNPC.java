@@ -41,6 +41,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
@@ -302,6 +303,8 @@ public class CitizensNPC extends AbstractNPC {
             }
         }
 
+        updateFlyableState();
+
         return true;
     }
 
@@ -400,7 +403,12 @@ public class CitizensNPC extends AbstractNPC {
         if (type == null)
             return;
         if (Util.isAlwaysFlyable(type)) {
-            data().setPersistent(NPC.FLYABLE_METADATA, true);
+            if (!data().has(NPC.FLYABLE_METADATA)) {
+                data().setPersistent(NPC.FLYABLE_METADATA, true);
+            }
+            if (!hasTrait(Gravity.class)) {
+                getTrait(Gravity.class).setEnabled(true);
+            }
         }
     }
 

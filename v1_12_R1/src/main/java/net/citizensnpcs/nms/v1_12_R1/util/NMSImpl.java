@@ -954,6 +954,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setNoGravity(org.bukkit.entity.Entity entity, boolean enabled) {
+        getHandle(entity).setNoGravity(enabled);
+    }
+
+    @Override
     public void setPandaSitting(org.bukkit.entity.Entity entity, boolean sitting) {
     }
 

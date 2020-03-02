@@ -382,6 +382,10 @@ public class NMS {
         BRIDGE.setNavigationTarget(handle, target, speed);
     }
 
+    public static void setNoGravity(Entity entity, boolean enabled) {
+        BRIDGE.setNoGravity(entity, enabled);
+    }
+
     public static void setPandaSitting(Entity entity, boolean sitting) {
         BRIDGE.setPandaSitting(entity, sitting);
     }

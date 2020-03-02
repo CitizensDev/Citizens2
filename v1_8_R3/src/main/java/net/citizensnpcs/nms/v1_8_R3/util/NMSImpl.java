@@ -820,6 +820,17 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setNoGravity(org.bukkit.entity.Entity entity, boolean enabled) {
+        if (!enabled)
+            return;
+        if (((NPCHolder) entity).getNPC().getNavigator().isNavigating())
+            return; // use legacy gravity behaviour
+        Vector vector = entity.getVelocity();
+        vector.setY(Math.max(0, vector.getY()));
+        entity.setVelocity(vector);
+    }
+
+    @Override
     public void setPandaSitting(org.bukkit.entity.Entity entity, boolean sitting) {
     }
 
@@ -1327,11 +1338,8 @@ public class NMSImpl implements NMSBridge {
     public static Field NETWORK_ADDRESS = NMS.getField(NetworkManager.class, "l");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "a");
-
     private static final Random RANDOM = Util.getFastRandom();
-
     private static Field SKULL_PROFILE_FIELD;
-
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
 
     static {

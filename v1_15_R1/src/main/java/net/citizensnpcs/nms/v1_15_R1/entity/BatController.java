@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_15_R1.entity;
 
-import net.minecraft.server.v1_15_R1.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftBat;
@@ -64,6 +62,13 @@ public class BatController extends MobEntityController {
         }
 
         @Override
+        public void checkDespawn() {
+            if (npc == null) {
+                super.checkDespawn();
+            }
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_15_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -74,23 +79,8 @@ public class BatController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect getSoundDeath() {
-            return NMSImpl.getSoundEffect(npc, super.getSoundDeath(), NPC.DEATH_SOUND_METADATA);
-        }
-
-        @Override
-        protected SoundEffect getSoundHurt(DamageSource damagesource) {
-            return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
-        }
-
-        @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
-        }
-
-        @Override
-        public SoundEffect getSoundAmbient() {
-            return NMSImpl.getSoundEffect(npc, super.getSoundAmbient(), NPC.AMBIENT_SOUND_METADATA);
         }
 
         @Override
@@ -104,6 +94,34 @@ public class BatController extends MobEntityController {
             if (!event.isCancelled()) {
                 super.enderTeleportTo(d0, d1, d2);
             }
+        }
+
+        @Override
+        public CraftEntity getBukkitEntity() {
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new BatNPC(this));
+            }
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+
+        @Override
+        public SoundEffect getSoundAmbient() {
+            return NMSImpl.getSoundEffect(npc, super.getSoundAmbient(), NPC.AMBIENT_SOUND_METADATA);
+        }
+
+        @Override
+        protected SoundEffect getSoundDeath() {
+            return NMSImpl.getSoundEffect(npc, super.getSoundDeath(), NPC.DEATH_SOUND_METADATA);
+        }
+
+        @Override
+        protected SoundEffect getSoundHurt(DamageSource damagesource) {
+            return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
         }
 
         @Override
@@ -126,26 +144,6 @@ public class BatController extends MobEntityController {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
-                NMSImpl.setBukkitEntity(this, new BatNPC(this));
-            }
-            return super.getBukkitEntity();
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-
-        @Override
-        public void checkDespawn() {
-            if (npc == null) {
-                super.checkDespawn();
-            }
         }
 
         @Override

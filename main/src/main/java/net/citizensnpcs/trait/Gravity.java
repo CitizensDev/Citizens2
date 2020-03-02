@@ -1,13 +1,12 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.util.NMS;
 
 /**
- * Enable/disable gravity. Without gravity the y velocity of the NPC is always set to <code>0</code>
+ * Enable/disable Minecraft's gravity.
  */
 @TraitName("gravity")
 public class Gravity extends Trait implements Toggleable {
@@ -36,11 +35,11 @@ public class Gravity extends Trait implements Toggleable {
     public void run() {
         if (!npc.isSpawned())
             return;
-        if (!enabled || npc.getNavigator().isNavigating())
-            return;
-        Vector vector = npc.getEntity().getVelocity();
-        vector.setY(Math.max(0, vector.getY()));
-        npc.getEntity().setVelocity(vector);
+        NMS.setNoGravity(npc.getEntity(), enabled);
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
