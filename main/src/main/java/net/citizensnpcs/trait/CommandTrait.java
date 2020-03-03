@@ -36,10 +36,11 @@ public class CommandTrait extends Trait {
         super("commandtrait");
     }
 
-    public int addCommand(String command, Hand hand, boolean player, boolean op, int cooldown, List<String> perms) {
+    public int addCommand(String command, Hand hand, boolean player, boolean op, int cooldown, List<String> perms,
+            int n) {
         int id = getNewId();
         commands.put(String.valueOf(id),
-                new NPCCommand(String.valueOf(id), command, hand, player, op, cooldown, perms));
+                new NPCCommand(String.valueOf(id), command, hand, player, op, cooldown, perms, n));
         return id;
     }
 
@@ -129,12 +130,13 @@ public class CommandTrait extends Trait {
         int cooldown;
         Hand hand;
         String id;
+        int n;
         boolean op;
         List<String> perms;
         boolean player;
 
         public NPCCommand(String id, String command, Hand hand, boolean player, boolean op, int cooldown,
-                List<String> perms) {
+                List<String> perms, int n) {
             this.id = id;
             this.command = command;
             this.hand = hand;
@@ -142,6 +144,7 @@ public class CommandTrait extends Trait {
             this.op = op;
             this.cooldown = cooldown;
             this.perms = perms;
+            this.n = n;
         }
 
         public void run(NPC npc, Player clicker) {
@@ -177,7 +180,7 @@ public class CommandTrait extends Trait {
             }
             return new NPCCommand(root.name(), root.getString("command"), Hand.valueOf(root.getString("hand")),
                     Boolean.valueOf(root.getString("player")), Boolean.valueOf(root.getString("op")),
-                    root.getInt("cooldown"), perms);
+                    root.getInt("cooldown"), perms, root.getInt("n"));
         }
 
         @Override
@@ -187,6 +190,7 @@ public class CommandTrait extends Trait {
             root.setBoolean("player", instance.player);
             root.setBoolean("op", instance.op);
             root.setInt("cooldown", instance.cooldown);
+            root.setInt("n", instance.n);
             for (int i = 0; i < instance.perms.size(); i++) {
                 root.setString("permissions." + i, instance.perms.get(i));
             }
@@ -196,6 +200,8 @@ public class CommandTrait extends Trait {
     private static class PlayerNPCCommand {
         @Persist
         Map<String, Long> lastUsed = Maps.newHashMap();
+        @Persist
+        Map<String, Integer> nUsed = Maps.newHashMap();
 
         public PlayerNPCCommand() {
         }
@@ -217,8 +223,15 @@ public class CommandTrait extends Trait {
                 }
                 lastUsed.remove(command.command);
             }
+            int previouslyUsed = nUsed.getOrDefault(command.command, 0);
+            if (command.n > 0 && command.n <= previouslyUsed) {
+                return false;
+            }
             if (command.cooldown > 0) {
                 lastUsed.put(command.command, currentTimeSec);
+            }
+            if (command.n > 0) {
+                nUsed.put(command.command, previouslyUsed + 1);
             }
             return true;
         }

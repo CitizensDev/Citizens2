@@ -277,7 +277,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --permissions [perms]",
+            usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             modifiers = { "command", "cmd" },
             min = 1,
@@ -298,7 +298,7 @@ public class NPCCommands {
                 perms.addAll(Arrays.asList(args.getFlag("permissions").split(",")));
             }
             int id = commands.addCommand(command, hand, args.hasFlag('p'), args.hasFlag('o'),
-                    args.getFlagInteger("cooldown", 0), perms);
+                    args.getFlagInteger("cooldown", 0), perms, args.getFlagInteger("n", -1));
             Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
         } else if (args.getString(1).equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
