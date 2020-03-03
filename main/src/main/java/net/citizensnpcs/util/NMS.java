@@ -19,6 +19,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import com.mojang.authlib.GameProfile;
@@ -415,6 +416,10 @@ public class NMS {
 
     public static void setStepHeight(org.bukkit.entity.Entity entity, float height) {
         BRIDGE.setStepHeight(entity, height);
+    }
+
+    public static void setTeamNameTagVisible(Team team, boolean visible) {
+        BRIDGE.setTeamNameTagVisible(team, visible);
     }
 
     public static void setVerticalMovement(org.bukkit.entity.Entity bukkitEntity, double d) {

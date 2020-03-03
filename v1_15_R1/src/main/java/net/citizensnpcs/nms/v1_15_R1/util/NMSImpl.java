@@ -43,6 +43,7 @@ import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
@@ -255,6 +256,8 @@ import net.minecraft.server.v1_15_R1.PlayerChunkMap;
 import net.minecraft.server.v1_15_R1.PlayerChunkMap.EntityTracker;
 import net.minecraft.server.v1_15_R1.RegistryBlocks;
 import net.minecraft.server.v1_15_R1.ReportedException;
+import net.minecraft.server.v1_15_R1.ScoreboardTeam;
+import net.minecraft.server.v1_15_R1.ScoreboardTeamBase.EnumNameTagVisibility;
 import net.minecraft.server.v1_15_R1.SoundEffect;
 import net.minecraft.server.v1_15_R1.Vec3D;
 import net.minecraft.server.v1_15_R1.WorldServer;
@@ -1098,6 +1101,20 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setTeamNameTagVisible(Team team, boolean visible) {
+        if (TEAM_FIELD == null) {
+            TEAM_FIELD = NMS.getGetter(team.getClass(), "team");
+        }
+        ScoreboardTeam nmsTeam;
+        try {
+            nmsTeam = (ScoreboardTeam) TEAM_FIELD.invoke(team);
+            nmsTeam.setNameTagVisibility(visible ? EnumNameTagVisibility.ALWAYS : EnumNameTagVisibility.NEVER);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void setVerticalMovement(org.bukkit.entity.Entity bukkitEntity, double d) {
         if (!bukkitEntity.getType().isAlive())
             return;
@@ -1712,6 +1729,7 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
             "advancementDataPlayer");
+
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
@@ -1752,6 +1770,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
     private static Field SKULL_PROFILE_FIELD;
+    private static MethodHandle TEAM_FIELD;
 
     static {
         try {

@@ -40,6 +40,7 @@ import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
@@ -217,6 +218,8 @@ import net.minecraft.server.v1_12_R1.PathPoint;
 import net.minecraft.server.v1_12_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_12_R1.RegistryMaterials;
 import net.minecraft.server.v1_12_R1.ReportedException;
+import net.minecraft.server.v1_12_R1.ScoreboardTeam;
+import net.minecraft.server.v1_12_R1.ScoreboardTeamBase.EnumNameTagVisibility;
 import net.minecraft.server.v1_12_R1.SoundEffect;
 import net.minecraft.server.v1_12_R1.SoundEffects;
 import net.minecraft.server.v1_12_R1.Vec3D;
@@ -1012,6 +1015,20 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setTeamNameTagVisible(Team team, boolean visible) {
+        if (TEAM_FIELD == null) {
+            TEAM_FIELD = NMS.getGetter(team.getClass(), "team");
+        }
+        ScoreboardTeam nmsTeam;
+        try {
+            nmsTeam = (ScoreboardTeam) TEAM_FIELD.invoke(team);
+            nmsTeam.setNameTagVisibility(visible ? EnumNameTagVisibility.ALWAYS : EnumNameTagVisibility.NEVER);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void setVerticalMovement(org.bukkit.entity.Entity bukkitEntity, double d) {
         if (!bukkitEntity.getType().isAlive())
             return;
@@ -1507,11 +1524,11 @@ public class NMSImpl implements NMSBridge {
             if ((entity.width > f2) && (!justCreated) && (!entity.world.isClientSide))
                 entity.move(EnumMoveType.SELF, (f2 - entity.width) / 2, 0.0D, (f2 - entity.width) / 2);
         }
-    };
+    }
 
     public static void stopNavigation(NavigationAbstract navigation) {
         navigation.p();
-    }
+    };
 
     public static void updateAI(EntityLiving entity) {
         if (entity instanceof EntityInsentient) {
@@ -1531,6 +1548,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class, "bY");
+
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
@@ -1549,8 +1567,9 @@ public class NMSImpl implements NMSBridge {
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "i");
     private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bx");
     private static final Random RANDOM = Util.getFastRandom();
-
     private static Field SKULL_PROFILE_FIELD;
+
+    private static MethodHandle TEAM_FIELD;
 
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
 

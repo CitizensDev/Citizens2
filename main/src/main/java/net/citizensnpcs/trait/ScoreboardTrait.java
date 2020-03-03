@@ -13,6 +13,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.util.NMS;
 
 @TraitName("scoreboardtrait")
 public class ScoreboardTrait extends Trait {
@@ -56,6 +57,9 @@ public class ScoreboardTrait extends Trait {
             } catch (NoClassDefFoundError e) {
                 SUPPORT_TEAM_SETOPTION = false;
             }
+        }
+        if (!SUPPORT_TEAM_SETOPTION) {
+            NMS.setTeamNameTagVisible(team, nameVisibility);
         }
 
         if (npc.data().has(NPC.GLOWING_COLOR_METADATA)) {

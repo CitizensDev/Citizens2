@@ -76,7 +76,7 @@ public class Commands {
         }
         if (args.hasFlag('n')) {
             trait.setNectar(!trait.hasNectar());
-            output += ' ' + (trait.hasNectar() ? Messaging.tr(Messages.BEE_HAS_NECTAR, npc.getName())
+            output += ' ' + (trait.hasStung() ? Messaging.tr(Messages.BEE_HAS_NECTAR, npc.getName())
                     : Messaging.tr(Messages.BEE_NO_NECTAR, npc.getName()));
         }
         if (!output.isEmpty()) {

@@ -206,8 +206,9 @@ public class CommandTrait extends Trait {
 
         public boolean canUse(Player player, NPCCommand command) {
             for (String perm : command.perms) {
-                if (!player.hasPermission(perm))
+                if (!player.hasPermission(perm)) {
                     return false;
+                }
             }
             long currentTimeSec = System.currentTimeMillis() / 1000;
             if (lastUsed.containsKey(command.command)) {
