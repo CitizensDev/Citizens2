@@ -2,7 +2,6 @@ package net.citizensnpcs.trait;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -30,7 +29,7 @@ public class CommandTrait extends Trait {
     private final Map<String, NPCCommand> commands = Maps.newHashMap();
     @Persist
     @DelegatePersistence(PlayerNPCCommandPersister.class)
-    private final Map<UUID, PlayerNPCCommand> cooldowns = Maps.newHashMap();
+    private final Map<String, PlayerNPCCommand> cooldowns = Maps.newHashMap();
 
     public CommandTrait() {
         super("commandtrait");
@@ -92,13 +91,13 @@ public class CommandTrait extends Trait {
         for (NPCCommand command : commands.values()) {
             if (command.hand != hand && command.hand != Hand.BOTH)
                 continue;
-            PlayerNPCCommand info = cooldowns.get(player.getUniqueId());
+            PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
             if (info != null && !info.canUse(player, command)) {
                 continue;
             }
             command.run(npc, player);
             if (command.cooldown > 0 && info == null) {
-                cooldowns.put(player.getUniqueId(), new PlayerNPCCommand(command));
+                cooldowns.put(player.getUniqueId().toString(), new PlayerNPCCommand(command));
             }
         }
     }
