@@ -247,9 +247,6 @@ public class PersistenceLoader {
                 }
             }
         }
-        if (field.delegate == null && type == UUID.class) {
-            return UUID.fromString(root.getString(""));
-        }
         return field.delegate == null ? root.getRaw("") : field.delegate.create(root);
 
     }
@@ -466,8 +463,6 @@ public class PersistenceLoader {
             ((Persister<Object>) field.delegate).save(value, root);
         } else if (value instanceof Enum) {
             root.setRaw("", ((Enum<?>) value).name());
-        } else if (value instanceof UUID) {
-            root.setString("", ((UUID) value).toString());
         } else {
             root.setRaw("", value);
         }
