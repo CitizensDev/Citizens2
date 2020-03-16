@@ -81,6 +81,10 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
             stop();
             return true;
         }
+        if (navigator.getCancelReason() != null) {
+            setCancelReason(navigator.getCancelReason());
+            return true;
+        }
         return wasFinished;
     }
 

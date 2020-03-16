@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_15_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.ChunkCache;
@@ -86,7 +87,6 @@ public class PlayerPathfinder extends Pathfinder {
         this.a.a(var0);
         int var6 = 0;
         int var7 = (int) (this.d * var4);
-
         while (!this.a.e()) {
             ++var6;
             if (var6 >= var7) {
@@ -131,9 +131,7 @@ public class PlayerPathfinder extends Pathfinder {
                 return this.a(var1x.d(), var1.get(var1x), true);
             }).sorted(Comparator.comparingInt(PathEntity::e));
         } else {
-            var8 = var5.stream().map((var1x) -> {
-                return this.a(var1x.d(), var1.get(var1x), false);
-            }).sorted(Comparator.comparingDouble(PathEntity::l).thenComparingInt(PathEntity::e));
+            var8 = getFallbackDestinations(var1, var5);
         }
 
         Optional var9 = var8.findFirst();
@@ -156,6 +154,16 @@ public class PlayerPathfinder extends Pathfinder {
         }
 
         return var2;
+    }
+
+    public Stream<PathEntity> getFallbackDestinations(Map<PathDestination, BlockPosition> var1,
+            Set<PathDestination> var5) {
+        if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean()) {
+            return Stream.empty();
+        }
+        return var5.stream().map((var1x) -> {
+            return this.a(var1x.d(), var1.get(var1x), false);
+        }).sorted(Comparator.comparingDouble(PathEntity::l).thenComparingInt(PathEntity::e));
     }
 
 }
