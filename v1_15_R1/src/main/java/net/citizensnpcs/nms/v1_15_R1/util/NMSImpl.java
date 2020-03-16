@@ -615,7 +615,7 @@ public class NMSImpl implements NMSBridge {
                         }
                     }
                 }
-                navigation.a(params.speed());
+                navigation.a((double) params.speed());
                 return NMSImpl.isNavigationFinished(navigation);
             }
         };
