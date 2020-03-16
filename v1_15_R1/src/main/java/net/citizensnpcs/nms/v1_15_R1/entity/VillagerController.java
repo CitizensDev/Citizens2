@@ -126,15 +126,6 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
-        public boolean dY() {
-            if (blockingATrade) {
-                blockingATrade = false;
-                return true;
-            }
-            return super.dY();
-        }
-
-        @Override
         public void e(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(vec3d);
@@ -154,6 +145,15 @@ public class VillagerController extends MobEntityController {
             if (!event.isCancelled()) {
                 super.enderTeleportTo(d0, d1, d2);
             }
+        }
+
+        @Override
+        public boolean et() {
+            if (blockingATrade) {
+                blockingATrade = false;
+                return true;
+            }
+            return super.et();
         }
 
         @Override
