@@ -1,5 +1,12 @@
 package net.citizensnpcs.commands;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +38,8 @@ import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -1627,7 +1636,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-c -l(atest)) [name] (or -t [uuid/name] [data] [signature])",
+            usage = "skin (-c -l(atest)) [name] (or --url [url] or -t [uuid/name] [data] [signature])",
             desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
             modifiers = { "skin" },
             min = 1,
@@ -1639,6 +1648,62 @@ public class NPCCommands {
         String skinName = npc.getName();
         if (args.hasFlag('c')) {
             npc.data().remove(NPC.PLAYER_SKIN_UUID_METADATA);
+        } else if (args.hasValueFlag("url")) {
+            final String url = args.getFlag("url");
+            Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    DataOutputStream out = null;
+                    BufferedReader reader = null;
+                    try {
+                        URL target = new URL("https://api.mineskin.org/generate/url");
+                        HttpURLConnection con = (HttpURLConnection) target.openConnection();
+                        con.setRequestMethod("POST");
+                        con.setDoOutput(true);
+                        con.setConnectTimeout(1000);
+                        con.setReadTimeout(10000);
+                        out = new DataOutputStream(con.getOutputStream());
+                        out.writeBytes("url=" + URLEncoder.encode(url, "UTF-8"));
+                        out.close();
+                        reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                        JSONObject output = (JSONObject) new JSONParser().parse(reader);
+                        JSONObject data = (JSONObject) output.get("data");
+                        String uuid = (String) data.get("uuid");
+                        JSONObject texture = (JSONObject) data.get("texture");
+                        String textureEncoded = (String) texture.get("value");
+                        String signature = (String) texture.get("signature");
+                        con.disconnect();
+                        Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
+                            @Override
+                            public void run() {
+                                ((SkinnableEntity) npc.getEntity()).setSkinPersistent(uuid, signature, textureEncoded);
+                                Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url);
+                            }
+                        });
+                    } catch (Throwable t) {
+                        Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
+                            @Override
+                            public void run() {
+                                Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url);
+                            }
+                        });
+                    } finally {
+                        if (out != null) {
+                            try {
+                                out.close();
+                            } catch (IOException e) {
+                            }
+                        }
+                        if (reader != null) {
+                            try {
+                                reader.close();
+                            } catch (IOException e) {
+                            }
+                        }
+                    }
+                }
+            });
+            return;
         } else if (args.hasFlag('t')) {
             if (args.argsLength() != 4)
                 throw new CommandException(Messages.SKIN_REQUIRED);

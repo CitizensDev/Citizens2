@@ -89,6 +89,7 @@ public class Messages {
     public static final String ERROR_LOADING_ECONOMY = "citizens.economy.error-loading";
     public static final String ERROR_SETTING_ENTITY_PERSISTENT = "citizens.nms-errors.error-setting-persistent";
     public static final String ERROR_SETTING_LOOKCLOSE_RANGE = "citizens.commands.npc.lookclose.error-random-range";
+    public static final String ERROR_SETTING_SKIN_URL = "citizens.commands.npc.skin.error-setting-url";
     public static final String ERROR_SPAWNING_CUSTOM_ENTITY = "citizens.nms-errors.spawning-custom-entity";
     public static final String ERROR_STOPPING_NETWORK_THREADS = "citizens.nms-errors.stopping-network-threads";
     public static final String ERROR_UPDATING_NAVIGATION_WORLD = "citizens.nms-errors.updating-navigation-world";
@@ -274,9 +275,12 @@ public class Messages {
     public static final String SKIN_LAYERS_SET = "citizens.commands.npc.skin.layers-set";
     public static final String SKIN_REQUIRED = "citizens.commands.npc.skin.missing-skin";
     public static final String SKIN_SET = "citizens.commands.npc.skin.set";
+    public static final String SKIN_URL_SET = "citizens.commands.npc.skin.skin-url-set";
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
     public static final String SKIPPING_INVALID_ANCHOR = "citizens.notifications.skipping-invalid-anchor";
     public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
+    public static final String SNOWMAN_DERP_SET = "citizens.commands.npc.snowman.derp-set";
+    public static final String SNOWMAN_DERP_STOPPED = "citizens.commands.npc.snowman.derp-stopped";
     public static final String SOUND_INFO = "citizens.commands.npc.sound.info";
     public static final String SOUND_SET = "citizens.commands.npc.sound.set";
     public static final String SPAWN_NUMERIC_ID_ONLY = "citizens.commands.npc.spawn.numeric-id-only";
@@ -370,6 +374,4 @@ public class Messages {
     public static final String ZOMBIE_VILLAGER_PROFESSION_SET = "citizens.commands.npc.zombiemod.villager-profession-set";
     public static final String ZOMBIE_VILLAGER_SET = "citizens.commands.npc.zombiemod.villager-set";
     public static final String ZOMBIE_VILLAGER_UNSET = "citizens.commands.npc.zombiemod.villager-unset";
-    public static final String SNOWMAN_DERP_SET = "citizens.commands.npc.snowman.derp-set";
-    public static final String SNOWMAN_DERP_STOPPED = "citizens.commands.npc.snowman.derp-stopped";
 }
