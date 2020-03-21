@@ -118,6 +118,9 @@ public class VectorNode extends AStarNode implements PathPoint {
                     if (x == 0 && y == 0 && z == 0)
                         continue;
                     Vector mod = location.clone().add(new Vector(x, y, z));
+                    if (mod.getBlockY() < 0 || mod.getBlockY() > 255) {
+                        continue;
+                    }
                     if (x != 0 && z != 0) {
                         if (!isPassable(point.createAtOffset((location.clone().add(new Vector(x, y, 0)))))
                                 || !isPassable(point.createAtOffset((location.clone().add(new Vector(0, y, z)))))) {
