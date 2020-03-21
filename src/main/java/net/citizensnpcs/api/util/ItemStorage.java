@@ -3,6 +3,7 @@ package net.citizensnpcs.api.util;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -10,11 +11,15 @@ import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.block.Banner;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -237,6 +242,30 @@ public class ItemStorage {
             ((Repairable) meta).setRepairCost(root.getInt("repaircost"));
             res.setItemMeta(meta);
         }
+
+        if (root.keyExists("attributes") && SUPPORTS_ATTRIBUTES) {
+            ItemMeta meta = ensureMeta(res);
+            try {
+                for (DataKey attr : root.getRelative("attributes").getSubKeys()) {
+                    Attribute attribute = Attribute.valueOf(attr.name());
+                    for (DataKey modifier : attr.getIntegerSubKeys()) {
+                        UUID uuid = UUID.fromString(modifier.getString("uuid"));
+                        String name = modifier.getString("name");
+                        double amount = modifier.getDouble("amount");
+                        Operation operation = Operation.valueOf(modifier.getString("operation"));
+                        EquipmentSlot slot = modifier.keyExists("slot")
+                                ? EquipmentSlot.valueOf(modifier.getString("slot"))
+                                : null;
+                        meta.addAttributeModifier(attribute,
+                                new AttributeModifier(uuid, name, amount, operation, slot));
+                    }
+                }
+            } catch (Throwable e) {
+                SUPPORTS_ATTRIBUTES = false;
+            }
+            res.setItemMeta(meta);
+        }
+
         ItemMeta meta = res.getItemMeta();
         if (meta != null) {
             try {
@@ -308,7 +337,6 @@ public class ItemStorage {
         if (item.getData() != null) {
             key.setInt("mdata", item.getData().getData());
         }
-
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
             serialiseMeta(key.getRelative("meta"), meta);
@@ -364,8 +392,29 @@ public class ItemStorage {
                 } else {
                     key.removeKey("custommodel");
                 }
-            } catch (Throwable t) {
+            } catch (NoSuchMethodError e) {
                 SUPPORTS_CUSTOM_MODEL_DATA = false;
+            }
+        }
+        if (SUPPORTS_ATTRIBUTES) {
+            try {
+                key.removeKey("attributes");
+                for (Attribute attr : meta.getAttributeModifiers().keySet()) {
+                    int i = 0;
+                    for (AttributeModifier modifier : meta.getAttributeModifiers(attr)) {
+                        DataKey root = key.getRelative("attributes." + attr.name() + "." + i);
+                        root.setString("uuid", modifier.getUniqueId().toString());
+                        root.setString("name", modifier.getName());
+                        root.setDouble("amount", modifier.getAmount());
+                        root.setString("operation", modifier.getOperation().name());
+                        if (modifier.getSlot() != null) {
+                            root.setString("slot", modifier.getSlot().name());
+                        }
+                    }
+                    i++;
+                }
+            } catch (Throwable e) {
+                SUPPORTS_ATTRIBUTES = false;
             }
         }
         key.removeKey("flags");
@@ -549,5 +598,6 @@ public class ItemStorage {
     }
 
     private static boolean SUPPORTS_1_14_API = true;
+    private static boolean SUPPORTS_ATTRIBUTES = true;
     private static boolean SUPPORTS_CUSTOM_MODEL_DATA = true;
 }

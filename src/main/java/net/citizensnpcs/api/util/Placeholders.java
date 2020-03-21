@@ -10,9 +10,23 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 
 public class Placeholders {
-    private static Pattern PLAYER_MATCHER = Pattern.compile("<player>|<p>");
+    public static String replace(String text, CommandSender sender, NPC npc) {
+        if (sender instanceof Player) {
+            text = replace(text, (Player) sender);
+        }
+        if (npc == null) {
+            return text;
+        }
+        text = text.replace("<owner>", npc.getTrait(Owner.class).getOwner());
+        text = text.replace("<npc>", npc.getName());
+        text = text.replace("<id>", Integer.toString(npc.getId()));
+        return text;
+    }
 
     public static String replace(String text, Player player) {
+        if (player == null) {
+            return text;
+        }
         text = PLAYER_MATCHER.matcher(text).replaceAll(player.getName());
         text = text.replace("<world>", player.getWorld().getName());
         try {
@@ -22,13 +36,5 @@ public class Placeholders {
         return text;
     }
 
-    public static String replace(String text, CommandSender sender, NPC npc) {
-        if (sender instanceof Player) {
-            text = replace(text, (Player) sender);
-        }
-        text = text.replace("<owner>", npc.getTrait(Owner.class).getOwner());
-        text = text.replace("<npc>", npc.getName());
-        text = text.replace("<id>", Integer.toString(npc.getId()));
-        return text;
-    }
+    private static Pattern PLAYER_MATCHER = Pattern.compile("<player>|<p>");
 }
