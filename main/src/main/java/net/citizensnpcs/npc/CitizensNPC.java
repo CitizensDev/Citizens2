@@ -402,13 +402,13 @@ public class CitizensNPC extends AbstractNPC {
         EntityType type = isSpawned() ? getEntity().getType() : getTrait(MobType.class).getType();
         if (type == null)
             return;
-        if (Util.isAlwaysFlyable(type)) {
-            if (!data().has(NPC.FLYABLE_METADATA)) {
-                data().setPersistent(NPC.FLYABLE_METADATA, true);
-            }
-            if (!hasTrait(Gravity.class)) {
-                getTrait(Gravity.class).setEnabled(true);
-            }
+        if (!Util.isAlwaysFlyable(type))
+            return;
+        if (!data().has(NPC.FLYABLE_METADATA)) {
+            data().setPersistent(NPC.FLYABLE_METADATA, true);
+        }
+        if (!hasTrait(Gravity.class)) {
+            getTrait(Gravity.class).setEnabled(true);
         }
     }
 

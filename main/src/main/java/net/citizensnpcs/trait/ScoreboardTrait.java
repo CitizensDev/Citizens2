@@ -14,6 +14,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 
 @TraitName("scoreboardtrait")
 public class ScoreboardTrait extends Trait {
@@ -67,6 +68,9 @@ public class ScoreboardTrait extends Trait {
             npc.data().remove(NPC.GLOWING_COLOR_METADATA);
         }
         if (color != null) {
+            if (SUPPORT_GLOWING_COLOR && Util.getMinecraftRevision().contains("1_12_R1")) {
+                SUPPORT_GLOWING_COLOR = false;
+            }
             if (SUPPORT_GLOWING_COLOR) {
                 try {
                     if (team.getColor() == null || previousGlowingColor == null

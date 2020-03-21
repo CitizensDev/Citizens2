@@ -1472,12 +1472,7 @@ public class NPCCommands {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
             newName = newName.substring(0, nameLength);
         }
-        Location prev = npc.isSpawned() ? npc.getEntity().getLocation() : null;
-        npc.despawn(DespawnReason.PENDING_RESPAWN);
         npc.setName(newName);
-        if (prev != null) {
-            npc.spawn(prev, SpawnReason.RESPAWN);
-        }
 
         Messaging.sendTr(sender, Messages.NPC_RENAMED, oldName, newName);
     }
