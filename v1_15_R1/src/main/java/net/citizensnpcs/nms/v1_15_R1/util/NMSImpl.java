@@ -435,7 +435,7 @@ public class NMSImpl implements NMSBridge {
         if (!(entity instanceof LivingEntity)) {
             return entity.getLocation().getYaw();
         }
-        return getHandle((LivingEntity) entity).aM;
+        return getHandle((LivingEntity) entity).aK;
     }
 
     @Override
@@ -996,6 +996,11 @@ public class NMSImpl implements NMSBridge {
 
         NMSImpl.sendPacket(recipient,
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
+    }
+
+    @Override
+    public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
+        getHandle(entity).yaw = yaw;
     }
 
     @Override
@@ -1729,7 +1734,6 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
             "advancementDataPlayer");
-
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,

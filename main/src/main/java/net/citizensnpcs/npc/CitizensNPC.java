@@ -154,6 +154,7 @@ public class CitizensNPC extends AbstractNPC {
         CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
         if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
             spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
+            NMS.setHeadYaw(getEntity(), spawnLocation.getHeadYaw());
         }
         if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() == null) {
             Messaging.debug("Tried to spawn", getId(), "on load but world was null");
@@ -261,6 +262,7 @@ public class CitizensNPC extends AbstractNPC {
 
         getEntity().teleport(at);
 
+        NMS.setBodyYaw(getEntity(), at.getYaw());
         NMS.setHeadYaw(getEntity(), at.getYaw());
 
         // Set the spawned state

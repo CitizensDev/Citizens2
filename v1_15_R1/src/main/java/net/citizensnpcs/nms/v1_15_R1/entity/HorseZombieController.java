@@ -48,11 +48,8 @@ public class HorseZombieController extends MobEntityController {
 
     public static class EntityHorseZombieNPC extends EntityHorseZombie implements NPCHolder {
         private double baseMovementSpeed;
-
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
-
         private boolean riding;
 
         public EntityHorseZombieNPC(EntityTypes<? extends EntityHorseZombie> types, World world) {
@@ -97,18 +94,18 @@ public class HorseZombieController extends MobEntityController {
         }
 
         @Override
+        public void checkDespawn() {
+            if (npc == null) {
+                super.checkDespawn();
+            }
+        }
+
+        @Override
         public boolean cj() {
             if (npc != null && riding) {
                 return true;
             }
             return super.cj();
-        }
-
-        @Override
-        public void checkDespawn() {
-            if (npc == null) {
-                super.checkDespawn();
-            }
         }
 
         @Override
@@ -149,28 +146,6 @@ public class HorseZombieController extends MobEntityController {
         }
 
         @Override
-        public void h(double x, double y, double z) {
-            if (npc == null) {
-                super.h(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.h(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new HorseZombieNPC(this));
@@ -196,6 +171,28 @@ public class HorseZombieController extends MobEntityController {
         @Override
         protected SoundEffect getSoundHurt(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
+        }
+
+        @Override
+        public void h(double x, double y, double z) {
+            if (npc == null) {
+                super.h(x, y, z);
+                return;
+            }
+            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+                    super.h(x, y, z);
+                return;
+            }
+            Vector vector = new Vector(x, y, z);
+            NPCPushEvent event = Util.callPushEvent(npc, vector);
+            if (!event.isCancelled()) {
+                vector = event.getCollisionVector();
+                super.h(vector.getX(), vector.getY(), vector.getZ());
+            }
+            // when another entity collides, this method is called to push the
+            // NPC so we prevent it from doing anything if the event is
+            // cancelled.
         }
 
         @Override

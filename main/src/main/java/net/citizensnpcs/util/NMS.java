@@ -358,6 +358,10 @@ public class NMS {
         BRIDGE.sendTabListRemove(recipient, listPlayer);
     }
 
+    public static void setBodyYaw(Entity entity, float yaw) {
+        BRIDGE.setBodyYaw(entity, yaw);
+    }
+
     public static void setDestination(org.bukkit.entity.Entity entity, double x, double y, double z, float speed) {
         BRIDGE.setDestination(entity, x, y, z, speed);
     }

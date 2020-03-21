@@ -943,6 +943,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
+        getHandle(entity).yaw = yaw;
+    }
+
+    @Override
     public void setDestination(org.bukkit.entity.Entity entity, double x, double y, double z, float speed) {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null)

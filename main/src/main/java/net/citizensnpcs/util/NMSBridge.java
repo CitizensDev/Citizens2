@@ -115,6 +115,8 @@ public interface NMSBridge {
 
     public void sendTabListRemove(Player recipient, Player listPlayer);
 
+    public void setBodyYaw(Entity entity, float yaw);
+
     public void setDestination(Entity entity, double x, double y, double z, float speed);
 
     public void setDummyAdvancement(Player entity);
