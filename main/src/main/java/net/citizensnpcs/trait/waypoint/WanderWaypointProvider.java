@@ -283,6 +283,14 @@ public class WanderWaypointProvider
         this.paused = paused;
     }
 
+    public void setXYRange(int xrange, int yrange) {
+        this.xrange = xrange;
+        this.yrange = yrange;
+        if (currentGoal != null) {
+            currentGoal.setXYRange(xrange, yrange);
+        }
+    }
+
     private class RecalculateList extends ForwardingList<Location> {
         @Override
         public void add(int idx, Location loc) {
