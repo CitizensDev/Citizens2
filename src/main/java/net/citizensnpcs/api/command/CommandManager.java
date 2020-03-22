@@ -440,8 +440,9 @@ public class CommandManager implements TabCompleter {
             List<Annotation> annotations = Lists.newArrayList();
             for (Annotation annotation : method.getDeclaringClass().getAnnotations()) {
                 Class<? extends Annotation> annotationClass = annotation.annotationType();
-                if (annotationProcessors.containsKey(annotationClass))
+                if (annotationProcessors.containsKey(annotationClass)) {
                     annotations.add(annotation);
+                }
             }
             for (Annotation annotation : method.getAnnotations()) {
                 Class<? extends Annotation> annotationClass = annotation.annotationType();

@@ -41,6 +41,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
+        if (pos.getBlockY() <= 0 || pos.getBlockY() >= 255) {
+            return PassableState.UNPASSABLE;
+        }
         Material above = source.getMaterialAt(pos.clone().add(UP));
         Material below = source.getMaterialAt(pos.clone().add(DOWN));
         Material in = source.getMaterialAt(pos);
