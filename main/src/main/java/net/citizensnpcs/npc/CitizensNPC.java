@@ -422,8 +422,7 @@ public class CitizensNPC extends AbstractNPC {
         }
     }
 
-    private static final Location CACHE_LOCATION = null;
-
+    private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
     private static final String NPC_METADATA_MARKER = "NPC";
     private static boolean SUPPORT_GLOWING = true;
