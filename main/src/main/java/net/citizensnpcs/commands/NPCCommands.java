@@ -1047,7 +1047,6 @@ public class NPCCommands {
             min = 1,
             permission = "citizens.npc.moveto")
     public void moveto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned()) {
             npc.spawn(npc.getTrait(CurrentLocation.class).getLocation(), SpawnReason.COMMAND);
         }
@@ -2024,7 +2023,6 @@ public class NPCCommands {
     public void tphere(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.getSenderLocation() == null)
             throw new ServerCommandException();
-        // Spawn the NPC if it isn't spawned to prevent NPEs
         if (!npc.isSpawned()) {
             npc.spawn(args.getSenderLocation(), SpawnReason.COMMAND);
             if (!sender.hasPermission("citizens.npc.tphere.multiworld")

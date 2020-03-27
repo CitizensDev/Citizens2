@@ -231,7 +231,7 @@ public class CitizensNPC extends AbstractNPC {
 
         at = at.clone();
 
-        if (reason == SpawnReason.CHUNK_LOAD) {
+        if (reason == SpawnReason.CHUNK_LOAD || reason == SpawnReason.COMMAND) {
             at.getChunk().load();
         }
 
