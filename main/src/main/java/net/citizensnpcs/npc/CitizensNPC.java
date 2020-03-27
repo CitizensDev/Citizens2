@@ -149,7 +149,6 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public void load(final DataKey root) {
         super.load(root);
-
         // Spawn the NPC
         CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
         if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
