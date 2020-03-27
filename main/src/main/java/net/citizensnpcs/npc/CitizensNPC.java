@@ -12,6 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scoreboard.Team;
 
@@ -132,7 +133,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public Location getStoredLocation() {
-        return isSpawned() ? getEntity().getLocation() : getTrait(CurrentLocation.class).getLocation();
+        return isSpawned() ? getEntity().getLocation(CACHE_LOCATION) : getTrait(CurrentLocation.class).getLocation();
     }
 
     @Override
@@ -194,7 +195,7 @@ public class CitizensNPC extends AbstractNPC {
         boolean wasSpawned = isSpawned();
         Location prev = null;
         if (wasSpawned) {
-            prev = getEntity().getLocation();
+            prev = getEntity().getLocation(CACHE_LOCATION);
             despawn(DespawnReason.PENDING_RESPAWN);
         }
         entityController = newController;
@@ -310,6 +311,14 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public void teleport(Location location, TeleportCause reason) {
+        super.teleport(location, reason);
+        if (isSpawned() && getEntity().getLocation(CACHE_LOCATION).distanceSquared(location) < 1) {
+            NMS.setHeadYaw(getEntity(), location.getYaw());
+        }
+    }
+
+    @Override
     public void update() {
         try {
             super.update();
@@ -412,6 +421,8 @@ public class CitizensNPC extends AbstractNPC {
             getTrait(Gravity.class).setEnabled(true);
         }
     }
+
+    private static final Location CACHE_LOCATION = null;
 
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
     private static final String NPC_METADATA_MARKER = "NPC";
