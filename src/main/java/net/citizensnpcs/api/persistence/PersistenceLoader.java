@@ -2,6 +2,7 @@ package net.citizensnpcs.api.persistence;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -193,7 +194,11 @@ public class PersistenceLoader {
                 return;
             }
             if (clazz == Double.class && type != Double.class) {
-                return;
+                if (type == Float.class) {
+                    value = ((Double) value).floatValue();
+                } else {
+                    return;
+                }
             }
             if (clazz == Byte.class && type != Short.class && type != Byte.class && type != Integer.class
                     && type != Double.class && type != Long.class && type != Float.class) {
@@ -331,10 +336,25 @@ public class PersistenceLoader {
      *            The root key to load from
      * @return The loaded instance
      */
+    @SuppressWarnings("unchecked")
     public static <T> T load(Class<? extends T> clazz, DataKey root) {
         T instance;
         try {
-            instance = clazz.newInstance();
+            Constructor<T> constructor = (Constructor<T>) clazz.getConstructor();
+            constructor.setAccessible(true);
+            instance = constructor.newInstance();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return null;
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            return null;
         } catch (InstantiationException e) {
             e.printStackTrace();
             return null;
