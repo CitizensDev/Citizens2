@@ -2,7 +2,6 @@ package net.citizensnpcs.api.persistence;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -338,29 +337,17 @@ public class PersistenceLoader {
      */
     @SuppressWarnings("unchecked")
     public static <T> T load(Class<? extends T> clazz, DataKey root) {
-        T instance;
+        T instance = null;
         try {
-            Constructor<T> constructor = (Constructor<T>) clazz.getConstructor();
-            constructor.setAccessible(true);
-            instance = constructor.newInstance();
-        } catch (IllegalArgumentException e) {
+            for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                if (constructor.getParameterCount() == 0) {
+                    constructor.setAccessible(true);
+                    instance = (T) constructor.newInstance();
+                    break;
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return null;
-        } catch (SecurityException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
         }
         if (instance == null)
             return null;
