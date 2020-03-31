@@ -1088,7 +1088,7 @@ public class NPCCommands {
 
         npc.teleport(to, TeleportCause.COMMAND);
         NMS.look(npc.getEntity(), to.getYaw(), to.getPitch());
-        Messaging.sendTr(sender, Messages.MOVETO_TELEPORTED, npc.getName(), to);
+        Messaging.sendTr(sender, Messages.MOVETO_TELEPORTED, npc.getName(), Util.prettyPrintLocation(to));
     }
 
     @Command(

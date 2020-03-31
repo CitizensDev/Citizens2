@@ -217,6 +217,11 @@ public class Util {
         return e.name().toLowerCase().replace('_', ' ');
     }
 
+    public static String prettyPrintLocation(Location to) {
+        return String.format("%s at %d, %d, %d (%d, %d)", to.getWorld().getName(), to.getBlockX(), to.getBlockY(),
+                to.getBlockZ(), (int) to.getYaw(), (int) to.getPitch());
+    }
+
     public static String[] splitPlayerName(String coloredName) {
         String name = coloredName, prefix = null, suffix = null;
         if (coloredName.length() > 16) {
