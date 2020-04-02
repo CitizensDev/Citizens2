@@ -158,54 +158,44 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChunkUnload(final ChunkUnloadEvent event) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                ChunkCoord coord = new ChunkCoord(event.getChunk());
-                Location loc = new Location(null, 0, 0, 0);
-                boolean loadChunk = false;
-                for (NPC npc : getAllNPCs()) {
-                    if (npc == null || !npc.isSpawned())
-                        continue;
-                    loc = npc.getEntity().getLocation(loc);
-                    boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
-                    if (!sameChunkCoordinates || !event.getWorld().equals(loc.getWorld()))
-                        continue;
-                    if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
-                        if (!(event instanceof Cancellable)) {
-                            loadChunk = true;
-                            toRespawn.put(coord, npc);
-                            continue;
-                        }
-                        ((Cancellable) event).setCancelled(true);
-                        if (Messaging.isDebugging()) {
-                            Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
-                        }
-                        respawnAllFromCoord(coord);
-                        return;
-                    }
+        ChunkCoord coord = new ChunkCoord(event.getChunk());
+        Location loc = new Location(null, 0, 0, 0);
+        boolean loadChunk = false;
+        for (NPC npc : getAllNPCs()) {
+            if (npc == null || !npc.isSpawned())
+                continue;
+            loc = npc.getEntity().getLocation(loc);
+            boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
+            if (!sameChunkCoordinates || !event.getWorld().equals(loc.getWorld()))
+                continue;
+            if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
+                if (!(event instanceof Cancellable)) {
+                    loadChunk = true;
                     toRespawn.put(coord, npc);
-                    if (Messaging.isDebugging()) {
-                        Messaging.debug("Despawned id", npc.getId(),
-                                "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+                    continue;
+                }
+                ((Cancellable) event).setCancelled(true);
+                if (Messaging.isDebugging()) {
+                    Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
+                }
+                respawnAllFromCoord(coord);
+                return;
+            }
+            toRespawn.put(coord, npc);
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Despawned id", npc.getId(),
+                        "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+            }
+        }
+        if (loadChunk) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    if (!event.getChunk().isLoaded()) {
+                        event.getChunk().load();
                     }
                 }
-                if (loadChunk) {
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!event.getChunk().isLoaded()) {
-                                event.getChunk().load();
-                            }
-                        }
-                    }, 10);
-                }
-            }
-        };
-        if (event instanceof Cancellable || true) {
-            runnable.run();
-        } else {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable);
+            }, 10);
         }
     }
 

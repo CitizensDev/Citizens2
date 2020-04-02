@@ -32,7 +32,6 @@ import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftWither;
 import org.bukkit.craftbukkit.v1_14_R1.event.CraftEventFactory;
-import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
@@ -1038,6 +1037,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setLyingDown(org.bukkit.entity.Entity cat, boolean lying) {
+        ((EntityCat) getHandle(cat)).u(lying);
     }
 
     @Override
@@ -1679,10 +1679,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    }
-
-    public static void setLyingDown(Cat cat, boolean lying) {
-        ((EntityCat) getHandle(cat)).u(lying);
     }
 
     public static void setNotInSchool(EntityFish entity) {
