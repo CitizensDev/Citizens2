@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -286,13 +287,19 @@ public class PersistenceLoader {
 
     private static Field[] getFields(Class<?> clazz) {
         Field[] fields = fieldCache.get(clazz);
-        if (fields == null)
+        if (fields == null) {
             fieldCache.put(clazz, fields = getFieldsFromClass(clazz));
+        }
         return fields;
     }
 
     private static Field[] getFieldsFromClass(Class<?> clazz) {
         List<Field> toFilter = Lists.newArrayList(clazz.getDeclaredFields());
+        Class<?> superClass = clazz.getSuperclass();
+        while (superClass != Object.class && superClass != null) {
+            toFilter.addAll(Arrays.asList(superClass.getDeclaredFields()));
+            superClass = superClass.getSuperclass();
+        }
         Iterator<Field> itr = toFilter.iterator();
         while (itr.hasNext()) {
             Field field = itr.next();

@@ -120,6 +120,19 @@ public class PersistenceLoaderTest {
     }
 
     @Test
+    public void testSuperClass() {
+        root.setInt("integer", 5);
+        root.setString("superclass", "test");
+        SuperclassTest test = PersistenceLoader.load(SuperclassTest.class, root);
+        assertEquals(test.superclass, "test");
+        assertEquals(test.integer, 5);
+        root = new MemoryDataKey();
+        PersistenceLoader.save(test, root);
+        assertEquals(root.getString("superclass"), "test");
+        assertEquals(root.getInt("integer"), 5);
+    }
+
+    @Test
     public void testTypeInference() {
         root.setString("map.1", "1");
         InferenceTest test = PersistenceLoader.load(InferenceTest.class, root);
@@ -190,6 +203,16 @@ public class PersistenceLoaderTest {
 
         @Persist(collectionType = LinkedHashSet.class)
         private Set<Integer> set;
+    }
+
+    public static class Superclass {
+        @Persist
+        public String superclass;
+    }
+
+    public static class SuperclassTest extends Superclass {
+        @Persist
+        public int integer;
     }
 
     public static class TestMap {
