@@ -413,7 +413,7 @@ public class NMSImpl implements NMSBridge {
         // navigation won't execute, and calling entity.move doesn't
         // entirely fix the problem.
         final NavigationAbstract navigation = NMSImpl.getNavigation(entity);
-        boolean oldAvoidsWater = navigation instanceof Navigation ? ((Navigation) navigation).e() : false;
+        final boolean oldAvoidsWater = navigation instanceof Navigation ? ((Navigation) navigation).e() : false;
         if (navigation instanceof Navigation) {
             ((Navigation) navigation).a(params.avoidWater());
         }
