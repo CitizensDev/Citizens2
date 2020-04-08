@@ -125,7 +125,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             defaultParams.updatePathRate(root.getInt("updatepathrate"));
         }
         defaultParams.speedModifier((float) root.getDouble("speedmodifier", 1F));
-        defaultParams.avoidWater(root.getBoolean("avoidwater"));
+        defaultParams.avoidWater(root.getBoolean("avoidwater")); 
         if (!root.getBoolean("usedefaultstuckaction") && defaultParams.stuckAction() == TeleportStuckAction.INSTANCE) {
             defaultParams.stuckAction(null);
         }

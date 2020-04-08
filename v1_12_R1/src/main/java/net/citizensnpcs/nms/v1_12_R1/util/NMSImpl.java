@@ -215,6 +215,7 @@ import net.minecraft.server.v1_12_R1.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_12_R1.PathEntity;
 import net.minecraft.server.v1_12_R1.PathPoint;
+import net.minecraft.server.v1_12_R1.PathType;
 import net.minecraft.server.v1_12_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_12_R1.RegistryMaterials;
 import net.minecraft.server.v1_12_R1.ReportedException;
@@ -484,6 +485,15 @@ public class NMSImpl implements NMSBridge {
         // navigation won't execute, and calling entity.move doesn't
         // entirely fix the problem.
         final NavigationAbstract navigation = NMSImpl.getNavigation(entity);
+        final float oldWater = raw instanceof EntityPlayer ? ((EntityHumanNPC) raw).a(PathType.WATER)
+                : ((EntityInsentient) raw).a(PathType.WATER);
+        if (params.avoidWater() && oldWater >= 0) {
+            if (raw instanceof EntityPlayer) {
+                ((EntityHumanNPC) raw).a(PathType.WATER, oldWater + 1F);
+            } else {
+                ((EntityInsentient) raw).a(PathType.WATER, oldWater + 1F);
+            }
+        }
         return new MCNavigator() {
             float lastSpeed;
             CancelReason reason;
@@ -508,6 +518,13 @@ public class NMSImpl implements NMSBridge {
                                     .getBlock();
                             player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
                         }
+                    }
+                }
+                if (oldWater >= 0) {
+                    if (raw instanceof EntityPlayer) {
+                        ((EntityHumanNPC) raw).a(PathType.WATER, oldWater);
+                    } else {
+                        ((EntityInsentient) raw).a(PathType.WATER, oldWater);
                     }
                 }
                 stopNavigation(navigation);

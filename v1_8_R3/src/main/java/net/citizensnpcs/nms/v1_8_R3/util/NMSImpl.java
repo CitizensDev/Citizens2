@@ -159,6 +159,7 @@ import net.minecraft.server.v1_8_R3.EntityTypes;
 import net.minecraft.server.v1_8_R3.EntityWither;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.MathHelper;
+import net.minecraft.server.v1_8_R3.Navigation;
 import net.minecraft.server.v1_8_R3.NavigationAbstract;
 import net.minecraft.server.v1_8_R3.NetworkManager;
 import net.minecraft.server.v1_8_R3.Packet;
@@ -412,6 +413,10 @@ public class NMSImpl implements NMSBridge {
         // navigation won't execute, and calling entity.move doesn't
         // entirely fix the problem.
         final NavigationAbstract navigation = NMSImpl.getNavigation(entity);
+        boolean oldAvoidsWater = navigation instanceof Navigation ? ((Navigation) navigation).e() : false;
+        if (navigation instanceof Navigation) {
+            ((Navigation) navigation).a(params.avoidWater());
+        }
         return new MCNavigator() {
             float lastSpeed;
             CancelReason reason;
@@ -428,6 +433,9 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void stop() {
+                if (navigation instanceof Navigation) {
+                    ((Navigation) navigation).a(oldAvoidsWater);
+                }
                 stopNavigation(navigation);
             }
 
