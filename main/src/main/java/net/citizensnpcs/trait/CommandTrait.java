@@ -154,7 +154,7 @@ public class CommandTrait extends Trait {
                     clicker.setOp(true);
                 }
                 try {
-                    clicker.performCommand(interpolatedCommand);
+                    clicker.chat("/" + interpolatedCommand);
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }

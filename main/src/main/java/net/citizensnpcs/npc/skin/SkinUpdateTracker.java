@@ -58,7 +58,7 @@ public class SkinUpdateTracker {
     }
 
     // determines if a player is near a skinnable entity and, if checkFov set, if the
-    // skinnable entity is within the players field of view.
+    // skinnable entity is within the player's field of view.
     private boolean canSee(Player player, SkinnableEntity skinnable, boolean checkFov) {
         Player entity = skinnable.getBukkitEntity();
         if (entity == null)
