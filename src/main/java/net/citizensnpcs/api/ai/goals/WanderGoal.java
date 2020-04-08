@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -54,6 +55,10 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
             Block block = base.getWorld().getBlockAt(x, y, z);
             if (MinecraftBlockExaminer.canStandOn(block)) {
+                if ((block.getRelative(BlockFace.UP).isLiquid() || block.getRelative(0, 2, 0).isLiquid())
+                        && npc.getNavigator().getDefaultParameters().avoidWater()) {
+                    continue;
+                }
                 long[] pt = { x, y, z };
                 if (tree != null && tree.get() != null && !tree.get().queryIntersect(pt, pt).hasNext()) {
                     continue;
