@@ -1,9 +1,6 @@
 package net.citizensnpcs.trait;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -71,27 +68,32 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
      * Finds a new look-close target
      */
     public void findNewTarget() {
-        List<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
-        Collections.sort(nearby, new Comparator<Entity>() {
-            @Override
-            public int compare(Entity o1, Entity o2) {
+        List<Player> nearby = new ArrayList<>();
+        for (Entity entity : npc.getEntity().getNearbyEntities(range, range, range)) {
+            if (!(entity instanceof Player)) continue;
+
+            Player player = (Player) entity;
+            if (CitizensAPI.getNPCRegistry().getNPC(entity) != null
+                    || player.getGameMode() == GameMode.SPECTATOR
+                    || entity.getLocation(CACHE_LOCATION).getWorld() != NPC_LOCATION.getWorld()
+                    || player.hasPotionEffect(PotionEffectType.INVISIBILITY)
+                    || isPluginVanished((Player) entity))
+                continue;
+            nearby.add(player);
+        }
+
+        if (!nearby.isEmpty()) {
+            nearby.sort((o1, o2) -> {
                 Location l1 = o1.getLocation(CACHE_LOCATION);
                 Location l2 = o2.getLocation(CACHE_LOCATION2);
                 if (!NPC_LOCATION.getWorld().equals(l1.getWorld()) || !NPC_LOCATION.getWorld().equals(l2.getWorld())) {
                     return -1;
                 }
                 return Double.compare(l1.distanceSquared(NPC_LOCATION), l2.distanceSquared(NPC_LOCATION));
-            }
-        });
-        for (Entity entity : nearby) {
-            if (entity.getType() != EntityType.PLAYER || ((Player) entity).getGameMode() == GameMode.SPECTATOR
-                    || ((Player) entity).hasPotionEffect(PotionEffectType.INVISIBILITY)
-                    || isPluginVanished((Player) entity)
-                    || entity.getLocation(CACHE_LOCATION).getWorld() != NPC_LOCATION.getWorld()
-                    || CitizensAPI.getNPCRegistry().getNPC(entity) != null)
-                continue;
-            lookingAt = (Player) entity;
-            return;
+            });
+
+
+            lookingAt = nearby.get(0);
         }
     }
 
