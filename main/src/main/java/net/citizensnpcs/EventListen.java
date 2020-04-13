@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
@@ -159,14 +160,10 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChunkUnload(final ChunkUnloadEvent event) {
         ChunkCoord coord = new ChunkCoord(event.getChunk());
-        Location loc = new Location(null, 0, 0, 0);
         boolean loadChunk = false;
-        for (NPC npc : getAllNPCs()) {
+        for (Entity entity : event.getChunk().getEntities()) {
+            NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
             if (npc == null || !npc.isSpawned())
-                continue;
-            loc = npc.getEntity().getLocation(loc);
-            boolean sameChunkCoordinates = coord.z == loc.getBlockZ() >> 4 && coord.x == loc.getBlockX() >> 4;
-            if (!sameChunkCoordinates || !event.getWorld().equals(loc.getWorld()))
                 continue;
             if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
                 if (!(event instanceof Cancellable)) {
