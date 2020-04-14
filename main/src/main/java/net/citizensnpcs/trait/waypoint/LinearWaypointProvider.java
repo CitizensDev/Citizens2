@@ -360,7 +360,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             if (currentGoal != null) {
                 currentGoal.onProviderChanged();
             }
-            if (conversation != null) {
+            if (conversation != null && getCurrentWaypoint() != null) {
                 getCurrentWaypoint().describeTriggers(player);
             }
         }
