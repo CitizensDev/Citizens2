@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.DelegatePersistence;
 import net.citizensnpcs.api.persistence.Persist;
@@ -87,18 +88,28 @@ public class CommandTrait extends Trait {
         return output;
     }
 
-    public void dispatch(Player player, Hand hand) {
-        for (NPCCommand command : commands.values()) {
-            if (command.hand != hand && command.hand != Hand.BOTH)
-                continue;
-            PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
-            if (info != null && !info.canUse(player, command)) {
-                continue;
+    public void dispatch(final Player player, final Hand hand) {
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                for (NPCCommand command : commands.values()) {
+                    if (command.hand != hand && command.hand != Hand.BOTH)
+                        continue;
+                    PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
+                    if (info != null && !info.canUse(player, command)) {
+                        continue;
+                    }
+                    command.run(npc, player);
+                    if (command.cooldown > 0 && info == null) {
+                        cooldowns.put(player.getUniqueId().toString(), new PlayerNPCCommand(command));
+                    }
+                }
             }
-            command.run(npc, player);
-            if (command.cooldown > 0 && info == null) {
-                cooldowns.put(player.getUniqueId().toString(), new PlayerNPCCommand(command));
-            }
+        };
+        if (Bukkit.isPrimaryThread()) {
+            task.run();
+        } else {
+            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), task);
         }
     }
 

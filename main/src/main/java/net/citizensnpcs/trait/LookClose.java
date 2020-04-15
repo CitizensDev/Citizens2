@@ -1,11 +1,12 @@
 package net.citizensnpcs.trait;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
@@ -49,8 +50,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     /**
-     * Returns whether the target can be seen. Will use realistic line of sight if
-     * {@link #setRealisticLooking(boolean)} is true.
+     * Returns whether the target can be seen. Will use realistic line of sight if {@link #setRealisticLooking(boolean)}
+     * is true.
      */
     public boolean canSeeTarget() {
         return realisticLooking && npc.getEntity() instanceof LivingEntity
@@ -70,14 +71,13 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     public void findNewTarget() {
         List<Player> nearby = new ArrayList<>();
         for (Entity entity : npc.getEntity().getNearbyEntities(range, range, range)) {
-            if (!(entity instanceof Player)) continue;
+            if (!(entity instanceof Player))
+                continue;
 
             Player player = (Player) entity;
-            if (CitizensAPI.getNPCRegistry().getNPC(entity) != null
-                    || player.getGameMode() == GameMode.SPECTATOR
+            if (CitizensAPI.getNPCRegistry().getNPC(entity) != null || player.getGameMode() == GameMode.SPECTATOR
                     || entity.getLocation(CACHE_LOCATION).getWorld() != NPC_LOCATION.getWorld()
-                    || player.hasPotionEffect(PotionEffectType.INVISIBILITY)
-                    || isPluginVanished((Player) entity))
+                    || player.hasPotionEffect(PotionEffectType.INVISIBILITY) || isPluginVanished((Player) entity))
                 continue;
             nearby.add(player);
         }
@@ -91,7 +91,6 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
                 }
                 return Double.compare(l1.distanceSquared(NPC_LOCATION), l2.distanceSquared(NPC_LOCATION));
             });
-
 
             lookingAt = nearby.get(0);
         }
@@ -181,8 +180,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     /**
-     * Enables random looking - will look at a random {@link Location} every so
-     * often if enabled.
+     * Enables random looking - will look at a random {@link Location} every so often if enabled.
      */
     public void setRandomLook(boolean enableRandomLook) {
         this.enableRandomLook = enableRandomLook;
@@ -211,8 +209,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     /**
-     * Enables/disables realistic looking (using line of sight checks). More
-     * computationally expensive.
+     * Enables/disables realistic looking (using line of sight checks). More computationally expensive.
      */
     public void setRealisticLooking(boolean realistic) {
         this.realisticLooking = realistic;
