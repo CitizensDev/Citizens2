@@ -24,7 +24,7 @@ public class EndermanEquipper implements Equipper {
 
         if (SpigotUtil.isUsing1_13API()) {
             BlockData carried = ((Enderman) npc.getEntity()).getCarriedBlock();
-            if (carried.getMaterial() == Material.AIR) {
+            if (carried == null || carried.getMaterial() == Material.AIR) {
                 if (hand.getType() == Material.AIR) {
                     Messaging.sendErrorTr(equipper, Messages.EQUIPMENT_EDITOR_INVALID_BLOCK);
                     return;
