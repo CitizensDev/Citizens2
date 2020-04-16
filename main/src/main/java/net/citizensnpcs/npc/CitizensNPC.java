@@ -66,6 +66,8 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     public boolean shouldTick() {
+        if (navigator.isNavigating()) return true;
+
         LookClose trait = getTrait(LookClose.class);
         if (trait != null && trait.hasTargetMoved())
             return true;
