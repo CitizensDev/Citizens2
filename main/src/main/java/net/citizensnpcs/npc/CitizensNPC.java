@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
+import net.citizensnpcs.trait.LookClose;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -54,11 +55,25 @@ public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
+    public int tickCount;
 
     public CitizensNPC(UUID uuid, int id, String name, EntityController entityController, NPCRegistry registry) {
         super(uuid, id, name, registry);
         Preconditions.checkNotNull(entityController);
         this.entityController = entityController;
+    }
+
+    public boolean shouldTick() {
+        LookClose trait = getTrait(LookClose.class);
+        if (trait != null && trait.hasTargetMoved())
+            return true;
+
+        if (++tickCount >= 20) {
+            tickCount = 0;
+            return true;
+        }
+
+        return false;
     }
 
     @Override

@@ -34,6 +34,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     @Persist
     private boolean enableRandomLook = Setting.DEFAULT_RANDOM_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
+    private Location lastLookingAtLocation;
+
     @Persist
     private int randomLookDelay = Setting.DEFAULT_RANDOM_LOOK_DELAY.asInt();
     @Persist
@@ -92,16 +94,35 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
                 return Double.compare(l1.distanceSquared(NPC_LOCATION), l2.distanceSquared(NPC_LOCATION));
             });
 
-            lookingAt = nearby.get(0);
+
+            Player target = nearby.get(0);
+            if (!target.equals(lookingAt)) {
+                lastLookingAtLocation = null;
+            }
+            lookingAt = target;
         }
+    }
+
+    public boolean hasTargetMoved() {
+        if (lookingAt == null) return false;
+
+        Location lookingAtLocation = lookingAt.getLocation();
+
+        boolean moved = !lookingAtLocation.equals(lastLookingAtLocation);
+        if (moved) {
+            lastLookingAtLocation = lookingAt.getLocation();
+        }
+
+        return moved;
     }
 
     private boolean hasInvalidTarget() {
         if (lookingAt == null)
             return true;
         if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getEntity().getWorld()
-                || lookingAt.getLocation(PLAYER_LOCATION).distanceSquared(NPC_LOCATION) > range) {
+                || lookingAt.getLocation(PLAYER_LOCATION).distanceSquared(NPC_LOCATION) > range * range) {
             lookingAt = null;
+            lastLookingAtLocation = null;
         }
         return lookingAt == null;
     }
