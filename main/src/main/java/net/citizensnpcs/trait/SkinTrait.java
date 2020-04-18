@@ -26,24 +26,39 @@ public class SkinTrait extends Trait {
         super("skintrait");
     }
 
+    /**
+     * Clears skin texture and name.
+     */
     public void clearTexture() {
         textureRaw = null;
         signature = null;
         skinName = null;
     }
 
+    /**
+     * Whether to fetch the Mojang skin using the NPC's name on spawn.
+     */
     public boolean fetchDefaultSkin() {
         return fetchDefaultSkin;
     }
 
+    /**
+     * @return The texture signature, or null
+     */
     public String getSignature() {
         return signature;
     }
 
+    /**
+     * @return The skin name if set, or null (i.e. using the NPC's name)
+     */
     public String getSkinName() {
         return skinName;
     }
 
+    /**
+     * @return The encoded texture data, or null
+     */
     public String getTexture() {
         return textureRaw;
     }
@@ -87,24 +102,54 @@ public class SkinTrait extends Trait {
         migrate();
     }
 
+    /**
+     * @see #fetchDefaultSkin
+     */
     public void setFetchDefaultSkin(boolean fetch) {
         this.fetchDefaultSkin = fetch;
     }
 
+    /**
+     * @see #shouldUpdateSkins()
+     */
     public void setShouldUpdateSkins(boolean update) {
         this.updateSkins = update;
     }
 
+    /**
+     * Sets the skin name - will respawn NPC if spawned.
+     *
+     * @param name
+     *            The skin name
+     */
     public void setSkinName(String name) {
         setSkinName(name, false);
     }
 
+    /**
+     * Sets the skin name - will respawn NPC if spawned.
+     *
+     * @param name
+     *            The skin name
+     * @param forceUpdate
+     *            Whether to force update if no data has been fetched yet
+     * @see net.citizensnpcs.npc.skin.Skin#get(SkinnableEntity, boolean)
+     */
     public void setSkinName(String name, boolean forceUpdate) {
         Preconditions.checkNotNull(name);
         this.skinName = name.toLowerCase();
         onSkinChange(forceUpdate);
     }
 
+    /**
+     * Sets the skin data directly, respawning the NPC if spawned
+     *
+     * @param skinName
+     * @param signature
+     *            {@link #getSignature()}
+     * @param data
+     *            {@link #getTexture()}
+     */
     public void setSkinPersistent(String skinName, String signature, String data) {
         Preconditions.checkNotNull(skinName);
         Preconditions.checkNotNull(signature);
@@ -123,6 +168,9 @@ public class SkinTrait extends Trait {
         this.signature = signature;
     }
 
+    /**
+     * @return Whether the skin should be updated from Mojang periodically
+     */
     public boolean shouldUpdateSkins() {
         return updateSkins;
     }
