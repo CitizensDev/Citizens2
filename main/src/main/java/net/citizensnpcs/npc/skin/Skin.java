@@ -26,6 +26,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.profile.ProfileFetchHandler;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.profile.ProfileRequest;
+import net.citizensnpcs.trait.SkinTrait;
 
 /**
  * Stores data for a single skin.
@@ -100,6 +101,10 @@ public class Skin {
         }
 
         if (!hasSkinData()) {
+            if (npc.hasTrait(SkinTrait.class) && !this.skinName.equals(cachedName)
+                    && !npc.getTrait(SkinTrait.class).fetchDefaultSkin()) {
+                return false;
+            }
             if (hasFetched) {
                 return true;
             } else {
