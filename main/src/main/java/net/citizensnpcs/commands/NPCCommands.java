@@ -1721,13 +1721,7 @@ public class NPCCommands {
             skinName = args.getString(1);
         }
         Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), skinName);
-        if (npc.isSpawned()) {
-            SkinnableEntity skinnable = npc.getEntity() instanceof SkinnableEntity ? (SkinnableEntity) npc.getEntity()
-                    : null;
-            if (skinnable != null) {
-                skinnable.setSkinName(skinName, true);
-            }
-        }
+        trait.setSkinName(skinName, true);
     }
 
     @Command(
