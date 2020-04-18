@@ -138,9 +138,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             Function<Block, Boolean> filter, Random random) {
         Location found = null;
         for (int i = 0; i < 10; i++) {
-            int x = base.getBlockX() + random.nextInt(2 * xrange) - xrange;
-            int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
-            int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
+            int x = base.getBlockX() + random.nextInt(2 * xrange + 1) - xrange;
+            int y = base.getBlockY() + random.nextInt(2 * yrange + 1) - yrange;
+            int z = base.getBlockZ() + random.nextInt(2 * xrange + 1) - xrange;
             Block block = base.getWorld().getBlockAt(x, y, z);
             if (MinecraftBlockExaminer.canStandOn(block)) {
                 if (filter != null && !filter.apply(block)) {
