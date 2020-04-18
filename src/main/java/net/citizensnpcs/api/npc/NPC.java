@@ -369,20 +369,24 @@ public interface NPC extends Agent, Cloneable {
      */
     public static final String PATHFINDER_OPEN_DOORS_METADATA = "pathfinder-open-doors";
     /**
-     * @see Skinnable
+     * @see SkinTrait
      */
+    @Deprecated
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA = "player-skin-textures";
     /**
-     * @see Skinnable
+     * @see SkinTrait
      */
+    @Deprecated
     public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA = "player-skin-signature";
     /**
-     * @see Skinnable
+     * @see SkinTrait
      */
+    @Deprecated
     public static final String PLAYER_SKIN_USE_LATEST = "player-skin-use-latest-skin";
     /**
-     * @see Skinnable
+     * @see SkinTrait
      */
+    @Deprecated
     public static final String PLAYER_SKIN_UUID_METADATA = "player-skin-name";
     /**
      * The Integer delay to respawn in ticks after death. Only works if non-zero.
