@@ -82,8 +82,7 @@ public class Skin {
         NPC npc = entity.getNPC();
 
         // Use npc cached skin if available.
-        // If npc requires latest skin, cache is used for faster
-        // availability until the latest skin can be loaded.
+        // If npc requires latest skin, cache is used for faster availability until the latest skin can be loaded.
         String cachedName = npc.data().get(CACHED_SKIN_UUID_NAME_METADATA);
         String texture = npc.data().get(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA, "cache");
         if (this.skinName.equals(cachedName) && !texture.equals("cache")) {

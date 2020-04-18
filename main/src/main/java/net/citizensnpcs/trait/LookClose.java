@@ -100,7 +100,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         if (lookingAt == null)
             return true;
         if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getEntity().getWorld()
-                || lookingAt.getLocation(PLAYER_LOCATION).distanceSquared(NPC_LOCATION) > range) {
+                || lookingAt.getLocation(PLAYER_LOCATION).distanceSquared(NPC_LOCATION) > range * range) {
             lookingAt = null;
         }
         return lookingAt == null;
