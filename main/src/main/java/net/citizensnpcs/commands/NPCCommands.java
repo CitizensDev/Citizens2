@@ -81,7 +81,6 @@ import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
@@ -1642,7 +1641,7 @@ public class NPCCommands {
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
     public void skin(final CommandContext args, final CommandSender sender, final NPC npc) throws CommandException {
         String skinName = npc.getName();
-        SkinTrait trait = npc.getTrait(SkinTrait.class);
+        final SkinTrait trait = npc.getTrait(SkinTrait.class);
         if (args.hasFlag('c')) {
             trait.clearTexture();
         } else if (args.hasValueFlag("url")) {
@@ -1673,7 +1672,7 @@ public class NPCCommands {
                         Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
                             @Override
                             public void run() {
-                                ((SkinnableEntity) npc.getEntity()).setSkinPersistent(uuid, signature, textureEncoded);
+                                trait.setSkinPersistent(uuid, signature, textureEncoded);
                                 Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url);
                             }
                         });
@@ -1704,12 +1703,7 @@ public class NPCCommands {
         } else if (args.hasFlag('t')) {
             if (args.argsLength() != 4)
                 throw new CommandException(Messages.SKIN_REQUIRED);
-            SkinnableEntity skinnable = npc.getEntity() instanceof SkinnableEntity ? (SkinnableEntity) npc.getEntity()
-                    : null;
-            if (skinnable == null) {
-                throw new CommandException("Must be spawned.");
-            }
-            skinnable.setSkinPersistent(args.getString(1), args.getString(3), args.getString(2));
+            trait.setSkinPersistent(args.getString(1), args.getString(3), args.getString(2));
             Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), args.getString(1));
             return;
         } else {
