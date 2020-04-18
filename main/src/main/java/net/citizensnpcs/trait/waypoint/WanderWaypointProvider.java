@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
@@ -72,6 +74,20 @@ public class WanderWaypointProvider
             }
         }
         if (closestCentre != null) {
+            Location randomLocation = MinecraftBlockExaminer.findRandomValidLocation(npc.getEntity().getLocation(),
+                    xrange, yrange, new Function<Block, Boolean>() {
+                        @Override
+                        public Boolean apply(Block block) {
+                            if ((block.getRelative(BlockFace.UP).isLiquid() || block.getRelative(0, 2, 0).isLiquid())
+                                    && npc.getNavigator().getDefaultParameters().avoidWater()) {
+                                return false;
+                            }
+                            return true;
+                        }
+                    }, Util.getFastRandom());
+            if (randomLocation != null) {
+                return randomLocation;
+            }
             // TODO: should find closest edge block that is valid
             return MinecraftBlockExaminer.findValidLocation(closestCentre, xrange, yrange);
         }
