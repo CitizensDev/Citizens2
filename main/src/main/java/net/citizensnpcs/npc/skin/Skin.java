@@ -80,21 +80,20 @@ public class Skin {
         Preconditions.checkNotNull(entity);
 
         NPC npc = entity.getNPC();
-
+        SkinTrait skinTrait = npc.getTrait(SkinTrait.class);
         // Use npc cached skin if available.
         // If npc requires latest skin, cache is used for faster availability until the latest skin can be loaded.
         String cachedName = npc.data().get(CACHED_SKIN_UUID_NAME_METADATA);
-        String texture = npc.data().get(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA, "cache");
-        if (this.skinName.equals(cachedName) && !texture.equals("cache")) {
-            Property localData = new Property("textures", texture,
-                    npc.data().<String> get(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA));
+        String texture = skinTrait.getTexture();
+        if (this.skinName.equals(cachedName) && texture != null && !texture.equals("cache")) {
+            Property localData = new Property("textures", texture, skinTrait.getSignature());
             setNPCTexture(entity, localData);
 
             // check if NPC prefers to use cached skin over the latest skin.
             if (entity.getNPC().data().has("player-skin-use-latest")) {
                 entity.getNPC().data().remove("player-skin-use-latest");
             }
-            if (!entity.getNPC().data().get(NPC.PLAYER_SKIN_USE_LATEST, Setting.NPC_SKIN_USE_LATEST.asBoolean())) {
+            if (!skinTrait.shouldUpdateSkins()) {
                 // cache preferred
                 return true;
             }
@@ -367,22 +366,18 @@ public class Skin {
 
     private static void setNPCSkinData(SkinnableEntity entity, String skinName, UUID skinId, Property skinProperty) {
         NPC npc = entity.getNPC();
+        SkinTrait skinTrait = npc.getTrait(SkinTrait.class);
 
         // cache skins for faster initial skin availability and
         // for use when the latest skin is not required.
         npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, skinName);
         npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, skinId.toString());
         if (skinProperty.getValue() != null) {
-            npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA, skinProperty.getValue());
-            if (skinProperty.getSignature() == null) {
-                npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA, "");
-            } else {
-                npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA, skinProperty.getSignature());
-            }
+            skinTrait.setTexture(skinProperty.getValue(),
+                    skinProperty.getSignature() == null ? "" : skinProperty.getSignature());
             setNPCTexture(entity, skinProperty);
         } else {
-            npc.data().remove(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA);
-            npc.data().remove(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA);
+            skinTrait.clearTexture();
         }
     }
 

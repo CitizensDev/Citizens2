@@ -341,6 +341,6 @@ public class WanderWaypointProvider
         }
     }
 
-    private static final int DEFAULT_XRANGE = 3;
-    private static final int DEFAULT_YRANGE = 25;
+    private static final int DEFAULT_XRANGE = 25;
+    private static final int DEFAULT_YRANGE = 3;
 }

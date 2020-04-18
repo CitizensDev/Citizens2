@@ -103,6 +103,7 @@ import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
+import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
@@ -1641,8 +1642,9 @@ public class NPCCommands {
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
     public void skin(final CommandContext args, final CommandSender sender, final NPC npc) throws CommandException {
         String skinName = npc.getName();
+        SkinTrait trait = npc.getTrait(SkinTrait.class);
         if (args.hasFlag('c')) {
-            npc.data().remove(NPC.PLAYER_SKIN_UUID_METADATA);
+            trait.clearTexture();
         } else if (args.hasValueFlag("url")) {
             final String url = args.getFlag("url");
             Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), new Runnable() {
@@ -1713,9 +1715,8 @@ public class NPCCommands {
         } else {
             if (args.argsLength() != 2)
                 throw new CommandException(Messages.SKIN_REQUIRED);
-            npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, args.getString(1));
             if (args.hasFlag('l')) {
-                npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, true);
+                trait.setShouldUpdateSkins(true);
             }
             skinName = args.getString(1);
         }
