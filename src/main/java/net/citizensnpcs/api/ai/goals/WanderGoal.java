@@ -32,7 +32,6 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private boolean forceFinish;
     private final NPC npc;
     private boolean paused;
-    private final Random random = new Random();
     private final Supplier<PhTreeSolid<Boolean>> tree;
     private int xrange;
     private int yrange;
@@ -47,26 +46,21 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     }
 
     private Location findRandomPosition() {
-        Location base = npc.getEntity().getLocation();
-        Location found = null;
-        for (int i = 0; i < 10; i++) {
-            int x = base.getBlockX() + random.nextInt(2 * xrange) - xrange;
-            int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
-            int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
-            Block block = base.getWorld().getBlockAt(x, y, z);
-            if (MinecraftBlockExaminer.canStandOn(block)) {
-                if ((block.getRelative(BlockFace.UP).isLiquid() || block.getRelative(0, 2, 0).isLiquid())
-                        && npc.getNavigator().getDefaultParameters().avoidWater()) {
-                    continue;
-                }
-                long[] pt = { x, y, z };
-                if (tree != null && tree.get() != null && !tree.get().queryIntersect(pt, pt).hasNext()) {
-                    continue;
-                }
-                found = block.getLocation().add(0, 1, 0);
-                break;
-            }
-        }
+        Location found = MinecraftBlockExaminer.findRandomValidLocation(npc.getEntity().getLocation(NPC_LOCATION),
+                xrange, yrange, new Function<Block, Boolean>() {
+                    @Override
+                    public Boolean apply(Block block) {
+                        if ((block.getRelative(BlockFace.UP).isLiquid() || block.getRelative(0, 2, 0).isLiquid())
+                                && npc.getNavigator().getDefaultParameters().avoidWater()) {
+                            return false;
+                        }
+                        long[] pt = { block.getX(), block.getY(), block.getZ() };
+                        if (tree != null && tree.get() != null && !tree.get().queryIntersect(pt, pt).hasNext()) {
+                            return false;
+                        }
+                        return true;
+                    }
+                }, RANDOM);
         if (found == null && fallback != null) {
             return fallback.apply(npc);
         }
@@ -157,4 +151,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             Supplier<PhTreeSolid<Boolean>> tree, Function<NPC, Location> fallback) {
         return new WanderGoal(npc, xrange, yrange, tree, fallback);
     }
+
+    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
+    private static final Random RANDOM = new Random();
 }

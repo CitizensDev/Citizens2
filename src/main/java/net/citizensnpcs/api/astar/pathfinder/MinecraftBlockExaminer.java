@@ -2,7 +2,9 @@ package net.citizensnpcs.api.astar.pathfinder;
 
 import java.util.EnumSet;
 import java.util.ListIterator;
+import java.util.Random;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -121,6 +123,34 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     public static boolean canStandOn(Material mat) {
         return !UNWALKABLE.contains(mat) && mat.isSolid();
+    }
+
+    public static Location findRandomValidLocation(Location base, int xrange, int yrange) {
+        return findRandomValidLocation(base, xrange, yrange, null, new Random());
+    }
+
+    public static Location findRandomValidLocation(Location base, int xrange, int yrange,
+            Function<Block, Boolean> filter) {
+        return findRandomValidLocation(base, xrange, yrange, filter, new Random());
+    }
+
+    public static Location findRandomValidLocation(Location base, int xrange, int yrange,
+            Function<Block, Boolean> filter, Random random) {
+        Location found = null;
+        for (int i = 0; i < 10; i++) {
+            int x = base.getBlockX() + random.nextInt(2 * xrange) - xrange;
+            int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
+            int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
+            Block block = base.getWorld().getBlockAt(x, y, z);
+            if (MinecraftBlockExaminer.canStandOn(block)) {
+                if (filter != null && !filter.apply(block)) {
+                    continue;
+                }
+                found = block.getLocation().add(0, 1, 0);
+                break;
+            }
+        }
+        return found;
     }
 
     public static Location findValidLocation(Location location, int radius) {
