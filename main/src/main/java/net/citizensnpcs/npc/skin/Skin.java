@@ -10,6 +10,7 @@ import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.google.common.base.Preconditions;
@@ -101,7 +102,9 @@ public class Skin {
         }
 
         if (!hasSkinData()) {
-            if (npc.hasTrait(SkinTrait.class) && !this.skinName.equals(cachedName)
+            String defaultSkinName = ChatColor.stripColor(npc.getName()).toLowerCase();
+
+            if (npc.hasTrait(SkinTrait.class) && this.skinName.equals(defaultSkinName)
                     && !npc.getTrait(SkinTrait.class).fetchDefaultSkin()) {
                 return false;
             }
