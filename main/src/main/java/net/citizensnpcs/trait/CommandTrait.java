@@ -217,7 +217,7 @@ public class CommandTrait extends Trait {
         }
 
         public PlayerNPCCommand(NPCCommand command) {
-            lastUsed.put(command.command, System.currentTimeMillis() / 1000);
+            lastUsed.put(command.command, ((Number) (System.currentTimeMillis() / 1000)).longValue());
         }
 
         public boolean canUse(Player player, NPCCommand command) {
@@ -228,7 +228,7 @@ public class CommandTrait extends Trait {
             }
             long currentTimeSec = System.currentTimeMillis() / 1000;
             if (lastUsed.containsKey(command.command)) {
-                if (currentTimeSec < lastUsed.get(command.command) + command.cooldown) {
+                if (currentTimeSec < ((Number) (lastUsed.get(command.command) + command.cooldown)).longValue()) {
                     return false;
                 }
                 lastUsed.remove(command.command);

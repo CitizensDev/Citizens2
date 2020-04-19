@@ -394,7 +394,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b,u) --at (x:y:z:world) --type (type) --trait ('trait1, trait2...') --b (behaviours))",
+            usage = "create [name] ((-b,u) --at [x:y:z:world] --type [type] --trait ['trait1, trait2...'] --b [behaviours])",
             desc = "Create a new NPC",
             flags = "bu",
             modifiers = { "create" },
