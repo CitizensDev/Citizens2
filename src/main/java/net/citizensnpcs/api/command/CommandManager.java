@@ -517,7 +517,7 @@ public class CommandManager implements TabCompleter {
             String[] usage = commandAnnotation.usage().split(" ");
             for (String part : usage) {
                 if (part.startsWith("--")) {
-                    valueFlags.add(part.split("|")[0].replace("--", ""));
+                    valueFlags.add(part.split("\\|")[0].replace("--", ""));
                 }
             }
             return valueFlags;
