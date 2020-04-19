@@ -268,10 +268,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             double dXcos = -Math.sin(yaw * Math.PI / 180.0F);
             double dXsin = Math.cos(yaw * Math.PI / 180.0F);
 
-            vel = vel.setX(dXcos * speed * 0.5).setZ(dXsin * speed * 0.5);
+            vel = vel.setX(dXcos * speed * 0.5 * speedMod).setZ(dXsin * speed * 0.5 * speedMod);
         }
-        vel = vel.add(
-                new Vector(passenger.getVelocity().getX() * speedMod, 0D, passenger.getVelocity().getZ() * speedMod));
+        vel = vel.add(new Vector(passenger.getVelocity().getX() * speedMod * 4, 0D,
+                passenger.getVelocity().getZ() * speedMod * 4));
 
         double newSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
         if (newSpeed > maxSpeed) {
