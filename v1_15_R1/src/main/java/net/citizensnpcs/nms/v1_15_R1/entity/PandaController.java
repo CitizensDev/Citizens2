@@ -47,8 +47,7 @@ public class PandaController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
             }
         }
 
@@ -197,6 +196,7 @@ public class PandaController extends MobEntityController {
         public void mobTick() {
             super.mobTick();
             if (npc != null) {
+                NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
         }

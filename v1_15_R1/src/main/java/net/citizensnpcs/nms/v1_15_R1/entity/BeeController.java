@@ -56,7 +56,7 @@ public class BeeController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
             }
         }
 
@@ -164,6 +164,10 @@ public class BeeController extends MobEntityController {
             if (npc == null) {
                 super.mobTick();
             } else {
+                NMSImpl.updateMinecraftAIState(npc, this);
+                if (!npc.useMinecraftAI()) {
+                    NMSImpl.updateAI(this);
+                }
                 NMSImpl.updateAI(this);
                 npc.update();
             }

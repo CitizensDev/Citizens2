@@ -56,7 +56,7 @@ public class BatController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 setFlying(false);
             }
         }
@@ -165,7 +165,10 @@ public class BatController extends MobEntityController {
             if (npc == null) {
                 super.mobTick();
             } else {
-                NMSImpl.updateAI(this);
+                NMSImpl.updateMinecraftAIState(npc, this);
+                if (!npc.useMinecraftAI()) {
+                    NMSImpl.updateAI(this);
+                }
                 npc.update();
             }
         }

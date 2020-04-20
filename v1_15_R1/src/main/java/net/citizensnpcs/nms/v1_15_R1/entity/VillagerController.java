@@ -60,7 +60,7 @@ public class VillagerController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.3);
             }
         }
@@ -241,7 +241,7 @@ public class VillagerController extends MobEntityController {
                 }
                 if (this.behaviorMap.size() > 0) {
                     this.behaviorMap.clear();
-                    NMSImpl.clearGoals(goalSelector, targetSelector);
+                    NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 }
             }
             super.mobTick();

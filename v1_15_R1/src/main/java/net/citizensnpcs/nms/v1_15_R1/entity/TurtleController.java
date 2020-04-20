@@ -11,6 +11,7 @@ import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
+import net.citizensnpcs.nms.v1_15_R1.util.PlayerControllerMove;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
@@ -41,6 +42,8 @@ public class TurtleController extends MobEntityController {
 
     public static class EntityTurtleNPC extends EntityTurtle implements NPCHolder {
         private final CitizensNPC npc;
+        private ControllerJump oldJumpController;
+        private ControllerMove oldMoveController;
 
         public EntityTurtleNPC(EntityTypes<? extends EntityTurtle> types, World world) {
             this(types, world, null);
@@ -50,7 +53,9 @@ public class TurtleController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
+                this.oldMoveController = this.moveController;
+                this.oldJumpController = this.bq;
                 this.moveController = new ControllerMove(this);
                 this.bq = new EmptyControllerJump(this);
             }
@@ -198,6 +203,15 @@ public class TurtleController extends MobEntityController {
         public void mobTick() {
             super.mobTick();
             if (npc != null) {
+                NMSImpl.updateMinecraftAIState(npc, this);
+                if (npc.useMinecraftAI() && this.moveController != this.oldMoveController) {
+                    this.moveController = this.oldMoveController;
+                    this.bq = this.oldJumpController;
+                }
+                if (!npc.useMinecraftAI() && this.moveController == this.oldMoveController) {
+                    this.moveController = new PlayerControllerMove(this);
+                    this.bq = new EmptyControllerJump(this);
+                }
                 npc.update();
             }
         }

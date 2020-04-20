@@ -87,6 +87,7 @@ public class Messages {
     public static final String ERROR_GETTING_METHOD = "citizens.nms-errors.getting-method";
     public static final String ERROR_INITALISING_SUB_PLUGIN = "citizens.sub-plugins.error-on-load";
     public static final String ERROR_LOADING_ECONOMY = "citizens.economy.error-loading";
+    public static final String ERROR_RESTORING_GOALS = "citizens.nms-errors.restoring-goals";
     public static final String ERROR_SETTING_ENTITY_PERSISTENT = "citizens.nms-errors.error-setting-persistent";
     public static final String ERROR_SETTING_LOOKCLOSE_RANGE = "citizens.commands.npc.lookclose.error-random-range";
     public static final String ERROR_SETTING_SKIN_URL = "citizens.commands.npc.skin.error-setting-url";

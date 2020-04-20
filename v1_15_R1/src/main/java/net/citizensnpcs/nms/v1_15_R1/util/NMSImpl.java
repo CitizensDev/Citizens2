@@ -1356,12 +1356,15 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
+    public static void clearGoals(NPC npc, PathfinderGoalSelector... goalSelectors) {
         if (GOAL_SET_FIELD == null || goalSelectors == null)
             return;
         for (PathfinderGoalSelector selector : goalSelectors) {
             try {
                 Collection<?> list = (Collection<?>) GOAL_SET_FIELD.invoke(selector);
+                if (!list.isEmpty()) {
+                    npc.data().set("goal-selector-" + selector.hashCode(), Lists.newArrayList(list));
+                }
                 list.clear();
             } catch (Exception e) {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
@@ -1636,6 +1639,25 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static void restoreGoals(NPC npc, PathfinderGoalSelector... goalSelectors) {
+        if (GOAL_SET_FIELD == null || goalSelectors == null)
+            return;
+        for (PathfinderGoalSelector selector : goalSelectors) {
+            try {
+                Collection<Object> list = (Collection<Object>) GOAL_SET_FIELD.invoke(selector);
+                list.clear();
+                Collection<Object> old = npc.data().get("goal-selector-" + selector.hashCode());
+                if (old != null) {
+                    list.addAll(old);
+                }
+            } catch (Exception e) {
+                Messaging.logTr(Messages.ERROR_RESTORING_GOALS, e.getLocalizedMessage());
+            } catch (Throwable e) {
+                Messaging.logTr(Messages.ERROR_RESTORING_GOALS, e.getLocalizedMessage());
+            }
+        }
+    }
+
     public static void sendPacket(Player player, Packet<?> packet) {
         if (packet == null)
             return;
@@ -1741,6 +1763,16 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static void updateMinecraftAIState(NPC npc, EntityInsentient entity) {
+        if (npc == null)
+            return;
+        if (npc.useMinecraftAI()) {
+            NMSImpl.restoreGoals(npc, entity.goalSelector, entity.targetSelector);
+        } else {
+            NMSImpl.clearGoals(npc, entity.goalSelector, entity.targetSelector);
+        }
+    }
+
     public static void updateNavigation(NavigationAbstract navigation) {
         navigation.c();
     }
@@ -1787,6 +1819,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
     private static Field SKULL_PROFILE_FIELD;
+
     private static MethodHandle TEAM_FIELD;
 
     static {

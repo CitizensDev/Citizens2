@@ -60,7 +60,7 @@ public class HorseZombieController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 ((ZombieHorse) getBukkitEntity())
                         .setDomestication(((ZombieHorse) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
@@ -221,6 +221,7 @@ public class HorseZombieController extends MobEntityController {
         public void mobTick() {
             super.mobTick();
             if (npc != null) {
+                NMSImpl.updateMinecraftAIState(npc, this);
                 if (npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled()) {
                     riding = getBukkitEntity().getPassengers().size() > 0;
                     getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)

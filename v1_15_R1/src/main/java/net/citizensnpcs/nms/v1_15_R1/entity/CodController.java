@@ -11,6 +11,7 @@ import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
+import net.citizensnpcs.nms.v1_15_R1.util.PlayerControllerMove;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
@@ -51,6 +52,7 @@ public class CodController extends MobEntityController {
 
     public static class EntityCodNPC extends EntityCod implements NPCHolder {
         private final CitizensNPC npc;
+        private ControllerMove oldMoveController;
 
         public EntityCodNPC(EntityTypes<? extends EntityCod> types, World world) {
             this(types, world, null);
@@ -60,7 +62,8 @@ public class CodController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
+                this.oldMoveController = this.moveController;
                 this.moveController = new ControllerMove(this);
             }
         }
@@ -124,28 +127,6 @@ public class CodController extends MobEntityController {
         }
 
         @Override
-        public void h(double x, double y, double z) {
-            if (npc == null) {
-                super.h(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.h(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new CodNPC(this));
@@ -174,6 +155,28 @@ public class CodController extends MobEntityController {
         }
 
         @Override
+        public void h(double x, double y, double z) {
+            if (npc == null) {
+                super.h(x, y, z);
+                return;
+            }
+            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+                    super.h(x, y, z);
+                return;
+            }
+            Vector vector = new Vector(x, y, z);
+            NPCPushEvent event = Util.callPushEvent(npc, vector);
+            if (!event.isCancelled()) {
+                vector = event.getCollisionVector();
+                super.h(vector.getX(), vector.getY(), vector.getZ());
+            }
+            // when another entity collides, this method is called to push the
+            // NPC so we prevent it from doing anything if the event is
+            // cancelled.
+        }
+
+        @Override
         public boolean isClimbing() {
             if (npc == null || !npc.isFlyable()) {
                 return super.isClimbing();
@@ -198,7 +201,16 @@ public class CodController extends MobEntityController {
         @Override
         public void mobTick() {
             if (npc != null) {
-                NMSImpl.setNotInSchool(this);
+                if (!npc.useMinecraftAI()) {
+                    NMSImpl.setNotInSchool(this);
+                }
+                NMSImpl.updateMinecraftAIState(npc, this);
+                if (npc.useMinecraftAI() && this.moveController != this.oldMoveController) {
+                    this.moveController = this.oldMoveController;
+                }
+                if (!npc.useMinecraftAI() && this.moveController == this.oldMoveController) {
+                    this.moveController = new PlayerControllerMove(this);
+                }
             }
             super.mobTick();
             if (npc != null) {

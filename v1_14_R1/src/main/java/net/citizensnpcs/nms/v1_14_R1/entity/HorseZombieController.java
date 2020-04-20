@@ -48,11 +48,8 @@ public class HorseZombieController extends MobEntityController {
 
     public static class EntityHorseZombieNPC extends EntityHorseZombie implements NPCHolder {
         private double baseMovementSpeed;
-
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
-
         private boolean riding;
 
         public EntityHorseZombieNPC(EntityTypes<? extends EntityHorseZombie> types, World world) {

@@ -64,8 +64,10 @@ public class EvokerController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cs() {
-            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
+        public void c(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.c(f, f1);
+            }
         }
 
         @Override
@@ -79,6 +81,11 @@ public class EvokerController extends MobEntityController {
         }
 
         @Override
+        protected SoundEffect cs() {
+            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
+        }
+
+        @Override
         protected SoundEffect d(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
         }
@@ -89,10 +96,8 @@ public class EvokerController extends MobEntityController {
         }
 
         @Override
-        public void c(float f, float f1) {
-            if (npc == null || !npc.isFlyable()) {
-                super.c(f, f1);
-            }
+        protected SoundEffect D() {
+            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
         }
 
         @Override
@@ -131,11 +136,6 @@ public class EvokerController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect D() {
-            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new EvokerNPC(this);
@@ -149,6 +149,13 @@ public class EvokerController extends MobEntityController {
         }
 
         @Override
+        protected void I() {
+            if (npc == null) {
+                super.I();
+            }
+        }
+
+        @Override
         public boolean isLeashed() {
             if (npc == null)
                 return super.isLeashed();
@@ -159,13 +166,6 @@ public class EvokerController extends MobEntityController {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
-        }
-
-        @Override
-        protected void I() {
-            if (npc == null) {
-                super.I();
-            }
         }
 
         @Override

@@ -57,7 +57,7 @@ public class WanderingTraderController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
             }
         }
 
@@ -237,6 +237,7 @@ public class WanderingTraderController extends MobEntityController {
                 if (this.behaviorMap.size() > 0) {
                     this.behaviorMap.clear();
                 }
+                NMSImpl.updateMinecraftAIState(npc, this);
             }
             super.mobTick();
             if (npc != null) {

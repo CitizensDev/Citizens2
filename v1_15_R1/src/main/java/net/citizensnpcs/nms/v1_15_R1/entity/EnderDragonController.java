@@ -57,7 +57,7 @@ public class EnderDragonController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
             }
         }
 
@@ -93,28 +93,6 @@ public class EnderDragonController extends MobEntityController {
             if (!event.isCancelled()) {
                 super.enderTeleportTo(d0, d1, d2);
             }
-        }
-
-        @Override
-        public void h(double x, double y, double z) {
-            if (npc == null) {
-                super.h(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.h(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
         }
 
         @Override
@@ -155,6 +133,28 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
+        public void h(double x, double y, double z) {
+            if (npc == null) {
+                super.h(x, y, z);
+                return;
+            }
+            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+                    super.h(x, y, z);
+                return;
+            }
+            Vector vector = new Vector(x, y, z);
+            NPCPushEvent event = Util.callPushEvent(npc, vector);
+            if (!event.isCancelled()) {
+                vector = event.getCollisionVector();
+                super.h(vector.getX(), vector.getY(), vector.getZ());
+            }
+            // when another entity collides, this method is called to push the
+            // NPC so we prevent it from doing anything if the event is
+            // cancelled.
+        }
+
+        @Override
         public boolean isLeashed() {
             if (npc == null)
                 return super.isLeashed();
@@ -171,6 +171,9 @@ public class EnderDragonController extends MobEntityController {
         public void movementTick() {
             if (npc != null) {
                 npc.update();
+                NMSImpl.updateMinecraftAIState(npc, this);
+            }
+            if (npc != null && !npc.useMinecraftAI()) {
                 Vec3D mot = getMot();
                 if (mot.getX() != 0 || mot.getY() != 0 || mot.getZ() != 0) {
                     mot = mot.d(0.98, 0.98, 0.98);

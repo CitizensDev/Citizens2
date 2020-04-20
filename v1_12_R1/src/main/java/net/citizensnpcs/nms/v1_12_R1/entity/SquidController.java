@@ -176,6 +176,14 @@ public class SquidController extends MobEntityController {
         }
 
         @Override
+        public void n() {
+            super.n();
+            if (npc != null) {
+                npc.update();
+            }
+        }
+
+        @Override
         public void setSize(float f, float f1) {
             if (npc == null) {
                 super.setSize(f, f1);

@@ -48,7 +48,6 @@ public class TraderLlamaController extends MobEntityController {
 
     public static class EntityTraderLlamaNPC extends EntityLlamaTrader implements NPCHolder {
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityTraderLlamaNPC(EntityTypes<? extends EntityLlamaTrader> types, World world) {
@@ -59,7 +58,7 @@ public class TraderLlamaController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 ((TraderLlama) getBukkitEntity())
                         .setDomestication(((TraderLlama) getBukkitEntity()).getMaxDomestication());
             }
@@ -136,28 +135,6 @@ public class TraderLlamaController extends MobEntityController {
         }
 
         @Override
-        public void h(double x, double y, double z) {
-            if (npc == null) {
-                super.h(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.h(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new TraderLlamaNPC(this));
@@ -183,6 +160,28 @@ public class TraderLlamaController extends MobEntityController {
         @Override
         protected SoundEffect getSoundHurt(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
+        }
+
+        @Override
+        public void h(double x, double y, double z) {
+            if (npc == null) {
+                super.h(x, y, z);
+                return;
+            }
+            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+                    super.h(x, y, z);
+                return;
+            }
+            Vector vector = new Vector(x, y, z);
+            NPCPushEvent event = Util.callPushEvent(npc, vector);
+            if (!event.isCancelled()) {
+                vector = event.getCollisionVector();
+                super.h(vector.getX(), vector.getY(), vector.getZ());
+            }
+            // when another entity collides, this method is called to push the
+            // NPC so we prevent it from doing anything if the event is
+            // cancelled.
         }
 
         @Override
@@ -212,9 +211,13 @@ public class TraderLlamaController extends MobEntityController {
             if (npc == null) {
                 super.mobTick();
             } else {
+                NMSImpl.updateMinecraftAIState(npc, this);
+                if (npc.useMinecraftAI()) {
+                    super.mobTick();
+                }
                 try {
-                    if (bJ != null) {
-                        bJ.invoke(this, 10); // DespawnDelay
+                    if (bF != null) {
+                        bF.invoke(this, 10); // DespawnDelay
                     }
                 } catch (Throwable e) {
                 }
@@ -223,7 +226,7 @@ public class TraderLlamaController extends MobEntityController {
             }
         }
 
-        private static final MethodHandle bJ = NMS.getSetter(EntityLlamaTrader.class, "bJ");
+        private static final MethodHandle bF = NMS.getSetter(EntityLlamaTrader.class, "bF");
     }
 
     public static class TraderLlamaNPC extends CraftTraderLlama implements NPCHolder {

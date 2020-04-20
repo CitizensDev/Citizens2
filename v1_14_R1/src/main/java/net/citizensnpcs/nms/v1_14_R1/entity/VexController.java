@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
-import net.minecraft.server.v1_14_R1.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
@@ -45,8 +43,8 @@ public class VexController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
+                setNoGravity(true);
             }
-            setNoGravity(true);
         }
 
         @Override

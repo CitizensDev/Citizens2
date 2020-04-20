@@ -42,13 +42,8 @@ public class VexController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
+                setNoGravity(true);
             }
-            setNoGravity(true);
-        }
-
-        @Override
-        protected SoundEffect cs() {
-            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override
@@ -62,6 +57,11 @@ public class VexController extends MobEntityController {
         }
 
         @Override
+        protected SoundEffect cs() {
+            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
+        }
+
+        @Override
         protected SoundEffect d(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
         }
@@ -69,6 +69,11 @@ public class VexController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        protected SoundEffect D() {
+            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
         }
 
         @Override
@@ -107,11 +112,6 @@ public class VexController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect D() {
-            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(bukkitEntity instanceof NPCHolder))
                 bukkitEntity = new VexNPC(this);
@@ -121,6 +121,13 @@ public class VexController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        protected void I() {
+            if (npc == null) {
+                super.I();
+            }
         }
 
         @Override
@@ -135,13 +142,6 @@ public class VexController extends MobEntityController {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
-        }
-
-        @Override
-        protected void I() {
-            if (npc == null) {
-                super.I();
-            }
         }
 
         @Override

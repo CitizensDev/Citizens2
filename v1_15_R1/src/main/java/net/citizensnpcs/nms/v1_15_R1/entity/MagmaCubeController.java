@@ -16,6 +16,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.BlockPosition;
+import net.minecraft.server.v1_15_R1.ControllerMove;
 import net.minecraft.server.v1_15_R1.DamageSource;
 import net.minecraft.server.v1_15_R1.EntityHuman;
 import net.minecraft.server.v1_15_R1.EntityMagmaCube;
@@ -38,6 +39,7 @@ public class MagmaCubeController extends MobEntityController {
 
     public static class EntityMagmaCubeNPC extends EntityMagmaCube implements NPCHolder {
         private final CitizensNPC npc;
+        private ControllerMove oldMoveController;
 
         public EntityMagmaCubeNPC(EntityTypes<? extends EntityMagmaCube> types, World world) {
             this(types, world, null);
@@ -48,7 +50,8 @@ public class MagmaCubeController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 setSize(3, true);
-                NMSImpl.clearGoals(goalSelector, targetSelector);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
+                this.oldMoveController = this.moveController;
                 this.moveController = new PlayerControllerMove(this);
             }
         }
@@ -112,28 +115,6 @@ public class MagmaCubeController extends MobEntityController {
         }
 
         @Override
-        public void h(double x, double y, double z) {
-            if (npc == null) {
-                super.h(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.h(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new MagmaCubeNPC(this));
@@ -159,6 +140,28 @@ public class MagmaCubeController extends MobEntityController {
         @Override
         protected SoundEffect getSoundHurt(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
+        }
+
+        @Override
+        public void h(double x, double y, double z) {
+            if (npc == null) {
+                super.h(x, y, z);
+                return;
+            }
+            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
+                    super.h(x, y, z);
+                return;
+            }
+            Vector vector = new Vector(x, y, z);
+            NPCPushEvent event = Util.callPushEvent(npc, vector);
+            if (!event.isCancelled()) {
+                vector = event.getCollisionVector();
+                super.h(vector.getX(), vector.getY(), vector.getZ());
+            }
+            // when another entity collides, this method is called to push the
+            // NPC so we prevent it from doing anything if the event is
+            // cancelled.
         }
 
         @Override
@@ -194,6 +197,13 @@ public class MagmaCubeController extends MobEntityController {
         public void tick() {
             super.tick();
             if (npc != null) {
+                NMSImpl.updateMinecraftAIState(npc, this);
+                if (npc.useMinecraftAI() && this.moveController != this.oldMoveController) {
+                    this.moveController = this.oldMoveController;
+                }
+                if (!npc.useMinecraftAI() && this.moveController == this.oldMoveController) {
+                    this.moveController = new PlayerControllerMove(this);
+                }
                 npc.update();
             }
         }
