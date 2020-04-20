@@ -380,6 +380,11 @@ public abstract class AbstractNPC implements NPC {
         data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, isProtected);
     }
 
+    @Override
+    public void setUseMinecraftAI(boolean use) {
+        data().setPersistent(NPC.USE_MINECRAFT_AI_METADATA, use);
+    }
+
     private void teleport(final Entity entity, Location location, int delay) {
         final Entity passenger = entity.getPassenger();
         entity.eject();
@@ -432,5 +437,10 @@ public abstract class AbstractNPC implements NPC {
         if (isSpawned()) {
             goalController.run();
         }
+    }
+
+    @Override
+    public boolean useMinecraftAI() {
+        return data().get(NPC.USE_MINECRAFT_AI_METADATA, false);
     }
 }

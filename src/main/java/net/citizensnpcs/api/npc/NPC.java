@@ -266,6 +266,12 @@ public interface NPC extends Agent, Cloneable {
     public void setProtected(boolean isProtected);
 
     /**
+     * Set the NPC to use Minecraft AI where possible. Note that the NPC may not always behave exactly like a Minecraft
+     * mob would because of additional Citizens APIs.
+     */
+    public void setUseMinecraftAI(boolean use);
+
+    /**
      * Attempts to spawn this NPC.
      *
      * @param location
@@ -294,6 +300,11 @@ public interface NPC extends Agent, Cloneable {
      *            The cause for teleporting
      */
     public void teleport(Location location, TeleportCause cause);
+
+    /**
+     * Whether the NPC is currently set to use Minecraft AI. Defaults to false.
+     */
+    public boolean useMinecraftAI();
 
     /**
      * The Minecraft ambient sound played. String - Minecraft sound name
@@ -413,4 +424,8 @@ public interface NPC extends Agent, Cloneable {
      * Whether to prevent NPC being targeted by hostile mobs. Boolean.
      */
     public static final String TARGETABLE_METADATA = "protected-target";
+    /**
+     * Whether to use Minecraft AI. Boolean.
+     */
+    public static final String USE_MINECRAFT_AI_METADATA = "minecraft-ai";
 }
