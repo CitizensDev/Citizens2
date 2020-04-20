@@ -458,6 +458,9 @@ public class EventListen implements Listener {
         Player player = event.getPlayer();
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
         Bukkit.getPluginManager().callEvent(rightClickEvent);
+        if (rightClickEvent.isCancelled()) {
+            event.setCancelled(true);
+        }
         if (npc.hasTrait(CommandTrait.class)) {
             npc.getTrait(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
         }

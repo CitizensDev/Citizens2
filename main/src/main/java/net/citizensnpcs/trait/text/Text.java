@@ -140,6 +140,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         String localPattern = itemInHandPattern.equals("default") ? Setting.TALK_ITEM.asString() : itemInHandPattern;
         if (Util.matchesItemInHand(event.getClicker(), localPattern) && !shouldTalkClose()) {
             sendText(event.getClicker());
+            event.setCancelled(true);
         }
     }
 
