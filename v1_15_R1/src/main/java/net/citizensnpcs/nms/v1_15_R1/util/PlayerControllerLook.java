@@ -31,6 +31,7 @@ public class PlayerControllerLook {
             this.a.yaw = this.a.aK;
             this.a.pitch = this.a(this.a.pitch, this.g(), this.c);
         } else {
+            this.a.yaw = this.a.aK + 40;
             // this.a.aK = this.a(this.a.aK, this.a.aI, 10.0F);
         }
 
@@ -44,6 +45,10 @@ public class PlayerControllerLook {
     }
 
     public void a(double var0, double var2, double var4, float var6, float var7) {
+        double d = Math.pow(this.e - var0, 2) + Math.pow(this.f - var2, 2) + Math.pow(this.g - var4, 2);
+        if (d < 0.01) {
+            return;
+        }
         this.e = var0;
         this.f = var2;
         this.g = var4;

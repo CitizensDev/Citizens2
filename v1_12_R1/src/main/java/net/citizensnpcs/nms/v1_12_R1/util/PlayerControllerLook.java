@@ -42,6 +42,7 @@ public class PlayerControllerLook {
                 this.a.aP += 360F;
             }
         } else {
+            this.a.yaw = this.a.aP + 40;
             // this.a.aP = a(this.a.aP, this.a.aN, 10.0F);
         }
         float f3 = MathHelper.g(this.a.aP - this.a.aN);
@@ -56,6 +57,10 @@ public class PlayerControllerLook {
     }
 
     public void a(double d0, double d1, double d2, float f, float f1) {
+        double d = Math.pow(this.e - d0, 2) + Math.pow(this.f - d1, 2) + Math.pow(this.g - d2, 2);
+        if (d < 0.01) {
+            return;
+        }
         this.e = d0;
         this.f = d1;
         this.g = d2;

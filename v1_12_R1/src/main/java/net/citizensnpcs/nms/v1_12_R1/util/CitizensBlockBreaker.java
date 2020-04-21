@@ -30,6 +30,7 @@ public class CitizensBlockBreaker extends BlockBreaker {
     private final Entity entity;
     private boolean isDigging = true;
     private final Location location;
+    private boolean setTarget;
     private int startDigTick;
     private final int x, y, z;
 
@@ -69,6 +70,13 @@ public class CitizensBlockBreaker extends BlockBreaker {
 
     @Override
     public void reset() {
+        if (setTarget && entity instanceof NPCHolder) {
+            NPC npc = ((NPCHolder) entity).getNPC();
+            if (npc != null && npc.getNavigator().isNavigating()) {
+                npc.getNavigator().cancelNavigation();
+            }
+        }
+        setTarget = false;
         if (configuration.callback() != null) {
             configuration.callback().run();
         }
@@ -92,6 +100,7 @@ public class CitizensBlockBreaker extends BlockBreaker {
                 if (npc != null && !npc.getNavigator().isNavigating()) {
                     npc.getNavigator()
                             .setTarget(entity.world.getWorld().getBlockAt(x, y, z).getLocation().add(0, 1, 0));
+                    setTarget = true;
                 }
             }
             return BehaviorStatus.RUNNING;

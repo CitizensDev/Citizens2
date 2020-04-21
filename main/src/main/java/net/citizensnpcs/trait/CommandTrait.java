@@ -228,7 +228,8 @@ public class CommandTrait extends Trait {
             }
             long currentTimeSec = System.currentTimeMillis() / 1000;
             if (lastUsed.containsKey(command.command)) {
-                if (currentTimeSec < ((Number) (lastUsed.get(command.command) + command.cooldown)).longValue()) {
+                if (currentTimeSec < ((Number) (lastUsed.get(command.command)
+                        + ((Number) command.cooldown).longValue())).longValue()) {
                     return false;
                 }
                 lastUsed.remove(command.command);
