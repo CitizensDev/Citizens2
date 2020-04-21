@@ -272,6 +272,7 @@ public class WanderWaypointProvider
     }
 
     private void recalculateTree() {
+        tree.clear();
         tree = PhTreeSolid.create(3);
         for (Location loc : regionCentres) {
             long[] lower = { loc.getBlockX() - xrange, loc.getBlockY() - yrange, loc.getBlockZ() - xrange };
