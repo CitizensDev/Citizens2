@@ -268,10 +268,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             double dXcos = -Math.sin(yaw * Math.PI / 180.0F);
             double dXsin = Math.cos(yaw * Math.PI / 180.0F);
 
-            vel = vel.setX(dXcos * speed * 0.5 * speedMod).setZ(dXsin * speed * 0.5 * speedMod);
+            vel = vel.setX(dXcos * speed * speedMod).setZ(dXsin * speed * speedMod);
         }
-        vel = vel.add(new Vector(passenger.getVelocity().getX() * speedMod * 4, 0D,
-                passenger.getVelocity().getZ() * speedMod * 4));
+        vel = vel.add(
+                new Vector(passenger.getVelocity().getX() * speedMod, 0D, passenger.getVelocity().getZ() * speedMod));
 
         double newSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
         if (newSpeed > maxSpeed) {
@@ -327,9 +327,9 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             setMountedYaw(npc.getEntity());
         }
 
-        private static final float AIR_SPEED = 1.5F;
-        private static final float GROUND_SPEED = 4F;
-        private static final float JUMP_VELOCITY = 0.6F;
+        private static final float AIR_SPEED = 0.5F;
+        private static final float GROUND_SPEED = 0.5F;
+        private static final float JUMP_VELOCITY = 0.5F;
     }
 
     public class LookAirController implements MovementController {
