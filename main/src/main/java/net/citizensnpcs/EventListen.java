@@ -56,6 +56,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
@@ -159,15 +160,21 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChunkUnload(final ChunkUnloadEvent event) {
+        final List<NPC> toDespawn = Lists.newArrayList();
+        for (Entity entity : event.getChunk().getEntities()) {
+            NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
+            if (npc == null || !npc.isSpawned())
+                continue;
+            toDespawn.add(npc);
+        }
+        if (toDespawn.isEmpty())
+            return;
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
                 ChunkCoord coord = new ChunkCoord(event.getChunk());
                 boolean loadChunk = false;
-                for (Entity entity : event.getChunk().getEntities()) {
-                    NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
-                    if (npc == null || !npc.isSpawned())
-                        continue;
+                for (NPC npc : toDespawn) {
                     if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
                         if (!(event instanceof Cancellable)) {
                             loadChunk = true;
