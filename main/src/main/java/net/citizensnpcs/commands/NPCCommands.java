@@ -640,6 +640,9 @@ public class NPCCommands {
             if (!(npc.getEntity() instanceof Player))
                 throw new CommandException(Messages.GLOWING_COLOR_PLAYER_ONLY);
             npc.getTrait(ScoreboardTrait.class).setColor(chatColor);
+            if (!npc.data().has(NPC.GLOWING_METADATA)) {
+                npc.data().setPersistent(NPC.GLOWING_METADATA, true);
+            }
             Messaging.sendTr(sender, Messages.GLOWING_COLOR_SET, npc.getName(),
                     chatColor == null ? ChatColor.WHITE + "white" : chatColor + Util.prettyEnum(chatColor));
             return;
