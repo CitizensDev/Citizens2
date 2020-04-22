@@ -62,7 +62,7 @@ public class Owner extends Trait {
     }
 
     public boolean isOwnedBy(String name) {
-        return owner.equalsIgnoreCase(name);
+        return owner.equalsIgnoreCase(name) || (uuid != null && uuid.toString().equalsIgnoreCase(name));
     }
 
     @Override
@@ -112,7 +112,7 @@ public class Owner extends Trait {
 
     /**
      * Sets the owner of an NPC.
-     * 
+     *
      * @param owner
      *            Name of the owner
      * @param uuid
