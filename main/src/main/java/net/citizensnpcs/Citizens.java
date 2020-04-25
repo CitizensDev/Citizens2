@@ -322,6 +322,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         registerCommands();
         enableSubPlugins();
         NMS.load(commands);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         commands.registerTabCompletion(this);
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld

@@ -7,8 +7,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -136,6 +139,7 @@ public class CommandTrait extends Trait {
     }
 
     private static class NPCCommand {
+        String bungeeServer;
         String command;
         int cooldown;
         Hand hand;
@@ -155,6 +159,8 @@ public class CommandTrait extends Trait {
             this.cooldown = cooldown;
             this.perms = perms;
             this.n = n;
+            List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().splitToList(command);
+            this.bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
         }
 
         public void run(NPC npc, Player clicker) {
@@ -163,6 +169,13 @@ public class CommandTrait extends Trait {
                 boolean wasOp = clicker.isOp();
                 if (op) {
                     clicker.setOp(true);
+                }
+                if (bungeeServer != null) {
+                    ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                    out.writeUTF("Connect");
+                    out.writeUTF(bungeeServer);
+
+                    clicker.sendPluginMessage(CitizensAPI.getPlugin(), "BungeeCord", out.toByteArray());
                 }
                 try {
                     clicker.chat("/" + interpolatedCommand);
