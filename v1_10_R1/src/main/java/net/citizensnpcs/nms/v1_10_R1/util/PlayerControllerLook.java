@@ -42,7 +42,7 @@ public class PlayerControllerLook {
                 this.a.aQ += 360F;
             }
         } else {
-            this.a.yaw = this.a.aQ + 40;
+            this.a.yaw = b(this.a.yaw, this.a.aK, -40F);
             // this.a.aQ = a(this.a.aQ, this.a.aO, 10.0F);
         }
         float f3 = MathHelper.g(this.a.aQ - this.a.aO);
@@ -99,6 +99,16 @@ public class PlayerControllerLook {
 
     public boolean b() {
         return this.d;
+    }
+
+    public float b(float var0, float var1, float var2) {
+        float var3 = c(var0, var1);
+        float var4 = MathHelper.a(var3, -var2, var2);
+        return var1 - var4;
+    }
+
+    public float c(float var0, float var1) {
+        return MathHelper.g(var1 - var0);
     }
 
     public double e() {

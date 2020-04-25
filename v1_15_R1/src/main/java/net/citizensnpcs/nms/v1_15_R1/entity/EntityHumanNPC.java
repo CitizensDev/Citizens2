@@ -77,6 +77,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private final SkinPacketTracker skinTracker;
+
     private int updateCounter = 0;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,

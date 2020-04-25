@@ -228,7 +228,6 @@ public class CitizensNPC extends AbstractNPC {
             return false;
         }
         data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
-
         at = at.clone();
 
         if (reason == SpawnReason.CHUNK_LOAD || reason == SpawnReason.COMMAND) {
