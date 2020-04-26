@@ -28,7 +28,7 @@ public @interface Persist {
 
     /**
      * The save key to use when saving. If not present, the field name will be used instead.
-     * 
+     *
      * <ul>
      * <li><code>@Persist</code> -> root key + field name</li>
      * <li><code>@Persist("")</code> -> root key + "" (or simply root key)</li>
@@ -36,4 +36,10 @@ public @interface Persist {
      * </ul>
      */
     String value() default "UNINITIALISED";
+
+    /**
+     * The specific value type to use when deserialising values from storage. Most useful when using specific number
+     * types e.g. Long, Byte, Short but storing as Integer.
+     */
+    Class<?> valueType() default Object.class;
 }

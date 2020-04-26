@@ -143,8 +143,9 @@ public class PersistenceLoader {
             if (Map.class.isAssignableFrom(collectionType)) {
                 map = (Map<String, Object>) collectionType.newInstance();
             } else {
-                map = (Map<String, Object>) (field.get() != null && Map.class.isAssignableFrom(field.get().getClass())
-                        && !field.get().getClass().isInterface() ? field.get() : Maps.newHashMap());
+                boolean hasConcreteType = field.get() != null && Map.class.isAssignableFrom(field.get().getClass())
+                        && !field.get().getClass().isInterface();
+                map = (Map<String, Object>) (hasConcreteType ? field.get() : Maps.newHashMap());
             }
             deserialiseMap(map, root, field);
             value = map;
@@ -222,16 +223,49 @@ public class PersistenceLoader {
 
     private static void deserialiseCollection(Collection<Object> collection, DataKey root, PersistField field) {
         for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
-            Object loaded = deserialiseValue(field, subKey);
+            Object loaded = deserialiseCollectionValue(field, subKey, field.persistAnnotation.valueType());
             if (loaded == null)
                 continue;
             collection.add(loaded);
         }
     }
 
+    private static Object deserialiseCollectionValue(PersistField field, DataKey subKey, Class<?> type) {
+        Object deserialised = deserialiseValue(field, subKey);
+        if (deserialised == null || type == Object.class)
+            return deserialised;
+        Class<?> clazz = deserialised.getClass();
+        if (type.isPrimitive() || Primitives.isWrapperType(type)) {
+            if (!Primitives.isWrapperType(clazz)) {
+                clazz = Primitives.wrap(clazz);
+            }
+            if (type != clazz) {
+                if (type == Long.class) {
+                    return ((Number) deserialised).longValue();
+                }
+                if (type == Byte.class) {
+                    return ((Number) deserialised).byteValue();
+                }
+                if (type == Short.class) {
+                    return ((Number) deserialised).shortValue();
+                }
+                if (type == Float.class) {
+                    return ((Number) deserialised).floatValue();
+                }
+                if (type == Double.class) {
+                    return ((Number) deserialised).doubleValue();
+                }
+                if (type == Integer.class) {
+                    return ((Number) deserialised).intValue();
+                }
+            }
+        }
+        return deserialised;
+    }
+
     private static void deserialiseMap(Map<String, Object> map, DataKey root, PersistField field) {
         for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
-            Object loaded = deserialiseValue(field, subKey);
+            Object loaded = deserialiseCollectionValue(field, subKey, field.persistAnnotation.valueType());
             if (loaded == null)
                 continue;
             map.put(subKey.name(), loaded);
@@ -252,7 +286,8 @@ public class PersistenceLoader {
                 }
             }
         }
-        return field.delegate == null ? root.getRaw("") : field.delegate.create(root);
+        Object deserialised = field.delegate == null ? root.getRaw("") : field.delegate.create(root);
+        return deserialised;
 
     }
 
