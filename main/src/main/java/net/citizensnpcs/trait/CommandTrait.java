@@ -221,7 +221,7 @@ public class CommandTrait extends Trait {
     }
 
     private static class PlayerNPCCommand {
-        @Persist
+        @Persist(valueType = Long.class)
         Map<String, Long> lastUsed = Maps.newHashMap();
         @Persist
         Map<String, Integer> nUsed = Maps.newHashMap();
@@ -241,8 +241,7 @@ public class CommandTrait extends Trait {
             }
             long currentTimeSec = System.currentTimeMillis() / 1000;
             if (lastUsed.containsKey(command.command)) {
-                if (currentTimeSec < ((Number) (lastUsed.get(command.command)
-                        + ((Number) command.cooldown).longValue())).longValue()) {
+                if (currentTimeSec < lastUsed.get(command.command) + command.cooldown) {
                     return false;
                 }
                 lastUsed.remove(command.command);
