@@ -42,7 +42,7 @@ public class PlayerControllerLook {
                 this.a.aQ += 360F;
             }
         } else {
-            this.a.yaw = b(this.a.yaw, this.a.aK, -40F);
+            // this.a.yaw = b(this.a.yaw, this.a.aK, -40F);
             // this.a.aQ = a(this.a.aQ, this.a.aO, 10.0F);
         }
         float f3 = MathHelper.g(this.a.aQ - this.a.aO);

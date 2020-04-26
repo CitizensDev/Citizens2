@@ -31,7 +31,7 @@ public class PlayerControllerLook {
             this.a.yaw = this.a.aK;
             this.a.pitch = this.a(this.a.pitch, this.g(), this.c);
         } else {
-            this.a.yaw = MathHelper.b(this.a.yaw, this.a.aK, -40F);
+            // this.a.yaw = MathHelper.b(this.a.yaw, this.a.aK, 40F);
             // this.a.aK = this.a(this.a.aK, this.a.aI, 10.0F);
         }
 

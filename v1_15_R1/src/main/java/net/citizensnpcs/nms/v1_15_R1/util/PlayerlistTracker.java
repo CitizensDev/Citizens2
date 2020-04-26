@@ -111,15 +111,6 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         return false;
     }
 
-    private static int getTrackingDistance(EntityTracker entry) {
-        try {
-            return (Integer) TRACKING_DISTANCE.invoke(entry);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
     private static Entity getTracker(EntityTracker entry) {
         try {
             return (Entity) TRACKER.invoke(entry);
@@ -138,14 +129,23 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         return null;
     }
 
+    private static int getTrackingDistance(EntityTracker entry) {
+        try {
+            return (Integer) TRACKING_DISTANCE.invoke(entry);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     private static final MethodHandle B = NMS.getMethodHandle(PlayerChunkMap.class, "b", true, ChunkCoordIntPair.class,
             EntityPlayer.class, boolean.class);
     private static final MethodHandle D = NMS.getGetter(EntityTrackerEntry.class, "d");
     private static final MethodHandle E = NMS.getGetter(EntityTrackerEntry.class, "e");
     private static final MethodHandle GET_VISIBLE_CHUNK = NMS.getMethodHandle(PlayerChunkMap.class, "getVisibleChunk",
             true, long.class);
-    private static final MethodHandle TRACKING_DISTANCE = NMS.getGetter(EntityTracker.class, "trackingDistance");
     private static final MethodHandle TRACKER = NMS.getGetter(EntityTracker.class, "tracker");
     private static final MethodHandle TRACKER_ENTRY = NMS.getGetter(EntityTracker.class, "trackerEntry");
+    private static final MethodHandle TRACKING_DISTANCE = NMS.getGetter(EntityTracker.class, "trackingDistance");
     private static final MethodHandle VIEW_DISTANCE = NMS.getGetter(PlayerChunkMap.class, "viewDistance");
 }
