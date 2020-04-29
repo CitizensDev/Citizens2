@@ -34,7 +34,6 @@ public class PlayerControllerLook {
             // this.a.yaw = MathHelper.b(this.a.yaw, this.a.aK, 40F);
             // this.a.aK = this.a(this.a.aK, this.a.aI, 10.0F);
         }
-
         if (!this.a.getNavigation().m()) {
             this.a.aK = MathHelper.b(this.a.aK, this.a.aI, 75);
         }
