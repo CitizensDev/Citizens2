@@ -745,6 +745,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void playerTick(Player entity) {
+        ((EntityPlayer) getHandle(entity)).k_();
+    }
+
+    @Override
     public void registerEntityClass(Class<?> clazz) {
         if (ENTITY_CLASS_TO_INT == null || ENTITY_CLASS_TO_INT.containsKey(clazz))
             return;

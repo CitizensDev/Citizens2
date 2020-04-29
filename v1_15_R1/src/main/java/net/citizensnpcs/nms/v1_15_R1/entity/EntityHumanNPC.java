@@ -11,7 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -46,7 +45,6 @@ import net.minecraft.server.v1_15_R1.AttributeInstance;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.ChatComponentText;
 import net.minecraft.server.v1_15_R1.DamageSource;
-import net.minecraft.server.v1_15_R1.DimensionManager;
 import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityHuman;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
@@ -80,7 +78,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private final SkinPacketTracker skinTracker;
     private int updateCounter = 0;
-    private int yawUpdateRequiredTicks;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
             PlayerInteractManager playerInteractManager, NPC npc) {
@@ -317,35 +314,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         return npc.getNavigator().isNavigating();
     }
 
-    public void livingEntityBaseTick() {
-        // doPortalTick code
-        boolean old = this.af;
-        if (af && ag + 1 > ab()) {
-            af = false;
-            Bukkit.getServer().getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    portalCooldown = ba();
-                    a(world.worldProvider.getDimensionManager().getType() == DimensionManager.NETHER
-                            ? DimensionManager.OVERWORLD
-                            : DimensionManager.NETHER, TeleportCause.NETHER_PORTAL);
-                }
-            });
-        }
-        entityBaseTick();
-        af = old;
-        this.az = this.aA;
-        if (this.hurtTicks > 0) {
-            this.hurtTicks -= 1;
-        }
-        tickPotionEffects();
-        this.aU = this.aT;
-        this.aJ = this.aI;
-        this.aL = this.aK;
-        this.lastYaw = this.yaw;
-        this.lastPitch = this.pitch;
-    }
-
     private void moveOnCurrentHeading() {
         if (jumping) {
             if (onGround && jumpTicks == 0) {
@@ -362,6 +330,25 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (jumpTicks > 0) {
             jumpTicks--;
         }
+    }
+
+    @Override
+    public void playerTick() {
+        if (npc == null) {
+            super.playerTick();
+            return;
+        }
+        entityBaseTick();
+        this.az = this.aA;
+        if (this.hurtTicks > 0) {
+            this.hurtTicks -= 1;
+        }
+        tickPotionEffects();
+        this.aU = this.aT;
+        this.aJ = this.aI;
+        this.aL = this.aK;
+        this.lastYaw = this.yaw;
+        this.lastPitch = this.pitch;
     }
 
     public void setMoveDestination(double x, double y, double z, double speed) {
@@ -415,7 +402,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             updateEffects = true;
         }
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
-        livingEntityBaseTick();
 
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
@@ -441,15 +427,15 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         npc.update();
         /*
-        double diff = this.yaw - this.aK;
-        if (diff != 40 && diff != -40) {
-            ++this.yawUpdateRequiredTicks;
-        }
-        if (this.yawUpdateRequiredTicks > 5) {
-            this.yaw = (diff > -40 && diff < 0) || (diff > 0 && diff > 40) ? this.aK - 40 : this.aK + 40;
-            this.yawUpdateRequiredTicks = 0;
-        }
-        */
+         double diff = this.yaw - this.aK;
+         if (diff != 40 && diff != -40) {
+         ++this.yawUpdateRequiredTicks;
+         }
+         if (this.yawUpdateRequiredTicks > 5) {
+         this.yaw = (diff > -40 && diff < 0) || (diff > 0 && diff > 40) ? this.aK - 40 : this.aK + 40;
+         this.yawUpdateRequiredTicks = 0;
+         }
+         */
     }
 
     public void updateAI() {

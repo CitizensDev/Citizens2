@@ -281,7 +281,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         return npc.getNavigator().isNavigating();
     }
 
-    public void livingEntityBaseTick() {
+    @Override
+    public void k_() {
+        if (npc == null) {
+            super.k_();
+            return;
+        }
         this.aD = this.aE;
         this.aK = this.aL;
         if (this.hurtTicks > 0) {
@@ -305,7 +310,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
         this.noclip = isSpectator();
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", bukkitEntity);
-        livingEntityBaseTick();
 
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);

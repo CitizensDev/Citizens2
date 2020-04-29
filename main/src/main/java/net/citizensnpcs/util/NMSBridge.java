@@ -95,6 +95,8 @@ public interface NMSBridge {
 
     public void playAnimation(PlayerAnimation animation, Player player, int radius);
 
+    public void playerTick(Player entity);
+
     public void registerEntityClass(Class<?> clazz);
 
     public void remove(Entity entity);

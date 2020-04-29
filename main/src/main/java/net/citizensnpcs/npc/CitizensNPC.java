@@ -47,6 +47,7 @@ import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
 
 public class CitizensNPC extends AbstractNPC {
@@ -86,6 +87,9 @@ public class CitizensNPC extends AbstractNPC {
         boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
         if (!keepSelected) {
             data().remove("selectors");
+        }
+        if (getEntity() instanceof Player) {
+            PlayerUpdateTask.deregisterPlayer(getEntity());
         }
         navigator.onDespawn();
         if (reason == DespawnReason.RELOAD) {
@@ -302,6 +306,10 @@ public class CitizensNPC extends AbstractNPC {
             if (getEntity() instanceof Player) {
                 NMS.replaceTrackerEntry((Player) getEntity());
             }
+        }
+
+        if (getEntity() instanceof Player) {
+            PlayerUpdateTask.registerPlayer(getEntity());
         }
 
         updateFlyableState();

@@ -308,21 +308,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         return npc.getNavigator().isNavigating();
     }
 
-    public void livingEntityBaseTick() {
-        W();
-        this.aF = this.aG;
-        this.aM = this.aN;
-        if (this.hurtTicks > 0) {
-            this.hurtTicks -= 1;
-        }
-        tickPotionEffects();
-        this.bc = this.bb;
-        this.aR = this.aQ;
-        this.aT = this.aS;
-        this.lastYaw = this.yaw;
-        this.lastPitch = this.pitch;
-    }
-
     private void moveOnCurrentHeading() {
         if (bg) {
             if (onGround && jumpTicks == 0) {
@@ -340,6 +325,26 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (jumpTicks > 0) {
             jumpTicks--;
         }
+    }
+
+    @Override
+    public void playerTick() {
+        if (npc == null) {
+            super.playerTick();
+            return;
+        }
+        W();
+        this.aF = this.aG;
+        this.aM = this.aN;
+        if (this.hurtTicks > 0) {
+            this.hurtTicks -= 1;
+        }
+        tickPotionEffects();
+        this.bc = this.bb;
+        this.aR = this.aQ;
+        this.aT = this.aS;
+        this.lastYaw = this.yaw;
+        this.lastPitch = this.pitch;
     }
 
     public void setMoveDestination(double x, double y, double z, double speed) {
@@ -393,7 +398,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             updateEffects = true;
         }
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", bukkitEntity);
-        livingEntityBaseTick();
 
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);

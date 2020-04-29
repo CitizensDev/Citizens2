@@ -906,6 +906,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void playerTick(Player entity) {
+        ((EntityPlayer) getHandle(entity)).playerTick();
+    }
+
+    @Override
     public void registerEntityClass(Class<?> clazz) {
         if (ENTITY_REGISTRY == null)
             return;
@@ -1819,7 +1824,6 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
     private static Field SKULL_PROFILE_FIELD;
-
     private static MethodHandle TEAM_FIELD;
 
     static {

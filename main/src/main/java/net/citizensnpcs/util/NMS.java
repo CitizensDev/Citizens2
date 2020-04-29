@@ -318,6 +318,10 @@ public class NMS {
         BRIDGE.playAnimation(animation, player, radius);
     }
 
+    public static void playerTick(Player entity) {
+        BRIDGE.playerTick(entity);
+    }
+
     public static void registerEntityClass(Class<?> clazz) {
         BRIDGE.registerEntityClass(clazz);
     }
