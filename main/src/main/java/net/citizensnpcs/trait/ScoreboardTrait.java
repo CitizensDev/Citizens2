@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
@@ -89,6 +91,9 @@ public class ScoreboardTrait extends Trait {
                     previousGlowingColor = color;
                 }
             }
+        }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            NMS.sendTeamPacket(player, team);
         }
     }
 

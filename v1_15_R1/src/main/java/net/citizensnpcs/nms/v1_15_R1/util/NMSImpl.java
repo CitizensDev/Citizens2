@@ -248,6 +248,7 @@ import net.minecraft.server.v1_15_R1.NetworkManager;
 import net.minecraft.server.v1_15_R1.Packet;
 import net.minecraft.server.v1_15_R1.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_15_R1.PathEntity;
 import net.minecraft.server.v1_15_R1.PathPoint;
 import net.minecraft.server.v1_15_R1.PathType;
@@ -1022,6 +1023,23 @@ public class NMSImpl implements NMSBridge {
 
         NMSImpl.sendPacket(recipient,
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
+    }
+
+    @Override
+    public void sendTeamPacket(Player recipient, Team team) {
+        Preconditions.checkNotNull(recipient);
+        Preconditions.checkNotNull(team);
+
+        if (TEAM_FIELD == null) {
+            TEAM_FIELD = NMS.getGetter(team.getClass(), "team");
+        }
+
+        try {
+            ScoreboardTeam nmsTeam = (ScoreboardTeam) TEAM_FIELD.invoke(team);
+            sendPacket(recipient, new PacketPlayOutScoreboardTeam(nmsTeam, 0));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

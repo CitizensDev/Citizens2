@@ -366,6 +366,10 @@ public class NMS {
         BRIDGE.sendTabListRemove(recipient, listPlayer);
     }
 
+    public static void sendTeamPacket(Player recipient, Team team) {
+        BRIDGE.sendTeamPacket(recipient, team);
+    }
+
     public static void setBodyYaw(Entity entity, float yaw) {
         BRIDGE.setBodyYaw(entity, yaw);
     }

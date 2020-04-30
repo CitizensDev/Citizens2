@@ -83,6 +83,10 @@ public class HumanController extends AbstractEntityController {
                     team.addPlayer(handle.getBukkitEntity());
 
                     handle.getNPC().data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
+
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        NMS.sendTeamPacket(player, team);
+                    }
                 }
             }
         }, 20);
