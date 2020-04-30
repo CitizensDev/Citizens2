@@ -27,9 +27,15 @@ public class PlayerControllerLook {
         }
         if (this.d) {
             this.d = false;
+            this.a.pitch = this.a(this.a.pitch, this.g(), this.c);
             this.a.aK = this.a(this.a.aK, this.h(), this.b);
             this.a.yaw = this.a.aK;
-            this.a.pitch = this.a(this.a.pitch, this.g(), this.c);
+            while (this.a.aK >= 180F) {
+                this.a.aK -= 360F;
+            }
+            while (this.a.aK < -180F) {
+                this.a.aK += 360F;
+            }
         } else {
             // this.a.yaw = MathHelper.b(this.a.yaw, this.a.aK, 40F);
             // this.a.aK = this.a(this.a.aK, this.a.aI, 10.0F);
