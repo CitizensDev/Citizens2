@@ -484,11 +484,13 @@ public class EventListen implements Listener {
 
         if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             for (NPC npc : getAllNPCs()) {
+                if (!(npc.getEntity() instanceof Player)) {
+                    continue;
+                }
                 String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
                 Team team = null;
-                if (!(npc.getEntity() instanceof Player) || teamName.length() == 0
-                        || (team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)) == null)
-                    return;
+                if (teamName.length() == 0 || (team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)) == null)
+                    continue;
 
                 NMS.sendTeamPacket(event.getPlayer(), team);
             }
