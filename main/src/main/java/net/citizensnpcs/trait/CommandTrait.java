@@ -198,6 +198,7 @@ public class CommandTrait extends Trait {
             if (op) {
                 clicker.setOp(true);
             }
+
             if (bungeeServer != null) {
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("Connect");
@@ -211,6 +212,7 @@ public class CommandTrait extends Trait {
                     t.printStackTrace();
                 }
             }
+
             if (op) {
                 clicker.setOp(wasOp);
             }
