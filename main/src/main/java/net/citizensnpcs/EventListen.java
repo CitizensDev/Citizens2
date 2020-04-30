@@ -481,6 +481,18 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         skinUpdateTracker.updatePlayer(event.getPlayer(), 6 * 20, true);
+
+        for (NPC npc : getAllNPCs()) {
+            String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+            Team team = null;
+            if (!(npc.getEntity() instanceof Player) || teamName.length() == 0
+                    || (team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)) == null)
+                return;
+
+            if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+                NMS.sendTeamPacket(event.getPlayer(), team);
+            }
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
