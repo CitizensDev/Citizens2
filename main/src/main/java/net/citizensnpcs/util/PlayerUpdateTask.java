@@ -64,6 +64,10 @@ public class PlayerUpdateTask extends BukkitRunnable {
         PLAYERS.put(entity.getUniqueId(), (Player) entity);
     }
 
+    public static Iterable<Player> getRegisteredPlayerNPCs() {
+        return PLAYERS.values();
+    }
+
     private static Map<UUID, org.bukkit.entity.Player> PLAYERS = new HashMap<UUID, org.bukkit.entity.Player>();
     private static Map<UUID, org.bukkit.entity.Entity> TICKERS = new HashMap<UUID, org.bukkit.entity.Entity>();
     private static List<org.bukkit.entity.Entity> TICKERS_PENDING_ADD = new ArrayList<org.bukkit.entity.Entity>();

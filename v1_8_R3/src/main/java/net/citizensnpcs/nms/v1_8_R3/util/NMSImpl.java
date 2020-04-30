@@ -788,7 +788,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendTeamPacket(Player recipient, Team team) {
+    public void sendTeamPacket(Player recipient, Team team, int mode) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(team);
 
@@ -798,7 +798,7 @@ public class NMSImpl implements NMSBridge {
 
         try {
             ScoreboardTeam nmsTeam = (ScoreboardTeam) TEAM_FIELD.get(team);
-            sendPacket(recipient, new PacketPlayOutScoreboardTeam(nmsTeam, 0));
+            sendPacket(recipient, new PacketPlayOutScoreboardTeam(nmsTeam, mode));
         } catch (Throwable e) {
             e.printStackTrace();
         }
