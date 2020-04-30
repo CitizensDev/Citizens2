@@ -62,6 +62,7 @@ public class Messages {
     public static final String COMMAND_REQUIREMENTS_INVALID_MOB_TYPE = "citizens.commands.requirements.disallowed-mobtype";
     public static final String COMMAND_RIGHT_HAND_HEADER = "citizens.commands.npc.command.right-hand-header";
     public static final String COMMAND_SAVE_HELP = "citizens.commands.citizens.save.help";
+    public static final String COMMAND_TEMPORARY_PERMISSIONS_SET = "citizens.commands.npc.command.temporary-permissions-set";
     public static final String COMMAND_TOO_FEW_ARGUMENTS = "citizens.commands.requirements.too-few-arguments";
     public static final String COMMAND_TOO_MANY_ARGUMENTS = "citizens.commands.requirements.too-many-arguments";
     public static final String COMMAND_UNKNOWN_COMMAND_ID = "citizens.commands.npc.command.unknown-id";

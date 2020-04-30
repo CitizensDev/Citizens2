@@ -288,7 +288,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id] | permissions [permissions]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             modifiers = { "command", "cmd" },
             min = 1,
@@ -320,6 +320,11 @@ public class NPCCommands {
                 throw new CommandException(Messages.COMMAND_UNKNOWN_COMMAND_ID, id);
             commands.removeCommandById(id);
             Messaging.sendTr(sender, Messages.COMMAND_REMOVED, id);
+        } else if (args.getString(1).equalsIgnoreCase("permissions") || args.getString(1).equalsIgnoreCase("perms")) {
+            List<String> temporaryPermissions = Arrays.asList(args.getSlice(2));
+            commands.setTemporaryPermissions(temporaryPermissions);
+            Messaging.sendTr(sender, Messages.COMMAND_TEMPORARY_PERMISSIONS_SET,
+                    Joiner.on(' ').join(temporaryPermissions));
         } else {
             throw new CommandUsageException();
         }

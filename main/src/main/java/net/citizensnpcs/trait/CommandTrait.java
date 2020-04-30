@@ -6,6 +6,7 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachment;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -34,6 +35,8 @@ public class CommandTrait extends Trait {
     @Persist
     @DelegatePersistence(PlayerNPCCommandPersister.class)
     private final Map<String, PlayerNPCCommand> cooldowns = Maps.newHashMap();
+    @Persist
+    private final List<String> temporaryPermissions = Lists.newArrayList();
 
     public CommandTrait() {
         super("commandtrait");
@@ -103,10 +106,17 @@ public class CommandTrait extends Trait {
                     Runnable runnable = new Runnable() {
                         @Override
                         public void run() {
+                            PermissionAttachment attachment = new PermissionAttachment(CitizensAPI.getPlugin(), player);
+                            if (temporaryPermissions.size() > 0) {
+                                for (String permission : temporaryPermissions) {
+                                    attachment.setPermission(permission, true);
+                                }
+                            }
                             command.run(npc, player);
                             if (command.cooldown > 0 && info == null) {
                                 cooldowns.put(player.getUniqueId().toString(), new PlayerNPCCommand(command));
                             }
+                            attachment.remove();
                         }
                     };
                     if (command.delay <= 0) {
@@ -138,6 +148,11 @@ public class CommandTrait extends Trait {
 
     public void removeCommandById(int id) {
         commands.remove(String.valueOf(id));
+    }
+
+    public void setTemporaryPermissions(List<String> permissions) {
+        temporaryPermissions.clear();
+        temporaryPermissions.addAll(permissions);
     }
 
     public static enum Hand {
