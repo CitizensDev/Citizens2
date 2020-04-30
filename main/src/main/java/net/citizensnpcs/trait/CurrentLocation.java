@@ -14,7 +14,7 @@ import net.citizensnpcs.util.NMS;
 @TraitName("location")
 public class CurrentLocation extends Trait {
     @Persist
-    private float bodyYaw;
+    private float bodyYaw = Float.NaN;
     @Persist(value = "", required = true)
     private Location location = new Location(null, 0, 0, 0);
 
@@ -33,6 +33,13 @@ public class CurrentLocation extends Trait {
     @Override
     public void load(DataKey key) {
         key.removeKey("headYaw");
+    }
+
+    @Override
+    public void onSpawn() {
+        if (!Float.isNaN(bodyYaw)) {
+            NMS.setBodyYaw(npc.getEntity(), bodyYaw);
+        }
     }
 
     @Override

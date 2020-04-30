@@ -106,7 +106,7 @@ public class CommandTrait extends Trait {
                     Runnable runnable = new Runnable() {
                         @Override
                         public void run() {
-                            PermissionAttachment attachment = new PermissionAttachment(CitizensAPI.getPlugin(), player);
+                            PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
                             if (temporaryPermissions.size() > 0) {
                                 for (String permission : temporaryPermissions) {
                                     attachment.setPermission(permission, true);

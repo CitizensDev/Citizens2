@@ -157,11 +157,11 @@ public class CitizensNPC extends AbstractNPC {
         // Spawn the NPC
         CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
         if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
-            spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
-            NMS.setBodyYaw(getEntity(), spawnLocation.getBodyYaw());
-        }
-        if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() == null) {
-            Messaging.debug("Tried to spawn", getId(), "on load but world was null");
+            if (spawnLocation.getLocation() != null) {
+                spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
+            } else {
+                Messaging.debug("Tried to spawn", getId(), "on load but world was null");
+            }
         }
 
         navigator.load(root.getRelative("navigator"));
