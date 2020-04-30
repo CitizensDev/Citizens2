@@ -90,7 +90,7 @@ public class ScoreboardTrait extends Trait {
                 }
             }
         }
-        Util.sendTeamPacketToAll(team, 2);
+        Util.sendTeamPacketToOnlinePlayers(team, 2);
     }
 
     public void removeTag(String tag) {

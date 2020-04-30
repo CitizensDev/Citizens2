@@ -483,7 +483,7 @@ public class EventListen implements Listener {
         skinUpdateTracker.updatePlayer(event.getPlayer(), 6 * 20, true);
 
         if (Setting.USE_SCOREBOARD_TEAMS.asBoolean() && !Util.isPlayerMainScoreboard(event.getPlayer())) {
-            Util.sendAllNpcTeamsTo(event.getPlayer(), 0);
+            Util.updateNPCTeams(event.getPlayer(), 0);
         }
     }
 

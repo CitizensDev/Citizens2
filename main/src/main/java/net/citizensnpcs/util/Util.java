@@ -3,8 +3,8 @@ package net.citizensnpcs.util;
 import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -152,6 +152,16 @@ public class Util {
         }
     }
 
+    public static boolean isPlayerMainScoreboard(Player player) {
+        boolean isOnMain = player.getScoreboard().equals(Bukkit.getScoreboardManager().getMainScoreboard());
+        if (isOnMain) {
+            PLAYERS_ON_MAIN_SCOREBOARD.add(player.getUniqueId());
+        } else {
+            PLAYERS_ON_MAIN_SCOREBOARD.remove(player.getUniqueId());
+        }
+        return isOnMain;
+    }
+
     public static String listValuesPretty(Enum<?>[] values) {
         return "<e>" + Joiner.on("<a>, <e>").join(values).toLowerCase();
     }
@@ -226,6 +236,23 @@ public class Util {
                 to.getBlockZ(), (int) to.getYaw(), (int) to.getPitch());
     }
 
+    /**
+     * @param mode
+     *            0 for create, 1 for remove, 2 for update
+     */
+    public static void sendTeamPacketToOnlinePlayers(Team team, int mode) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            boolean wasOnMain = PLAYERS_ON_MAIN_SCOREBOARD.contains(player.getUniqueId());
+            if (isPlayerMainScoreboard(player))
+                continue;
+            if (wasOnMain) {
+                updateNPCTeams(player, 0);
+            } else {
+                NMS.sendTeamPacket(player, team, mode);
+            }
+        }
+    }
+
     public static String[] splitPlayerName(String coloredName) {
         String name = coloredName, prefix = null, suffix = null;
         if (coloredName.length() > 16) {
@@ -274,49 +301,22 @@ public class Util {
         return new String[] { name, prefix, suffix };
     }
 
-    public static boolean isPlayerMainScoreboard(Player player) {
-        boolean isOnMain = player.getScoreboard().equals(Bukkit.getScoreboardManager().getMainScoreboard());
-        if (isOnMain) {
-            playersOnMainScoreboard.add(player.getUniqueId());
-        }
-        else {
-            playersOnMainScoreboard.remove(player.getUniqueId());
-        }
-        return isOnMain;
-    }
-
-    public static void sendAllNpcTeamsTo(Player player, int mode) {
-        for (Player npcPlayer : PlayerUpdateTask.getRegisteredPlayerNPCs()) {
-            NPC npc = ((NPCHolder) npcPlayer).getNPC();
+    public static void updateNPCTeams(Player toUpdate, int mode) {
+        for (Player player : PlayerUpdateTask.getRegisteredPlayerNPCs()) {
+            NPC npc = ((NPCHolder) player).getNPC();
 
             String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
             Team team = null;
-            if (teamName.length() == 0 || (team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)) == null)
+            if (teamName.length() == 0
+                    || (team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)) == null)
                 continue;
 
-            NMS.sendTeamPacket(player, team, mode);
+            NMS.sendTeamPacket(toUpdate, team, mode);
         }
     }
 
-    /**
-     * @param mode 0 for create, 1 for remove, 2 for update
-     */
-    public static void sendTeamPacketToAll(Team team, int mode) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            boolean wasOnMain = playersOnMainScoreboard.contains(player.getUniqueId());
-            if (!isPlayerMainScoreboard(player)) {
-                if (wasOnMain) {
-                    sendAllNpcTeamsTo(player, 0);
-                }
-                else {
-                    NMS.sendTeamPacket(player, team, mode);
-                }
-            }
-        }
-    }
-
-    private static final Set<UUID> playersOnMainScoreboard = Sets.newHashSet();
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
     private static String MINECRAFT_REVISION;
     private static final Pattern NON_ALPHABET_MATCHER = Pattern.compile(".*[^A-Za-z0-9_].*");
+    private static final Set<UUID> PLAYERS_ON_MAIN_SCOREBOARD = Sets.newHashSet();
 }
