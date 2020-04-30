@@ -24,7 +24,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
-import net.citizensnpcs.Settings;
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -73,7 +73,7 @@ public class SkinUpdateTracker {
         Location playerLoc = player.getLocation(CACHE_LOCATION);
         Location skinLoc = entity.getLocation(NPC_LOCATION);
 
-        double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
+        double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
         viewDistance *= viewDistance;
 
         if (playerLoc.distanceSquared(skinLoc) > viewDistance)
@@ -288,7 +288,7 @@ public class SkinUpdateTracker {
         if (entity == null || !entity.isValid())
             return;
 
-        double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
+        double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
         viewDistance *= viewDistance;
         Location location = entity.getLocation(NPC_LOCATION);
         List<Player> players = entity.getWorld().getPlayers();
@@ -403,7 +403,7 @@ public class SkinUpdateTracker {
         void reset(Player player) {
             player.getLocation(this.location);
             if (rotationCount < 3) {
-                float rotationDegrees = Settings.Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
+                float rotationDegrees = Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
                 float yaw = Util.clampYaw(this.location.getYaw());
                 this.startYaw = yaw;
                 this.upperBound = Util.clampYaw(yaw + rotationDegrees);

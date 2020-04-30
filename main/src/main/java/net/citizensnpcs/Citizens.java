@@ -295,7 +295,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 e.printStackTrace();
             }
             Messaging.severeTr(Messages.CITIZENS_INCOMPATIBLE, getDescription().getVersion(), mcVersion);
-            getServer().getPluginManager().disablePlugin(this);
+            Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
         registerScriptHelpers();
@@ -303,7 +303,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         saves = createStorage(getDataFolder());
         if (saves == null) {
             Messaging.severeTr(Messages.FAILED_LOAD_SAVES);
-            getServer().getPluginManager().disablePlugin(this);
+            Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
@@ -313,7 +313,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         speechFactory = new CitizensSpeechFactory();
         speechFactory.register(Chat.class, "chat");
 
-        getServer().getPluginManager().registerEvents(new EventListen(storedRegistries), this);
+        Bukkit.getPluginManager().registerEvents(new EventListen(storedRegistries), this);
 
         if (Setting.NPC_COST.asDouble() > 0) {
             setupEconomy();
@@ -322,7 +322,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         registerCommands();
         enableSubPlugins();
         NMS.load(commands);
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         commands.registerTabCompletion(this);
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
@@ -341,7 +341,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             }
         }, 1) == -1) {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
-            getServer().getPluginManager().disablePlugin(this);
+            Bukkit.getPluginManager().disablePlugin(this);
         }
     }
 

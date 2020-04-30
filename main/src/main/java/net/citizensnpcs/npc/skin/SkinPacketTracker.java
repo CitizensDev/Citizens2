@@ -16,7 +16,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.google.common.base.Preconditions;
 
-import net.citizensnpcs.Settings;
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 
@@ -132,7 +132,7 @@ public class SkinPacketTracker {
                 if (!entity.getNPC().isSpawned())
                     return;
 
-                double viewDistance = Settings.Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
+                double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
                 updateNearbyViewers(viewDistance);
             }
         }.runTaskLater(CitizensAPI.getPlugin(), 20);
@@ -161,7 +161,7 @@ public class SkinPacketTracker {
     }
 
     private boolean shouldRemoveFromTabList() {
-        return entity.getNPC().data().get("removefromtablist", Settings.Setting.DISABLE_TABLIST.asBoolean());
+        return entity.getNPC().data().get("removefromtablist", Setting.DISABLE_TABLIST.asBoolean());
     }
 
     /**

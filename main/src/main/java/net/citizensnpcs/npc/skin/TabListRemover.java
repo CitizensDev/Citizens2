@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Preconditions;
 
-import net.citizensnpcs.Settings;
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 
@@ -113,7 +113,7 @@ public class TabListRemover {
     private class Sender implements Runnable {
         @Override
         public void run() {
-            int maxPacketEntries = Settings.Setting.MAX_PACKET_ENTRIES.asInt();
+            int maxPacketEntries = Setting.MAX_PACKET_ENTRIES.asInt();
 
             Iterator<Map.Entry<UUID, PlayerEntry>> entryIterator = pending.entrySet().iterator();
             while (entryIterator.hasNext()) {
