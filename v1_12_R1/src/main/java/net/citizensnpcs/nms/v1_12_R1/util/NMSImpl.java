@@ -919,6 +919,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void sendTeamPacket(Player recipient, Team team) {
+    }
+
+    @Override
     public void sendTabListRemove(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);

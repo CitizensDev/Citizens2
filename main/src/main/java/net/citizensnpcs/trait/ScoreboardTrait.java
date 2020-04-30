@@ -4,13 +4,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.util.NMS;
@@ -89,6 +94,22 @@ public class ScoreboardTrait extends Trait {
                     previousGlowingColor = color;
                 }
             }
+        }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            NMS.sendTeamPacket(player, team);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+        Team team = null;
+        if (!(npc.getEntity() instanceof Player) || teamName.length() == 0
+                || (team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)) == null)
+            return;
+
+        if (Settings.Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+            NMS.sendTeamPacket(event.getPlayer(), team);
         }
     }
 

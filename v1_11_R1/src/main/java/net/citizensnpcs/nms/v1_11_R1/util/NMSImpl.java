@@ -922,6 +922,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void sendTeamPacket(Player recipient, Team team) {
+    }
+
+    @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).yaw = yaw;
     }
