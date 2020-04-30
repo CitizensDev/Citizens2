@@ -32,8 +32,9 @@ import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.util.NMS;
 
 public class CitizensNPCRegistry implements NPCRegistry {
-    private final NPCCollection npcs = TROVE_EXISTS ? new TroveNPCCollection() : new MapNPCCollection();
+    private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<NPC>();
     private final NPCDataStore saves;
+    private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
 
     public CitizensNPCRegistry(NPCDataStore store) {
         saves = store;
@@ -52,7 +53,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
         if (npc == null)
             throw new IllegalStateException("Could not create NPC.");
-        npcs.put(npc.getId(), npc);
+        npcs.put(id, npc);
+        uniqueNPCs.put(npc.getUniqueId(), npc);
         Bukkit.getPluginManager().callEvent(new NPCCreateEvent(npc));
         if (type == EntityType.ARMOR_STAND && !npc.hasTrait(ArmorStandTrait.class)) {
             npc.addTrait(ArmorStandTrait.class);
@@ -67,7 +69,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
     @Override
     public void deregister(NPC npc) {
         npc.despawn(DespawnReason.REMOVAL);
-        npcs.remove(npc);
+        npcs.remove(npc.getId());
+        uniqueNPCs.remove(npc.getUniqueId());
         if (saves != null) {
             saves.clearData(npc);
         }
@@ -107,7 +110,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC getByUniqueId(UUID uuid) {
-        return npcs.get(uuid);
+        return uniqueNPCs.get(uuid);
     }
 
     @Override
@@ -142,102 +145,14 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public Iterator<NPC> iterator() {
-        return npcs.iterator();
+        return npcs.valueCollection().iterator();
     }
 
     @Override
     public Iterable<NPC> sorted() {
-        return npcs.sorted();
-    }
-
-    public static class MapNPCCollection implements NPCCollection {
-        private final Map<Integer, NPC> npcs = Maps.newHashMap();
-        private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
-
-        @Override
-        public NPC get(int id) {
-            return npcs.get(id);
-        }
-
-        @Override
-        public NPC get(UUID uuid) {
-            return uniqueNPCs.get(uuid);
-        }
-
-        @Override
-        public Iterator<NPC> iterator() {
-            return npcs.values().iterator();
-        }
-
-        @Override
-        public void put(int id, NPC npc) {
-            npcs.put(id, npc);
-            uniqueNPCs.put(npc.getUniqueId(), npc);
-        }
-
-        @Override
-        public void remove(NPC npc) {
-            npcs.remove(npc.getId());
-            uniqueNPCs.remove(npc.getUniqueId());
-        }
-
-        @Override
-        public Iterable<NPC> sorted() {
-            List<NPC> vals = new ArrayList<NPC>(npcs.values());
-            Collections.sort(vals, NPC_COMPARATOR);
-            return vals;
-        }
-    }
-
-    public static interface NPCCollection extends Iterable<NPC> {
-        public NPC get(int id);
-
-        public NPC get(UUID uuid);
-
-        public void put(int id, NPC npc);
-
-        public void remove(NPC npc);
-
-        public Iterable<NPC> sorted();
-    }
-
-    public static class TroveNPCCollection implements NPCCollection {
-        private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<NPC>();
-        private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
-
-        @Override
-        public NPC get(int id) {
-            return npcs.get(id);
-        }
-
-        @Override
-        public NPC get(UUID uuid) {
-            return uniqueNPCs.get(uuid);
-        }
-
-        @Override
-        public Iterator<NPC> iterator() {
-            return npcs.valueCollection().iterator();
-        }
-
-        @Override
-        public void put(int id, NPC npc) {
-            npcs.put(id, npc);
-            uniqueNPCs.put(npc.getUniqueId(), npc);
-        }
-
-        @Override
-        public void remove(NPC npc) {
-            npcs.remove(npc.getId());
-            uniqueNPCs.remove(npc.getUniqueId());
-        }
-
-        @Override
-        public Iterable<NPC> sorted() {
-            List<NPC> vals = new ArrayList<NPC>(npcs.valueCollection());
-            Collections.sort(vals, NPC_COMPARATOR);
-            return vals;
-        }
+        List<NPC> vals = new ArrayList<NPC>(npcs.valueCollection());
+        Collections.sort(vals, NPC_COMPARATOR);
+        return vals;
     }
 
     private static final Comparator<NPC> NPC_COMPARATOR = new Comparator<NPC>() {
@@ -246,15 +161,4 @@ public class CitizensNPCRegistry implements NPCRegistry {
             return o1.getId() - o2.getId();
         }
     };
-
-    private static boolean TROVE_EXISTS = false;
-
-    static {
-        // allow trove dependency to be optional for debugging purposes
-        try {
-            Class.forName("gnu.trove.map.hash.TIntObjectHashMap").newInstance();
-            TROVE_EXISTS = true;
-        } catch (Exception e) {
-        }
-    }
 }
