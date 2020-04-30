@@ -75,6 +75,8 @@ public interface NMSBridge {
 
     public float getVerticalMovement(Entity entity);
 
+    public float getYaw(Entity entity);
+
     public boolean isOnGround(Entity entity);
 
     public boolean isValid(Entity entity);

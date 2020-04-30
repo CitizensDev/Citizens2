@@ -397,7 +397,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         super.tick();
         if (npc == null)
             return;
-        this.noclip = isSpectator();
+        noclip = isSpectator();
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             updateEffects = true;
         }

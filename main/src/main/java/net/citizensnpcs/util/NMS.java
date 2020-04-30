@@ -273,6 +273,10 @@ public class NMS {
         return BRIDGE.getVerticalMovement(bukkitEntity);
     }
 
+    public static float getYaw(Entity entity) {
+        return BRIDGE.getYaw(entity);
+    }
+
     public static boolean isOnGround(org.bukkit.entity.Entity entity) {
         return BRIDGE.isOnGround(entity);
     }

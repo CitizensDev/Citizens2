@@ -548,6 +548,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public float getYaw(org.bukkit.entity.Entity entity) {
+        return getHandle(entity).yaw;
+    }
+
+    @Override
     public boolean isOnGround(org.bukkit.entity.Entity entity) {
         return NMSImpl.getHandle(entity).onGround;
     }
@@ -1521,7 +1526,6 @@ public class NMSImpl implements NMSBridge {
     private static Field SKULL_PROFILE_FIELD;
     private static MethodHandle TEAM_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
-
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bG");
 
     static {

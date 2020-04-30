@@ -590,6 +590,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public float getYaw(org.bukkit.entity.Entity entity) {
+        return getHandle(entity).yaw;
+    }
+
+    @Override
     public boolean isOnGround(org.bukkit.entity.Entity entity) {
         return NMSImpl.getHandle(entity).onGround;
     }

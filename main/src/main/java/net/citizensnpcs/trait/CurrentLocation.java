@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 
 /**
@@ -13,7 +14,7 @@ import net.citizensnpcs.util.NMS;
 @TraitName("location")
 public class CurrentLocation extends Trait {
     @Persist
-    private float headYaw;
+    private float bodyYaw;
     @Persist(value = "", required = true)
     private Location location = new Location(null, 0, 0, 0);
 
@@ -21,8 +22,8 @@ public class CurrentLocation extends Trait {
         super("location");
     }
 
-    public float getHeadYaw() {
-        return headYaw;
+    public float getBodyYaw() {
+        return bodyYaw;
     }
 
     public Location getLocation() {
@@ -30,11 +31,16 @@ public class CurrentLocation extends Trait {
     }
 
     @Override
+    public void load(DataKey key) {
+        key.removeKey("headYaw");
+    }
+
+    @Override
     public void run() {
         if (!npc.isSpawned())
             return;
         location = npc.getEntity().getLocation(location);
-        headYaw = NMS.getHeadYaw(npc.getEntity());
+        bodyYaw = NMS.getYaw(npc.getEntity());
     }
 
     public void setLocation(Location loc) {

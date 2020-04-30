@@ -158,7 +158,7 @@ public class CitizensNPC extends AbstractNPC {
         CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
         if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
             spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
-            NMS.setHeadYaw(getEntity(), spawnLocation.getHeadYaw());
+            NMS.setBodyYaw(getEntity(), spawnLocation.getBodyYaw());
         }
         if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() == null) {
             Messaging.debug("Tried to spawn", getId(), "on load but world was null");
@@ -262,11 +262,10 @@ public class CitizensNPC extends AbstractNPC {
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
         }
-
         getEntity().teleport(at);
 
-        NMS.setBodyYaw(getEntity(), at.getYaw());
         NMS.setHeadYaw(getEntity(), at.getYaw());
+        NMS.setBodyYaw(getEntity(), at.getYaw());
 
         // Set the spawned state
         getTrait(CurrentLocation.class).setLocation(at);
