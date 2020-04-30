@@ -119,7 +119,7 @@ public interface NMSBridge {
 
     public void sendTabListRemove(Player recipient, Player listPlayer);
 
-    public void sendTeamPacket(Player recipient, Team team);
+    public void sendTeamPacket(Player recipient, Team team, int mode);
 
     public void setBodyYaw(Entity entity, float yaw);
 

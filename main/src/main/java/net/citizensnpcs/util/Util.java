@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,15 +16,18 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Sets;
 
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.SpigotUtil;
+import net.citizensnpcs.npc.ai.NPCHolder;
 
 public class Util {
     // Static class for small (emphasis small) utility methods
@@ -270,6 +274,48 @@ public class Util {
         return new String[] { name, prefix, suffix };
     }
 
+    public static boolean isPlayerMainScoreboard(Player player) {
+        boolean isOnMain = player.getScoreboard().equals(Bukkit.getScoreboardManager().getMainScoreboard());
+        if (isOnMain) {
+            playersOnMainScoreboard.add(player.getUniqueId());
+        }
+        else {
+            playersOnMainScoreboard.remove(player.getUniqueId());
+        }
+        return isOnMain;
+    }
+
+    public static void sendAllNpcTeamsTo(Player player, int mode) {
+        for (Player npcPlayer : PlayerUpdateTask.getRegisteredPlayerNPCs()) {
+            NPC npc = ((NPCHolder) npcPlayer).getNPC();
+
+            String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+            Team team = null;
+            if (teamName.length() == 0 || (team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)) == null)
+                continue;
+
+            NMS.sendTeamPacket(player, team, mode);
+        }
+    }
+
+    /**
+     * @param mode 0 for create, 1 for remove, 2 for update
+     */
+    public static void sendTeamPacketToAll(Team team, int mode) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            boolean wasOnMain = playersOnMainScoreboard.contains(player.getUniqueId());
+            if (!isPlayerMainScoreboard(player)) {
+                if (wasOnMain) {
+                    sendAllNpcTeamsTo(player, 0);
+                }
+                else {
+                    NMS.sendTeamPacket(player, team, mode);
+                }
+            }
+        }
+    }
+
+    private static final Set<UUID> playersOnMainScoreboard = Sets.newHashSet();
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
     private static String MINECRAFT_REVISION;
     private static final Pattern NON_ALPHABET_MATCHER = Pattern.compile(".*[^A-Za-z0-9_].*");
