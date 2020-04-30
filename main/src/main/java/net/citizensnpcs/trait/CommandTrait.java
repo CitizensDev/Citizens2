@@ -39,11 +39,9 @@ public class CommandTrait extends Trait {
         super("commandtrait");
     }
 
-    public int addCommand(String command, Hand hand, boolean player, boolean op, int cooldown, List<String> perms,
-            int n) {
+    public int addCommand(NPCCommandBuilder builder) {
         int id = getNewId();
-        commands.put(String.valueOf(id),
-                new NPCCommand(String.valueOf(id), command, hand, player, op, cooldown, perms, n));
+        commands.put(String.valueOf(id), builder.build(String.valueOf(id)));
         return id;
     }
 
@@ -102,9 +100,19 @@ public class CommandTrait extends Trait {
                     if (info != null && !info.canUse(player, command)) {
                         continue;
                     }
-                    command.run(npc, player);
-                    if (command.cooldown > 0 && info == null) {
-                        cooldowns.put(player.getUniqueId().toString(), new PlayerNPCCommand(command));
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            command.run(npc, player);
+                            if (command.cooldown > 0 && info == null) {
+                                cooldowns.put(player.getUniqueId().toString(), new PlayerNPCCommand(command));
+                            }
+                        }
+                    };
+                    if (command.delay <= 0) {
+                        runnable.run();
+                    } else {
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable, command.delay);
                     }
                 }
             }
@@ -112,7 +120,7 @@ public class CommandTrait extends Trait {
         if (Bukkit.isPrimaryThread()) {
             task.run();
         } else {
-            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), task);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), task);
         }
     }
 
@@ -142,6 +150,7 @@ public class CommandTrait extends Trait {
         String bungeeServer;
         String command;
         int cooldown;
+        int delay;
         Hand hand;
         String id;
         int n;
@@ -150,7 +159,7 @@ public class CommandTrait extends Trait {
         boolean player;
 
         public NPCCommand(String id, String command, Hand hand, boolean player, boolean op, int cooldown,
-                List<String> perms, int n) {
+                List<String> perms, int n, int delay) {
             this.id = id;
             this.command = command;
             this.hand = hand;
@@ -159,35 +168,96 @@ public class CommandTrait extends Trait {
             this.cooldown = cooldown;
             this.perms = perms;
             this.n = n;
+            this.delay = delay;
             List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().splitToList(command);
             this.bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
         }
 
         public void run(NPC npc, Player clicker) {
             String interpolatedCommand = Placeholders.replace(command, clicker, npc);
-            if (player) {
-                boolean wasOp = clicker.isOp();
-                if (op) {
-                    clicker.setOp(true);
-                }
-                if (bungeeServer != null) {
-                    ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                    out.writeUTF("Connect");
-                    out.writeUTF(bungeeServer);
-
-                    clicker.sendPluginMessage(CitizensAPI.getPlugin(), "BungeeCord", out.toByteArray());
-                }
-                try {
-                    clicker.chat("/" + interpolatedCommand);
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-                if (op) {
-                    clicker.setOp(wasOp);
-                }
-            } else {
+            if (!player) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
+                return;
             }
+            boolean wasOp = clicker.isOp();
+            if (op) {
+                clicker.setOp(true);
+            }
+            if (bungeeServer != null) {
+                ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                out.writeUTF("Connect");
+                out.writeUTF(bungeeServer);
+
+                clicker.sendPluginMessage(CitizensAPI.getPlugin(), "BungeeCord", out.toByteArray());
+            }
+            try {
+                clicker.chat("/" + interpolatedCommand);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+            if (op) {
+                clicker.setOp(wasOp);
+            }
+        }
+    }
+
+    public static class NPCCommandBuilder {
+        String command;
+        int cooldown;
+        int delay;
+        Hand hand;
+        int n = -1;
+        boolean op;
+        List<String> perms = Lists.newArrayList();
+        boolean player;
+
+        public NPCCommandBuilder(String command, Hand hand) {
+            this.command = command;
+            this.hand = hand;
+        }
+
+        public NPCCommandBuilder addPerm(String permission) {
+            this.perms.add(permission);
+            return this;
+        }
+
+        public NPCCommandBuilder addPerms(List<String> perms) {
+            this.perms.addAll(perms);
+            return this;
+        }
+
+        private NPCCommand build(String id) {
+            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay);
+        }
+
+        public NPCCommandBuilder command(String command) {
+            this.command = command;
+            return this;
+        }
+
+        public NPCCommandBuilder cooldown(int cooldown) {
+            this.cooldown = cooldown;
+            return this;
+        }
+
+        public NPCCommandBuilder delay(int delay) {
+            this.delay = delay;
+            return this;
+        }
+
+        public NPCCommandBuilder n(int n) {
+            this.n = n;
+            return this;
+        }
+
+        public NPCCommandBuilder op(boolean op) {
+            this.op = op;
+            return this;
+        }
+
+        public NPCCommandBuilder player(boolean player) {
+            this.player = player;
+            return this;
         }
     }
 
@@ -203,7 +273,7 @@ public class CommandTrait extends Trait {
             }
             return new NPCCommand(root.name(), root.getString("command"), Hand.valueOf(root.getString("hand")),
                     Boolean.valueOf(root.getString("player")), Boolean.valueOf(root.getString("op")),
-                    root.getInt("cooldown"), perms, root.getInt("n"));
+                    root.getInt("cooldown"), perms, root.getInt("n"), root.getInt("delay"));
         }
 
         @Override
@@ -214,6 +284,7 @@ public class CommandTrait extends Trait {
             root.setBoolean("op", instance.op);
             root.setInt("cooldown", instance.cooldown);
             root.setInt("n", instance.n);
+            root.setInt("delay", instance.delay);
             for (int i = 0; i < instance.perms.size(); i++) {
                 root.setString("permissions." + i, instance.perms.get(i));
             }

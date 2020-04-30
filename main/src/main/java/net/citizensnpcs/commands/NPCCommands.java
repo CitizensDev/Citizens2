@@ -85,6 +85,7 @@ import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.CommandTrait;
+import net.citizensnpcs.trait.CommandTrait.NPCCommandBuilder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.FollowTrait;
@@ -287,7 +288,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             modifiers = { "command", "cmd" },
             min = 1,
@@ -307,8 +308,9 @@ public class NPCCommands {
             if (args.hasValueFlag("permissions")) {
                 perms.addAll(Arrays.asList(args.getFlag("permissions").split(",")));
             }
-            int id = commands.addCommand(command, hand, args.hasFlag('p'), args.hasFlag('o'),
-                    args.getFlagInteger("cooldown", 0), perms, args.getFlagInteger("n", -1));
+            int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms).player(args.hasFlag('p'))
+                    .op(args.hasFlag('o')).cooldown(args.getFlagInteger("cooldown", 0)).n(args.getFlagInteger("n", -1))
+                    .delay(args.getFlagInteger("delay", 0)));
             Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
         } else if (args.getString(1).equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
