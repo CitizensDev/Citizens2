@@ -69,6 +69,7 @@ public class Settings {
                 "<target>|, <target>| & <target>| & others"),
         CHAT_RANGE("npc.chat.options.range", 5),
         CHECK_MINECRAFT_VERSION("advanced.check-minecraft-version", true),
+        CONTROLLABLE_GROUND_DIRECTION_MODIFIER("npc.controllable.ground-direction-modifier", 1.0D),
         DEBUG_FILE("general.debug-file", ""),
         DEBUG_MODE("general.debug-mode", false),
         DEBUG_PATHFINDING("general.debug-pathfinding", false),

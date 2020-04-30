@@ -204,11 +204,12 @@ public class CommandTrait extends Trait {
                 out.writeUTF(bungeeServer);
 
                 clicker.sendPluginMessage(CitizensAPI.getPlugin(), "BungeeCord", out.toByteArray());
-            }
-            try {
-                clicker.chat("/" + interpolatedCommand);
-            } catch (Throwable t) {
-                t.printStackTrace();
+            } else {
+                try {
+                    clicker.chat("/" + interpolatedCommand);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
             }
             if (op) {
                 clicker.setOp(wasOp);
