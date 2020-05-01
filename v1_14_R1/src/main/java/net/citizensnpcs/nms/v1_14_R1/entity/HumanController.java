@@ -67,12 +67,14 @@ public class HumanController extends AbstractEntityController {
                 NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
 
                 if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-                    Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+                    Scoreboard scoreboard = Util.getDummyScoreboard();
                     String teamName = profile.getId().toString().substring(0, 16);
 
                     Team team = scoreboard.getTeam(teamName);
+                    int mode = 2;
                     if (team == null) {
                         team = scoreboard.registerNewTeam(teamName);
+                        mode = 0;
                     }
                     if (prefixCapture != null) {
                         team.setPrefix(prefixCapture);
@@ -84,7 +86,7 @@ public class HumanController extends AbstractEntityController {
 
                     handle.getNPC().data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
 
-                    Util.sendTeamPacketToOnlinePlayers(team, 0);
+                    Util.sendTeamPacketToOnlinePlayers(team, mode);
                 }
             }
         }, 20);
@@ -105,15 +107,16 @@ public class HumanController extends AbstractEntityController {
         if (entity != null) {
             if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
                 String teamName = entity.getUniqueId().toString().substring(0, 16);
-                Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+                Scoreboard scoreboard = Util.getDummyScoreboard();
                 Team team = scoreboard.getTeam(teamName);
                 if (team != null && team.hasPlayer(entity)) {
                     if (team.getSize() == 1) {
-                        team.setPrefix("");
-                        team.setSuffix("");
+                        Util.sendTeamPacketToOnlinePlayers(team, 1);
+                        team.unregister();
                     }
-                    team.removePlayer(entity);
-                    Util.sendTeamPacketToOnlinePlayers(team, 1);
+                    else {
+                        team.removePlayer(entity);
+                    }
                 }
             }
             NMS.removeFromWorld(entity);

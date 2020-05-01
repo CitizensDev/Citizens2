@@ -50,7 +50,6 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
@@ -288,16 +287,6 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);
 
-        if (npc.data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
-            String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-            Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
-            if (team != null) {
-                team.unregister();
-            }
-
-            npc.data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-        }
-
         if (npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1) >= 0) {
             int delay = npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1);
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
@@ -482,7 +471,7 @@ public class EventListen implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         skinUpdateTracker.updatePlayer(event.getPlayer(), 6 * 20, true);
 
-        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean() && !Util.isPlayerMainScoreboard(event.getPlayer())) {
+        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             Util.updateNPCTeams(event.getPlayer(), 0);
         }
     }

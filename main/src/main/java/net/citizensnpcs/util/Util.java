@@ -3,7 +3,6 @@ package net.citizensnpcs.util;
 import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -16,12 +15,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Sets;
 
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
@@ -84,6 +83,10 @@ public class Util {
         if (to == null || entity.getWorld() != to.getWorld())
             return;
         NMS.look(entity, to, headOnly, immediate);
+    }
+
+    public static Scoreboard getDummyScoreboard() {
+        return DUMMY_SCOREBOARD;
     }
 
     public static Location getEyeLocation(Entity entity) {
@@ -150,16 +153,6 @@ public class Util {
         } catch (NoSuchFieldError e) {
             return false;
         }
-    }
-
-    public static boolean isPlayerMainScoreboard(Player player) {
-        boolean isOnMain = player.getScoreboard().equals(Bukkit.getScoreboardManager().getMainScoreboard());
-        if (isOnMain) {
-            PLAYERS_ON_MAIN_SCOREBOARD.add(player.getUniqueId());
-        } else {
-            PLAYERS_ON_MAIN_SCOREBOARD.remove(player.getUniqueId());
-        }
-        return isOnMain;
     }
 
     public static String listValuesPretty(Enum<?>[] values) {
@@ -242,14 +235,7 @@ public class Util {
      */
     public static void sendTeamPacketToOnlinePlayers(Team team, int mode) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            boolean wasOnMain = PLAYERS_ON_MAIN_SCOREBOARD.contains(player.getUniqueId());
-            if (isPlayerMainScoreboard(player))
-                continue;
-            if (wasOnMain) {
-                updateNPCTeams(player, 0);
-            } else {
-                NMS.sendTeamPacket(player, team, mode);
-            }
+            NMS.sendTeamPacket(player, team, mode);
         }
     }
 
@@ -308,7 +294,7 @@ public class Util {
             String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
             Team team = null;
             if (teamName.length() == 0
-                    || (team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName)) == null)
+                    || (team = Util.getDummyScoreboard().getTeam(teamName)) == null)
                 continue;
 
             NMS.sendTeamPacket(toUpdate, team, mode);
@@ -316,7 +302,7 @@ public class Util {
     }
 
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
+    private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static String MINECRAFT_REVISION;
     private static final Pattern NON_ALPHABET_MATCHER = Pattern.compile(".*[^A-Za-z0-9_].*");
-    private static final Set<UUID> PLAYERS_ON_MAIN_SCOREBOARD = Sets.newHashSet();
 }
