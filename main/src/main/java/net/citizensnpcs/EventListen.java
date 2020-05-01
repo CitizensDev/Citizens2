@@ -50,7 +50,6 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
@@ -287,16 +286,6 @@ public class EventListen implements Listener {
         final Location location = npc.getStoredLocation();
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);
-
-        if (npc.data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
-            String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-            Team team = Util.getDummyScoreboard().getTeam(teamName);
-            if (team != null) {
-                team.unregister();
-            }
-
-            npc.data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-        }
 
         if (npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1) >= 0) {
             int delay = npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1);
