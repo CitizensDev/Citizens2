@@ -290,7 +290,7 @@ public class EventListen implements Listener {
 
         if (npc.data().has(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA)) {
             String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-            Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
+            Team team = Util.getDummyScoreboard().getTeam(teamName);
             if (team != null) {
                 team.unregister();
             }
@@ -482,7 +482,7 @@ public class EventListen implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         skinUpdateTracker.updatePlayer(event.getPlayer(), 6 * 20, true);
 
-        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean() && !Util.isPlayerMainScoreboard(event.getPlayer())) {
+        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             Util.updateNPCTeams(event.getPlayer(), 0);
         }
     }

@@ -67,7 +67,7 @@ public class HumanController extends AbstractEntityController {
                 NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
 
                 if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-                    Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+                    Scoreboard scoreboard = Util.getDummyScoreboard();
                     String teamName = profile.getId().toString().substring(0, 16);
 
                     Team team = scoreboard.getTeam(teamName);
@@ -105,7 +105,7 @@ public class HumanController extends AbstractEntityController {
         if (entity != null) {
             if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
                 String teamName = entity.getUniqueId().toString().substring(0, 16);
-                Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+                Scoreboard scoreboard = Util.getDummyScoreboard();
                 Team team = scoreboard.getTeam(teamName);
                 if (team != null && team.hasPlayer(entity)) {
                     if (team.getSize() == 1) {
