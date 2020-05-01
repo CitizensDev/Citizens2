@@ -168,14 +168,14 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private void resetCachedCoord() {
-        if (cachedCoord != null) {
-            CHUNK_LOADERS.remove(NPC_METADATA_MARKER, CHUNK_LOADERS);
-            CHUNK_LOADERS.remove(cachedCoord, this);
-            if (CHUNK_LOADERS.get(cachedCoord).size() == 0) {
-                cachedCoord.setForceLoaded(false);
-            }
-            cachedCoord = null;
+        if (cachedCoord == null)
+            return;
+        CHUNK_LOADERS.remove(NPC_METADATA_MARKER, CHUNK_LOADERS);
+        CHUNK_LOADERS.remove(cachedCoord, this);
+        if (CHUNK_LOADERS.get(cachedCoord).size() == 0) {
+            cachedCoord.setForceLoaded(false);
         }
+        cachedCoord = null;
     }
 
     @Override
@@ -344,7 +344,8 @@ public class CitizensNPC extends AbstractNPC {
                 }
             }
 
-            if (!getNavigator().isNavigating() && updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
+            boolean isLiving = getEntity() instanceof LivingEntity;
+            if (updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
                 if (Setting.KEEP_CHUNKS_LOADED.asBoolean()) {
                     ChunkCoord currentCoord = new ChunkCoord(getStoredLocation());
                     if (!currentCoord.equals(cachedCoord)) {
@@ -354,24 +355,18 @@ public class CitizensNPC extends AbstractNPC {
                         cachedCoord = currentCoord;
                     }
                 }
-                updateCounter = 0;
-
-                Player player = getEntity().getType() == EntityType.PLAYER ? (Player) getEntity() : null;
-                NMS.sendPositionUpdate(player, getEntity(), getStoredLocation());
-            }
-
-            if (getEntity() instanceof LivingEntity) {
-                if (updateCounter == 0) {
+                if (isLiving) {
                     updateCustomName();
                 }
+                updateCounter = 0;
+            }
+
+            if (isLiving) {
                 String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
                 ((LivingEntity) getEntity()).setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
 
-                if (data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
-                    NMS.setKnockbackResistance((LivingEntity) getEntity(), 1D);
-                } else {
-                    NMS.setKnockbackResistance((LivingEntity) getEntity(), 0D);
-                }
+                NMS.setKnockbackResistance((LivingEntity) getEntity(),
+                        data().get(NPC.DEFAULT_PROTECTED_METADATA, true) ? 1D : 0D);
             }
 
             if (SUPPORT_SILENT && data().has(NPC.SILENT_METADATA)) {

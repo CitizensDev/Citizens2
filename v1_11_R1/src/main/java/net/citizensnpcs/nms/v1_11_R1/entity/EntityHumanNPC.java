@@ -53,13 +53,11 @@ import net.minecraft.server.v1_11_R1.EnumProtocolDirection;
 import net.minecraft.server.v1_11_R1.GenericAttributes;
 import net.minecraft.server.v1_11_R1.IBlockData;
 import net.minecraft.server.v1_11_R1.IChatBaseComponent;
-import net.minecraft.server.v1_11_R1.MathHelper;
 import net.minecraft.server.v1_11_R1.MinecraftServer;
 import net.minecraft.server.v1_11_R1.NavigationAbstract;
 import net.minecraft.server.v1_11_R1.NetworkManager;
 import net.minecraft.server.v1_11_R1.Packet;
 import net.minecraft.server.v1_11_R1.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_11_R1.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_11_R1.PathType;
 import net.minecraft.server.v1_11_R1.PlayerInteractManager;
 import net.minecraft.server.v1_11_R1.WorldServer;
@@ -427,11 +425,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         updateCounter = 0;
         Location current = getBukkitEntity().getLocation(packetLocationCache);
-        Packet<?>[] packets = new Packet[navigating ? EnumItemSlot.values().length : EnumItemSlot.values().length + 1];
-        if (!navigating) {
-            packets[5] = new PacketPlayOutEntityHeadRotation(this,
-                    (byte) MathHelper.d(NMSImpl.getHeadYaw(this) * 256.0F / 360.0F));
-        }
+        Packet<?>[] packets = new Packet[EnumItemSlot.values().length];
         int i = 0;
         for (EnumItemSlot slot : EnumItemSlot.values()) {
             packets[i++] = new PacketPlayOutEntityEquipment(getId(), slot, getEquipment(slot));

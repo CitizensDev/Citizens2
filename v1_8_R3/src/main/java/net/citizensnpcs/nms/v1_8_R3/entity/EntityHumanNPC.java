@@ -46,13 +46,11 @@ import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.EnumProtocolDirection;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.MathHelper;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.NavigationAbstract;
 import net.minecraft.server.v1_8_R3.NetworkManager;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_8_R3.PlayerInteractManager;
 import net.minecraft.server.v1_8_R3.WorldServer;
 import net.minecraft.server.v1_8_R3.WorldSettings;
@@ -404,11 +402,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             return;
         updateCounter = 0;
         Location current = getBukkitEntity().getLocation(packetLocationCache);
-        Packet<?>[] packets = new Packet[navigating ? this.inventory.armor.length : this.inventory.armor.length + 1];
-        if (!navigating) {
-            packets[this.inventory.armor.length] = new PacketPlayOutEntityHeadRotation(this,
-                    (byte) MathHelper.d(NMSImpl.getHeadYaw(this) * 256.0F / 360.0F));
-        }
+        Packet<?>[] packets = new Packet[this.inventory.armor.length];
         for (int i = 0; i < this.inventory.armor.length; i++) {
             packets[i] = new PacketPlayOutEntityEquipment(getId(), i, getEquipment(i));
         }
