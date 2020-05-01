@@ -26,6 +26,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.StringHelper;
 
 @TraitName("commandtrait")
 public class CommandTrait extends Trait {
@@ -82,7 +83,8 @@ public class CommandTrait extends Trait {
     }
 
     private String describe(NPCCommand command) {
-        String output = "<br>    - [" + command.id + "]: " + command.command + " [" + command.cooldown + "s]";
+        String output = "<br>    - [" + StringHelper.wrap(command.id) + "]: " + command.command + " ["
+                + StringHelper.wrap(command.cooldown + "s") + "]";
         if (command.op) {
             output += " -o";
         }
