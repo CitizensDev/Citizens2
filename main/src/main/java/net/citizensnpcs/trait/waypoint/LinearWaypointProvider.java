@@ -23,8 +23,6 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -132,22 +130,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 continue;
             waypoints.add(waypoint);
         }
-        for (DataKey root : key.getRelative("cache").getSubKeys()) {
-            String[] parts = Iterables.toArray(Splitter.on('/').split(root.name()), String.class);
-            Vector to = new Vector(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-            for (DataKey sub : root.getSubKeys()) {
-                parts = Iterables.toArray(Splitter.on('/').split(sub.name()), String.class);
-                Vector from = new Vector(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
-                        Integer.parseInt(parts[2]));
-                List<Vector> points = Lists.newArrayList();
-                for (DataKey path : sub.getIntegerSubKeys()) {
-                    parts = Iterables.toArray(Splitter.on('/').split(path.getString("")), String.class);
-                    points.add(new Vector(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
-                            Integer.parseInt(parts[2])));
-                }
-                cachedPaths.put(new SourceDestinationPair(from, to), points);
-            }
-        }
     }
 
     @Override
@@ -173,17 +155,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         DataKey root = key.getRelative("points");
         for (int i = 0; i < waypoints.size(); ++i) {
             PersistenceLoader.save(waypoints.get(i), root.getRelative(i));
-        }
-        key.removeKey("cache");
-        if (cachePaths) {
-            for (Map.Entry<SourceDestinationPair, Iterable<Vector>> entry : cachedPaths.entrySet()) {
-                root = key.getRelative("cache." + entry.getKey().getToKey() + "." + entry.getKey().getFromKey());
-                Vector[] path = Iterables.toArray(entry.getValue(), Vector.class);
-                for (int i = 0; i < path.length; i++) {
-                    root.setString(Integer.toString(i),
-                            Joiner.on('/').join(path[i].getBlockX(), path[i].getBlockY(), path[i].getBlockZ()));
-                }
-            }
         }
     }
 
