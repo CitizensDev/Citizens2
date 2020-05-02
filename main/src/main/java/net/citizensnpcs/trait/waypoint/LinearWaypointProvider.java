@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Player;
@@ -22,7 +21,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.util.Vector;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -571,14 +569,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             return true;
         }
 
-        public String getFromKey() {
-            return Joiner.on('/').join(from.getBlockX(), from.getBlockY(), from.getBlockZ());
-        }
-
-        public String getToKey() {
-            return Joiner.on('/').join(to.getBlockX(), to.getBlockY(), to.getBlockZ());
-        }
-
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -589,8 +579,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         public boolean verify(World world, Iterable<Vector> cached) {
             for (Vector vector : cached) {
                 if (!MinecraftBlockExaminer
-                        .canStandOn(world.getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ())
-                                .getRelative(BlockFace.DOWN))) {
+                        .validPosition(world.getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ()))) {
                     return false;
                 }
             }
