@@ -2,12 +2,15 @@ package net.citizensnpcs.trait.waypoint;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Player;
@@ -17,20 +20,28 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.util.Vector;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
+import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
@@ -44,6 +55,9 @@ import net.citizensnpcs.util.Util;
  * An ordered list of {@link Waypoint}s to walk between.
  */
 public class LinearWaypointProvider implements EnumerableWaypointProvider {
+    private final Map<SourceDestinationPair, Iterable<Vector>> cachedPaths = Maps.newHashMap();
+    @Persist
+    private boolean cachePaths = Setting.DEFAULT_CACHE_WAYPOINT_PATHS.asBoolean();
     private LinearWaypointGoal currentGoal;
     private NPC npc;
     private final List<Waypoint> waypoints = Lists.newArrayList();
@@ -78,6 +92,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             return null;
         } else if (args.hasFlag('c')) {
             waypoints.clear();
+            cachedPaths.clear();
             return null;
         } else if (args.hasFlag('l')) {
             if (waypoints.size() > 0) {
@@ -86,6 +101,9 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             return null;
         } else if (args.hasFlag('p')) {
             setPaused(!isPaused());
+            return null;
+        } else if (args.hasFlag('k')) {
+            cachePaths = !cachePaths;
             return null;
         } else if (!(sender instanceof Player)) {
             Messaging.sendErrorTr(sender, Messages.COMMAND_MUST_BE_INGAME);
@@ -114,6 +132,22 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 continue;
             waypoints.add(waypoint);
         }
+        for (DataKey root : key.getRelative("cache").getSubKeys()) {
+            String[] parts = Iterables.toArray(Splitter.on('/').split(root.name()), String.class);
+            Vector to = new Vector(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+            for (DataKey sub : root.getSubKeys()) {
+                parts = Iterables.toArray(Splitter.on('/').split(sub.name()), String.class);
+                Vector from = new Vector(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
+                        Integer.parseInt(parts[2]));
+                List<Vector> points = Lists.newArrayList();
+                for (DataKey path : sub.getIntegerSubKeys()) {
+                    parts = Iterables.toArray(Splitter.on('/').split(path.getString("")), String.class);
+                    points.add(new Vector(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
+                            Integer.parseInt(parts[2])));
+                }
+                cachedPaths.put(new SourceDestinationPair(from, to), points);
+            }
+        }
     }
 
     @Override
@@ -136,9 +170,20 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
     @Override
     public void save(DataKey key) {
         key.removeKey("points");
-        key = key.getRelative("points");
+        DataKey root = key.getRelative("points");
         for (int i = 0; i < waypoints.size(); ++i) {
-            PersistenceLoader.save(waypoints.get(i), key.getRelative(i));
+            PersistenceLoader.save(waypoints.get(i), root.getRelative(i));
+        }
+        key.removeKey("cache");
+        if (cachePaths) {
+            for (Map.Entry<SourceDestinationPair, Iterable<Vector>> entry : cachedPaths.entrySet()) {
+                root = key.getRelative("cache." + entry.getKey().getToKey() + "." + entry.getKey().getFromKey());
+                Vector[] path = Iterables.toArray(entry.getValue(), Vector.class);
+                for (int i = 0; i < path.length; i++) {
+                    root.setString(Integer.toString(i),
+                            Joiner.on('/').join(path[i].getBlockX(), path[i].getBlockY(), path[i].getBlockZ()));
+                }
+            }
         }
     }
 
@@ -478,23 +523,106 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             }
             this.selector = selector;
             Waypoint next = itr.next();
-            Location npcLoc = npc.getEntity().getLocation(cachedLocation);
+            final Location npcLoc = npc.getEntity().getLocation(cachedLocation);
             if (npcLoc.getWorld() != next.getLocation().getWorld() || npcLoc.distanceSquared(next.getLocation()) < npc
                     .getNavigator().getLocalParameters().distanceMargin()) {
                 return false;
             }
             currentDestination = next;
-            getNavigator().setTarget(currentDestination.getLocation());
+            if (cachePaths) {
+                SourceDestinationPair key = new SourceDestinationPair(npcLoc, currentDestination);
+                Iterable<Vector> cached = cachedPaths.get(key);
+                if (cached != null) {
+                    if (!key.verify(npcLoc.getWorld(), cached)) {
+                        cachedPaths.remove(key);
+                    } else {
+                        getNavigator().setTarget(cached);
+                    }
+                }
+            }
+            if (!getNavigator().isNavigating()) {
+                getNavigator().setTarget(currentDestination.getLocation());
+            }
             getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(@Nullable CancelReason cancelReason) {
                     if (npc.isSpawned() && currentDestination != null
                             && Util.locationWithinRange(npc.getStoredLocation(), currentDestination.getLocation(), 2)) {
                         currentDestination.onReach(npc);
+                        if (cachePaths && cancelReason == null) {
+                            cachedPaths.put(new SourceDestinationPair(npcLoc, currentDestination),
+                                    getNavigator().getPathStrategy().getPath());
+                        }
                     }
                     selector.finish();
                 }
             });
+            return true;
+        }
+    }
+
+    private static class SourceDestinationPair {
+        private final Vector from;
+        private final Vector to;
+
+        public SourceDestinationPair(Location npcLoc, Waypoint to) {
+            this(new Vector(npcLoc.getBlockX(), npcLoc.getBlockY(), npcLoc.getBlockZ()), to.getLocation().toVector());
+        }
+
+        public SourceDestinationPair(Vector from, Vector to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            SourceDestinationPair other = (SourceDestinationPair) obj;
+            if (from == null) {
+                if (other.from != null) {
+                    return false;
+                }
+            } else if (!from.equals(other.from)) {
+                return false;
+            }
+            if (to == null) {
+                if (other.to != null) {
+                    return false;
+                }
+            } else if (!to.equals(other.to)) {
+                return false;
+            }
+            return true;
+        }
+
+        public String getFromKey() {
+            return Joiner.on('/').join(from.getBlockX(), from.getBlockY(), from.getBlockZ());
+        }
+
+        public String getToKey() {
+            return Joiner.on('/').join(to.getBlockX(), to.getBlockY(), to.getBlockZ());
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = prime + ((from == null) ? 0 : from.hashCode());
+            return prime * result + ((to == null) ? 0 : to.hashCode());
+        }
+
+        public boolean verify(World world, Iterable<Vector> cached) {
+            for (Vector vector : cached) {
+                if (!MinecraftBlockExaminer
+                        .canStandOn(world.getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ())
+                                .getRelative(BlockFace.DOWN))) {
+                    return false;
+                }
+            }
             return true;
         }
     }

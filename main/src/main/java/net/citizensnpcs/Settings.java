@@ -73,6 +73,7 @@ public class Settings {
         DEBUG_FILE("general.debug-file", ""),
         DEBUG_MODE("general.debug-mode", false),
         DEBUG_PATHFINDING("general.debug-pathfinding", false),
+        DEFAULT_CACHE_WAYPOINT_PATHS("npc.default.waypoints.cache-paths", false),
         DEFAULT_DISTANCE_MARGIN("npc.pathfinding.default-distance-margin", 2),
         DEFAULT_LOOK_CLOSE("npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("npc.default.look-close.range", 5),
