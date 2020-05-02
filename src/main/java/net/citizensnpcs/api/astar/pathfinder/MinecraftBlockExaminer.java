@@ -24,8 +24,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     @Override
     public float getCost(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
-        Material above = source.getMaterialAt(pos.clone().add(UP));
-        Material below = source.getMaterialAt(pos.clone().add(DOWN));
+        Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
+        Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
         Material in = source.getMaterialAt(pos);
         if (above == WEB || in == WEB)
             return 1F;
@@ -46,13 +46,13 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         if (pos.getBlockY() <= 0 || pos.getBlockY() >= 255) {
             return PassableState.UNPASSABLE;
         }
-        Material above = source.getMaterialAt(pos.clone().add(UP));
-        Material below = source.getMaterialAt(pos.clone().add(DOWN));
+        Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
+        Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
         Material in = source.getMaterialAt(pos);
         if (!below.isBlock() || !canStandOn(below)) {
             return PassableState.UNPASSABLE;
         }
-        if ((isClimbable(above) && isClimbable(in)) || (isClimbable(in) && isClimbable(below))) {
+        if (isClimbable(in) && (isClimbable(above) || isClimbable(below))) {
             point.addCallback(new LadderClimber());
         } else if (!canStandIn(above) || !canStandIn(in)) {
             return PassableState.UNPASSABLE;
@@ -136,7 +136,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     public static Location findRandomValidLocation(Location base, int xrange, int yrange,
             Function<Block, Boolean> filter, Random random) {
-        Location found = null;
         for (int i = 0; i < 10; i++) {
             int x = base.getBlockX() + random.nextInt(2 * xrange + 1) - xrange;
             int y = base.getBlockY() + random.nextInt(2 * yrange + 1) - yrange;
@@ -146,11 +145,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 if (filter != null && !filter.apply(block)) {
                     continue;
                 }
-                found = block.getLocation().add(0, 1, 0);
-                break;
+                return block.getLocation().add(0, 1, 0);
             }
         }
-        return found;
+        return null;
     }
 
     public static Location findValidLocation(Location location, int radius) {
@@ -161,7 +159,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
                     Block relative = base.getRelative(x, y, z);
-                    if (canStandOn(base.getRelative(BlockFace.DOWN))) {
+                    if (canStandOn(relative.getRelative(BlockFace.DOWN))) {
                         return relative.getLocation();
                     }
                 }
@@ -178,7 +176,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
                     Block relative = base.getRelative(x, y, z);
-                    if (canStandOn(base.getRelative(BlockFace.DOWN))) {
+                    if (canStandOn(relative.getRelative(BlockFace.DOWN))) {
                         return relative.getLocation();
                     }
                 }
@@ -207,12 +205,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     private static final Set<Material> DOORS = EnumSet.of(Material.SPRUCE_DOOR, Material.BIRCH_DOOR,
             Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR);
-    private static final Vector DOWN = new Vector(0, -1, 0);
     private static final Set<Material> LIQUIDS = EnumSet.of(Material.WATER, Material.LAVA);
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
             Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
     private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.CACTUS);
-    private static final Vector UP = new Vector(0, 1, 0);
     private static Material WEB = SpigotUtil.isUsing1_13API() ? Material.COBWEB : Material.valueOf("WEB");
 
     static {

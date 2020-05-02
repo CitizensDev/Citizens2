@@ -16,6 +16,7 @@ public class VectorNode extends AStarNode implements PathPoint {
     List<PathCallback> callbacks;
     private final PathInfo info;
     Vector location;
+    Vector locationClone;
 
     public VectorNode(VectorGoal goal, Location location, BlockSource source, BlockExaminer... examiners) {
         this(null, goal, location.toVector(), source, examiners);
@@ -29,7 +30,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     public VectorNode(VectorNode parent, VectorGoal goal, Vector location, BlockSource source,
             BlockExaminer... examiners) {
-        this(parent, location, new PathInfo(source, examiners == null ? new BlockExaminer[] {} : examiners, goal));
+        this(parent, location, new PathInfo(source, examiners == null ? EMPTY_BLOCK_EXAMINER : examiners, goal));
     }
 
     @Override
@@ -42,8 +43,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public Plan buildPlan() {
-        Iterable<VectorNode> parents = getParents();
-        return new Path(parents);
+        return new Path(getParents());
     }
 
     @Override
@@ -117,18 +117,19 @@ public class VectorNode extends AStarNode implements PathPoint {
                 for (int z = -1; z <= 1; z++) {
                     if (x == 0 && y == 0 && z == 0)
                         continue;
-                    Vector mod = location.clone().add(new Vector(x, y, z));
-                    if (mod.getBlockY() < 0 || mod.getBlockY() > 255) {
+                    int modY = location.getBlockY() + y;
+                    if (modY < 0 || modY > 255) {
                         continue;
                     }
+                    Vector mod = location.clone().add(new Vector(x, y, z));
+                    if (mod.equals(location))
+                        continue;
                     if (x != 0 && z != 0) {
-                        if (!isPassable(point.createAtOffset((location.clone().add(new Vector(x, y, 0)))))
-                                || !isPassable(point.createAtOffset((location.clone().add(new Vector(0, y, z)))))) {
+                        if (!isPassable(point.createAtOffset(location.clone().add(new Vector(x, y, 0))))
+                                || !isPassable(point.createAtOffset(location.clone().add(new Vector(0, y, z))))) {
                             continue;
                         }
                     }
-                    if (mod.equals(location))
-                        continue;
                     neighbours.add(point.createAtOffset(mod));
                 }
             }
@@ -143,7 +144,10 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public Vector getVector() {
-        return location.clone();
+        if (locationClone == null) {
+            locationClone = location.clone();
+        }
+        return locationClone.setX(location.getBlockX()).setY(location.getBlockY()).setZ(location.getBlockZ());
     }
 
     @Override
@@ -184,5 +188,6 @@ public class VectorNode extends AStarNode implements PathPoint {
         }
     }
 
+    private static final BlockExaminer[] EMPTY_BLOCK_EXAMINER = new BlockExaminer[] {};
     private static final float TIEBREAKER = 1.001f;
 }

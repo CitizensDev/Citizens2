@@ -23,8 +23,9 @@ public class SwimmingExaminer implements BlockExaminer {
     public float getCost(BlockSource source, PathPoint point) {
         if (SpigotUtil.isUsing1_13API() && npc.getEntity() instanceof WaterMob) {
             Material in = source.getMaterialAt(point.getVector());
-            if (!MinecraftBlockExaminer.isLiquid(in))
+            if (!MinecraftBlockExaminer.isLiquid(in)) {
                 return 0.5F;
+            }
         }
         return 0;
     }
