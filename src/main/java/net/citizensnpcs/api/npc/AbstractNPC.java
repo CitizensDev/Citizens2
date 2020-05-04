@@ -40,6 +40,7 @@ import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.Placeholders;
 
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
@@ -207,7 +208,7 @@ public abstract class AbstractNPC implements NPC {
                     "to", name.substring(0, nameLength));
             name = name.substring(0, nameLength);
         }
-        return name;
+        return Placeholders.replace(Colorizer.parseColors(name), null, this);
     }
 
     @Override
