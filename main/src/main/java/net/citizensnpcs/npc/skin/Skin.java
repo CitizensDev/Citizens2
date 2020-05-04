@@ -136,10 +136,15 @@ public class Skin {
 
         NPC npc = entity.getNPC();
 
-        if (npc.isSpawned()) {
-            npc.despawn(DespawnReason.PENDING_RESPAWN);
-            npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
-        }
+        if (!npc.isSpawned())
+            return;
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                npc.despawn(DespawnReason.PENDING_RESPAWN);
+                npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
+            }
+        });
     }
 
     private void fetch() {

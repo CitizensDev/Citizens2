@@ -77,7 +77,6 @@ import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
-import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
@@ -409,7 +408,7 @@ public class NPCCommands {
             permission = "citizens.npc.create")
     @Requirements
     public void create(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        String name = Placeholders.replace(Colorizer.parseColors(args.getJoinedStrings(1).trim()), sender, null);
+        String name = Colorizer.parseColors(args.getJoinedStrings(1).trim());
         EntityType type = EntityType.PLAYER;
         if (args.hasValueFlag("type")) {
             String inputType = args.getFlag("type");
