@@ -420,7 +420,6 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onNPCSpawn(NPCSpawnEvent event) {
-        toRespawn.remove(new ChunkCoord(event.getNPC().getStoredLocation()), event.getNPC());
         skinUpdateTracker.onNPCSpawn(event.getNPC());
     }
 
