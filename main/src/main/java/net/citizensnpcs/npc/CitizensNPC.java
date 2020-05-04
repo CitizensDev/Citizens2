@@ -252,9 +252,7 @@ public class CitizensNPC extends AbstractNPC {
             if (skinnable != null) {
                 skinnable.getSkinTracker().onSpawnNPC();
             }
-        }
-
-        if (!couldSpawn) {
+        } else {
             Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.",
                     Util.isLoaded(at) ? "Util.isLoaded true" : "Util.isLoaded false");
             // we need to wait for a chunk load before trying to spawn
@@ -313,6 +311,7 @@ public class CitizensNPC extends AbstractNPC {
 
         updateFlyableState();
 
+        Messaging.debug("Spawned", getId(), "SpawnReason." + reason);
         return true;
     }
 

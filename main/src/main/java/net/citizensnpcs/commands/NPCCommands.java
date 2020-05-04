@@ -2032,19 +2032,13 @@ public class NPCCommands {
     public void tphere(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.getSenderLocation() == null)
             throw new ServerCommandException();
+        if (!sender.hasPermission("citizens.npc.tphere.multiworld")
+                && npc.getStoredLocation().getWorld() != args.getSenderLocation().getWorld()) {
+            throw new CommandException(Messages.CANNOT_TELEPORT_ACROSS_WORLDS);
+        }
         if (!npc.isSpawned()) {
             npc.spawn(args.getSenderLocation(), SpawnReason.COMMAND);
-            if (!sender.hasPermission("citizens.npc.tphere.multiworld")
-                    && npc.getEntity().getLocation().getWorld() != args.getSenderLocation().getWorld()) {
-                npc.despawn(DespawnReason.REMOVAL);
-                throw new CommandException(Messages.CANNOT_TELEPORT_ACROSS_WORLDS);
-            }
         } else {
-            if (!sender.hasPermission("citizens.npc.tphere.multiworld")
-                    && npc.getEntity().getLocation().getWorld() != args.getSenderLocation().getWorld()) {
-                npc.despawn(DespawnReason.REMOVAL);
-                throw new CommandException(Messages.CANNOT_TELEPORT_ACROSS_WORLDS);
-            }
             npc.teleport(args.getSenderLocation(), TeleportCause.COMMAND);
         }
         Messaging.sendTr(sender, Messages.NPC_TELEPORTED, npc.getName());
