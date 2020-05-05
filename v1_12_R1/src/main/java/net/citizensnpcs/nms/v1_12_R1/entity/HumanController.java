@@ -68,7 +68,7 @@ public class HumanController extends AbstractEntityController {
 
                 if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
                     Scoreboard scoreboard = Util.getDummyScoreboard();
-                    String teamName = profile.getId().toString().substring(0, 16);
+                    String teamName = Util.getTeamName(profile.getId());
 
                     Team team = scoreboard.getTeam(teamName);
                     int mode = 2;
@@ -105,20 +105,6 @@ public class HumanController extends AbstractEntityController {
     public void remove() {
         Player entity = getBukkitEntity();
         if (entity != null) {
-            if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-                String teamName = entity.getUniqueId().toString().substring(0, 16);
-                Scoreboard scoreboard = Util.getDummyScoreboard();
-                Team team = scoreboard.getTeam(teamName);
-                if (team != null && team.hasPlayer(entity)) {
-                    if (team.getSize() == 1) {
-                        Util.sendTeamPacketToOnlinePlayers(team, 1);
-                        team.unregister();
-                    }
-                    else {
-                        team.removePlayer(entity);
-                    }
-                }
-            }
             NMS.removeFromWorld(entity);
             SkinnableEntity npc = entity instanceof SkinnableEntity ? (SkinnableEntity) entity : null;
             npc.getSkinTracker().onRemoveNPC();

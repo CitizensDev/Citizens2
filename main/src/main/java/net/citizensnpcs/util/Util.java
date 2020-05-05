@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -102,6 +103,10 @@ public class Util {
             MINECRAFT_REVISION = Bukkit.getServer().getClass().getPackage().getName();
         }
         return MINECRAFT_REVISION.substring(MINECRAFT_REVISION.lastIndexOf('.') + 2);
+    }
+
+    public static String getTeamName(UUID id) {
+        return "CIT-" + id.toString().replace("-", "").substring(0, 12);
     }
 
     public static boolean isAlwaysFlyable(EntityType type) {
