@@ -101,13 +101,16 @@ public class CommandTrait extends Trait {
                 for (NPCCommand command : commands.values()) {
                     if (command.hand != hand && command.hand != Hand.BOTH)
                         continue;
-                    PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
-                    if (info != null && !info.canUse(player, command)) {
-                        continue;
-                    }
                     Runnable runnable = new Runnable() {
                         @Override
                         public void run() {
+                            PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
+                            if (info == null && (command.cooldown > 0 || command.n > 0)) {
+                                cooldowns.put(player.getUniqueId().toString(), info = new PlayerNPCCommand());
+                            }
+                            if (info != null && !info.canUse(player, command)) {
+                                return;
+                            }
                             PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
                             if (temporaryPermissions.size() > 0) {
                                 for (String permission : temporaryPermissions) {
@@ -115,9 +118,6 @@ public class CommandTrait extends Trait {
                                 }
                             }
                             command.run(npc, player);
-                            if (command.cooldown > 0 && info == null) {
-                                cooldowns.put(player.getUniqueId().toString(), new PlayerNPCCommand(command));
-                            }
                             attachment.remove();
                         }
                     };
@@ -318,10 +318,6 @@ public class CommandTrait extends Trait {
         Map<String, Integer> nUsed = Maps.newHashMap();
 
         public PlayerNPCCommand() {
-        }
-
-        public PlayerNPCCommand(NPCCommand command) {
-            lastUsed.put(command.command, ((Number) (System.currentTimeMillis() / 1000)).longValue());
         }
 
         public boolean canUse(Player player, NPCCommand command) {
