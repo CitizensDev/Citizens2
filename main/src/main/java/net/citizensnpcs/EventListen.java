@@ -417,8 +417,7 @@ public class EventListen implements Listener {
                     + event.getReason().name());
         }
         skinUpdateTracker.onNPCDespawn(event.getNPC());
-        if (event.getNPC().getEntity() instanceof Player && !event.isCancelled()
-                && Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+        if (event.getNPC().getEntity() instanceof Player && Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             String teamName = event.getNPC().data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
             if (teamName.length() > 0) {
                 Player player = (Player) event.getNPC().getEntity();
