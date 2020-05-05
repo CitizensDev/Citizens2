@@ -218,7 +218,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getName() {
-        return Colorizer.stripColors(getFullName());
+        return Colorizer.stripColors(name);
     }
 
     @Override
