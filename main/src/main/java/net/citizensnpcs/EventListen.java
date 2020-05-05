@@ -50,6 +50,7 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
@@ -416,6 +417,22 @@ public class EventListen implements Listener {
                     + event.getReason().name());
         }
         skinUpdateTracker.onNPCDespawn(event.getNPC());
+        if (event.getNPC().getEntity() instanceof Player && Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+            String teamName = event.getNPC().data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+            if (teamName.length() > 0) {
+                Player player = (Player) event.getNPC().getEntity();
+                Team team = Util.getDummyScoreboard().getTeam(teamName);
+                if (team != null && team.hasPlayer(player)) {
+                    if (team.getSize() == 1) {
+                        Util.sendTeamPacketToOnlinePlayers(team, 1);
+                        team.unregister();
+                    }
+                    else {
+                        team.removePlayer(player);
+                    }
+                }
+            }
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
