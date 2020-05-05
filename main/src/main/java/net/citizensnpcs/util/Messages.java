@@ -240,6 +240,7 @@ public class Messages {
     public static final String PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET = "citizens.commands.npc.pathopt.distance-margin-set";
     public static final String PATHFINDING_OPTIONS_PATH_DISTANCE_MARGIN_SET = "citizens.commands.npc.pathopt.path-distance-margin-set";
     public static final String PATHFINDING_OPTIONS_STATIONARY_TICKS_SET = "citizens.commands.npc.pathopt.stationary-ticks-set";
+    public static final String PATHFINDING_OPTIONS_USE_NEW_FINDER = "citizens.commands.npc.pathopt.use-new-finder";
     public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
     public static final String PHANTOM_STATE_SET = "citizens.commands.npc.phantom.phantom-set";
     public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";

@@ -1208,56 +1208,61 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathopt --avoid-water|aw [true|false] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin]",
+            usage = "pathopt --avoid-water|aw [true|false] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --use-new-finder [true|false]",
             desc = "Sets an NPC's pathfinding options",
             modifiers = { "pathopt", "po", "patho" },
             min = 1,
             max = 1,
             permission = "citizens.npc.pathfindingoptions")
     public void pathfindingOptions(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        boolean found = false;
+        String output = "";
         if (args.hasValueFlag("avoid-water") || args.hasValueFlag("aw")) {
             String raw = args.getFlag("avoid-water", args.getFlag("aw"));
             boolean avoid = Boolean.parseBoolean(raw);
             npc.getNavigator().getDefaultParameters().avoidWater(avoid);
-            Messaging.sendTr(sender, avoid ? Messages.PATHFINDING_OPTIONS_AVOID_WATER_SET
+            output += Messaging.tr(avoid ? Messages.PATHFINDING_OPTIONS_AVOID_WATER_SET
                     : Messages.PATHFINDING_OPTIONS_AVOID_WATER_UNSET, npc.getName());
-            found = true;
         }
         if (args.hasValueFlag("stationary-ticks")) {
             int ticks = Integer.parseInt(args.getFlag("stationary-ticks"));
             if (ticks < 0)
-                throw new CommandException();
+                throw new CommandUsageException();
             npc.getNavigator().getDefaultParameters().stationaryTicks(ticks);
-            Messaging.sendTr(sender, Messages.PATHFINDING_OPTIONS_STATIONARY_TICKS_SET, npc.getName(), ticks);
-            found = true;
+            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_STATIONARY_TICKS_SET, npc.getName(), ticks);
         }
         if (args.hasValueFlag("distance-margin")) {
             double distance = Double.parseDouble(args.getFlag("distance-margin"));
             if (distance < 0)
-                throw new CommandException();
+                throw new CommandUsageException();
             npc.getNavigator().getDefaultParameters().distanceMargin(Math.pow(distance, 2));
-            Messaging.sendTr(sender, Messages.PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET, npc.getName(), distance);
-            found = true;
+            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET, npc.getName(), distance);
+
         }
         if (args.hasValueFlag("path-distance-margin")) {
             double distance = Double.parseDouble(args.getFlag("path-distance-margin"));
             if (distance < 0)
-                throw new CommandException();
+                throw new CommandUsageException();
             npc.getNavigator().getDefaultParameters().pathDistanceMargin(Math.pow(distance, 2));
-            Messaging.sendTr(sender, Messages.PATHFINDING_OPTIONS_PATH_DISTANCE_MARGIN_SET, npc.getName(), distance);
-            found = true;
+            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_PATH_DISTANCE_MARGIN_SET, npc.getName(), distance);
         }
         if (args.hasValueFlag("attack-range")) {
             double range = Double.parseDouble(args.getFlag("attack-range"));
             if (range < 0)
-                throw new CommandException();
+                throw new CommandUsageException();
             npc.getNavigator().getDefaultParameters().attackRange(range);
-            Messaging.sendTr(sender, Messages.PATHFINDING_OPTIONS_ATTACK_RANGE_SET, npc.getName(), range);
-            found = true;
+            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_ATTACK_RANGE_SET, npc.getName(), range);
         }
-        if (!found) {
-            throw new CommandException();
+        if (args.hasValueFlag("use-new-finder")) {
+            String raw = args.getFlag("use-new-finder", args.getFlag("unf"));
+            boolean use = Boolean.parseBoolean(raw);
+            npc.getNavigator().getDefaultParameters().useNewPathfinder(use);
+            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_USE_NEW_FINDER, npc.getName(), use);
+
+        }
+        if (output.isEmpty()) {
+            throw new CommandUsageException();
+        } else {
+            Messaging.send(sender, output);
         }
     }
 
