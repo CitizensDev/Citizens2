@@ -145,6 +145,10 @@ public class AStarMachine<N extends AStarNode, P extends Plan> {
         public N getBestNode() {
             return (N) storage.getBestNode();
         }
+
+        public boolean isEmpty() {
+            return storage.getBestNode() == null;
+        }
     }
 
     /**

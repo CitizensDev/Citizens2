@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
  * for the open/closed sets.
  */
 public class SimpleAStarStorage implements AStarStorage {
-    private final Map<AStarNode, Float> closed = Maps.newHashMapWithExpectedSize(256);
+    private final Map<AStarNode, Float> closed = Maps.newHashMapWithExpectedSize(512);
     private final Map<AStarNode, Float> open = Maps.newHashMapWithExpectedSize(128);
     private final Queue<AStarNode> queue = new PriorityQueue<AStarNode>(128);
 
