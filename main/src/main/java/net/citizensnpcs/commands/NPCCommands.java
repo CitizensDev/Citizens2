@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -113,9 +115,16 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
+import javax.net.ssl.HttpsURLConnection;
+
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
     private final NPCSelector selector;
+
+    private static final String URL_FORMAT = "https://api.mineskin.org/generate/url?url=%s";
+    private static final String USER_AGENT = "MineSkin-JavaClient";
+
+    private long nextMineskinRequest = 0;
 
     public NPCCommands(Citizens plugin) {
         selector = plugin.getNPCSelector();
@@ -1671,21 +1680,31 @@ public class NPCCommands {
             trait.clearTexture();
         } else if (args.hasValueFlag("url")) {
             final String url = args.getFlag("url");
-            Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), new Runnable() {
+            new BukkitRunnable() {
                 @Override
                 public void run() {
-                    DataOutputStream out = null;
+                    if (System.currentTimeMillis() < nextMineskinRequest) {
+                        long delay = (nextMineskinRequest - System.currentTimeMillis());
+                        try {
+                            Thread.sleep(delay + 1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     BufferedReader reader = null;
                     try {
-                        URL target = new URL("https://api.mineskin.org/generate/url");
+                        URL target = new URL(String.format(URL_FORMAT, url));
+
                         HttpURLConnection con = (HttpURLConnection) target.openConnection();
                         con.setRequestMethod("POST");
-                        con.setDoOutput(true);
                         con.setConnectTimeout(1000);
-                        con.setReadTimeout(10000);
-                        out = new DataOutputStream(con.getOutputStream());
-                        out.writeBytes("url=" + URLEncoder.encode(url, "UTF-8"));
-                        out.close();
+                        con.setReadTimeout(20000);
+                        con.setRequestProperty("User-Agent", USER_AGENT);
+                        con.setRequestProperty("Accept", "*/*");
+                        con.setRequestProperty("Content-Length", "0");
+                        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
                         reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                         JSONObject output = (JSONObject) new JSONParser().parse(reader);
                         JSONObject data = (JSONObject) output.get("data");
@@ -1694,36 +1713,26 @@ public class NPCCommands {
                         String textureEncoded = (String) texture.get("value");
                         String signature = (String) texture.get("signature");
                         con.disconnect();
-                        Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
-                                trait.setSkinPersistent(uuid, signature, textureEncoded);
-                                Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url);
-                            }
+
+                        Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> {
+                            trait.setSkinPersistent(uuid, signature, textureEncoded);
+                            Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url);
                         });
                     } catch (Throwable t) {
-                        Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
-                                Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url);
-                            }
-                        });
+                        t.printStackTrace();
+                        Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url));
                     } finally {
-                        if (out != null) {
-                            try {
-                                out.close();
-                            } catch (IOException e) {
-                            }
-                        }
                         if (reader != null) {
                             try {
                                 reader.close();
                             } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
                     }
                 }
-            });
+            }.runTaskAsynchronously(CitizensAPI.getPlugin());
+
             return;
         } else if (args.hasFlag('t')) {
             if (args.argsLength() != 4)
