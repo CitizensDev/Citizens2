@@ -16,7 +16,7 @@
 		<craftbukkit.version>1.15.2-R0.1-SNAPSHOT</craftbukkit.version>
 		<citizensapi.version>${project.version}</citizensapi.version>
 		<powermock.version>1.4.12</powermock.version>
-		<bstats.version>1.5</bstats.version>
+		<bstats.version>1.7</bstats.version>
 	</properties>
 
 	<repositories>

@@ -454,7 +454,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void startMetrics() {
         try {
-            Metrics metrics = new Metrics(this);
+            Metrics metrics = new Metrics(this, 2463);
 
             metrics.addCustomChart(new Metrics.SingleLineChart("total_npcs", new Callable<Integer>() {
                 @Override
@@ -464,10 +464,15 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     return Iterables.size(npcRegistry);
                 }
             }));
-
-            // todo: Read the comment in CitizensTraitFactory.
-            // traitFactory.addPlotters(metrics.createGraph("traits"));
-
+            /*
+            TODO: not implemented yet
+            metrics.addCustomChart(new Metrics.MultiLineChart("traits", new Callable<Map<String, Integer>>() {
+                @Override
+                public Map<String, Integer> call() throws Exception {
+                    return traitFactory.getTraitPlot();
+                }
+            }));
+            */
         } catch (Exception e) {
             Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
         }

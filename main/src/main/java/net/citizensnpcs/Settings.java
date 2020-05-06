@@ -57,6 +57,7 @@ public class Settings {
     }
 
     public enum Setting {
+        ASTAR_ITERATIONS_PER_TICK("npc.pathfinding.new-finder.iterations-per-tick", 25000),
         AUTH_SERVER_URL("general.authlib.profile-url", "https://sessionserver.mojang.com/session/minecraft/profile/"),
         CHAT_BYSTANDERS_HEAR_TARGETED_CHAT("npc.chat.options.bystanders-hear-targeted-chat", true),
         CHAT_FORMAT("npc.chat.format.no-targets", "[<npc>]: <text>"),
