@@ -249,7 +249,7 @@ public class Commands {
             min = 1,
             max = 1,
             permission = "citizens.npc.mushroomcow")
-    @Requirements(selected = true, ownership = true, types = { EntityType.SHULKER })
+    @Requirements(selected = true, ownership = true, types = { EntityType.MUSHROOM_COW })
     public void mushroomcow(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         MushroomCowTrait trait = npc.getTrait(MushroomCowTrait.class);
         boolean hasArg = false;

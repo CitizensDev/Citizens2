@@ -210,7 +210,7 @@ public class Commands {
             min = 1,
             max = 1,
             permission = "citizens.npc.mushroomcow")
-    @Requirements(selected = true, ownership = true, types = { EntityType.SHULKER })
+    @Requirements(selected = true, ownership = true, types = { EntityType.MUSHROOM_COW })
     public void mushroomcow(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         MushroomCowTrait trait = npc.getTrait(MushroomCowTrait.class);
         boolean hasArg = false;
@@ -377,6 +377,29 @@ public class Commands {
 
     @Command(
             aliases = { "npc" },
+            usage = "snowman (-d[erp])",
+            desc = "Sets snowman modifiers.",
+            modifiers = { "snowman" },
+            min = 1,
+            max = 1,
+            flags = "d",
+            permission = "citizens.npc.snowman")
+    @Requirements(selected = true, ownership = true, types = { EntityType.SNOWMAN })
+    public void snowman(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        SnowmanTrait trait = npc.getTrait(SnowmanTrait.class);
+        boolean hasArg = false;
+        if (args.hasFlag('d')) {
+            boolean isDerp = trait.toggleDerp();
+            Messaging.sendTr(sender, isDerp ? Messages.SNOWMAN_DERP_SET : Messages.SNOWMAN_DERP_STOPPED, npc.getName());
+            hasArg = true;
+        }
+        if (!hasArg) {
+            throw new CommandUsageException();
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "tfish (--body color) (--pattern pattern) (--patterncolor color)",
             desc = "Sets tropical fish modifiers",
             modifiers = { "tfish" },
@@ -461,29 +484,6 @@ public class Commands {
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
         } else {
-            throw new CommandUsageException();
-        }
-    }
-    
-    @Command(
-            aliases = { "npc" },
-            usage = "snowman (-d[erp])",
-            desc = "Sets snowman modifiers.",
-            modifiers = { "snowman" },
-            min = 1,
-            max = 1,
-            flags = "d",
-            permission = "citizens.npc.snowman")
-    @Requirements(selected = true, ownership = true, types = { EntityType.SNOWMAN })
-    public void snowman(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        SnowmanTrait trait = npc.getTrait(SnowmanTrait.class);
-        boolean hasArg = false;
-        if (args.hasFlag('d')) {
-            boolean isDerp = trait.toggleDerp();
-            Messaging.sendTr(sender, isDerp ? Messages.SNOWMAN_DERP_SET : Messages.SNOWMAN_DERP_STOPPED, npc.getName());
-            hasArg = true;
-        }
-        if (!hasArg) {
             throw new CommandUsageException();
         }
     }
