@@ -514,7 +514,7 @@ public class CommandManager implements TabCompleter {
 
         private Collection<String> calculateValueFlags() {
             valueFlags = new ArrayList<String>();
-            String[] usage = commandAnnotation.usage().split(" ");
+            String[] usage = commandAnnotation.usage().replace("(", "").replace(")", "").split(" ");
             for (String part : usage) {
                 if (part.startsWith("--")) {
                     valueFlags.add(part.split("\\|")[0].replace("--", ""));
