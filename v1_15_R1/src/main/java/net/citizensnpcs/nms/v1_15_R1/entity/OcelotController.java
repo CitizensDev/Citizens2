@@ -18,6 +18,7 @@ import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.DamageSource;
 import net.minecraft.server.v1_15_R1.DataWatcherObject;
 import net.minecraft.server.v1_15_R1.EntityOcelot;
+import net.minecraft.server.v1_15_R1.EntityPose;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.IBlockData;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
@@ -195,7 +196,12 @@ public class OcelotController extends MobEntityController {
 
         @Override
         public void mobTick() {
+            EntityPose old = this.getPose();
+            boolean restorePose = !this.getControllerMove().b();
             super.mobTick();
+            if (restorePose) {
+                this.setPose(old);
+            }
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();

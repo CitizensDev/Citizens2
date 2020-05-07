@@ -30,15 +30,15 @@ public class CatTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Cat) {
-            Cat cat = (Cat) npc.getEntity();
-            cat.setSitting(sitting);
-            cat.setCatType(type);
-            if (collarColor != null) {
-                cat.setCollarColor(collarColor);
-            }
-            NMS.setLyingDown(cat, lying);
+        if (!(npc.getEntity() instanceof Cat))
+            return;
+        Cat cat = (Cat) npc.getEntity();
+        cat.setSitting(sitting);
+        cat.setCatType(type);
+        if (collarColor != null) {
+            cat.setCollarColor(collarColor);
         }
+        NMS.setLyingDown(cat, lying);
     }
 
     public void setCollarColor(DyeColor color) {

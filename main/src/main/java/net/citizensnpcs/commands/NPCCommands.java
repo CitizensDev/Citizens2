@@ -1166,6 +1166,9 @@ public class NPCCommands {
                 throw new CommandException(Messages.INVALID_OCELOT_TYPE, valid);
             }
             trait.setType(type);
+            if (!trait.supportsOcelotType()) {
+                Messaging.sendErrorTr(sender, Messages.OCELOT_TYPE_DEPRECATED);
+            }
         }
     }
 
@@ -1249,7 +1252,7 @@ public class NPCCommands {
             double range = Double.parseDouble(args.getFlag("attack-range"));
             if (range < 0)
                 throw new CommandUsageException();
-            npc.getNavigator().getDefaultParameters().attackRange(range);
+            npc.getNavigator().getDefaultParameters().attackRange(Math.pow(range, 2));
             output += Messaging.tr(Messages.PATHFINDING_OPTIONS_ATTACK_RANGE_SET, npc.getName(), range);
         }
         if (args.hasValueFlag("use-new-finder")) {
@@ -1257,7 +1260,6 @@ public class NPCCommands {
             boolean use = Boolean.parseBoolean(raw);
             npc.getNavigator().getDefaultParameters().useNewPathfinder(use);
             output += Messaging.tr(Messages.PATHFINDING_OPTIONS_USE_NEW_FINDER, npc.getName(), use);
-
         }
         if (output.isEmpty()) {
             throw new CommandUsageException();

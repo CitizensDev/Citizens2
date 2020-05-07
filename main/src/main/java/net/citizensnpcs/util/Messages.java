@@ -222,6 +222,7 @@ public class Messages {
     public static final String NPC_TELEPORTED = "citizens.commands.npc.tphere.teleported";
     public static final String NPCS_REMOVED = "citizens.commands.npc.remove.npcs-removed";
     public static final String NUM_LOADED_NOTIFICATION = "citizens.notifications.npcs-loaded";
+    public static final String OCELOT_TYPE_DEPRECATED = "citizens.commands.npc.ocelot.deprecated";
     public static final String OVER_NPC_LIMIT = "citizens.limits.over-npc-limit";
     public static final String OWNER_SET = "citizens.commands.npc.owner.set";
     public static final String OWNER_SET_SERVER = "citizens.commands.npc.owner.set-server";

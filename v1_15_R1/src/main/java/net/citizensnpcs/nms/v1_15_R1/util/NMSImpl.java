@@ -190,6 +190,7 @@ import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
+import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.trait.versioned.VillagerTrait;
 import net.citizensnpcs.util.BoundingBox;
@@ -692,6 +693,7 @@ public class NMSImpl implements NMSBridge {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SnowmanTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TropicalFishTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(VillagerTrait.class));
         manager.register(Commands.class);
@@ -1137,7 +1139,12 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setSitting(Ocelot ocelot, boolean sitting) {
-        // sitting removed
+        if (SET_POSE == null)
+            return;
+        try {
+            SET_POSE.invoke(getHandle(ocelot), sitting ? EntityPose.CROUCHING : EntityPose.STANDING);
+        } catch (Throwable e) {
+        }
     }
 
     @Override
@@ -1662,6 +1669,7 @@ public class NMSImpl implements NMSBridge {
     public static void resetPuffTicks(EntityPufferFish fish) {
         try {
             PUFFERFISH_C.invoke(fish, 0);
+            PUFFERFISH_D.invoke(fish, 0);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1842,8 +1850,10 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(PlayerChunkMap.class,
             "viewDistance");
     private static final MethodHandle PUFFERFISH_C = NMS.getSetter(EntityPufferFish.class, "c");
+    private static final MethodHandle PUFFERFISH_D = NMS.getSetter(EntityPufferFish.class, "d");
     private static final MethodHandle RABBIT_DATAWATCHER_FIELD = NMS.getGetter(EntityRabbit.class, "bw");
     private static final Random RANDOM = Util.getFastRandom();
+    private static final MethodHandle SET_POSE = NMS.getMethodHandle(Entity.class, "setPose", true, EntityPose.class);
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
     private static Field SKULL_PROFILE_FIELD;

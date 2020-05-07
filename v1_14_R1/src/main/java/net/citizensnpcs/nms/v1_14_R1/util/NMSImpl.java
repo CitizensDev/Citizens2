@@ -1669,6 +1669,7 @@ public class NMSImpl implements NMSBridge {
     public static void resetPuffTicks(EntityPufferFish fish) {
         try {
             PUFFERFISH_C.invoke(fish, 0);
+            PUFFERFISH_D.invoke(fish, 0);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1823,6 +1824,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(PlayerChunkMap.class,
             "viewDistance");
     private static final MethodHandle PUFFERFISH_C = NMS.getSetter(EntityPufferFish.class, "c");
+    private static final MethodHandle PUFFERFISH_D = NMS.getSetter(EntityPufferFish.class, "d");
     private static final MethodHandle RABBIT_FIELD = NMS.getGetter(EntityRabbit.class, "bz");
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");

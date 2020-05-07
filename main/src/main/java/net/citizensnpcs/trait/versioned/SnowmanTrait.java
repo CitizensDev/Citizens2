@@ -1,13 +1,10 @@
 package net.citizensnpcs.trait.versioned;
 
-import org.bukkit.DyeColor;
-import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Snowman;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.util.NMS;
 
 @TraitName("snowmantrait")
 public class SnowmanTrait extends Trait {

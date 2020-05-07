@@ -13,6 +13,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.ControllerMove;
@@ -77,8 +78,9 @@ public class PufferFishController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override
@@ -173,6 +175,9 @@ public class PufferFishController extends MobEntityController {
             super.mobTick();
             if (npc != null) {
                 npc.update();
+                if (npc.hasTrait(PufferFishTrait.class)) {
+                    setPuffState(npc.getTrait(PufferFishTrait.class).getPuffState());
+                }
             }
         }
 

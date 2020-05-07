@@ -13,11 +13,14 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.ControllerMove;
 import net.minecraft.server.v1_14_R1.DamageSource;
+import net.minecraft.server.v1_14_R1.EntityPose;
 import net.minecraft.server.v1_14_R1.EntityPufferFish;
+import net.minecraft.server.v1_14_R1.EntitySize;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
@@ -59,6 +62,14 @@ public class PufferFishController extends MobEntityController {
         }
 
         @Override
+        public EntitySize a(EntityPose entitypose) {
+            if (npc == null) {
+                return super.a(entitypose);
+            }
+            return super.a(entitypose).a(1 / s(getPuffState())).a(0.5F);
+        }
+
+        @Override
         public void b(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
@@ -77,8 +88,9 @@ public class PufferFishController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override
@@ -205,13 +217,23 @@ public class PufferFishController extends MobEntityController {
 
         @Override
         public void tick() {
-            int lastPuffState = getPuffState();
             if (npc != null) {
                 NMSImpl.resetPuffTicks(this);
             }
             super.tick();
-            if (npc != null) {
-                setPuffState(lastPuffState);
+            if (npc != null && npc.hasTrait(PufferFishTrait.class)) {
+                setPuffState(npc.getTrait(PufferFishTrait.class).getPuffState());
+            }
+        }
+
+        private static float s(int i) {
+            switch (i) {
+                case 0:
+                    return 0.5F;
+                case 1:
+                    return 0.7F;
+                default:
+                    return 1.0F;
             }
         }
     }

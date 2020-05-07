@@ -24,6 +24,11 @@ public class OcelotModifiers extends Trait {
         super("ocelotmodifiers");
     }
 
+    private void migrateToCat() {
+        npc.getTrait(CatTrait.class).setSitting(sitting);
+        npc.getTrait(CatTrait.class).setType(type);
+    }
+
     @Override
     public void onSpawn() {
         updateModifiers();
@@ -39,18 +44,26 @@ public class OcelotModifiers extends Trait {
         updateModifiers();
     }
 
+    public boolean supportsOcelotType() {
+        return SUPPORTS_CAT_TYPE;
+    }
+
     private void updateModifiers() {
-        if (npc.getEntity() instanceof Ocelot) {
-            Ocelot ocelot = (Ocelot) npc.getEntity();
-            try {
-                ocelot.setCatType(type);
-            } catch (UnsupportedOperationException ex) {
-                npc.getTrait(CatTrait.class).setSitting(sitting);
-                npc.getTrait(CatTrait.class).setType(type);
-                npc.removeTrait(OcelotModifiers.class);
-                return;
-            }
-            NMS.setSitting(ocelot, sitting);
+        if (!(npc.getEntity() instanceof Ocelot))
+            return;
+        Ocelot ocelot = (Ocelot) npc.getEntity();
+        NMS.setSitting(ocelot, sitting);
+        if (!SUPPORTS_CAT_TYPE) {
+            migrateToCat();
+            return;
+        }
+        try {
+            ocelot.setCatType(type);
+        } catch (UnsupportedOperationException ex) {
+            migrateToCat();
+            SUPPORTS_CAT_TYPE = false;
         }
     }
+
+    private static boolean SUPPORTS_CAT_TYPE = true;
 }
