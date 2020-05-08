@@ -1804,7 +1804,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "sound (--death [death sound|d]) (--ambient [ambient sound|d]) (--hurt [hurt sound|d]) (-n(one)) (-d(efault))",
+            usage = "sound (--death [death sound|d]) (--ambient [ambient sound|d]) (--hurt [hurt sound|d]) (-n(one)/-s(ilent)) (-d(efault))",
             desc = "Sets an NPC's played sounds",
             modifiers = { "sound" },
             flags = "dns",
@@ -1821,12 +1821,16 @@ public class NPCCommands {
             return;
         }
 
-        if (args.hasFlag('n') || args.hasFlag('s')) {
+        if (args.hasFlag('n')) {
             ambientSound = deathSound = hurtSound = "";
             npc.data().setPersistent(NPC.SILENT_METADATA, true);
         }
+        if (args.hasFlag('s')) {
+            npc.data().setPersistent(NPC.SILENT_METADATA, !npc.data().get(NPC.SILENT_METADATA, false));
+        }
         if (args.hasFlag('d')) {
             ambientSound = deathSound = hurtSound = null;
+            npc.data().setPersistent(NPC.SILENT_METADATA, false);
         } else {
             if (args.hasValueFlag("death")) {
                 deathSound = args.getFlag("death").equals("d") ? null : NMS.getSound(args.getFlag("death"));
