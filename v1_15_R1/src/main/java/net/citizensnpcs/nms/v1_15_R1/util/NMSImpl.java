@@ -898,7 +898,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void openHorseScreen(Tameable horse, Player equipper) {
-        EntityLiving handle = NMSImpl.getHandle((LivingEntity) horse);
+        EntityLiving handle = NMSImpl.getHandle(horse);
         EntityHuman equipperHandle = (EntityHuman) NMSImpl.getHandle(equipper);
         if (handle == null || equipperHandle == null)
             return;
@@ -1142,14 +1142,15 @@ public class NMSImpl implements NMSBridge {
         if (SET_POSE == null)
             return;
         try {
-            SET_POSE.invoke(getHandle(ocelot), sitting ? EntityPose.CROUCHING : EntityPose.STANDING);
+            EntityPose pose = sitting ? EntityPose.CROUCHING : EntityPose.STANDING;
+            SET_POSE.invoke(getHandle(ocelot), pose);
         } catch (Throwable e) {
         }
     }
 
     @Override
     public void setSitting(Tameable tameable, boolean sitting) {
-        ((EntityTameableAnimal) NMSImpl.getHandle((LivingEntity) tameable)).setSitting(sitting);
+        ((EntityTameableAnimal) NMSImpl.getHandle(tameable)).setSitting(sitting);
     }
 
     @Override
