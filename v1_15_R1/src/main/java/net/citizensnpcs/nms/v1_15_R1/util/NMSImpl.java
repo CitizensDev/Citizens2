@@ -1614,6 +1614,10 @@ public class NMSImpl implements NMSBridge {
         return ((CraftEntity) entity).getHandle();
     }
 
+    private static EntityLiving getHandle(Tameable entity) {
+        return (EntityLiving) NMSImpl.getHandle((org.bukkit.entity.Entity) entity);
+    }
+
     public static float getHeadYaw(EntityLiving handle) {
         return handle.getHeadRotation();
     }
