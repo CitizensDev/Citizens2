@@ -2,11 +2,11 @@ package net.citizensnpcs.api.event;
 
 import java.util.List;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class NPCDeathEvent extends NPCEvent {
     private final EntityDeathEvent event;
@@ -24,6 +24,10 @@ public class NPCDeathEvent extends NPCEvent {
         return event.getDrops();
     }
 
+    public EntityDeathEvent getEvent() {
+        return event;
+    }
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
@@ -33,9 +37,9 @@ public class NPCDeathEvent extends NPCEvent {
         event.setDroppedExp(exp);
     }
 
-    private static final HandlerList handlers = new HandlerList();
-
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    private static final HandlerList handlers = new HandlerList();
 }

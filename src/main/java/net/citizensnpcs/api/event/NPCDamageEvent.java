@@ -1,11 +1,11 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class NPCDamageEvent extends NPCEvent implements Cancellable {
     private final EntityDamageEvent event;
@@ -21,6 +21,10 @@ public class NPCDamageEvent extends NPCEvent implements Cancellable {
 
     public double getDamage() {
         return event.getDamage();
+    }
+
+    public EntityDamageEvent getEvent() {
+        return event;
     }
 
     @Override
