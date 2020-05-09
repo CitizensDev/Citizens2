@@ -17,7 +17,11 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.DamageSource;
 import net.minecraft.server.v1_13_R2.EntityCow;
+import net.minecraft.server.v1_13_R2.EntityHuman;
+import net.minecraft.server.v1_13_R2.EnumHand;
 import net.minecraft.server.v1_13_R2.IBlockData;
+import net.minecraft.server.v1_13_R2.ItemStack;
+import net.minecraft.server.v1_13_R2.Items;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.SoundEffect;
 import net.minecraft.server.v1_13_R2.World;
@@ -81,6 +85,17 @@ public class CowController extends MobEntityController {
         }
 
         @Override
+        public boolean a(EntityHuman entityhuman, EnumHand enumhand) {
+            if (npc == null || !npc.isProtected())
+                return super.a(entityhuman, enumhand);
+            ItemStack itemstack = entityhuman.b(enumhand);
+            if (itemstack.getItem() == Items.BUCKET && !entityhuman.abilities.canInstantlyBuild && !this.isBaby()) {
+                return false;
+            }
+            return super.a(entityhuman, enumhand);
+        }
+
+        @Override
         public void a(float f, float f1, float f2) {
             if (npc == null || !npc.isFlyable()) {
                 super.a(f, f1, f2);
@@ -90,8 +105,10 @@ public class CowController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cs() {
-            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
+        public void c(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.c(f, f1);
+            }
         }
 
         @Override
@@ -105,6 +122,11 @@ public class CowController extends MobEntityController {
         }
 
         @Override
+        protected SoundEffect cs() {
+            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
+        }
+
+        @Override
         protected SoundEffect d(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
         }
@@ -115,10 +137,8 @@ public class CowController extends MobEntityController {
         }
 
         @Override
-        public void c(float f, float f1) {
-            if (npc == null || !npc.isFlyable()) {
-                super.c(f, f1);
-            }
+        protected SoundEffect D() {
+            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
         }
 
         @Override
@@ -157,11 +177,6 @@ public class CowController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect D() {
-            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new CowNPC(this);
@@ -175,6 +190,13 @@ public class CowController extends MobEntityController {
         }
 
         @Override
+        protected void I() {
+            if (npc == null) {
+                super.I();
+            }
+        }
+
+        @Override
         public boolean isLeashed() {
             if (npc == null)
                 return super.isLeashed();
@@ -185,13 +207,6 @@ public class CowController extends MobEntityController {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
-        }
-
-        @Override
-        protected void I() {
-            if (npc == null) {
-                super.I();
-            }
         }
 
         @Override

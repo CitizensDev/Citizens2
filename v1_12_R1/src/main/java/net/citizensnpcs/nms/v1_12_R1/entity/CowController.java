@@ -17,7 +17,11 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.EntityCow;
+import net.minecraft.server.v1_12_R1.EntityHuman;
+import net.minecraft.server.v1_12_R1.EnumHand;
 import net.minecraft.server.v1_12_R1.IBlockData;
+import net.minecraft.server.v1_12_R1.ItemStack;
+import net.minecraft.server.v1_12_R1.Items;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.SoundEffect;
 import net.minecraft.server.v1_12_R1.World;
@@ -78,6 +82,17 @@ public class CowController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityHuman entityhuman, EnumHand enumhand) {
+            if (npc == null || !npc.isProtected())
+                return super.a(entityhuman, enumhand);
+            ItemStack itemstack = entityhuman.b(enumhand);
+            if (itemstack.getItem() == Items.BUCKET && !entityhuman.abilities.canInstantlyBuild && !this.isBaby()) {
+                return false;
+            }
+            return super.a(entityhuman, enumhand);
         }
 
         @Override

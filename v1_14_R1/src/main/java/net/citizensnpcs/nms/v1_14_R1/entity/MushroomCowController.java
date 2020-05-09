@@ -17,9 +17,13 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.DataWatcherObject;
+import net.minecraft.server.v1_14_R1.EntityHuman;
 import net.minecraft.server.v1_14_R1.EntityMushroomCow;
 import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_14_R1.EnumHand;
 import net.minecraft.server.v1_14_R1.IBlockData;
+import net.minecraft.server.v1_14_R1.ItemStack;
+import net.minecraft.server.v1_14_R1.Items;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.SoundEffect;
 import net.minecraft.server.v1_14_R1.Vec3D;
@@ -38,7 +42,6 @@ public class MushroomCowController extends MobEntityController {
 
     public static class EntityMushroomCowNPC extends EntityMushroomCow implements NPCHolder {
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityMushroomCowNPC(EntityTypes<? extends EntityMushroomCow> types, World world) {
@@ -69,6 +72,17 @@ public class MushroomCowController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityHuman entityhuman, EnumHand enumhand) {
+            if (npc == null || !npc.isProtected())
+                return super.a(entityhuman, enumhand);
+            ItemStack itemstack = entityhuman.b(enumhand);
+            if (itemstack.getItem() == Items.BUCKET && !entityhuman.abilities.canInstantlyBuild && !this.isBaby()) {
+                return false;
+            }
+            return super.a(entityhuman, enumhand);
         }
 
         @Override

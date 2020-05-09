@@ -288,17 +288,17 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);
 
-        if (npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1) >= 0) {
-            int delay = npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
-                        npc.spawn(location, SpawnReason.TIMED_RESPAWN);
-                    }
+        int delay = npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1);
+        if (delay < 0)
+            return;
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
+                    npc.spawn(location, SpawnReason.TIMED_RESPAWN);
                 }
-            }, delay + 2);
-        }
+            }
+        }, delay + 2);
     }
 
     @EventHandler
@@ -426,8 +426,7 @@ public class EventListen implements Listener {
                     if (team.getSize() == 1) {
                         Util.sendTeamPacketToOnlinePlayers(team, 1);
                         team.unregister();
-                    }
-                    else {
+                    } else {
                         team.removePlayer(player);
                     }
                 }
