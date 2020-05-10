@@ -22,8 +22,6 @@ import net.minecraft.server.v1_15_R1.EntityMushroomCow;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.EnumHand;
 import net.minecraft.server.v1_15_R1.IBlockData;
-import net.minecraft.server.v1_15_R1.ItemStack;
-import net.minecraft.server.v1_15_R1.Items;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import net.minecraft.server.v1_15_R1.SoundEffect;
 import net.minecraft.server.v1_15_R1.Vec3D;
@@ -78,11 +76,7 @@ public class MushroomCowController extends MobEntityController {
         public boolean a(EntityHuman entityhuman, EnumHand enumhand) {
             if (npc == null || !npc.isProtected())
                 return super.a(entityhuman, enumhand);
-            ItemStack itemstack = entityhuman.b(enumhand);
-            if (itemstack.getItem() == Items.BUCKET && !entityhuman.abilities.canInstantlyBuild && !this.isBaby()) {
-                return false;
-            }
-            return super.a(entityhuman, enumhand);
+            return false;
         }
 
         @Override

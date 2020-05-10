@@ -18,8 +18,6 @@ import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.EntityMushroomCow;
-import net.minecraft.server.v1_8_R3.ItemStack;
-import net.minecraft.server.v1_8_R3.Items;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
 
@@ -71,12 +69,7 @@ public class MushroomCowController extends MobEntityController {
         public boolean a(EntityHuman entityhuman) {
             if (npc == null || !npc.isProtected())
                 return super.a(entityhuman);
-            ItemStack itemstack = entityhuman.inventory.getItemInHand();
-            if (itemstack != null && itemstack.getItem() == Items.BUCKET && !entityhuman.abilities.canInstantlyBuild
-                    && !this.isBaby()) {
-                return false;
-            }
-            return super.a(entityhuman);
+            return false;
         }
 
         @Override
