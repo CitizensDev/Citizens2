@@ -43,7 +43,8 @@ public class WaypointCommands {
         boolean opensDoors = !npc.data().get(NPC.PATHFINDER_OPEN_DOORS_METADATA, false);
         npc.data().setPersistent(NPC.PATHFINDER_OPEN_DOORS_METADATA, opensDoors);
         Messaging.sendTr(sender,
-                opensDoors ? Messages.PATHFINDER_OPEN_DOORS_ENABLED : Messages.PATHFINDER_OPEN_DOORS_DISABLED);
+                opensDoors ? Messages.PATHFINDER_OPEN_DOORS_ENABLED : Messages.PATHFINDER_OPEN_DOORS_DISABLED,
+                npc.getName());
     }
 
     @Command(
