@@ -1684,7 +1684,7 @@ public class NPCCommands {
                         con.setRequestMethod("POST");
                         con.setDoOutput(true);
                         con.setConnectTimeout(1000);
-                        con.setReadTimeout(10000);
+                        con.setReadTimeout(30000);
                         out = new DataOutputStream(con.getOutputStream());
                         out.writeBytes("url=" + URLEncoder.encode(url, "UTF-8"));
                         out.close();
