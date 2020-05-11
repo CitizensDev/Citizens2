@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
@@ -25,6 +26,7 @@ import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 
 public class AStarNavigationStrategy extends AbstractPathStrategy {
     private final Location destination;
@@ -164,7 +166,13 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         if (distance > 0 && dY > NMS.getStepHeight(npc.getEntity()) && xzDistance <= 2.75) {
             NMS.setShouldJump(npc.getEntity());
         }
-        NMS.setDestination(npc.getEntity(), destVector.getX(), destVector.getY(), destVector.getZ(), params.speed());
+        if (Util.isHorse(npc.getEntity().getType())) {
+            Entity passenger = npc.getEntity().getPassenger();
+            NMS.setDestination(passenger, destVector.getX(), destVector.getY(), destVector.getZ(), params.speed());
+        } else {
+            NMS.setDestination(npc.getEntity(), destVector.getX(), destVector.getY(), destVector.getZ(),
+                    params.speed());
+        }
         params.run();
         plan.run(npc);
         return false;
