@@ -43,6 +43,9 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
 
     @Override
     public Material getMaterialAt(int x, int y, int z) {
+        if (y > 255) {
+            return Material.AIR;
+        }
         T chunk = getSpecific(x, z);
         if (chunk != null)
             return getType(chunk, x & 15, y, z & 15);
