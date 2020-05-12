@@ -68,7 +68,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         Entity tracker = getTracker(this);
         final Vec3D vec3d = new Vec3D(entityplayer.locX(), entityplayer.locY(), entityplayer.locZ())
                 .d(this.trackerEntry.b());
-        final int i = Math.max(this.trackingDistance, (getViewDistance(map) - 1) * 16);
+        final int i = Math.min(this.trackingDistance, (getViewDistance(map) - 1) * 16);
         final boolean flag = vec3d.x >= -i && vec3d.x <= i && vec3d.z >= -i && vec3d.z <= i
                 && this.tracker.a(entityplayer);
         if (entityplayer != tracker && flag && tracker instanceof SkinnableEntity) {
@@ -80,15 +80,13 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
                     flag1 = getb(chunkcoordintpair, entityplayer, false) <= getViewDistance(map);
                 }
             }*/
-
             if (!this.trackedPlayers.contains(entityplayer)) {
                 SkinnableEntity skinnable = (SkinnableEntity) tracker;
 
                 Player player = skinnable.getBukkitEntity();
-                if (!entityplayer.getBukkitEntity().canSee(player))
-                    return;
-
-                skinnable.getSkinTracker().updateViewer(entityplayer.getBukkitEntity());
+                if (entityplayer.getBukkitEntity().canSee(player)) {
+                    skinnable.getSkinTracker().updateViewer(entityplayer.getBukkitEntity());
+                }
             }
         }
         super.updatePlayer(entityplayer);
