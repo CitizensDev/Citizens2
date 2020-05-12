@@ -639,6 +639,13 @@ public class EventListen implements Listener {
                 }
                 continue;
             }
+            if (npc.isSpawned()) {
+                ids.remove(i--);
+                if (Messaging.isDebugging()) {
+                    Messaging.debug("NPC", npc.getId(), "already spawned");
+                }
+                continue;
+            }
             boolean success = spawn(npc);
             if (!success) {
                 if (Messaging.isDebugging()) {
