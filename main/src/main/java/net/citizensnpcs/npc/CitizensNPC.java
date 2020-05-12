@@ -321,9 +321,6 @@ public class CitizensNPC extends AbstractNPC {
         if (isSpawned() && getEntity().getLocation(CACHE_LOCATION).distanceSquared(location) < 1) {
             NMS.setHeadYaw(getEntity(), location.getYaw());
         }
-        if (getEntity() instanceof SkinnableEntity) {
-            ((SkinnableEntity) getEntity()).getSkinTracker().updateNearbyViewers(48);
-        }
     }
 
     @Override
