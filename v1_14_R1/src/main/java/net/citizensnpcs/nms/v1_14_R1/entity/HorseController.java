@@ -123,6 +123,11 @@ public class HorseController extends MobEntityController {
         }
 
         @Override
+        public boolean dD() {
+            return npc != null && npc.getNavigator().isNavigating() ? false : super.dD();
+        }
+
+        @Override
         public void e(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(vec3d);
@@ -228,6 +233,10 @@ public class HorseController extends MobEntityController {
                     riding = false;
                 }
                 if (riding) {
+                    org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
+                    if (basePassenger instanceof NPCHolder) {
+                        NMS.look(basePassenger, yaw, pitch);
+                    }
                     d(4, true); // datawatcher method
                 }
                 NMS.setStepHeight(getBukkitEntity(), 1);

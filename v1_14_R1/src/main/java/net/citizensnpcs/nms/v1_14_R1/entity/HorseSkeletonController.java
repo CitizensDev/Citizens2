@@ -48,11 +48,8 @@ public class HorseSkeletonController extends MobEntityController {
 
     public static class EntityHorseSkeletonNPC extends EntityHorseSkeleton implements NPCHolder {
         private double baseMovementSpeed;
-
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
-
         private boolean riding;
 
         public EntityHorseSkeletonNPC(EntityTypes<? extends EntityHorseSkeleton> types, World world) {
@@ -123,6 +120,11 @@ public class HorseSkeletonController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public boolean dD() {
+            return npc != null && npc.getNavigator().isNavigating() ? false : super.dD();
         }
 
         @Override
@@ -231,6 +233,10 @@ public class HorseSkeletonController extends MobEntityController {
                     riding = false;
                 }
                 if (riding) {
+                    org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
+                    if (basePassenger instanceof NPCHolder) {
+                        NMS.look(basePassenger, yaw, pitch);
+                    }
                     d(4, true); // datawatcher method
                 }
                 NMS.setStepHeight(getBukkitEntity(), 1);

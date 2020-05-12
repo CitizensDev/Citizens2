@@ -132,7 +132,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     }
 
     /**
-     * Attempts to mount the {@link NPC} onto the supplied {@link Player}.
+     * Attempts to mount the {@link Player} onto the {@link NPC}.
      *
      * @param toMount
      *            the player to mount
@@ -140,7 +140,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
      */
     public boolean mount(Player toMount) {
         List<Entity> passengers = NMS.getPassengers(npc.getEntity());
-        if (passengers.size() == 0) {
+        if (passengers.size() != 0) {
             return false;
         }
         boolean found = false;
@@ -150,7 +150,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                 break;
             }
         }
-        if (!found) {
+        if (found) {
             return false;
         }
         enterOrLeaveVehicle(toMount);

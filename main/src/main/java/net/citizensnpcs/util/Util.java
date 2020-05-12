@@ -3,8 +3,8 @@ package net.citizensnpcs.util;
 import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -198,7 +198,7 @@ public class Util {
         if (parts.contains("*") || parts.isEmpty())
             return true;
         for (String part : Splitter.on(',').split(parts)) {
-            Material matchMaterial = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(part, true)
+            Material matchMaterial = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(part, false)
                     : Material.matchMaterial(part);
             if (matchMaterial == null) {
                 if (part.equals("280")) {
@@ -298,8 +298,7 @@ public class Util {
 
             String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
             Team team = null;
-            if (teamName.length() == 0
-                    || (team = Util.getDummyScoreboard().getTeam(teamName)) == null)
+            if (teamName.length() == 0 || (team = Util.getDummyScoreboard().getTeam(teamName)) == null)
                 continue;
 
             NMS.sendTeamPacket(toUpdate, team, mode);

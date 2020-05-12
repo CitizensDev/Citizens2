@@ -16,6 +16,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.HorseModifiers;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.DamageSource;
@@ -123,6 +124,11 @@ public class HorseController extends MobEntityController {
         }
 
         @Override
+        public boolean dY() {
+            return npc != null && npc.getNavigator().isNavigating() ? false : super.dY();
+        }
+
+        @Override
         public void e(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(vec3d);
@@ -219,20 +225,26 @@ public class HorseController extends MobEntityController {
         @Override
         public void mobTick() {
             super.mobTick();
-            if (npc != null) {
-                NMSImpl.updateMinecraftAIState(npc, this);
-                if (npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled()) {
-                    riding = getBukkitEntity().getPassengers().size() > 0;
-                    getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
-                            .setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());
-                } else {
-                    riding = false;
-                }
-                if (riding) {
-                    d(4, true); // datawatcher method
-                }
-                npc.update();
+            if (npc == null)
+                return;
+            NMSImpl.updateMinecraftAIState(npc, this);
+            if (npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled()) {
+                riding = getBukkitEntity().getPassengers().size() > 0;
+                getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
+                        .setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());
+            } else {
+                riding = false;
             }
+            if (riding) {
+                org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
+                if (basePassenger instanceof NPCHolder) {
+                    NMS.look(basePassenger, yaw, pitch);
+                }
+                d(4, true); // datawatcher method
+            }
+            NMS.setStepHeight(getBukkitEntity(), 1);
+            npc.update();
+
         }
     }
 

@@ -100,8 +100,9 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
                 player.removeMetadata("selected", plugin);
                 select(player, npc);
                 Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), npc);
-                if (!Setting.QUICK_SELECT.asBoolean())
+                if (!Setting.QUICK_SELECT.asBoolean()) {
                     return;
+                }
             }
         }
     }
