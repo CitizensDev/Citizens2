@@ -81,7 +81,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
                 }
             }*/
 
-            if (!this.trackedPlayers.contains(entityplayer) || true) {
+            if (!this.trackedPlayers.contains(entityplayer)) {
                 SkinnableEntity skinnable = (SkinnableEntity) tracker;
 
                 Player player = skinnable.getBukkitEntity();
