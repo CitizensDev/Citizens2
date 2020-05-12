@@ -433,7 +433,7 @@ public class NPCCommands {
             throw new NoPermissionsException();
 
         npc = CitizensAPI.getNPCRegistry().createNPC(type, name);
-        String msg = "You created [[" + npc.getName() + "]]";
+        String msg = "You created [[" + npc.getName() + "]] (ID [[" + npc.getId() + "]])";
 
         int age = 0;
         if (args.hasFlag('b')) {
@@ -857,11 +857,11 @@ public class NPCCommands {
         }
 
         Paginator paginator = new Paginator().header("NPCs").console(sender instanceof ConsoleCommandSender);
-        paginator.addLine("<e>Key: <a>ID  <b>Name");
+        paginator.addLine("<b>Key: <e>ID  <a>Name");
         for (int i = 0; i < npcs.size(); i += 2) {
-            String line = "<a>" + npcs.get(i).getId() + "<b>  " + npcs.get(i).getName();
+            String line = "<e>" + npcs.get(i).getId() + "<a>  " + npcs.get(i).getName();
             if (npcs.size() >= i + 2)
-                line += "      " + "<a>" + npcs.get(i + 1).getId() + "<b>  " + npcs.get(i + 1).getName();
+                line += "      " + "<e>" + npcs.get(i + 1).getId() + "<a>  " + npcs.get(i + 1).getName();
             paginator.addLine(line);
         }
 

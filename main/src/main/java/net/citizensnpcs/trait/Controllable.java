@@ -195,7 +195,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         if (!enabled || !npc.isSpawned())
             return;
         List<Entity> passengers = NMS.getPassengers(npc.getEntity());
-        if (passengers.size() == 0 || !(passengers.get(0) instanceof Player))
+        if (passengers.size() == 0 || !(passengers.get(0) instanceof Player) || npc.getNavigator().isNavigating())
             return;
         controller.run((Player) passengers.get(0));
     }

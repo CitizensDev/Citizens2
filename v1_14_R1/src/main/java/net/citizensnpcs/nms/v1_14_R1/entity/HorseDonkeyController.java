@@ -232,8 +232,8 @@ public class HorseDonkeyController extends MobEntityController {
                     riding = false;
                 }
                 if (riding) {
-                    org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
-                    if (basePassenger instanceof NPCHolder) {
+                    if (npc.getNavigator().isNavigating()) {
+                        org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
                         NMS.look(basePassenger, yaw, pitch);
                     }
                     d(4, true); // datawatcher method

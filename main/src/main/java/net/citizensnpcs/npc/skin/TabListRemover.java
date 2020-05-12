@@ -70,8 +70,9 @@ public class TabListRemover {
             skinnable.getSkinTracker().notifyRemovePacketCancelled(player.getUniqueId());
         }
 
-        if (entry.toRemove.isEmpty())
+        if (entry.toRemove.isEmpty()) {
             pending.remove(player.getUniqueId());
+        }
     }
 
     private PlayerEntry getEntry(Player player) {

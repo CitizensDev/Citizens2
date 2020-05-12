@@ -63,7 +63,7 @@ public class HorseController extends MobEntityController {
                 NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 Horse horse = (Horse) getBukkitEntity();
                 horse.setDomestication(horse.getMaxDomestication());
-                baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() * 0.8;
+                baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
         }
 
@@ -236,8 +236,8 @@ public class HorseController extends MobEntityController {
                 riding = false;
             }
             if (riding) {
-                org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
-                if (basePassenger instanceof NPCHolder) {
+                if (npc.getNavigator().isNavigating()) {
+                    org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
                     NMS.look(basePassenger, yaw, pitch);
                 }
                 d(4, true); // datawatcher method

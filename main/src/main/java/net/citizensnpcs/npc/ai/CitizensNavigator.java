@@ -345,13 +345,17 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private void updateMountedStatus() {
-        if (!isNavigating())
+        // TODO: this method seems to break assumptions: better to let the NPC pathfind for itself rather than
+        // "commanding" the NPC below on the stack
+        if (!isNavigating() || true)
             return;
         Entity vehicle = NMS.getVehicle(npc.getEntity());
         if (!(vehicle instanceof NPCHolder)) {
             return;
         }
         NPC mount = ((NPCHolder) vehicle).getNPC();
+        if (mount.getNavigator().isNavigating())
+            return;
         switch (getTargetType()) {
             case ENTITY:
                 mount.getNavigator().setTarget(getEntityTarget().getTarget(), getEntityTarget().isAggressive());
@@ -373,7 +377,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (localParams.stationaryTicks() < 0)
             return false;
         Location current = npc.getEntity().getLocation(STATIONARY_LOCATION);
-        if (current.getY() < -5) {
+        if (current.getY() < -6) {
             stopNavigating(CancelReason.STUCK);
             return true;
         }
