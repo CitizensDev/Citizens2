@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
@@ -182,8 +183,22 @@ public class Inventory extends Trait {
             maxCopySize = 36;
         } else if (npc.getEntity() instanceof StorageMinecart) {
             dest = ((StorageMinecart) npc.getEntity()).getInventory();
-        } else if (npc.getEntity() instanceof Horse) {
-            dest = ((Horse) npc.getEntity()).getInventory();
+        }
+        if (SUPPORT_ABSTRACT_HORSE) {
+            try {
+                if (npc.getEntity() instanceof AbstractHorse) {
+                    dest = ((AbstractHorse) npc.getEntity()).getInventory();
+                }
+            } catch (Throwable t) {
+                SUPPORT_ABSTRACT_HORSE = false;
+                if (npc.getEntity() instanceof Horse) {
+                    dest = ((Horse) npc.getEntity()).getInventory();
+                }
+            }
+        } else {
+            if (npc.getEntity() instanceof Horse) {
+                dest = ((Horse) npc.getEntity()).getInventory();
+            }
         }
 
         if (dest == null)
@@ -193,10 +208,14 @@ public class Inventory extends Trait {
         }
 
         for (int i = 0; i < maxCopySize; i++) {
-            dest.setItem(i, contents[i]);
+            if (i < contents.length) {
+                dest.setItem(i, contents[i]);
+            }
         }
-        if (view != null) {
-            for (int i = 0; i < maxCopySize; i++) {
+        if (view == null)
+            return;
+        for (int i = 0; i < maxCopySize; i++) {
+            if (i < contents.length && i < view.getSize()) {
                 view.setItem(i, contents[i]);
             }
         }
@@ -227,4 +246,6 @@ public class Inventory extends Trait {
     public String toString() {
         return "Inventory{" + Arrays.toString(contents) + "}";
     }
+
+    private static boolean SUPPORT_ABSTRACT_HORSE = true;
 }
