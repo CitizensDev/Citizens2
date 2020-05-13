@@ -231,8 +231,9 @@ public class SkinPacketTracker {
         // cancel previous packet tasks so they do not interfere with
         // new tasks
         void cancel() {
-            if (removeTask != null)
+            if (removeTask != null) {
                 removeTask.cancel();
+            }
             removeCount = 0;
         }
     }

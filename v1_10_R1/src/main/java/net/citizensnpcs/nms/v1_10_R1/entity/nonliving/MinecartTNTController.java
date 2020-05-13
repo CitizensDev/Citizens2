@@ -10,7 +10,6 @@ import net.citizensnpcs.nms.v1_10_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_10_R1.DamageSource;
 import net.minecraft.server.v1_10_R1.EntityMinecartTNT;
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import net.minecraft.server.v1_10_R1.World;
@@ -50,13 +49,6 @@ public class MinecartTNTController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
-        }
-
-        @Override
-        public boolean damageEntity(DamageSource damagesource, float f) {
-            if (npc == null || !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                return super.damageEntity(damagesource, f);
-            return false;
         }
 
         @Override

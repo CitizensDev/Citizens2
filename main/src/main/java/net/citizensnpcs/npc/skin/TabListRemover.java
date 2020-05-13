@@ -129,7 +129,6 @@ public class TabListRemover {
                 int i = 0;
                 Iterator<SkinnableEntity> skinIterator = entry.toRemove.iterator();
                 while (skinIterator.hasNext()) {
-
                     if (i >= maxPacketEntries)
                         break;
 

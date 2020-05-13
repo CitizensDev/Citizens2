@@ -10,7 +10,6 @@ import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_15_R1.DamageSource;
 import net.minecraft.server.v1_15_R1.EntityMinecartHopper;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
@@ -54,10 +53,8 @@ public class MinecartHopperController extends MobEntityController {
         }
 
         @Override
-        public boolean damageEntity(DamageSource damagesource, float f) {
-            if (npc == null || !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                return super.damageEntity(damagesource, f);
-            return false;
+        public NPC getNPC() {
+            return npc;
         }
 
         @Override
@@ -80,11 +77,6 @@ public class MinecartHopperController extends MobEntityController {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
 
         @Override

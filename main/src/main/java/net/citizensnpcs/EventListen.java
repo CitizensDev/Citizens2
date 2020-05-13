@@ -41,6 +41,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -82,6 +83,7 @@ import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
+import net.citizensnpcs.api.event.NPCVehicleDamageEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
@@ -240,7 +242,6 @@ public class EventListen implements Listener {
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
-
         if (npc == null) {
             if (event instanceof EntityDamageByEntityEvent) {
                 npc = CitizensAPI.getNPCRegistry().getNPC(((EntityDamageByEntityEvent) event).getDamager());
@@ -574,6 +575,28 @@ public class EventListen implements Listener {
                 NMS.removeHookIfNecessary(CitizensAPI.getNPCRegistry(), (FishHook) event.getEntity());
             }
         }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
+    }
+
+    @EventHandler
+    public void onVehicleDamage(VehicleDamageEvent event) {
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getVehicle());
+        if (npc == null) {
+            return;
+        }
+        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+
+        NPCVehicleDamageEvent damageEvent = new NPCVehicleDamageEvent(npc, event);
+        Bukkit.getPluginManager().callEvent(damageEvent);
+
+        if (!damageEvent.isCancelled() || !(damageEvent.getDamager() instanceof Player))
+            return;
+        Player damager = (Player) damageEvent.getDamager();
+
+        NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
+        Bukkit.getPluginManager().callEvent(leftClickEvent);
+        if (npc.hasTrait(CommandTrait.class)) {
+            npc.getTrait(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
+        }
     }
 
     @EventHandler

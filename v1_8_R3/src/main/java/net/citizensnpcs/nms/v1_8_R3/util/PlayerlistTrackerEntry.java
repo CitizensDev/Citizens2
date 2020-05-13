@@ -31,7 +31,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                     && ((entityplayer.u().getPlayerChunkMap().a(entityplayer, tracker.ae, tracker.ag))
                             || (tracker.attachedToPlayer))) {
                 if ((tracker instanceof SkinnableEntity)) {
-
                     SkinnableEntity skinnable = (SkinnableEntity) tracker;
 
                     Player player = skinnable.getBukkitEntity();
