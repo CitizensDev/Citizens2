@@ -77,6 +77,7 @@ import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
@@ -420,7 +421,7 @@ public class NPCCommands {
             }
         }
 
-        int nameLength = type == EntityType.PLAYER ? 46 : 64;
+        int nameLength = SpigotUtil.getMaxNameLength(type);
         if (name.length() > nameLength) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
             name = name.substring(0, nameLength);
