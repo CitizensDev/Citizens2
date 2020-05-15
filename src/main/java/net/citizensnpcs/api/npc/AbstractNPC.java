@@ -41,6 +41,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
@@ -202,7 +203,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getFullName() {
-        int nameLength = getTrait(MobType.class).getType() == EntityType.PLAYER ? 46 : 64;
+        int nameLength = SpigotUtil.getMaxNameLength(getTrait(MobType.class).getType());
         if (name.length() > nameLength) {
             Messaging.severe("ID", id, "created with name length greater than " + nameLength + ", truncating", name,
                     "to", name.substring(0, nameLength));

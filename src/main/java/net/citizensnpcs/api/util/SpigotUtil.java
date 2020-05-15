@@ -1,8 +1,13 @@
 package net.citizensnpcs.api.util;
 
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 
 public class SpigotUtil {
+    public static int getMaxNameLength(EntityType type) {
+        return type == EntityType.PLAYER ? 46 : isUsing1_13API() ? 256 : 64;
+    }
+
     public static boolean isUsing1_13API() {
         if (using1_13API == null) {
             try {
