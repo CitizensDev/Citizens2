@@ -975,7 +975,7 @@ public class NMSImpl implements NMSBridge {
         PlayerlistTracker replace = new PlayerlistTracker(server.getChunkProvider().playerChunkMap, entry);
         server.getChunkProvider().playerChunkMap.trackedEntities.put(player.getEntityId(), replace);
         if (getHandle(player) instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) getHandle(player)).setTracked();
+            ((EntityHumanNPC) getHandle(player)).setTracked(replace);
         }
     }
 
