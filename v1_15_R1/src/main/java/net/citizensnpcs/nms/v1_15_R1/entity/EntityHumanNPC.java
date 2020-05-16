@@ -33,6 +33,7 @@ import net.citizensnpcs.nms.v1_15_R1.util.PlayerControllerJump;
 import net.citizensnpcs.nms.v1_15_R1.util.PlayerControllerLook;
 import net.citizensnpcs.nms.v1_15_R1.util.PlayerControllerMove;
 import net.citizensnpcs.nms.v1_15_R1.util.PlayerNavigation;
+import net.citizensnpcs.nms.v1_15_R1.util.PlayerlistTracker;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinPacketTracker;
@@ -69,11 +70,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private PlayerControllerJump controllerJump;
     private PlayerControllerLook controllerLook;
     private PlayerControllerMove controllerMove;
-    private boolean isTracked = false;
     private int jumpTicks = 0;
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
+    private PlayerlistTracker playerlistTracker;
     private final SkinPacketTracker skinTracker;
     private int updateCounter = 0;
 
@@ -100,7 +101,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean a(EntityPlayer entityplayer) {
-        if (npc != null && !isTracked) {
+        if (npc != null && playerlistTracker == null) {
             return false;
         }
         return super.a(entityplayer);
@@ -312,6 +313,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         return npc.getNavigator().isNavigating();
     }
 
+    @Override
+    public Packet<?> L() {
+        if (playerlistTracker != null) {
+            playerlistTracker.updateLastPlayer();
+        }
+        return super.L();
+    }
+
     private void moveOnCurrentHeading() {
         if (jumping) {
             if (onGround && jumpTicks == 0) {
@@ -386,8 +395,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         controllerLook.a(target.getX(), target.getY(), target.getZ());
     }
 
-    public void setTracked() {
-        isTracked = true;
+    public void setTracked(PlayerlistTracker tracker) {
+        this.playerlistTracker = tracker;
     }
 
     @Override
