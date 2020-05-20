@@ -47,6 +47,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
     public void updatePlayer(final EntityPlayer entityplayer) {
         if (!(entityplayer instanceof EntityHumanNPC)) {
             // prevent updates to NPC "viewers"
+            lastUpdatedPlayer = entityplayer;
             super.updatePlayer(entityplayer);
         }
     }
