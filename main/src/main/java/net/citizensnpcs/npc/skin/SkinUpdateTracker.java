@@ -38,7 +38,7 @@ import net.citizensnpcs.util.Util;
 public class SkinUpdateTracker {
     private final Map<SkinnableEntity, Void> navigating = new WeakHashMap<SkinnableEntity, Void>(25);
     private final Map<UUID, PlayerTracker> playerTrackers = new HashMap<UUID, PlayerTracker>(
-            Bukkit.getMaxPlayers() / 2);
+            Math.max(128, Bukkit.getMaxPlayers() / 2));
     private final Map<String, NPCRegistry> registries;
     private final NPCNavigationUpdater updater = new NPCNavigationUpdater();
 

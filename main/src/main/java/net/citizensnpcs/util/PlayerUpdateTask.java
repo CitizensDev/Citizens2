@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerUpdateTask extends BukkitRunnable {
+    private boolean playerTicking;
+
     @Override
     public void cancel() {
         super.cancel();
@@ -48,11 +50,13 @@ public class PlayerUpdateTask extends BukkitRunnable {
         PLAYERS_PENDING_ADD.clear();
         PLAYERS_PENDING_REMOVE.clear();
 
+        playerTicking = true;
         for (Player entity : PLAYERS.values()) {
             if (entity.isValid()) {
                 NMS.playerTick(entity);
             }
         }
+        playerTicking = false;
     }
 
     public static void addOrRemove(org.bukkit.entity.Entity entity, boolean remove) {
