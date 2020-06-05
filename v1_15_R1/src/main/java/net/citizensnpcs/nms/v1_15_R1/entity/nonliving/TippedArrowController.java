@@ -1,17 +1,16 @@
 package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;
 
-import net.citizensnpcs.nms.v1_15_R1.entity.MobEntityController;
-import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftArrow;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
-import org.bukkit.entity.Arrow;
+import org.bukkit.entity.TippedArrow;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.entity.MobEntityController;
+import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
@@ -26,8 +25,8 @@ public class TippedArrowController extends MobEntityController {
     }
 
     @Override
-    public Arrow getBukkitEntity() {
-        return (Arrow) super.getBukkitEntity();
+    public TippedArrow getBukkitEntity() {
+        return (TippedArrow) super.getBukkitEntity();
     }
 
     public static class EntityTippedArrowNPC extends EntityTippedArrow implements NPCHolder {
@@ -58,6 +57,19 @@ public class TippedArrowController extends MobEntityController {
         }
 
         @Override
+        public CraftEntity getBukkitEntity() {
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new TippedArrowNPC(this));
+            }
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+
+        @Override
         public void h(double x, double y, double z) {
             if (npc == null) {
                 super.h(x, y, z);
@@ -77,19 +89,6 @@ public class TippedArrowController extends MobEntityController {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
-                NMSImpl.setBukkitEntity(this, new TippedArrowNPC(this));
-            }
-            return super.getBukkitEntity();
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
 
         @Override
