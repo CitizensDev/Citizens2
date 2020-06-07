@@ -62,6 +62,7 @@ import net.minecraft.server.v1_15_R1.Packet;
 import net.minecraft.server.v1_15_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_15_R1.PathType;
 import net.minecraft.server.v1_15_R1.PlayerInteractManager;
+import net.minecraft.server.v1_15_R1.TagsFluid;
 import net.minecraft.server.v1_15_R1.Vec3D;
 import net.minecraft.server.v1_15_R1.WorldServer;
 
@@ -346,6 +347,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             return;
         }
         entityBaseTick();
+        this.aC();
+        this.O = this.a(TagsFluid.WATER, true);
+        this.aB();
+
         this.az = this.aA;
         if (this.hurtTicks > 0) {
             this.hurtTicks -= 1;
