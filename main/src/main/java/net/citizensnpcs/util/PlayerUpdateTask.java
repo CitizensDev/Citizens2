@@ -41,11 +41,11 @@ public class PlayerUpdateTask extends BukkitRunnable {
             }
         }
 
-        for (Entity entity : PLAYERS_PENDING_ADD) {
-            PLAYERS.put(entity.getUniqueId(), (Player) entity);
-        }
         for (Entity entity : PLAYERS_PENDING_REMOVE) {
             PLAYERS.remove(entity.getUniqueId());
+        }
+        for (Entity entity : PLAYERS_PENDING_ADD) {
+            PLAYERS.put(entity.getUniqueId(), (Player) entity);
         }
         PLAYERS_PENDING_ADD.clear();
         PLAYERS_PENDING_REMOVE.clear();
@@ -71,6 +71,7 @@ public class PlayerUpdateTask extends BukkitRunnable {
     }
 
     public static void deregisterPlayer(org.bukkit.entity.Entity entity) {
+        PLAYERS_PENDING_ADD.remove(entity);
         PLAYERS_PENDING_REMOVE.add(entity);
     }
 
@@ -79,6 +80,7 @@ public class PlayerUpdateTask extends BukkitRunnable {
     }
 
     public static void registerPlayer(org.bukkit.entity.Entity entity) {
+        PLAYERS_PENDING_REMOVE.remove(entity);
         PLAYERS_PENDING_ADD.add(entity);
     }
 
