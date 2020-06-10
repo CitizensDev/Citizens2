@@ -66,6 +66,8 @@ public class Messages {
     public static final String COMMAND_TOO_FEW_ARGUMENTS = "citizens.commands.requirements.too-few-arguments";
     public static final String COMMAND_TOO_MANY_ARGUMENTS = "citizens.commands.requirements.too-many-arguments";
     public static final String COMMAND_UNKNOWN_COMMAND_ID = "citizens.commands.npc.command.unknown-id";
+    public static final String COMMANDS_SEQUENTIAL_SET = "citizens.commands.npc.commands.sequential-set";
+    public static final String COMMANDS_SEQUENTIAL_UNSET = "citizens.commands.npc.commands.sequential-unset";
     public static final String CONTROLLABLE_REMOVED = "citizens.commands.npc.controllable.removed";
     public static final String CONTROLLABLE_SET = "citizens.commands.npc.controllable.set";
     public static final String COPIER_EDITOR_BEGIN = "citizens.editors.copier.begin";

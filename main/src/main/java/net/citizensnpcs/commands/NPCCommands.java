@@ -288,7 +288,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id] | permissions [permissions]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             modifiers = { "command", "cmd" },
             min = 1,
@@ -313,6 +313,10 @@ public class NPCCommands {
                             .op(args.hasFlag('o')).cooldown(args.getFlagInteger("cooldown", 0))
                             .n(args.getFlagInteger("n", -1)).delay(args.getFlagInteger("delay", 0)));
             Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
+        } else if (args.getString(1).equalsIgnoreCase("sequential")) {
+            commands.setSequential(!commands.isSequential());
+            Messaging.sendTr(sender,
+                    commands.isSequential() ? Messages.COMMANDS_SEQUENTIAL_SET : Messages.COMMANDS_SEQUENTIAL_UNSET);
         } else if (args.getString(1).equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
                 throw new CommandUsageException();

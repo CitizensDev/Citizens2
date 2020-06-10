@@ -1,5 +1,7 @@
 package net.citizensnpcs.trait;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +10,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteArrayDataOutput;
@@ -37,6 +41,8 @@ public class CommandTrait extends Trait {
     @DelegatePersistence(PlayerNPCCommandPersister.class)
     private final Map<String, PlayerNPCCommand> cooldowns = Maps.newHashMap();
     @Persist
+    private boolean sequential = false;
+    @Persist
     private final List<String> temporaryPermissions = Lists.newArrayList();
 
     public CommandTrait() {
@@ -45,7 +51,7 @@ public class CommandTrait extends Trait {
 
     public int addCommand(NPCCommandBuilder builder) {
         int id = getNewId();
-        commands.put(String.valueOf(id), builder.build(String.valueOf(id)));
+        commands.put(String.valueOf(id), builder.build(id));
         return id;
     }
 
@@ -98,14 +104,39 @@ public class CommandTrait extends Trait {
         Runnable task = new Runnable() {
             @Override
             public void run() {
-                for (NPCCommand command : commands.values()) {
-                    if (command.hand != hand && command.hand != Hand.BOTH)
-                        continue;
+                Iterable<NPCCommand> commandList = Iterables.filter(commands.values(), new Predicate<NPCCommand>() {
+                    @Override
+                    public boolean apply(NPCCommand command) {
+                        return command.hand == hand || command.hand == Hand.BOTH;
+                    }
+                });
+                int max = -1;
+                if (sequential) {
+                    commandList = Lists.newArrayList(commandList);
+                    List<NPCCommand> downcast = (List<NPCCommand>) commandList;
+                    Collections.sort(downcast, new Comparator<NPCCommand>() {
+                        @Override
+                        public int compare(NPCCommand o1, NPCCommand o2) {
+                            return Integer.compare(o1.id, o2.id);
+                        }
+                    });
+                    max = downcast.size() > 0 ? downcast.get(downcast.size() - 1).id : -1;
+                }
+                for (NPCCommand command : commandList) {
+                    if (sequential) {
+                        PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
+                        if (info != null && command.id < info.lastUsedId) {
+                            if (info.lastUsedId == max) {
+                                info.lastUsedId = -1;
+                            }
+                            continue;
+                        }
+                    }
                     Runnable runnable = new Runnable() {
                         @Override
                         public void run() {
                             PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
-                            if (info == null && (command.cooldown > 0 || command.n > 0)) {
+                            if (info == null && (command.cooldown > 0 || command.n > 0 || sequential)) {
                                 cooldowns.put(player.getUniqueId().toString(), info = new PlayerNPCCommand());
                             }
                             if (info != null && !info.canUse(player, command)) {
@@ -148,8 +179,16 @@ public class CommandTrait extends Trait {
         return commands.containsKey(String.valueOf(id));
     }
 
+    public boolean isSequential() {
+        return this.sequential;
+    }
+
     public void removeCommandById(int id) {
         commands.remove(String.valueOf(id));
+    }
+
+    public void setSequential(boolean sequential) {
+        this.sequential = sequential;
     }
 
     public void setTemporaryPermissions(List<String> permissions) {
@@ -169,13 +208,13 @@ public class CommandTrait extends Trait {
         int cooldown;
         int delay;
         Hand hand;
-        String id;
+        int id;
         int n;
         boolean op;
         List<String> perms;
         boolean player;
 
-        public NPCCommand(String id, String command, Hand hand, boolean player, boolean op, int cooldown,
+        public NPCCommand(int id, String command, Hand hand, boolean player, boolean op, int cooldown,
                 List<String> perms, int n, int delay) {
             this.id = id;
             this.command = command;
@@ -246,7 +285,7 @@ public class CommandTrait extends Trait {
             return this;
         }
 
-        private NPCCommand build(String id) {
+        private NPCCommand build(int id) {
             return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay);
         }
 
@@ -291,9 +330,10 @@ public class CommandTrait extends Trait {
             for (DataKey key : root.getRelative("permissions").getIntegerSubKeys()) {
                 perms.add(key.getString(""));
             }
-            return new NPCCommand(root.name(), root.getString("command"), Hand.valueOf(root.getString("hand")),
-                    Boolean.valueOf(root.getString("player")), Boolean.valueOf(root.getString("op")),
-                    root.getInt("cooldown"), perms, root.getInt("n"), root.getInt("delay"));
+            return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
+                    Hand.valueOf(root.getString("hand")), Boolean.valueOf(root.getString("player")),
+                    Boolean.valueOf(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
+                    root.getInt("delay"));
         }
 
         @Override
@@ -314,6 +354,8 @@ public class CommandTrait extends Trait {
     private static class PlayerNPCCommand {
         @Persist(valueType = Long.class)
         Map<String, Long> lastUsed = Maps.newHashMap();
+        @Persist
+        int lastUsedId = -1;
         @Persist
         Map<String, Integer> nUsed = Maps.newHashMap();
 
@@ -343,6 +385,7 @@ public class CommandTrait extends Trait {
             if (command.n > 0) {
                 nUsed.put(command.command, previouslyUsed + 1);
             }
+            lastUsedId = command.id;
             return true;
         }
     }
