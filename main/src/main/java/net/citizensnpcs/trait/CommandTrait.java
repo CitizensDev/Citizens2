@@ -137,7 +137,8 @@ public class CommandTrait extends Trait {
                         @Override
                         public void run() {
                             PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
-                            if (info == null && (command.cooldown > 0 || command.n > 0 || sequential)) {
+                            if (info == null && (command.cooldown > 0 || command.n > 0
+                                    || (command.perms != null && command.perms.size() > 0) || sequential)) {
                                 cooldowns.put(player.getUniqueId().toString(), info = new PlayerNPCCommand());
                             }
                             if (info != null && !info.canUse(player, command)) {
