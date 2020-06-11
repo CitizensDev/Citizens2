@@ -290,6 +290,7 @@ public class NPCCommands {
             aliases = { "npc" },
             usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
+            help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
             min = 1,
             flags = "lrpo",

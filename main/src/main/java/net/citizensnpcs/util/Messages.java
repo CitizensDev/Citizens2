@@ -210,6 +210,7 @@ public class Messages {
     public static final String NOT_LIVING_MOBTYPE = "citizens.commands.npc.create.not-living-mobtype";
     public static final String NPC_ALREADY_SELECTED = "citizens.commands.npc.select.already-selected";
     public static final String NPC_ALREADY_SPAWNED = "citizens.commands.npc.spawn.already-spawned";
+    public static final String NPC_COMMAND_HELP = "citizens.commands.npc.command.help";
     public static final String NPC_COPIED = "citizens.commands.npc.copy.copied";
     public static final String NPC_CREATE_INVALID_MOBTYPE = "citizens.commands.npc.create.invalid-mobtype";
     public static final String NPC_CREATE_MISSING_MOBTYPE = "citizens.commands.npc.create.mobtype-missing";
