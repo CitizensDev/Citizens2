@@ -125,11 +125,12 @@ public class CommandTrait extends Trait {
                 for (NPCCommand command : commandList) {
                     if (sequential) {
                         PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
-                        if (info != null && command.id < info.lastUsedId) {
+                        if (info != null && command.id <= info.lastUsedId) {
                             if (info.lastUsedId == max) {
                                 info.lastUsedId = -1;
+                            } else {
+                                continue;
                             }
-                            continue;
                         }
                     }
                     Runnable runnable = new Runnable() {
