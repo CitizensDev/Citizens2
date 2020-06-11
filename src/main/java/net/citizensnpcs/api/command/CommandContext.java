@@ -211,10 +211,11 @@ public class CommandContext {
     public Location getSenderLocation() throws CommandException {
         if (location != null || sender == null)
             return location;
-        if (sender instanceof Player)
+        if (sender instanceof Player) {
             location = ((Player) sender).getLocation();
-        else if (sender instanceof BlockCommandSender)
+        } else if (sender instanceof BlockCommandSender) {
             location = ((BlockCommandSender) sender).getBlock().getLocation();
+        }
         if (hasValueFlag("location")) {
             location = parseLocation(location, getFlag("location"));
         }

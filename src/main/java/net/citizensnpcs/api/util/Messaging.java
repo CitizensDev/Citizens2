@@ -21,7 +21,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.trait.Owner;
 
 public class Messaging {
     private static class DebugFormatter extends Formatter {
@@ -111,7 +110,7 @@ public class Messaging {
         }
         message = message.replace("[[", HIGHLIGHT_COLOUR);
         message = message.replace("{{", ERROR_COLOUR);
-        return CHAT_NEWLINE.matcher(message).replaceAll("<n>]]").replace("]]", messageColour);
+        return CHAT_NEWLINE.matcher(message).replaceAll("<br>]]").replace("]]", messageColour);
     }
 
     public static void send(CommandSender sender, Object... msg) {
@@ -169,7 +168,7 @@ public class Messaging {
         return count >= 2 ? tr(message) : message;
     }
 
-    private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|<n>|\\n", Pattern.MULTILINE);
+    private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|\\n", Pattern.MULTILINE);
     private static final Splitter CHAT_NEWLINE_SPLITTER = Splitter.on(CHAT_NEWLINE);
     private static boolean DEBUG = false;
     private static Logger DEBUG_LOGGER;
