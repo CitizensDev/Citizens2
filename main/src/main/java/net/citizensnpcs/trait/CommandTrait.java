@@ -19,6 +19,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.DelegatePersistence;
 import net.citizensnpcs.api.persistence.Persist;
@@ -137,8 +138,7 @@ public class CommandTrait extends Trait {
                         @Override
                         public void run() {
                             PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
-                            if (info == null && (command.cooldown > 0 || command.n > 0
-                                    || (command.perms != null && command.perms.size() > 0) || sequential)) {
+                            if (info == null && (sequential || PlayerNPCCommand.requiresTracking(command))) {
                                 cooldowns.put(player.getUniqueId().toString(), info = new PlayerNPCCommand());
                             }
                             if (info != null && !info.canUse(player, command)) {
@@ -367,6 +367,7 @@ public class CommandTrait extends Trait {
         public boolean canUse(Player player, NPCCommand command) {
             for (String perm : command.perms) {
                 if (!player.hasPermission(perm)) {
+                    Messaging.sendErrorTr(player, CommandMessages.NO_PERMISSION);
                     return false;
                 }
             }
@@ -389,6 +390,10 @@ public class CommandTrait extends Trait {
             }
             lastUsedId = command.id;
             return true;
+        }
+
+        public static boolean requiresTracking(NPCCommand command) {
+            return command.cooldown > 0 || command.n > 0 || (command.perms != null && command.perms.size() > 0);
         }
     }
 
