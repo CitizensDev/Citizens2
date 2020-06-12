@@ -55,6 +55,8 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
     @Persist
     private boolean cachePaths = Setting.DEFAULT_CACHE_WAYPOINT_PATHS.asBoolean();
     private LinearWaypointGoal currentGoal;
+    @Persist
+    private boolean cycle = false;
     private NPC npc;
     private final List<Waypoint> waypoints = Lists.newArrayList();
 
@@ -287,6 +289,14 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                         togglePath();
                     }
                 });
+            } else if (message.equalsIgnoreCase("cycle")) {
+                event.setCancelled(true);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                    @Override
+                    public void run() {
+                        cycle = !cycle;
+                    }
+                });
             }
         }
 
@@ -394,6 +404,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
     }
 
     private class LinearWaypointGoal implements Goal {
+        private boolean ascending = true;
         private final Location cachedLocation = new Location(null, 0, 0, 0);
         private Waypoint currentDestination;
         private Iterator<Waypoint> itr;
@@ -421,24 +432,49 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         }
 
         private Iterator<Waypoint> getUnsafeIterator() {
-            return new Iterator<Waypoint>() {
-                int idx = 0;
+            if (cycle && ascending) {
+                ascending = false;
+                return new Iterator<Waypoint>() {
+                    int idx = waypoints.size() - 1;
 
-                @Override
-                public boolean hasNext() {
-                    return idx < waypoints.size();
-                }
+                    @Override
+                    public boolean hasNext() {
+                        return idx >= 0 && idx < waypoints.size();
+                    }
 
-                @Override
-                public Waypoint next() {
-                    return waypoints.get(idx++);
-                }
+                    @Override
+                    public Waypoint next() {
+                        System.out.println(idx);
+                        return waypoints.get(idx--);
+                    }
 
-                @Override
-                public void remove() {
-                    waypoints.remove(Math.max(0, idx - 1));
-                }
-            };
+                    @Override
+                    public void remove() {
+                        waypoints.remove(Math.max(0, idx - 1));
+                    }
+                };
+            } else {
+                ascending = true;
+                return new Iterator<Waypoint>() {
+                    int idx = 0;
+
+                    @Override
+                    public boolean hasNext() {
+                        return idx < waypoints.size();
+                    }
+
+                    @Override
+                    public Waypoint next() {
+                        System.out.println(idx);
+                        return waypoints.get(idx++);
+                    }
+
+                    @Override
+                    public void remove() {
+                        waypoints.remove(Math.max(0, idx - 1));
+                    }
+                };
+            }
         }
 
         public boolean isPaused() {
