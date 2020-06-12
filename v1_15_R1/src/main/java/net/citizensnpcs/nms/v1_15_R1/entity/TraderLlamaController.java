@@ -3,6 +3,7 @@ package net.citizensnpcs.nms.v1_15_R1.entity;
 import java.lang.invoke.MethodHandle;
 
 import org.bukkit.Bukkit;
+import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
@@ -22,6 +23,8 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.DamageSource;
 import net.minecraft.server.v1_15_R1.DataWatcherObject;
+import net.minecraft.server.v1_15_R1.Entity;
+import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityLlamaTrader;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.IBlockData;
@@ -224,6 +227,14 @@ public class TraderLlamaController extends MobEntityController {
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
         }
 
         private static final MethodHandle bF = NMS.getSetter(EntityLlamaTrader.class, "bF");

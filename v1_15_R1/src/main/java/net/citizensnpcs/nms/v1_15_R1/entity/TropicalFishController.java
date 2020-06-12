@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_15_R1.entity;
 
 import org.bukkit.Bukkit;
+import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftTropicalFish;
@@ -18,6 +19,8 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.ControllerMove;
 import net.minecraft.server.v1_15_R1.DamageSource;
+import net.minecraft.server.v1_15_R1.Entity;
+import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityTropicalFish;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.IBlockData;
@@ -214,6 +217,14 @@ public class TropicalFishController extends MobEntityController {
             if (npc != null) {
                 this.v = lastInWater;
             }
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
         }
     }
 
