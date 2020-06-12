@@ -233,6 +233,10 @@ public class CommandTrait extends Trait {
 
         public void run(NPC npc, Player clicker) {
             String interpolatedCommand = Placeholders.replace(command, clicker, npc);
+            if (Messaging.isDebugging()) {
+                Messaging.debug(
+                        "Running command " + interpolatedCommand + " on NPC " + npc.getId() + " clicker " + clicker);
+            }
             if (!player) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
                 return;
