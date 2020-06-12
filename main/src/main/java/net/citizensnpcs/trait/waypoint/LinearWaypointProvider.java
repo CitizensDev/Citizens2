@@ -552,7 +552,8 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 @Override
                 public void onCompletion(@Nullable CancelReason cancelReason) {
                     if (npc.isSpawned() && currentDestination != null
-                            && Util.locationWithinRange(npc.getStoredLocation(), currentDestination.getLocation(), 2)) {
+                            && Util.locationWithinRange(npc.getStoredLocation(), currentDestination.getLocation(),
+                                    Setting.DEFAULT_DISTANCE_MARGIN.asDouble())) {
                         currentDestination.onReach(npc);
                         if (cachePaths && cancelReason == null) {
                             cachedPaths.put(new SourceDestinationPair(npcLoc, currentDestination),
