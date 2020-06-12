@@ -444,7 +444,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
                     @Override
                     public Waypoint next() {
-                        System.out.println(idx);
                         return waypoints.get(idx--);
                     }
 
@@ -465,7 +464,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
                     @Override
                     public Waypoint next() {
-                        System.out.println(idx);
                         return waypoints.get(idx++);
                     }
 
