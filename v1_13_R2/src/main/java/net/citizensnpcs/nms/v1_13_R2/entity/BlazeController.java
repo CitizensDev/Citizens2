@@ -15,7 +15,10 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.DamageSource;
+import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityBlaze;
+import net.minecraft.server.v1_13_R2.EntityBoat;
+import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.SoundEffect;
 import net.minecraft.server.v1_13_R2.World;
@@ -60,11 +63,6 @@ public class BlazeController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cs() {
-            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
-        }
-
-        @Override
         public void collide(net.minecraft.server.v1_13_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -75,6 +73,11 @@ public class BlazeController extends MobEntityController {
         }
 
         @Override
+        protected SoundEffect cs() {
+            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
+        }
+
+        @Override
         protected SoundEffect d(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
         }
@@ -82,6 +85,11 @@ public class BlazeController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        protected SoundEffect D() {
+            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
         }
 
         @Override
@@ -120,11 +128,6 @@ public class BlazeController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect D() {
-            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new BlazeNPC(this);
@@ -135,6 +138,13 @@ public class BlazeController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        protected void I() {
+            if (npc == null) {
+                super.I();
+            }
         }
 
         @Override
@@ -151,17 +161,18 @@ public class BlazeController extends MobEntityController {
         }
 
         @Override
-        protected void I() {
-            if (npc == null) {
-                super.I();
-            }
-        }
-
-        @Override
         public void mobTick() {
             if (npc != null) {
                 npc.update();
             }
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
         }
     }
 }

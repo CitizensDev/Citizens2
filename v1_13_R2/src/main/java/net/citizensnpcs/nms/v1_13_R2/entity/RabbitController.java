@@ -17,7 +17,10 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.DamageSource;
+import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.EntityBoat;
 import net.minecraft.server.v1_13_R2.EntityLiving;
+import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.EntityRabbit;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
@@ -197,6 +200,14 @@ public class RabbitController extends MobEntityController {
             } else {
                 super.mobTick();
             }
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
         }
 
         @Override

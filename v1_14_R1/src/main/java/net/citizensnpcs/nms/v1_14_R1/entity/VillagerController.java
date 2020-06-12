@@ -21,8 +21,11 @@ import net.minecraft.server.v1_14_R1.BehaviorController;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.DataWatcherObject;
+import net.minecraft.server.v1_14_R1.Entity;
+import net.minecraft.server.v1_14_R1.EntityBoat;
 import net.minecraft.server.v1_14_R1.EntityHuman;
 import net.minecraft.server.v1_14_R1.EntityLightning;
+import net.minecraft.server.v1_14_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EntityVillager;
 import net.minecraft.server.v1_14_R1.EnumHand;
@@ -245,6 +248,14 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
         }
 
         @Override

@@ -1,7 +1,7 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
-import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_13_R2.*;
+import java.lang.reflect.Method;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -15,9 +15,21 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-
-import java.lang.reflect.Method;
+import net.minecraft.server.v1_13_R2.BlockPosition;
+import net.minecraft.server.v1_13_R2.ControllerLook;
+import net.minecraft.server.v1_13_R2.ControllerMove;
+import net.minecraft.server.v1_13_R2.DamageSource;
+import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.EntityBoat;
+import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_13_R2.EntityPhantom;
+import net.minecraft.server.v1_13_R2.EnumDifficulty;
+import net.minecraft.server.v1_13_R2.IBlockData;
+import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.SoundEffect;
+import net.minecraft.server.v1_13_R2.World;
 
 public class PhantomController extends MobEntityController {
     public PhantomController() {
@@ -193,7 +205,13 @@ public class PhantomController extends MobEntityController {
             }
         }
 
-        private static final Method MOVEMENT_TICK = NMS.getMethod(EntityPhantom.class, "k", false);
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
+        }
 
         @Override
         public void tick() {
@@ -216,6 +234,8 @@ public class PhantomController extends MobEntityController {
                 return false;
             }
         }
+
+        private static final Method MOVEMENT_TICK = NMS.getMethod(EntityPhantom.class, "k", false);
     }
 
     public static class PhantomNPC extends CraftPhantom implements NPCHolder {

@@ -17,7 +17,10 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.DataWatcherObject;
+import net.minecraft.server.v1_14_R1.Entity;
+import net.minecraft.server.v1_14_R1.EntityBoat;
 import net.minecraft.server.v1_14_R1.EntityChicken;
+import net.minecraft.server.v1_14_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
@@ -51,7 +54,6 @@ public class ChickenController extends MobEntityController {
 
     public static class EntityChickenNPC extends EntityChicken implements NPCHolder {
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityChickenNPC(EntityTypes<? extends EntityChicken> types, World world) {
@@ -221,6 +223,14 @@ public class ChickenController extends MobEntityController {
                 this.eggLayTime = 100; // egg timer
             }
             super.movementTick();
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
         }
     }
 }

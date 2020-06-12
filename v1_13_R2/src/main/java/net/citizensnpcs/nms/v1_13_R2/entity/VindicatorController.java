@@ -16,6 +16,9 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.DamageSource;
+import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.EntityBoat;
+import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.EntityVindicator;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
@@ -75,8 +78,10 @@ public class VindicatorController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cs() {
-            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
+        public void c(float f, float f1) {
+            if (npc == null || !npc.isFlyable()) {
+                super.c(f, f1);
+            }
         }
 
         @Override
@@ -90,6 +95,11 @@ public class VindicatorController extends MobEntityController {
         }
 
         @Override
+        protected SoundEffect cs() {
+            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
+        }
+
+        @Override
         protected SoundEffect d(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
         }
@@ -100,10 +110,8 @@ public class VindicatorController extends MobEntityController {
         }
 
         @Override
-        public void c(float f, float f1) {
-            if (npc == null || !npc.isFlyable()) {
-                super.c(f, f1);
-            }
+        protected SoundEffect D() {
+            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
         }
 
         @Override
@@ -142,11 +150,6 @@ public class VindicatorController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect D() {
-            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(bukkitEntity instanceof NPCHolder))
                 bukkitEntity = new VindicatorNPC(this);
@@ -156,6 +159,13 @@ public class VindicatorController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        protected void I() {
+            if (npc == null) {
+                super.I();
+            }
         }
 
         @Override
@@ -172,18 +182,19 @@ public class VindicatorController extends MobEntityController {
         }
 
         @Override
-        protected void I() {
-            if (npc == null) {
-                super.I();
-            }
-        }
-
-        @Override
         public void mobTick() {
             super.mobTick();
             if (npc != null) {
                 npc.update();
             }
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
         }
 
         @Override

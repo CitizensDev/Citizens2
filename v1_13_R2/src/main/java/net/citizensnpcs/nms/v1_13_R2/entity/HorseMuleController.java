@@ -20,7 +20,10 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.DamageSource;
+import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.EntityBoat;
 import net.minecraft.server.v1_13_R2.EntityHorseMule;
+import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.GenericAttributes;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
@@ -45,9 +48,7 @@ public class HorseMuleController extends MobEntityController {
 
     public static class EntityHorseMuleNPC extends EntityHorseMule implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
-
         private boolean riding;
 
         public EntityHorseMuleNPC(World world) {
@@ -221,6 +222,14 @@ public class HorseMuleController extends MobEntityController {
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
         }
 
         @Override

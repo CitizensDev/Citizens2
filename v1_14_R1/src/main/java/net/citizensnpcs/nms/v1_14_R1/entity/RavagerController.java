@@ -2,8 +2,8 @@ package net.citizensnpcs.nms.v1_14_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftRavager;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftRavager;
 import org.bukkit.entity.Ravager;
 import org.bukkit.util.Vector;
 
@@ -17,6 +17,9 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.DataWatcherObject;
+import net.minecraft.server.v1_14_R1.Entity;
+import net.minecraft.server.v1_14_R1.EntityBoat;
+import net.minecraft.server.v1_14_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_14_R1.EntityRavager;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.IBlockData;
@@ -33,20 +36,6 @@ public class RavagerController extends MobEntityController {
     @Override
     public Ravager getBukkitEntity() {
         return (Ravager) super.getBukkitEntity();
-    }
-
-    public static class RavagerNPC extends CraftRavager implements NPCHolder {
-        private final CitizensNPC npc;
-
-        public RavagerNPC(EntityRavagerNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
     }
 
     public static class EntityRavagerNPC extends EntityRavager implements NPCHolder {
@@ -212,6 +201,28 @@ public class RavagerController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
+        }
+    }
+
+    public static class RavagerNPC extends CraftRavager implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public RavagerNPC(EntityRavagerNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
-import net.citizensnpcs.util.NMS;
+import java.lang.reflect.Method;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -14,16 +15,18 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.DamageSource;
+import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.EntityBoat;
+import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.EntitySnowman;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.SoundEffect;
 import net.minecraft.server.v1_13_R2.World;
-
-import java.lang.reflect.Method;
 
 public class SnowmanController extends MobEntityController {
     public SnowmanController() {
@@ -170,6 +173,14 @@ public class SnowmanController extends MobEntityController {
         }
 
         @Override
+        public void mobTick() {
+            super.mobTick();
+            if (npc != null) {
+                npc.update();
+            }
+        }
+
+        @Override
         public void movementTick() {
             boolean allowsGriefing = this.world.getGameRules().getBoolean("mobGriefing");
             if (npc != null) {
@@ -190,14 +201,12 @@ public class SnowmanController extends MobEntityController {
             }
         }
 
-        private static final Method MOVEMENT_TICK = NMS.getMethod(EntitySnowman.class, "k", false);
-
         @Override
-        public void mobTick() {
-            super.mobTick();
-            if (npc != null) {
-                npc.update();
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             }
+            return super.n(entity);
         }
 
         @Override
@@ -217,6 +226,8 @@ public class SnowmanController extends MobEntityController {
                 return false;
             }
         }
+
+        private static final Method MOVEMENT_TICK = NMS.getMethod(EntitySnowman.class, "k", false);
     }
 
     public static class SnowmanNPC extends CraftSnowman implements NPCHolder {

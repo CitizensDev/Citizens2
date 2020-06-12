@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
-import net.minecraft.server.v1_14_R1.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftBat;
@@ -17,7 +15,10 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.DamageSource;
+import net.minecraft.server.v1_14_R1.Entity;
 import net.minecraft.server.v1_14_R1.EntityBat;
+import net.minecraft.server.v1_14_R1.EntityBoat;
+import net.minecraft.server.v1_14_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.SoundEffect;
@@ -64,6 +65,13 @@ public class BatController extends MobEntityController {
         }
 
         @Override
+        protected void checkDespawn() {
+            if (npc == null) {
+                super.checkDespawn();
+            }
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_14_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -74,23 +82,8 @@ public class BatController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect getSoundDeath() {
-            return NMSImpl.getSoundEffect(npc, super.getSoundDeath(), NPC.DEATH_SOUND_METADATA);
-        }
-
-        @Override
-        protected SoundEffect getSoundHurt(DamageSource damagesource) {
-            return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
-        }
-
-        @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
-        }
-
-        @Override
-        public SoundEffect getSoundAmbient() {
-            return NMSImpl.getSoundEffect(npc, super.getSoundAmbient(), NPC.AMBIENT_SOUND_METADATA);
         }
 
         @Override
@@ -142,10 +135,18 @@ public class BatController extends MobEntityController {
         }
 
         @Override
-        protected void checkDespawn() {
-            if (npc == null) {
-                super.checkDespawn();
-            }
+        public SoundEffect getSoundAmbient() {
+            return NMSImpl.getSoundEffect(npc, super.getSoundAmbient(), NPC.AMBIENT_SOUND_METADATA);
+        }
+
+        @Override
+        protected SoundEffect getSoundDeath() {
+            return NMSImpl.getSoundEffect(npc, super.getSoundDeath(), NPC.DEATH_SOUND_METADATA);
+        }
+
+        @Override
+        protected SoundEffect getSoundHurt(DamageSource damagesource) {
+            return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
         }
 
         @Override
@@ -170,6 +171,14 @@ public class BatController extends MobEntityController {
                 NMSImpl.updateAI(this);
                 npc.update();
             }
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
         }
 
         public void setFlying(boolean flying) {

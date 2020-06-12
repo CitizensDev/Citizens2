@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
-import net.minecraft.server.v1_14_R1.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftDrowned;
@@ -18,11 +16,15 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DamageSource;
+import net.minecraft.server.v1_14_R1.Entity;
+import net.minecraft.server.v1_14_R1.EntityBoat;
 import net.minecraft.server.v1_14_R1.EntityDrowned;
+import net.minecraft.server.v1_14_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.SoundEffect;
+import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
 
 public class DrownedController extends MobEntityController {
@@ -72,15 +74,6 @@ public class DrownedController extends MobEntityController {
         }
 
         @Override
-        public void e(Vec3D vec3d) {
-            if (npc == null || !npc.isFlyable()) {
-                super.e(vec3d);
-            } else {
-                NMSImpl.flyingMoveLogic(this, vec3d);
-            }
-        }
-
-        @Override
         public void b(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
@@ -106,6 +99,15 @@ public class DrownedController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public void e(Vec3D vec3d) {
+            if (npc == null || !npc.isFlyable()) {
+                super.e(vec3d);
+            } else {
+                NMSImpl.flyingMoveLogic(this, vec3d);
+            }
         }
 
         @Override
@@ -172,6 +174,15 @@ public class DrownedController extends MobEntityController {
         }
 
         @Override
+        public boolean isClimbing() {
+            if (npc == null || !npc.isFlyable()) {
+                return super.isClimbing();
+            } else {
+                return false;
+            }
+        }
+
+        @Override
         public boolean isLeashed() {
             if (npc == null)
                 return super.isLeashed();
@@ -193,12 +204,11 @@ public class DrownedController extends MobEntityController {
         }
 
         @Override
-        public boolean isClimbing() {
-            if (npc == null || !npc.isFlyable()) {
-                return super.isClimbing();
-            } else {
-                return false;
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
             }
+            return super.n(entity);
         }
     }
 }

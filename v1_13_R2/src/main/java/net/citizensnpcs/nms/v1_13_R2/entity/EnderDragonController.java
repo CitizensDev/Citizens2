@@ -1,7 +1,7 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
-import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_13_R2.*;
+import java.lang.reflect.Method;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEnderDragon;
@@ -15,9 +15,16 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-
-import java.lang.reflect.Method;
+import net.minecraft.server.v1_13_R2.DamageSource;
+import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.EntityBoat;
+import net.minecraft.server.v1_13_R2.EntityEnderDragon;
+import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.SoundEffect;
+import net.minecraft.server.v1_13_R2.World;
 
 public class EnderDragonController extends MobEntityController {
     public EnderDragonController() {
@@ -59,17 +66,17 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cs() {
-            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
-        }
-
-        @Override
         public void collide(net.minecraft.server.v1_13_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
             if (npc != null)
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+        }
+
+        @Override
+        protected SoundEffect cs() {
+            return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override
@@ -80,6 +87,11 @@ public class EnderDragonController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        protected SoundEffect D() {
+            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
         }
 
         @Override
@@ -118,11 +130,6 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect D() {
-            return NMSImpl.getSoundEffect(npc, super.D(), NPC.AMBIENT_SOUND_METADATA);
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new EnderDragonNPC(this);
@@ -145,6 +152,13 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
+        protected void I() {
+            if (npc == null) {
+                super.I();
+            }
+        }
+
+        @Override
         public boolean isLeashed() {
             if (npc == null)
                 return super.isLeashed();
@@ -155,13 +169,6 @@ public class EnderDragonController extends MobEntityController {
                 unleash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
-        }
-
-        @Override
-        protected void I() {
-            if (npc == null) {
-                super.I();
-            }
         }
 
         @Override
@@ -186,6 +193,14 @@ public class EnderDragonController extends MobEntityController {
                     }
                 }
             }
+        }
+
+        @Override
+        protected boolean n(Entity entity) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            }
+            return super.n(entity);
         }
 
         private static final Method MOVEMENT_TICK = NMS.getMethod(EntityEnderDragon.class, "k", false);
