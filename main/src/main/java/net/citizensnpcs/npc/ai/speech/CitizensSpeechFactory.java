@@ -66,6 +66,7 @@ public class CitizensSpeechFactory implements SpeechFactory {
         return new TalkableEntity(entity);
     }
 
+    @Override
     public Talkable newTalkableEntity(LivingEntity entity) {
         return newTalkableEntity((Entity) entity);
     }

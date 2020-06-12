@@ -1,6 +1,6 @@
 package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;
 
-import org.bukkit.Bukkit;import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftMinecartChest;

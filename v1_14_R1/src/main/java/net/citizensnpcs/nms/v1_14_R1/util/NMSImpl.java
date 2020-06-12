@@ -1436,7 +1436,7 @@ public class NMSImpl implements NMSBridge {
                     vec3d5 = entity.getLookDirection();
                     f1 = entity.pitch * 0.017453292F;
                     double d3 = Math.sqrt(vec3d5.x * vec3d5.x + vec3d5.z * vec3d5.z);
-                    double d4 = Math.sqrt(entity.b(vec3d4));
+                    double d4 = Math.sqrt(Entity.b(vec3d4));
                     d2 = vec3d5.f();
                     float f3 = MathHelper.cos(f1);
                     f3 = (float) ((double) f3 * (double) f3 * Math.min(1.0D, d2 / 0.4D));
@@ -1460,7 +1460,7 @@ public class NMSImpl implements NMSBridge {
                     entity.setMot(vec3d4.d(0.9900000095367432D, 0.9800000190734863D, 0.9900000095367432D));
                     entity.move(EnumMoveType.SELF, entity.getMot());
                     if (entity.positionChanged && !entity.world.isClientSide) {
-                        d5 = Math.sqrt(entity.b(entity.getMot()));
+                        d5 = Math.sqrt(Entity.b(entity.getMot()));
                         double d6 = d4 - d5;
                         float f4 = (float) (d6 * 10.0D - 3.0D);
                         if (f4 > 0.0F) {

@@ -36,6 +36,7 @@ public class Waypoints extends Trait {
         }
     }
 
+    @Override
     public void onAttach() {
         provider = new LinearWaypointProvider(npc);
     }

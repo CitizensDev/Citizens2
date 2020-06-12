@@ -250,7 +250,7 @@ public class Commands {
             throw new CommandUsageException();
         }
     }
-    
+
     @Command(
             aliases = { "npc" },
             usage = "snowman (-d[erp])",
