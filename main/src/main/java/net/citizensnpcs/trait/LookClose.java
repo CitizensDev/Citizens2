@@ -106,6 +106,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         return lookingAt == null;
     }
 
+    private boolean isEqual(float[] array) {
+        return Math.abs(array[0] - array[1]) < 0.001;
+    }
+
     private boolean isPluginVanished(Player player) {
         for (MetadataValue meta : player.getMetadata("vanished")) {
             if (meta.asBoolean()) {
@@ -134,8 +138,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     private void randomLook() {
         Random rand = new Random();
-        float pitch = rand.doubles(randomPitchRange[0], randomPitchRange[1]).iterator().next().floatValue(),
-                yaw = rand.doubles(randomYawRange[0], randomYawRange[1]).iterator().next().floatValue();
+        float pitch = isEqual(randomPitchRange) ? randomPitchRange[0]
+                : rand.doubles(randomPitchRange[0], randomPitchRange[1]).iterator().next().floatValue();
+        float yaw = isEqual(randomYawRange) ? randomYawRange[0]
+                : rand.doubles(randomYawRange[0], randomYawRange[1]).iterator().next().floatValue();
         Util.assumePose(npc.getEntity(), yaw, pitch);
     }
 
