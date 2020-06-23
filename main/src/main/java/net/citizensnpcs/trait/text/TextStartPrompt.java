@@ -58,12 +58,15 @@ public class TextStartPrompt extends StringPrompt {
             if (parts.length > 1) {
                 text.setItemInHandPattern(parts[1]);
                 Messaging.sendTr(sender, Messages.TEXT_EDITOR_SET_ITEM, parts[1]);
+            } else {
+                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_MISSING_ITEM_PATTERN);
             }
         } else if (input.equalsIgnoreCase("help")) {
             context.setSessionData("said-text", false);
             Messaging.send(sender, getPromptText(context));
-        } else
+        } else {
             Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_EDIT_TYPE);
+        }
 
         return new TextStartPrompt(text);
     }
