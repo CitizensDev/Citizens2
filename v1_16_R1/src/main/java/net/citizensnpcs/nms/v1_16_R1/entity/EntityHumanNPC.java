@@ -1,9 +1,11 @@
 package net.citizensnpcs.nms.v1_16_R1.entity;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
 import java.net.Socket;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -290,18 +292,20 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
 
         AttributeModifiable range = getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
-        System.out.println("RANGE " + range);
         if (range == null) {
             try {
-                AttributeProvider provider = (AttributeProvider) NMS.getGetter(AttributeMapBase.class, "d")
-                        .invoke(getAttributeMap());
+                AttributeProvider provider = (AttributeProvider) ATTRIBUTE_MAP.invoke(getAttributeMap());
                 Map<AttributeBase, AttributeModifiable> all = Maps
-                        .newHashMap((Map) NMS.getGetter(AttributeProvider.class, "a").invoke(provider));
-                all.put(GenericAttributes.FOLLOW_RANGE, new AttributeModifiable(GenericAttributes.FOLLOW_RANGE, x -> {
-                    throw new UnsupportedOperationException(
-                            "Tried to change value for default attribute instance FOLLOW_RANGE");
-                }));
-                NMS.getFinalSetter(AttributeProvider.class, "a").invoke(provider, ImmutableMap.copyOf(all));
+                        .newHashMap((Map<AttributeBase, AttributeModifiable>) ATTRIBUTE_PROVIDER_MAP.invoke(provider));
+                all.put(GenericAttributes.FOLLOW_RANGE,
+                        new AttributeModifiable(GenericAttributes.FOLLOW_RANGE, new Consumer<AttributeModifiable>() {
+                            @Override
+                            public void accept(AttributeModifiable att) {
+                                throw new UnsupportedOperationException(
+                                        "Tried to change value for default attribute instance FOLLOW_RANGE");
+                            }
+                        }));
+                ATTRIBUTE_PROVIDER_MAP_SETTER.invoke(provider, ImmutableMap.copyOf(all));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -575,6 +579,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
     }
 
+    private static final MethodHandle ATTRIBUTE_MAP = NMS.getGetter(AttributeMapBase.class, "d");
+    private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getGetter(AttributeProvider.class, "a");
+    private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFinalSetter(AttributeProvider.class, "a");
     private static final float EPSILON = 0.005F;
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }
