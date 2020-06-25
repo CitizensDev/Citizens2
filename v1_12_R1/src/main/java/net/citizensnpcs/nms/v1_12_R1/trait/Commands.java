@@ -39,7 +39,7 @@ public class Commands {
             max = 1)
     @Requirements(selected = true, ownership = true, types = { EntityType.WITHER, EntityType.ENDER_DRAGON })
     public void bossbar(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        BossBarTrait trait = npc.getTrait(BossBarTrait.class);
+        BossBarTrait trait = npc.getOrAddTrait(BossBarTrait.class);
         if (args.hasValueFlag("color")) {
             BarColor color = Util.matchEnum(BarColor.values(), args.getFlag("color"));
             trait.setColor(color);
@@ -72,7 +72,7 @@ public class Commands {
             permission = "citizens.npc.llama")
     @Requirements(selected = true, ownership = true, types = EntityType.LLAMA)
     public void llama(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        LlamaTrait trait = npc.getTrait(LlamaTrait.class);
+        LlamaTrait trait = npc.getOrAddTrait(LlamaTrait.class);
         String output = "";
         if (args.hasValueFlag("color") || args.hasValueFlag("colour")) {
             String colorRaw = args.getFlag("color", args.getFlag("colour"));
@@ -103,7 +103,7 @@ public class Commands {
             permission = "citizens.npc.parrot")
     @Requirements(selected = true, ownership = true, types = EntityType.PARROT)
     public void parrot(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        ParrotTrait trait = npc.getTrait(ParrotTrait.class);
+        ParrotTrait trait = npc.getOrAddTrait(ParrotTrait.class);
         String output = "";
         if (args.hasValueFlag("variant")) {
             String variantRaw = args.getFlag("variant");
@@ -130,7 +130,7 @@ public class Commands {
             permission = "citizens.npc.shulker")
     @Requirements(selected = true, ownership = true, types = { EntityType.SHULKER })
     public void shulker(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        ShulkerTrait trait = npc.getTrait(ShulkerTrait.class);
+        ShulkerTrait trait = npc.getOrAddTrait(ShulkerTrait.class);
         boolean hasArg = false;
         if (args.hasValueFlag("peek")) {
             int peek = (byte) args.getFlagInteger("peek");
@@ -164,7 +164,7 @@ public class Commands {
             permission = "citizens.npc.snowman")
     @Requirements(selected = true, ownership = true, types = { EntityType.SNOWMAN })
     public void snowman(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        SnowmanTrait trait = npc.getTrait(SnowmanTrait.class);
+        SnowmanTrait trait = npc.getOrAddTrait(SnowmanTrait.class);
         boolean hasArg = false;
         if (args.hasFlag('d')) {
             boolean isDerp = trait.toggleDerp();
