@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R1.entity;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_16_R1.EntityMinecartAbstract;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftDonkey;
@@ -25,6 +24,7 @@ import net.minecraft.server.v1_16_R1.DataWatcherObject;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityBoat;
 import net.minecraft.server.v1_16_R1.EntityHorseDonkey;
+import net.minecraft.server.v1_16_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.GenericAttributes;
 import net.minecraft.server.v1_16_R1.IBlockData;
@@ -229,7 +229,7 @@ public class HorseDonkeyController extends MobEntityController {
             super.mobTick();
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                if (npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled()) {
+                if (npc.hasTrait(Controllable.class) && npc.getOrAddTrait(Controllable.class).isEnabled()) {
                     riding = getBukkitEntity().getPassengers().size() > 0;
                     getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
                             .setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());

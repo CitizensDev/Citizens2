@@ -59,7 +59,7 @@ public class Commands {
             permission = "citizens.npc.bee")
     @Requirements(selected = true, ownership = true, types = EntityType.BEE)
     public void bee(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        BeeTrait trait = npc.getTrait(BeeTrait.class);
+        BeeTrait trait = npc.getOrAddTrait(BeeTrait.class);
         String output = "";
         if (args.hasValueFlag("anger")) {
             int anger = args.getFlagInteger("anger");
@@ -95,7 +95,7 @@ public class Commands {
             max = 1)
     @Requirements(selected = true, ownership = true, types = { EntityType.WITHER, EntityType.ENDER_DRAGON })
     public void bossbar(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        BossBarTrait trait = npc.getTrait(BossBarTrait.class);
+        BossBarTrait trait = npc.getOrAddTrait(BossBarTrait.class);
         if (args.hasValueFlag("color")) {
             BarColor color = Util.matchEnum(BarColor.values(), args.getFlag("color"));
             trait.setColor(color);
@@ -130,7 +130,7 @@ public class Commands {
             permission = "citizens.npc.cat")
     @Requirements(selected = true, ownership = true, types = EntityType.CAT)
     public void cat(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        CatTrait trait = npc.getTrait(CatTrait.class);
+        CatTrait trait = npc.getOrAddTrait(CatTrait.class);
         String output = "";
         if (args.hasValueFlag("type")) {
             Cat.Type type = Util.matchEnum(Cat.Type.values(), args.getFlag("type"));
@@ -178,7 +178,7 @@ public class Commands {
             permission = "citizens.npc.fox")
     @Requirements(selected = true, ownership = true, types = EntityType.FOX)
     public void fox(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        FoxTrait trait = npc.getTrait(FoxTrait.class);
+        FoxTrait trait = npc.getOrAddTrait(FoxTrait.class);
         String output = "";
         if (args.hasValueFlag("type")) {
             Fox.Type type = Util.matchEnum(Fox.Type.values(), args.getFlag("type"));
@@ -220,7 +220,7 @@ public class Commands {
             permission = "citizens.npc.llama")
     @Requirements(selected = true, ownership = true, types = { EntityType.LLAMA, EntityType.TRADER_LLAMA })
     public void llama(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        LlamaTrait trait = npc.getTrait(LlamaTrait.class);
+        LlamaTrait trait = npc.getOrAddTrait(LlamaTrait.class);
         String output = "";
         if (args.hasValueFlag("color") || args.hasValueFlag("colour")) {
             String colorRaw = args.getFlag("color", args.getFlag("colour"));
@@ -251,7 +251,7 @@ public class Commands {
             permission = "citizens.npc.mushroomcow")
     @Requirements(selected = true, ownership = true, types = { EntityType.MUSHROOM_COW })
     public void mushroomcow(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        MushroomCowTrait trait = npc.getTrait(MushroomCowTrait.class);
+        MushroomCowTrait trait = npc.getOrAddTrait(MushroomCowTrait.class);
         boolean hasArg = false;
         if (args.hasValueFlag("variant")) {
             MushroomCow.Variant variant = Util.matchEnum(MushroomCow.Variant.values(), args.getFlag("variant"));
@@ -280,7 +280,7 @@ public class Commands {
             permission = "citizens.npc.panda")
     @Requirements(selected = true, ownership = true, types = EntityType.PANDA)
     public void panda(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        PandaTrait trait = npc.getTrait(PandaTrait.class);
+        PandaTrait trait = npc.getOrAddTrait(PandaTrait.class);
         String output = "";
         if (args.hasValueFlag("gene")) {
             Panda.Gene gene = Util.matchEnum(Panda.Gene.values(), args.getFlag("gene"));
@@ -321,7 +321,7 @@ public class Commands {
             permission = "citizens.npc.parrot")
     @Requirements(selected = true, ownership = true, types = EntityType.PARROT)
     public void parrot(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        ParrotTrait trait = npc.getTrait(ParrotTrait.class);
+        ParrotTrait trait = npc.getOrAddTrait(ParrotTrait.class);
         String output = "";
         if (args.hasValueFlag("variant")) {
             String variantRaw = args.getFlag("variant");
@@ -348,7 +348,7 @@ public class Commands {
             permission = "citizens.npc.phantom")
     @Requirements(selected = true, ownership = true, types = EntityType.PHANTOM)
     public void phantom(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        PhantomTrait trait = npc.getTrait(PhantomTrait.class);
+        PhantomTrait trait = npc.getOrAddTrait(PhantomTrait.class);
         String output = "";
         if (args.hasValueFlag("size")) {
             if (args.getFlagInteger("size") <= 0) {
@@ -374,7 +374,7 @@ public class Commands {
             permission = "citizens.npc.pufferfish")
     @Requirements(selected = true, ownership = true, types = EntityType.PUFFERFISH)
     public void pufferfish(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        PufferFishTrait trait = npc.getTrait(PufferFishTrait.class);
+        PufferFishTrait trait = npc.getOrAddTrait(PufferFishTrait.class);
         String output = "";
         if (args.hasValueFlag("state")) {
             int state = Math.min(Math.max(args.getFlagInteger("state"), 0), 3);
@@ -396,7 +396,7 @@ public class Commands {
             permission = "citizens.npc.shulker")
     @Requirements(selected = true, ownership = true, types = { EntityType.SHULKER })
     public void shulker(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        ShulkerTrait trait = npc.getTrait(ShulkerTrait.class);
+        ShulkerTrait trait = npc.getOrAddTrait(ShulkerTrait.class);
         boolean hasArg = false;
         if (args.hasValueFlag("peek")) {
             int peek = (byte) args.getFlagInteger("peek");
@@ -430,7 +430,7 @@ public class Commands {
             permission = "citizens.npc.snowman")
     @Requirements(selected = true, ownership = true, types = { EntityType.SNOWMAN })
     public void snowman(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        SnowmanTrait trait = npc.getTrait(SnowmanTrait.class);
+        SnowmanTrait trait = npc.getOrAddTrait(SnowmanTrait.class);
         boolean hasArg = false;
         if (args.hasFlag('d')) {
             boolean isDerp = trait.toggleDerp();
@@ -452,7 +452,7 @@ public class Commands {
             permission = "citizens.npc.tropicalfish")
     @Requirements(selected = true, ownership = true, types = EntityType.TROPICAL_FISH)
     public void tropicalfish(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        TropicalFishTrait trait = npc.getTrait(TropicalFishTrait.class);
+        TropicalFishTrait trait = npc.getOrAddTrait(TropicalFishTrait.class);
         String output = "";
         if (args.hasValueFlag("body")) {
             DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("body"));
@@ -498,7 +498,7 @@ public class Commands {
             permission = "citizens.npc.villager")
     @Requirements(selected = true, ownership = true, types = EntityType.VILLAGER)
     public void villager(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        VillagerTrait trait = npc.getTrait(VillagerTrait.class);
+        VillagerTrait trait = npc.getOrAddTrait(VillagerTrait.class);
         String output = "";
         if (args.hasValueFlag("level")) {
             if (args.getFlagInteger("level") < 0) {
@@ -522,7 +522,7 @@ public class Commands {
                 throw new CommandException(Messages.INVALID_PROFESSION, args.getString(1),
                         Joiner.on(',').join(Profession.values()));
             }
-            npc.getTrait(VillagerProfession.class).setProfession(parsed);
+            npc.getOrAddTrait(VillagerProfession.class).setProfession(parsed);
             output += Messaging.tr(Messages.PROFESSION_SET, npc.getName(), args.getFlag("profession"));
         }
         if (!output.isEmpty()) {
