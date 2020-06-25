@@ -228,13 +228,24 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    @Deprecated
     public <T extends Trait> T getTrait(Class<T> clazz) {
+        return getOrAddTrait(clazz);
+    }
+    
+    @Override
+    public <T extends Trait> T getOrAddTrait(Class<T> clazz) {
         Trait trait = traits.get(clazz);
         if (trait == null) {
             trait = getTraitFor(clazz);
             addTrait(trait);
         }
         return trait != null ? clazz.cast(trait) : null;
+    }
+    
+    @Override
+    public <T extends Trait> T getTraitSafely(Class<T> clazz) {
+        return clazz.cast(traits.get(clazz)); // #cast allows null as value
     }
 
     protected Trait getTraitFor(Class<? extends Trait> clazz) {
