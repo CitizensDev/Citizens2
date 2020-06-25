@@ -42,7 +42,7 @@ public class PlayerAnimationImpl {
                 }
                 final NPC holder = registry.createNPC(EntityType.ARMOR_STAND, "");
                 holder.spawn(player.getBukkitEntity().getLocation());
-                ArmorStandTrait trait = holder.getTrait(ArmorStandTrait.class);
+                ArmorStandTrait trait = holder.getOrAddTrait(ArmorStandTrait.class);
                 trait.setGravity(false);
                 trait.setHasArms(false);
                 trait.setHasBaseplate(false);

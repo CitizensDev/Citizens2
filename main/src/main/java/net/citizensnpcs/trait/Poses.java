@@ -47,7 +47,7 @@ public class Poses extends Trait {
 
     private void assumePose(float yaw, float pitch) {
         if (!npc.isSpawned()) {
-            npc.spawn(npc.getTrait(CurrentLocation.class).getLocation(), SpawnReason.COMMAND);
+            npc.spawn(npc.getOrAddTrait(CurrentLocation.class).getLocation(), SpawnReason.COMMAND);
         }
         Util.assumePose(npc.getEntity(), yaw, pitch);
     }

@@ -66,13 +66,13 @@ public class EquipmentEditor extends Editor {
                 if (hand.getType() == Material.AIR || hand.getAmount() <= 0) {
                     return;
                 }
-                ItemStack old = npc.getTrait(Equipment.class).get(finalSlot);
+                ItemStack old = npc.getOrAddTrait(Equipment.class).get(finalSlot);
                 if (old != null && old.getType() != Material.AIR) {
                     event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), old);
                 }
                 ItemStack newStack = hand.clone();
                 newStack.setAmount(1);
-                npc.getTrait(Equipment.class).set(finalSlot, newStack);
+                npc.getOrAddTrait(Equipment.class).set(finalSlot, newStack);
                 hand.setAmount(hand.getAmount() - 1);
                 event.getPlayer().getInventory().setItemInHand(hand);
             }

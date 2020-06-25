@@ -25,8 +25,8 @@ public class OcelotModifiers extends Trait {
     }
 
     private void migrateToCat() {
-        npc.getTrait(CatTrait.class).setSitting(sitting);
-        npc.getTrait(CatTrait.class).setType(type);
+        npc.getOrAddTrait(CatTrait.class).setSitting(sitting);
+        npc.getOrAddTrait(CatTrait.class).setType(type);
     }
 
     @Override

@@ -32,7 +32,7 @@ public class DelayTrigger implements WaypointTrigger {
     @Override
     public void onWaypointReached(NPC npc, Location waypoint) {
         if (delay > 0) {
-            scheduleTask(npc.getTrait(Waypoints.class).getCurrentProvider());
+            scheduleTask(npc.getOrAddTrait(Waypoints.class).getCurrentProvider());
         }
     }
 

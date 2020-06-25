@@ -50,7 +50,7 @@ public class EditorCommands {
             permission = "citizens.npc.edit.path")
     @Requirements(selected = true, ownership = true)
     public void path(CommandContext args, CommandSender player, NPC npc) {
-        Editor editor = npc.getTrait(Waypoints.class).getEditor(player, args);
+        Editor editor = npc.getOrAddTrait(Waypoints.class).getEditor(player, args);
         if (editor == null)
             return;
         Editor.enterOrLeave((Player) player, editor);
@@ -65,6 +65,6 @@ public class EditorCommands {
             max = 1,
             permission = "citizens.npc.edit.text")
     public void text(CommandContext args, Player player, NPC npc) {
-        Editor.enterOrLeave(player, npc.getTrait(Text.class).getEditor(player));
+        Editor.enterOrLeave(player, npc.getOrAddTrait(Text.class).getEditor(player));
     }
 }

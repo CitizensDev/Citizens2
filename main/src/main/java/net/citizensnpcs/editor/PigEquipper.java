@@ -17,13 +17,13 @@ public class PigEquipper implements Equipper {
         Pig pig = (Pig) toEquip.getEntity();
         if (hand.getType() == Material.SADDLE) {
             if (!pig.hasSaddle()) {
-                toEquip.getTrait(Saddle.class).toggle();
+                toEquip.getOrAddTrait(Saddle.class).toggle();
                 hand.setAmount(0);
                 Messaging.sendTr(equipper, Messages.SADDLED_SET, toEquip.getName());
             }
         } else if (pig.hasSaddle()) {
             equipper.getWorld().dropItemNaturally(pig.getLocation(), new ItemStack(Material.SADDLE, 1));
-            toEquip.getTrait(Saddle.class).toggle();
+            toEquip.getOrAddTrait(Saddle.class).toggle();
             Messaging.sendTr(equipper, Messages.SADDLED_STOPPED, toEquip.getName());
         }
         equipper.getInventory().setItemInHand(hand);
