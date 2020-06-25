@@ -92,6 +92,7 @@ import net.citizensnpcs.nms.v1_16_R1.entity.GhastController;
 import net.citizensnpcs.nms.v1_16_R1.entity.GiantController;
 import net.citizensnpcs.nms.v1_16_R1.entity.GuardianController;
 import net.citizensnpcs.nms.v1_16_R1.entity.GuardianElderController;
+import net.citizensnpcs.nms.v1_16_R1.entity.HoglinController;
 import net.citizensnpcs.nms.v1_16_R1.entity.HorseController;
 import net.citizensnpcs.nms.v1_16_R1.entity.HorseDonkeyController;
 import net.citizensnpcs.nms.v1_16_R1.entity.HorseMuleController;
@@ -776,6 +777,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.PILLAGER, PillagerController.class);
         EntityControllers.setEntityControllerForType(EntityType.PIG, PigController.class);
         EntityControllers.setEntityControllerForType(EntityType.PIGLIN, PiglinController.class);
+        EntityControllers.setEntityControllerForType(EntityType.HOGLIN, HoglinController.class);
         EntityControllers.setEntityControllerForType(EntityType.ZOMBIFIED_PIGLIN, PigZombieController.class);
         EntityControllers.setEntityControllerForType(EntityType.ZOGLIN, ZoglinController.class);
         EntityControllers.setEntityControllerForType(EntityType.POLAR_BEAR, PolarBearController.class);

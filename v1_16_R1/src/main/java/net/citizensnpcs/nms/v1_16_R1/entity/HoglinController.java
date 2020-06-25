@@ -5,8 +5,8 @@ import java.util.TreeMap;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPiglin;
-import org.bukkit.entity.Piglin;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftHoglin;
+import org.bukkit.entity.Hoglin;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
@@ -21,8 +21,8 @@ import net.minecraft.server.v1_16_R1.BlockPosition;
 import net.minecraft.server.v1_16_R1.DamageSource;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityBoat;
+import net.minecraft.server.v1_16_R1.EntityHoglin;
 import net.minecraft.server.v1_16_R1.EntityMinecartAbstract;
-import net.minecraft.server.v1_16_R1.EntityPiglin;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.IBlockData;
 import net.minecraft.server.v1_16_R1.NBTTagCompound;
@@ -30,26 +30,26 @@ import net.minecraft.server.v1_16_R1.SoundEffect;
 import net.minecraft.server.v1_16_R1.Vec3D;
 import net.minecraft.server.v1_16_R1.World;
 
-public class PiglinController extends MobEntityController {
-    public PiglinController() {
-        super(EntityPiglinNPC.class);
+public class HoglinController extends MobEntityController {
+    public HoglinController() {
+        super(EntityHoglinNPC.class);
     }
 
     @Override
-    public Piglin getBukkitEntity() {
-        return (Piglin) super.getBukkitEntity();
+    public Hoglin getBukkitEntity() {
+        return (Hoglin) super.getBukkitEntity();
     }
 
-    public static class EntityPiglinNPC extends EntityPiglin implements NPCHolder {
+    public static class EntityHoglinNPC extends EntityHoglin implements NPCHolder {
         private TreeMap<?, ?> behaviorMap;
         private final CitizensNPC npc;
-        private BehaviorController<EntityPiglin> previousBehaviorController;
+        private BehaviorController<EntityHoglin> previousBehaviorController;
 
-        public EntityPiglinNPC(EntityTypes<? extends EntityPiglin> types, World world) {
+        public EntityHoglinNPC(EntityTypes<? extends EntityHoglin> types, World world) {
             this(types, world, null);
         }
 
-        public EntityPiglinNPC(EntityTypes<? extends EntityPiglin> types, World world, NPC npc) {
+        public EntityHoglinNPC(EntityTypes<? extends EntityHoglin> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
@@ -118,7 +118,7 @@ public class PiglinController extends MobEntityController {
         @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
-                NMSImpl.setBukkitEntity(this, new PiglinNPC(this));
+                NMSImpl.setBukkitEntity(this, new HoglinNPC(this));
             }
             return super.getBukkitEntity();
         }
@@ -216,10 +216,10 @@ public class PiglinController extends MobEntityController {
         }
     }
 
-    public static class PiglinNPC extends CraftPiglin implements NPCHolder {
+    public static class HoglinNPC extends CraftHoglin implements NPCHolder {
         private final CitizensNPC npc;
 
-        public PiglinNPC(EntityPiglinNPC entity) {
+        public HoglinNPC(EntityHoglinNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
         }

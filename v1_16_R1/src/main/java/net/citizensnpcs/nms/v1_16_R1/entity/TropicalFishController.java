@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R1.entity;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_16_R1.EntityMinecartAbstract;
 import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftTropicalFish;
@@ -21,6 +20,7 @@ import net.minecraft.server.v1_16_R1.ControllerMove;
 import net.minecraft.server.v1_16_R1.DamageSource;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityBoat;
+import net.minecraft.server.v1_16_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R1.EntityTropicalFish;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.IBlockData;
@@ -94,15 +94,6 @@ public class TropicalFishController extends MobEntityController {
         }
 
         @Override
-        public void f(Vec3D vec3d) {
-            if (npc == null || !npc.isFlyable()) {
-                super.f(vec3d);
-            } else {
-                NMSImpl.flyingMoveLogic(this, vec3d);
-            }
-        }
-
-        @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
             if (npc == null) {
                 super.enderTeleportTo(d0, d1, d2);
@@ -112,6 +103,15 @@ public class TropicalFishController extends MobEntityController {
             Bukkit.getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
                 super.enderTeleportTo(d0, d1, d2);
+            }
+        }
+
+        @Override
+        public void f(Vec3D vec3d) {
+            if (npc == null || !npc.isFlyable()) {
+                super.f(vec3d);
+            } else {
+                NMSImpl.flyingMoveLogic(this, vec3d);
             }
         }
 
