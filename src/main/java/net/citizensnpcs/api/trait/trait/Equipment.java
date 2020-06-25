@@ -285,6 +285,24 @@ public class Equipment extends Trait {
             return entity;
         }
 
+        public ItemStack getItem(EquipmentSlot arg0) {
+            switch (arg0) {
+                case BOOTS:
+                    return getBoots();
+                case CHESTPLATE:
+                    return getChestplate();
+                case HAND:
+                    return getItemInHand();
+                case HELMET:
+                    return getHelmet();
+                case LEGGINGS:
+                    return getLeggings();
+                case OFF_HAND:
+                    return getItemInOffHand();
+            }
+            return null;
+        }
+
         @Override
         public ItemStack getItemInHand() {
             return entity.getItemInHand();
@@ -358,6 +376,31 @@ public class Equipment extends Trait {
 
         @Override
         public void setHelmetDropChance(float arg0) {
+        }
+
+        public void setItem(EquipmentSlot arg0, ItemStack arg1) {
+            switch (arg0) {
+                case BOOTS:
+                    setBoots(arg1);
+                    break;
+                case CHESTPLATE:
+                    setChestplate(arg1);
+                    break;
+                case HAND:
+                    setItemInHand(arg1);
+                    break;
+                case HELMET:
+                    setHelmet(arg1);
+                    break;
+                case LEGGINGS:
+                    setLeggings(arg1);
+                    break;
+                case OFF_HAND:
+                    setItemInOffHand(arg1);
+                    break;
+                default:
+                    break;
+            }
         }
 
         @Override
@@ -467,6 +510,24 @@ public class Equipment extends Trait {
             return player;
         }
 
+        public ItemStack getItem(EquipmentSlot arg0) {
+            switch (arg0) {
+                case BOOTS:
+                    return player.getInventory().getBoots();
+                case CHESTPLATE:
+                    return player.getInventory().getChestplate();
+                case HAND:
+                    return player.getInventory().getItemInHand();
+                case HELMET:
+                    return player.getInventory().getHelmet();
+                case LEGGINGS:
+                    return player.getInventory().getLeggings();
+                case OFF_HAND:
+                    return player.getInventory().getItemInOffHand();
+            }
+            return null;
+        }
+
         @Override
         @SuppressWarnings("deprecation")
         public ItemStack getItemInHand() {
@@ -541,6 +602,31 @@ public class Equipment extends Trait {
         @Override
         public void setHelmetDropChance(float chance) {
             throw new UnsupportedOperationException();
+        }
+
+        public void setItem(EquipmentSlot arg0, ItemStack arg1) {
+            switch (arg0) {
+                case BOOTS:
+                    player.getInventory().setBoots(arg1);
+                    break;
+                case CHESTPLATE:
+                    player.getInventory().setChestplate(arg1);
+                    break;
+                case HAND:
+                    player.getInventory().setItemInHand(arg1);
+                    break;
+                case HELMET:
+                    player.getInventory().setHelmet(arg1);
+                    break;
+                case LEGGINGS:
+                    player.getInventory().setLeggings(arg1);
+                    break;
+                case OFF_HAND:
+                    player.getInventory().setItemInOffHand(arg1);
+                    break;
+                default:
+                    break;
+            }
         }
 
         @Override
