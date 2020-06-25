@@ -61,7 +61,7 @@ public class Inventory extends Trait {
         for (int i = 0; i < contents.length; i++) {
             this.contents[i] = contents[i];
             if (i == 0) {
-                npc.getTrait(Equipment.class).setItemInHand(contents[i]);
+                npc.getOrAddTrait(Equipment.class).setItemInHand(contents[i]);
             }
         }
         if (npc.getEntity() instanceof InventoryHolder) {
@@ -164,7 +164,7 @@ public class Inventory extends Trait {
             contents = ((InventoryHolder) entity).getInventory().getContents();
         }
         if (entity instanceof Player) {
-            npc.getTrait(Equipment.class).setItemInHand(contents[0]);
+            npc.getOrAddTrait(Equipment.class).setItemInHand(contents[0]);
         }
     }
 
@@ -230,7 +230,7 @@ public class Inventory extends Trait {
             throw new IndexOutOfBoundsException();
         }
         if (slot == 0) {
-            npc.getTrait(Equipment.class).setItemInHand(item);
+            npc.getOrAddTrait(Equipment.class).setItemInHand(item);
         }
     }
 

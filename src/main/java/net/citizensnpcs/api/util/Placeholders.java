@@ -17,7 +17,7 @@ public class Placeholders {
         if (npc == null) {
             return text;
         }
-        text = text.replace("<owner>", npc.getTrait(Owner.class).getOwner());
+        text = text.replace("<owner>", npc.getOrAddTrait(Owner.class).getOwner());
         text = text.replace("<npc>", npc.getName());
         text = text.replace("<id>", Integer.toString(npc.getId()));
         return text;
