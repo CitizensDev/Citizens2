@@ -51,14 +51,7 @@
 			<version>${project.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
-		</dependency> 
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>citizens-v1_11_R1</artifactId>
-			<version>${project.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
+		</dependency>  
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>citizens-v1_12_R1</artifactId>
@@ -83,6 +76,13 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>citizens-v1_15_R1</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>citizens-v1_16_R1</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
