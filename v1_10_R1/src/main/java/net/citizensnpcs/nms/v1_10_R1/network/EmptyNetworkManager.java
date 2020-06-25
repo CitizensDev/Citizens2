@@ -19,6 +19,6 @@ public class EmptyNetworkManager extends NetworkManager {
     }
 
     @Override
-    public void sendPacket(Packet packet) {
+    public void sendPacket(Packet<?> packet) {
     }
 }

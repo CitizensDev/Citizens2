@@ -26,6 +26,7 @@ import net.minecraft.server.v1_15_R1.Pathfinder;
 
 public class PlayerPathfinder extends Pathfinder {
     private final Path a = new Path();
+    @SuppressWarnings("rawtypes")
     private final Set b = Sets.newHashSet();
     private final PathPoint[] c = new PathPoint[32];
     private final int d;
@@ -65,7 +66,7 @@ public class PlayerPathfinder extends Pathfinder {
     }
 
     private PathEntity a(PathPoint var0, BlockPosition var1, boolean var2) {
-        List var3 = Lists.newArrayList();
+        List<PathPoint> var3 = Lists.newArrayList();
         PathPoint var4 = var0;
         var3.add(0, var0);
 
@@ -125,7 +126,7 @@ public class PlayerPathfinder extends Pathfinder {
             }
         }
 
-        Stream var8;
+        Stream<PathEntity> var8;
         if (var5.stream().anyMatch(PathDestination::f)) {
             var8 = var5.stream().filter(PathDestination::f).map((var1x) -> {
                 return this.a(var1x.d(), var1.get(var1x), true);
@@ -134,21 +135,21 @@ public class PlayerPathfinder extends Pathfinder {
             var8 = getFallbackDestinations(var1, var5);
         }
 
-        Optional var9 = var8.findFirst();
+        Optional<PathEntity> var9 = var8.findFirst();
         if (!var9.isPresent()) {
             return null;
         } else {
-            PathEntity var10 = (PathEntity) var9.get();
+            PathEntity var10 = var9.get();
             return var10;
         }
     }
 
-    private float a(PathPoint var0, Set var1) {
+    private float a(PathPoint var0, Set<PathDestination> var1) {
         float var2 = Float.MAX_VALUE;
 
         float var5;
-        for (Iterator var4 = var1.iterator(); var4.hasNext(); var2 = Math.min(var5, var2)) {
-            PathDestination var6 = (PathDestination) var4.next();
+        for (Iterator<PathDestination> var4 = var1.iterator(); var4.hasNext(); var2 = Math.min(var5, var2)) {
+            PathDestination var6 = var4.next();
             var5 = var0.a(var6);
             var6.a(var5, var0);
         }

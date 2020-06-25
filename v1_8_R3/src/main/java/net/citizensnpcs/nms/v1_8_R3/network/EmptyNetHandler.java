@@ -12,6 +12,6 @@ public class EmptyNetHandler extends PlayerConnection {
     }
 
     @Override
-    public void sendPacket(Packet packet) {
+    public void sendPacket(@SuppressWarnings("rawtypes") Packet packet) {
     }
 }

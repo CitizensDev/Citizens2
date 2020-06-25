@@ -10,7 +10,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -42,7 +41,7 @@ public class PlayerPathfinder extends Pathfinder {
         this.d.a();
         this.c.a(var0, var1);
         PathPoint var6 = this.c.b();
-        Map var7 = var2.stream().collect(Collectors.toMap((var0x) -> {
+        Map<PathDestination, BlockPosition> var7 = var2.stream().collect(Collectors.toMap((var0x) -> {
             return this.c.a((double) var0x.getX(), (double) var0x.getY(), (double) var0x.getZ());
         }, Function.identity()));
         PathEntity var8 = this.a(var6, var7, var3, var4, var5);
@@ -56,7 +55,7 @@ public class PlayerPathfinder extends Pathfinder {
         this.d.a();
         this.c.a(var0, var1);
         PathPoint var6 = this.c.b();
-        Map var7 = var2.stream().collect(Collectors.toMap((var0x) -> {
+        Map<PathDestination, BlockPosition> var7 = var2.stream().collect(Collectors.toMap((var0x) -> {
             return this.c.a((double) var0x.getX(), (double) var0x.getY(), (double) var0x.getZ());
         }, Function.identity()));
         PathEntity var8 = this.a(var6, var7, var3, var4, var5);
@@ -65,7 +64,7 @@ public class PlayerPathfinder extends Pathfinder {
     }
 
     private PathEntity a(PathPoint var0, BlockPosition var1, boolean var2) {
-        List var3 = Lists.newArrayList();
+        List<PathPoint> var3 = Lists.newArrayList();
         PathPoint var4 = var0;
         var3.add(0, var0);
 
@@ -77,14 +76,13 @@ public class PlayerPathfinder extends Pathfinder {
         return new PathEntity(var3, var1, var2);
     }
 
-    private PathEntity a(PathPoint var0, Map var1, float var2, int var3, float var4) {
-        Set var5 = var1.keySet();
+    private PathEntity a(PathPoint var0, Map<PathDestination, BlockPosition> var1, float var2, int var3, float var4) {
+        Set<PathDestination> var5 = var1.keySet();
         var0.e = 0.0F;
         var0.f = this.a(var0, var5);
         var0.g = var0.f;
         this.d.a();
         this.d.a(var0);
-        Set var6 = ImmutableSet.of();
         int var7 = 0;
         Set<PathDestination> var8 = Sets.newHashSetWithExpectedSize(var5.size());
         int var9 = (int) (this.b * var4);
@@ -97,10 +95,10 @@ public class PlayerPathfinder extends Pathfinder {
 
             PathPoint var10 = this.d.c();
             var10.i = true;
-            Iterator var12 = var5.iterator();
+            Iterator<PathDestination> var12 = var5.iterator();
 
             while (var12.hasNext()) {
-                PathDestination var122 = (PathDestination) var12.next();
+                PathDestination var122 = var12.next();
                 if (var10.c(var122) <= var3) {
                     var122.e();
                     var8.add(var122);
@@ -133,23 +131,23 @@ public class PlayerPathfinder extends Pathfinder {
                 }
             }
         }
-        Optional var10 = !var8.isEmpty() ? var8.stream().map((var1x) -> {
-            return this.a(var1x.d(), (BlockPosition) var1.get(var1x), true);
+        Optional<PathEntity> var10 = !var8.isEmpty() ? var8.stream().map((var1x) -> {
+            return this.a(var1x.d(), var1.get(var1x), true);
         }).min(Comparator.comparingInt(PathEntity::e)) : getFallbackDestinations(var1, var5).findFirst();
         if (!var10.isPresent()) {
             return null;
         } else {
-            PathEntity var11 = (PathEntity) var10.get();
+            PathEntity var11 = var10.get();
             return var11;
         }
     }
 
-    private float a(PathPoint var0, Set var1) {
+    private float a(PathPoint var0, Set<PathDestination> var1) {
         float var2 = Float.MAX_VALUE;
 
         float var5;
-        for (Iterator var4 = var1.iterator(); var4.hasNext(); var2 = Math.min(var5, var2)) {
-            PathDestination var44 = (PathDestination) var4.next();
+        for (Iterator<PathDestination> var4 = var1.iterator(); var4.hasNext(); var2 = Math.min(var5, var2)) {
+            PathDestination var44 = var4.next();
             var5 = var0.a(var44);
             var44.a(var5, var0);
         }

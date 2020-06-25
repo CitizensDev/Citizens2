@@ -113,7 +113,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
 
     public PathType a(IBlockAccess var0, int var1, int var2, int var3, EntityHumanNPC var4, int var5, int var6,
             int var7, boolean var8, boolean var9) {
-        EnumSet var10 = EnumSet.noneOf(PathType.class);
+        EnumSet<PathType> var10 = EnumSet.noneOf(PathType.class);
         PathType var11 = PathType.BLOCKED;
         double var12 = var4.getWidth() / 2.0D;
         BlockPosition var14 = new BlockPosition(var4);
@@ -122,10 +122,10 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             return PathType.FENCE;
         } else {
             PathType var15 = PathType.BLOCKED;
-            Iterator var17 = var10.iterator();
+            Iterator<PathType> var17 = var10.iterator();
 
             while (var17.hasNext()) {
-                PathType var16 = (PathType) var17.next();
+                PathType var16 = var17.next();
                 if (var4.a(var16) < 0.0F) {
                     return var16;
                 }
@@ -146,7 +146,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     @Override
     public PathType a(IBlockAccess var0, int var1, int var2, int var3, EntityInsentient var4, int var5, int var6,
             int var7, boolean var8, boolean var9) {
-        EnumSet var10 = EnumSet.noneOf(PathType.class);
+        EnumSet<PathType> var10 = EnumSet.noneOf(PathType.class);
         PathType var11 = PathType.BLOCKED;
         double var12 = var4.getWidth() / 2.0D;
         BlockPosition var14 = new BlockPosition(var4);
@@ -155,10 +155,10 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             return PathType.FENCE;
         } else {
             PathType var15 = PathType.BLOCKED;
-            Iterator var17 = var10.iterator();
+            Iterator<PathType> var17 = var10.iterator();
 
             while (var17.hasNext()) {
-                PathType var16 = (PathType) var17.next();
+                PathType var16 = var17.next();
                 if (var4.a(var16) < 0.0F) {
                     return var16;
                 }
@@ -177,7 +177,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     }
 
     public PathType a(IBlockAccess var0, int var1, int var2, int var3, int var4, int var5, int var6, boolean var7,
-            boolean var8, EnumSet var9, PathType var10, BlockPosition var11) {
+            boolean var8, EnumSet<PathType> var9, PathType var10, BlockPosition var11) {
         for (int var12 = 0; var12 < var4; ++var12) {
             for (int var13 = 0; var13 < var5; ++var13) {
                 for (int var14 = 0; var14 < var6; ++var14) {
@@ -450,15 +450,15 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         var1 = new BlockPosition(this.b);
         PathType var2 = this.a(this.b, var1.getX(), var0, var1.getZ());
         if (this.b.a(var2) < 0.0F) {
-            Set var3 = Sets.newHashSet();
+            Set<BlockPosition> var3 = Sets.newHashSet();
             var3.add(new BlockPosition(this.b.getBoundingBox().minX, var0, this.b.getBoundingBox().minZ));
             var3.add(new BlockPosition(this.b.getBoundingBox().minX, var0, this.b.getBoundingBox().maxZ));
             var3.add(new BlockPosition(this.b.getBoundingBox().maxX, var0, this.b.getBoundingBox().minZ));
             var3.add(new BlockPosition(this.b.getBoundingBox().maxX, var0, this.b.getBoundingBox().maxZ));
-            Iterator var5 = var3.iterator();
+            Iterator<BlockPosition> var5 = var3.iterator();
 
             while (var5.hasNext()) {
-                BlockPosition var4 = (BlockPosition) var5.next();
+                BlockPosition var4 = var5.next();
                 PathType var6 = this.a(this.b, var4);
                 if (this.b.a(var6) >= 0.0F) {
                     return this.a(var4.getX(), var4.getY(), var4.getZ());

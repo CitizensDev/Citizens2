@@ -26,7 +26,8 @@ import net.minecraft.server.v1_14_R1.Pathfinder;
 
 public class PlayerPathfinder extends Pathfinder {
     private final Path a = new Path();
-    private final Set b = Sets.newHashSet();
+    @SuppressWarnings("rawtypes")
+	private final Set b = Sets.newHashSet();
     private final PathPoint[] c = new PathPoint[32];
     private final int d;
     private final PlayerPathfinderNormal e;
@@ -42,7 +43,7 @@ public class PlayerPathfinder extends Pathfinder {
         this.a.a();
         this.e.a(var0, var1);
         PathPoint var5 = this.e.b();
-        Map var6 = var2.stream().collect(Collectors.toMap((var0x) -> {
+        Map<PathDestination, BlockPosition> var6 = var2.stream().collect(Collectors.toMap((var0x) -> {
             return this.e.a((double) var0x.getX(), (double) var0x.getY(), (double) var0x.getZ());
         }, Function.identity()));
         PathEntity var7 = this.a(var5, var6, var3, var4);
@@ -55,7 +56,7 @@ public class PlayerPathfinder extends Pathfinder {
         this.a.a();
         this.e.a(var0, var1);
         PathPoint var5 = this.e.b();
-        Map var6 = var2.stream().collect(Collectors.toMap((var0x) -> {
+        Map<PathDestination, BlockPosition> var6 = var2.stream().collect(Collectors.toMap((var0x) -> {
             return this.e.a((double) var0x.getX(), (double) var0x.getY(), (double) var0x.getZ());
         }, Function.identity()));
         PathEntity var7 = this.a(var5, var6, var3, var4);
@@ -64,7 +65,7 @@ public class PlayerPathfinder extends Pathfinder {
     }
 
     private PathEntity a(PathPoint var0, BlockPosition var1, boolean var2) {
-        List var3 = Lists.newArrayList();
+        List<PathPoint> var3 = Lists.newArrayList();
         PathPoint var4 = var0;
         var3.add(0, var0);
 
@@ -76,7 +77,7 @@ public class PlayerPathfinder extends Pathfinder {
         return new PathEntity(var3, var1, var2);
     }
 
-    private PathEntity a(PathPoint var0, Map var1, float var2, int var3) {
+    private PathEntity a(PathPoint var0, Map<PathDestination, BlockPosition> var1, float var2, int var3) {
         Set<PathDestination> var4 = var1.keySet();
         var0.e = 0.0F;
         var0.f = this.a(var0, var4);
@@ -124,30 +125,30 @@ public class PlayerPathfinder extends Pathfinder {
             }
         }
 
-        Stream var6;
+        Stream<PathEntity> var6;
         if (var4.stream().anyMatch(PathDestination::f)) {
             var6 = var4.stream().filter(PathDestination::f).map((var1x) -> {
-                return this.a(var1x.d(), (BlockPosition) var1.get(var1x), true);
+                return this.a(var1x.d(), var1.get(var1x), true);
             }).sorted(Comparator.comparingInt(PathEntity::e));
         } else {
             var6 = getFallbackDestinations(var1, var4);
         }
 
-        Optional var7 = var6.findFirst();
+        Optional<PathEntity> var7 = var6.findFirst();
         if (!var7.isPresent()) {
             return null;
         } else {
-            PathEntity var8 = (PathEntity) var7.get();
+            PathEntity var8 = var7.get();
             return var8;
         }
     }
 
-    private float a(PathPoint var0, Set var1) {
+    private float a(PathPoint var0, Set<PathDestination> var1) {
         float var2 = Float.MAX_VALUE;
 
         float var5;
-        for (Iterator var4 = var1.iterator(); var4.hasNext(); var2 = Math.min(var5, var2)) {
-            PathDestination var3 = (PathDestination) var4.next();
+        for (Iterator<PathDestination> var4 = var1.iterator(); var4.hasNext(); var2 = Math.min(var5, var2)) {
+            PathDestination var3 = var4.next();
             var5 = var0.a(var3);
             var3.a(var5, var0);
         }

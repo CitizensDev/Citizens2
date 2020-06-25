@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_14_R1.network;
 
 import java.io.IOException;
 
+import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import net.minecraft.server.v1_14_R1.EnumProtocolDirection;
@@ -20,6 +21,6 @@ public class EmptyNetworkManager extends NetworkManager {
     }
 
     @Override
-    public void sendPacket(Packet packet, GenericFutureListener genericfuturelistener) {
+    public void sendPacket(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> genericfuturelistener) {
     }
 }

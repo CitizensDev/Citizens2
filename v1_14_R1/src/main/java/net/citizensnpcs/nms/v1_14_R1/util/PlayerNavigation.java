@@ -207,7 +207,7 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     @Override
-    protected PathEntity a(Set var0, int var1, boolean var2, int var3) {
+    protected PathEntity a(Set<BlockPosition> var0, int var1, boolean var2, int var3) {
         if (var0.isEmpty()) {
             return null;
         } else if (this.a.locY < 0.0D) {
@@ -234,8 +234,8 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     @Override
-    public PathEntity a(Stream var0, int var1) {
-        return this.a((Set) var0.collect(Collectors.toSet()), 8, false, var1);
+    public PathEntity a(Stream<BlockPosition> var0, int var1) {
+        return this.a(var0.collect(Collectors.toSet()), 8, false, var1);
     }
 
     @Override
@@ -353,7 +353,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     private boolean b(int var0, int var1, int var2, int var3, int var4, int var5, Vec3D var6, double var7,
             double var9) {
-        Iterator var12 = BlockPosition.a(new BlockPosition(var0, var1, var2),
+        Iterator<BlockPosition> var12 = BlockPosition.a(new BlockPosition(var0, var1, var2),
                 new BlockPosition(var0 + var3 - 1, var1 + var4 - 1, var2 + var5 - 1)).iterator();
 
         BlockPosition var14;
@@ -364,7 +364,7 @@ public class PlayerNavigation extends NavigationAbstract {
                 return true;
             }
 
-            var14 = (BlockPosition) var12.next();
+            var14 = var12.next();
             var13 = var14.getX() + 0.5D - var6.x;
             var15 = var14.getZ() + 0.5D - var6.z;
         } while (var13 * var7 + var15 * var9 < 0.0D || this.b.getType(var14).a(this.b, var14, PathMode.LAND));

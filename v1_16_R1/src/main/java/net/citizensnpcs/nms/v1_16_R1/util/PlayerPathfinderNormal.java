@@ -38,8 +38,8 @@ import net.minecraft.server.v1_16_R1.VoxelShape;
 public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     protected float j;
 
-    private final Long2ObjectMap<PathType> k = new Long2ObjectOpenHashMap();
-    private final Object2BooleanMap<AxisAlignedBB> l = new Object2BooleanOpenHashMap();
+    private final Long2ObjectMap<PathType> k = new Long2ObjectOpenHashMap<>();
+    private final Object2BooleanMap<AxisAlignedBB> l = new Object2BooleanOpenHashMap<>();
 
     @Override
     public void a() {

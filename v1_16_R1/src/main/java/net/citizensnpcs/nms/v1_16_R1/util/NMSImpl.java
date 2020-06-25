@@ -310,7 +310,7 @@ public class NMSImpl implements NMSBridge {
         if (remove) {
             handle.world.getPlayers().remove(handle);
         } else if (!handle.world.getPlayers().contains(handle)) {
-            ((List) handle.world.getPlayers()).add(handle);
+            ((WorldServer) handle.world).getPlayers().add(handle);
         }
         // PlayerUpdateTask.addOrRemove(entity, remove);
     }
@@ -1251,8 +1251,7 @@ public class NMSImpl implements NMSBridge {
                 return true;
             } else if (!removeFromPlayerList) {
                 if (!entity.world.getPlayers().contains(entity)) {
-                    List list = entity.world.getPlayers();
-                    list.add(entity);
+                    ((WorldServer) entity.world).getPlayers().add((EntityPlayer) entity);
                 }
                 return true;
             } else {

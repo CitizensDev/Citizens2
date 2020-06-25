@@ -13,7 +13,7 @@ import net.minecraft.server.v1_16_R1.PathfinderAbstract;
 public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
     protected ChunkCache a;
     protected EntityHumanNPC b;
-    protected final Int2ObjectMap<PathPoint> c = new Int2ObjectOpenHashMap();
+    protected final Int2ObjectMap<PathPoint> c = new Int2ObjectOpenHashMap<>();
     protected int d;
     protected int e;
     protected int f;
