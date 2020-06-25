@@ -13,7 +13,7 @@ import net.minecraft.server.v1_10_R1.PathPoint;
 
 public class PlayerPathfinder {
     private final Path a = new Path();
-    private final Set<PathPoint> b = new HashSet<PathPoint>();
+    private final Set<PathPoint> b = new HashSet<>();
     private final PathPoint[] c = new PathPoint[32];
     private final PlayerPathfinderNormal d;
 

@@ -292,7 +292,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (!isNavigating())
             return;
         Iterator<NavigatorCallback> itr = localParams.callbacks().iterator();
-        List<NavigatorCallback> callbacks = new ArrayList<NavigatorCallback>();
+        List<NavigatorCallback> callbacks = new ArrayList<>();
         while (itr.hasNext()) {
             callbacks.add(itr.next());
             itr.remove();

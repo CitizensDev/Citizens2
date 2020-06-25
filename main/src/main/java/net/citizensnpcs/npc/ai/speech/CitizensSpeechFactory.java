@@ -14,7 +14,7 @@ import net.citizensnpcs.api.ai.speech.Talkable;
 import net.citizensnpcs.api.ai.speech.VocalChord;
 
 public class CitizensSpeechFactory implements SpeechFactory {
-    Map<String, Class<? extends VocalChord>> registered = new HashMap<String, Class<? extends VocalChord>>();
+    Map<String, Class<? extends VocalChord>> registered = new HashMap<>();
 
     @Override
     public VocalChord getVocalChord(Class<? extends VocalChord> clazz) {

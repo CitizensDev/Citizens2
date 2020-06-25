@@ -32,7 +32,7 @@ import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.util.NMS;
 
 public class CitizensNPCRegistry implements NPCRegistry {
-    private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<NPC>();
+    private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<>();
     private final NPCDataStore saves;
     private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
 
@@ -150,7 +150,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public Iterable<NPC> sorted() {
-        List<NPC> vals = new ArrayList<NPC>(npcs.valueCollection());
+        List<NPC> vals = new ArrayList<>(npcs.valueCollection());
         Collections.sort(vals, NPC_COMPARATOR);
         return vals;
     }

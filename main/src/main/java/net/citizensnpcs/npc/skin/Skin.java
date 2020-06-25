@@ -37,7 +37,7 @@ public class Skin {
     private int fetchRetries = -1;
     private boolean hasFetched;
     private volatile boolean isValid = true;
-    private final Map<SkinnableEntity, Void> pending = new WeakHashMap<SkinnableEntity, Void>(15);
+    private final Map<SkinnableEntity, Void> pending = new WeakHashMap<>(15);
     private BukkitTask retryTask;
     private volatile Property skinData;
     private volatile UUID skinId;
@@ -286,7 +286,7 @@ public class Skin {
         skinId = profile.getId();
         skinData = Iterables.getFirst(profile.getProperties().get("textures"), null);
 
-        List<SkinnableEntity> entities = new ArrayList<SkinnableEntity>(pending.keySet());
+        List<SkinnableEntity> entities = new ArrayList<>(pending.keySet());
         for (SkinnableEntity entity : entities) {
             applyAndRespawn(entity);
         }
@@ -401,7 +401,7 @@ public class Skin {
         profile.getProperties().put("textures", skinProperty);
     }
 
-    private static final Map<String, Skin> CACHE = new HashMap<String, Skin>(20);
+    private static final Map<String, Skin> CACHE = new HashMap<>(20);
     public static final String CACHED_SKIN_UUID_METADATA = "cached-skin-uuid";
     public static final String CACHED_SKIN_UUID_NAME_METADATA = "cached-skin-uuid-name";
 }

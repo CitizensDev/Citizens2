@@ -100,7 +100,7 @@ public class WanderWaypointProvider
     public WaypointEditor createEditor(final CommandSender sender, CommandContext args) {
         return new WaypointEditor() {
             boolean editingRegions = false;
-            EntityMarkers<Location> markers = new EntityMarkers<Location>();
+            EntityMarkers<Location> markers = new EntityMarkers<>();
 
             @Override
             public void begin() {

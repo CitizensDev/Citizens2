@@ -370,7 +370,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         localObject1 = new BlockPosition(this.b);
         Object localObject2 = a(this.b, localObject1.getX(), i, localObject1.getZ());
         if (this.b.a((PathType) localObject2) < 0.0F) {
-            HashSet<BlockPosition> localHashSet = new HashSet<BlockPosition>();
+            HashSet<BlockPosition> localHashSet = new HashSet<>();
             localHashSet.add(new BlockPosition(this.b.getBoundingBox().a, i, this.b.getBoundingBox().c));
             localHashSet.add(new BlockPosition(this.b.getBoundingBox().a, i, this.b.getBoundingBox().f));
             localHashSet.add(new BlockPosition(this.b.getBoundingBox().d, i, this.b.getBoundingBox().c));

@@ -62,7 +62,7 @@ public class ProfileRequest {
         }
 
         if (handlers == null)
-            handlers = new ArrayDeque<ProfileFetchHandler>();
+            handlers = new ArrayDeque<>();
 
         handlers.addLast(handler);
     }

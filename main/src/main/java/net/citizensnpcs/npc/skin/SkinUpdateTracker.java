@@ -36,8 +36,8 @@ import net.citizensnpcs.util.Util;
  * @see net.citizensnpcs.EventListen
  */
 public class SkinUpdateTracker {
-    private final Map<SkinnableEntity, Void> navigating = new WeakHashMap<SkinnableEntity, Void>(25);
-    private final Map<UUID, PlayerTracker> playerTrackers = new HashMap<UUID, PlayerTracker>(
+    private final Map<SkinnableEntity, Void> navigating = new WeakHashMap<>(25);
+    private final Map<UUID, PlayerTracker> playerTrackers = new HashMap<>(
             Math.max(128, Bukkit.getMaxPlayers() / 2));
     private final Map<String, NPCRegistry> registries;
     private final NPCNavigationUpdater updater = new NPCNavigationUpdater();
@@ -109,7 +109,7 @@ public class SkinUpdateTracker {
     }
 
     private List<SkinnableEntity> getNearbyNPCs(Player player, boolean reset, boolean checkFov) {
-        List<SkinnableEntity> results = new ArrayList<SkinnableEntity>();
+        List<SkinnableEntity> results = new ArrayList<>();
         PlayerTracker tracker = getTracker(player, reset);
         for (NPC npc : getAllNPCs()) {
             SkinnableEntity skinnable = getSkinnable(npc);
@@ -341,7 +341,7 @@ public class SkinUpdateTracker {
             if (navigating.isEmpty() || playerTrackers.isEmpty())
                 return;
 
-            List<SkinnableEntity> nearby = new ArrayList<SkinnableEntity>(10);
+            List<SkinnableEntity> nearby = new ArrayList<>(10);
             Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 
             for (Player player : players) {
@@ -364,7 +364,7 @@ public class SkinUpdateTracker {
     // Updates players. Repeating task used to schedule updates without
     // causing excessive scheduling.
     private class NPCNavigationUpdater extends BukkitRunnable {
-        Queue<UpdateInfo> queue = new ArrayDeque<UpdateInfo>(20);
+        Queue<UpdateInfo> queue = new ArrayDeque<>(20);
 
         @Override
         public void run() {
@@ -378,7 +378,7 @@ public class SkinUpdateTracker {
     // Tracks player location and yaw to determine when the player should be updated
     // with nearby skins.
     private class PlayerTracker {
-        final Set<SkinnableEntity> fovVisibleSkins = new HashSet<SkinnableEntity>(20);
+        final Set<SkinnableEntity> fovVisibleSkins = new HashSet<>(20);
         boolean hasMoved;
         final Location location = new Location(null, 0, 0, 0);
         float lowerBound;

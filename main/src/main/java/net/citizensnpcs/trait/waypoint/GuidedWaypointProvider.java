@@ -87,7 +87,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         }
         final Player player = (Player) sender;
         return new WaypointEditor() {
-            private final EntityMarkers<Waypoint> markers = new EntityMarkers<Waypoint>(EntityType.ITEM_FRAME);
+            private final EntityMarkers<Waypoint> markers = new EntityMarkers<>(EntityType.ITEM_FRAME);
             private boolean showPath;
 
             @Override

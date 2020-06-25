@@ -492,7 +492,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         Packet<?>[] packets = new Packet[1];
         List<Pair<EnumItemSlot, ItemStack>> vals = Lists.newArrayList();
         for (EnumItemSlot slot : EnumItemSlot.values()) {
-            vals.add(new Pair<EnumItemSlot, ItemStack>(slot, getEquipment(slot)));
+            vals.add(new Pair<>(slot, getEquipment(slot)));
         }
         packets[0] = new PacketPlayOutEntityEquipment(getId(), vals);
         NMSImpl.sendPacketsNearby(getBukkitEntity(), current, packets);

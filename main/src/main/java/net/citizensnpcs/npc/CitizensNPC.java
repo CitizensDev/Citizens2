@@ -95,7 +95,7 @@ public class CitizensNPC extends AbstractNPC {
         if (reason == DespawnReason.RELOAD) {
             unloadEvents();
         }
-        for (Trait trait : new ArrayList<Trait>(traits.values())) {
+        for (Trait trait : new ArrayList<>(traits.values())) {
             trait.onDespawn();
         }
         Messaging.debug("Despawned", getId(), "DespawnReason." + reason);

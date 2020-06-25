@@ -26,8 +26,8 @@ import net.citizensnpcs.api.CitizensAPI;
  */
 class ProfileFetchThread implements Runnable {
     private final ProfileFetcher profileFetcher = new ProfileFetcher();
-    private final Deque<ProfileRequest> queue = new ArrayDeque<ProfileRequest>();
-    private final Map<String, ProfileRequest> requested = new HashMap<String, ProfileRequest>(35);
+    private final Deque<ProfileRequest> queue = new ArrayDeque<>();
+    private final Map<String, ProfileRequest> requested = new HashMap<>(35);
     private final Object sync = new Object(); // sync for queue & requested fields
 
     ProfileFetchThread() {
@@ -114,7 +114,7 @@ class ProfileFetchThread implements Runnable {
             if (queue.isEmpty())
                 return;
 
-            requests = new ArrayList<ProfileRequest>(queue);
+            requests = new ArrayList<>(queue);
             queue.clear();
         }
 

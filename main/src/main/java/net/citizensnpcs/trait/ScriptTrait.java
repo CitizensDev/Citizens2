@@ -27,8 +27,8 @@ import net.citizensnpcs.api.util.DataKey;
 @TraitName("scripttrait")
 public class ScriptTrait extends Trait {
     @Persist
-    public List<String> files = new ArrayList<String>();
-    private final List<RunnableScript> runnableScripts = new ArrayList<RunnableScript>();
+    public List<String> files = new ArrayList<>();
+    private final List<RunnableScript> runnableScripts = new ArrayList<>();
 
     public ScriptTrait() {
         super("scripttrait");

@@ -49,7 +49,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
     private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
     private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
-    private final List<String> text = new ArrayList<String>();
+    private final List<String> text = new ArrayList<>();
 
     public Text() {
         super("text");

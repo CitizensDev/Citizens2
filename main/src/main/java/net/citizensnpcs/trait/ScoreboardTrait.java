@@ -22,7 +22,7 @@ public class ScoreboardTrait extends Trait {
     private ChatColor color;
     private ChatColor previousGlowingColor;
     @Persist
-    private final Set<String> tags = new HashSet<String>();
+    private final Set<String> tags = new HashSet<>();
 
     public ScoreboardTrait() {
         super("scoreboardtrait");
@@ -33,7 +33,7 @@ public class ScoreboardTrait extends Trait {
     }
 
     public void apply(Team team, boolean nameVisibility) {
-        Set<String> newTags = new HashSet<String>(tags);
+        Set<String> newTags = new HashSet<>(tags);
         if (SUPPORT_TAGS) {
             try {
                 for (Iterator<String> iterator = npc.getEntity().getScoreboardTags().iterator(); iterator.hasNext();) {

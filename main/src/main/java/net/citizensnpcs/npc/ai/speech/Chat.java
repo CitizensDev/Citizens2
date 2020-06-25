@@ -60,7 +60,7 @@ public class Chat implements VocalChord {
         else { // Multiple recipients
             String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<npc>", npc.getName()).replace("<text>",
                     context.getMessage());
-            List<String> targetNames = new ArrayList<String>();
+            List<String> targetNames = new ArrayList<>();
             // Talk to each recipient
             for (Talkable entity : context) {
                 entity.talkTo(context, text, this);

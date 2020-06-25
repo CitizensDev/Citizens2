@@ -183,7 +183,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
         private LinearWaypointEditor(Player player) {
             this.player = player;
-            this.markers = new EntityMarkers<Waypoint>();
+            this.markers = new EntityMarkers<>();
         }
 
         @Override

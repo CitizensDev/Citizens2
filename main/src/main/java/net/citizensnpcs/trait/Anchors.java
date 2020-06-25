@@ -21,7 +21,7 @@ import net.citizensnpcs.util.Messages;
  */
 @TraitName("anchors")
 public class Anchors extends Trait {
-    private final List<Anchor> anchors = new ArrayList<Anchor>();
+    private final List<Anchor> anchors = new ArrayList<>();
 
     public Anchors() {
         super("anchors");

@@ -92,7 +92,7 @@ public class Settings {
         DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!") {
             @Override
             public void loadFromKey(DataKey root) {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 for (DataKey key : root.getRelative("npc.default.text").getSubKeys())
                     list.add(key.getString(""));
                 value = list;

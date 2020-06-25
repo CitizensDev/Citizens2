@@ -828,7 +828,7 @@ public class NPCCommands {
                 : CitizensAPI.getNPCRegistry();
         if (source == null)
             throw new CommandException();
-        List<NPC> npcs = new ArrayList<NPC>();
+        List<NPC> npcs = new ArrayList<>();
 
         if (args.hasFlag('a')) {
             for (NPC add : source.sorted()) {
@@ -1568,7 +1568,7 @@ public class NPCCommands {
     public void script(CommandContext args, CommandSender sender, NPC npc) {
         ScriptTrait trait = npc.getTrait(ScriptTrait.class);
         if (args.hasValueFlag("add")) {
-            List<String> files = new ArrayList<String>();
+            List<String> files = new ArrayList<>();
             for (String file : args.getFlag("add").split(",")) {
                 if (!trait.validateFile(file)) {
                     Messaging.sendErrorTr(sender, Messages.INVALID_SCRIPT_FILE, file);

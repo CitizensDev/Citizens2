@@ -84,10 +84,10 @@ public class PlayerUpdateTask extends BukkitRunnable {
         PLAYERS_PENDING_ADD.add(entity);
     }
 
-    private static Map<UUID, org.bukkit.entity.Player> PLAYERS = new HashMap<UUID, org.bukkit.entity.Player>();
-    private static List<org.bukkit.entity.Entity> PLAYERS_PENDING_ADD = new ArrayList<org.bukkit.entity.Entity>();
-    private static List<org.bukkit.entity.Entity> PLAYERS_PENDING_REMOVE = new ArrayList<org.bukkit.entity.Entity>();
-    private static Map<UUID, org.bukkit.entity.Entity> TICKERS = new HashMap<UUID, org.bukkit.entity.Entity>();
-    private static List<org.bukkit.entity.Entity> TICKERS_PENDING_ADD = new ArrayList<org.bukkit.entity.Entity>();
-    private static List<org.bukkit.entity.Entity> TICKERS_PENDING_REMOVE = new ArrayList<org.bukkit.entity.Entity>();
+    private static Map<UUID, org.bukkit.entity.Player> PLAYERS = new HashMap<>();
+    private static List<org.bukkit.entity.Entity> PLAYERS_PENDING_ADD = new ArrayList<>();
+    private static List<org.bukkit.entity.Entity> PLAYERS_PENDING_REMOVE = new ArrayList<>();
+    private static Map<UUID, org.bukkit.entity.Entity> TICKERS = new HashMap<>();
+    private static List<org.bukkit.entity.Entity> TICKERS_PENDING_ADD = new ArrayList<>();
+    private static List<org.bukkit.entity.Entity> TICKERS_PENDING_REMOVE = new ArrayList<>();
 }

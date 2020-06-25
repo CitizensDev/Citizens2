@@ -26,7 +26,7 @@ import net.citizensnpcs.util.NMS;
  * </p>
  */
 public class TabListRemover {
-    private final Map<UUID, PlayerEntry> pending = new HashMap<UUID, PlayerEntry>(Bukkit.getMaxPlayers() / 2);
+    private final Map<UUID, PlayerEntry> pending = new HashMap<>(Bukkit.getMaxPlayers() / 2);
 
     TabListRemover() {
         Bukkit.getScheduler().runTaskTimer(CitizensAPI.getPlugin(), new Sender(), 2, 2);
@@ -104,7 +104,7 @@ public class TabListRemover {
 
     private class PlayerEntry {
         Player player;
-        Set<SkinnableEntity> toRemove = new HashSet<SkinnableEntity>(25);
+        Set<SkinnableEntity> toRemove = new HashSet<>(25);
 
         PlayerEntry(Player player) {
             this.player = player;
@@ -124,7 +124,7 @@ public class TabListRemover {
                 int listSize = Math.min(maxPacketEntries, entry.toRemove.size());
                 boolean sendAll = listSize == entry.toRemove.size();
 
-                List<SkinnableEntity> skinnableList = new ArrayList<SkinnableEntity>(listSize);
+                List<SkinnableEntity> skinnableList = new ArrayList<>(listSize);
 
                 int i = 0;
                 Iterator<SkinnableEntity> skinIterator = entry.toRemove.iterator();

@@ -29,7 +29,7 @@ import net.citizensnpcs.util.NMS;
  */
 public class SkinPacketTracker {
     private final SkinnableEntity entity;
-    private final Map<UUID, PlayerEntry> inProgress = new HashMap<UUID, PlayerEntry>(Bukkit.getMaxPlayers() / 2);
+    private final Map<UUID, PlayerEntry> inProgress = new HashMap<>(Bukkit.getMaxPlayers() / 2);
 
     private boolean isRemoved;
     private Skin skin;
