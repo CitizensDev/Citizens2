@@ -186,7 +186,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     public static boolean isDoor(Material in) {
-        return DOORS.contains(in);
+        return in.name().contains("DOOR") && !in.name().contains("TRAPDOOR");
     }
 
     public static boolean isLiquid(Material... materials) {
@@ -203,8 +203,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 && canStandOn(in.getRelative(BlockFace.DOWN).getType());
     }
 
-    private static final Set<Material> DOORS = EnumSet.of(Material.SPRUCE_DOOR, Material.BIRCH_DOOR,
-            Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR);
     private static final Set<Material> LIQUIDS = EnumSet.of(Material.WATER, Material.LAVA);
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
             Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
@@ -218,7 +216,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             UNWALKABLE.add(Material.valueOf("STATIONARY_LAVA"));
             NOT_JUMPABLE.addAll(Lists.newArrayList(Material.valueOf("FENCE"), Material.valueOf("IRON_FENCE"),
                     Material.valueOf("NETHER_FENCE"), Material.valueOf("COBBLE_WALL")));
-            DOORS.addAll(Lists.newArrayList(Material.valueOf("IRON_DOOR_BLOCK"), Material.valueOf("WOODEN_DOOR")));
         } else {
             try {
                 UNWALKABLE.add(Material.valueOf("CAMPFIRE"));
@@ -227,7 +224,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             }
             NOT_JUMPABLE.addAll(Lists.newArrayList(Material.valueOf("OAK_FENCE"),
                     Material.valueOf("NETHER_BRICK_FENCE"), Material.valueOf("COBBLESTONE_WALL")));
-            DOORS.addAll(Lists.newArrayList(Material.valueOf("IRON_DOOR"), Material.valueOf("OAK_DOOR")));
         }
     }
 }
