@@ -179,7 +179,7 @@ public class PufferFishController extends MobEntityController {
             if (npc != null) {
                 npc.update();
                 if (npc.hasTrait(PufferFishTrait.class)) {
-                    setPuffState(npc.getOrAddTrait(PufferFishTrait.class).getPuffState());
+                    setPuffState(npc.getTraitSafely(PufferFishTrait.class).getPuffState());
                 }
             }
         }

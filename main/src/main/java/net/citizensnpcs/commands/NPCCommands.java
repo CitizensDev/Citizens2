@@ -349,9 +349,6 @@ public class NPCCommands {
                 "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase().replace("_", "")))
                 || !sender.hasPermission("citizens.npc.controllable"))
             throw new NoPermissionsException();
-        if (!npc.hasTrait(Controllable.class)) {
-            npc.addTrait(new Controllable(false));
-        }
         Controllable trait = npc.getOrAddTrait(Controllable.class);
         boolean enabled = trait.toggle();
         if (args.hasFlag('y')) {
@@ -1040,7 +1037,7 @@ public class NPCCommands {
             npc.getOrAddTrait(MountTrait.class).unmount();
             return;
         }
-        boolean enabled = npc.hasTrait(Controllable.class) && npc.getOrAddTrait(Controllable.class).isEnabled();
+        boolean enabled = npc.hasTrait(Controllable.class) && npc.getTraitSafely(Controllable.class).isEnabled();
         if (!enabled) {
             Messaging.sendTr(sender, Messages.NPC_NOT_CONTROLLABLE, npc.getName());
             return;

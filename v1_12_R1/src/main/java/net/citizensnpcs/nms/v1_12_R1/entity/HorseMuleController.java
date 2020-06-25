@@ -206,7 +206,7 @@ public class HorseMuleController extends MobEntityController {
         public void M() {
             super.M();
             if (npc != null) {
-                if (npc.hasTrait(Controllable.class) && npc.getOrAddTrait(Controllable.class).isEnabled()) {
+                if (npc.hasTrait(Controllable.class) && npc.getTraitSafely(Controllable.class).isEnabled()) {
                     riding = getBukkitEntity().getPassengers().size() > 0;
                     getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
                             .setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());

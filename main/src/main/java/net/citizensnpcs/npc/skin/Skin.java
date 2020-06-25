@@ -103,7 +103,7 @@ public class Skin {
             String defaultSkinName = ChatColor.stripColor(npc.getName()).toLowerCase();
 
             if (npc.hasTrait(SkinTrait.class) && this.skinName.equals(defaultSkinName)
-                    && !npc.getOrAddTrait(SkinTrait.class).fetchDefaultSkin()) {
+                    && !npc.getTraitSafely(SkinTrait.class).fetchDefaultSkin()) {
                 return false;
             }
             if (hasFetched) {

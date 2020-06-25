@@ -128,7 +128,7 @@ public class EventListen implements Listener {
         int owned = 0;
         for (NPC npc : CitizensAPI.getNPCRegistry()) {
             if (!event.getNPC().equals(npc) && npc.hasTrait(Owner.class)
-                    && npc.getOrAddTrait(Owner.class).isOwnedBy(event.getCreator())) {
+                    && npc.getTraitSafely(Owner.class).isOwnedBy(event.getCreator())) {
                 owned++;
             }
         }
@@ -265,7 +265,7 @@ public class EventListen implements Listener {
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
             Bukkit.getPluginManager().callEvent(leftClickEvent);
             if (npc.hasTrait(CommandTrait.class)) {
-                npc.getOrAddTrait(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
+                npc.getTraitSafely(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
             }
         } else if (event instanceof EntityDamageByBlockEvent) {
             Bukkit.getPluginManager().callEvent(new NPCDamageByBlockEvent(npc, (EntityDamageByBlockEvent) event));
