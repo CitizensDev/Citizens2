@@ -285,6 +285,7 @@ public class Equipment extends Trait {
             return entity;
         }
 
+        @Override
         public ItemStack getItem(EquipmentSlot arg0) {
             switch (arg0) {
                 case BOOTS:
@@ -378,6 +379,7 @@ public class Equipment extends Trait {
         public void setHelmetDropChance(float arg0) {
         }
 
+        @Override
         public void setItem(EquipmentSlot arg0, ItemStack arg1) {
             switch (arg0) {
                 case BOOTS:
@@ -510,6 +512,7 @@ public class Equipment extends Trait {
             return player;
         }
 
+        @Override
         public ItemStack getItem(EquipmentSlot arg0) {
             switch (arg0) {
                 case BOOTS:
@@ -604,6 +607,7 @@ public class Equipment extends Trait {
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public void setItem(EquipmentSlot arg0, ItemStack arg1) {
             switch (arg0) {
                 case BOOTS:
