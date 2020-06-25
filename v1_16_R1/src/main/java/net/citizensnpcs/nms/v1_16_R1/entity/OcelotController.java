@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R1.entity;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_16_R1.EntityMinecartAbstract;
 import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftOcelot;
@@ -20,6 +19,7 @@ import net.minecraft.server.v1_16_R1.DamageSource;
 import net.minecraft.server.v1_16_R1.DataWatcherObject;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityBoat;
+import net.minecraft.server.v1_16_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R1.EntityOcelot;
 import net.minecraft.server.v1_16_R1.EntityPose;
 import net.minecraft.server.v1_16_R1.EntityTypes;

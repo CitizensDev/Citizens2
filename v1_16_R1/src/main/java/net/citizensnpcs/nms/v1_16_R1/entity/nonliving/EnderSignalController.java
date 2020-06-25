@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R1.entity.nonliving;
 
-import net.citizensnpcs.nms.v1_16_R1.entity.MobEntityController;
-import net.citizensnpcs.nms.v1_16_R1.util.NMSImpl;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEnderSignal;
@@ -12,6 +9,8 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_16_R1.entity.MobEntityController;
+import net.citizensnpcs.nms.v1_16_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;

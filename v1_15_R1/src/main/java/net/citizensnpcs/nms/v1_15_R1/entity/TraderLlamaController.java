@@ -3,7 +3,6 @@ package net.citizensnpcs.nms.v1_15_R1.entity;
 import java.lang.invoke.MethodHandle;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
@@ -26,6 +25,7 @@ import net.minecraft.server.v1_15_R1.DataWatcherObject;
 import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityLlamaTrader;
+import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.IBlockData;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;

@@ -19,6 +19,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.EntityHuman;
+import net.minecraft.server.v1_12_R1.EntityLightning;
 import net.minecraft.server.v1_12_R1.EntityVillager;
 import net.minecraft.server.v1_12_R1.EnumHand;
 import net.minecraft.server.v1_12_R1.IBlockData;
@@ -26,7 +27,6 @@ import net.minecraft.server.v1_12_R1.MerchantRecipe;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.SoundEffect;
 import net.minecraft.server.v1_12_R1.World;
-import net.minecraft.server.v1_12_R1.EntityLightning;
 
 public class VillagerController extends MobEntityController {
     public VillagerController() {

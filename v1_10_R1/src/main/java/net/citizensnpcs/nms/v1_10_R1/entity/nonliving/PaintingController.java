@@ -1,5 +1,12 @@
 package net.citizensnpcs.nms.v1_10_R1.entity.nonliving;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_10_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPainting;
+import org.bukkit.entity.Painting;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_10_R1.entity.MobEntityController;
@@ -9,13 +16,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_10_R1.EntityPainting;
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import net.minecraft.server.v1_10_R1.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_10_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPainting;
-import org.bukkit.entity.Painting;
-import org.bukkit.util.Vector;
 
 public class PaintingController extends MobEntityController {
     public PaintingController() {

@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v1_11_R1.entity;
 
 import java.util.UUID;
 
-import net.citizensnpcs.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_11_R1.CraftWorld;
@@ -21,6 +20,7 @@ import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_11_R1.PlayerInteractManager;
 import net.minecraft.server.v1_11_R1.WorldServer;
 

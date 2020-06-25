@@ -1,11 +1,33 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
+import java.lang.reflect.Method;
+
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
 import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_13_R2.*;
-
-import java.lang.reflect.Method;
+import net.minecraft.server.v1_13_R2.AttributeInstance;
+import net.minecraft.server.v1_13_R2.Block;
+import net.minecraft.server.v1_13_R2.BlockPosition;
+import net.minecraft.server.v1_13_R2.Blocks;
+import net.minecraft.server.v1_13_R2.ChunkCache;
+import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.EntityInsentient;
+import net.minecraft.server.v1_13_R2.EntityTypes;
+import net.minecraft.server.v1_13_R2.GenericAttributes;
+import net.minecraft.server.v1_13_R2.IBlockData;
+import net.minecraft.server.v1_13_R2.MathHelper;
+import net.minecraft.server.v1_13_R2.MethodProfiler;
+import net.minecraft.server.v1_13_R2.NavigationAbstract;
+import net.minecraft.server.v1_13_R2.PathEntity;
+import net.minecraft.server.v1_13_R2.PathMode;
+import net.minecraft.server.v1_13_R2.PathPoint;
+import net.minecraft.server.v1_13_R2.PathType;
+import net.minecraft.server.v1_13_R2.Pathfinder;
+import net.minecraft.server.v1_13_R2.PathfinderAbstract;
+import net.minecraft.server.v1_13_R2.PathfinderNormal;
+import net.minecraft.server.v1_13_R2.SystemUtils;
+import net.minecraft.server.v1_13_R2.Vec3D;
+import net.minecraft.server.v1_13_R2.World;
 
 public class PlayerNavigation extends NavigationAbstract {
     protected EntityHumanNPC a;

@@ -3,6 +3,8 @@ package net.citizensnpcs.npc.ai.speech;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.entity.Entity;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
@@ -10,8 +12,6 @@ import net.citizensnpcs.api.ai.speech.Talkable;
 import net.citizensnpcs.api.ai.speech.VocalChord;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
-
-import org.bukkit.entity.Entity;
 
 public class Chat implements VocalChord {
     public final String VOCAL_CHORD_NAME = "chat";

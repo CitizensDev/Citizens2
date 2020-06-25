@@ -1,5 +1,12 @@
 package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
 
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftLeash;
+import org.bukkit.entity.LeashHitch;
+import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.entity.MobEntityController;
@@ -9,13 +16,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.EntityLeash;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.World;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftLeash;
-import org.bukkit.entity.LeashHitch;
-import org.bukkit.util.Vector;
 
 public class LeashController extends MobEntityController {
     public LeashController() {

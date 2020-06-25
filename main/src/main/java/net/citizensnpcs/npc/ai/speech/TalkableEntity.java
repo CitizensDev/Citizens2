@@ -1,5 +1,9 @@
 package net.citizensnpcs.npc.ai.speech;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.Talkable;
@@ -8,10 +12,6 @@ import net.citizensnpcs.api.ai.speech.event.SpeechBystanderEvent;
 import net.citizensnpcs.api.ai.speech.event.SpeechTargetedEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 public class TalkableEntity implements Talkable {
     Entity entity;

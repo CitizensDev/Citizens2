@@ -1,9 +1,9 @@
 package net.citizensnpcs.util;
 
+import org.bukkit.ChatColor;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.util.Colorizer;
-
-import org.bukkit.ChatColor;
 
 public class StringHelper {
     public static String wrap(Object string) {

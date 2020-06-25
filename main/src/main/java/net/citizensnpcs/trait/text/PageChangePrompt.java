@@ -1,13 +1,13 @@
 package net.citizensnpcs.trait.text;
 
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.util.Messages;
-
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
+
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 
 public class PageChangePrompt extends NumericPrompt {
     private final Text text;
