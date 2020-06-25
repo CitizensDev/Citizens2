@@ -378,10 +378,6 @@ public class NMS {
         BRIDGE.setDestination(entity, x, y, z, speed);
     }
 
-    public static void setDummyAdvancement(Player entity) {
-        BRIDGE.setDummyAdvancement(entity);
-    }
-
     public static void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
         BRIDGE.setHeadYaw(entity, yaw);
     }

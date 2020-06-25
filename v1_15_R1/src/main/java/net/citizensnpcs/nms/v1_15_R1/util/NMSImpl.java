@@ -270,13 +270,14 @@ public class NMSImpl implements NMSBridge {
         loadEntityTypes();
     }
 
+    @SuppressWarnings("resource")
     @Override
     public boolean addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom) {
         int viewDistance = -1;
         PlayerChunkMap chunkMap = null;
         try {
             if (entity instanceof Player) {
-                chunkMap = (PlayerChunkMap) PLAYER_CHUNK_MAP_GETTER.invoke(getHandle(entity).world.getChunkProvider());
+                chunkMap = ((ChunkProviderServer) getHandle(entity).world.getChunkProvider()).playerChunkMap;
                 viewDistance = (int) PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER.invoke(chunkMap);
                 PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, -1);
             }
@@ -317,6 +318,10 @@ public class NMSImpl implements NMSBridge {
             EntityPlayer humanHandle = (EntityPlayer) handle;
             humanHandle.attack(target);
             PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
+            return;
+        }
+        if (handle instanceof EntityInsentient) {
+            ((EntityInsentient) handle).B(target);
             return;
         }
         AttributeInstance attackDamage = handle.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE);
@@ -595,7 +600,7 @@ public class NMSImpl implements NMSBridge {
             @Override
             public boolean update() {
                 if (params.speed() != lastSpeed) {
-                    if (Messaging.isDebugging()) {
+                    if (Messaging.isDebugging() && lastSpeed > 0) {
                         Messaging.debug(
                                 "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change from",
                                 lastSpeed, "to", params.speed());
@@ -1059,11 +1064,6 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setMoveDestination(x, y, z, speed);
         }
-    }
-
-    @Override
-    public void setDummyAdvancement(Player entity) {
-        setAdvancement(entity, DummyPlayerAdvancementData.INSTANCE);
     }
 
     @Override
@@ -1848,8 +1848,6 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getSetter(NavigationAbstract.class, "b");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle PATHFINDING_RANGE = NMS.getGetter(NavigationAbstract.class, "p");
-    private static final MethodHandle PLAYER_CHUNK_MAP_GETTER = NMS.getGetter(ChunkProviderServer.class,
-            "playerChunkMap");
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getGetter(PlayerChunkMap.class,
             "viewDistance");
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(PlayerChunkMap.class,

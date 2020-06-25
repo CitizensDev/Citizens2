@@ -593,7 +593,7 @@ public class NMSImpl implements NMSBridge {
             @Override
             public boolean update() {
                 if (params.speed() != lastSpeed) {
-                    if (Messaging.isDebugging()) {
+                    if (Messaging.isDebugging() && lastSpeed > 0) {
                         Messaging.debug(
                                 "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change");
                     }
@@ -1054,11 +1054,6 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setMoveDestination(x, y, z, speed);
         }
-    }
-
-    @Override
-    public void setDummyAdvancement(Player entity) {
-        setAdvancement(entity, DummyPlayerAdvancementData.INSTANCE);
     }
 
     @Override

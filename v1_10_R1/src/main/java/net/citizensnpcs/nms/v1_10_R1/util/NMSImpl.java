@@ -500,7 +500,7 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public boolean update() {
-                if (params.speed() != lastSpeed) {
+                if (params.speed() != lastSpeed && lastSpeed > 0) {
                     if (Messaging.isDebugging()) {
                         Messaging.debug(
                                 "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change");
@@ -861,6 +861,17 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void sendTabListRemove(Player recipient, Player listPlayer) {
+        Preconditions.checkNotNull(recipient);
+        Preconditions.checkNotNull(listPlayer);
+
+        EntityPlayer entity = ((CraftPlayer) listPlayer).getHandle();
+
+        NMSImpl.sendPacket(recipient,
+                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
+    }
+
+    @Override
     public void sendTeamPacket(Player recipient, Team team, int mode) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(team);
@@ -878,17 +889,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendTabListRemove(Player recipient, Player listPlayer) {
-        Preconditions.checkNotNull(recipient);
-        Preconditions.checkNotNull(listPlayer);
-
-        EntityPlayer entity = ((CraftPlayer) listPlayer).getHandle();
-
-        NMSImpl.sendPacket(recipient,
-                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
-    }
-
-    @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).yaw = yaw;
     }
@@ -903,10 +903,6 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setMoveDestination(x, y, z, speed);
         }
-    }
-
-    @Override
-    public void setDummyAdvancement(Player entity) {
     }
 
     @Override
