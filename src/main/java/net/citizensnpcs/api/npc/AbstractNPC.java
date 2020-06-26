@@ -244,7 +244,7 @@ public abstract class AbstractNPC implements NPC {
     }
     
     @Override
-    public <T extends Trait> T getTraitSafely(Class<T> clazz) {
+    public <T extends Trait> T getTraitNullable(Class<T> clazz) {
         return clazz.cast(traits.get(clazz)); // #cast allows null as value
     }
 

@@ -178,7 +178,7 @@ public interface NPC extends Agent, Cloneable {
      *            Trait to get
      * @return Trait with the given name
      */
-    public <T extends Trait> T getTraitSafely(Class<T> trait);
+    public <T extends Trait> T getTraitNullable(Class<T> trait);
 
     /**
      * Returns the currently attached {@link Trait}s
