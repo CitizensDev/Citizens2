@@ -25,19 +25,19 @@ public class GenericEquipper implements Equipper {
         if (type.name().equals("ELYTRA") && !equipper.isSneaking()) {
             slot = EquipmentSlot.CHESTPLATE;
         } else {
-            if (HELMETS.contains(type)) {
+            if (type.name().endsWith("HELMET") || HELMETS.contains(type)) {
                 if (!equipper.isSneaking()) {
                     slot = EquipmentSlot.HELMET;
                 }
-            } else if (CHESTPLATES.contains(type)) {
+            } else if (type.name().endsWith("CHESTPLATE")) {
                 if (!equipper.isSneaking()) {
                     slot = EquipmentSlot.CHESTPLATE;
                 }
-            } else if (LEGGINGS.contains(type)) {
+            } else if (type.name().endsWith("LEGGINGS")) {
                 if (!equipper.isSneaking()) {
                     slot = EquipmentSlot.LEGGINGS;
                 }
-            } else if (BOOTS.contains(type)) {
+            } else if (type.name().endsWith("BOOTS")) {
                 if (!equipper.isSneaking()) {
                     slot = EquipmentSlot.BOOTS;
                 }
@@ -73,21 +73,10 @@ public class GenericEquipper implements Equipper {
         }
     }
 
-    private static Set<Material> BOOTS = EnumSet.of(Material.CHAINMAIL_BOOTS, Material.DIAMOND_BOOTS,
-            Material.IRON_BOOTS, Material.LEATHER_BOOTS,
-            SpigotUtil.isUsing1_13API() ? Material.GOLDEN_BOOTS : Material.valueOf("GOLD_BOOTS"));
-    private static Set<Material> CHESTPLATES = EnumSet.of(Material.CHAINMAIL_CHESTPLATE, Material.DIAMOND_CHESTPLATE,
-            Material.IRON_CHESTPLATE, Material.LEATHER_CHESTPLATE,
-            SpigotUtil.isUsing1_13API() ? Material.GOLDEN_CHESTPLATE : Material.valueOf("GOLD_CHESTPLATE"));
     private static Set<Material> HELMETS = SpigotUtil.isUsing1_13API()
-            ? EnumSet.of(Material.PUMPKIN, Material.JACK_O_LANTERN, Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET,
-                    Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.TURTLE_HELMET, Material.GOLDEN_HELMET,
-                    Material.CREEPER_HEAD, Material.DRAGON_HEAD, Material.PLAYER_HEAD, Material.SKELETON_SKULL,
-                    Material.ZOMBIE_HEAD, Material.WITHER_SKELETON_SKULL)
-            : EnumSet.of(Material.PUMPKIN, Material.JACK_O_LANTERN, Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET,
-                    Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.valueOf("SKULL_ITEM"),
+            ? EnumSet.of(Material.PUMPKIN, Material.JACK_O_LANTERN, Material.CREEPER_HEAD, Material.DRAGON_HEAD,
+                    Material.PLAYER_HEAD, Material.SKELETON_SKULL, Material.ZOMBIE_HEAD, Material.WITHER_SKELETON_SKULL)
+            : EnumSet.of(Material.PUMPKIN, Material.JACK_O_LANTERN, Material.valueOf("SKULL_ITEM"),
                     Material.valueOf("GOLD_HELMET"));
-    private static Set<Material> LEGGINGS = EnumSet.of(Material.CHAINMAIL_LEGGINGS, Material.DIAMOND_LEGGINGS,
-            Material.IRON_LEGGINGS, Material.LEATHER_LEGGINGS,
-            SpigotUtil.isUsing1_13API() ? Material.GOLDEN_LEGGINGS : Material.valueOf("GOLD_LEGGINGS"));
+
 }
