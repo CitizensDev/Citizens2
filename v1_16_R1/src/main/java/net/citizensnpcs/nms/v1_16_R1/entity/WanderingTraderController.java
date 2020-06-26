@@ -92,7 +92,7 @@ public class WanderingTraderController extends MobEntityController {
                     list.clear();
                 }
             }
-            return super.a(entityhuman, enumhand);
+            return super.b(entityhuman, enumhand);
         }
 
         @Override

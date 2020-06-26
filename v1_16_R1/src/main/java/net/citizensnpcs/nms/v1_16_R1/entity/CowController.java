@@ -93,12 +93,12 @@ public class CowController extends MobEntityController {
         @Override
         public EnumInteractionResult b(EntityHuman entityhuman, EnumHand enumhand) {
             if (npc == null || !npc.isProtected())
-                return super.a(entityhuman, enumhand);
+                return super.b(entityhuman, enumhand);
             ItemStack itemstack = entityhuman.b(enumhand);
             if (itemstack.getItem() == Items.BUCKET && !entityhuman.abilities.canInstantlyBuild && !this.isBaby()) {
                 return EnumInteractionResult.FAIL;
             }
-            return super.a(entityhuman, enumhand);
+            return super.b(entityhuman, enumhand);
         }
 
         @Override

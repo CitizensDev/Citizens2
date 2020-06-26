@@ -79,7 +79,7 @@ public class MushroomCowController extends MobEntityController {
         @Override
         public EnumInteractionResult b(EntityHuman entityhuman, EnumHand enumhand) {
             if (npc == null || !npc.isProtected())
-                return super.a(entityhuman, enumhand);
+                return super.b(entityhuman, enumhand);
             return EnumInteractionResult.FAIL;
         }
 

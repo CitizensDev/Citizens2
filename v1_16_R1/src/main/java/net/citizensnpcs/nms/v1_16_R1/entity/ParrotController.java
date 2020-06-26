@@ -56,7 +56,7 @@ public class ParrotController extends MobEntityController {
         public EnumInteractionResult b(EntityHuman paramEntityHuman, EnumHand paramEnumHand) {
             // block feeding
             if (npc == null || !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
-                return super.a(paramEntityHuman, paramEnumHand);
+                return super.b(paramEntityHuman, paramEnumHand);
             }
             return EnumInteractionResult.FAIL;
         }
