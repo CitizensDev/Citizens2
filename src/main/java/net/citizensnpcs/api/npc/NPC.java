@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Minecart;
@@ -79,6 +80,14 @@ public interface NPC extends Agent, Cloneable {
      * Permanently removes this NPC and all data about it from the registry it's attached to.
      */
     public void destroy();
+
+    /**
+     * Permanently removes this NPC and all data about it from the registry it's attached to.
+     *
+     * @param source
+     *            The source of the removal
+     */
+    public void destroy(CommandSender source);
 
     /**
      * Faces a given {@link Location} if the NPC is spawned.

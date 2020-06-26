@@ -1,17 +1,25 @@
 package net.citizensnpcs.api.event;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 
 import net.citizensnpcs.api.npc.NPC;
 
-public class NPCRemoveEvent extends NPCEvent {
-    public NPCRemoveEvent(NPC npc) {
+public class NPCRemoveByCommandSenderEvent extends NPCRemoveEvent {
+    private final CommandSender source;
+
+    public NPCRemoveByCommandSenderEvent(NPC npc, CommandSender source) {
         super(npc);
+        this.source = source;
     }
 
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+
+    public CommandSender getSource() {
+        return source;
     }
 
     public static HandlerList getHandlerList() {

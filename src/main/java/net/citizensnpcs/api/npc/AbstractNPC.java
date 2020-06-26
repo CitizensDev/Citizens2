@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -29,6 +30,7 @@ import net.citizensnpcs.api.ai.speech.SpeechController;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCAddTraitEvent;
 import net.citizensnpcs.api.event.NPCCloneEvent;
+import net.citizensnpcs.api.event.NPCRemoveByCommandSenderEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRemoveTraitEvent;
 import net.citizensnpcs.api.event.NPCTeleportEvent;
@@ -161,6 +163,12 @@ public abstract class AbstractNPC implements NPC {
         traits.clear();
         registry.deregister(this);
         goalController.clear();
+    }
+
+    @Override
+    public void destroy(CommandSender source) {
+        Bukkit.getPluginManager().callEvent(new NPCRemoveByCommandSenderEvent(this, source));
+        destroy();
     }
 
     @Override
