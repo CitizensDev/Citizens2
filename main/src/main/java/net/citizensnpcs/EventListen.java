@@ -128,7 +128,7 @@ public class EventListen implements Listener {
         int owned = 0;
         for (NPC npc : CitizensAPI.getNPCRegistry()) {
             if (!event.getNPC().equals(npc) && npc.hasTrait(Owner.class)
-                    && npc.getTraitSafely(Owner.class).isOwnedBy(event.getCreator())) {
+                    && npc.getTraitNullable(Owner.class).isOwnedBy(event.getCreator())) {
                 owned++;
             }
         }
@@ -265,7 +265,7 @@ public class EventListen implements Listener {
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
             Bukkit.getPluginManager().callEvent(leftClickEvent);
             if (npc.hasTrait(CommandTrait.class)) {
-                npc.getTraitSafely(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
+                npc.getTraitNullable(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
             }
         } else if (event instanceof EntityDamageByBlockEvent) {
             Bukkit.getPluginManager().callEvent(new NPCDamageByBlockEvent(npc, (EntityDamageByBlockEvent) event));
@@ -480,7 +480,7 @@ public class EventListen implements Listener {
             event.setCancelled(true);
         }
         if (npc.hasTrait(CommandTrait.class)) {
-            npc.getTraitSafely(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
+            npc.getTraitNullable(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
         }
     }
 
@@ -595,7 +595,7 @@ public class EventListen implements Listener {
         NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
         Bukkit.getPluginManager().callEvent(leftClickEvent);
         if (npc.hasTrait(CommandTrait.class)) {
-            npc.getTraitSafely(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
+            npc.getTraitNullable(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
         }
     }
 
@@ -615,7 +615,7 @@ public class EventListen implements Listener {
             return;
         if ((Util.isHorse(npc.getEntity().getType()) || npc.getEntity().getType() == EntityType.BOAT
                 || npc.getEntity().getType() == EntityType.PIG || npc.getEntity() instanceof Minecart)
-                && (!npc.hasTrait(Controllable.class) || !npc.getTraitSafely(Controllable.class).isEnabled())) {
+                && (!npc.hasTrait(Controllable.class) || !npc.getTraitNullable(Controllable.class).isEnabled())) {
             event.setCancelled(true);
         }
     }

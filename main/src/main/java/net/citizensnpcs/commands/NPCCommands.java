@@ -1037,7 +1037,7 @@ public class NPCCommands {
             npc.getOrAddTrait(MountTrait.class).unmount();
             return;
         }
-        boolean enabled = npc.hasTrait(Controllable.class) && npc.getTraitSafely(Controllable.class).isEnabled();
+        boolean enabled = npc.hasTrait(Controllable.class) && npc.getTraitNullable(Controllable.class).isEnabled();
         if (!enabled) {
             Messaging.sendTr(sender, Messages.NPC_NOT_CONTROLLABLE, npc.getName());
             return;
