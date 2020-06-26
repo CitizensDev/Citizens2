@@ -157,11 +157,14 @@ public class TraitCommands {
             addTrait(npc, clazz, sender);
             added.add(StringHelper.wrap(traitName));
         }
-        if (added.size() > 0)
+        if (added.size() > 0) {
             Messaging.sendTr(sender, Messages.TRAITS_ADDED, Joiner.on(", ").join(added));
-        if (removed.size() > 0)
+        }
+        if (removed.size() > 0) {
             Messaging.sendTr(sender, Messages.TRAITS_REMOVED, Joiner.on(", ").join(removed));
-        if (failed.size() > 0)
+        }
+        if (failed.size() > 0) {
             Messaging.sendTr(sender, Messages.TRAITS_FAILED_TO_CHANGE, Joiner.on(", ").join(failed));
+        }
     }
 }

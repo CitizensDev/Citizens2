@@ -1438,7 +1438,7 @@ public class NPCCommands {
             Collection<NPC> npcs = Lists.newArrayList(CitizensAPI.getNPCRegistry());
             for (NPC o : npcs) {
                 if (o.getTrait(Owner.class).isOwnedBy(owner)) {
-                    o.destroy();
+                    o.destroy(sender);
                 }
             }
             Messaging.sendTr(sender, Messages.NPCS_REMOVED);
@@ -1447,7 +1447,7 @@ public class NPCCommands {
         if (args.hasValueFlag("eid")) {
             Entity entity = Bukkit.getServer().getEntity(UUID.fromString(args.getFlag("eid")));
             if (entity != null && (npc = CitizensAPI.getNPCRegistry().getNPC(entity)) != null) {
-                npc.destroy();
+                npc.destroy(sender);
                 Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
                 return;
             } else {
@@ -1472,7 +1472,7 @@ public class NPCCommands {
                             throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
                         if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
                             throw new NoPermissionsException();
-                        npc.destroy();
+                        npc.destroy(sender);
                         Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
                     }
                 };
@@ -1487,7 +1487,7 @@ public class NPCCommands {
             throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
         if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
             throw new NoPermissionsException();
-        npc.destroy();
+        npc.destroy(sender);
         Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
     }
 
