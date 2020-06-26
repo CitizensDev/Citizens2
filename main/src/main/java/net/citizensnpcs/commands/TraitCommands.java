@@ -17,6 +17,7 @@ import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
 import net.citizensnpcs.api.event.NPCTraitCommandAttachEvent;
+import net.citizensnpcs.api.event.NPCTraitCommandDetachEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.Messaging;
@@ -116,13 +117,18 @@ public class TraitCommands {
                 failed.add(String.format("%s: Trait not attached", traitName));
                 continue;
             }
-            npc.removeTrait(clazz);
+            removeTrait(npc, clazz, sender);
             removed.add(StringHelper.wrap(traitName));
         }
         if (removed.size() > 0)
             Messaging.sendTr(sender, Messages.TRAITS_REMOVED, Joiner.on(", ").join(removed));
         if (failed.size() > 0)
             Messaging.sendTr(sender, Messages.FAILED_TO_REMOVE, Joiner.on(", ").join(failed));
+    }
+
+    private void removeTrait(NPC npc, Class<? extends Trait> clazz, CommandSender sender) {
+        Bukkit.getPluginManager().callEvent(new NPCTraitCommandDetachEvent(npc, clazz, sender));
+        npc.removeTrait(clazz);
     }
 
     @Command(
@@ -150,7 +156,7 @@ public class TraitCommands {
             }
             boolean remove = npc.hasTrait(clazz);
             if (remove) {
-                npc.removeTrait(clazz);
+                removeTrait(npc, clazz, sender);
                 removed.add(StringHelper.wrap(traitName));
                 continue;
             }
