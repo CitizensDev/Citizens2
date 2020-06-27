@@ -1711,6 +1711,9 @@ public class NPCCommands {
                             }
                         });
                     } catch (Throwable t) {
+                        if (Messaging.isDebugging()) {
+                            t.printStackTrace();
+                        }
                         Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
                             @Override
                             public void run() {
