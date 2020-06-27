@@ -320,7 +320,8 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public NPC getNPC(org.bukkit.entity.Entity entity) {
-        return getHandle(entity) instanceof NPCHolder ? ((NPCHolder) getHandle(entity)).getNPC() : null;
+        Entity handle = getHandle(entity);
+        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
     }
 
     @Override

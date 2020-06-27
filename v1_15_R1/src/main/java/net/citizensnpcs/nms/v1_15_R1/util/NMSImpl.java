@@ -455,12 +455,16 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public NPC getNPC(org.bukkit.entity.Entity entity) {
-        return getHandle(entity) instanceof NPCHolder ? ((NPCHolder) getHandle(entity)).getNPC() : null;
+        Entity handle = getHandle(entity);
+        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
     }
 
     @Override
     public List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
-        return Lists.transform(NMSImpl.getHandle(entity).passengers, new Function<Entity, org.bukkit.entity.Entity>() {
+        Entity handle = NMSImpl.getHandle(entity);
+        if (handle == null || handle.passengers == null)
+            return Lists.newArrayList();
+        return Lists.transform(handle.passengers, new Function<Entity, org.bukkit.entity.Entity>() {
             @Override
             public org.bukkit.entity.Entity apply(Entity input) {
                 return input.getBukkitEntity();
