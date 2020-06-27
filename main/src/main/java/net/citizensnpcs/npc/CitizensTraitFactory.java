@@ -27,6 +27,7 @@ import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.EndermanTrait;
 import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
@@ -62,6 +63,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(CommandTrait.class));
         registerTrait(TraitInfo.create(Controllable.class));
         registerTrait(TraitInfo.create(CurrentLocation.class));
+        registerTrait(TraitInfo.create(EndermanTrait.class));
         registerTrait(TraitInfo.create(Equipment.class));
         registerTrait(TraitInfo.create(FollowTrait.class));
         registerTrait(TraitInfo.create(GameModeTrait.class));

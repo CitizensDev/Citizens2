@@ -219,6 +219,7 @@ import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityBird;
 import net.minecraft.server.v1_15_R1.EntityCat;
 import net.minecraft.server.v1_15_R1.EntityEnderDragon;
+import net.minecraft.server.v1_15_R1.EntityEnderman;
 import net.minecraft.server.v1_15_R1.EntityFish;
 import net.minecraft.server.v1_15_R1.EntityFishSchool;
 import net.minecraft.server.v1_15_R1.EntityFishingHook;
@@ -1071,6 +1072,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setEndermanAngry(org.bukkit.entity.Enderman enderman, boolean angry) {
+        if (ENDERMAN_ANGRY == null)
+            return;
+        getHandle(enderman).getDataWatcher().set(ENDERMAN_ANGRY, angry);
+    }
+
+    @Override
     public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
         if (!(entity instanceof LivingEntity))
             return;
@@ -1834,6 +1842,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
     private static final MethodHandle ENDERDRAGON_BATTLE_FIELD = NMS.getGetter(EntityEnderDragon.class, "bN");
+    private static DataWatcherObject<Boolean> ENDERMAN_ANGRY;
     private static final MethodHandle ENTITY_FISH_NUM_IN_SCHOOL = NMS.getSetter(EntityFishSchool.class, "c", false);
     private static final MethodHandle ENTITY_GET_SOUND_FALL = NMS.getMethodHandle(EntityLiving.class, "getSoundFall",
             true, int.class);
@@ -1873,6 +1882,13 @@ public class NMSImpl implements NMSBridge {
             NMS.getFinalSetter(IRegistry.class, "ENTITY_TYPE").invoke(ENTITY_REGISTRY);
         } catch (Throwable e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
+        }
+        try {
+            ENDERMAN_ANGRY = (DataWatcherObject<Boolean>) NMS.getField(EntityEnderman.class, "bw").get(null);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 }

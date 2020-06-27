@@ -167,6 +167,7 @@ import net.minecraft.server.v1_10_R1.EnchantmentManager;
 import net.minecraft.server.v1_10_R1.EnderDragonBattle;
 import net.minecraft.server.v1_10_R1.Entity;
 import net.minecraft.server.v1_10_R1.EntityEnderDragon;
+import net.minecraft.server.v1_10_R1.EntityEnderman;
 import net.minecraft.server.v1_10_R1.EntityFishingHook;
 import net.minecraft.server.v1_10_R1.EntityHorse;
 import net.minecraft.server.v1_10_R1.EntityHuman;
@@ -910,6 +911,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setEndermanAngry(org.bukkit.entity.Enderman enderman, boolean angry) {
+        if (ENDERMAN_ANGRY == null)
+            return;
+        getHandle(enderman).getDataWatcher().set(ENDERMAN_ANGRY, angry);
+    }
+
+    @Override
     public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
         if (!(entity instanceof LivingEntity))
             return;
@@ -1524,11 +1532,11 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE,
             EntityType.HORSE, EntityType.GHAST);
-
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c");
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bK");
+    private static DataWatcherObject<Boolean> ENDERMAN_ANGRY;
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
@@ -1562,6 +1570,14 @@ public class NMSImpl implements NMSBridge {
             MAKE_REQUEST.setAccessible(true);
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+
+        try {
+            ENDERMAN_ANGRY = (DataWatcherObject<Boolean>) NMS.getField(EntityEnderman.class, "by").get(null);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 }

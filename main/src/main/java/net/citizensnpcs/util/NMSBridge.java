@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
@@ -124,6 +125,8 @@ public interface NMSBridge {
     public void setBodyYaw(Entity entity, float yaw);
 
     public void setDestination(Entity entity, double x, double y, double z, float speed);
+
+    public void setEndermanAngry(Enderman enderman, boolean angry);
 
     public void setHeadYaw(Entity entity, float yaw);
 

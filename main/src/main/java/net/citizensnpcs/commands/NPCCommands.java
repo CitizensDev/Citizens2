@@ -88,6 +88,7 @@ import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.CommandTrait.NPCCommandBuilder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.EndermanTrait;
 import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
@@ -558,6 +559,24 @@ public class NPCCommands {
         } else {
             callback.run(npc);
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "enderman -a[ngry]",
+            desc = "Set enderman modifiers",
+            flags = "a",
+            modifiers = { "enderman" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.enderman")
+    public void enderman(CommandContext args, Player sender, NPC npc) throws CommandException {
+        if (args.hasFlag('a')) {
+            boolean angry = npc.getTrait(EndermanTrait.class).toggleAngry();
+            Messaging.sendTr(sender, angry ? Messages.ENDERMAN_ANGRY_SET : Messages.ENDERMAN_ANGRY_UNSET,
+                    npc.getName());
+        }
+        throw new CommandUsageException();
     }
 
     @Command(

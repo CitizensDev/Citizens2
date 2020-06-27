@@ -200,6 +200,7 @@ import net.minecraft.server.v1_13_R2.EnderDragonBattle;
 import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityBird;
 import net.minecraft.server.v1_13_R2.EntityEnderDragon;
+import net.minecraft.server.v1_13_R2.EntityEnderman;
 import net.minecraft.server.v1_13_R2.EntityFish;
 import net.minecraft.server.v1_13_R2.EntityFishingHook;
 import net.minecraft.server.v1_13_R2.EntityHorse;
@@ -1009,6 +1010,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setEndermanAngry(org.bukkit.entity.Enderman enderman, boolean angry) {
+        if (ENDERMAN_ANGRY == null)
+            return;
+        getHandle(enderman).getDataWatcher().set(ENDERMAN_ANGRY, angry);
+    }
+
+    @Override
     public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
         if (!(entity instanceof LivingEntity))
             return;
@@ -1712,6 +1720,7 @@ public class NMSImpl implements NMSBridge {
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c", false);
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bR");
+    private static DataWatcherObject<Boolean> ENDERMAN_ANGRY;
     private static Method ENTITY_FISH_METHOD = NMS.getMethod(EntityFish.class, "t", false, boolean.class);
     private static Field ENTITY_FISH_NUM_IN_SCHOOL;
     private static CustomEntityRegistry ENTITY_REGISTRY;
@@ -1759,6 +1768,14 @@ public class NMSImpl implements NMSBridge {
             MAKE_REQUEST.setAccessible(true);
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+
+        try {
+            ENDERMAN_ANGRY = (DataWatcherObject<Boolean>) NMS.getField(EntityEnderman.class, "bC").get(null);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 }

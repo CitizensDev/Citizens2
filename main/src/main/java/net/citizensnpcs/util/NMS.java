@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
@@ -376,6 +377,10 @@ public class NMS {
 
     public static void setDestination(org.bukkit.entity.Entity entity, double x, double y, double z, float speed) {
         BRIDGE.setDestination(entity, x, y, z, speed);
+    }
+
+    public static void setEndermanAngry(Enderman enderman, boolean angry) {
+        BRIDGE.setEndermanAngry(enderman, angry);
     }
 
     public static void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {

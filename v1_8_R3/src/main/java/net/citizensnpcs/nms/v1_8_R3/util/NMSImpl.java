@@ -834,6 +834,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setEndermanAngry(org.bukkit.entity.Enderman enderman, boolean angry) {
+        getHandle(enderman).getDataWatcher().watch(17, Byte.valueOf((byte) (angry ? 1 : 0)));
+    }
+
+    @Override
     public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
         if (!(entity instanceof LivingEntity))
             return;
