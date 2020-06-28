@@ -27,7 +27,7 @@ public class CurrentLocation extends Trait {
     }
 
     public Location getLocation() {
-        return location.getWorld() == null ? null : location;
+        return location.getWorld() == null ? null : location.clone();
     }
 
     @Override

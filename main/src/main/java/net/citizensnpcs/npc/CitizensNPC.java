@@ -137,7 +137,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public Location getStoredLocation() {
-        return isSpawned() ? getEntity().getLocation(CACHE_LOCATION) : getTrait(CurrentLocation.class).getLocation();
+        return isSpawned() ? getEntity().getLocation() : getTrait(CurrentLocation.class).getLocation();
     }
 
     @Override
