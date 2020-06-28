@@ -16,6 +16,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -150,7 +151,7 @@ public class EventListen implements Listener {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                respawnAllFromCoord(new ChunkCoord(event.getChunk()));
+                respawnAllFromCoord(new ChunkCoord(event.getChunk()), event);
             }
         };
         if (event instanceof Cancellable) {
@@ -187,7 +188,7 @@ public class EventListen implements Listener {
                         if (Messaging.isDebugging()) {
                             Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
                         }
-                        respawnAllFromCoord(coord);
+                        respawnAllFromCoord(coord, event);
                         return;
                     }
                     toRespawn.put(coord, npc);
@@ -625,7 +626,7 @@ public class EventListen implements Listener {
         for (ChunkCoord chunk : toRespawn.keySet()) {
             if (!chunk.worldUUID.equals(event.getWorld().getUID()) || !event.getWorld().isChunkLoaded(chunk.x, chunk.z))
                 continue;
-            respawnAllFromCoord(chunk);
+            respawnAllFromCoord(chunk, event);
         }
     }
 
@@ -638,7 +639,7 @@ public class EventListen implements Listener {
             if (event.isCancelled() || !despawned) {
                 for (ChunkCoord coord : toRespawn.keySet()) {
                     if (event.getWorld().getUID().equals(coord.worldUUID)) {
-                        respawnAllFromCoord(coord);
+                        respawnAllFromCoord(coord, event);
                     }
                 }
                 event.setCancelled(true);
@@ -651,7 +652,7 @@ public class EventListen implements Listener {
         }
     }
 
-    private void respawnAllFromCoord(ChunkCoord coord) {
+    private void respawnAllFromCoord(ChunkCoord coord, Event event) {
         List<NPC> ids = toRespawn.get(coord);
         for (int i = 0; i < ids.size(); i++) {
             NPC npc = ids.get(i);
@@ -672,8 +673,8 @@ public class EventListen implements Listener {
             boolean success = spawn(npc);
             if (!success) {
                 if (Messaging.isDebugging()) {
-                    Messaging.debug("Couldn't respawn id", npc.getId(),
-                            "during chunk event at [" + coord.x + "," + coord.z + "]");
+                    Messaging.debug("Couldn't respawn id", npc.getId(), "during", event,
+                            "at [" + coord.x + "," + coord.z + "]");
                 }
                 continue;
             }
@@ -686,7 +687,7 @@ public class EventListen implements Listener {
                 break;
             }
             if (Messaging.isDebugging()) {
-                Messaging.debug("Spawned id", npc.getId(), "due to chunk event at [" + coord.x + "," + coord.z + "]");
+                Messaging.debug("Spawned id", npc.getId(), "during", event, "at [" + coord.x + "," + coord.z + "]");
             }
         }
     }

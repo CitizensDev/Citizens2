@@ -243,8 +243,8 @@ public class CitizensNPC extends AbstractNPC {
 
         getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
-        boolean couldSpawn = !Util.isLoaded(at) ? false
-                : NMS.addEntityToWorld(getEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
+        boolean loaded = Util.isLoaded(at);
+        boolean couldSpawn = !loaded ? false : NMS.addEntityToWorld(getEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
 
         // send skin packets, if applicable, before other NMS packets are sent
         if (couldSpawn) {
@@ -253,9 +253,11 @@ public class CitizensNPC extends AbstractNPC {
                 skinnable.getSkinTracker().onSpawnNPC();
             }
         } else {
-            Messaging.debug("Retrying spawn of", getId(), "later due to chunk being unloaded.",
-                    Util.isLoaded(at) ? "Util.isLoaded true" : "Util.isLoaded false");
-            // we need to wait for a chunk load before trying to spawn
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Retrying spawn of", getId(), "later. Was loaded", loaded, "is loaded",
+                        Util.isLoaded(at));
+            }
+            // we need to wait before trying to spawn
             entityController.remove();
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
