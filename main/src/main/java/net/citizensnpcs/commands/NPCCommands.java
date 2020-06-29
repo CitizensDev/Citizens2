@@ -1337,9 +1337,9 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pose (--save [name]|--assume [name]|--remove [name]) (-a)",
+            usage = "pose (--save [name] (-d)|--assume [name]|--remove [name]|--default [name]) (-a)",
             desc = "Changes/Saves/Lists NPC's head pose(s)",
-            flags = "a",
+            flags = "ad",
             modifiers = { "pose" },
             min = 1,
             max = 2,
@@ -1353,10 +1353,16 @@ public class NPCCommands {
             if (args.getSenderLocation() == null)
                 throw new ServerCommandException();
 
-            if (trait.addPose(args.getFlag("save"), args.getSenderLocation())) {
+            if (trait.addPose(args.getFlag("save"), args.getSenderLocation(), args.hasFlag('d'))) {
                 Messaging.sendTr(sender, Messages.POSE_ADDED);
             } else
                 throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("save"));
+        } else if (args.hasValueFlag("default")) {
+            String pose = args.getFlag("default");
+            if (!trait.hasPose(pose))
+                throw new CommandException(Messages.POSE_MISSING, pose);
+            trait.setDefaultPose(pose);
+            Messaging.sendTr(sender, Messages.DEFAULT_POSE_SET, pose);
         } else if (args.hasValueFlag("assume")) {
             String pose = args.getFlag("assume");
             if (pose.isEmpty())
@@ -1376,7 +1382,6 @@ public class NPCCommands {
             trait.describe(sender, args.getInteger(1, 1));
         }
 
-        // Assume Player's pose
         if (!args.hasFlag('a'))
             return;
         if (args.getSenderLocation() == null)

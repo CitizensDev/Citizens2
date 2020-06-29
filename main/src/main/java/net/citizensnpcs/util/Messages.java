@@ -75,6 +75,7 @@ public class Messages {
     public static final String CURRENT_SCRIPTS = "citizens.commands.npc.script.current-scripts";
     public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.waypoints.current-provider";
     public static final String DATABASE_CONNECTION_FAILED = "citizens.notifications.database-connection-failed";
+    public static final String DEFAULT_POSE_SET = "citizens.commands.npc.pose.default-pose-set";
     public static final String DELAY_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.delay.prompt";
     public static final String ELDER_SET = "citizens.commands.npc.guardian.elder-set";
     public static final String ELDER_UNSET = "citizens.commands.npc.guardian.elder-unset";
