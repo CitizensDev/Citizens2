@@ -357,7 +357,6 @@ public class PlayerNavigation extends NavigationAbstract {
         } else if (this.c != null && this.c.f() < this.c.e()) {
             Vec3D vec3D1 = b();
             Vec3D vec3D2 = this.c.a(this.a, this.c.f());
-            System.out.println(vec3D1 + " " + vec3D2);
             if (vec3D1.y > vec3D2.y && !this.a.isOnGround() && MathHelper.floor(vec3D1.x) == MathHelper.floor(vec3D2.x)
                     && MathHelper.floor(vec3D1.z) == MathHelper.floor(vec3D2.z))
                 this.c.c(this.c.f() + 1);

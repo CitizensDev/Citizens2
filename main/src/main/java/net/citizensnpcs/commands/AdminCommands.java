@@ -41,6 +41,7 @@ public class AdminCommands {
     public void reload(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.sendTr(sender, Messages.CITIZENS_RELOADING);
         try {
+
             plugin.reload();
             Messaging.sendTr(sender, Messages.CITIZENS_RELOADED);
         } catch (NPCLoadException ex) {
