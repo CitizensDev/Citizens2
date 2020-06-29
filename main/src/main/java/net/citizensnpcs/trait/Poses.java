@@ -78,6 +78,8 @@ public class Poses extends Trait {
      * Sets the yaw/pitch to the stored pose, looked up by name.
      */
     public void assumePose(String flag) {
+        if (flag == null)
+            return;
         Pose pose = poses.get(flag.toLowerCase());
         assumePose(pose.getYaw(), pose.getPitch());
     }
@@ -97,27 +99,30 @@ public class Poses extends Trait {
     }
 
     public Pose getPose(String name) {
-        return poses.get(name.toLowerCase());
+        return name == null ? null : poses.get(name.toLowerCase());
     }
 
     public boolean hasPose(String pose) {
+        if (pose == null)
+            return false;
         return poses.containsKey(pose.toLowerCase());
     }
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
         poses.clear();
-        for (DataKey sub : key.getRelative("list").getIntegerSubKeys())
+        for (DataKey sub : key.getRelative("list").getIntegerSubKeys()) {
             try {
                 String[] parts = sub.getString("").split(";");
                 poses.put(parts[0].toLowerCase(), new Pose(parts[0], Float.valueOf(parts[1]), Float.valueOf(parts[2])));
             } catch (NumberFormatException e) {
                 Messaging.logTr(Messages.SKIPPING_INVALID_POSE, sub.name(), e.getMessage());
             }
+        }
     }
 
     public boolean removePose(String pose) {
-        return poses.remove(pose.toLowerCase()) != null;
+        return pose == null ? false : poses.remove(pose.toLowerCase()) != null;
     }
 
     @Override
