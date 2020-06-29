@@ -130,7 +130,7 @@ public class Poses extends Trait {
         if (!hasPose(defaultPose))
             return;
         if (!npc.getNavigator().isNavigating()
-                && (!npc.hasTrait(LookClose.class) || npc.getTrait(LookClose.class).canSeeTarget())) {
+                && (!npc.hasTrait(LookClose.class) || !npc.getTrait(LookClose.class).canSeeTarget())) {
             assumePose(defaultPose);
         }
     }
