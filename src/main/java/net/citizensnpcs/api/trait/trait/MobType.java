@@ -30,7 +30,11 @@ public class MobType extends Trait {
     @SuppressWarnings("deprecation")
     public void load(DataKey key) {
         try {
-            type = EntityType.valueOf(key.getString(""));
+            if (key.getString("").equals("PIG_ZOMBIE")) {
+                type = EntityType.ZOMBIFIED_PIGLIN;
+            } else {
+                type = EntityType.valueOf(key.getString(""));
+            }
         } catch (IllegalArgumentException ex) {
             type = EntityType.fromName(key.getString(""));
         }
