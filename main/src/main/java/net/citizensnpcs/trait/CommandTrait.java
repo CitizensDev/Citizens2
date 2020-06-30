@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
@@ -20,6 +21,7 @@ import com.google.common.io.ByteStreams;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.CommandMessages;
+import net.citizensnpcs.api.event.NPCCommandDispatchEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.DelegatePersistence;
 import net.citizensnpcs.api.persistence.Persist;
@@ -32,6 +34,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
+import net.milkbowl.vault.economy.Economy;
 
 @TraitName("commandtrait")
 public class CommandTrait extends Trait {
@@ -41,6 +44,8 @@ public class CommandTrait extends Trait {
     @Persist
     @DelegatePersistence(PlayerNPCCommandPersister.class)
     private final Map<String, PlayerNPCCommand> cooldowns = Maps.newHashMap();
+    @Persist
+    private double cost = -1;
     @Persist
     private boolean sequential = false;
     @Persist
@@ -54,6 +59,23 @@ public class CommandTrait extends Trait {
         int id = getNewId();
         commands.put(String.valueOf(id), builder.build(id));
         return id;
+    }
+
+    private boolean checkPreconditions(Player player, Hand hand) {
+        if (cost > 0) {
+            try {
+                RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager()
+                        .getRegistration(Economy.class);
+                if (provider != null && provider.getProvider() != null) {
+                    Economy economy = provider.getProvider();
+                    if (!economy.has(player, cost))
+                        return false;
+                    economy.withdrawPlayer(player, cost);
+                }
+            } catch (NoClassDefFoundError e) {
+            }
+        }
+        return true;
     }
 
     /**
@@ -102,6 +124,12 @@ public class CommandTrait extends Trait {
     }
 
     public void dispatch(final Player player, final Hand hand) {
+        NPCCommandDispatchEvent event = new NPCCommandDispatchEvent(npc, player);
+        event.setCancelled(!checkPreconditions(player, hand));
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
         Runnable task = new Runnable() {
             @Override
             public void run() {
@@ -187,6 +215,10 @@ public class CommandTrait extends Trait {
 
     public void removeCommandById(int id) {
         commands.remove(String.valueOf(id));
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 
     public void setSequential(boolean sequential) {

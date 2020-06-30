@@ -332,6 +332,9 @@ public class NPCCommands {
             commands.setTemporaryPermissions(temporaryPermissions);
             Messaging.sendTr(sender, Messages.COMMAND_TEMPORARY_PERMISSIONS_SET,
                     Joiner.on(' ').join(temporaryPermissions));
+        } else if (args.getString(1).equalsIgnoreCase("cost")) {
+            commands.setCost(args.getDouble(2));
+            Messaging.sendTr(sender, Messages.COMMAND_COST_SET, args.getDouble(2));
         } else {
             throw new CommandUsageException();
         }
