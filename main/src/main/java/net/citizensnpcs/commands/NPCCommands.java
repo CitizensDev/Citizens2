@@ -92,6 +92,7 @@ import net.citizensnpcs.trait.EndermanTrait;
 import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
+import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.MountTrait;
@@ -699,6 +700,25 @@ public class NPCCommands {
         boolean enabled = npc.getTrait(Gravity.class).toggle();
         String key = !enabled ? Messages.GRAVITY_ENABLED : Messages.GRAVITY_DISABLED;
         Messaging.sendTr(sender, key, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "hologram [text]",
+            desc = "Controls NPC hologram",
+            modifiers = { "hologram" },
+            min = 1,
+            max = -1,
+            permission = "citizens.npc.hologram")
+    public void hologram(CommandContext args, CommandSender sender, NPC npc) {
+        HologramTrait trait = npc.getTrait(HologramTrait.class);
+        if (args.argsLength() == 1) {
+            trait.setText(null);
+            Messaging.sendTr(sender, Messages.HOLOGRAM_TEXT_REMOVED);
+        } else {
+            trait.setText(args.getJoinedStrings(1));
+            Messaging.sendTr(sender, Messages.HOLOGRAM_TEXT_SET);
+        }
     }
 
     @Command(
