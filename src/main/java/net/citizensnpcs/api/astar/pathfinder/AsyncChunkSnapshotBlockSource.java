@@ -8,6 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
+import net.citizensnpcs.api.util.BoundingBox;
+
 public class AsyncChunkSnapshotBlockSource extends CachingChunkBlockSource<ChunkSnapshot> {
     public AsyncChunkSnapshotBlockSource(Location location, float radius) {
         super(location, radius);
@@ -31,6 +33,11 @@ public class AsyncChunkSnapshotBlockSource extends CachingChunkBlockSource<Chunk
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    protected BoundingBox getCollisionBox(ChunkSnapshot chunk, int x, int y, int z) {
+        return null; // TODO
     }
 
     @Override

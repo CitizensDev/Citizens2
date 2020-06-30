@@ -8,6 +8,8 @@ import org.bukkit.World;
 
 import com.google.common.collect.Maps;
 
+import net.citizensnpcs.api.util.BoundingBox;
+
 public abstract class CachingChunkBlockSource<T> extends BlockSource {
     private final Map<ChunkCoord, ChunkCache> chunkCache = Maps.newHashMap();
     private final Object[][] chunks;
@@ -38,6 +40,19 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
     }
 
     protected abstract T getChunkObject(int x, int z);
+
+    @Override
+    public BoundingBox getCollisionBox(int x, int y, int z) {
+        if (y > 255) {
+            return new BoundingBox(-1, -1, -1, 1, 1, 1);
+        }
+        T chunk = getSpecific(x, z);
+        if (chunk != null)
+            return getCollisionBox(chunk, x & 15, y, z & 15);
+        return BoundingBox.convert(world.getBlockAt(x, y, z).getBoundingBox());
+    }
+
+    protected abstract BoundingBox getCollisionBox(T chunk, int x, int y, int z);
 
     protected abstract int getLightLevel(T chunk, int x, int y, int z);
 
