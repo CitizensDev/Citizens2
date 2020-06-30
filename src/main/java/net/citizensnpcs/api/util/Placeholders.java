@@ -2,8 +2,9 @@ package net.citizensnpcs.api.util;
 
 import java.util.regex.Pattern;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -11,9 +12,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 
 public class Placeholders {
     public static String replace(String text, CommandSender sender, NPC npc) {
-        if (sender instanceof Player) {
-            text = replace(text, (Player) sender);
-        }
+        text = replace(text, sender instanceof OfflinePlayer ? (OfflinePlayer) sender : null);
         if (npc == null) {
             return text;
         }
@@ -23,17 +22,23 @@ public class Placeholders {
         return text;
     }
 
-    public static String replace(String text, Player player) {
+    public static String replace(String text, OfflinePlayer player) {
         if (player == null) {
-            return text;
+            return setPlaceholderAPIPlaceholders(text, player);
         }
         text = PLAYER_MATCHER.matcher(text).replaceAll(player.getName());
-        text = text.replace("<world>", player.getWorld().getName());
-        try {
-            PlaceholderAPI.setPlaceholders(player, text);
-        } catch (Throwable t) {
+        if (player instanceof Entity && ((Entity) player).isValid()) {
+            text = text.replace("<world>", ((Entity) player).getWorld().getName());
         }
-        return text;
+        return setPlaceholderAPIPlaceholders(text, player);
+    }
+
+    private static String setPlaceholderAPIPlaceholders(String text, OfflinePlayer player) {
+        try {
+            return PlaceholderAPI.setPlaceholders(player, text);
+        } catch (Throwable t) {
+            return text;
+        }
     }
 
     private static Pattern PLAYER_MATCHER = Pattern.compile("<player>|<p>");
