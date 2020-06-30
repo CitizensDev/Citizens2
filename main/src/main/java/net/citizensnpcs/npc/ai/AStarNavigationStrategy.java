@@ -17,7 +17,6 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.AStarMachine;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.BlockSource;
-import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint;
@@ -80,7 +79,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         Location location = npc.getEntity().getLocation();
         VectorGoal goal = new VectorGoal(destination, (float) params.pathDistanceMargin());
         state = ASTAR.getStateFor(goal,
-                new VectorNode(goal, location, new ChunkBlockSource(location, params.range()), params.examiners()));
+                new VectorNode(goal, location, new NMSChunkBlockSource(location, params.range()), params.examiners()));
     }
 
     public void setPlan(Path path) {
@@ -134,7 +133,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         Location currLoc = npc.getEntity().getLocation(NPC_LOCATION);
         Vector destVector = new Vector(vector.getX() + 0.5, vector.getY(), vector.getZ() + 0.5);
         /* Proper door movement - gets stuck on corners at times
-        
+
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
           if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();

@@ -33,6 +33,7 @@ import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -73,6 +74,10 @@ public class NMS {
 
     public static BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
         return BRIDGE.getBoundingBox(handle);
+    }
+
+    public static BoundingBox getCollisionBox(Block block) {
+        return BRIDGE.getCollisionBox(block).add(block.getX(), block.getY(), block.getZ());
     }
 
     public static Field getField(Class<?> clazz, String field) {

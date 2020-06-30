@@ -26,6 +26,7 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftWither;
+import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
@@ -61,6 +62,7 @@ import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.nms.v1_8_R3.entity.BatController;
 import net.citizensnpcs.nms.v1_8_R3.entity.BlazeController;
@@ -127,7 +129,6 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
@@ -286,6 +287,15 @@ public class NMSImpl implements NMSBridge {
     public BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
         AxisAlignedBB bb = NMSImpl.getHandle(handle).getBoundingBox();
         return new BoundingBox(bb.a, bb.b, bb.c, bb.d, bb.e, bb.f);
+    }
+
+    @Override
+    public BoundingBox getCollisionBox(org.bukkit.block.Block block) {
+        WorldServer world = ((CraftWorld) block.getWorld()).getHandle();
+        Block type = CraftMagicNumbers.getBlock(block);
+        BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ());
+        AxisAlignedBB aabb = type.a(world, pos, world.getType(pos));
+        return new BoundingBox(aabb.a, aabb.b, aabb.c, aabb.d, aabb.e, aabb.f);
     }
 
     private float getDragonYaw(Entity handle, double tX, double tZ) {

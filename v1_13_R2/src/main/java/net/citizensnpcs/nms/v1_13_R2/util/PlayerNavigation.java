@@ -1,7 +1,7 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
+import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
-import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_13_R2.*;
 

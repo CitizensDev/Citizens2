@@ -68,6 +68,7 @@ import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.TraitInfo;
+import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.nms.v1_10_R1.entity.BatController;
 import net.citizensnpcs.nms.v1_10_R1.entity.BlazeController;
@@ -146,7 +147,6 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
-import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
@@ -334,6 +334,17 @@ public class NMSImpl implements NMSBridge {
     public BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
         AxisAlignedBB bb = NMSImpl.getHandle(handle).getBoundingBox();
         return new BoundingBox(bb.a, bb.b, bb.c, bb.d, bb.e, bb.f);
+    }
+
+    @Override
+    public BoundingBox getCollisionBox(org.bukkit.block.Block block) {
+        WorldServer world = ((CraftWorld) block.getWorld()).getHandle();
+        BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ());
+        AxisAlignedBB aabb = world.getType(pos).c(world, pos);
+        if (aabb == null) {
+            aabb = world.getType(pos).d(world, pos);
+        }
+        return new BoundingBox(aabb.a, aabb.b, aabb.c, aabb.d, aabb.e, aabb.f);
     }
 
     private float getDragonYaw(Entity handle, double tX, double tZ) {

@@ -12,7 +12,7 @@ import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.BoundingBox;
+import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.util.NMS;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {

@@ -1,6 +1,6 @@
 package net.citizensnpcs.nms.v1_15_R1.util;
 
-import net.citizensnpcs.util.BoundingBox;
+import net.citizensnpcs.api.util.BoundingBox;
 import net.minecraft.server.v1_15_R1.AxisAlignedBB;
 
 public class NMSBoundingBox {

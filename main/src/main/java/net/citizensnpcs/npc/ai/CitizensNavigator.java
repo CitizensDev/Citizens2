@@ -330,6 +330,9 @@ public class CitizensNavigator implements Navigator, Runnable {
                 : npc.data().<Boolean> get(NPC.PATHFINDER_OPEN_DOORS_METADATA)) {
             localParams.examiner(new DoorExaminer());
         }
+        if (Setting.NEW_PATHFINDER_CHECK_BOUNDING_BOXES.asBoolean()) {
+            localParams.examiner(new BoundingBoxExaminer(npc.getEntity()));
+        }
     }
 
     private void switchStrategyTo(PathStrategy newStrategy) {

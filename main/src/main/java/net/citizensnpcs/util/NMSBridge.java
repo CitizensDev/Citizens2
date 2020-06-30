@@ -29,6 +29,7 @@ import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
@@ -47,6 +48,8 @@ public interface NMSBridge {
     public Object getBossBar(Entity entity);
 
     public BoundingBox getBoundingBox(Entity handle);
+
+    public BoundingBox getCollisionBox(Block block);
 
     public GameProfileRepository getGameProfileRepository();
 

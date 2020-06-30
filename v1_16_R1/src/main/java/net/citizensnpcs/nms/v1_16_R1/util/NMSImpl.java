@@ -27,6 +27,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_16_R1.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
@@ -70,6 +71,7 @@ import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.TraitInfo;
+import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.nms.v1_16_R1.entity.BatController;
 import net.citizensnpcs.nms.v1_16_R1.entity.BeeController;
@@ -197,7 +199,6 @@ import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.trait.versioned.VillagerTrait;
-import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
@@ -269,6 +270,7 @@ import net.minecraft.server.v1_16_R1.ScoreboardTeamBase.EnumNameTagVisibility;
 import net.minecraft.server.v1_16_R1.SoundEffect;
 import net.minecraft.server.v1_16_R1.TagsFluid;
 import net.minecraft.server.v1_16_R1.Vec3D;
+import net.minecraft.server.v1_16_R1.VoxelShape;
 import net.minecraft.server.v1_16_R1.WorldServer;
 
 @SuppressWarnings("unchecked")
@@ -428,6 +430,16 @@ public class NMSImpl implements NMSBridge {
     @Override
     public BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
         return NMSBoundingBox.wrap(NMSImpl.getHandle(handle).getBoundingBox());
+    }
+
+    @Override
+    public BoundingBox getCollisionBox(org.bukkit.block.Block block) {
+        WorldServer world = ((CraftWorld) block.getWorld()).getHandle();
+        VoxelShape shape = ((CraftBlock) block).getNMS().getCollisionShape(world, ((CraftBlock) block).getPosition());
+        AxisAlignedBB aabb = shape.isEmpty()
+                ? ((CraftBlock) block).getNMS().getShape(world, ((CraftBlock) block).getPosition()).getBoundingBox()
+                : shape.getBoundingBox();
+        return aabb == null ? BoundingBox.convert(block.getBoundingBox()) : NMSBoundingBox.wrap(aabb);
     }
 
     private float getDragonYaw(Entity handle, double tX, double tZ) {

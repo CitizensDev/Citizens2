@@ -7,8 +7,8 @@ import java.util.Iterator;
 
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
-import net.citizensnpcs.util.BoundingBox;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_13_R2.AxisAlignedBB;
 import net.minecraft.server.v1_13_R2.Block;

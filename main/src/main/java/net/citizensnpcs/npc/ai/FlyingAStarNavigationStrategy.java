@@ -20,7 +20,6 @@ import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.AStarMachine;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
-import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
 import net.citizensnpcs.api.astar.pathfinder.FlyingBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.Path;
@@ -101,7 +100,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
                 parameters.examiner(new FlyingBlockExaminer());
             }
             setPlan(ASTAR.runFully(goal, new VectorNode(goal, location,
-                    new ChunkBlockSource(location, parameters.range()), parameters.examiners()),
+                    new NMSChunkBlockSource(location, parameters.range()), parameters.examiners()),
                     Setting.MAXIMUM_ASTAR_ITERATIONS.asInt()));
         }
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
