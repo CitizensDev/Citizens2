@@ -1,5 +1,8 @@
 package net.citizensnpcs.api.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +18,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.block.Banner;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
@@ -38,8 +40,11 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
@@ -100,6 +105,20 @@ public class ItemStorage {
     }
 
     private static void deserialiseMeta(DataKey root, ItemStack res) {
+        if (root.keyExists("encoded-meta")) {
+            byte[] raw = BaseEncoding.base64().decode(root.getString("encoded-meta"));
+            try {
+                BukkitObjectInputStream inp = new BukkitObjectInputStream(new ByteArrayInputStream(raw));
+                ItemMeta meta = (ItemMeta) inp.readObject();
+                res.setItemMeta(meta);
+                Bukkit.getPluginManager().callEvent(new CitizensDeserialiseMetaEvent(root, res));
+                return;
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         if (SUPPORTS_CUSTOM_MODEL_DATA) {
             try {
                 if (root.keyExists("custommodel")) {
@@ -346,29 +365,6 @@ public class ItemStorage {
         serialiseEnchantments(key.getRelative("enchantments"), item.getEnchantments());
     }
 
-    private static void serialiseBanner(DataKey root, Banner banner) {
-        if (banner.getBaseColor() != null) {
-            root.setString("basecolor", banner.getBaseColor().name());
-        } else {
-            root.removeKey("basecolor");
-        }
-        List<org.bukkit.block.banner.Pattern> patterns = banner.getPatterns();
-        root.removeKey("patterns");
-        for (int i = 0; i < patterns.size(); i++) {
-            org.bukkit.block.banner.Pattern pattern = patterns.get(i);
-            DataKey sub = root.getRelative("patterns." + i);
-            sub.setString("color", pattern.getColor().name());
-            sub.setString("type", pattern.getPattern().getIdentifier());
-        }
-    }
-
-    private static void serialiseColors(DataKey key, List<Color> colors) {
-        for (int i = 0; i < colors.size(); i++) {
-            Color color = colors.get(i);
-            key.getRelative(i).setInt("rgb", color.asRGB());
-        }
-    }
-
     private static void serialiseEnchantments(DataKey key, Map<Enchantment, Integer> enchantments) {
         for (Map.Entry<Enchantment, Integer> enchantment : enchantments.entrySet()) {
             key.setInt(SpigotUtil.isUsing1_13API() ? enchantment.getKey().getKey().getKey()
@@ -376,225 +372,20 @@ public class ItemStorage {
         }
     }
 
-    private static void serialiseFireworkEffect(DataKey key, FireworkEffect effect) {
-        key.setBoolean("trail", effect.hasTrail());
-        key.setBoolean("flicker", effect.hasFlicker());
-        key.setString("type", effect.getType().name());
-        serialiseColors(key.getRelative("colors"), effect.getColors());
-        serialiseColors(key.getRelative("fadecolors"), effect.getFadeColors());
-    }
-
     private static void serialiseMeta(DataKey key, ItemMeta meta) {
-        if (SUPPORTS_CUSTOM_MODEL_DATA) {
-            try {
-                if (meta.hasCustomModelData()) {
-                    key.setInt("custommodel", meta.getCustomModelData());
-                } else {
-                    key.removeKey("custommodel");
-                }
-            } catch (NoSuchMethodError e) {
-                SUPPORTS_CUSTOM_MODEL_DATA = false;
-            }
-        }
-        if (SUPPORTS_ATTRIBUTES) {
-            try {
-                key.removeKey("attributes");
-                for (Attribute attr : meta.getAttributeModifiers().keySet()) {
-                    int i = 0;
-                    for (AttributeModifier modifier : meta.getAttributeModifiers(attr)) {
-                        DataKey root = key.getRelative("attributes." + attr.name() + "." + i);
-                        root.setString("uuid", modifier.getUniqueId().toString());
-                        root.setString("name", modifier.getName());
-                        root.setDouble("amount", modifier.getAmount());
-                        root.setString("operation", modifier.getOperation().name());
-                        if (modifier.getSlot() != null) {
-                            root.setString("slot", modifier.getSlot().name());
-                        }
-                    }
-                    i++;
-                }
-            } catch (Throwable e) {
-                SUPPORTS_ATTRIBUTES = false;
-            }
-        }
-        key.removeKey("flags");
+        key.removeKey("encoded-meta");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        BukkitObjectOutputStream bukkitOut;
         try {
-            key.setBoolean("unbreakable", meta.isUnbreakable());
-        } catch (Throwable t) {
-            // probably backwards-compat issue, don't log
+            bukkitOut = new BukkitObjectOutputStream(out);
+            bukkitOut.writeObject(meta);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        int j = 0;
-        for (ItemFlag flag : ItemFlag.values()) {
-            if (meta.hasItemFlag(flag)) {
-                key.setString("flags." + j++, flag.name());
-            }
-        }
-        if (meta instanceof Repairable) {
-            Repairable rep = (Repairable) meta;
-            key.setInt("repaircost", rep.getRepairCost());
-        } else {
-            key.removeKey("repaircost");
-        }
-        if (meta.hasLore()) {
-            List<String> lore = meta.getLore();
-            DataKey root = key.getRelative("lore");
-            for (int i = 0; i < lore.size(); i++) {
-                root.setString(Integer.toString(i), lore.get(i));
-            }
-        } else {
-            key.removeKey("lore");
-        }
-
-        if (meta.hasDisplayName()) {
-            key.setString("displayname", meta.getDisplayName());
-        } else {
-            key.removeKey("displayname");
-        }
-
-        if (meta instanceof BookMeta) {
-            BookMeta book = (BookMeta) meta;
-            DataKey pages = key.getRelative("book.pages");
-            for (int i = 1; i <= book.getPageCount(); i++) {
-                pages.setString(Integer.toString(i), book.getPage(i));
-            }
-            key.setString("book.title", book.getTitle());
-            key.setString("book.author", book.getAuthor());
-            serialiseEnchantments(key.getRelative("book.enchantments"), book.getEnchants());
-        } else {
-            key.removeKey("book");
-        }
-
-        if (meta instanceof SkullMeta) {
-            SkullMeta skull = (SkullMeta) meta;
-            String texture = CitizensAPI.getSkullMetaProvider().getTexture(skull);
-            if (texture == null) {
-                key.removeKey("skull.texture");
-            } else {
-                key.setString("skull.texture", CitizensAPI.getSkullMetaProvider().getTexture(skull));
-            }
-            key.setString("skull.owner", skull.getOwner());
-        } else {
-            key.removeKey("skull");
-        }
-
-        if (meta instanceof FireworkMeta) {
-            FireworkMeta firework = (FireworkMeta) meta;
-            int i = 0;
-            for (FireworkEffect effect : firework.getEffects()) {
-                serialiseFireworkEffect(key.getRelative("firework.effects." + i), effect);
-                i++;
-            }
-            key.setInt("firework.power", firework.getPower());
-        } else {
-            key.removeKey("firework");
-        }
-
-        if (meta instanceof MapMeta) {
-            MapMeta map = (MapMeta) meta;
-            key.setBoolean("map.scaling", map.isScaling());
-        } else {
-            key.removeKey("map");
-        }
-
-        if (meta instanceof LeatherArmorMeta) {
-            LeatherArmorMeta armor = (LeatherArmorMeta) meta;
-            Color color = armor.getColor();
-            key.setInt("armor.color", color.asRGB());
-        } else {
-            key.removeKey("armor");
-        }
-
-        if (meta instanceof EnchantmentStorageMeta) {
-            EnchantmentStorageMeta ench = (EnchantmentStorageMeta) meta;
-            for (Map.Entry<Enchantment, Integer> e : ench.getStoredEnchants().entrySet()) {
-                key.getRelative("enchantmentstorage").setInt(
-                        SpigotUtil.isUsing1_13API() ? e.getKey().getKey().getKey() : e.getKey().getName(),
-                        e.getValue());
-            }
-        } else {
-            key.removeKey("enchantmentstorage");
-        }
-
-        if (meta instanceof PotionMeta) {
-            PotionMeta potion = (PotionMeta) meta;
-            List<PotionEffect> effects = potion.getCustomEffects();
-            try {
-                PotionData data = potion.getBasePotionData();
-                key.setBoolean("potion.data.extended", data.isExtended());
-                key.setBoolean("potion.data.upgraded", data.isUpgraded());
-                key.setString("potion.data.type", data.getType().name());
-            } catch (Throwable t) {
-            }
-            key.removeKey("potion.effects");
-            DataKey effectKey = key.getRelative("potion.effects");
-            for (int i = 0; i < effects.size(); i++) {
-                PotionEffect effect = effects.get(i);
-                DataKey sub = effectKey.getRelative(Integer.toString(i));
-                sub.setBoolean("ambient", effect.isAmbient());
-                sub.setInt("amplifier", effect.getAmplifier());
-                sub.setInt("duration", effect.getDuration());
-                sub.setString("type", effect.getType().getName());
-            }
-        } else {
-            key.removeKey("potion");
-        }
-
-        key.removeKey("blockstate");
-        if (meta instanceof BlockStateMeta) {
-            BlockStateMeta state = (BlockStateMeta) meta;
-            if (state.hasBlockState()) {
-                DataKey root = key.getRelative("blockstate");
-                BlockState blockstate = state.getBlockState();
-                if (blockstate instanceof Banner) {
-                    Banner banner = (Banner) blockstate;
-                    serialiseBanner(root.getRelative("banner"), banner);
-                } else {
-                    root.removeKey("banner");
-                }
-            }
-        }
-
-        if (meta instanceof BannerMeta) {
-            BannerMeta banner = (BannerMeta) meta;
-            DataKey root = key.getRelative("banner");
-            if (banner.getBaseColor() != null) { // TODO: why is this deprecated?
-                root.setString("basecolor", banner.getBaseColor().name());
-            } else {
-                root.removeKey("basecolor");
-            }
-            List<org.bukkit.block.banner.Pattern> patterns = banner.getPatterns();
-            root.removeKey("patterns");
-            for (int i = 0; i < patterns.size(); i++) {
-                org.bukkit.block.banner.Pattern pattern = patterns.get(i);
-                DataKey sub = root.getRelative("patterns." + i);
-                sub.setString("color", pattern.getColor().name());
-                sub.setString("type", pattern.getPattern().getIdentifier());
-            }
-        } else {
-            key.removeKey("banner");
-        }
-
-        List<ItemStack> chargedProjectiles = null;
-        if (SUPPORTS_1_14_API) {
-            try {
-                if (meta instanceof CrossbowMeta) {
-                    chargedProjectiles = ((CrossbowMeta) meta).getChargedProjectiles();
-                } else {
-                    key.removeKey("crossbow");
-                }
-            } catch (Throwable t) {
-                SUPPORTS_1_14_API = false;
-                // old MC version?
-            }
-        }
-        if (chargedProjectiles != null) {
-            for (int i = 0; i < chargedProjectiles.size(); i++) {
-                ItemStack stack = chargedProjectiles.get(i);
-                ItemStorage.saveItem(key.getRelative("crossbow.projectiles." + i), stack);
-            }
-        }
-
+        String encoded = BaseEncoding.base64().encode(out.toByteArray());
+        key.setString("encoded-meta", encoded);
         Bukkit.getPluginManager().callEvent(new CitizensSerialiseMetaEvent(key, meta));
+        return;
     }
 
     private static boolean SUPPORTS_1_14_API = true;
