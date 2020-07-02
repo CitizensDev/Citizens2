@@ -72,10 +72,10 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
             return true;
         boolean wasFinished = navigator.update();
         parameters.run();
-        handle.getLocation(HANDLE_LOCATION);
-        double dX = target.getBlockX() + 0.5 - HANDLE_LOCATION.getX();
-        double dZ = target.getBlockZ() + 0.5 - HANDLE_LOCATION.getZ();
-        double dY = target.getY() - HANDLE_LOCATION.getY();
+        Location loc = handle.getLocation(HANDLE_LOCATION);
+        double dX = target.getBlockX() + 0.5 - loc.getX();
+        double dZ = target.getBlockZ() + 0.5 - loc.getZ();
+        double dY = target.getY() - loc.getY();
         double xzDistance = dX * dX + dZ * dZ;
         if ((dY * dY) < 1 && xzDistance <= parameters.distanceMargin()) {
             stop();
