@@ -85,6 +85,7 @@ import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.CommandTrait;
+import net.citizensnpcs.trait.CommandTrait.ExecutionMode;
 import net.citizensnpcs.trait.CommandTrait.NPCCommandBuilder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
@@ -317,9 +318,11 @@ public class NPCCommands {
                             .n(args.getFlagInteger("n", -1)).delay(args.getFlagInteger("delay", 0)));
             Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
         } else if (args.getString(1).equalsIgnoreCase("sequential")) {
-            commands.setSequential(!commands.isSequential());
+            commands.setExecutionMode(commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? ExecutionMode.LINEAR
+                    : ExecutionMode.SEQUENTIAL);
             Messaging.sendTr(sender,
-                    commands.isSequential() ? Messages.COMMANDS_SEQUENTIAL_SET : Messages.COMMANDS_SEQUENTIAL_UNSET);
+                    commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? Messages.COMMANDS_SEQUENTIAL_SET
+                            : Messages.COMMANDS_SEQUENTIAL_UNSET);
         } else if (args.getString(1).equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
                 throw new CommandUsageException();
@@ -336,6 +339,11 @@ public class NPCCommands {
         } else if (args.getString(1).equalsIgnoreCase("cost")) {
             commands.setCost(args.getDouble(2));
             Messaging.sendTr(sender, Messages.COMMAND_COST_SET, args.getDouble(2));
+        } else if (args.getString(1).equalsIgnoreCase("random")) {
+            commands.setExecutionMode(
+                    commands.getExecutionMode() == ExecutionMode.RANDOM ? ExecutionMode.LINEAR : ExecutionMode.RANDOM);
+            Messaging.sendTr(sender, commands.getExecutionMode() == ExecutionMode.RANDOM ? Messages.COMMANDS_RANDOM_SET
+                    : Messages.COMMANDS_RANDOM_UNSET);
         } else {
             throw new CommandUsageException();
         }

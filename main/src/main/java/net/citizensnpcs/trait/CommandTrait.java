@@ -34,6 +34,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
+import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
 
 @TraitName("commandtrait")
@@ -47,7 +48,7 @@ public class CommandTrait extends Trait {
     @Persist
     private double cost = -1;
     @Persist
-    private boolean sequential = false;
+    private ExecutionMode executionMode = ExecutionMode.LINEAR;
     @Persist
     private final List<String> temporaryPermissions = Lists.newArrayList();
 
@@ -133,26 +134,28 @@ public class CommandTrait extends Trait {
         Runnable task = new Runnable() {
             @Override
             public void run() {
-                Iterable<NPCCommand> commandList = Iterables.filter(commands.values(), new Predicate<NPCCommand>() {
-                    @Override
-                    public boolean apply(NPCCommand command) {
-                        return command.hand == hand || command.hand == Hand.BOTH;
-                    }
-                });
+                List<NPCCommand> commandList = Lists
+                        .newArrayList(Iterables.filter(commands.values(), new Predicate<NPCCommand>() {
+                            @Override
+                            public boolean apply(NPCCommand command) {
+                                return command.hand == hand || command.hand == Hand.BOTH;
+                            }
+                        }));
+                if (executionMode == ExecutionMode.RANDOM && commandList.size() > 0) {
+                    runCommand(player, commandList.get(Util.getFastRandom().nextInt(commandList.size())));
+                }
                 int max = -1;
-                if (sequential) {
-                    commandList = Lists.newArrayList(commandList);
-                    List<NPCCommand> downcast = (List<NPCCommand>) commandList;
-                    Collections.sort(downcast, new Comparator<NPCCommand>() {
+                if (executionMode == ExecutionMode.SEQUENTIAL) {
+                    Collections.sort(commandList, new Comparator<NPCCommand>() {
                         @Override
                         public int compare(NPCCommand o1, NPCCommand o2) {
                             return Integer.compare(o1.id, o2.id);
                         }
                     });
-                    max = downcast.size() > 0 ? downcast.get(downcast.size() - 1).id : -1;
+                    max = commandList.size() > 0 ? commandList.get(commandList.size() - 1).id : -1;
                 }
                 for (NPCCommand command : commandList) {
-                    if (sequential) {
+                    if (executionMode == ExecutionMode.SEQUENTIAL) {
                         PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
                         if (info != null && command.id <= info.lastUsedId) {
                             if (info.lastUsedId == max) {
@@ -162,31 +165,36 @@ public class CommandTrait extends Trait {
                             }
                         }
                     }
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
-                            if (info == null && (sequential || PlayerNPCCommand.requiresTracking(command))) {
-                                cooldowns.put(player.getUniqueId().toString(), info = new PlayerNPCCommand());
-                            }
-                            if (info != null && !info.canUse(player, command)) {
-                                return;
-                            }
-                            PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
-                            if (temporaryPermissions.size() > 0) {
-                                for (String permission : temporaryPermissions) {
-                                    attachment.setPermission(permission, true);
-                                }
-                            }
-                            command.run(npc, player);
-                            attachment.remove();
+                    runCommand(player, command);
+                }
+            }
+
+            private void runCommand(final Player player, NPCCommand command) {
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
+                        if (info == null && (executionMode == ExecutionMode.SEQUENTIAL
+                                || PlayerNPCCommand.requiresTracking(command))) {
+                            cooldowns.put(player.getUniqueId().toString(), info = new PlayerNPCCommand());
                         }
-                    };
-                    if (command.delay <= 0) {
-                        runnable.run();
-                    } else {
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable, command.delay);
+                        if (info != null && !info.canUse(player, command)) {
+                            return;
+                        }
+                        PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
+                        if (temporaryPermissions.size() > 0) {
+                            for (String permission : temporaryPermissions) {
+                                attachment.setPermission(permission, true);
+                            }
+                        }
+                        command.run(npc, player);
+                        attachment.remove();
                     }
+                };
+                if (command.delay <= 0) {
+                    runnable.run();
+                } else {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable, command.delay);
                 }
             }
         };
@@ -195,6 +203,10 @@ public class CommandTrait extends Trait {
         } else {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), task);
         }
+    }
+
+    public ExecutionMode getExecutionMode() {
+        return executionMode;
     }
 
     private int getNewId() {
@@ -209,10 +221,6 @@ public class CommandTrait extends Trait {
         return commands.containsKey(String.valueOf(id));
     }
 
-    public boolean isSequential() {
-        return this.sequential;
-    }
-
     public void removeCommandById(int id) {
         commands.remove(String.valueOf(id));
     }
@@ -221,13 +229,19 @@ public class CommandTrait extends Trait {
         this.cost = cost;
     }
 
-    public void setSequential(boolean sequential) {
-        this.sequential = sequential;
+    public void setExecutionMode(ExecutionMode mode) {
+        this.executionMode = mode;
     }
 
     public void setTemporaryPermissions(List<String> permissions) {
         temporaryPermissions.clear();
         temporaryPermissions.addAll(permissions);
+    }
+
+    public enum ExecutionMode {
+        LINEAR,
+        RANDOM,
+        SEQUENTIAL;
     }
 
     public static enum Hand {

@@ -43,7 +43,7 @@ public class HologramTrait extends Trait {
     }
 
     private double getHeight(int lineNumber) {
-        return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight) * lineNumber;
+        return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight) * (lineNumber + 1);
     }
 
     public List<String> getLines() {
@@ -75,6 +75,11 @@ public class HologramTrait extends Trait {
     }
 
     @Override
+    public void onRemove() {
+        unload();
+    }
+
+    @Override
     public void onSpawn() {
         load();
     }
@@ -88,10 +93,10 @@ public class HologramTrait extends Trait {
     @Override
     public void run() {
         if (!npc.isSpawned()) {
-            onDespawn();
+            unload();
             return;
         }
-        boolean update = currentLoc.distanceSquared(npc.getStoredLocation()) > 0.5;
+        boolean update = currentLoc.distanceSquared(npc.getStoredLocation()) >= 0.01;
         if (update) {
             currentLoc = npc.getStoredLocation();
         }
@@ -101,7 +106,7 @@ public class HologramTrait extends Trait {
             if (hologram == null)
                 continue;
             if (update) {
-                hologramNPC.teleport(currentLoc.clone().add(0, npc.getEntity().getHeight() + lineHeight * i, 0),
+                hologramNPC.teleport(currentLoc.clone().add(0, npc.getEntity().getHeight() + getHeight(i), 0),
                         TeleportCause.PLUGIN);
             }
             String text = lines.get(i);
