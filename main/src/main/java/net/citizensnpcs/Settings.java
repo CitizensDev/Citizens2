@@ -78,6 +78,7 @@ public class Settings {
         DEFAULT_DISTANCE_MARGIN("npc.pathfinding.default-distance-margin", 2),
         DEFAULT_LOOK_CLOSE("npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("npc.default.look-close.range", 5),
+        DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT("npc.hologram.default-line-height", 0.4D),
         DEFAULT_NPC_LIMIT("npc.limits.default-limit", 10),
         DEFAULT_PATH_DISTANCE_MARGIN("npc.pathfinding.default-path-distance-margin", 1),
         DEFAULT_PATHFINDER_UPDATE_PATH_RATE("npc.pathfinding.update-path-rate", 20),

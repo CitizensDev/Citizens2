@@ -704,20 +704,42 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram [text]",
-            desc = "Controls NPC hologram",
+            usage = "hologram set [line #] [text] | add [text] | remove [line #] | lineheight [height]",
+            desc = "Controls NPC hologram text",
             modifiers = { "hologram" },
             min = 1,
             max = -1,
             permission = "citizens.npc.hologram")
-    public void hologram(CommandContext args, CommandSender sender, NPC npc) {
+    public void hologram(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         HologramTrait trait = npc.getTrait(HologramTrait.class);
         if (args.argsLength() == 1) {
-            trait.setText(null);
-            Messaging.sendTr(sender, Messages.HOLOGRAM_TEXT_REMOVED);
-        } else {
-            trait.setText(args.getJoinedStrings(1));
-            Messaging.sendTr(sender, Messages.HOLOGRAM_TEXT_SET);
+            String output = Messaging.tr(Messages.HOLOGRAM_DESCRIBE_HEADER, npc.getName());
+            List<String> lines = trait.getLines();
+            for (int i = 0; i < lines.size(); i++) {
+                String line = lines.get(i);
+                output += "<br>    [[" + i + "]] - " + line;
+            }
+            Messaging.send(sender, output);
+        } else if (args.getString(1).equalsIgnoreCase("set")) {
+            int idx = Math.max(0, args.getInteger(2));
+            if (idx > trait.getLines().size()) {
+                throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+            }
+            trait.setLine(idx, args.getJoinedStrings(3));
+            Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_SET, idx, args.getJoinedStrings(3));
+        } else if (args.getString(1).equalsIgnoreCase("add")) {
+            trait.addLine(args.getJoinedStrings(2));
+            Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_ADD, args.getJoinedStrings(2));
+        } else if (args.getString(1).equalsIgnoreCase("remove")) {
+            int idx = Math.max(0, args.getInteger(2));
+            if (idx > trait.getLines().size()) {
+                throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+            }
+            trait.removeLine(idx);
+            Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_REMOVED, idx);
+        } else if (args.getString(1).equalsIgnoreCase("lineheight")) {
+            trait.setLineHeight(args.getDouble(2));
+            Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_HEIGHT_SET, args.getDouble(2));
         }
     }
 

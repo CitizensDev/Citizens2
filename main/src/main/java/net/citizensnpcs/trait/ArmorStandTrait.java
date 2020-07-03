@@ -63,6 +63,12 @@ public class ArmorStandTrait extends Trait {
             if (head != null) {
                 entity.setHeadPose(head);
             }
+            entity.setVisible(visible);
+            entity.setGravity(gravity);
+            entity.setArms(hasarms);
+            entity.setBasePlate(hasbaseplate);
+            entity.setSmall(small);
+            entity.setMarker(marker);
         }
     }
 

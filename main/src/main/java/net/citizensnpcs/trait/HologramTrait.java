@@ -1,8 +1,15 @@
 package net.citizensnpcs.trait;
 
+import java.util.List;
+
+import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import com.google.common.collect.Lists;
+
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
@@ -17,55 +24,108 @@ import net.citizensnpcs.api.util.Placeholders;
  */
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
-    private final NPCRegistry registry = CitizensAPI
-            .createAnonymousNPCRegistry(new MemoryNPCDataStore());
-    private NPC hologramNPC;
+    private Location currentLoc;
+    private final List<NPC> hologramNPCs = Lists.newArrayList();
     @Persist
-    private String text;
+    private double lineHeight = -1;
+    @Persist
+    private final List<String> lines = Lists.newArrayList();
+    private final NPCRegistry registry = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
 
     public HologramTrait() {
         super("hologramtrait");
     }
 
+    public void addLine(String text) {
+        lines.add(text);
+        unload();
+        load();
+    }
+
+    private double getHeight(int lineNumber) {
+        return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight) * lineNumber;
+    }
+
+    public List<String> getLines() {
+        return lines;
+    }
+
+    private void load() {
+        int i = 0;
+        currentLoc = npc.getStoredLocation();
+        for (String line : lines) {
+            NPC hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, Placeholders.replace(line, null, npc));
+            ArmorStandTrait trait = hologramNPC.getTrait(ArmorStandTrait.class);
+            trait.setVisible(false);
+            trait.setSmall(true);
+            trait.setMarker(true);
+            trait.setGravity(false);
+            trait.setHasArms(false);
+            trait.setHasBaseplate(false);
+            hologramNPC.spawn(currentLoc.clone().add(0, npc.getEntity().getHeight() + getHeight(i), 0));
+            hologramNPC.getEntity().setInvulnerable(true);
+            hologramNPCs.add(hologramNPC);
+            i++;
+        }
+    }
+
     @Override
     public void onDespawn() {
-        if (hologramNPC != null) {
-            hologramNPC.destroy();
-        }
+        unload();
     }
 
     @Override
     public void onSpawn() {
-        hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, "");
-        ArmorStandTrait trait = hologramNPC.getTrait(ArmorStandTrait.class);
-        trait.setVisible(false);
-        trait.setSmall(true);
-        hologramNPC.spawn(npc.getStoredLocation());
-        hologramNPC.getEntity().setInvulnerable(true);
-        hologramNPC.getEntity().setGravity(false);
+        load();
+    }
+
+    public void removeLine(int idx) {
+        lines.remove(idx);
+        unload();
+        load();
     }
 
     @Override
     public void run() {
-        if (!npc.isSpawned())
+        if (!npc.isSpawned()) {
+            onDespawn();
             return;
-        ArmorStand hologram = (ArmorStand) hologramNPC.getEntity();
-        if (hologram == null)
-            return;
-        if (hologram.getVehicle() == null || hologram.getVehicle() != npc.getEntity()) {
-            if (hologram.getVehicle() != npc.getEntity()) {
-                hologram.leaveVehicle();
+        }
+        boolean update = currentLoc.distanceSquared(npc.getStoredLocation()) > 0.5;
+        if (update) {
+            currentLoc = npc.getStoredLocation();
+        }
+        for (int i = 0; i < hologramNPCs.size(); i++) {
+            NPC hologramNPC = hologramNPCs.get(i);
+            ArmorStand hologram = (ArmorStand) hologramNPC.getEntity();
+            if (hologram == null)
+                continue;
+            if (update) {
+                hologramNPC.teleport(currentLoc.clone().add(0, npc.getEntity().getHeight() + lineHeight * i, 0),
+                        TeleportCause.PLUGIN);
             }
-            npc.getEntity().addPassenger(hologram);
-        }
-        if (text != null && !text.isEmpty()) {
-            hologramNPC.setName(Placeholders.replace(text, null, npc));
-        } else {
+            String text = lines.get(i);
+            if (text != null && !text.isEmpty()) {
+                hologramNPC.setName(Placeholders.replace(text, null, npc));
+            } else {
+            }
         }
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setLine(int idx, String text) {
+        lines.set(idx, text);
     }
 
+    public void setLineHeight(double height) {
+        lineHeight = height;
+    }
+
+    private void unload() {
+        if (hologramNPCs.isEmpty())
+            return;
+        for (NPC npc : hologramNPCs) {
+            npc.destroy();
+        }
+        hologramNPCs.clear();
+    }
 }
