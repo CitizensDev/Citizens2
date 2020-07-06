@@ -228,6 +228,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public void removeTrait(Class<? extends Trait> trait);
 
+    public boolean requiresNameHologram();
+
     /**
      * Saves the {@link NPC} to the given {@link DataKey}. This includes all metadata, traits, and spawn information
      * that will allow it to respawn at a later time via {@link #load(DataKey)}.

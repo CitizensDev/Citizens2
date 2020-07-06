@@ -209,6 +209,10 @@ public abstract class AbstractNPC implements NPC {
         return speechController;
     }
 
+    private EntityType getEntityType() {
+        return isSpawned() ? getEntity().getType() : getTrait(MobType.class).getType();
+    }
+
     @Override
     public String getFullName() {
         int nameLength = SpigotUtil.getMaxNameLength(getTrait(MobType.class).getType());
@@ -334,6 +338,13 @@ public abstract class AbstractNPC implements NPC {
             HandlerList.unregisterAll(trait);
             trait.onRemove();
         }
+    }
+
+    @Override
+    public boolean requiresNameHologram() {
+        return getEntityType() != EntityType.ARMOR_STAND
+                && ((name.length() > 16 && getEntityType() == EntityType.PLAYER)
+                        || !Placeholders.replace(name, null, this).equals(name));
     }
 
     @Override
