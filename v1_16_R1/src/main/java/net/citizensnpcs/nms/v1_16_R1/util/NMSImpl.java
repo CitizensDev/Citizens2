@@ -1451,7 +1451,7 @@ public class NMSImpl implements NMSBridge {
             try {
                 Collection<?> list = (Collection<?>) GOAL_SET_FIELD.invoke(selector);
                 if (!list.isEmpty()) {
-                    npc.data().set("goal-selector-" + selector.hashCode(), Lists.newArrayList(list));
+                    npc.data().set("goal-selector", Lists.newArrayList(list));
                 }
                 list.clear();
             } catch (Exception e) {
@@ -1676,7 +1676,8 @@ public class NMSImpl implements NMSBridge {
             try {
                 Collection<Object> list = (Collection<Object>) GOAL_SET_FIELD.invoke(selector);
                 list.clear();
-                Collection<Object> old = npc.data().get("goal-selector-" + selector.hashCode());
+
+                Collection<Object> old = npc.data().get("goal-selector");
                 if (old != null) {
                     list.addAll(old);
                 }

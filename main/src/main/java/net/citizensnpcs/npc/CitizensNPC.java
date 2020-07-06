@@ -31,7 +31,6 @@ import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.BlockBreaker;
-import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -55,8 +54,6 @@ import net.citizensnpcs.util.Util;
 public class CitizensNPC extends AbstractNPC {
     private ChunkCoord cachedCoord;
     private EntityController entityController;
-    private final NPC nameHologram = null;
-    private final NPCRegistry registry = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
 
