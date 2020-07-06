@@ -43,6 +43,11 @@ public class HologramTrait extends Trait {
         load();
     }
 
+    public void clear() {
+        unload();
+        lines.clear();
+    }
+
     private NPC createHologram(String line, double heightOffset) {
         NPC hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
         ArmorStandTrait trait = hologramNPC.getTrait(ArmorStandTrait.class);
@@ -58,13 +63,6 @@ public class HologramTrait extends Trait {
     }
 
     private double getEntityHeight() {
-        if (SUPPORT_GET_HEIGHT) {
-            try {
-                return npc.getEntity().getHeight();
-            } catch (NoSuchMethodError err) {
-                SUPPORT_GET_HEIGHT = false;
-            }
-        }
         return NMS.getHeight(npc.getEntity());
     }
 
@@ -162,6 +160,4 @@ public class HologramTrait extends Trait {
         }
         hologramNPCs.clear();
     }
-
-    private static boolean SUPPORT_GET_HEIGHT = true;
 }

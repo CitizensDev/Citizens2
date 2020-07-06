@@ -745,6 +745,9 @@ public class NPCCommands {
             }
             trait.removeLine(idx);
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_REMOVED, idx);
+        } else if (args.getString(1).equalsIgnoreCase("clear")) {
+            trait.clear();
+            Messaging.sendTr(sender, Messages.HOLOGRAM_CLEARED);
         } else if (args.getString(1).equalsIgnoreCase("lineheight")) {
             trait.setLineHeight(args.getDouble(2));
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_HEIGHT_SET, args.getDouble(2));
