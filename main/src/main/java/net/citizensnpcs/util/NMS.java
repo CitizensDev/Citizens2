@@ -187,6 +187,10 @@ public class NMS {
         return BRIDGE.getHeadYaw(entity);
     }
 
+    public static double getHeight(Entity entity) {
+        return BRIDGE.getHeight(entity);
+    }
+
     public static float getHorizontalMovement(org.bukkit.entity.Entity bukkitEntity) {
         return BRIDGE.getHorizontalMovement(bukkitEntity);
     }
@@ -277,6 +281,10 @@ public class NMS {
 
     public static float getVerticalMovement(org.bukkit.entity.Entity bukkitEntity) {
         return BRIDGE.getVerticalMovement(bukkitEntity);
+    }
+
+    public static double getWidth(Entity entity) {
+        return BRIDGE.getWidth(entity);
     }
 
     public static float getYaw(Entity entity) {

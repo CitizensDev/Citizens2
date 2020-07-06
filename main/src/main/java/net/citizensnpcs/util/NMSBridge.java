@@ -55,6 +55,8 @@ public interface NMSBridge {
 
     public float getHeadYaw(Entity entity);
 
+    public double getHeight(Entity entity);
+
     public float getHorizontalMovement(Entity entity);
 
     public NPC getNPC(Entity entity);
@@ -78,6 +80,8 @@ public interface NMSBridge {
     public Entity getVehicle(Entity entity);
 
     public float getVerticalMovement(Entity entity);
+
+    public double getWidth(Entity entity);
 
     public float getYaw(Entity entity);
 

@@ -18,6 +18,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.util.NMS;
 
 /**
  * Persists a hologram attached to the NPC.
@@ -42,6 +43,17 @@ public class HologramTrait extends Trait {
         load();
     }
 
+    private double getEntityHeight() {
+        if (SUPPORT_GET_HEIGHT) {
+            try {
+                return npc.getEntity().getHeight();
+            } catch (NoSuchMethodError err) {
+                SUPPORT_GET_HEIGHT = false;
+            }
+        }
+        return NMS.getHeight(npc.getEntity());
+    }
+
     private double getHeight(int lineNumber) {
         return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight) * (lineNumber + 1);
     }
@@ -62,7 +74,7 @@ public class HologramTrait extends Trait {
             trait.setGravity(false);
             trait.setHasArms(false);
             trait.setHasBaseplate(false);
-            hologramNPC.spawn(currentLoc.clone().add(0, npc.getEntity().getHeight() + getHeight(i), 0));
+            hologramNPC.spawn(currentLoc.clone().add(0, getEntityHeight() + getHeight(i), 0));
             hologramNPC.getEntity().setInvulnerable(true);
             hologramNPCs.add(hologramNPC);
             i++;
@@ -106,7 +118,7 @@ public class HologramTrait extends Trait {
             if (hologram == null)
                 continue;
             if (update) {
-                hologramNPC.teleport(currentLoc.clone().add(0, npc.getEntity().getHeight() + getHeight(i), 0),
+                hologramNPC.teleport(currentLoc.clone().add(0, getEntityHeight() + getHeight(i), 0),
                         TeleportCause.PLUGIN);
             }
             String text = lines.get(i);
@@ -133,4 +145,6 @@ public class HologramTrait extends Trait {
         }
         hologramNPCs.clear();
     }
+
+    private static boolean SUPPORT_GET_HEIGHT = true;
 }

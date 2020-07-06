@@ -9,6 +9,7 @@ import net.citizensnpcs.api.astar.pathfinder.BlockSource;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint;
 import net.citizensnpcs.api.util.BoundingBox;
+import net.citizensnpcs.util.NMS;
 
 public class BoundingBoxExaminer implements BlockExaminer {
     private double height;
@@ -16,8 +17,8 @@ public class BoundingBoxExaminer implements BlockExaminer {
 
     public BoundingBoxExaminer(Entity entity) {
         if (entity != null) {
-            this.height = entity.getHeight();
-            this.width = entity.getWidth();
+            this.height = NMS.getHeight(entity);
+            this.width = NMS.getWidth(entity);
         }
     }
 
