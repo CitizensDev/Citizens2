@@ -31,6 +31,7 @@ import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.BlockBreaker;
+import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -43,6 +44,7 @@ import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
+import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
@@ -53,6 +55,8 @@ import net.citizensnpcs.util.Util;
 public class CitizensNPC extends AbstractNPC {
     private ChunkCoord cachedCoord;
     private EntityController entityController;
+    private final NPC nameHologram = null;
+    private final NPCRegistry registry = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
 
@@ -267,6 +271,12 @@ public class CitizensNPC extends AbstractNPC {
         NMS.setHeadYaw(getEntity(), at.getYaw());
         NMS.setBodyYaw(getEntity(), at.getYaw());
 
+        if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
+            addTrait(HologramTrait.class);
+        }
+        String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+        getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
+
         // Set the spawned state
         getTrait(CurrentLocation.class).setLocation(at);
         getTrait(Spawned.class).setSpawned(true);
@@ -362,10 +372,10 @@ public class CitizensNPC extends AbstractNPC {
                 updateCounter = 0;
             }
 
-            if (isLiving) {
-                String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
-                ((LivingEntity) getEntity()).setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
+            String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+            getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
 
+            if (isLiving) {
                 NMS.setKnockbackResistance((LivingEntity) getEntity(),
                         data().get(NPC.DEFAULT_PROTECTED_METADATA, true) ? 1D : 0D);
             }

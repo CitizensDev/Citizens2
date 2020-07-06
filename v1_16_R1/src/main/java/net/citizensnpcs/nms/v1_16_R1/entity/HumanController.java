@@ -15,7 +15,6 @@ import com.mojang.authlib.GameProfile;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
@@ -32,12 +31,8 @@ public class HumanController extends AbstractEntityController {
     @Override
     protected Entity createEntity(final Location at, final NPC npc) {
         final WorldServer nmsWorld = ((CraftWorld) at.getWorld()).getHandle();
-        String coloredName = Colorizer.parseColors(npc.getFullName());
-
-        String[] nameSplit = Util.splitPlayerName(coloredName);
-        String name = nameSplit[0];
-
-        final String prefixCapture = nameSplit[1], suffixCapture = nameSplit[2];
+        String coloredName = npc.getFullName();
+        String name = coloredName.length() > 16 ? coloredName.substring(0, 16) : coloredName;
 
         UUID uuid = npc.getUniqueId();
         if (uuid.version() == 4) { // clear version
@@ -46,7 +41,6 @@ public class HumanController extends AbstractEntityController {
             msb |= 0x0000000000002000L;
             uuid = new UUID(msb, uuid.getLeastSignificantBits());
         }
-
         final GameProfile profile = new GameProfile(uuid, name);
 
         final EntityHumanNPC handle = new EntityHumanNPC(nmsWorld.getServer().getServer(), nmsWorld, profile,
@@ -75,12 +69,6 @@ public class HumanController extends AbstractEntityController {
                     if (team == null) {
                         team = scoreboard.registerNewTeam(teamName);
                         mode = 0;
-                    }
-                    if (prefixCapture != null) {
-                        team.setPrefix(prefixCapture);
-                    }
-                    if (suffixCapture != null) {
-                        team.setSuffix(suffixCapture);
                     }
                     team.addPlayer(handle.getBukkitEntity());
 
