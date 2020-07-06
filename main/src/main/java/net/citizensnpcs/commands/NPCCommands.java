@@ -1578,9 +1578,9 @@ public class NPCCommands {
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
         String newName = Colorizer.parseColors(args.getJoinedStrings(1));
-        int nameLength = npc.getTrait(MobType.class).getType() == EntityType.PLAYER ? 46 : 64;
+        int nameLength = SpigotUtil.getMaxNameLength(npc.getTrait(MobType.class).getType());
         if (newName.length() > nameLength) {
-            Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG);
+            Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
             newName = newName.substring(0, nameLength);
         }
         npc.setName(newName);

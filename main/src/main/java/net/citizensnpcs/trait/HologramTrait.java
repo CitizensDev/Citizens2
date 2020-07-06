@@ -81,6 +81,7 @@ public class HologramTrait extends Trait {
         int i = 0;
         if (npc.requiresNameHologram()) {
             nameNPC = createHologram(npc.getFullName(), 0);
+            npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
         }
         for (String line : lines) {
             hologramNPCs.add(createHologram(Placeholders.replace(line, null, npc), getHeight(i)));
