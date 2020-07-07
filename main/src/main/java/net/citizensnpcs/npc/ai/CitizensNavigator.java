@@ -257,6 +257,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             cancelNavigation();
             return;
         }
+        target = target.clone();
         switchParams();
         updatePathfindingRange();
         PathStrategy newStrategy;

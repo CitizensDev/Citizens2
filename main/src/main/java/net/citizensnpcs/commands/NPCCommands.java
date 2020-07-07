@@ -712,7 +712,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram set [line #] [text] | add [text] | remove [line #] | lineheight [height]",
+            usage = "hologram add [text] | set [line #] [text] | remove [line #] | clear | lineheight [height]",
             desc = "Controls NPC hologram text",
             modifiers = { "hologram" },
             min = 1,

@@ -88,7 +88,7 @@ public class Waypoint implements Locatable {
 
     @Override
     public Location getLocation() {
-        return location;
+        return location.clone();
     }
 
     public List<WaypointTrigger> getTriggers() {
