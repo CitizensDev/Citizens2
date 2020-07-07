@@ -381,6 +381,11 @@ public class ItemStorage {
             bukkitOut.writeObject(meta);
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            // spigot bug
+            Messaging.severe("Spigot error when saving item meta: " + meta);
+            e.printStackTrace();
+            return;
         }
         String encoded = BaseEncoding.base64().encode(out.toByteArray());
         key.setString("encoded-meta", encoded);
