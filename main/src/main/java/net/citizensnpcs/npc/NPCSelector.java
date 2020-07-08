@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.CitizensGetSelectedNPCEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.event.NPCSelectEvent;
@@ -41,6 +42,11 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
 
     @Override
     public NPC getSelected(CommandSender sender) {
+        CitizensGetSelectedNPCEvent event = new CitizensGetSelectedNPCEvent(sender);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.getSelected() != null) {
+            return event.getSelected();
+        }
         if (sender instanceof Player) {
             return getSelectedFromMetadatable((Player) sender);
         } else if (sender instanceof BlockCommandSender) {
