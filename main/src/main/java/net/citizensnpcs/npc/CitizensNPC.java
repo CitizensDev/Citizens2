@@ -73,7 +73,7 @@ public class CitizensNPC extends AbstractNPC {
             if (reason == DespawnReason.RELOAD) {
                 unloadEvents();
             }
-            return false;
+            return true;
         }
         NPCDespawnEvent event = new NPCDespawnEvent(this, reason);
         if (reason == DespawnReason.CHUNK_UNLOAD) {
