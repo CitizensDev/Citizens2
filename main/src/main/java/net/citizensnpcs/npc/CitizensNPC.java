@@ -268,10 +268,8 @@ public class CitizensNPC extends AbstractNPC {
         NMS.setHeadYaw(getEntity(), at.getYaw());
         NMS.setBodyYaw(getEntity(), at.getYaw());
 
-        if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
-            addTrait(HologramTrait.class);
-        }
-        String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+        String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, !requiresNameHologram())
+                .toString();
         getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
 
         // Set the spawned state
@@ -316,6 +314,10 @@ public class CitizensNPC extends AbstractNPC {
 
         if (getEntity() instanceof Player) {
             PlayerUpdateTask.registerPlayer(getEntity());
+        }
+
+        if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
+            addTrait(HologramTrait.class);
         }
 
         updateFlyableState();

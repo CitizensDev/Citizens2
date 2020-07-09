@@ -74,6 +74,7 @@ public class CommandTrait extends Trait {
                     economy.withdrawPlayer(player, cost);
                 }
             } catch (NoClassDefFoundError e) {
+                Messaging.severe("Unable to find Vault when checking command cost - is it installed?");
             }
         }
         return true;
