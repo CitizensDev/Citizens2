@@ -14,6 +14,7 @@ import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.npc.ai.NPCHolder;
 
 /**
  * A helper class for storing a number of entity markers. By default an entity marker is a non-persisted EnderSignal.
@@ -50,16 +51,14 @@ public class EntityMarkers<T> {
     }
 
     public void destroyMarkers() {
-        for (Entity entity : markers.values()) {
-            entity.remove();
-        }
+        registry.deregisterAll();
         markers.clear();
     }
 
     public void removeMarker(T marker) {
         Entity entity = markers.remove(marker);
         if (entity != null) {
-            entity.remove();
+            ((NPCHolder) entity).getNPC().destroy();
         }
     }
 
