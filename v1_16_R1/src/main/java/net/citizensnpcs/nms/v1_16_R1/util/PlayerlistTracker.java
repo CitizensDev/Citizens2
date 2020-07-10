@@ -32,6 +32,8 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         if (tracker.dead)
             return;
         final EntityPlayer entityplayer = lastUpdatedPlayer;
+        if (entityplayer == null)
+            return;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         if (!Setting.DISABLE_TABLIST.asBoolean())
             return;
