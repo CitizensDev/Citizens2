@@ -268,8 +268,10 @@ public class CitizensNPC extends AbstractNPC {
         NMS.setHeadYaw(getEntity(), at.getYaw());
         NMS.setBodyYaw(getEntity(), at.getYaw());
 
-        String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, !requiresNameHologram())
-                .toString();
+        String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+        if (requiresNameHologram()) {
+            nameplateVisible = "false";
+        }
         getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
 
         // Set the spawned state

@@ -77,7 +77,8 @@ public class HologramTrait extends Trait {
     private void load() {
         currentLoc = npc.getStoredLocation();
         int i = 0;
-        if (npc.requiresNameHologram() && npc.data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true)) {
+        if (npc.requiresNameHologram()
+                && Boolean.parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString())) {
             nameNPC = createHologram(npc.getFullName(), 0);
         }
         for (String line : lines) {
@@ -114,7 +115,8 @@ public class HologramTrait extends Trait {
             return;
         }
         if (npc.requiresNameHologram()) {
-            boolean visible = npc.data().get(NPC.NAMEPLATE_VISIBLE_METADATA, true);
+            boolean visible = Boolean
+                    .parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString());
             if (nameNPC != null && !visible) {
                 nameNPC.destroy();
                 nameNPC = null;
