@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -109,8 +110,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         if (explicitType != null) {
             type = explicitType;
         }
-        if (!(npc.getEntity() instanceof LivingEntity) && (explicitType == null || explicitType == EntityType.UNKNOWN
-                || npc.getEntity().getType() == explicitType)) {
+        if (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof Vehicle) && (explicitType == null
+                || explicitType == EntityType.UNKNOWN || npc.getEntity().getType() == explicitType)) {
             controller = new LookAirController();
             return;
         }
@@ -277,7 +278,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         vel = vel.add(new Vector(
                 passenger.getVelocity().getX() * speedMod * Setting.CONTROLLABLE_GROUND_DIRECTION_MODIFIER.asDouble(),
                 0D,
-                passenger.getVelocity().getZ() * speedMod * Setting.CONTROLLABLE_GROUND_DIRECTION_MODIFIER.asDouble()));
+                passenger.getVelocity().getZ() * speedMod * Setting.CONTROLLABLE_GROUND_DIRECTION_MODIFIER.asDouble()))
+                .multiply(0.98);
 
         double newSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
         if (newSpeed > maxSpeed) {
