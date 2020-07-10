@@ -399,7 +399,7 @@ public class CitizensNPC extends AbstractNPC {
         if (!getEntity().isCustomNameVisible()
                 && !data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("hover")) {
             getEntity().setCustomName("");
-        } else {
+        } else if (!requiresNameHologram()) {
             nameVisibility = true;
             getEntity().setCustomName(getFullName());
         }
