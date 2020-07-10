@@ -410,7 +410,16 @@ public abstract class AbstractNPC implements NPC {
     private void teleport(final Entity entity, Location location, int delay) {
         final Entity passenger = entity.getPassenger();
         entity.eject();
-        entity.teleport(location);
+        if (!location.getWorld().equals(entity.getWorld())) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    entity.teleport(location);
+                }
+            }, delay++);
+        } else {
+            entity.teleport(location);
+        }
         if (passenger == null)
             return;
         teleport(passenger, location, delay++);
