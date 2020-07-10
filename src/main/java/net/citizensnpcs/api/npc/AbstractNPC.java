@@ -111,8 +111,9 @@ public abstract class AbstractNPC implements NPC {
 
         Bukkit.getPluginManager().registerEvents(trait, CitizensAPI.getPlugin());
         traits.put(trait.getClass(), trait);
-        if (isSpawned())
+        if (isSpawned()) {
             trait.onSpawn();
+        }
 
         if (trait.isRunImplemented()) {
             if (replaced != null)

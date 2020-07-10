@@ -383,7 +383,7 @@ public class ItemStorage {
             e.printStackTrace();
         } catch (NullPointerException e) {
             // spigot bug
-            Messaging.severe("Spigot error when saving item meta: " + meta);
+            Messaging.severe("Spigot error when saving item meta");
             e.printStackTrace();
             return;
         }
