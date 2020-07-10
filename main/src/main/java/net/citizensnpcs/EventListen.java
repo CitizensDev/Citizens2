@@ -172,43 +172,41 @@ public class EventListen implements Listener {
         }
         if (toDespawn.isEmpty())
             return;
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                ChunkCoord coord = new ChunkCoord(event.getChunk());
-                boolean loadChunk = false;
-                for (NPC npc : toDespawn) {
-                    if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
-                        if (!(event instanceof Cancellable)) {
-                            loadChunk = true;
-                            toRespawn.put(coord, npc);
-                            continue;
-                        }
-                        ((Cancellable) event).setCancelled(true);
-                        if (Messaging.isDebugging()) {
-                            Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
-                        }
-                        respawnAllFromCoord(coord, event);
-                        return;
-                    }
-                    toRespawn.put(coord, npc);
+        ChunkCoord coord = new ChunkCoord(event.getChunk());
+        boolean loadChunk = false;
+        for (NPC npc : toDespawn) {
+            if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
+                if (!(event instanceof Cancellable)) {
                     if (Messaging.isDebugging()) {
-                        Messaging.debug("Despawned id", npc.getId(),
-                                "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+                        Messaging.debug("Reloading chunk because", npc.getId(), "couldn't despawn");
+                    }
+                    loadChunk = true;
+                    toRespawn.put(coord, npc);
+                    continue;
+                }
+                ((Cancellable) event).setCancelled(true);
+                if (Messaging.isDebugging()) {
+                    Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
+                }
+                respawnAllFromCoord(coord, event);
+                return;
+            }
+            toRespawn.put(coord, npc);
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Despawned id", npc.getId(),
+                        "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+            }
+        }
+        if (loadChunk) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    if (!event.getChunk().isLoaded()) {
+                        event.getChunk().load();
                     }
                 }
-                if (loadChunk) {
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!event.getChunk().isLoaded()) {
-                                event.getChunk().load();
-                            }
-                        }
-                    }, 10);
-                }
-            }
-        });
+            }, 10);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
