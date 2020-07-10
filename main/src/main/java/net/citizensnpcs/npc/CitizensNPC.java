@@ -268,12 +268,6 @@ public class CitizensNPC extends AbstractNPC {
         NMS.setHeadYaw(getEntity(), at.getYaw());
         NMS.setBodyYaw(getEntity(), at.getYaw());
 
-        String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
-        if (requiresNameHologram()) {
-            nameplateVisible = "false";
-        }
-        getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
-
         // Set the spawned state
         getTrait(CurrentLocation.class).setLocation(at);
         getTrait(Spawned.class).setSpawned(true);
@@ -323,6 +317,7 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         updateFlyableState();
+        updateCustomName();
 
         Messaging.debug("Spawned", getId(), "SpawnReason." + reason);
         return true;
