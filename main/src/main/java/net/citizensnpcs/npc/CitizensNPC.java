@@ -326,7 +326,8 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public void teleport(Location location, TeleportCause reason) {
         super.teleport(location, reason);
-        if (isSpawned() && getEntity().getLocation(CACHE_LOCATION).distanceSquared(location) < 1) {
+        Location npcLoc = getEntity().getLocation(CACHE_LOCATION);
+        if (isSpawned() && npcLoc.getWorld() == location.getWorld() && npcLoc.distanceSquared(location) < 1) {
             NMS.setHeadYaw(getEntity(), location.getYaw());
         }
     }
