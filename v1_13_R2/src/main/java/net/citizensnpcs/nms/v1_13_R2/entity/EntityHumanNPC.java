@@ -34,6 +34,7 @@ import net.citizensnpcs.nms.v1_13_R2.util.PlayerControllerJump;
 import net.citizensnpcs.nms.v1_13_R2.util.PlayerControllerLook;
 import net.citizensnpcs.nms.v1_13_R2.util.PlayerControllerMove;
 import net.citizensnpcs.nms.v1_13_R2.util.PlayerNavigation;
+import net.citizensnpcs.nms.v1_13_R2.util.PlayerlistTrackerEntry;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinPacketTracker;
@@ -46,6 +47,7 @@ import net.minecraft.server.v1_13_R2.AttributeInstance;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.ChatComponentText;
 import net.minecraft.server.v1_13_R2.DamageSource;
+import net.minecraft.server.v1_13_R2.DataWatcher;
 import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityHuman;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
@@ -69,12 +71,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private PlayerControllerJump controllerJump;
     private PlayerControllerLook controllerLook;
     private PlayerControllerMove controllerMove;
-    private boolean isTracked = false;
     private int jumpTicks = 0;
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private final SkinPacketTracker skinTracker;
+    private PlayerlistTrackerEntry trackerEntry;
     private int updateCounter = 0;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
@@ -100,7 +102,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean a(EntityPlayer entityplayer) {
-        if (npc != null && !isTracked) {
+        if (npc != null && trackerEntry == null) {
             return false;
         }
         return super.a(entityplayer);
@@ -230,6 +232,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     public PlayerControllerMove getControllerMove() {
         return controllerMove;
+    }
+
+    @Override
+    public DataWatcher getDataWatcher() {
+        if (trackerEntry != null && trackerEntry.isUpdating()) {
+            trackerEntry.updateLastPlayer();
+        }
+        return super.getDataWatcher();
     }
 
     public NavigationAbstract getNavigation() {
@@ -382,8 +392,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         controllerLook.a(target.getX(), target.getY(), target.getZ(), 10, 40);
     }
 
-    public void setTracked() {
-        isTracked = true;
+    public void setTracked(PlayerlistTrackerEntry trackerEntry) {
+        this.trackerEntry = trackerEntry;
     }
 
     @Override

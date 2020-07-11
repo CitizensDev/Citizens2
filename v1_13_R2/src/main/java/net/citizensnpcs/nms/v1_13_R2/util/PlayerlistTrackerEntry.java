@@ -2,16 +2,20 @@ package net.citizensnpcs.nms.v1_13_R2.util;
 
 import java.lang.reflect.Field;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
 import net.minecraft.server.v1_13_R2.EntityTrackerEntry;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
+    private EntityPlayer lastUpdatedPlayer;
+
     public PlayerlistTrackerEntry(Entity entity, int i, int j, int k, boolean flag) {
         super(entity, i, j, k, flag);
     }
@@ -20,53 +24,35 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         this(getTracker(entry), getE(entry), getF(entry), getG(entry), getU(entry));
     }
 
+    public boolean isUpdating() {
+        return lastUpdatedPlayer != null;
+    }
+
+    public void updateLastPlayer() {
+        if (lastUpdatedPlayer == null)
+            return;
+        Entity tracker = getTracker(this);
+        final EntityPlayer entityplayer = lastUpdatedPlayer;
+        NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
+        lastUpdatedPlayer = null;
+        if (!Setting.DISABLE_TABLIST.asBoolean())
+            return;
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
+            }
+        });
+    }
+
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
         // prevent updates to NPC "viewers"
         if (entityplayer instanceof EntityHumanNPC)
             return;
-        Entity tracker = getTracker(this);
-        if (entityplayer != tracker && c(entityplayer)) {
-            if (!this.trackedPlayers.contains(entityplayer) && ((entityplayer.getWorldServer().getPlayerChunkMap()
-                    .a(entityplayer, getChunkX(tracker), getChunkZ(tracker))) || (tracker.attachedToPlayer))) {
-                if ((tracker instanceof SkinnableEntity)) {
-                    SkinnableEntity skinnable = (SkinnableEntity) tracker;
-
-                    Player player = skinnable.getBukkitEntity();
-                    if (!entityplayer.getBukkitEntity().canSee(player))
-                        return;
-
-                    skinnable.getSkinTracker().updateViewer(entityplayer.getBukkitEntity());
-                }
-            }
-        }
+        lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
-    }
-
-    private static int getChunkX(Entity tracker) {
-        try {
-            return tracker.chunkX;
-        } catch (NoSuchFieldError ex) {
-            try {
-                return CHUNK_X.getInt(tracker);
-            } catch (Exception ex2) {
-                ex2.printStackTrace();
-                return 0;
-            }
-        }
-    }
-
-    private static int getChunkZ(Entity tracker) {
-        try {
-            return tracker.chunkZ;
-        } catch (NoSuchFieldError ex) {
-            try {
-                return CHUNK_Z.getInt(tracker);
-            } catch (Exception ex2) {
-                ex2.printStackTrace();
-                return 0;
-            }
-        }
+        lastUpdatedPlayer = null;
     }
 
     private static int getE(EntityTrackerEntry entry) {
@@ -124,8 +110,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         return false;
     }
 
-    private static Field CHUNK_X = NMS.getField(Entity.class, "ae", false);
-    private static Field CHUNK_Z = NMS.getField(Entity.class, "ag", false);
     private static Field E = NMS.getField(EntityTrackerEntry.class, "e");
     private static Field F = NMS.getField(EntityTrackerEntry.class, "f");
     private static Field G = NMS.getField(EntityTrackerEntry.class, "g");
