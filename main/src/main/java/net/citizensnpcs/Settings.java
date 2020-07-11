@@ -57,7 +57,7 @@ public class Settings {
     }
 
     public enum Setting {
-        ASTAR_ITERATIONS_PER_TICK("npc.pathfinding.new-finder.iterations-per-tick", 25000),
+        ASTAR_ITERATIONS_PER_TICK("npc.pathfinding.new-finder.iterations-per-tick", 5000),
         AUTH_SERVER_URL("general.authlib.profile-url", "https://sessionserver.mojang.com/session/minecraft/profile/"),
         CHAT_BYSTANDERS_HEAR_TARGETED_CHAT("npc.chat.options.bystanders-hear-targeted-chat", true),
         CHAT_FORMAT("npc.chat.format.no-targets", "[<npc>]: <text>"),
@@ -112,7 +112,7 @@ public class Settings {
         MAX_PACKET_ENTRIES("npc.limits.max-packet-entries", 15),
         MAX_SPEED("npc.limits.max-speed", 100),
         MAX_TEXT_RANGE("npc.chat.options.max-text-range", 500),
-        MAXIMUM_ASTAR_ITERATIONS("npc.pathfinding.maximum-new-pathfinder-iterations", 50000),
+        MAXIMUM_ASTAR_ITERATIONS("npc.pathfinding.maximum-new-pathfinder-iterations", 10000),
         MESSAGE_COLOUR("general.color-scheme.message", "<a>"),
         NEW_PATHFINDER_CHECK_BOUNDING_BOXES("npc.pathfinding.new-finder.check-bounding-boxes", false),
         NEW_PATHFINDER_OPENS_DOORS("npc.pathfinding.new-finder.open-doors", false),
