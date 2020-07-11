@@ -127,7 +127,10 @@ public class ScriptCompiler {
             return engine;
         ScriptEngine search = null;
         if (extension.equals("js") || extension.equals("javascript")) {
-            search = engineManager.getEngineByName("nashorn");
+            search = engineManager.getEngineByName("graal.js");
+            if (search == null) {
+                search = engineManager.getEngineByName("nashorn");
+            }
         }
         if (search == null) {
             search = engineManager.getEngineByExtension(extension);
