@@ -772,7 +772,7 @@ public class NMSImpl implements NMSBridge {
             }
         }
         if (getHandle(player) instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) getHandle(player)).setTracked();
+            ((EntityHumanNPC) getHandle(player)).setTracked(replace);
         }
     }
 

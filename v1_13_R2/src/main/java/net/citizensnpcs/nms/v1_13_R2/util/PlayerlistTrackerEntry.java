@@ -31,7 +31,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     public void updateLastPlayer() {
         if (lastUpdatedPlayer == null)
             return;
-        Entity tracker = getTracker(this);
+        final Entity tracker = getTracker(this);
         final EntityPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         lastUpdatedPlayer = null;

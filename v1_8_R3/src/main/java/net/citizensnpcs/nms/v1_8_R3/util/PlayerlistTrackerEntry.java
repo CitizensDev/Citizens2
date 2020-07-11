@@ -2,16 +2,20 @@ package net.citizensnpcs.nms.v1_8_R3.util;
 
 import java.lang.reflect.Field;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.EntityTrackerEntry;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
+    private EntityPlayer lastUpdatedPlayer;
+
     public PlayerlistTrackerEntry(Entity entity, int i, int j, boolean flag) {
         super(entity, i, j, flag);
     }
@@ -20,28 +24,35 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         this(getTracker(entry), getB(entry), getC(entry), getU(entry));
     }
 
+    public boolean isUpdating() {
+        return lastUpdatedPlayer != null;
+    }
+
+    public void updateLastPlayer() {
+        if (lastUpdatedPlayer == null)
+            return;
+        final Entity tracker = getTracker(this);
+        final EntityPlayer entityplayer = lastUpdatedPlayer;
+        NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
+        lastUpdatedPlayer = null;
+        if (!Setting.DISABLE_TABLIST.asBoolean())
+            return;
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
+            }
+        });
+    }
+
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
         // prevent updates to NPC "viewers"
         if (entityplayer instanceof EntityHumanNPC)
             return;
-        Entity tracker = getTracker(this);
-        if (entityplayer != tracker && c(entityplayer)) {
-            if (!this.trackedPlayers.contains(entityplayer)
-                    && ((entityplayer.u().getPlayerChunkMap().a(entityplayer, tracker.ae, tracker.ag))
-                            || (tracker.attachedToPlayer))) {
-                if ((tracker instanceof SkinnableEntity)) {
-                    SkinnableEntity skinnable = (SkinnableEntity) tracker;
-
-                    Player player = skinnable.getBukkitEntity();
-                    if (!entityplayer.getBukkitEntity().canSee(player))
-                        return;
-
-                    skinnable.getSkinTracker().updateViewer(entityplayer.getBukkitEntity());
-                }
-            }
-        }
+        lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
+        lastUpdatedPlayer = null;
     }
 
     private static int getB(EntityTrackerEntry entry) {
