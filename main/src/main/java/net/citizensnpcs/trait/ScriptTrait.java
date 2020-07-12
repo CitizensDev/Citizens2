@@ -36,7 +36,7 @@ public class ScriptTrait extends Trait {
 
     /**
      * Add and load all given script file names
-     * 
+     *
      * @see #loadScript(String)
      */
     public void addScripts(List<String> scripts) {

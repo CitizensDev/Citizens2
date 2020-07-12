@@ -15,8 +15,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<craftbukkit.version>1.16.1-R0.1-SNAPSHOT</craftbukkit.version>
 		<citizensapi.version>${project.version}</citizensapi.version>
-		<powermock.version>1.4.12</powermock.version>
-		<bstats.version>1.7</bstats.version>
+		<powermock.version>1.4.12</powermock.version> 
 	</properties>
 
 	<repositories>
@@ -27,12 +26,7 @@
 		<repository>
 			<id>everything</id>
 			<url>http://repo.citizensnpcs.co</url>
-		</repository>
-		<repository>
-			<!-- for bstats -->
-			<id>CodeMC</id>
-			<url>https://repo.codemc.org/repository/maven-public</url>
-		</repository>
+		</repository> 
 		<repository>
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
@@ -65,13 +59,7 @@
 			<artifactId>VaultAPI</artifactId>
 			<version>1.7</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.bstats</groupId>
-			<artifactId>bstats-bukkit</artifactId>
-			<version>${bstats.version}</version>
-			<scope>compile</scope>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
