@@ -142,8 +142,11 @@ public class CommandTrait extends Trait {
                                 return command.hand == hand || command.hand == Hand.BOTH;
                             }
                         }));
-                if (executionMode == ExecutionMode.RANDOM && commandList.size() > 0) {
-                    runCommand(player, commandList.get(Util.getFastRandom().nextInt(commandList.size())));
+                if (executionMode == ExecutionMode.RANDOM) {
+                    if (commandList.size() > 0) {
+                        runCommand(player, commandList.get(Util.getFastRandom().nextInt(commandList.size())));
+                    }
+                    return;
                 }
                 int max = -1;
                 if (executionMode == ExecutionMode.SEQUENTIAL) {
