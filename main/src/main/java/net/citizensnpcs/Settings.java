@@ -123,7 +123,6 @@ public class Settings {
         NPC_SKIN_USE_LATEST("npc.skins.use-latest-by-default", false),
         NPC_SKIN_VIEW_DISTANCE("npc.skins.view-distance", 100D),
         PACKET_UPDATE_DELAY("npc.packets.update-delay", 30),
-        QUICK_SELECT("npc.selection.quick-select", false),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("npc.player.remove-from-list", true),
         SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
         SELECTION_ITEM("npc.selection.item", "stick"),
