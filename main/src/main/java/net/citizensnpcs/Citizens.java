@@ -97,12 +97,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public NPCRegistry createAnonymousNPCRegistry(NPCDataStore store) {
-        return new CitizensNPCRegistry(store);
+        return new CitizensNPCRegistry(store, "anonymous-" + UUID.randomUUID().toString());
     }
 
     @Override
     public NPCRegistry createNamedNPCRegistry(String name, NPCDataStore store) {
-        NPCRegistry created = new CitizensNPCRegistry(store);
+        NPCRegistry created = new CitizensNPCRegistry(store, name);
         storedRegistries.put(name, created);
         return created;
     }
@@ -178,6 +178,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public NPCRegistry getNamedNPCRegistry(String name) {
+        if (name.equals(npcRegistry.getName()))
+            return npcRegistry;
         return storedRegistries.get(name);
     }
 
@@ -306,7 +308,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return;
         }
 
-        npcRegistry = new CitizensNPCRegistry(saves);
+        npcRegistry = new CitizensNPCRegistry(saves, "citizens-global-" + UUID.randomUUID().toString());
         traitFactory = new CitizensTraitFactory();
         selector = new NPCSelector(this);
         speechFactory = new CitizensSpeechFactory();
@@ -414,7 +416,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             despawnNPCs();
         }
         this.saves = store;
-        this.npcRegistry = new CitizensNPCRegistry(saves);
+        this.npcRegistry = new CitizensNPCRegistry(saves, "citizens-global-" + UUID.randomUUID().toString());
     }
 
     private void setupEconomy() {

@@ -50,6 +50,7 @@ public class HologramTrait extends Trait {
 
     private NPC createHologram(String line, double heightOffset) {
         NPC hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
+        hologramNPC.addTrait(new ClickRedirectTrait(npc));
         ArmorStandTrait trait = hologramNPC.getTrait(ArmorStandTrait.class);
         trait.setVisible(false);
         trait.setSmall(true);

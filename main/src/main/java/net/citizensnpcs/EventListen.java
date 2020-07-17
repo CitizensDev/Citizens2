@@ -95,6 +95,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
+import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
@@ -261,6 +262,12 @@ public class EventListen implements Listener {
                 return;
             Player damager = (Player) damageEvent.getDamager();
 
+            if (npc.hasTrait(ClickRedirectTrait.class)) {
+                npc = npc.getTrait(ClickRedirectTrait.class).getRedirectNPC();
+                if (npc == null)
+                    return;
+            }
+
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
             Bukkit.getPluginManager().callEvent(leftClickEvent);
             if (npc.hasTrait(CommandTrait.class)) {
@@ -417,19 +424,19 @@ public class EventListen implements Listener {
                     + event.getReason().name());
         }
         skinUpdateTracker.onNPCDespawn(event.getNPC());
-        if (event.getNPC().getEntity() instanceof Player && Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-            String teamName = event.getNPC().data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
-            if (teamName.length() > 0) {
-                Player player = (Player) event.getNPC().getEntity();
-                Team team = Util.getDummyScoreboard().getTeam(teamName);
-                if (team != null && team.hasPlayer(player)) {
-                    if (team.getSize() == 1) {
-                        Util.sendTeamPacketToOnlinePlayers(team, 1);
-                        team.unregister();
-                    } else {
-                        team.removePlayer(player);
-                    }
-                }
+        if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean())
+            return;
+        String teamName = event.getNPC().data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+        if (teamName.isEmpty())
+            return;
+        Player player = (Player) event.getNPC().getEntity();
+        Team team = Util.getDummyScoreboard().getTeam(teamName);
+        if (team != null && team.hasPlayer(player)) {
+            if (team.getSize() == 1) {
+                Util.sendTeamPacketToOnlinePlayers(team, 1);
+                team.unregister();
+            } else {
+                team.removePlayer(player);
             }
         }
     }
@@ -471,6 +478,11 @@ public class EventListen implements Listener {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked());
         if (npc == null || Util.isOffHand(event)) {
             return;
+        }
+        if (npc.hasTrait(ClickRedirectTrait.class)) {
+            npc = npc.getTrait(ClickRedirectTrait.class).getRedirectNPC();
+            if (npc == null)
+                return;
         }
         Player player = event.getPlayer();
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);

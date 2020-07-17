@@ -32,12 +32,19 @@ import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.util.NMS;
 
 public class CitizensNPCRegistry implements NPCRegistry {
+    private final String name;
     private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<NPC>();
     private final NPCDataStore saves;
     private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
 
     public CitizensNPCRegistry(NPCDataStore store) {
         saves = store;
+        name = "";
+    }
+
+    public CitizensNPCRegistry(NPCDataStore store, String registryName) {
+        saves = store;
+        name = registryName;
     }
 
     @Override
@@ -127,6 +134,11 @@ public class CitizensNPCRegistry implements NPCRegistry {
             }
         }
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
