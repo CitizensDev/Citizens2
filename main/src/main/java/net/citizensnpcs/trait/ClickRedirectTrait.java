@@ -35,6 +35,9 @@ public class ClickRedirectTrait extends Trait {
 
     @Override
     public void save(DataKey key) {
+        key.removeKey("uuid");
+        if (redirectNPC == null)
+            return;
         key.setString("uuid", redirectNPC.getUniqueId().toString());
     }
 }
