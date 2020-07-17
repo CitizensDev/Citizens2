@@ -420,9 +420,9 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b,u) --at [x:y:z:world] --type [type] --trait ['trait1, trait2...'] --b [behaviours])",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent)) --at [x:y:z:world] --type [type] --trait ['trait1, trait2...'] --b [behaviours])",
             desc = "Create a new NPC",
-            flags = "bu",
+            flags = "bus",
             modifiers = { "create" },
             min = 2,
             permission = "citizens.npc.create")
@@ -464,6 +464,9 @@ public class NPCCommands {
                 age = -24000;
                 msg += " as a baby";
             }
+        }
+        if (args.hasFlag('s')) {
+            npc.data().set(NPC.SILENT_METADATA, true);
         }
 
         // Initialize necessary traits
