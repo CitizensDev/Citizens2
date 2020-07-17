@@ -9,7 +9,6 @@ import org.bukkit.entity.EntityType;
  * Controls the registration and lookup of a set of {@link NPC}s.
  */
 public interface NPCRegistry extends Iterable<NPC> {
-
     /**
      * Creates an despawned {@link NPC}.
      *
@@ -74,6 +73,11 @@ public interface NPCRegistry extends Iterable<NPC> {
      * @return NPC with the given UUID
      */
     public NPC getByUniqueIdGlobal(UUID uuid);
+
+    /**
+     * Gets the name of the registry. Not null.
+     */
+    public String getName();
 
     /**
      * Tries to convert the given {@link Entity} to a spawned {@link NPC}.
