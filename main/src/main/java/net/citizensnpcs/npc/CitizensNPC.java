@@ -168,6 +168,11 @@ public class CitizensNPC extends AbstractNPC {
         navigator.load(root.getRelative("navigator"));
     }
 
+    @Override
+    public boolean requiresNameHologram() {
+        return super.requiresNameHologram() || Setting.ALWAYS_USE_NAME_HOLOGRAM.asBoolean();
+    }
+
     private void resetCachedCoord() {
         if (cachedCoord == null)
             return;
