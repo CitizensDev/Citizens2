@@ -2,6 +2,7 @@ package net.citizensnpcs;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -70,6 +71,7 @@ import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
+    private List<NPCRegistry> anonymousRegistries;
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
@@ -97,7 +99,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public NPCRegistry createAnonymousNPCRegistry(NPCDataStore store) {
-        return new CitizensNPCRegistry(store, "anonymous-" + UUID.randomUUID().toString());
+        CitizensNPCRegistry anon = new CitizensNPCRegistry(store, "anonymous-" + UUID.randomUUID().toString());
+        anonymousRegistries.add(anon);
+        return anon;
     }
 
     @Override
@@ -199,7 +203,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     @Override
                     public NPCRegistry next() {
                         if (stored == null) {
-                            stored = storedRegistries.values().iterator();
+                            stored = Iterables.concat(storedRegistries.values(), anonymousRegistries).iterator();
                             return npcRegistry;
                         }
                         return stored.next();
@@ -308,7 +312,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return;
         }
 
-        npcRegistry = new CitizensNPCRegistry(saves, "citizens-global-" + UUID.randomUUID().toString());
+        npcRegistry = new CitizensNPCRegistry(saves, "citizens");
         traitFactory = new CitizensTraitFactory();
         selector = new NPCSelector(this);
         speechFactory = new CitizensSpeechFactory();
