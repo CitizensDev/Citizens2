@@ -17,6 +17,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -71,7 +72,7 @@ import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
-    private List<NPCRegistry> anonymousRegistries;
+    private final List<NPCRegistry> anonymousRegistries = Lists.newArrayList();
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
