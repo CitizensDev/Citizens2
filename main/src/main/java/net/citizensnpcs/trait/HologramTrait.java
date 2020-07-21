@@ -59,7 +59,6 @@ public class HologramTrait extends Trait {
         trait.setHasArms(false);
         trait.setHasBaseplate(false);
         hologramNPC.spawn(currentLoc.clone().add(0, getEntityHeight() + heightOffset, 0));
-        hologramNPC.getEntity().setInvulnerable(true);
         return hologramNPC;
     }
 
