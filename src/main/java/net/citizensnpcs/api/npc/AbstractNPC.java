@@ -210,7 +210,7 @@ public abstract class AbstractNPC implements NPC {
         return speechController;
     }
 
-    private EntityType getEntityType() {
+    protected EntityType getEntityType() {
         return isSpawned() ? getEntity().getType() : getTrait(MobType.class).getType();
     }
 
