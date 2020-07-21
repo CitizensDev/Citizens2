@@ -2157,7 +2157,8 @@ public class NPCCommands {
         } else {
             npc.teleport(args.getSenderLocation(), TeleportCause.COMMAND);
         }
-        Messaging.sendTr(sender, Messages.NPC_TELEPORTED, npc.getName());
+        Messaging.sendTr(sender, Messages.NPC_TELEPORTED, npc.getName(),
+                Util.prettyPrintLocation(args.getSenderLocation()));
     }
 
     @Command(
