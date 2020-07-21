@@ -143,6 +143,7 @@ public class Messages {
     public static final String HOLOGRAM_LINE_HEIGHT_SET = "citizens.commands.npc.hologram.line-height-set";
     public static final String HOLOGRAM_LINE_REMOVED = "citizens.commands.npc.hologram.line-removed";
     public static final String HOLOGRAM_LINE_SET = "citizens.commands.npc.hologram.text-set";
+    public static final String HOLOGRAM_TEXT_MISSING = "citizens.commands.npc.hologram.text-missing";
     public static final String HOLOGRAM_TEXT_REMOVED = "citizens.commands.npc.hologram.text-removed";
     public static final String HORSE_CHEST_SET = "citizens.commands.npc.horse.chest-set";
     public static final String HORSE_CHEST_UNSET = "citizens.commands.npc.horse.chest-unset";

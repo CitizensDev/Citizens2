@@ -732,16 +732,28 @@ public class NPCCommands {
             }
             Messaging.send(sender, output);
         } else if (args.getString(1).equalsIgnoreCase("set")) {
+            if (args.argsLength() == 2) {
+                throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+            }
             int idx = Math.max(0, args.getInteger(2));
             if (idx > trait.getLines().size()) {
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
             }
+            if (args.argsLength() == 3) {
+                throw new CommandException(Messages.HOLOGRAM_TEXT_MISSING);
+            }
             trait.setLine(idx, args.getJoinedStrings(3));
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_SET, idx, args.getJoinedStrings(3));
         } else if (args.getString(1).equalsIgnoreCase("add")) {
+            if (args.argsLength() == 2) {
+                throw new CommandException(Messages.HOLOGRAM_TEXT_MISSING);
+            }
             trait.addLine(args.getJoinedStrings(2));
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_ADD, args.getJoinedStrings(2));
         } else if (args.getString(1).equalsIgnoreCase("remove")) {
+            if (args.argsLength() == 2) {
+                throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+            }
             int idx = Math.max(0, args.getInteger(2));
             if (idx > trait.getLines().size()) {
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
