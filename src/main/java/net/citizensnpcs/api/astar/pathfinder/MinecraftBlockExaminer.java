@@ -37,7 +37,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     private boolean isClimbable(Material mat) {
-        return mat == Material.LADDER || mat == Material.VINE;
+        return CLIMBABLE.contains(mat);
     }
 
     @Override
@@ -203,6 +203,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 && canStandOn(in.getRelative(BlockFace.DOWN).getType());
     }
 
+    private static final Set<Material> CLIMBABLE = EnumSet.of(Material.LADDER, Material.VINE);
     private static final Set<Material> LIQUIDS = EnumSet.of(Material.WATER, Material.LAVA);
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
             Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
@@ -221,6 +222,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 UNWALKABLE.add(Material.valueOf("CAMPFIRE"));
             } catch (IllegalArgumentException e) {
                 // 1.13
+            }
+            try {
+                CLIMBABLE.add(Material.valueOf("SCAFFOLDING"));
+            } catch (IllegalArgumentException e) {
             }
             NOT_JUMPABLE.addAll(Lists.newArrayList(Material.valueOf("OAK_FENCE"),
                     Material.valueOf("NETHER_BRICK_FENCE"), Material.valueOf("COBBLESTONE_WALL")));
