@@ -49,7 +49,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
         Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
         Material in = source.getMaterialAt(pos);
-        if (!below.isBlock() || (!isClimbable(below) && !canStandOn(below))) {
+        if (!isClimbable(below) && !isLiquid(in) && (!below.isBlock() && !canStandOn(below))) {
             return PassableState.UNPASSABLE;
         }
         if (isClimbable(in) && (isClimbable(above) || isClimbable(below))) {
