@@ -31,8 +31,11 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             return 1F;
         if (below == Material.SOUL_SAND || below == Material.ICE)
             return 1F;
-        if (isLiquid(above, below, in))
-            return 0.5F;
+        if (isLiquid(in)) {
+            if (in == Material.LAVA)
+                return 2F;
+            return 1F;
+        }
         return 0F; // TODO: add light level-specific costs?
     }
 
@@ -49,7 +52,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
         Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
         Material in = source.getMaterialAt(pos);
-        if (!isClimbable(below) && !isLiquid(in) && (!below.isBlock() && !canStandOn(below))) {
+        boolean canStand = below.isBlock() || canStandOn(below) || isLiquid(in, below) || isClimbable(below);
+        if (!canStand) {
             return PassableState.UNPASSABLE;
         }
         if (isClimbable(in) && (isClimbable(above) || isClimbable(below))) {
