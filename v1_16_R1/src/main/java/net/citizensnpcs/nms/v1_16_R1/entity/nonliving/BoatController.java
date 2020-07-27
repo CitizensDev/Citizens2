@@ -205,10 +205,7 @@ public class BoatController extends MobEntityController {
                 }
                 move(EnumMoveType.SELF, getMot());
                 if (isVehicle()) {
-                    float f = 0.0F;
                     this.yaw += this.ar;
-                    setMot(getMot().add((MathHelper.sin(-this.yaw * 0.017453292F) * f), 0.0D,
-                            (MathHelper.cos(this.yaw * 0.017453292F) * f)));
                 }
             } else {
                 super.tick();
