@@ -94,6 +94,7 @@ import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
+import net.citizensnpcs.trait.HologramTrait.HologramDirection;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.MountTrait;
@@ -715,7 +716,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram add [text] | set [line #] [text] | remove [line #] | clear | lineheight [height]",
+            usage = "hologram add [text] | set [line #] [text] | remove [line #] | clear | lineheight [height] | direction [up|down]",
             desc = "Controls NPC hologram text",
             modifiers = { "hologram" },
             min = 1,
@@ -766,6 +767,11 @@ public class NPCCommands {
         } else if (args.getString(1).equalsIgnoreCase("lineheight")) {
             trait.setLineHeight(args.getDouble(2));
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_HEIGHT_SET, args.getDouble(2));
+        } else if (args.getString(1).equalsIgnoreCase("direction")) {
+            HologramDirection direction = args.getString(2).equalsIgnoreCase("up") ? HologramDirection.BOTTOM_UP
+                    : HologramDirection.TOP_DOWN;
+            trait.setDirection(direction);
+            Messaging.sendTr(sender, Messages.HOLOGRAM_DIRECTION_SET, Util.prettyEnum(direction));
         }
     }
 

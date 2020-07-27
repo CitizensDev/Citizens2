@@ -138,6 +138,7 @@ public class Messages {
     public static final String GUIDED_WAYPOINT_EDITOR_END = "citizens.editors.waypoints.guided.end";
     public static final String HOLOGRAM_CLEARED = "citizens.commands.npc.hologram.cleared";
     public static final String HOLOGRAM_DESCRIBE_HEADER = "citizens.commands.npc.hologram.text-describe-header";
+    public static final String HOLOGRAM_DIRECTION_SET = "citizens.commands.npc.hologram.direction-set";
     public static final String HOLOGRAM_INVALID_LINE = "citizens.commands.npc.hologram.invalid-text-id";
     public static final String HOLOGRAM_LINE_ADD = "citizens.commands.npc.hologram.line-add";
     public static final String HOLOGRAM_LINE_HEIGHT_SET = "citizens.commands.npc.hologram.line-height-set";

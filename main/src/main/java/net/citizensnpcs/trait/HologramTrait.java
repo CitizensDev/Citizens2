@@ -25,6 +25,8 @@ import net.citizensnpcs.util.NMS;
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
     private Location currentLoc;
+    @Persist
+    private HologramDirection direction = HologramDirection.BOTTOM_UP;
     private final List<NPC> hologramNPCs = Lists.newArrayList();
     @Persist
     private double lineHeight = -1;
@@ -58,7 +60,10 @@ public class HologramTrait extends Trait {
         trait.setGravity(false);
         trait.setHasArms(false);
         trait.setHasBaseplate(false);
-        hologramNPC.spawn(currentLoc.clone().add(0, getEntityHeight() + heightOffset, 0));
+        hologramNPC.spawn(currentLoc.clone().add(0,
+                getEntityHeight()
+                        + (direction == HologramDirection.BOTTOM_UP ? heightOffset : getMaxHeight() - heightOffset),
+                0));
         return hologramNPC;
     }
 
@@ -72,6 +77,11 @@ public class HologramTrait extends Trait {
 
     public List<String> getLines() {
         return lines;
+    }
+
+    private double getMaxHeight() {
+        return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight)
+                * (lines.size() + (npc.requiresNameHologram() ? 0 : -1));
     }
 
     private void load() {
@@ -150,6 +160,12 @@ public class HologramTrait extends Trait {
         }
     }
 
+    public void setDirection(HologramDirection direction) {
+        this.direction = direction;
+        unload();
+        load();
+    }
+
     public void setLine(int idx, String text) {
         lines.set(idx, text);
     }
@@ -169,5 +185,10 @@ public class HologramTrait extends Trait {
             npc.destroy();
         }
         hologramNPCs.clear();
+    }
+
+    public enum HologramDirection {
+        BOTTOM_UP,
+        TOP_DOWN;
     }
 }
