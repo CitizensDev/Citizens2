@@ -127,7 +127,7 @@ public class Settings {
         REMOVE_PLAYERS_FROM_PLAYER_LIST("npc.player.remove-from-list", true),
         SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
         SELECTION_ITEM("npc.selection.item", "stick"),
-        SELECTION_MESSAGE("npc.selection.message", "<b>You selected <a><npc><b>!"),
+        SELECTION_MESSAGE("npc.selection.message", "Selected [[<npc>]] (ID <id>)."),
         SERVER_OWNS_NPCS("npc.server-ownership", false),
         STORAGE_FILE("storage.file", "saves.yml"),
         STORAGE_TYPE("storage.type", "yaml"),

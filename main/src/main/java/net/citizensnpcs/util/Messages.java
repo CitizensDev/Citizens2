@@ -356,6 +356,7 @@ public class Messages {
     public static final String TRAITS_FAILED_TO_ADD = "citizens.commands.trait.failed-to-add";
     public static final String TRAITS_FAILED_TO_CHANGE = "citizens.commands.trait.failed-to-change";
     public static final String TRAITS_REMOVED = "citizens.commands.trait.removed";
+    public static final String TRIED_TO_MOUNT_NPC_ON_ITSELF = "citizens.commands.npc.mount.mount-on-itself";
     public static final String TROPICALFISH_BODY_COLOR_SET = "citizens.commands.npc.tropicalfish.body-color-set";
     public static final String TROPICALFISH_PATTERN_COLOR_SET = "citizens.commands.npc.tropicalfish.pattern-color-set";
     public static final String TROPICALFISH_PATTERN_SET = "citizens.commands.npc.tropicalfish.pattern-set";

@@ -1122,7 +1122,7 @@ public class NPCCommands {
                 throw new CommandException(Messaging.tr(Messages.MOUNT_NPC_MUST_BE_SPAWNED, args.getFlag("onnpc")));
             }
             if (mount.equals(npc)) {
-                throw new CommandException();
+                throw new CommandException(Messages.TRIED_TO_MOUNT_NPC_ON_ITSELF);
             }
             NMS.mount(mount.getEntity(), npc.getEntity());
             return;
