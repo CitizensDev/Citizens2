@@ -732,7 +732,10 @@ public class NPCCommands {
                 output += "<br>    [[" + i + "]] - " + line;
             }
             Messaging.send(sender, output);
-        } else if (args.getString(1).equalsIgnoreCase("set")) {
+            return;
+        }
+
+        if (args.getString(1).equalsIgnoreCase("set")) {
             if (args.argsLength() == 2) {
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
             }
