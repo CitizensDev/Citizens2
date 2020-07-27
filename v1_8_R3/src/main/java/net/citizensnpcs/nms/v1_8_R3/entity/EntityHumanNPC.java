@@ -290,6 +290,22 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             super.l();
             return;
         }
+        boolean navigating = npc.getNavigator().isNavigating();
+        if (!navigating && getBukkitEntity() != null
+                && (npc.hasTrait(Gravity.class) && npc.getTrait(Gravity.class).hasGravity())
+                && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
+            g(0, 0);
+        }
+        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
+            motX = motY = motZ = 0;
+        }
+        if (navigating) {
+            if (!NMSImpl.isNavigationFinished(navigation)) {
+                NMSImpl.updateNavigation(navigation);
+            }
+            moveOnCurrentHeading();
+        }
+        NMSImpl.updateAI(this);
         if (!this.world.isClientSide) {
             b(0, this.fireTicks > 0);
         }
@@ -379,20 +395,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
-        if (!navigating && getBukkitEntity() != null && npc.getTrait(Gravity.class).hasGravity()
-                && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            g(0, 0);
-        }
-        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
-            motX = motY = motZ = 0;
-        }
-        if (navigating) {
-            if (!NMSImpl.isNavigationFinished(navigation)) {
-                NMSImpl.updateNavigation(navigation);
-            }
-            moveOnCurrentHeading();
-        }
-        NMSImpl.updateAI(this);
 
         if (noDamageTicks > 0) {
             --noDamageTicks;

@@ -311,11 +311,8 @@ public class CitizensNPC extends AbstractNPC {
             }
             if (getEntity() instanceof Player) {
                 NMS.replaceTrackerEntry((Player) getEntity());
+                PlayerUpdateTask.registerPlayer(getEntity());
             }
-        }
-
-        if (getEntity() instanceof Player) {
-            PlayerUpdateTask.registerPlayer(getEntity());
         }
 
         if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {

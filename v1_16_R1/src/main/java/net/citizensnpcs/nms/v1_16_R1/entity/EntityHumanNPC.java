@@ -377,6 +377,23 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             return;
         }
         entityBaseTick();
+        boolean navigating = npc.getNavigator().isNavigating();
+        if (!navigating && getBukkitEntity() != null
+                && (npc.hasTrait(Gravity.class) && npc.getTrait(Gravity.class).hasGravity())
+                && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
+            f(new Vec3D(0, 0, 0));
+        }
+        Vec3D mot = getMot();
+        if (Math.abs(mot.getX()) < EPSILON && Math.abs(mot.getY()) < EPSILON && Math.abs(mot.getZ()) < EPSILON) {
+            setMot(new Vec3D(0, 0, 0));
+        }
+        if (navigating) {
+            if (!NMSImpl.isNavigationFinished(navigation)) {
+                NMSImpl.updateNavigation(navigation);
+            }
+            moveOnCurrentHeading();
+        }
+        NMSImpl.updateAI(this);
 
         this.ay = this.az;
         if (this.hurtTicks > 0) {
@@ -444,21 +461,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
-        if (!navigating && getBukkitEntity() != null && npc.getTrait(Gravity.class).hasGravity()
-                && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            f(new Vec3D(0, 0, 0));
-        }
-        Vec3D mot = getMot();
-        if (Math.abs(mot.getX()) < EPSILON && Math.abs(mot.getY()) < EPSILON && Math.abs(mot.getZ()) < EPSILON) {
-            setMot(new Vec3D(0, 0, 0));
-        }
-        if (navigating) {
-            if (!NMSImpl.isNavigationFinished(navigation)) {
-                NMSImpl.updateNavigation(navigation);
-            }
-            moveOnCurrentHeading();
-        }
-        NMSImpl.updateAI(this);
 
         if (noDamageTicks > 0) {
             --noDamageTicks;

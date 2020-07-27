@@ -881,7 +881,7 @@ public class NMSImpl implements NMSBridge {
                     - (handle.getBukkitEntity().getType() == EntityType.PHANTOM ? 45 : 90);
             if (zDiff < 0.0)
                 yaw += Math.abs(180 - yaw) * 2;
-            if (handle instanceof EntityEnderDragon) {
+            if (handle.getBukkitEntity().getType() == EntityType.ENDER_DRAGON) {
                 yaw = getDragonYaw(handle, to.getX(), to.getZ());
             } else {
                 yaw = yaw - 90;
