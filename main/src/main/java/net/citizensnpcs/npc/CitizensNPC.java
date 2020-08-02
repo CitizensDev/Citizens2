@@ -72,7 +72,7 @@ public class CitizensNPC extends AbstractNPC {
         if (trait != null && trait.hasTargetMoved())
             return true;
 
-        if (++tickCount >= 20) {
+        if (++tickCount >= 40) {
             tickCount = 0;
             return true;
         }
