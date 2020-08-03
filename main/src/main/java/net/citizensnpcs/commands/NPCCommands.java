@@ -23,6 +23,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -1839,6 +1840,7 @@ public class NPCCommands {
                         }
                     }
                 }
+
             });
             return;
         } else if (args.hasFlag('t')) {
@@ -2148,23 +2150,37 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "tphere",
+            usage = "tphere (cursor) (-c(enter))",
             desc = "Teleport a NPC to your location",
+            flags = "c",
             modifiers = { "tphere", "tph", "move" },
             min = 1,
-            max = 1,
+            max = 2,
             permission = "citizens.npc.tphere")
     public void tphere(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        if (args.getSenderLocation() == null)
+        Location to = args.getSenderLocation();
+        if (to == null)
             throw new ServerCommandException();
+        if (args.argsLength() > 1 && args.getString(1).equalsIgnoreCase("cursor")) {
+            if (!(sender instanceof Player))
+                throw new ServerCommandException();
+            Block target = ((Player) sender).getTargetBlock(null, 64);
+            if (target == null)
+                throw new CommandException(Messages.MISSING_TP_CURSOR_BLOCK);
+            to = target.getLocation();
+        }
         if (!sender.hasPermission("citizens.npc.tphere.multiworld")
                 && npc.getStoredLocation().getWorld() != args.getSenderLocation().getWorld()) {
             throw new CommandException(Messages.CANNOT_TELEPORT_ACROSS_WORLDS);
         }
+        if (args.hasFlag('c')) {
+            to.setX(Math.round(to.getX() * 2) / 2.0);
+            to.setZ(Math.round(to.getZ() * 2) / 2.0);
+        }
         if (!npc.isSpawned()) {
-            npc.spawn(args.getSenderLocation(), SpawnReason.COMMAND);
+            npc.spawn(to, SpawnReason.COMMAND);
         } else {
-            npc.teleport(args.getSenderLocation(), TeleportCause.COMMAND);
+            npc.teleport(to, TeleportCause.COMMAND);
         }
         Messaging.sendTr(sender, Messages.NPC_TELEPORTED, npc.getName(),
                 Util.prettyPrintLocation(args.getSenderLocation()));
