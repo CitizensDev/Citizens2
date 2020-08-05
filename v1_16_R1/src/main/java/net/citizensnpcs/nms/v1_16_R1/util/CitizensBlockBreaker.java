@@ -47,7 +47,7 @@ public class CitizensBlockBreaker extends BlockBreaker {
     }
 
     private double distanceSquared() {
-        return Math.pow(entity.locX() - x, 2) + Math.pow(entity.locY() - y, 2) + Math.pow(entity.locZ() - z, 2);
+        return Math.pow(entity.locX() - x, 2) + Math.pow(entity.locY() + entity.getHeadHeight() - y, 2) + Math.pow(entity.locZ() - z, 2);
     }
 
     private net.minecraft.server.v1_16_R1.ItemStack getCurrentItem() {
