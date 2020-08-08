@@ -427,7 +427,7 @@ public class EventListen implements Listener {
         if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean())
             return;
         String teamName = event.getNPC().data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
-        if (teamName.isEmpty())
+        if (teamName.isEmpty() || !(event.getNPC() instanceof Player))
             return;
         Player player = (Player) event.getNPC().getEntity();
         Team team = Util.getDummyScoreboard().getTeam(teamName);
