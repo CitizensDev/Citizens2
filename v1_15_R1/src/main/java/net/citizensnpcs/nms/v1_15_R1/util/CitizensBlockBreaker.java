@@ -9,6 +9,7 @@ import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.BlockPosition;
@@ -47,7 +48,8 @@ public class CitizensBlockBreaker extends BlockBreaker {
     }
 
     private double distanceSquared() {
-        return Math.pow(entity.locX() - x, 2) + Math.pow(entity.locY() - y, 2) + Math.pow(entity.locZ() - z, 2);
+        return Math.pow(entity.locX() - x, 2) + Math.pow(NMS.getHeight(entity.getBukkitEntity()) + entity.locY() - y, 2)
+                + Math.pow(entity.locZ() - z, 2);
     }
 
     private net.minecraft.server.v1_15_R1.ItemStack getCurrentItem() {
