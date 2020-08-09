@@ -429,9 +429,12 @@ public class EventListen implements Listener {
         String teamName = event.getNPC().data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
         if (teamName.isEmpty())
             return;
-        Player player = (Player) event.getNPC().getEntity();
         Team team = Util.getDummyScoreboard().getTeam(teamName);
-        if (team != null && team.hasPlayer(player)) {
+        event.getNPC().data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+        if (team == null || !(event.getNPC().getEntity() instanceof Player))
+            return;
+        Player player = (Player) event.getNPC().getEntity();
+        if (team.hasPlayer(player)) {
             if (team.getSize() == 1) {
                 Util.sendTeamPacketToOnlinePlayers(team, 1);
                 team.unregister();

@@ -64,22 +64,22 @@ public class HumanController extends AbstractEntityController {
                         Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
                 NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
 
-                if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-                    Scoreboard scoreboard = Util.getDummyScoreboard();
-                    String teamName = Util.getTeamName(profile.getId());
+                if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean())
+                    return;
+                Scoreboard scoreboard = Util.getDummyScoreboard();
+                String teamName = Util.getTeamName(profile.getId());
 
-                    Team team = scoreboard.getTeam(teamName);
-                    int mode = 2;
-                    if (team == null) {
-                        team = scoreboard.registerNewTeam(teamName);
-                        mode = 0;
-                    }
-                    team.addPlayer(handle.getBukkitEntity());
-
-                    handle.getNPC().data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
-
-                    Util.sendTeamPacketToOnlinePlayers(team, mode);
+                Team team = scoreboard.getTeam(teamName);
+                int mode = 2;
+                if (team == null) {
+                    team = scoreboard.registerNewTeam(teamName);
+                    mode = 0;
                 }
+                team.addPlayer(handle.getBukkitEntity());
+
+                handle.getNPC().data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
+
+                Util.sendTeamPacketToOnlinePlayers(team, mode);
             }
         }, 20);
 
