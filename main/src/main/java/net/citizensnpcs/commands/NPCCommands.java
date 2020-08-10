@@ -24,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -2167,15 +2168,16 @@ public class NPCCommands {
             Block target = ((Player) sender).getTargetBlock(null, 64);
             if (target == null)
                 throw new CommandException(Messages.MISSING_TP_CURSOR_BLOCK);
-            to = target.getLocation();
+            to = target.getRelative(BlockFace.UP).getLocation();
         }
         if (!sender.hasPermission("citizens.npc.tphere.multiworld")
                 && npc.getStoredLocation().getWorld() != args.getSenderLocation().getWorld()) {
             throw new CommandException(Messages.CANNOT_TELEPORT_ACROSS_WORLDS);
         }
         if (args.hasFlag('c')) {
-            to.setX(Math.round(to.getX() * 2) / 2.0);
-            to.setZ(Math.round(to.getZ() * 2) / 2.0);
+            to = to.getBlock().getLocation();
+            to.setX(to.getX() + 0.5);
+            to.setZ(to.getZ() + 0.5);
         }
         if (!npc.isSpawned()) {
             npc.spawn(to, SpawnReason.COMMAND);
