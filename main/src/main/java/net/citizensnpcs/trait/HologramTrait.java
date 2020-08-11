@@ -167,7 +167,11 @@ public class HologramTrait extends Trait {
     }
 
     public void setLine(int idx, String text) {
-        lines.set(idx, text);
+        if (idx == lines.size()) {
+            lines.add(idx, text);
+        } else {
+            lines.set(idx, text);
+        }
     }
 
     public void setLineHeight(double height) {
