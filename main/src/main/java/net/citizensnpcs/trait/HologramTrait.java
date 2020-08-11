@@ -81,7 +81,7 @@ public class HologramTrait extends Trait {
 
     private double getMaxHeight() {
         return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight)
-                * (lines.size() + (npc.requiresNameHologram() ? 0 : -1));
+                * (lines.size() + (npc.requiresNameHologram() ? 0 : 1));
     }
 
     private void load() {

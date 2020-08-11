@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
@@ -263,7 +262,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     public String getSkinName() {
         String skinName = npc.getTrait(SkinTrait.class).getSkinName();
         if (skinName == null) {
-            skinName = ChatColor.stripColor(getName());
+            skinName = npc.getName();
         }
         return skinName.toLowerCase();
     }
