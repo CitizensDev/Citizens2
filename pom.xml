@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.16.1-R0.1-SNAPSHOT</bukkit.version>
+		<bukkit.version>1.16.2-R0.1-SNAPSHOT</bukkit.version>
 		<powermock.version>1.4.12</powermock.version>
 		<placeholderapi.version>2.10.4</placeholderapi.version>
 		<build.number>Unknown</build.number>
@@ -23,7 +23,7 @@
 		</repository>
 	</repositories>
 
-	<dependencies>
+	<dependencies> 
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
