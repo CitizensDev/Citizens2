@@ -236,7 +236,7 @@ public class PlayerNavigation extends NavigationAbstract {
             this.f = this.e;
             this.g = var0;
         }
-        if (this.c != null && !this.c.b()) {
+        if (this.c != null && !this.c.c()) {
             BaseBlockPosition var1 = this.c.g();
             if (var1.equals(this.h)) {
                 this.i += SystemUtils.getMonotonicMillis() - this.j;
@@ -354,12 +354,12 @@ public class PlayerNavigation extends NavigationAbstract {
             return;
         if (a()) {
             l();
-        } else if (this.c != null && this.c.f() < this.c.e()) {
+        } else if (this.c != null && !this.c.c()) {
             Vec3D vec3D1 = b();
-            Vec3D vec3D2 = this.c.a(this.a, this.c.f());
+            Vec3D vec3D2 = this.c.a(this.a);
             if (vec3D1.y > vec3D2.y && !this.a.isOnGround() && MathHelper.floor(vec3D1.x) == MathHelper.floor(vec3D2.x)
                     && MathHelper.floor(vec3D1.z) == MathHelper.floor(vec3D2.z))
-                this.c.c(this.c.f() + 1);
+                this.c.a();
         }
         if (m())
             return;
@@ -503,7 +503,7 @@ public class PlayerNavigation extends NavigationAbstract {
             if (var3.a(Blocks.CAULDRON)) {
                 this.c.a(var0, var1.a(var1.a, var1.b + 1, var1.c));
                 if (var2 != null && var1.b >= var2.b)
-                    this.c.a(var0 + 1, var2.a(var2.a, var1.b + 1, var2.c));
+                    this.c.a(var0 + 1, var1.a(var2.a, var1.b + 1, var2.c));
             }
         }
     }

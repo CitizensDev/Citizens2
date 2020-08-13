@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R2.util;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -65,70 +64,55 @@ public class PlayerPathfinder extends Pathfinder {
     }
 
     private PathEntity a(PathPoint var0, BlockPosition var1, boolean var2) {
-        List var3 = Lists.newArrayList();
+        List<PathPoint> var3 = Lists.newArrayList();
         PathPoint var4 = var0;
-        var3.add(0, var0);
-
+        var3.add(0, var4);
         while (var4.h != null) {
             var4 = var4.h;
             var3.add(0, var4);
         }
-
         return new PathEntity(var3, var1, var2);
     }
 
     private PathEntity a(PathPoint var0, Map var1, float var2, int var3, float var4) {
-        Set var5 = var1.keySet();
+        Set<PathDestination> var5 = var1.keySet();
         var0.e = 0.0F;
-        var0.f = this.a(var0, var5);
+        var0.f = a(var0, var5);
         var0.g = var0.f;
         this.d.a();
         this.d.a(var0);
-        Set var6 = ImmutableSet.of();
+        ImmutableSet immutableSet = ImmutableSet.of();
         int var7 = 0;
         Set<PathDestination> var8 = Sets.newHashSetWithExpectedSize(var5.size());
         int var9 = (int) (this.b * var4);
-
-        while (!this.d.e()) {
-            ++var7;
-            if (var7 >= var9) {
-                break;
-            }
-
-            PathPoint var10 = this.d.c();
-            var10.i = true;
-            Iterator var12 = var5.iterator();
-
-            while (var12.hasNext()) {
-                PathDestination var122 = (PathDestination) var12.next();
-                if (var10.c(var122) <= var3) {
-                    var122.e();
-                    var8.add(var122);
+        while (!this.d.e() && ++var7 < var9) {
+            PathPoint pathPoint = this.d.c();
+            pathPoint.i = true;
+            for (PathDestination pathDestination : var5) {
+                if (pathPoint.c(pathDestination) <= var3) {
+                    pathDestination.e();
+                    var8.add(pathDestination);
                 }
             }
-
-            if (!var8.isEmpty()) {
+            if (!var8.isEmpty())
                 break;
-            }
-
-            if (var10.a(var0) < var2) {
-                int var11 = this.c.a(this.a, var10);
-
-                for (int var12i = 0; var12i < var11; ++var12i) {
-                    PathPoint var13 = this.a[var12i];
-                    float var14 = var10.a(var13);
-                    var13.j = var10.j + var14;
-                    float var15 = var10.e + var14 + var13.k;
-                    if (var13.j < var2 && (!var13.c() || var15 < var13.e)) {
-                        var13.h = var10;
-                        var13.e = var15;
-                        var13.f = this.a(var13, var5) * 1.5F;
-                        if (var13.c()) {
-                            this.d.a(var13, var13.e + var13.f);
-                        } else {
-                            var13.g = var13.e + var13.f;
-                            this.d.a(var13);
-                        }
+            if (pathPoint.a(var0) >= var2)
+                continue;
+            int i = this.c.a(this.a, pathPoint);
+            for (int var12 = 0; var12 < i; var12++) {
+                PathPoint var13 = this.a[var12];
+                float var14 = pathPoint.a(var13);
+                pathPoint.j += var14;
+                float var15 = pathPoint.e + var14 + var13.k;
+                if (var13.j < var2 && (!var13.c() || var15 < var13.e)) {
+                    var13.h = pathPoint;
+                    var13.e = var15;
+                    var13.f = a(var13, var5) * 1.5F;
+                    if (var13.c()) {
+                        this.d.a(var13, var13.e + var13.f);
+                    } else {
+                        var13.g = var13.e + var13.f;
+                        this.d.a(var13);
                     }
                 }
             }
@@ -144,16 +128,13 @@ public class PlayerPathfinder extends Pathfinder {
         }
     }
 
-    private float a(PathPoint var0, Set var1) {
+    private float a(PathPoint var0, Set<PathDestination> var1) {
         float var2 = Float.MAX_VALUE;
-
-        float var5;
-        for (Iterator var4 = var1.iterator(); var4.hasNext(); var2 = Math.min(var5, var2)) {
-            PathDestination var44 = (PathDestination) var4.next();
-            var5 = var0.a(var44);
-            var44.a(var5, var0);
+        for (PathDestination var4 : var1) {
+            float var5 = var0.a(var4);
+            var4.a(var5, var0);
+            var2 = Math.min(var5, var2);
         }
-
         return var2;
     }
 
