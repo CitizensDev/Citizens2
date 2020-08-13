@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_16_R2.util;
 
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -206,7 +207,7 @@ public class PlayerNavigation extends NavigationAbstract {
             return null;
         if (!a())
             return null;
-        if (this.c != null && !this.c.b() && var0.contains(this.p))
+        if (this.c != null && !this.c.c() && var0.contains(this.p))
             return this.c;
         this.b.getMethodProfiler().enter("pathfind");
         float var4 = (float) this.a.b(GenericAttributes.FOLLOW_RANGE);
@@ -225,7 +226,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     public PathEntity a(Stream<BlockPosition> var0, int var1) {
-        return a(var0.collect(Collectors.<BlockPosition> toSet()), 8, false, var1);
+        return a((Set<BlockPosition>) var0.collect((Collector) Collectors.toSet()), 8, false, var1);
     }
 
     @Override
@@ -310,7 +311,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     public void b(BlockPosition var0) {
-        if (this.c == null || this.c.b() || this.c.e() == 0)
+        if (this.c == null || this.c.c() || this.c.e() == 0)
             return;
         PathPoint var1 = this.c.d();
         Vec3D var2 = new Vec3D((var1.a + this.a.locX()) / 2.0D, (var1.b + this.a.locY()) / 2.0D,
@@ -334,12 +335,12 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     private boolean b(Vec3D var0) {
-        if (this.c.e() <= this.c.f() + 1)
+        if (this.c.f() + 1 >= this.c.e())
             return false;
-        Vec3D var1 = Vec3D.c(this.c.a(this.c.f()).a());
+        Vec3D var1 = Vec3D.c(this.c.g());
         if (!var0.a(var1, 2.0D))
             return false;
-        Vec3D var2 = Vec3D.c(this.c.a(this.c.f() + 1).a());
+        Vec3D var2 = Vec3D.c(this.c.d(this.c.f() + 1));
         Vec3D var3 = var2.d(var1);
         Vec3D var4 = var0.d(var1);
         return (var3.b(var4) > 0.0D);
@@ -380,7 +381,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     protected void D_() {
-        superE_();
+        superD_();
         if (this.pp) {
             if (this.b.e(new BlockPosition(this.a.locX(), this.a.locY() + 0.5D, this.a.locZ())))
                 return;
@@ -451,13 +452,13 @@ public class PlayerNavigation extends NavigationAbstract {
                 && Math.abs(this.a.locZ() - (var1.getZ() + 0.5D)) < this.l
                 && Math.abs(this.a.locY() - var1.getY()) < 1.0D; // old-style calc
         if (var8 || b2 || (this.a.b((this.c.h()).l) && b(var0)))
-            this.c.c(this.c.f() + 1);
+            this.c.a();
         a(var0);
     }
 
     @Override
     public boolean m() {
-        return (this.c == null || this.c.b());
+        return (this.c == null || this.c.c());
     }
 
     @Override
@@ -490,10 +491,10 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     public PathEntity supera(BlockPosition var0, int var1) {
-        return a(ImmutableSet.of(var0), 8, false, var1);
+        return a(ImmutableSet.of(var0), 16, true, var1);
     }
 
-    protected void superE_() {
+    protected void superD_() {
         if (this.c == null)
             return;
         for (int var0 = 0; var0 < this.c.e(); var0++) {
