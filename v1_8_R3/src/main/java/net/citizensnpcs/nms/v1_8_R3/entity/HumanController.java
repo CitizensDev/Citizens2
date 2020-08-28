@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -73,6 +74,9 @@ public class HumanController extends AbstractEntityController {
                     int mode = 2;
                     if (team == null) {
                         team = scoreboard.registerNewTeam(teamName);
+                        if (npc.requiresNameHologram()) {
+                            team.setNameTagVisibility(NameTagVisibility.NEVER);
+                        }
                         mode = 0;
                     }
                     team.addPlayer(handle.getBukkitEntity());

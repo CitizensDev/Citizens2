@@ -74,6 +74,9 @@ public class HumanController extends AbstractEntityController {
                 int mode = 2;
                 if (team == null) {
                     team = scoreboard.registerNewTeam(teamName);
+                    if (npc.requiresNameHologram()) {
+                        team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
+                    }
                     mode = 0;
                 }
                 team.addPlayer(handle.getBukkitEntity());
