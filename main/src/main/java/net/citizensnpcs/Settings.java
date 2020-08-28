@@ -132,6 +132,7 @@ public class Settings {
         STORAGE_FILE("storage.file", "saves.yml"),
         STORAGE_TYPE("storage.type", "yaml"),
         SUBPLUGIN_FOLDER("subplugins.folder", "plugins"),
+        TABLIST_REMOVE_PACKET_DELAY("npc.tablist.remove-packet-delay", 1),
         TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 5),
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 10),
         TALK_ITEM("npc.text.talk-item", "*"),
