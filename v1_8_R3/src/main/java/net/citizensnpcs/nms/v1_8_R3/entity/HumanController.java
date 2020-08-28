@@ -33,17 +33,18 @@ public class HumanController extends AbstractEntityController {
         final WorldServer nmsWorld = ((CraftWorld) at.getWorld()).getHandle();
         String coloredName = npc.getFullName();
         String name = coloredName.length() > 16 ? coloredName.substring(0, 16) : coloredName;
-        if (npc.requiresNameHologram()) {
-            name = npc.getId() + UUID.randomUUID().toString().replace("-", "");
-            name = name.substring(0, 16);
-        }
-        
+
         UUID uuid = npc.getUniqueId();
         if (uuid.version() == 4) { // clear version
             long msb = uuid.getMostSignificantBits();
             msb &= ~0x0000000000004000L;
             msb |= 0x0000000000002000L;
             uuid = new UUID(msb, uuid.getLeastSignificantBits());
+        }
+
+        final String teamName = Util.getTeamName(uuid);
+        if (npc.requiresNameHologram()) {
+            name = teamName;
         }
 
         final GameProfile profile = new GameProfile(uuid, name);
@@ -67,7 +68,6 @@ public class HumanController extends AbstractEntityController {
 
                 if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
                     Scoreboard scoreboard = Util.getDummyScoreboard();
-                    String teamName = Util.getTeamName(profile.getId());
 
                     Team team = scoreboard.getTeam(teamName);
                     int mode = 2;
