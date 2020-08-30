@@ -311,7 +311,7 @@ public class EventListen implements Listener {
     @EventHandler
     public void onEntityPortal(EntityPortalEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
-        if (npc == null && event.getEntityType() != EntityType.PLAYER)
+        if (npc == null || event.getEntityType() != EntityType.PLAYER)
             return;
         event.setCancelled(true);
         npc.despawn(DespawnReason.PENDING_RESPAWN);
