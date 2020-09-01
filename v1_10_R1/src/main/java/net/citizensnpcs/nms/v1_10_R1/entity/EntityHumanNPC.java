@@ -264,6 +264,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         controllerLook = new PlayerControllerLook(this);
         controllerMove = new PlayerControllerMove(this);
         navigation = new PlayerNavigation(this, world);
+        invulnerableTicks = 0;
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
 
         setSkinFlags((byte) 0xFF);
