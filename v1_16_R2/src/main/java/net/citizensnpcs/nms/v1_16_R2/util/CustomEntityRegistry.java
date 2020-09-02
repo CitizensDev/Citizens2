@@ -24,7 +24,8 @@ public class CustomEntityRegistry extends RegistryBlocks {
 
     @SuppressWarnings("unchecked")
     public CustomEntityRegistry(RegistryBlocks<EntityTypes<?>> original) throws Throwable {
-        super(original.a().getNamespace(), (ResourceKey<IRegistry<EntityTypes<?>>>) IREGISTRY_RESOURCE_KEY.invoke(original),
+        super(original.a().getNamespace(),
+                (ResourceKey<IRegistry<EntityTypes<?>>>) IREGISTRY_RESOURCE_KEY.invoke(original),
                 (Lifecycle) IREGISTRY_LIFECYCLE.invoke(original));
         this.wrapped = original;
     }
@@ -106,11 +107,11 @@ public class CustomEntityRegistry extends RegistryBlocks {
         entityIds.put(entityClass, entityId);
     }
 
+    private static final MethodHandle IREGISTRY_LIFECYCLE = NMS.getGetter(IRegistry.class, "bf");
     // replace regex
     // ([A-Z_]+).*?a\(E(.*?)::new.*?$
     // minecraftClassMap.put(EntityTypes.\1, E\2.class);
     private static final MethodHandle IREGISTRY_RESOURCE_KEY = NMS.getGetter(IRegistry.class, "b");
-    private static final MethodHandle IREGISTRY_LIFECYCLE = NMS.getGetter(IRegistry.class, "bf");
     private static final BiMap<EntityTypes, Class<?>> minecraftClassMap = HashBiMap.create();
     static {
         minecraftClassMap.put(EntityTypes.AREA_EFFECT_CLOUD, EntityAreaEffectCloud.class);
@@ -174,6 +175,7 @@ public class CustomEntityRegistry extends RegistryBlocks {
         minecraftClassMap.put(EntityTypes.PHANTOM, EntityPhantom.class);
         minecraftClassMap.put(EntityTypes.PIG, EntityPig.class);
         minecraftClassMap.put(EntityTypes.PIGLIN, EntityPiglin.class);
+        minecraftClassMap.put(EntityTypes.PIGLIN_BRUTE, EntityPiglinBrute.class);
         minecraftClassMap.put(EntityTypes.PILLAGER, EntityPillager.class);
         minecraftClassMap.put(EntityTypes.POLAR_BEAR, EntityPolarBear.class);
         minecraftClassMap.put(EntityTypes.TNT, EntityTNTPrimed.class);
