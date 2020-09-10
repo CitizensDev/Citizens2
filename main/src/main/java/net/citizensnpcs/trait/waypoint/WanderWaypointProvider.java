@@ -117,6 +117,7 @@ public class WanderWaypointProvider
                 if (currentGoal != null) {
                     currentGoal.unpause();
                 }
+                markers.destroyMarkers();
             }
 
             private String formatLoc(Location location) {
