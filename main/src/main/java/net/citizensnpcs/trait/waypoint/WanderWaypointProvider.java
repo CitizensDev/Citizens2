@@ -157,21 +157,21 @@ public class WanderWaypointProvider
                 } else if (message.startsWith("regions")) {
                     event.setCancelled(true);
                     editingRegions = !editingRegions;
-                    if (editingRegions) {
-                        for (Location regionCentre : regionCentres) {
-                            Entity entity = markers.createMarker(regionCentre, regionCentre);
-                            entity.setMetadata("wandermarker",
-                                    new FixedMetadataValue(CitizensAPI.getPlugin(), regionCentre));
-                        }
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                        @Override
+                        public void run() {
+                            if (editingRegions) {
+                                for (Location regionCentre : regionCentres) {
+                                    Entity entity = markers.createMarker(regionCentre, regionCentre);
+                                    entity.setMetadata("wandermarker",
+                                            new FixedMetadataValue(CitizensAPI.getPlugin(), regionCentre));
+                                }
                                 Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_REGION_EDITING_START);
+                            } else {
+                                markers.destroyMarkers();
                             }
-                        });
-                    } else {
-                        markers.destroyMarkers();
-                    }
+                        }
+                    });
                 } else if (message.startsWith("delay")) {
                     event.setCancelled(true);
                     try {
@@ -186,9 +186,7 @@ public class WanderWaypointProvider
                                 Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay);
                             }
                         });
-                    } catch (
-
-                    Exception e) {
+                    } catch (Exception e) {
                         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                             @Override
                             public void run() {

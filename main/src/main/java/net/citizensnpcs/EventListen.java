@@ -126,7 +126,7 @@ public class EventListen implements Listener {
             break;
         }
         if (limit < 0)
-            return;
+            return; 
         int owned = 0;
         for (NPC npc : CitizensAPI.getNPCRegistry()) {
             if (!event.getNPC().equals(npc) && npc.hasTrait(Owner.class)
