@@ -171,8 +171,7 @@ public class CitizensTraitFactory implements TraitFactory {
     public void registerTrait(TraitInfo info) {
         Preconditions.checkNotNull(info, "info cannot be null");
         if (registered.containsKey(info.getTraitName())) {
-            System.out.println(info.getTraitClass());
-            throw new IllegalArgumentException("trait name already registered");
+            throw new IllegalArgumentException("Trait name " + info.getTraitName() + " already registered");
         }
         registered.put(info.getTraitName(), info);
         if (info.isDefaultTrait()) {

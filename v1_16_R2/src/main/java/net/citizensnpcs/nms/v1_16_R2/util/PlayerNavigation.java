@@ -40,7 +40,7 @@ public class PlayerNavigation extends NavigationAbstract {
     protected int e;
     protected int f;
     private final AttributeModifiable followRange;
-    protected Vec3D g = Vec3D.a;
+    protected Vec3D g = Vec3D.ORIGIN;
     protected BaseBlockPosition h = BaseBlockPosition.ZERO;
     protected long i;
     protected long j;
@@ -54,10 +54,11 @@ public class PlayerNavigation extends NavigationAbstract {
     private int q;
     private float r = 1.0F;
     private final PlayerPathfinder s;
+    private boolean t;
 
     public PlayerNavigation(EntityHumanNPC entityinsentient, World world) {
         super(getDummyInsentient(entityinsentient, world), world);
-        this.g = Vec3D.a;
+        this.g = Vec3D.ORIGIN;
         this.l = 0.5F;
         this.r = 1.0F;
         this.a = entityinsentient;
@@ -232,8 +233,12 @@ public class PlayerNavigation extends NavigationAbstract {
     @Override
     protected void a(Vec3D var0) {
         if (this.e - this.f > 100) {
-            if (var0.distanceSquared(this.g) < 2.25D)
+            if (var0.distanceSquared(this.g) < 2.25D) {
+                this.t = true;
                 o();
+            } else {
+                this.t = false;
+            }
             this.f = this.e;
             this.g = var0;
         }
@@ -306,7 +311,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     protected Vec3D b() {
-        return new Vec3D(this.a.locX(), t(), this.a.locZ());
+        return new Vec3D(this.a.locX(), u(), this.a.locZ());
     }
 
     @Override
@@ -399,6 +404,7 @@ public class PlayerNavigation extends NavigationAbstract {
         this.h = BaseBlockPosition.ZERO;
         this.i = 0L;
         this.k = 0.0D;
+        this.t = false;
     }
 
     public boolean f() {
@@ -509,7 +515,12 @@ public class PlayerNavigation extends NavigationAbstract {
         }
     }
 
-    private int t() {
+    @Override
+    public boolean t() {
+        return this.t;
+    }
+
+    private int u() {
         if (!this.a.isInWater() || !r())
             return MathHelper.floor(this.a.locY() + 0.5D);
         int var0 = MathHelper.floor(this.a.locY());
