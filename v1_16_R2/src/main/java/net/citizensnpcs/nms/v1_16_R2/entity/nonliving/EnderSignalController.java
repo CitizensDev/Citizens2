@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R2.entity.nonliving;
 
-import net.citizensnpcs.nms.v1_16_R2.entity.MobEntityController;
-import net.citizensnpcs.nms.v1_16_R2.util.NMSImpl;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R2.entity.CraftEnderSignal;
@@ -12,6 +9,8 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_16_R2.entity.MobEntityController;
+import net.citizensnpcs.nms.v1_16_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
@@ -72,6 +71,19 @@ public class EnderSignalController extends MobEntityController {
         }
 
         @Override
+        public CraftEntity getBukkitEntity() {
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new EnderSignalNPC(this));
+            }
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+
+        @Override
         public void i(double x, double y, double z) {
             if (npc == null) {
                 super.i(x, y, z);
@@ -91,19 +103,6 @@ public class EnderSignalController extends MobEntityController {
             // when another entity collides, this method is called to push the
             // NPC so we prevent it from doing anything if the event is
             // cancelled.
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
-                NMSImpl.setBukkitEntity(this, new EnderSignalNPC(this));
-            }
-            return super.getBukkitEntity();
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
 
         @Override

@@ -61,7 +61,8 @@ public class HumanController extends AbstractEntityController {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                if (getBukkitEntity() == null || !getBukkitEntity().isValid())
+                if (getBukkitEntity() == null || !getBukkitEntity().isValid()
+                        || getBukkitEntity() != handle.getBukkitEntity())
                     return;
                 boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
                         Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());

@@ -1628,6 +1628,15 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
+    public static EntitySize getSize(Entity entity) {
+        try {
+            return (EntitySize) SIZE_FIELD_GETTER.invoke(entity);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static SoundEffect getSoundEffect(NPC npc, SoundEffect snd, String meta) {
         return npc == null || !npc.data().has(meta) ? snd
                 : IRegistry.SOUND_EVENT.get(new MinecraftKey(npc.data().get(meta, snd == null ? "" : snd.toString())));
@@ -1772,6 +1781,14 @@ public class NMSImpl implements NMSBridge {
                     entity.move(EnumMoveType.SELF, new Vec3D(f, 0.0D, f));
                 }
             }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setSize(Entity entity, EntitySize size) {
+        try {
+            SIZE_FIELD_SETTER.invoke(entity, size);
         } catch (Throwable e) {
             e.printStackTrace();
         }
