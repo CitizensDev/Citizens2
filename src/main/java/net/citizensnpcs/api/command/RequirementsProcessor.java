@@ -47,7 +47,7 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
         }
 
         if (requirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
-                && !npc.getTrait(Owner.class).isOwnedBy(sender)) {
+                && !npc.getOrAddTrait(Owner.class).isOwnedBy(sender)) {
             throw new RequirementMissingException(Messaging.tr(CommandMessages.MUST_BE_OWNER));
         }
 
@@ -67,7 +67,7 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
         }
         types.removeAll(Sets.newHashSet(requirements.excludedTypes()));
 
-        EntityType type = npc.getTrait(MobType.class).getType();
+        EntityType type = npc.getOrAddTrait(MobType.class).getType();
         if (!types.contains(type)) {
             throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE,
                     type.name().toLowerCase().replace('_', ' ')));

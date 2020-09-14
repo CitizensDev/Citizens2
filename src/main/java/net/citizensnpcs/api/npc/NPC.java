@@ -163,8 +163,31 @@ public interface NPC extends Agent, Cloneable {
      * @param trait
      *            Trait to get
      * @return Trait with the given name
+     * 
+     * @deprecated for intransparent naming. Use {@link #getOrAddTrait(Class)} for the same behavior. 
      */
+    @Deprecated
     public <T extends Trait> T getTrait(Class<T> trait);
+    
+    /**
+     * Gets a trait from the given class. If the NPC does not currently have the trait then it will be created and
+     * attached using {@link #addTrait(Class)} .
+     *
+     * @param trait
+     *            Trait to get
+     * @return Trait with the given name
+     */
+    public <T extends Trait> T getOrAddTrait(Class<T> trait);
+    
+    /**
+     * Gets a trait from the given class. If the NPC does not currently have the trait, 
+     * <code>null</code> will be returned.
+     *
+     * @param trait
+     *            Trait to get
+     * @return Trait with the given name
+     */
+    public <T extends Trait> T getTraitNullable(Class<T> trait);
 
     /**
      * Returns the currently attached {@link Trait}s
