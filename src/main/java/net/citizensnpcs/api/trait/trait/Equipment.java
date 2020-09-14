@@ -174,7 +174,7 @@ public class Equipment extends Trait {
     public void set(int slot, ItemStack item) {
         equipment[slot] = item;
         if (slot == 0) {
-            npc.getTrait(Inventory.class).setItemInHand(item);
+            npc.getOrAddTrait(Inventory.class).setItemInHand(item);
         }
         if (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof ArmorStand))
             return;

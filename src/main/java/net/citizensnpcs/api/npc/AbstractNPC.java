@@ -131,7 +131,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public NPC copy() {
-        NPC copy = registry.createNPC(getTrait(MobType.class).getType(), getFullName());
+        NPC copy = registry.createNPC(getOrAddTrait(MobType.class).getType(), getFullName());
         DataKey key = new MemoryDataKey();
         save(key);
         copy.load(key);
@@ -211,12 +211,12 @@ public abstract class AbstractNPC implements NPC {
     }
 
     protected EntityType getEntityType() {
-        return isSpawned() ? getEntity().getType() : getTrait(MobType.class).getType();
+        return isSpawned() ? getEntity().getType() : getOrAddTrait(MobType.class).getType();
     }
 
     @Override
     public String getFullName() {
-        int nameLength = SpigotUtil.getMaxNameLength(getTrait(MobType.class).getType());
+        int nameLength = SpigotUtil.getMaxNameLength(getOrAddTrait(MobType.class).getType());
         if (name.length() > nameLength) {
             Messaging.severe("ID", id, "created with name length greater than " + nameLength + ", truncating", name,
                     "to", name.substring(0, nameLength));
@@ -236,6 +236,16 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public <T extends Trait> T getOrAddTrait(Class<T> clazz) {
+        Trait trait = traits.get(clazz);
+        if (trait == null) {
+            trait = getTraitFor(clazz);
+            addTrait(trait);
+        }
+        return trait != null ? clazz.cast(trait) : null;
+    }
+
+    @Override
     public NPCRegistry getOwningRegistry() {
         return registry;
     }
@@ -245,24 +255,14 @@ public abstract class AbstractNPC implements NPC {
     public <T extends Trait> T getTrait(Class<T> clazz) {
         return getOrAddTrait(clazz);
     }
-    
-    @Override
-    public <T extends Trait> T getOrAddTrait(Class<T> clazz) {
-        Trait trait = traits.get(clazz);
-        if (trait == null) {
-            trait = getTraitFor(clazz);
-            addTrait(trait);
-        }
-        return trait != null ? clazz.cast(trait) : null;
-    }
-    
-    @Override
-    public <T extends Trait> T getTraitNullable(Class<T> clazz) {
-        return clazz.cast(traits.get(clazz)); // #cast allows null as value
-    }
 
     protected Trait getTraitFor(Class<? extends Trait> clazz) {
         return CitizensAPI.getTraitFactory().getTrait(clazz);
+    }
+
+    @Override
+    public <T extends Trait> T getTraitNullable(Class<T> clazz) {
+        return clazz.cast(traits.get(clazz)); // #cast allows null as value
     }
 
     @Override
@@ -313,7 +313,7 @@ public abstract class AbstractNPC implements NPC {
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
             Trait trait;
             if (hasTrait(clazz)) {
-                trait = getTrait(clazz);
+                trait = getOrAddTrait(clazz);
             } else {
                 trait = CitizensAPI.getTraitFactory().getTrait(clazz);
                 if (trait == null) {
