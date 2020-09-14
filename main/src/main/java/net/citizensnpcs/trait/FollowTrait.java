@@ -44,7 +44,7 @@ public class FollowTrait extends Trait {
 
     @EventHandler
     private void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (isActive() && event.getEntity().equals(player)) {
+        if (isActive() && protect && event.getEntity().equals(player)) {
             Entity damager = event.getDamager();
             if (event.getEntity() instanceof Projectile) {
                 Projectile projectile = (Projectile) event.getEntity();
