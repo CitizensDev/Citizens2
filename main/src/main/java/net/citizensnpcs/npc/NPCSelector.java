@@ -102,7 +102,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         List<MetadataValue> selected = player.getMetadata("selected");
         if (selected == null || selected.size() == 0 || selected.get(0).asInt() != npc.getId()) {
             if (Util.matchesItemInHand(player, Setting.SELECTION_ITEM.asString())
-                    && npc.getTrait(Owner.class).isOwnedBy(player)) {
+                    && npc.getOrAddTrait(Owner.class).isOwnedBy(player)) {
                 player.removeMetadata("selected", plugin);
                 select(player, npc);
                 Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), npc);

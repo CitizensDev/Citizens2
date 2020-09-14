@@ -19,7 +19,7 @@ public class GenericEquipper implements Equipper {
     public void equip(Player equipper, NPC toEquip) {
         // TODO: migrate to an inventory-GUI system
         ItemStack hand = equipper.getInventory().getItemInHand();
-        Equipment trait = toEquip.getTrait(Equipment.class);
+        Equipment trait = toEquip.getOrAddTrait(Equipment.class);
         EquipmentSlot slot = EquipmentSlot.HAND;
         Material type = hand == null ? Material.AIR : hand.getType();
         // First, determine the slot to edit

@@ -261,7 +261,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public String getSkinName() {
-        String skinName = npc.getTrait(SkinTrait.class).getSkinName();
+        String skinName = npc.getOrAddTrait(SkinTrait.class).getSkinName();
         if (skinName == null) {
             skinName = npc.getName();
         }
@@ -347,7 +347,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         cA();
         boolean navigating = npc.getNavigator().isNavigating();
         if (!navigating && getBukkitEntity() != null
-                && (!npc.hasTrait(Gravity.class) || npc.getTrait(Gravity.class).hasGravity())
+                && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
             g(0, 0);
         }
@@ -390,17 +390,17 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public void setSkinName(String name) {
-        npc.getTrait(SkinTrait.class).setSkinName(name);
+        npc.getOrAddTrait(SkinTrait.class).setSkinName(name);
     }
 
     @Override
     public void setSkinName(String name, boolean forceUpdate) {
-        npc.getTrait(SkinTrait.class).setSkinName(name, forceUpdate);
+        npc.getOrAddTrait(SkinTrait.class).setSkinName(name, forceUpdate);
     }
 
     @Override
     public void setSkinPersistent(String skinName, String signature, String data) {
-        npc.getTrait(SkinTrait.class).setSkinPersistent(skinName, signature, data);
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(skinName, signature, data);
     }
 
     public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
@@ -447,7 +447,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
             this.cserver = (CraftServer) Bukkit.getServer();
-            npc.getTrait(Inventory.class);
+            npc.getOrAddTrait(Inventory.class);
         }
 
         @Override

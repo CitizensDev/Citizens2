@@ -80,7 +80,7 @@ public class Skin {
         Preconditions.checkNotNull(entity);
 
         NPC npc = entity.getNPC();
-        SkinTrait skinTrait = npc.getTrait(SkinTrait.class);
+        SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
         // Use npc cached skin if available.
         // If npc requires latest skin, cache is used for faster availability until the latest skin can be loaded.
         String cachedName = npc.data().get(CACHED_SKIN_UUID_NAME_METADATA);
@@ -103,7 +103,7 @@ public class Skin {
             String defaultSkinName = ChatColor.stripColor(npc.getName()).toLowerCase();
 
             if (npc.hasTrait(SkinTrait.class) && this.skinName.equals(defaultSkinName)
-                    && !npc.getTrait(SkinTrait.class).fetchDefaultSkin()) {
+                    && !npc.getOrAddTrait(SkinTrait.class).fetchDefaultSkin()) {
                 return false;
             }
             if (hasFetched) {
@@ -371,7 +371,7 @@ public class Skin {
 
     private static void setNPCSkinData(SkinnableEntity entity, String skinName, UUID skinId, Property skinProperty) {
         NPC npc = entity.getNPC();
-        SkinTrait skinTrait = npc.getTrait(SkinTrait.class);
+        SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
 
         // cache skins for faster initial skin availability and
         // for use when the latest skin is not required.

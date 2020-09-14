@@ -35,7 +35,7 @@ public class WaypointCommands {
             max = 5,
             permission = "citizens.waypoints.add")
     public void add(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        WaypointProvider provider = npc.getTrait(Waypoints.class).getCurrentProvider();
+        WaypointProvider provider = npc.getOrAddTrait(Waypoints.class).getCurrentProvider();
         if (!(provider instanceof LinearWaypointProvider))
             throw new CommandException();
         List<Waypoint> waypoints = (List<Waypoint>) ((LinearWaypointProvider) provider).waypoints();
@@ -88,7 +88,7 @@ public class WaypointCommands {
             flags = "d",
             permission = "citizens.waypoints.provider")
     public void provider(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        Waypoints waypoints = npc.getTrait(Waypoints.class);
+        Waypoints waypoints = npc.getOrAddTrait(Waypoints.class);
         if (args.argsLength() == 1) {
             if (args.hasFlag('d')) {
                 waypoints.describeProviders(sender);

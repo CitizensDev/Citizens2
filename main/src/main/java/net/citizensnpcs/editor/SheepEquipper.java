@@ -20,20 +20,20 @@ public class SheepEquipper implements Equipper {
         ItemStack hand = equipper.getInventory().getItemInHand();
         Sheep sheep = (Sheep) toEquip.getEntity();
         if (hand.getType() == Material.SHEARS) {
-            Messaging.sendTr(equipper, toEquip.getTrait(SheepTrait.class).toggleSheared() ? Messages.SHEARED_SET
+            Messaging.sendTr(equipper, toEquip.getOrAddTrait(SheepTrait.class).toggleSheared() ? Messages.SHEARED_SET
                     : Messages.SHEARED_STOPPED, toEquip.getName());
         } else if (hand.getType() == (SpigotUtil.isUsing1_13API() ? Material.INK_SAC : Material.valueOf("INK_SACK"))) {
             Dye dye = (Dye) hand.getData();
             if (sheep.getColor() == dye.getColor())
                 return;
             DyeColor color = dye.getColor();
-            toEquip.getTrait(WoolColor.class).setColor(color);
+            toEquip.getOrAddTrait(WoolColor.class).setColor(color);
             Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED, toEquip.getName(),
                     color.name().toLowerCase().replace("_", " "));
 
             hand.setAmount(hand.getAmount() - 1);
         } else {
-            toEquip.getTrait(WoolColor.class).setColor(DyeColor.WHITE);
+            toEquip.getOrAddTrait(WoolColor.class).setColor(DyeColor.WHITE);
             Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED, toEquip.getName(), "white");
         }
         equipper.getInventory().setItemInHand(hand);

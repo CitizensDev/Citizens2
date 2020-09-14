@@ -45,7 +45,7 @@ public class TraderLlamaController extends MobEntityController {
 
     @Override
     public void spawn(Location at, NPC npc) {
-        npc.getTrait(HorseModifiers.class);
+        npc.getOrAddTrait(HorseModifiers.class);
         super.spawn(at, npc);
     }
 

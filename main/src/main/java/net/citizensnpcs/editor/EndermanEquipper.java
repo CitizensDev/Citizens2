@@ -42,7 +42,7 @@ public class EndermanEquipper implements Equipper {
                 hand.setAmount(hand.getAmount() - 1);
                 equipper.getInventory().setItemInHand(hand);
             }
-            npc.getTrait(Equipment.class).set(0, set);
+            npc.getOrAddTrait(Equipment.class).set(0, set);
         } else {
             MaterialData carried = ((Enderman) npc.getEntity()).getCarriedMaterial();
             if (carried.getItemType() == Material.AIR) {
@@ -61,7 +61,7 @@ public class EndermanEquipper implements Equipper {
                 hand.setAmount(hand.getAmount() - 1);
                 equipper.getInventory().setItemInHand(hand);
             }
-            npc.getTrait(Equipment.class).set(0, set);
+            npc.getOrAddTrait(Equipment.class).set(0, set);
         }
     }
 }
