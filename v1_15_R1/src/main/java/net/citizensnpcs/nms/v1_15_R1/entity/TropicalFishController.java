@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_15_R1.entity;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftTropicalFish;
@@ -21,9 +20,14 @@ import net.minecraft.server.v1_15_R1.ControllerMove;
 import net.minecraft.server.v1_15_R1.DamageSource;
 import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityBoat;
+import net.minecraft.server.v1_15_R1.EntityHuman;
+import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_15_R1.EntityTropicalFish;
 import net.minecraft.server.v1_15_R1.EntityTypes;
+import net.minecraft.server.v1_15_R1.EnumHand;
 import net.minecraft.server.v1_15_R1.IBlockData;
+import net.minecraft.server.v1_15_R1.ItemStack;
+import net.minecraft.server.v1_15_R1.Items;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import net.minecraft.server.v1_15_R1.SoundEffect;
 import net.minecraft.server.v1_15_R1.Vec3D;
@@ -62,6 +66,17 @@ public class TropicalFishController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityHuman entityhuman, EnumHand enumhand) {
+            if (npc == null || !npc.isProtected())
+                return super.a(entityhuman, enumhand);
+            ItemStack itemstack = entityhuman.b(enumhand);
+            if (itemstack.getItem() == Items.WATER_BUCKET && isAlive()) {
+                return false;
+            }
+            return super.a(entityhuman, enumhand);
         }
 
         @Override

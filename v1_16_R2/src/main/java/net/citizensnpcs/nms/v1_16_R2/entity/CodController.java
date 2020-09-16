@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R2.entity;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_16_R2.EntityMinecartAbstract;
 import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R2.entity.CraftCod;
 import org.bukkit.craftbukkit.v1_16_R2.entity.CraftEntity;
@@ -22,8 +21,14 @@ import net.minecraft.server.v1_16_R2.DamageSource;
 import net.minecraft.server.v1_16_R2.Entity;
 import net.minecraft.server.v1_16_R2.EntityBoat;
 import net.minecraft.server.v1_16_R2.EntityCod;
+import net.minecraft.server.v1_16_R2.EntityHuman;
+import net.minecraft.server.v1_16_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R2.EntityTypes;
+import net.minecraft.server.v1_16_R2.EnumHand;
+import net.minecraft.server.v1_16_R2.EnumInteractionResult;
 import net.minecraft.server.v1_16_R2.IBlockData;
+import net.minecraft.server.v1_16_R2.ItemStack;
+import net.minecraft.server.v1_16_R2.Items;
 import net.minecraft.server.v1_16_R2.NBTTagCompound;
 import net.minecraft.server.v1_16_R2.SoundEffect;
 import net.minecraft.server.v1_16_R2.Vec3D;
@@ -79,6 +84,17 @@ public class CodController extends MobEntityController {
         }
 
         @Override
+        public EnumInteractionResult b(EntityHuman entityhuman, EnumHand enumhand) {
+            if (npc == null || !npc.isProtected())
+                return super.b(entityhuman, enumhand);
+            ItemStack itemstack = entityhuman.b(enumhand);
+            if (itemstack.getItem() == Items.WATER_BUCKET && isAlive()) {
+                return EnumInteractionResult.FAIL;
+            }
+            return super.b(entityhuman, enumhand);
+        }
+
+        @Override
         public boolean b(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 return super.b(f, f1);
@@ -108,15 +124,6 @@ public class CodController extends MobEntityController {
         }
 
         @Override
-        public void g(Vec3D vec3d) {
-            if (npc == null || !npc.isFlyable()) {
-                super.g(vec3d);
-            } else {
-                NMSImpl.flyingMoveLogic(this, vec3d);
-            }
-        }
-
-        @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
             if (npc == null) {
                 super.enderTeleportTo(d0, d1, d2);
@@ -126,6 +133,15 @@ public class CodController extends MobEntityController {
             Bukkit.getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
                 super.enderTeleportTo(d0, d1, d2);
+            }
+        }
+
+        @Override
+        public void g(Vec3D vec3d) {
+            if (npc == null || !npc.isFlyable()) {
+                super.g(vec3d);
+            } else {
+                NMSImpl.flyingMoveLogic(this, vec3d);
             }
         }
 
