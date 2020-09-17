@@ -1391,6 +1391,22 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "pathto [x] [y] [z]",
+            desc = "Starts pathfinding to a certain location",
+            modifiers = { "pathto" },
+            min = 4,
+            max = 4,
+            permission = "citizens.npc.pathto")
+    public void pathto(CommandContext args, CommandSender sender, NPC npc) {
+        Location loc = npc.getStoredLocation();
+        loc.setX(args.getDouble(1));
+        loc.setY(args.getDouble(2));
+        loc.setZ(args.getDouble(3));
+        npc.getNavigator().setTarget(loc);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "playerlist (-a,r)",
             desc = "Sets whether the NPC is put in the playerlist",
             modifiers = { "playerlist" },
