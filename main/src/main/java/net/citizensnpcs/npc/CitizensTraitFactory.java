@@ -98,9 +98,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(WolfModifiers.class));
         registerTrait(TraitInfo.create(VillagerProfession.class));
 
-        for (String trait : registered.keySet()) {
-            INTERNAL_TRAITS.add(trait);
-        }
+        INTERNAL_TRAITS.addAll(registered.keySet());
     }
 
     @Override
