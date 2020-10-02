@@ -102,7 +102,7 @@ public class CitizensNPC extends AbstractNPC {
                     getEntity().isValid());
             return false;
         }
-        boolean keepSelected = getTrait(Spawned.class).shouldSpawn();
+        boolean keepSelected = getOrAddTrait(Spawned.class).shouldSpawn();
         if (!keepSelected) {
             data().remove("selectors");
         }
@@ -155,7 +155,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public Location getStoredLocation() {
-        return isSpawned() ? getEntity().getLocation() : getTrait(CurrentLocation.class).getLocation();
+        return isSpawned() ? getEntity().getLocation() : getOrAddTrait(CurrentLocation.class).getLocation();
     }
 
     @Override
@@ -173,8 +173,8 @@ public class CitizensNPC extends AbstractNPC {
     public void load(final DataKey root) {
         super.load(root);
         // Spawn the NPC
-        CurrentLocation spawnLocation = getTrait(CurrentLocation.class);
-        if (getTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
+        CurrentLocation spawnLocation = getOrAddTrait(CurrentLocation.class);
+        if (getOrAddTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
             if (spawnLocation.getLocation() != null) {
                 spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
             } else {
@@ -262,7 +262,7 @@ public class CitizensNPC extends AbstractNPC {
             at.getChunk().load();
         }
 
-        getTrait(CurrentLocation.class).setLocation(at);
+        getOrAddTrait(CurrentLocation.class).setLocation(at);
         entityController.spawn(at, this);
 
         getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
@@ -292,8 +292,8 @@ public class CitizensNPC extends AbstractNPC {
         NMS.setBodyYaw(getEntity(), at.getYaw());
 
         // Set the spawned state
-        getTrait(CurrentLocation.class).setLocation(at);
-        getTrait(Spawned.class).setSpawned(true);
+        getOrAddTrait(CurrentLocation.class).setLocation(at);
+        getOrAddTrait(Spawned.class).setSpawned(true);
 
         NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at, reason);
         Bukkit.getPluginManager().callEvent(spawnEvent);
@@ -436,11 +436,11 @@ public class CitizensNPC extends AbstractNPC {
             return;
         }
 
-        getTrait(ScoreboardTrait.class).apply(team, nameVisibility);
+        getOrAddTrait(ScoreboardTrait.class).apply(team, nameVisibility);
     }
 
     private void updateFlyableState() {
-        EntityType type = isSpawned() ? getEntity().getType() : getTrait(MobType.class).getType();
+        EntityType type = isSpawned() ? getEntity().getType() : getOrAddTrait(MobType.class).getType();
         if (type == null)
             return;
         if (!Util.isAlwaysFlyable(type))
@@ -449,7 +449,7 @@ public class CitizensNPC extends AbstractNPC {
             data().setPersistent(NPC.FLYABLE_METADATA, true);
         }
         if (!hasTrait(Gravity.class)) {
-            getTrait(Gravity.class).setEnabled(true);
+            getOrAddTrait(Gravity.class).setEnabled(true);
         }
     }
 

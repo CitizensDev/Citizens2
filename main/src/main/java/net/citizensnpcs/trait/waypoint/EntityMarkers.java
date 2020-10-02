@@ -25,7 +25,7 @@ public class EntityMarkers<T> {
     private EntityType type;
 
     public EntityMarkers() {
-        this(EntityType.ENDER_SIGNAL);
+        this(DEFAULT_ENTITY_TYPE);
     }
 
     public EntityMarkers(EntityType type) {
@@ -75,5 +75,14 @@ public class EntityMarkers<T> {
         NPC npc = registry.createNPC(type, "");
         npc.spawn(at.clone().add(0.5, 0, 0.5), SpawnReason.CREATE);
         return npc.getEntity();
+    }
+
+    private static EntityType DEFAULT_ENTITY_TYPE = EntityType.ENDER_SIGNAL;
+
+    static {
+        try {
+            DEFAULT_ENTITY_TYPE = EntityType.valueOf("SHULKER_BULLET");
+        } catch (IllegalArgumentException e) {
+        }
     }
 }

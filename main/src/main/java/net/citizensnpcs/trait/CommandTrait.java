@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,6 +17,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -426,21 +428,29 @@ public class CommandTrait extends Trait {
                 }
             }
             long currentTimeSec = System.currentTimeMillis() / 1000;
-            if (lastUsed.containsKey(command.command)) {
-                if (currentTimeSec < lastUsed.get(command.command) + command.cooldown) {
+            String commandKey = BaseEncoding.base64().encode(command.command.getBytes());
+            // TODO: remove this in 2.0.28
+            for (Map map : Arrays.asList(lastUsed, nUsed)) {
+                if (map.containsKey(command)) {
+                    Object value = map.remove(command);
+                    map.put(commandKey, value);
+                }
+            }
+            if (lastUsed.containsKey(commandKey)) {
+                if (currentTimeSec < lastUsed.get(commandKey) + command.cooldown) {
                     return false;
                 }
-                lastUsed.remove(command.command);
+                lastUsed.remove(commandKey);
             }
-            int previouslyUsed = nUsed.getOrDefault(command.command, 0);
+            int previouslyUsed = nUsed.getOrDefault(commandKey, 0);
             if (command.n > 0 && command.n <= previouslyUsed) {
                 return false;
             }
             if (command.cooldown > 0) {
-                lastUsed.put(command.command, currentTimeSec);
+                lastUsed.put(commandKey, currentTimeSec);
             }
             if (command.n > 0) {
-                nUsed.put(command.command, previouslyUsed + 1);
+                nUsed.put(commandKey, previouslyUsed + 1);
             }
             lastUsedId = command.id;
             return true;

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_15_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_15_R1.AxisAlignedBB;
 import net.minecraft.server.v1_15_R1.Block;
@@ -266,7 +267,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                         }
 
                         var18 = this.a(var0, var1, var2);
-                        if (var16++ >= this.b.bD()) {
+                        if (var16++ >= Setting.MC_NAVIGATION_MAX_FALL_DISTANCE.asInt()) {
                             var18.l = PathType.BLOCKED;
                             var18.k = -1.0F;
                             return var18;

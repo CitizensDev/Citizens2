@@ -46,7 +46,7 @@ public class CopierEditor extends Editor {
             Location location = player.getLocation();
             location.getChunk().load();
             copy.teleport(location, TeleportCause.PLUGIN);
-            copy.getTrait(CurrentLocation.class).setLocation(location);
+            copy.getOrAddTrait(CurrentLocation.class).setLocation(location);
         }
 
         Messaging.sendTr(player, Messages.NPC_COPIED, npc.getName());

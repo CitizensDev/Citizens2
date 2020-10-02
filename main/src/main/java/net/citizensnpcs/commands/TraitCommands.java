@@ -86,7 +86,7 @@ public class TraitCommands {
             throw new CommandException(Messages.TRAIT_NOT_CONFIGURABLE);
         if (!npc.hasTrait(clazz))
             throw new CommandException(Messages.TRAIT_NOT_FOUND_ON_NPC);
-        CommandConfigurable trait = (CommandConfigurable) npc.getTrait(clazz);
+        CommandConfigurable trait = (CommandConfigurable) npc.getOrAddTrait(clazz);
         trait.configure(args);
     }
 

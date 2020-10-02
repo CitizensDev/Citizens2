@@ -130,7 +130,7 @@ public class EventListen implements Listener {
         int owned = 0;
         for (NPC npc : CitizensAPI.getNPCRegistry()) {
             if (!event.getNPC().equals(npc) && npc.hasTrait(Owner.class)
-                    && npc.getTrait(Owner.class).isOwnedBy(event.getCreator())) {
+                    && npc.getTraitNullable(Owner.class).isOwnedBy(event.getCreator())) {
                 owned++;
             }
         }
@@ -263,7 +263,7 @@ public class EventListen implements Listener {
             Player damager = (Player) damageEvent.getDamager();
 
             if (npc.hasTrait(ClickRedirectTrait.class)) {
-                npc = npc.getTrait(ClickRedirectTrait.class).getRedirectNPC();
+                npc = npc.getTraitNullable(ClickRedirectTrait.class).getRedirectNPC();
                 if (npc == null)
                     return;
             }
@@ -271,7 +271,7 @@ public class EventListen implements Listener {
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
             Bukkit.getPluginManager().callEvent(leftClickEvent);
             if (npc.hasTrait(CommandTrait.class)) {
-                npc.getTrait(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
+                npc.getTraitNullable(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
             }
         } else if (event instanceof EntityDamageByBlockEvent) {
             Bukkit.getPluginManager().callEvent(new NPCDamageByBlockEvent(npc, (EntityDamageByBlockEvent) event));
@@ -311,7 +311,7 @@ public class EventListen implements Listener {
     @EventHandler
     public void onEntityPortal(EntityPortalEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
-        if (npc == null && event.getEntityType() != EntityType.PLAYER)
+        if (npc == null || event.getEntityType() != EntityType.PLAYER)
             return;
         event.setCancelled(true);
         npc.despawn(DespawnReason.PENDING_RESPAWN);
@@ -483,7 +483,7 @@ public class EventListen implements Listener {
             return;
         }
         if (npc.hasTrait(ClickRedirectTrait.class)) {
-            npc = npc.getTrait(ClickRedirectTrait.class).getRedirectNPC();
+            npc = npc.getTraitNullable(ClickRedirectTrait.class).getRedirectNPC();
             if (npc == null)
                 return;
         }
@@ -494,7 +494,7 @@ public class EventListen implements Listener {
             event.setCancelled(true);
         }
         if (npc.hasTrait(CommandTrait.class)) {
-            npc.getTrait(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
+            npc.getTraitNullable(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
         }
     }
 
@@ -609,7 +609,7 @@ public class EventListen implements Listener {
         NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
         Bukkit.getPluginManager().callEvent(leftClickEvent);
         if (npc.hasTrait(CommandTrait.class)) {
-            npc.getTrait(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
+            npc.getTraitNullable(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
         }
     }
 
@@ -629,7 +629,7 @@ public class EventListen implements Listener {
             return;
         if ((Util.isHorse(npc.getEntity().getType()) || npc.getEntity().getType() == EntityType.BOAT
                 || npc.getEntity().getType() == EntityType.PIG || npc.getEntity() instanceof Minecart)
-                && (!npc.hasTrait(Controllable.class) || !npc.getTrait(Controllable.class).isEnabled())) {
+                && (!npc.hasTrait(Controllable.class) || !npc.getTraitNullable(Controllable.class).isEnabled())) {
             event.setCancelled(true);
         }
     }
@@ -706,7 +706,7 @@ public class EventListen implements Listener {
     }
 
     private boolean spawn(NPC npc) {
-        Location spawn = npc.getTrait(CurrentLocation.class).getLocation();
+        Location spawn = npc.getOrAddTrait(CurrentLocation.class).getLocation();
         if (spawn == null) {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Couldn't find a spawn location for despawned NPC id", npc.getId());

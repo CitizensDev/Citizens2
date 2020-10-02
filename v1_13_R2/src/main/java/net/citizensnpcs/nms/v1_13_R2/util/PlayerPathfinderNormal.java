@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
@@ -185,9 +186,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         return var11;
     }
 
-    private static final Method BLOCK_POSITION_B_C = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "f", false,
-            int.class, int.class, int.class);
-
     public PathType a(IBlockAccess var1, int var2, int var3, int var4, PathType var5) {
         if (var5 == PathType.WALKABLE) {
             BlockPosition.PooledBlockPosition var6 = BlockPosition.PooledBlockPosition.r();
@@ -312,7 +310,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
 
                     while (var2 > 0 && var12 == PathType.OPEN) {
                         --var2;
-                        if (var22++ >= this.b.bn()) {
+                        if (var22++ >= Setting.MC_NAVIGATION_MAX_FALL_DISTANCE.asInt()) {
                             return null;
                         }
 
@@ -516,8 +514,11 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         }
     }
 
+    private static final Method BLOCK_POSITION_B_C = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "f", false,
+            int.class, int.class, int.class);
+
     private static final Method GET_COLLISION_SHAPE = NMS.getMethod(IBlockData.class, "h", false, IBlockAccess.class,
             BlockPosition.class);
-    private static final Method IS_EMPTY = NMS.getMethod(VoxelShape.class, "b", false);
     private static final Method GET_FLUID = NMS.getMethod(IBlockAccess.class, "b", false, BlockPosition.class);
+    private static final Method IS_EMPTY = NMS.getMethod(VoxelShape.class, "b", false);
 }

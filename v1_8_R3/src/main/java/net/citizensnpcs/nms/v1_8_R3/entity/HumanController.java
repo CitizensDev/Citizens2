@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -33,17 +34,18 @@ public class HumanController extends AbstractEntityController {
         final WorldServer nmsWorld = ((CraftWorld) at.getWorld()).getHandle();
         String coloredName = npc.getFullName();
         String name = coloredName.length() > 16 ? coloredName.substring(0, 16) : coloredName;
-        if (npc.requiresNameHologram()) {
-            name = npc.getId() + UUID.randomUUID().toString().replace("-", "");
-            name = name.substring(0, 16);
-        }
-        
+
         UUID uuid = npc.getUniqueId();
         if (uuid.version() == 4) { // clear version
             long msb = uuid.getMostSignificantBits();
             msb &= ~0x0000000000004000L;
             msb |= 0x0000000000002000L;
             uuid = new UUID(msb, uuid.getLeastSignificantBits());
+        }
+
+        final String teamName = Util.getTeamName(uuid);
+        if (npc.requiresNameHologram()) {
+            name = teamName;
         }
 
         final GameProfile profile = new GameProfile(uuid, name);
@@ -59,7 +61,8 @@ public class HumanController extends AbstractEntityController {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
-                if (getBukkitEntity() == null || !getBukkitEntity().isValid())
+                if (getBukkitEntity() == null || !getBukkitEntity().isValid()
+                        || getBukkitEntity() != handle.getBukkitEntity())
                     return;
                 boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
                         Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
@@ -67,12 +70,14 @@ public class HumanController extends AbstractEntityController {
 
                 if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
                     Scoreboard scoreboard = Util.getDummyScoreboard();
-                    String teamName = Util.getTeamName(profile.getId());
 
                     Team team = scoreboard.getTeam(teamName);
                     int mode = 2;
                     if (team == null) {
                         team = scoreboard.registerNewTeam(teamName);
+                        if (npc.requiresNameHologram()) {
+                            team.setNameTagVisibility(NameTagVisibility.NEVER);
+                        }
                         mode = 0;
                     }
                     team.addPlayer(handle.getBukkitEntity());

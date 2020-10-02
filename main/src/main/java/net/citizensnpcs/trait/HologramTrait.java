@@ -53,7 +53,7 @@ public class HologramTrait extends Trait {
     private NPC createHologram(String line, double heightOffset) {
         NPC hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
         hologramNPC.addTrait(new ClickRedirectTrait(npc));
-        ArmorStandTrait trait = hologramNPC.getTrait(ArmorStandTrait.class);
+        ArmorStandTrait trait = hologramNPC.getOrAddTrait(ArmorStandTrait.class);
         trait.setVisible(false);
         trait.setSmall(true);
         trait.setMarker(true);
@@ -81,7 +81,7 @@ public class HologramTrait extends Trait {
 
     private double getMaxHeight() {
         return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight)
-                * (lines.size() + (npc.requiresNameHologram() ? 0 : -1));
+                * (lines.size() + (npc.requiresNameHologram() ? 0 : 1));
     }
 
     private void load() {
@@ -167,7 +167,11 @@ public class HologramTrait extends Trait {
     }
 
     public void setLine(int idx, String text) {
-        lines.set(idx, text);
+        if (idx == lines.size()) {
+            lines.add(idx, text);
+        } else {
+            lines.set(idx, text);
+        }
     }
 
     public void setLineHeight(double height) {

@@ -42,7 +42,7 @@ public class HorseSkeletonController extends MobEntityController {
 
     @Override
     public void spawn(Location at, NPC npc) {
-        npc.getTrait(HorseModifiers.class);
+        npc.getOrAddTrait(HorseModifiers.class);
         super.spawn(at, npc);
     }
 
@@ -210,7 +210,7 @@ public class HorseSkeletonController extends MobEntityController {
         public void mobTick() {
             super.mobTick();
             if (npc != null) {
-                if (npc.hasTrait(Controllable.class) && npc.getTrait(Controllable.class).isEnabled()) {
+                if (npc.hasTrait(Controllable.class) && npc.getOrAddTrait(Controllable.class).isEnabled()) {
                     riding = getBukkitEntity().getPassengers().size() > 0;
                     getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
                             .setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());
