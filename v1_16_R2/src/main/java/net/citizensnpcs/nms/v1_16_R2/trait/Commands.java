@@ -505,7 +505,7 @@ public class Commands {
                 throw new CommandUsageException();
             }
             trait.setLevel(args.getFlagInteger("level"));
-            output += Messaging.tr(Messages.VILLAGER_LEVEL_SET, args.getFlagInteger("level"));
+            output += " " + Messaging.tr(Messages.VILLAGER_LEVEL_SET, args.getFlagInteger("level"));
         }
         if (args.hasValueFlag("type")) {
             Villager.Type type = Util.matchEnum(Villager.Type.values(), args.getFlag("type"));
@@ -514,7 +514,7 @@ public class Commands {
                         Util.listValuesPretty(Villager.Type.values()));
             }
             trait.setType(type);
-            output += Messaging.tr(Messages.VILLAGER_TYPE_SET, args.getFlag("type"));
+            output += " " + Messaging.tr(Messages.VILLAGER_TYPE_SET, args.getFlag("type"));
         }
         if (args.hasValueFlag("profession")) {
             Profession parsed = Util.matchEnum(Profession.values(), args.getFlag("profession"));
@@ -523,10 +523,10 @@ public class Commands {
                         Joiner.on(',').join(Profession.values()));
             }
             npc.getOrAddTrait(VillagerProfession.class).setProfession(parsed);
-            output += Messaging.tr(Messages.PROFESSION_SET, npc.getName(), args.getFlag("profession"));
+            output += " " + Messaging.tr(Messages.PROFESSION_SET, npc.getName(), args.getFlag("profession"));
         }
         if (!output.isEmpty()) {
-            Messaging.send(sender, output);
+            Messaging.send(sender, output.trim());
         } else {
             throw new CommandUsageException();
         }
