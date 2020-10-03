@@ -144,6 +144,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             int x = base.getBlockX() + random.nextInt(2 * xrange + 1) - xrange;
             int y = base.getBlockY() + random.nextInt(2 * yrange + 1) - yrange;
             int z = base.getBlockZ() + random.nextInt(2 * xrange + 1) - xrange;
+            if (!base.getWorld().isChunkLoaded(x >> 4, z >> 4)) {
+                continue;
+            }
             Block block = base.getWorld().getBlockAt(x, y, z);
             if (MinecraftBlockExaminer.canStandOn(block)) {
                 if (filter != null && !filter.apply(block)) {
@@ -162,6 +165,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         for (int y = 0; y <= radius; y++) {
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
+                    if (!base.getWorld().isChunkLoaded(base.getX() + x >> 4, base.getZ() + z >> 4)) {
+                        continue;
+                    }
                     Block relative = base.getRelative(x, y, z);
                     if (canStandOn(relative.getRelative(BlockFace.DOWN))) {
                         return relative.getLocation();
@@ -179,6 +185,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         for (int y = -yradius; y <= yradius; y++) {
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
+                    if (!base.getWorld().isChunkLoaded(base.getX() + x >> 4, base.getZ() + z >> 4)) {
+                        continue;
+                    }
                     Block relative = base.getRelative(x, y, z);
                     if (canStandOn(relative.getRelative(BlockFace.DOWN))) {
                         return relative.getLocation();
