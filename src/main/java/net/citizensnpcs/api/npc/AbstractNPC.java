@@ -313,7 +313,7 @@ public abstract class AbstractNPC implements NPC {
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
             Trait trait;
             if (hasTrait(clazz)) {
-                trait = getOrAddTrait(clazz);
+                trait = getTraitNullable(clazz);
             } else {
                 trait = CitizensAPI.getTraitFactory().getTrait(clazz);
                 if (trait == null) {
