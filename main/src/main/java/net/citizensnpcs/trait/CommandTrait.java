@@ -172,6 +172,9 @@ public class CommandTrait extends Trait {
                         }
                     }
                     runCommand(player, command);
+                    if (executionMode == ExecutionMode.SEQUENTIAL) {
+                        break;
+                    }
                 }
             }
 
