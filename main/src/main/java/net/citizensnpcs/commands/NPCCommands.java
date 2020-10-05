@@ -173,6 +173,25 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "ai (true|false)",
+            desc = "Sets whether the NPC should use vanilla AI",
+            modifiers = { "ai" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.ai")
+    public void ai(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        boolean useAI = npc.useMinecraftAI();
+        if (args.argsLength() == 1) {
+            useAI = !useAI;
+        } else {
+            useAI = Boolean.parseBoolean(args.getString(1));
+        }
+        npc.setUseMinecraftAI(useAI);
+        Messaging.sendTr(sender, useAI ? Messages.USING_MINECRAFT_AI : Messages.NOT_USING_MINECRAFT_AI);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "anchor (--save [name]|--assume [name]|--remove [name]) (-a)(-c)",
             desc = "Changes/Saves/Lists NPC's location anchor(s)",
             flags = "ac",

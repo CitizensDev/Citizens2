@@ -225,6 +225,7 @@ public class Messages {
     public static final String NO_NPC_WITH_ID_FOUND = "citizens.commands.npc.spawn.missing-npc-id";
     public static final String NO_STORED_SPAWN_LOCATION = "citizens.commands.npc.spawn.no-location";
     public static final String NOT_LIVING_MOBTYPE = "citizens.commands.npc.create.not-living-mobtype";
+    public static final String NOT_USING_MINECRAFT_AI = "citizens.commands.npc.ai.stopped";
     public static final String NPC_ALREADY_SELECTED = "citizens.commands.npc.select.already-selected";
     public static final String NPC_ALREADY_SPAWNED = "citizens.commands.npc.spawn.already-spawned";
     public static final String NPC_COMMAND_HELP = "citizens.commands.npc.command.help";
@@ -364,6 +365,7 @@ public class Messages {
     public static final String TROPICALFISH_PATTERN_SET = "citizens.commands.npc.tropicalfish.pattern-set";
     public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";
     public static final String UNKNOWN_MATERIAL = "citizens.commands.npc.item.unknown-material";
+    public static final String USING_MINECRAFT_AI = "citizens.commands.npc.ai.started";
     public static final String VILLAGER_LEVEL_SET = "citizens.commands.npc.villager.level-set";
     public static final String VILLAGER_TYPE_SET = "citizens.commands.npc.villager.type-set";
     public static final String VULNERABLE_SET = "citizens.commands.npc.vulnerable.set";
