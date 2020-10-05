@@ -67,8 +67,9 @@ public class Translator {
 
     private MessageFormat getFormatter(String unreplaced) {
         MessageFormat formatter = messageFormatCache.get(unreplaced);
-        if (formatter == null)
+        if (formatter == null) {
             messageFormatCache.put(unreplaced, formatter = new MessageFormat(unreplaced));
+        }
         return formatter;
     }
 
@@ -214,6 +215,11 @@ public class Translator {
 
     public static void addTranslations(TranslationProvider... providers) {
         addTranslations(Arrays.asList(providers));
+    }
+
+    public static String format(String msg, Object... objects) {
+        MessageFormat formatter = instance.getFormatter(msg);
+        return formatter.format(objects);
     }
 
     private static Properties getDefaultBundleProperties() {
