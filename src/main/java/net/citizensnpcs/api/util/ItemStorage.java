@@ -374,6 +374,12 @@ public class ItemStorage {
 
     private static void serialiseMeta(DataKey key, ItemMeta meta) {
         key.removeKey("encoded-meta");
+        // TODO: remove when Spigot fixes the inability to serialise SkullMeta
+        if (meta instanceof SkullMeta) {
+            serialiseSkull(key, meta);
+            Bukkit.getPluginManager().callEvent(new CitizensSerialiseMetaEvent(key, meta));
+            return;
+        }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BukkitObjectOutputStream bukkitOut;
         try {
@@ -391,6 +397,80 @@ public class ItemStorage {
         key.setString("encoded-meta", encoded);
         Bukkit.getPluginManager().callEvent(new CitizensSerialiseMetaEvent(key, meta));
         return;
+    }
+
+    private static void serialiseSkull(DataKey key, ItemMeta meta) {
+        if (SUPPORTS_CUSTOM_MODEL_DATA) {
+            try {
+                if (meta.hasCustomModelData()) {
+                    key.setInt("custommodel", meta.getCustomModelData());
+                } else {
+                    key.removeKey("custommodel");
+                }
+            } catch (NoSuchMethodError e) {
+                SUPPORTS_CUSTOM_MODEL_DATA = false;
+            }
+        }
+        if (SUPPORTS_ATTRIBUTES) {
+            try {
+                key.removeKey("attributes");
+                for (Attribute attr : meta.getAttributeModifiers().keySet()) {
+                    int i = 0;
+                    for (AttributeModifier modifier : meta.getAttributeModifiers(attr)) {
+                        DataKey root = key.getRelative("attributes." + attr.name() + "." + i);
+                        root.setString("uuid", modifier.getUniqueId().toString());
+                        root.setString("name", modifier.getName());
+                        root.setDouble("amount", modifier.getAmount());
+                        root.setString("operation", modifier.getOperation().name());
+                        if (modifier.getSlot() != null) {
+                            root.setString("slot", modifier.getSlot().name());
+                        }
+                    }
+                    i++;
+                }
+            } catch (Throwable e) {
+                SUPPORTS_ATTRIBUTES = false;
+            }
+        }
+        key.removeKey("flags");
+        int j = 0;
+        for (ItemFlag flag : ItemFlag.values()) {
+            if (meta.hasItemFlag(flag)) {
+                key.setString("flags." + j++, flag.name());
+            }
+        }
+        if (meta instanceof Repairable) {
+            Repairable rep = (Repairable) meta;
+            key.setInt("repaircost", rep.getRepairCost());
+        } else {
+            key.removeKey("repaircost");
+        }
+        if (meta.hasLore()) {
+            List<String> lore = meta.getLore();
+            DataKey root = key.getRelative("lore");
+            for (int i = 0; i < lore.size(); i++) {
+                root.setString(Integer.toString(i), lore.get(i));
+            }
+        } else {
+            key.removeKey("lore");
+        }
+        if (meta.hasDisplayName()) {
+            key.setString("displayname", meta.getDisplayName());
+        } else {
+            key.removeKey("displayname");
+        }
+        if (meta instanceof SkullMeta) {
+            SkullMeta skull = (SkullMeta) meta;
+            String texture = CitizensAPI.getSkullMetaProvider().getTexture(skull);
+            if (texture == null) {
+                key.removeKey("skull.texture");
+            } else {
+                key.setString("skull.texture", CitizensAPI.getSkullMetaProvider().getTexture(skull));
+            }
+            key.setString("skull.owner", skull.getOwner());
+        } else {
+            key.removeKey("skull");
+        }
     }
 
     private static boolean SUPPORTS_1_14_API = true;
