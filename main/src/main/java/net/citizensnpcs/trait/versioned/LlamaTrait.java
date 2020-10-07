@@ -18,6 +18,14 @@ public class LlamaTrait extends Trait {
         super("llamatrait");
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
     @Override
     public void run() {
         if (npc.isSpawned() && npc.getEntity() instanceof Llama) {

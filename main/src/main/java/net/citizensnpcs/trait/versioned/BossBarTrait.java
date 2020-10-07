@@ -31,9 +31,25 @@ public class BossBarTrait extends Trait {
         super("bossbar");
     }
 
+    public BarColor getColor() {
+        return color;
+    }
+
+    public List<BarFlag> getFlags() {
+        return flags;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
     private boolean isBoss(Entity entity) {
         return entity.getType() == EntityType.ENDER_DRAGON || entity.getType() == EntityType.WITHER
                 || entity.getType() == EntityType.GUARDIAN;
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 
     @Override
@@ -65,6 +81,10 @@ public class BossBarTrait extends Trait {
 
     public void setFlags(Collection<BarFlag> flags) {
         this.flags = Lists.newArrayList(flags);
+    }
+
+    public void setFlags(List<BarFlag> flags) {
+        this.flags = flags;
     }
 
     public void setTitle(String title) {

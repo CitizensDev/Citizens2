@@ -20,6 +20,18 @@ public class PandaTrait extends Trait {
         super("pandatrait");
     }
 
+    public Panda.Gene getHiddenGene() {
+        return hiddenGene;
+    }
+
+    public Panda.Gene getMainGene() {
+        return mainGene;
+    }
+
+    public boolean isSitting() {
+        return sitting;
+    }
+
     @Override
     public void run() {
         if (npc.isSpawned() && npc.getEntity() instanceof Panda) {
@@ -38,6 +50,10 @@ public class PandaTrait extends Trait {
 
     public void setMainGene(Panda.Gene gene) {
         this.mainGene = gene;
+    }
+
+    public void setSitting(boolean sitting) {
+        this.sitting = sitting;
     }
 
     public boolean toggleSitting() {

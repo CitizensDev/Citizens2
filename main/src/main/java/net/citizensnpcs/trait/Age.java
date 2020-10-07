@@ -34,6 +34,10 @@ public class Age extends Trait implements Toggleable {
         Messaging.sendTr(sender, Messages.AGE_TRAIT_DESCRIPTION, npc.getName(), age, locked);
     }
 
+    public int getAge() {
+        return age;
+    }
+
     private boolean isAgeable() {
         return ageable != null;
     }

@@ -217,6 +217,10 @@ public class CommandTrait extends Trait {
         }
     }
 
+    public double getCost() {
+        return cost;
+    }
+
     public ExecutionMode getExecutionMode() {
         return executionMode;
     }

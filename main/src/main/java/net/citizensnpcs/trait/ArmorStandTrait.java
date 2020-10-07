@@ -41,6 +41,30 @@ public class ArmorStandTrait extends Trait {
         super("armorstandtrait");
     }
 
+    public boolean getGravity() {
+        return gravity;
+    }
+
+    public boolean getHasArms() {
+        return hasarms;
+    }
+
+    public boolean getHasBaseplate() {
+        return hasbaseplate;
+    }
+
+    public boolean isMarker() {
+        return marker;
+    }
+
+    public boolean isSmall() {
+        return small;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
     @Override
     public void onSpawn() {
         if (npc.getEntity() instanceof ArmorStand) {

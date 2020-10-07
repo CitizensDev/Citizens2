@@ -20,6 +20,14 @@ public class ShulkerTrait extends Trait {
         super("shulkertrait");
     }
 
+    public DyeColor getColor() {
+        return color;
+    }
+
+    public int getPeek() {
+        return peek;
+    }
+
     @Override
     public void onSpawn() {
         setPeek(peek);

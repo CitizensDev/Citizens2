@@ -28,6 +28,10 @@ public class SlimeSize extends Trait {
         Messaging.sendTr(sender, Messages.SIZE_DESCRIPTION, npc.getName(), size);
     }
 
+    public int getSize() {
+        return size;
+    }
+
     @Override
     public void onSpawn() {
         if (!(npc.getEntity() instanceof Slime)) {

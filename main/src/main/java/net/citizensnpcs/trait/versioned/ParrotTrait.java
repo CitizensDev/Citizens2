@@ -16,6 +16,10 @@ public class ParrotTrait extends Trait {
         super("parrottrait");
     }
 
+    public Variant getVariant() {
+        return variant;
+    }
+
     @Override
     public void run() {
         if (npc.isSpawned() && npc.getEntity() instanceof Parrot) {

@@ -51,4 +51,8 @@ public class Saddle extends Trait implements Toggleable {
     public String toString() {
         return "Saddle{" + saddle + "}";
     }
+
+    public boolean useSaddle() {
+        return saddle;
+    }
 }

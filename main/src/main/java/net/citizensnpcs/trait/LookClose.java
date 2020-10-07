@@ -96,6 +96,26 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         }
     }
 
+    public int getRandomLookDelay() {
+        return randomLookDelay;
+    }
+
+    public float[] getRandomLookPitchRange() {
+        return randomPitchRange;
+    }
+
+    public float[] getRandomLookYawRange() {
+        return randomYawRange;
+    }
+
+    public double getRange() {
+        return range;
+    }
+
+    public Player getTarget() {
+        return lookingAt;
+    }
+
     private boolean hasInvalidTarget() {
         if (lookingAt == null)
             return true;
@@ -117,6 +137,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             }
         }
         return false;
+    }
+
+    public boolean isRandomLook() {
+        return enableRandomLook;
     }
 
     @Override
@@ -223,6 +247,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     @Override
     public String toString() {
         return "LookClose{" + enabled + "}";
+    }
+
+    public boolean useRealisticLooking() {
+        return realisticLooking;
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);

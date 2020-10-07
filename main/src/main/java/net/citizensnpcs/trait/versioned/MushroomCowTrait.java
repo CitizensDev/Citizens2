@@ -16,6 +16,10 @@ public class MushroomCowTrait extends Trait {
         super("mushroomcowtrait");
     }
 
+    public Variant getVariant() {
+        return variant;
+    }
+
     @Override
     public void onSpawn() {
         setVariant(variant);

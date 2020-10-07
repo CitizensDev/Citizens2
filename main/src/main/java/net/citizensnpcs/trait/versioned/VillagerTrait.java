@@ -17,6 +17,14 @@ public class VillagerTrait extends Trait {
         super("villagertrait");
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public Villager.Type getType() {
+        return type;
+    }
+
     @Override
     public void run() {
         if (!(npc.getEntity() instanceof Villager))

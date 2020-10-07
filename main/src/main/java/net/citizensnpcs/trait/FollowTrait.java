@@ -31,6 +31,10 @@ public class FollowTrait extends Trait {
         super("followtrait");
     }
 
+    public Player getFollowingPlayer() {
+        return player;
+    }
+
     /**
      * Returns whether the trait is actively following a {@link Player}.
      */

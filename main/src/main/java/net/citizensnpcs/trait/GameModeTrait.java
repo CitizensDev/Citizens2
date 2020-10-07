@@ -9,7 +9,7 @@ import net.citizensnpcs.api.trait.TraitName;
 
 /**
  * Persists the {@link GameMode} of a {@link Player} NPC.
- * 
+ *
  * @see Player#setGameMode(GameMode)
  */
 @TraitName("gamemodetrait")
@@ -19,6 +19,10 @@ public class GameModeTrait extends Trait {
 
     public GameModeTrait() {
         super("gamemodetrait");
+    }
+
+    public GameMode getGameMode() {
+        return mode;
     }
 
     @Override

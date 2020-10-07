@@ -36,6 +36,10 @@ public class MountTrait extends Trait {
         }
     }
 
+    public UUID getMountedOn() {
+        return mountedOn;
+    }
+
     @Override
     public void onDespawn() {
         Entity e = NMS.getVehicle(npc.getEntity());
