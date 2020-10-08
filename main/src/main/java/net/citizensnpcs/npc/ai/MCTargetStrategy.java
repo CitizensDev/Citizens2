@@ -1,6 +1,8 @@
 package net.citizensnpcs.npc.ai;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -11,6 +13,7 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.util.NMS;
@@ -148,6 +151,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         @Override
         public void setPath() {
+            // TODO: should use fallback-style pathfinding
             setStrategy();
             strategy.update();
             CancelReason subReason = strategy.getCancelReason();
@@ -165,6 +169,17 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             Location location = parameters.entityTargetLocationMapper().apply(target);
             if (location == null) {
                 throw new IllegalStateException("mapper should not return null");
+            }
+            if (!npc.isFlyable()) {
+                Block block = location.getBlock();
+                while (!MinecraftBlockExaminer.canStandOn(block.getRelative(BlockFace.DOWN))) {
+                    block = block.getRelative(BlockFace.DOWN);
+                    if (block.getY() <= 0) {
+                        block = location.getBlock();
+                        break;
+                    }
+                }
+                location = block.getLocation();
             }
             strategy = npc.isFlyable() ? new FlyingAStarNavigationStrategy(npc, location, parameters)
                     : new AStarNavigationStrategy(npc, location, parameters);
