@@ -375,6 +375,9 @@ public class CitizensNPC extends AbstractNPC {
             }
 
             String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+            if (requiresNameHologram()) {
+                nameplateVisible = "false";
+            }
             getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
 
             if (isLiving) {
@@ -398,7 +401,6 @@ public class CitizensNPC extends AbstractNPC {
 
     private void updateCustomName() {
         boolean nameVisibility = false;
-
         if (!getEntity().isCustomNameVisible()
                 && !data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("hover")) {
             getEntity().setCustomName("");
