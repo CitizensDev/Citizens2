@@ -52,7 +52,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
         Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
         Material in = source.getMaterialAt(pos);
-        boolean canStand = below.isBlock() || canStandOn(below) || isLiquid(in, below) || isClimbable(below);
+        boolean canStand = canStandOn(below) || isLiquid(in, below) || isClimbable(below);
         if (!canStand) {
             return PassableState.UNPASSABLE;
         }
@@ -220,7 +220,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     private static final Set<Material> LIQUIDS = EnumSet.of(Material.WATER, Material.LAVA);
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
             Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
-    private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.LAVA, Material.CACTUS);
+    private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.CACTUS);
     private static Material WEB = SpigotUtil.isUsing1_13API() ? Material.COBWEB : Material.valueOf("WEB");
 
     static {
