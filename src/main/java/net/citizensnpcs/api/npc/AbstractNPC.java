@@ -181,17 +181,14 @@ public abstract class AbstractNPC implements NPC {
             return false;
         }
         AbstractNPC other = (AbstractNPC) obj;
-        if (id != other.id) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
+        if (uuid == null) {
+            if (other.uuid != null) {
                 return false;
             }
-        } else if (!name.equals(other.name)) {
+        } else if (!uuid.equals(other.uuid)) {
             return false;
         }
-        return registry.equals(other.registry);
+        return true;
     }
 
     @Override
@@ -278,7 +275,7 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public int hashCode() {
         final int prime = 31;
-        return prime * (prime + id) + ((name == null) ? 0 : name.hashCode());
+        return prime + uuid.hashCode();
     }
 
     @Override
