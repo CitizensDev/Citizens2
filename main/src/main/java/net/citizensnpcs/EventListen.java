@@ -415,8 +415,8 @@ public class EventListen implements Listener {
                 || event.getReason() == DespawnReason.RELOAD) {
             if (event.getNPC().getStoredLocation() != null) {
                 ChunkCoord coord = new ChunkCoord(event.getNPC().getStoredLocation());
-                Messaging.debug("Preventing further respawns of " + event.getNPC().getId() + " at [" + coord.x + ","
-                        + coord.z + "] due to DespawnReason." + event.getReason());
+                Messaging.debug("Preventing further respawns of", event.getNPC().getId(), "at", coord,
+                        "due to DespawnReason." + event.getReason());
                 toRespawn.remove(coord, event.getNPC());
             }
         } else {
@@ -447,6 +447,11 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onNPCSpawn(NPCSpawnEvent event) {
         skinUpdateTracker.onNPCSpawn(event.getNPC());
+        Location location = event.getNPC().getStoredLocation();
+        if (location == null) {
+            location = event.getLocation();
+        }
+        toRespawn.remove(new ChunkCoord(location), event.getNPC());
     }
 
     @EventHandler(ignoreCancelled = true)
