@@ -1,9 +1,26 @@
 package net.citizensnpcs.npc;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scoreboard.Team;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+
 import net.citizensnpcs.NPCNeedsRespawnEvent;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -24,23 +41,16 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import net.citizensnpcs.trait.*;
-import net.citizensnpcs.util.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scoreboard.Team;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
+import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.Gravity;
+import net.citizensnpcs.trait.HologramTrait;
+import net.citizensnpcs.trait.ScoreboardTrait;
+import net.citizensnpcs.util.ChunkCoord;
+import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.PlayerUpdateTask;
+import net.citizensnpcs.util.Util;
+import net.citizensnpcs.trait.ForceDespawnTrait;
 
 public class CitizensNPC extends AbstractNPC {
     private ChunkCoord cachedCoord;
