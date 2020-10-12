@@ -983,7 +983,7 @@ public class NPCCommands {
         }
 
         Paginator paginator = new Paginator().header("NPCs").console(sender instanceof ConsoleCommandSender);
-        paginator.addLine("<b>Key: <e>ID  <a>Name");
+        paginator.addLine("<e><o>ID  <a><o>Name");
         for (int i = 0; i < npcs.size(); i += 2) {
             String line = "<e>" + npcs.get(i).getId() + "<a>  " + npcs.get(i).getName();
             if (npcs.size() >= i + 2)

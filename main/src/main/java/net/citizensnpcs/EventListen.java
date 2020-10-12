@@ -659,7 +659,7 @@ public class EventListen implements Listener {
                 return;
             }
             if (npc.isSpawned()) {
-                storeForRespawn(npc);
+                toRespawn.put(new ChunkCoord(npc.getEntity().getLocation()), npc);
                 Messaging.debug("Despawned", npc.getId() + "due to world unload at", event.getWorld().getName());
             }
         }
@@ -714,9 +714,5 @@ public class EventListen implements Listener {
             return false;
         }
         return npc.spawn(spawn, SpawnReason.CHUNK_LOAD);
-    }
-
-    private void storeForRespawn(NPC npc) {
-        toRespawn.put(new ChunkCoord(npc.getEntity().getLocation()), npc);
     }
 }

@@ -324,14 +324,18 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
                 Waypoint element = new Waypoint(at);
                 normaliseEditingSlot();
-                waypoints.add(editingSlot, element);
+                if (editingSlot == waypoints.size()) {
+                    waypoints.add(element);
+                } else {
+                    waypoints.add(editingSlot, element);
+                }
                 if (showPath) {
                     markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
                 }
                 editingSlot = Math.min(editingSlot + 1, waypoints.size());
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at), editingSlot + 1,
                         waypoints.size());
-            } else if (waypoints.size() > 0) {
+            } else if (waypoints.size() > 0 && !event.getPlayer().isSneaking()) {
                 event.setCancelled(true);
                 normaliseEditingSlot();
                 Waypoint waypoint = waypoints.remove(editingSlot);
