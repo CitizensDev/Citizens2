@@ -505,13 +505,13 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         }
 
         public void setPaused(boolean pause) {
+            paused = pause;
             if (pause && currentDestination != null) {
                 selector.finish();
                 if (npc != null && npc.getNavigator().isNavigating()) {
                     npc.getNavigator().cancelNavigation();
                 }
             }
-            paused = pause;
         }
 
         @Override
