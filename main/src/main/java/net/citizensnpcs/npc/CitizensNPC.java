@@ -86,7 +86,8 @@ public class CitizensNPC extends AbstractNPC {
                     getEntity().isValid());
             return false;
         }
-        getOrAddTrait(ForceDespawnTrait.class).setDespawned(true);
+        if(reason == DespawnReason.PLUGIN || reason == DespawnReason.REMOVAL)
+            getOrAddTrait(ForceDespawnTrait.class).setDespawned(true);
         boolean keepSelected = getOrAddTrait(Spawned.class).shouldSpawn();
         if (!keepSelected) {
             data().remove("selectors");

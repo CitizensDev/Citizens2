@@ -51,6 +51,7 @@ import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.WoolColor;
+import net.citizensnpcs.trait.ForceDespawnTrait;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
@@ -97,6 +98,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(WoolColor.class));
         registerTrait(TraitInfo.create(WolfModifiers.class));
         registerTrait(TraitInfo.create(VillagerProfession.class));
+        registerTrait(TraitInfo.create(ForceDespawnTrait.class));
 
         for (String trait : registered.keySet()) {
             INTERNAL_TRAITS.add(trait);
