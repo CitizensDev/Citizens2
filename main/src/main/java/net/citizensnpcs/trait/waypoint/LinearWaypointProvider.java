@@ -324,10 +324,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
                 Waypoint element = new Waypoint(at);
                 normaliseEditingSlot();
-                if (editingSlot == waypoints.size()) {
+                if (editingSlot + 1 >= waypoints.size()) {
                     waypoints.add(element);
                 } else {
-                    waypoints.add(editingSlot, element);
+                    waypoints.add(editingSlot + 1, element);
                 }
                 if (showPath) {
                     markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
