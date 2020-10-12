@@ -413,14 +413,11 @@ public class EventListen implements Listener {
     public void onNPCDespawn(NPCDespawnEvent event) {
         if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL
                 || event.getReason() == DespawnReason.RELOAD) {
-            if (event.getNPC().getStoredLocation() != null) {
-                ChunkCoord coord = new ChunkCoord(event.getNPC().getStoredLocation());
-                if (Messaging.isDebugging()) {
-                    Messaging.debug("Preventing further respawns of", event.getNPC().getId(), "at", coord,
-                            "due to DespawnReason." + event.getReason());
-                }
-                toRespawn.remove(coord, event.getNPC());
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Preventing further respawns of", event.getNPC().getId(),
+                        "due to DespawnReason." + event.getReason());
             }
+            toRespawn.values().remove(event.getNPC());
         } else if (Messaging.isDebugging()) {
             Messaging.debug("Removing " + event.getNPC().getId() + " from skin tracker due to DespawnReason."
                     + event.getReason().name());
@@ -449,16 +446,10 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onNPCSpawn(NPCSpawnEvent event) {
         skinUpdateTracker.onNPCSpawn(event.getNPC());
-        Location location = event.getNPC().getStoredLocation();
-        if (location == null) {
-            location = event.getLocation();
-        }
-        ChunkCoord coord = new ChunkCoord(location);
         if (Messaging.isDebugging()) {
-            Messaging.debug("Preventing further spawns of", event.getNPC().getId(), "at", coord,
-                    "due to SpawnReason." + event.getReason());
+            Messaging.debug("Removing respawns of", event.getNPC().getId(), "due to SpawnReason." + event.getReason());
         }
-        toRespawn.remove(coord, event.getNPC());
+        toRespawn.values().remove(event.getNPC());
     }
 
     @EventHandler(ignoreCancelled = true)
