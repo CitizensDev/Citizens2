@@ -33,7 +33,9 @@ public class Messages {
     public static final String CAT_STOPPED_LYING = "citizens.commands.npc.cat.lying-stop";
     public static final String CAT_STOPPED_SITTING = "citizens.commands.npc.cat.sitting-stop";
     public static final String CAT_TYPE_SET = "citizens.commands.npc.cat.type-set";
+    public static final String CHAT_TRIGGER_MESSAGE_ADDED = "citizens.editors.waypoints.triggers.chat.message-added";
     public static final String CHAT_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.chat.prompt";
+    public static final String CHAT_TRIGGER_RADIUS_SET = "citizens.editors.waypoints.triggers.chat.radius-set";
     public static final String CITIZENS_IMPLEMENTATION_DISABLED = "citizens.changed-implementation";
     public static final String CITIZENS_INCOMPATIBLE = "citizens.notifications.incompatible-version";
     public static final String CITIZENS_INVALID_COMMAND_CLASS = "citizens.commands.invalid.class";

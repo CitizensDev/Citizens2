@@ -280,12 +280,11 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                         clearWaypoints();
                     }
                 });
-            } else if (message.equalsIgnoreCase("toggle path")) {
+            } else if (message.equalsIgnoreCase("toggle path") || message.equalsIgnoreCase("markers")) {
                 event.setCancelled(true);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
-                        // we need to spawn entities on the main thread.
                         togglePath();
                     }
                 });

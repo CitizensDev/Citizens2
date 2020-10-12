@@ -23,6 +23,7 @@ public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPr
         if (input.startsWith("radius")) {
             try {
                 radius = Double.parseDouble(input.split(" ")[1]);
+                Messaging.sendTr((CommandSender) context.getForWhom(), Messages.CHAT_TRIGGER_RADIUS_SET, radius);
             } catch (NumberFormatException e) {
                 Messaging.sendErrorTr((CommandSender) context.getForWhom(),
                         Messages.WAYPOINT_TRIGGER_CHAT_INVALID_RADIUS);
@@ -36,6 +37,7 @@ public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPr
             return (Prompt) context.getSessionData(WaypointTriggerPrompt.RETURN_PROMPT_KEY);
         }
         lines.add(input);
+        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.CHAT_TRIGGER_MESSAGE_ADDED, input);
         return this;
     }
 
