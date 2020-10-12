@@ -324,10 +324,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
                 Waypoint element = new Waypoint(at);
                 normaliseEditingSlot();
-                if (editingSlot + 1 >= waypoints.size()) {
+                if (editingSlot >= waypoints.size()) {
                     waypoints.add(element);
                 } else {
-                    waypoints.add(editingSlot + 1, element);
+                    waypoints.add(editingSlot, element);
                 }
                 if (showPath) {
                     markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
@@ -353,9 +353,19 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
             if (!player.equals(event.getPlayer()) || !showPath || Util.isOffHand(event))
                 return;
-            if (!event.getRightClicked().hasMetadata("waypointindex"))
+            int slot = -1;
+            double minDistance = Double.MAX_VALUE;
+            for (int i = 0; i < waypoints.size(); i++) {
+                Waypoint waypoint = waypoints.get(i);
+                double distance = waypoint.getLocation().distanceSquared(event.getRightClicked().getLocation());
+                if (minDistance > distance) {
+                    minDistance = distance;
+                    slot = i;
+                }
+            }
+            if (slot == -1)
                 return;
-            editingSlot = event.getRightClicked().getMetadata("waypointindex").get(0).asInt();
+            editingSlot = slot;
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET, editingSlot,
                     formatLoc(waypoints.get(editingSlot).getLocation()));
         }
