@@ -74,7 +74,7 @@ public class Messaging {
 
     public static void debug(Object... msg) {
         if (isDebugging()) {
-            DEBUG_LOGGER.log(Level.INFO, SPACE.join(msg));
+            DEBUG_LOGGER.log(Level.INFO, "[Citizens] " + SPACE.join(msg));
         }
     }
 
