@@ -415,11 +415,13 @@ public class EventListen implements Listener {
                 || event.getReason() == DespawnReason.RELOAD) {
             if (event.getNPC().getStoredLocation() != null) {
                 ChunkCoord coord = new ChunkCoord(event.getNPC().getStoredLocation());
-                Messaging.debug("Preventing further respawns of", event.getNPC().getId(), "at", coord,
-                        "due to DespawnReason." + event.getReason());
+                if (Messaging.isDebugging()) {
+                    Messaging.debug("Preventing further respawns of", event.getNPC().getId(), "at", coord,
+                            "due to DespawnReason." + event.getReason());
+                }
                 toRespawn.remove(coord, event.getNPC());
             }
-        } else {
+        } else if (Messaging.isDebugging()) {
             Messaging.debug("Removing " + event.getNPC().getId() + " from skin tracker due to DespawnReason."
                     + event.getReason().name());
         }
@@ -451,7 +453,12 @@ public class EventListen implements Listener {
         if (location == null) {
             location = event.getLocation();
         }
-        toRespawn.remove(new ChunkCoord(location), event.getNPC());
+        ChunkCoord coord = new ChunkCoord(location);
+        if (Messaging.isDebugging()) {
+            Messaging.debug("Preventing further spawns of", event.getNPC().getId(), "at", coord,
+                    "due to SpawnReason." + event.getReason());
+        }
+        toRespawn.remove(coord, event.getNPC());
     }
 
     @EventHandler(ignoreCancelled = true)
