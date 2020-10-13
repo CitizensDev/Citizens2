@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -236,6 +237,13 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             return waypoints.get(waypoints.size() - 2).getLocation();
         }
 
+        @EventHandler(ignoreCancelled = true)
+        public void onConversationAbandoned(ConversationAbandonedEvent event) {
+            if (event.getSource().equals(conversation)) {
+                conversation = null;
+            }
+        }
+
         @EventHandler
         public void onNPCDespawn(NPCDespawnEvent event) {
             if (event.getNPC().equals(npc)) {
@@ -285,8 +293,8 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                     @Override
                     public void run() {
                         cycle = !cycle;
-                        Messaging.sendTr(event.getPlayer(),
-                                cycle ? Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_SET : Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET);
+                        Messaging.sendTr(event.getPlayer(), cycle ? Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_SET
+                                : Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET);
                     }
                 });
             }
@@ -305,11 +313,11 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 Location prev = getPreviousWaypoint();
 
                 if (prev != null && prev.getWorld() == at.getWorld()) {
-                    double distance = at.distanceSquared(prev);
-                    double maxDistance = Math.pow(npc.getNavigator().getDefaultParameters().range(), 2);
+                    double distance = at.distance(prev);
+                    double maxDistance = npc.getNavigator().getDefaultParameters().range();
                     if (distance > maxDistance) {
-                        Messaging.sendErrorTr(player, Messages.LINEAR_WAYPOINT_EDITOR_RANGE_EXCEEDED,
-                                Math.sqrt(distance), Math.sqrt(maxDistance), ChatColor.RED);
+                        Messaging.sendErrorTr(player, Messages.LINEAR_WAYPOINT_EDITOR_RANGE_EXCEEDED, distance,
+                                maxDistance, ChatColor.RED);
                         return;
                     }
                 }
@@ -539,7 +547,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 public void onCompletion(@Nullable CancelReason cancelReason) {
                     if (npc.isSpawned() && currentDestination != null
                             && Util.locationWithinRange(npc.getStoredLocation(), currentDestination.getLocation(),
-                                    Setting.DEFAULT_DISTANCE_MARGIN.asDouble())) {
+                                    Setting.DEFAULT_DISTANCE_MARGIN.asDouble() + 1)) {
                         currentDestination.onReach(npc);
                         if (cachePaths && cancelReason == null) {
                             cachedPaths.put(new SourceDestinationPair(npcLoc, currentDestination),
