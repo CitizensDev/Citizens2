@@ -153,7 +153,6 @@ public class EventListen implements Listener {
             @Override
             public void run() {
                 ChunkCoord coord = new ChunkCoord(event.getChunk());
-                Messaging.debug("Respawning all NPCs at", coord, "due to chunk load");
                 respawnAllFromCoord(coord, event);
             }
         };
@@ -642,9 +641,6 @@ public class EventListen implements Listener {
         for (ChunkCoord chunk : toRespawn.keySet()) {
             if (!chunk.worldUUID.equals(event.getWorld().getUID()) || !event.getWorld().isChunkLoaded(chunk.x, chunk.z))
                 continue;
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Respawning all NPCs at", chunk, "due to world load");
-            }
             respawnAllFromCoord(chunk, event);
         }
     }
@@ -658,9 +654,6 @@ public class EventListen implements Listener {
             if (event.isCancelled() || !despawned) {
                 for (ChunkCoord coord : toRespawn.keySet()) {
                     if (event.getWorld().getUID().equals(coord.worldUUID)) {
-                        if (Messaging.isDebugging()) {
-                            Messaging.debug("Respawning all NPCs at", coord, "due to cancelled world unload");
-                        }
                         respawnAllFromCoord(coord, event);
                     }
                 }
@@ -676,6 +669,9 @@ public class EventListen implements Listener {
 
     private void respawnAllFromCoord(ChunkCoord coord, Event event) {
         List<NPC> ids = toRespawn.get(coord);
+        if (ids.size() > 0) {
+            Messaging.debug("Respawning all NPCs at", coord, "due to", event);
+        }
         for (int i = 0; i < ids.size(); i++) {
             NPC npc = ids.get(i);
             if (npc.getOwningRegistry().getById(npc.getId()) != npc) {

@@ -38,8 +38,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
 
     public CitizensNPCRegistry(NPCDataStore store) {
-        saves = store;
-        name = "";
+        this(store, "");
     }
 
     public CitizensNPCRegistry(NPCDataStore store, String registryName) {

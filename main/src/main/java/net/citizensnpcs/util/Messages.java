@@ -381,6 +381,8 @@ public class Messages {
     public static final String WANDER_WAYPOINTS_REGION_EDITING_START = "citizens.editors.waypoints.wander.editing-regions";
     public static final String WANDER_WAYPOINTS_REMOVED_REGION = "citizens.editors.waypoints.wander.removed-region";
     public static final String WAYPOINT_ADDED = "citizens.commands.waypoints.add.waypoint-added";
+    public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_SET = "citizens.editors.waypoints.linear.cycle-set";
+    public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET = "citizens.editors.waypoints.linear.cycle-unset";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
     public static final String WAYPOINT_TRIGGER_ADD_PROMPT = "citizens.editors.waypoints.triggers.add.prompt";

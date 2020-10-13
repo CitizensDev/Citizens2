@@ -178,7 +178,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         EntityMarkers<Waypoint> markers;
         private final Player player;
         private Waypoint selectedWaypoint;
-        private boolean showPath = true;
+        private boolean showingMarkers = true;
 
         private LinearWaypointEditor(Player player) {
             this.player = player;
@@ -212,7 +212,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             }
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_END);
             editing = false;
-            if (!showPath)
+            if (!showingMarkers)
                 return;
             markers.destroyMarkers();
         }
@@ -285,6 +285,8 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                     @Override
                     public void run() {
                         cycle = !cycle;
+                        Messaging.sendTr(event.getPlayer(),
+                                cycle ? Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_SET : Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET);
                     }
                 });
             }
@@ -314,19 +316,17 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
                 Waypoint element = new Waypoint(at);
                 waypoints.add(element);
-                if (showPath) {
+                if (showingMarkers) {
                     markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
                 }
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at),
                         waypoints.size());
             } else if (waypoints.size() > 0 && !event.getPlayer().isSneaking()) {
                 event.setCancelled(true);
-                Waypoint waypoint = waypoints.remove(waypoints.size() - 1);
+
+                Waypoint waypoint = removeWaypoint(waypoints.size() - 1);
                 if (waypoint.equals(selectedWaypoint)) {
                     selectedWaypoint = null;
-                }
-                if (showPath) {
-                    markers.removeMarker(waypoint);
                 }
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_REMOVED_WAYPOINT, waypoints.size());
             }
@@ -335,7 +335,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
         @EventHandler(ignoreCancelled = true)
         public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-            if (!player.equals(event.getPlayer()) || !showPath || Util.isOffHand(event))
+            if (!player.equals(event.getPlayer()) || !showingMarkers || Util.isOffHand(event))
                 return;
             int slot = -1;
             double minDistance = Double.MAX_VALUE;
@@ -350,8 +350,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             if (slot == -1)
                 return;
             if (selectedWaypoint != null && waypoints.get(slot) == selectedWaypoint) {
-                waypoints.remove(slot);
-                selectedWaypoint = null;
+                removeWaypoint(slot);
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_REMOVED_WAYPOINT, waypoints.size());
                 return;
             }
@@ -369,9 +368,20 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             }
         }
 
+        private Waypoint removeWaypoint(int idx) {
+            Waypoint waypoint = waypoints.remove(idx);
+            if (showingMarkers) {
+                markers.removeMarker(waypoint);
+            }
+            if (waypoint == selectedWaypoint) {
+                selectedWaypoint = null;
+            }
+            return waypoint;
+        }
+
         private void togglePath() {
-            showPath = !showPath;
-            if (showPath) {
+            showingMarkers = !showingMarkers;
+            if (showingMarkers) {
                 createWaypointMarkers();
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS);
             } else {
