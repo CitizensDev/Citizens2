@@ -352,7 +352,8 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             double minDistance = Double.MAX_VALUE;
             for (int i = 0; i < waypoints.size(); i++) {
                 Waypoint waypoint = waypoints.get(i);
-                double distance = waypoint.getLocation().distanceSquared(event.getRightClicked().getLocation());
+                double distance = waypoint.getLocation()
+                        .distanceSquared(event.getRightClicked().getLocation().add(0, -1, 0));
                 if (minDistance > distance) {
                     minDistance = distance;
                     slot = i;
