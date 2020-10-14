@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -237,13 +238,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             return waypoints.get(waypoints.size() - 2).getLocation();
         }
 
-        @EventHandler(ignoreCancelled = true)
-        public void onConversationAbandoned(ConversationAbandonedEvent event) {
-            if (event.getSource().equals(conversation)) {
-                conversation = null;
-            }
-        }
-
         @EventHandler
         public void onNPCDespawn(NPCDespawnEvent event) {
             if (event.getNPC().equals(npc)) {
@@ -269,6 +263,12 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                     @Override
                     public void run() {
                         conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
+                        conversation.addConversationAbandonedListener(new ConversationAbandonedListener() {
+                            @Override
+                            public void conversationAbandoned(ConversationAbandonedEvent event) {
+                                conversation = null;
+                            }
+                        });
                     }
                 });
             } else if (message.equalsIgnoreCase("clear")) {
