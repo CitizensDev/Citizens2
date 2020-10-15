@@ -442,7 +442,7 @@ public class EventListen implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCSpawn(NPCSpawnEvent event) {
         skinUpdateTracker.onNPCSpawn(event.getNPC());
         if (Messaging.isDebugging()) {
