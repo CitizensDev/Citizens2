@@ -152,7 +152,8 @@ public class EventListen implements Listener {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                respawnAllFromCoord(new ChunkCoord(event.getChunk()), event);
+                ChunkCoord coord = new ChunkCoord(event.getChunk());
+                respawnAllFromCoord(coord, event);
             }
         };
         if (event instanceof Cancellable) {
@@ -186,16 +187,13 @@ public class EventListen implements Listener {
                     continue;
                 }
                 ((Cancellable) event).setCancelled(true);
-                if (Messaging.isDebugging()) {
-                    Messaging.debug("Cancelled chunk unload at [" + coord.x + "," + coord.z + "]");
-                }
+                Messaging.debug("Cancelled chunk unload at", coord);
                 respawnAllFromCoord(coord, event);
                 return;
             }
             toRespawn.put(coord, npc);
             if (Messaging.isDebugging()) {
-                Messaging.debug("Despawned id", npc.getId(),
-                        "due to chunk unload at [" + coord.x + "," + coord.z + "]");
+                Messaging.debug("Despawned id", npc.getId(), "due to chunk unload at", coord);
             }
         }
         if (loadChunk) {
@@ -414,12 +412,12 @@ public class EventListen implements Listener {
     public void onNPCDespawn(NPCDespawnEvent event) {
         if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL
                 || event.getReason() == DespawnReason.RELOAD) {
-            Messaging.debug("Preventing further respawns of " + event.getNPC().getId() + " due to DespawnReason."
-                    + event.getReason().name());
-            if (event.getNPC().getStoredLocation() != null) {
-                toRespawn.remove(new ChunkCoord(event.getNPC().getStoredLocation()), event.getNPC());
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Preventing further respawns of", event.getNPC().getId(),
+                        "due to DespawnReason." + event.getReason());
             }
-        } else {
+            toRespawn.values().remove(event.getNPC());
+        } else if (Messaging.isDebugging()) {
             Messaging.debug("Removing " + event.getNPC().getId() + " from skin tracker due to DespawnReason."
                     + event.getReason().name());
         }
@@ -447,6 +445,10 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onNPCSpawn(NPCSpawnEvent event) {
         skinUpdateTracker.onNPCSpawn(event.getNPC());
+        if (Messaging.isDebugging()) {
+            Messaging.debug("Removing respawns of", event.getNPC().getId(), "due to SpawnReason." + event.getReason());
+        }
+        toRespawn.values().remove(event.getNPC());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -659,7 +661,7 @@ public class EventListen implements Listener {
                 return;
             }
             if (npc.isSpawned()) {
-                storeForRespawn(npc);
+                toRespawn.put(new ChunkCoord(npc.getEntity().getLocation()), npc);
                 Messaging.debug("Despawned", npc.getId() + "due to world unload at", event.getWorld().getName());
             }
         }
@@ -667,6 +669,9 @@ public class EventListen implements Listener {
 
     private void respawnAllFromCoord(ChunkCoord coord, Event event) {
         List<NPC> ids = toRespawn.get(coord);
+        if (ids.size() > 0) {
+            Messaging.debug("Respawning all NPCs at", coord, "due to", event);
+        }
         for (int i = 0; i < ids.size(); i++) {
             NPC npc = ids.get(i);
             if (npc.getOwningRegistry().getById(npc.getId()) != npc) {
@@ -679,15 +684,14 @@ public class EventListen implements Listener {
             if (npc.isSpawned()) {
                 ids.remove(i--);
                 if (Messaging.isDebugging()) {
-                    Messaging.debug("NPC", npc.getId(), "already spawned");
+                    Messaging.debug("Can't respawn NPC", npc.getId(), ": already spawned");
                 }
                 continue;
             }
             boolean success = spawn(npc);
             if (!success) {
                 if (Messaging.isDebugging()) {
-                    Messaging.debug("Couldn't respawn id", npc.getId(), "during", event,
-                            "at [" + coord.x + "," + coord.z + "]");
+                    Messaging.debug("Couldn't respawn id", npc.getId(), "during", event, "at", coord);
                 }
                 continue;
             }
@@ -696,11 +700,11 @@ public class EventListen implements Listener {
             } catch (IndexOutOfBoundsException ex) {
                 // something caused toRespawn to get modified?
                 Messaging.debug("Some strange chunk loading happened while spawning", npc.getId(),
-                        " - check all your NPCs in chunk [" + coord.x + "," + coord.z + "] are spawned");
+                        " - check all your NPCs in chunk", coord, "are spawned");
                 break;
             }
             if (Messaging.isDebugging()) {
-                Messaging.debug("Spawned id", npc.getId(), "during", event, "at [" + coord.x + "," + coord.z + "]");
+                Messaging.debug("Spawned id", npc.getId(), "during", event, "at", coord);
             }
         }
     }
@@ -714,9 +718,5 @@ public class EventListen implements Listener {
             return false;
         }
         return npc.spawn(spawn, SpawnReason.CHUNK_LOAD);
-    }
-
-    private void storeForRespawn(NPC npc) {
-        toRespawn.put(new ChunkCoord(npc.getEntity().getLocation()), npc);
     }
 }

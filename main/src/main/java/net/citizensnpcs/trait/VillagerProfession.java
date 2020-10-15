@@ -22,6 +22,10 @@ public class VillagerProfession extends Trait {
         super("profession");
     }
 
+    public Profession getProfession() {
+        return profession;
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         try {

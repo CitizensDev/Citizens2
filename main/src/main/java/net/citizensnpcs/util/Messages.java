@@ -33,7 +33,9 @@ public class Messages {
     public static final String CAT_STOPPED_LYING = "citizens.commands.npc.cat.lying-stop";
     public static final String CAT_STOPPED_SITTING = "citizens.commands.npc.cat.sitting-stop";
     public static final String CAT_TYPE_SET = "citizens.commands.npc.cat.type-set";
+    public static final String CHAT_TRIGGER_MESSAGE_ADDED = "citizens.editors.waypoints.triggers.chat.message-added";
     public static final String CHAT_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.chat.prompt";
+    public static final String CHAT_TRIGGER_RADIUS_SET = "citizens.editors.waypoints.triggers.chat.radius-set";
     public static final String CITIZENS_IMPLEMENTATION_DISABLED = "citizens.changed-implementation";
     public static final String CITIZENS_INCOMPATIBLE = "citizens.notifications.incompatible-version";
     public static final String CITIZENS_INVALID_COMMAND_CLASS = "citizens.commands.invalid.class";
@@ -186,11 +188,11 @@ public class Messages {
     public static final String LEASHABLE_STOPPED = "citizens.commands.npc.leashable.stopped";
     public static final String LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT = "citizens.editors.waypoints.linear.added-waypoint";
     public static final String LINEAR_WAYPOINT_EDITOR_BEGIN = "citizens.editors.waypoints.linear.begin";
-    public static final String LINEAR_WAYPOINT_EDITOR_EDIT_SLOT_SET = "citizens.editors.waypoints.linear.edit-slot-set";
     public static final String LINEAR_WAYPOINT_EDITOR_END = "citizens.editors.waypoints.linear.end";
     public static final String LINEAR_WAYPOINT_EDITOR_NOT_SHOWING_MARKERS = "citizens.editors.waypoints.linear.not-showing-markers";
     public static final String LINEAR_WAYPOINT_EDITOR_RANGE_EXCEEDED = "citizens.editors.waypoints.linear.range-exceeded";
     public static final String LINEAR_WAYPOINT_EDITOR_REMOVED_WAYPOINT = "citizens.editors.waypoints.linear.removed-waypoint";
+    public static final String LINEAR_WAYPOINT_EDITOR_SELECTED_WAYPOINT = "citizens.editors.waypoints.linear.selected-waypoint";
     public static final String LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS = "citizens.editors.waypoints.linear.showing-markers";
     public static final String LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED = "citizens.editors.waypoints.linear.waypoints-cleared";
     public static final String LLAMA_COLOR_SET = "citizens.commands.npc.llama.color-set";
@@ -225,6 +227,7 @@ public class Messages {
     public static final String NO_NPC_WITH_ID_FOUND = "citizens.commands.npc.spawn.missing-npc-id";
     public static final String NO_STORED_SPAWN_LOCATION = "citizens.commands.npc.spawn.no-location";
     public static final String NOT_LIVING_MOBTYPE = "citizens.commands.npc.create.not-living-mobtype";
+    public static final String NOT_USING_MINECRAFT_AI = "citizens.commands.npc.ai.stopped";
     public static final String NPC_ALREADY_SELECTED = "citizens.commands.npc.select.already-selected";
     public static final String NPC_ALREADY_SPAWNED = "citizens.commands.npc.spawn.already-spawned";
     public static final String NPC_COMMAND_HELP = "citizens.commands.npc.command.help";
@@ -364,6 +367,7 @@ public class Messages {
     public static final String TROPICALFISH_PATTERN_SET = "citizens.commands.npc.tropicalfish.pattern-set";
     public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";
     public static final String UNKNOWN_MATERIAL = "citizens.commands.npc.item.unknown-material";
+    public static final String USING_MINECRAFT_AI = "citizens.commands.npc.ai.started";
     public static final String VILLAGER_LEVEL_SET = "citizens.commands.npc.villager.level-set";
     public static final String VILLAGER_TYPE_SET = "citizens.commands.npc.villager.type-set";
     public static final String VULNERABLE_SET = "citizens.commands.npc.vulnerable.set";
@@ -377,6 +381,8 @@ public class Messages {
     public static final String WANDER_WAYPOINTS_REGION_EDITING_START = "citizens.editors.waypoints.wander.editing-regions";
     public static final String WANDER_WAYPOINTS_REMOVED_REGION = "citizens.editors.waypoints.wander.removed-region";
     public static final String WAYPOINT_ADDED = "citizens.commands.waypoints.add.waypoint-added";
+    public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_SET = "citizens.editors.waypoints.linear.cycle-set";
+    public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET = "citizens.editors.waypoints.linear.cycle-unset";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
     public static final String WAYPOINT_TRIGGER_ADD_PROMPT = "citizens.editors.waypoints.triggers.add.prompt";

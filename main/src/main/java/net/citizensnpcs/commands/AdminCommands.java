@@ -1,11 +1,8 @@
 package net.citizensnpcs.commands;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import net.citizensnpcs.Citizens;
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
@@ -15,7 +12,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
-import net.citizensnpcs.util.Util;
 
 @Requirements
 public class AdminCommands {
@@ -31,7 +27,7 @@ public class AdminCommands {
         Messaging.send(sender, "     <7>-- <c>Author: fullwall");
         Messaging.send(sender, "     <7>-- <c>Source Code: http://github.com/CitizensDev");
         Messaging.send(sender, "     <7>-- <c>Website: " + plugin.getDescription().getWebsite());
-        Messaging.send(sender, "     <7>-- <c>Report an issue: http://github.com/CitizensDev/Citizens2/issues"); 
+        Messaging.send(sender, "     <7>-- <c>Report an issue: http://github.com/CitizensDev/Citizens2/issues");
     }
 
     @Command(

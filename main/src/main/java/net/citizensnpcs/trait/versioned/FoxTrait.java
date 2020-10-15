@@ -21,6 +21,22 @@ public class FoxTrait extends Trait {
         super("foxtrait");
     }
 
+    public Fox.Type getType() {
+        return type;
+    }
+
+    public boolean isCrouching() {
+        return crouching;
+    }
+
+    public boolean isSitting() {
+        return sitting;
+    }
+
+    public boolean isSleeping() {
+        return sleeping;
+    }
+
     @Override
     public void run() {
         if (npc.isSpawned() && npc.getEntity() instanceof Fox) {

@@ -21,6 +21,18 @@ public class TropicalFishTrait extends Trait {
         super("tropicalfishtrait");
     }
 
+    public DyeColor getBodyColor() {
+        return bodyColor;
+    }
+
+    public Pattern getPattern() {
+        return pattern;
+    }
+
+    public DyeColor getPatternColor() {
+        return patternColor;
+    }
+
     @Override
     public void run() {
         if (npc.isSpawned() && npc.getEntity() instanceof TropicalFish) {

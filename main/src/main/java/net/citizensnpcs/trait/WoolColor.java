@@ -25,6 +25,10 @@ public class WoolColor extends Trait {
         super("woolcolor");
     }
 
+    public DyeColor getColor() {
+        return color;
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         try {

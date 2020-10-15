@@ -19,6 +19,10 @@ public class EndermanTrait extends Trait {
         super("endermantrait");
     }
 
+    public boolean isAngry() {
+        return angry;
+    }
+
     @Override
     public void run() {
         if (npc.getEntity() instanceof Enderman) {

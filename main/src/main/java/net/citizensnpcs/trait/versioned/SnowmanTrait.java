@@ -15,11 +15,19 @@ public class SnowmanTrait extends Trait {
         super("snowmantrait");
     }
 
+    public boolean isDerp() {
+        return derp;
+    }
+
     @Override
     public void run() {
         if (npc.getEntity() instanceof Snowman) {
             ((Snowman) npc.getEntity()).setDerp(derp);
         }
+    }
+
+    public void setDerp(boolean derp) {
+        this.derp = derp;
     }
 
     public boolean toggleDerp() {

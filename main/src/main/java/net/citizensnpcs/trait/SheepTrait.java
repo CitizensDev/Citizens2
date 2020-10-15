@@ -24,6 +24,14 @@ public class SheepTrait extends Trait {
         super("sheeptrait");
     }
 
+    public DyeColor getColor() {
+        return color;
+    }
+
+    public boolean isSheared() {
+        return sheared;
+    }
+
     @EventHandler
     private void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
         if (npc != null && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity()))) {

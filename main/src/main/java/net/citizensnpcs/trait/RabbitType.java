@@ -21,6 +21,10 @@ public class RabbitType extends Trait {
         super("rabbittype");
     }
 
+    public Rabbit.Type getRabbitType() {
+        return type;
+    }
+
     @Override
     public void onSpawn() {
         rabbit = npc.getEntity() instanceof Rabbit ? (Rabbit) npc.getEntity() : null;

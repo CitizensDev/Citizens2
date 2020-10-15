@@ -83,7 +83,7 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public boolean despawn(DespawnReason reason) {
         if (!isSpawned() && reason != DespawnReason.DEATH) {
-            Messaging.debug("Tried to despawn", getId(), "while already despawned.");
+            Messaging.debug("Tried to despawn", getId(), "while already despawned, DespawnReason." + reason);
             if (reason == DespawnReason.REMOVAL) {
                 Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this, reason));
             }
@@ -99,7 +99,7 @@ public class CitizensNPC extends AbstractNPC {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() && reason != DespawnReason.DEATH) {
             Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Will load chunk.",
-                    getEntity().isValid());
+                    getEntity().isValid(), ", DespawnReason." + reason);
             return false;
         }
         boolean keepSelected = getOrAddTrait(Spawned.class).shouldSpawn();
@@ -392,6 +392,9 @@ public class CitizensNPC extends AbstractNPC {
             }
 
             String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+            if (requiresNameHologram()) {
+                nameplateVisible = "false";
+            }
             getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
 
             if (isLiving) {
@@ -415,7 +418,6 @@ public class CitizensNPC extends AbstractNPC {
 
     private void updateCustomName() {
         boolean nameVisibility = false;
-
         if (!getEntity().isCustomNameVisible()
                 && !data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("hover")) {
             getEntity().setCustomName("");

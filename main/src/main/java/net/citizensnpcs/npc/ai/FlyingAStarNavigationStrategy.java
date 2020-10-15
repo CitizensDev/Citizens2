@@ -30,10 +30,12 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
 
 public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
+    private int iterations;
     private final NPC npc;
     private final NavigatorParameters parameters;
     private Path plan;
     private boolean planned;
+    private AStarMachine<VectorNode, Path>.AStarState state;
     private final Location target;
     private Vector vector;
 
@@ -63,6 +65,23 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         return target;
     }
 
+    private void initialisePathfinder() {
+        boolean found = false;
+        for (BlockExaminer examiner : parameters.examiners()) {
+            if (examiner instanceof FlyingBlockExaminer) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            parameters.examiner(new FlyingBlockExaminer());
+        }
+        Location location = npc.getEntity().getLocation();
+        VectorGoal goal = new VectorGoal(target, (float) parameters.pathDistanceMargin());
+        state = ASTAR.getStateFor(goal, new VectorNode(goal, location,
+                new NMSChunkBlockSource(location, parameters.range()), parameters.examiners()));
+    }
+
     public void setPlan(Path path) {
         this.plan = path;
         if (plan == null || plan.isComplete()) {
@@ -87,21 +106,25 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     @Override
     public boolean update() {
         if (!planned) {
-            Location location = npc.getEntity().getLocation();
-            VectorGoal goal = new VectorGoal(target, (float) parameters.pathDistanceMargin());
-            boolean found = false;
-            for (BlockExaminer examiner : parameters.examiners()) {
-                if (examiner instanceof FlyingBlockExaminer) {
-                    found = true;
-                    break;
+            if (state == null) {
+                initialisePathfinder();
+            }
+            int maxIterations = Setting.MAXIMUM_ASTAR_ITERATIONS.asInt();
+            int iterationsPerTick = Setting.ASTAR_ITERATIONS_PER_TICK.asInt();
+            Path plan = ASTAR.run(state, iterationsPerTick);
+            if (plan == null) {
+                if (state.isEmpty()) {
+                    setCancelReason(CancelReason.STUCK);
                 }
+                if (iterationsPerTick > 0 && maxIterations > 0) {
+                    iterations += iterationsPerTick;
+                    if (iterations > maxIterations) {
+                        setCancelReason(CancelReason.STUCK);
+                    }
+                }
+            } else {
+                setPlan(plan);
             }
-            if (!found) {
-                parameters.examiner(new FlyingBlockExaminer());
-            }
-            setPlan(ASTAR.runFully(goal, new VectorNode(goal, location,
-                    new NMSChunkBlockSource(location, parameters.range()), parameters.examiners()),
-                    Setting.MAXIMUM_ASTAR_ITERATIONS.asInt()));
         }
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
@@ -120,14 +143,13 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         }
         if (npc.getEntity().getType() == EntityType.PLAYER) {
             ItemStack stack = ((Player) npc.getEntity()).getInventory().getChestplate();
-            if (!MinecraftBlockExaminer.canStandOn(current.getBlock().getRelative(BlockFace.DOWN))) {
-                try {
-                    if (stack != null && stack.getType() == Material.ELYTRA) {
-                        PlayerAnimation.START_ELYTRA.play((Player) npc.getEntity());
-                    }
-                } catch (Exception ex) {
-                    // 1.8 compatibility
+            try {
+                if (stack != null && stack.getType() == Material.ELYTRA
+                        && !MinecraftBlockExaminer.canStandOn(current.getBlock().getRelative(BlockFace.DOWN))) {
+                    PlayerAnimation.START_ELYTRA.play((Player) npc.getEntity());
                 }
+            } catch (Exception ex) {
+                // 1.8 compatibility
             }
         }
 

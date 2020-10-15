@@ -93,6 +93,14 @@ public class ScoreboardTrait extends Trait {
         Util.sendTeamPacketToOnlinePlayers(team, 2);
     }
 
+    public ChatColor getColor() {
+        return color;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
     public void removeTag(String tag) {
         tags.remove(tag);
     }

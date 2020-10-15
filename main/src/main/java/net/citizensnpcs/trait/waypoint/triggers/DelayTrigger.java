@@ -32,11 +32,11 @@ public class DelayTrigger implements WaypointTrigger {
     @Override
     public void onWaypointReached(NPC npc, Location waypoint) {
         if (delay > 0) {
-            scheduleTask(npc.getOrAddTrait(Waypoints.class).getCurrentProvider());
+            delay(npc.getOrAddTrait(Waypoints.class).getCurrentProvider());
         }
     }
 
-    private void scheduleTask(final WaypointProvider provider) {
+    private void delay(final WaypointProvider provider) {
         provider.setPaused(true);
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override

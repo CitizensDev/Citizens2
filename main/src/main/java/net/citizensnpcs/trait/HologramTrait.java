@@ -67,12 +67,20 @@ public class HologramTrait extends Trait {
         return hologramNPC;
     }
 
+    public HologramDirection getDirection() {
+        return direction;
+    }
+
     private double getEntityHeight() {
         return NMS.getHeight(npc.getEntity());
     }
 
     private double getHeight(int lineNumber) {
         return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight) * (lineNumber + 1);
+    }
+
+    public double getLineHeight() {
+        return lineHeight;
     }
 
     public List<String> getLines() {

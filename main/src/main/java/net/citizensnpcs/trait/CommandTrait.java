@@ -21,8 +21,8 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.event.NPCCommandDispatchEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.DelegatePersistence;
@@ -34,6 +34,7 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
@@ -71,8 +72,10 @@ public class CommandTrait extends Trait {
                         .getRegistration(Economy.class);
                 if (provider != null && provider.getProvider() != null) {
                     Economy economy = provider.getProvider();
-                    if (!economy.has(player, cost))
+                    if (!economy.has(player, cost)) {
+                        sendErrorMessage(player, CommandTraitMessages.MISSING_MONEY, cost);
                         return false;
+                    }
                     economy.withdrawPlayer(player, cost);
                 }
             } catch (NoClassDefFoundError e) {
@@ -172,6 +175,9 @@ public class CommandTrait extends Trait {
                         }
                     }
                     runCommand(player, command);
+                    if (executionMode == ExecutionMode.SEQUENTIAL) {
+                        break;
+                    }
                 }
             }
 
@@ -184,7 +190,7 @@ public class CommandTrait extends Trait {
                                 || PlayerNPCCommand.requiresTracking(command))) {
                             cooldowns.put(player.getUniqueId().toString(), info = new PlayerNPCCommand());
                         }
-                        if (info != null && !info.canUse(player, command)) {
+                        if (info != null && !info.canUse(CommandTrait.this, player, command)) {
                             return;
                         }
                         PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
@@ -211,6 +217,10 @@ public class CommandTrait extends Trait {
         }
     }
 
+    public double getCost() {
+        return cost;
+    }
+
     public ExecutionMode getExecutionMode() {
         return executionMode;
     }
@@ -231,6 +241,11 @@ public class CommandTrait extends Trait {
         commands.remove(String.valueOf(id));
     }
 
+    private void sendErrorMessage(Player player, CommandTraitMessages msg, Object... objects) {
+        String messageRaw = msg.setting.asString();
+        Messaging.send(player, Translator.format(messageRaw, objects));
+    }
+
     public void setCost(double cost) {
         this.cost = cost;
     }
@@ -242,6 +257,19 @@ public class CommandTrait extends Trait {
     public void setTemporaryPermissions(List<String> permissions) {
         temporaryPermissions.clear();
         temporaryPermissions.addAll(permissions);
+    }
+
+    private enum CommandTraitMessages {
+        MAXIMUM_TIMES_USED(Setting.NPC_COMMAND_MAXIMUM_TIMES_USED_MESSAGE),
+        MISSING_MONEY(Setting.NPC_COMMAND_NOT_ENOUGH_MONEY_MESSAGE),
+        NO_PERMISSION(Setting.NPC_COMMAND_NO_PERMISSION_MESSAGE),
+        ON_COOLDOWN(Setting.NPC_COMMAND_ON_COOLDOWN_MESSAGE);
+
+        private final Setting setting;
+
+        CommandTraitMessages(Setting setting) {
+            this.setting = setting;
+        }
     }
 
     public enum ExecutionMode {
@@ -420,10 +448,10 @@ public class CommandTrait extends Trait {
         public PlayerNPCCommand() {
         }
 
-        public boolean canUse(Player player, NPCCommand command) {
+        public boolean canUse(CommandTrait trait, Player player, NPCCommand command) {
             for (String perm : command.perms) {
                 if (!player.hasPermission(perm)) {
-                    Messaging.sendErrorTr(player, CommandMessages.NO_PERMISSION);
+                    trait.sendErrorMessage(player, CommandTraitMessages.NO_PERMISSION);
                     return false;
                 }
             }
@@ -438,12 +466,15 @@ public class CommandTrait extends Trait {
             }
             if (lastUsed.containsKey(commandKey)) {
                 if (currentTimeSec < lastUsed.get(commandKey) + command.cooldown) {
+                    trait.sendErrorMessage(player, CommandTraitMessages.ON_COOLDOWN,
+                            (lastUsed.get(commandKey) + command.cooldown) - currentTimeSec);
                     return false;
                 }
                 lastUsed.remove(commandKey);
             }
             int previouslyUsed = nUsed.getOrDefault(commandKey, 0);
             if (command.n > 0 && command.n <= previouslyUsed) {
+                trait.sendErrorMessage(player, CommandTraitMessages.MAXIMUM_TIMES_USED, command.n);
                 return false;
             }
             if (command.cooldown > 0) {

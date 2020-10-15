@@ -65,5 +65,10 @@ public class ChunkCoord {
         }
     }
 
+    @Override
+    public String toString() {
+        return "[" + x + "," + z + "]";
+    }
+
     private static boolean SUPPORTS_FORCE_LOADED = true;
 }

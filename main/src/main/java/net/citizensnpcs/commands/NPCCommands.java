@@ -173,6 +173,25 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "ai (true|false)",
+            desc = "Sets whether the NPC should use vanilla AI",
+            modifiers = { "ai" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.ai")
+    public void ai(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        boolean useAI = npc.useMinecraftAI();
+        if (args.argsLength() == 1) {
+            useAI = !useAI;
+        } else {
+            useAI = Boolean.parseBoolean(args.getString(1));
+        }
+        npc.setUseMinecraftAI(useAI);
+        Messaging.sendTr(sender, useAI ? Messages.USING_MINECRAFT_AI : Messages.NOT_USING_MINECRAFT_AI);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "anchor (--save [name]|--assume [name]|--remove [name]) (-a)(-c)",
             desc = "Changes/Saves/Lists NPC's location anchor(s)",
             flags = "ac",
@@ -293,7 +312,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
@@ -964,7 +983,7 @@ public class NPCCommands {
         }
 
         Paginator paginator = new Paginator().header("NPCs").console(sender instanceof ConsoleCommandSender);
-        paginator.addLine("<b>Key: <e>ID  <a>Name");
+        paginator.addLine("<e><o>ID  <a><o>Name");
         for (int i = 0; i < npcs.size(); i += 2) {
             String line = "<e>" + npcs.get(i).getId() + "<a>  " + npcs.get(i).getName();
             if (npcs.size() >= i + 2)

@@ -15,6 +15,10 @@ public class PhantomTrait extends Trait {
         super("phantomtrait");
     }
 
+    public int getSize() {
+        return size;
+    }
+
     @Override
     public void run() {
         if (npc.isSpawned() && npc.getEntity() instanceof Phantom) {
