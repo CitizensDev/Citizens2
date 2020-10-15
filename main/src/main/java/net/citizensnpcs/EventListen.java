@@ -668,21 +668,19 @@ public class EventListen implements Listener {
     }
 
     private void respawnAllFromCoord(ChunkCoord coord, Event event) {
-        List<NPC> ids = toRespawn.get(coord);
+        List<NPC> ids = Lists.newArrayList(toRespawn.get(coord));
         if (ids.size() > 0) {
             Messaging.debug("Respawning all NPCs at", coord, "due to", event);
         }
         for (int i = 0; i < ids.size(); i++) {
             NPC npc = ids.get(i);
             if (npc.getOwningRegistry().getById(npc.getId()) != npc) {
-                ids.remove(i--);
                 if (Messaging.isDebugging()) {
                     Messaging.debug("Prevented deregistered NPC from respawning", npc.getId());
                 }
                 continue;
             }
             if (npc.isSpawned()) {
-                ids.remove(i--);
                 if (Messaging.isDebugging()) {
                     Messaging.debug("Can't respawn NPC", npc.getId(), ": already spawned");
                 }
@@ -690,22 +688,18 @@ public class EventListen implements Listener {
             }
             boolean success = spawn(npc);
             if (!success) {
+                ids.remove(i--);
                 if (Messaging.isDebugging()) {
                     Messaging.debug("Couldn't respawn id", npc.getId(), "during", event, "at", coord);
                 }
                 continue;
             }
-            try {
-                ids.remove(i--);
-            } catch (IndexOutOfBoundsException ex) {
-                // something caused toRespawn to get modified?
-                Messaging.debug("Some strange chunk loading happened while spawning", npc.getId(),
-                        " - check all your NPCs in chunk", coord, "are spawned");
-                break;
-            }
             if (Messaging.isDebugging()) {
                 Messaging.debug("Spawned id", npc.getId(), "during", event, "at", coord);
             }
+        }
+        for (NPC npc : ids) {
+            toRespawn.remove(coord, npc);
         }
     }
 
