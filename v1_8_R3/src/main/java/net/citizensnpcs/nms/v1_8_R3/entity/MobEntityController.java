@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_8_R3.entity;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.Map;
 
 import org.bukkit.Location;
@@ -12,6 +13,7 @@ import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.AbstractEntityController;
+import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.World;
 
 public abstract class MobEntityController extends AbstractEntityController {
@@ -31,8 +33,13 @@ public abstract class MobEntityController extends AbstractEntityController {
         // entity.onGround isn't updated right away - we approximate here so
         // that things like pathfinding still work *immediately* after spawn.
         org.bukkit.Material beneath = at.getBlock().getRelative(BlockFace.DOWN).getType();
-        if (beneath.isBlock()) {
+        if (beneath.isSolid()) {
             entity.onGround = true;
+        }
+        try {
+            UUID_FIELD.set(entity, npc.getUniqueId());
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
         return entity.getBukkitEntity();
     }
@@ -58,4 +65,5 @@ public abstract class MobEntityController extends AbstractEntityController {
     }
 
     private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = Maps.newHashMap();
+    private static final Field UUID_FIELD = NMS.getField(net.minecraft.server.v1_8_R3.Entity.class, "uniqueID");
 }
