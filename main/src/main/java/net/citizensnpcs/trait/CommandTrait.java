@@ -243,7 +243,9 @@ public class CommandTrait extends Trait {
 
     private void sendErrorMessage(Player player, CommandTraitMessages msg, Object... objects) {
         String messageRaw = msg.setting.asString();
-        Messaging.send(player, Translator.format(messageRaw, objects));
+        if (messageRaw != null && messageRaw.trim().length() > 0) {
+            Messaging.send(player, Translator.format(messageRaw, objects));
+        }
     }
 
     public void setCost(double cost) {
