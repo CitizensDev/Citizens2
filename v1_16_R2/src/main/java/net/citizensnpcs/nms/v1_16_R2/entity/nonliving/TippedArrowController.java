@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R2.entity.CraftTippedArrow;
-import org.bukkit.entity.TippedArrow;
+import org.bukkit.entity.Arrow;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCPushEvent;
@@ -25,8 +25,8 @@ public class TippedArrowController extends MobEntityController {
     }
 
     @Override
-    public TippedArrow getBukkitEntity() {
-        return (TippedArrow) super.getBukkitEntity();
+    public Arrow getBukkitEntity() {
+        return (Arrow) super.getBukkitEntity();
     }
 
     public static class EntityTippedArrowNPC extends EntityTippedArrow implements NPCHolder {
