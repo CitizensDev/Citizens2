@@ -2,8 +2,8 @@ package net.citizensnpcs.nms.v1_11_R1.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_11_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftArrow;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftTippedArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.util.Vector;
 
@@ -37,6 +37,15 @@ public class TippedArrowController extends MobEntityController {
         public EntityTippedArrowNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void A_() {
+            if (npc != null) {
+                npc.update();
+            } else {
+                super.A_();
+            }
         }
 
         @Override
@@ -88,18 +97,9 @@ public class TippedArrowController extends MobEntityController {
         public NPC getNPC() {
             return npc;
         }
-
-        @Override
-        public void A_() {
-            if (npc != null) {
-                npc.update();
-            } else {
-                super.A_();
-            }
-        }
     }
 
-    public static class TippedArrowNPC extends CraftArrow implements NPCHolder {
+    public static class TippedArrowNPC extends CraftTippedArrow implements NPCHolder {
         private final CitizensNPC npc;
 
         public TippedArrowNPC(EntityTippedArrowNPC entity) {

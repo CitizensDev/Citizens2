@@ -2,8 +2,8 @@ package net.citizensnpcs.nms.v1_10_R1.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_10_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftArrow;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftTippedArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.util.Vector;
 
@@ -99,7 +99,7 @@ public class TippedArrowController extends MobEntityController {
         }
     }
 
-    public static class TippedArrowNPC extends CraftArrow implements NPCHolder {
+    public static class TippedArrowNPC extends CraftTippedArrow implements NPCHolder {
         private final CitizensNPC npc;
 
         public TippedArrowNPC(EntityTippedArrowNPC entity) {
