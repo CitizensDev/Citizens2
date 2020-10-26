@@ -363,7 +363,7 @@ permissions:
   citizens.npc.speak: {default: false}
   citizens.npc.speed: {default: false}
   citizens.npc.swim: {default: false}
-  citizens.npc.talk: {default: false}
+  citizens.npc.talk: {default: true}
   citizens.npc.targetable: {default: false}
   citizens.npc.tp: {default: false}
   citizens.npc.tphere: {default: false}
