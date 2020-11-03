@@ -142,7 +142,8 @@ public class HologramTrait extends Trait {
                 nameNPC = createHologram(npc.getFullName(), 0);
             }
         }
-        boolean update = currentLoc.distanceSquared(npc.getStoredLocation()) >= 0.01;
+        boolean update = currentLoc.getWorld() != npc.getStoredLocation().getWorld()
+                || currentLoc.distanceSquared(npc.getStoredLocation()) >= 0.01;
         if (update) {
             currentLoc = npc.getStoredLocation();
         }
