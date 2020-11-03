@@ -209,8 +209,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     }
 
     private boolean sendText(Player player) {
-        if (!player.hasPermission("citizens.admin") && !player.hasPermission("citizens.npc.talk"))
-            return false;
         if (text.size() == 0)
             return false;
 
