@@ -185,14 +185,14 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         private LinearWaypointEditor(Player player) {
             this.player = player;
             this.markers = new EntityMarkers<Waypoint>();
-            if (showingMarkers) {
-                createWaypointMarkers();
-            }
         }
 
         @Override
         public void begin() {
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_BEGIN);
+            if (showingMarkers) {
+                createWaypointMarkers();
+            }
         }
 
         private void clearWaypoints() {
@@ -212,13 +212,11 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         public void end() {
             if (!editing)
                 return;
+            editing = false;
             if (conversation != null) {
                 conversation.abandon();
             }
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_END);
-            editing = false;
-            if (!showingMarkers)
-                return;
             markers.destroyMarkers();
         }
 
