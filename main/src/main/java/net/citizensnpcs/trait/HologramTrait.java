@@ -165,6 +165,7 @@ public class HologramTrait extends Trait {
             if (text != null && !text.isEmpty()) {
                 hologramNPC.setName(Placeholders.replace(text, null, npc));
             } else {
+                hologramNPC.setName("");
             }
         }
     }
