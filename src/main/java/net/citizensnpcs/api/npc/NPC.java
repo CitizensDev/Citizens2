@@ -144,6 +144,16 @@ public interface NPC extends Agent, Cloneable {
     public Navigator getNavigator();
 
     /**
+     * Gets a trait from the given class. If the NPC does not currently have the trait then it will be created and
+     * attached using {@link #addTrait(Class)} .
+     *
+     * @param trait
+     *            Trait to get
+     * @return Trait with the given name
+     */
+    public <T extends Trait> T getOrAddTrait(Class<T> trait);
+
+    /**
      * @return The {@link NPCRegistry} that created this NPC.
      */
     public NPCRegistry getOwningRegistry();
@@ -163,25 +173,15 @@ public interface NPC extends Agent, Cloneable {
      * @param trait
      *            Trait to get
      * @return Trait with the given name
-     * 
-     * @deprecated for intransparent naming. Use {@link #getOrAddTrait(Class)} for the same behavior. 
+     *
+     * @deprecated for intransparent naming. Use {@link #getOrAddTrait(Class)} for the same behavior.
      */
     @Deprecated
     public <T extends Trait> T getTrait(Class<T> trait);
-    
+
     /**
-     * Gets a trait from the given class. If the NPC does not currently have the trait then it will be created and
-     * attached using {@link #addTrait(Class)} .
-     *
-     * @param trait
-     *            Trait to get
-     * @return Trait with the given name
-     */
-    public <T extends Trait> T getOrAddTrait(Class<T> trait);
-    
-    /**
-     * Gets a trait from the given class. If the NPC does not currently have the trait, 
-     * <code>null</code> will be returned.
+     * Gets a trait from the given class. If the NPC does not currently have the trait, <code>null</code> will be
+     * returned.
      *
      * @param trait
      *            Trait to get
@@ -263,6 +263,14 @@ public interface NPC extends Agent, Cloneable {
     public void save(DataKey key);
 
     /**
+     * Sets whether to always use a name hologram instead of the in-built Minecraft name.
+     *
+     * @param use
+     *            Whether to use a hologram
+     */
+    public void setAlwaysUseNameHologram(boolean use);
+
+    /**
      * Sets the {@link EntityType} of this NPC. Currently only accepts <em>living</em> entity types, with scope for
      * additional types in the future. The NPC will respawned if currently spawned, or will remain despawned otherwise.
      *
@@ -340,6 +348,7 @@ public interface NPC extends Agent, Cloneable {
      */
     public boolean useMinecraftAI();
 
+    public static final String ALWAYS_USE_NAME_HOLOGRAM_METADATA = "always-use-name-hologram";
     /**
      * The Minecraft ambient sound played. String - Minecraft sound name
      */

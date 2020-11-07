@@ -352,7 +352,8 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public boolean requiresNameHologram() {
         return getEntityType() != EntityType.ARMOR_STAND
-                && (name.contains("&x") || (name.length() > 16 && getEntityType() == EntityType.PLAYER)
+                && ((name.length() > 16 && getEntityType() == EntityType.PLAYER)
+                        || data().get(NPC.ALWAYS_USE_NAME_HOLOGRAM_METADATA, false) || name.contains("&x")
                         || !Placeholders.replace(name, null, this).equals(name));
     }
 
@@ -385,6 +386,11 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public void setAlwaysUseNameHologram(boolean use) {
+        data().setPersistent(NPC.ALWAYS_USE_NAME_HOLOGRAM_METADATA, use);
+    }
+
+    @Override
     public void setFlyable(boolean flyable) {
         data().setPersistent(NPC.FLYABLE_METADATA, flyable);
     }
@@ -398,7 +404,7 @@ public abstract class AbstractNPC implements NPC {
         if (bukkitEntity instanceof LivingEntity) {
             ((LivingEntity) bukkitEntity).setCustomName(getFullName());
         }
-        if (bukkitEntity.getType() == EntityType.PLAYER) {
+        if (bukkitEntity.getType() == EntityType.PLAYER && !requiresNameHologram()) {
             Location old = bukkitEntity.getLocation();
             despawn(DespawnReason.PENDING_RESPAWN);
             spawn(old);
