@@ -34,12 +34,17 @@ public class Placeholders {
     }
 
     private static String setPlaceholderAPIPlaceholders(String text, OfflinePlayer player) {
+        if (!PLACEHOLDERAPI_ENABLED) {
+            return text;
+        }
         try {
             return PlaceholderAPI.setPlaceholders(player, text);
         } catch (Throwable t) {
+            PLACEHOLDERAPI_ENABLED = false;
             return text;
         }
     }
 
+    private static boolean PLACEHOLDERAPI_ENABLED = true;
     private static Pattern PLAYER_MATCHER = Pattern.compile("<player>|<p>");
 }
