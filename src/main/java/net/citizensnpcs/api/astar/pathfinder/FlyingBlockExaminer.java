@@ -29,7 +29,11 @@ public class FlyingBlockExaminer implements NeighbourGeneratorBlockExaminer {
                 for (int z = -1; z <= 1; z++) {
                     if (x == 0 && y == 0 && z == 0)
                         continue;
-                    neighbours.add(point.createAtOffset(point.getVector().add(new Vector(x, y, z))));
+                    Vector mod = point.getVector().clone().add(new Vector(x, y, z));
+                    if (mod.getY() < 0 || mod.getY() > 255 || mod.equals(point.getVector())) {
+                        continue;
+                    }
+                    neighbours.add(point.createAtOffset(mod));
                 }
             }
         }
