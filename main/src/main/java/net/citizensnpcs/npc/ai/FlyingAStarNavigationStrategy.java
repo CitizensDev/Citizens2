@@ -164,6 +164,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         motY += (Math.signum(d1) - motY) * 0.1;
         motZ += (Math.signum(d2) * 0.5D - motZ) * 0.1;
         velocity.setX(motX).setY(motY).setZ(motZ).multiply(parameters.speed());
+        npc.getEntity().setVelocity(velocity);
 
         float targetYaw = (float) (Math.atan2(motZ, motX) * 180.0D / Math.PI) - 90.0F;
         float normalisedTargetYaw = (targetYaw - current.getYaw()) % 360;
@@ -173,8 +174,6 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         if (normalisedTargetYaw < -180.0F) {
             normalisedTargetYaw += 360.0F;
         }
-        velocity.setX(motX).setY(motY).setZ(motZ).multiply(parameters.speed());
-        npc.getEntity().setVelocity(velocity);
 
         if (npc.getEntity().getType() != EntityType.ENDER_DRAGON) {
             NMS.setVerticalMovement(npc.getEntity(), 0.5);

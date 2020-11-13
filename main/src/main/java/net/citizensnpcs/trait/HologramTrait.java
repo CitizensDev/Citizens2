@@ -193,8 +193,6 @@ public class HologramTrait extends Trait {
             nameNPC.destroy();
             nameNPC = null;
         }
-        if (hologramNPCs.isEmpty())
-            return;
         for (NPC npc : hologramNPCs) {
             npc.destroy();
         }
