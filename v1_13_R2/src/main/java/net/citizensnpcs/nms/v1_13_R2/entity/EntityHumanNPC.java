@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -270,6 +272,19 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     @Override
     public SkinPacketTracker getSkinTracker() {
         return skinTracker;
+    }
+
+    @Override
+    public boolean inBlock() {
+        if (npc == null || noclip) {
+            return super.inBlock();
+        }
+        Location loc = getBukkitEntity().getLocation(LOADED_LOCATION);
+        if (!Util.isLoaded(loc)) {
+            return false;
+        }
+        Block in = loc.getBlock();
+        return in.getType().isSolid() && in.getRelative(BlockFace.UP).getType().isSolid();
     }
 
     private void initialise(MinecraftServer minecraftServer) {

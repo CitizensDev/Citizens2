@@ -9,6 +9,8 @@ import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -278,6 +280,19 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         // cancelled.
     }
 
+    @Override
+    public boolean inBlock() {
+        if (npc == null || noclip) {
+            return super.inBlock();
+        }
+        Location loc = getBukkitEntity().getLocation(LOADED_LOCATION);
+        if (!Util.isLoaded(loc)) {
+            return false;
+        }
+        Block in = loc.getBlock();
+        return in.getType().isSolid() && in.getRelative(BlockFace.UP).getType().isSolid();
+    }
+
     private void initialise(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
         NetworkManager conn = null;
@@ -376,7 +391,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             super.playerTick();
             return;
         }
+        noclip = true;
         entityBaseTick();
+        noclip = false;
         boolean navigating = npc.getNavigator().isNavigating();
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
