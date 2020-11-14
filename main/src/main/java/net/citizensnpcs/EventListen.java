@@ -107,7 +107,7 @@ import net.citizensnpcs.util.Util;
 public class EventListen implements Listener {
     private final Map<String, NPCRegistry> registries;
     private final SkinUpdateTracker skinUpdateTracker;
-    private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create();
+    private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create(64, 4);
 
     EventListen(Map<String, NPCRegistry> registries) {
         this.registries = registries;

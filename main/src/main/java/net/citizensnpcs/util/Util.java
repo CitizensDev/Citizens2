@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -108,6 +110,16 @@ public class Util {
 
     public static String getTeamName(UUID id) {
         return "CIT-" + id.toString().replace("-", "").substring(0, 12);
+    }
+
+    public static boolean inBlock(Entity entity) {
+        // TODO: bounding box aware?
+        Location loc = entity.getLocation(AT_LOCATION);
+        if (!Util.isLoaded(loc)) {
+            return false;
+        }
+        Block in = loc.getBlock();
+        return in.getType().isSolid() && in.getRelative(BlockFace.UP).getType().isSolid();
     }
 
     public static boolean isAlwaysFlyable(EntityType type) {

@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_11_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -277,15 +275,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean inBlock() {
-        if (npc == null || noclip) {
+        if (npc == null || noclip || isSleeping()) {
             return super.inBlock();
         }
-        Location loc = getBukkitEntity().getLocation(LOADED_LOCATION);
-        if (!Util.isLoaded(loc)) {
-            return false;
-        }
-        Block in = loc.getBlock();
-        return in.getType().isSolid() && in.getRelative(BlockFace.UP).getType().isSolid();
+        return Util.inBlock(getBukkitEntity());
     }
 
     private void initialise(MinecraftServer minecraftServer) {
