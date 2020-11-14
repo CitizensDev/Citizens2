@@ -391,9 +391,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             super.playerTick();
             return;
         }
-        noclip = true;
         entityBaseTick();
-        noclip = false;
         boolean navigating = npc.getNavigator().isNavigating();
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
