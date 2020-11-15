@@ -9,7 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -39,7 +41,7 @@ public class FollowTrait extends Trait {
      * Returns whether the trait is actively following a {@link Player}.
      */
     public boolean isActive() {
-        return enabled && npc.isSpawned() && player != null && npc.getEntity().getWorld().equals(player.getWorld());
+        return enabled && npc.isSpawned() && player != null;
     }
 
     public boolean isEnabled() {
@@ -71,6 +73,12 @@ public class FollowTrait extends Trait {
             }
         }
         if (!isActive()) {
+            return;
+        }
+        if (!npc.getEntity().getWorld().equals(player.getWorld())) {
+            if (Setting.FOLLOW_ACROSS_WORLDS.asBoolean()) {
+                npc.teleport(player.getLocation(), TeleportCause.PLUGIN);
+            }
             return;
         }
         if (!npc.getNavigator().isNavigating()) {

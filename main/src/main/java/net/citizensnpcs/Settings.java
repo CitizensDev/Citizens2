@@ -104,6 +104,7 @@ public class Settings {
         DISABLE_MC_NAVIGATION_FALLBACK("npc.pathfinding.disable-mc-fallback-navigation", true),
         DISABLE_TABLIST("npc.tablist.disable", true),
         ERROR_COLOUR("general.color-scheme.message-error", "<c>"),
+        FOLLOW_ACROSS_WORLDS("npc.follow.teleport-across-worlds", true),
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<e>"),
         KEEP_CHUNKS_LOADED("npc.chunks.always-keep-loaded", false),
         LOCALE("general.translation.locale", ""),
