@@ -1,7 +1,5 @@
 package net.citizensnpcs.api.util;
 
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -25,9 +23,12 @@ public class Placeholders {
         if (player == null) {
             return setPlaceholderAPIPlaceholders(text, player);
         }
-        text = PLAYER_MATCHER.matcher(text).replaceAll(player.getName());
         if (player instanceof Entity && ((Entity) player).isValid()) {
-            text = WORLD_MATCHER.matcher(text).replaceAll(((Entity) player).getWorld().getName());
+            text = StringUtils.replaceEach(text, PLAYER_WORLD_PLACEHOLDERS,
+                    new String[] { player.getName(), player.getName(), ((Entity) player).getWorld().getName() });
+        } else {
+            text = StringUtils.replaceEach(text, PLAYER_PLACEHOLDERS,
+                    new String[] { player.getName(), player.getName() });
         }
         return setPlaceholderAPIPlaceholders(text, player);
     }
@@ -44,8 +45,9 @@ public class Placeholders {
         }
     }
 
-    private static String[] CITIZENS_PLACEHOLDERS = { "<id>", "<npc>", "<owner>" };
+    private static final String[] CITIZENS_PLACEHOLDERS = { "<id>", "<npc>", "<owner>" };
+
     private static boolean PLACEHOLDERAPI_ENABLED = true;
-    private static Pattern PLAYER_MATCHER = Pattern.compile("<player>|<p>");
-    private static Pattern WORLD_MATCHER = Pattern.compile("<world>");
+    private static final String[] PLAYER_PLACEHOLDERS = { "<player>", "<p>", };
+    private static final String[] PLAYER_WORLD_PLACEHOLDERS = { "<player>", "<p>", "<world>" };
 }
