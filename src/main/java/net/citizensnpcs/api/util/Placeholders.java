@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.util;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.OfflinePlayer;
@@ -16,10 +17,19 @@ public class Placeholders {
         if (npc == null) {
             return text;
         }
-        text = text.replace("<owner>", npc.getOrAddTrait(Owner.class).getOwner());
-        text = text.replace("<npc>", npc.getName());
-        text = text.replace("<id>", Integer.toString(npc.getId()));
-        return text;
+        Matcher matcher = CITIZENS_PLACEHOLDERS.matcher(text);
+        StringBuffer sb = new StringBuffer(text.length());
+        while (matcher.find()) {
+            String match = matcher.group(1);
+            if (match.equals("owner")) {
+                matcher.appendReplacement(sb, npc.getOrAddTrait(Owner.class).getOwner());
+            } else if (match.equals("npc")) {
+                matcher.appendReplacement(sb, npc.getName());
+            } else if (match.equals("id")) {
+                matcher.appendReplacement(sb, Integer.toString(npc.getId()));
+            }
+        }
+        return matcher.appendTail(sb).toString();
     }
 
     public static String replace(String text, OfflinePlayer player) {
@@ -28,7 +38,7 @@ public class Placeholders {
         }
         text = PLAYER_MATCHER.matcher(text).replaceAll(player.getName());
         if (player instanceof Entity && ((Entity) player).isValid()) {
-            text = text.replace("<world>", ((Entity) player).getWorld().getName());
+            text = WORLD_MATCHER.matcher(text).replaceAll(((Entity) player).getWorld().getName());
         }
         return setPlaceholderAPIPlaceholders(text, player);
     }
@@ -45,6 +55,8 @@ public class Placeholders {
         }
     }
 
+    private static Pattern CITIZENS_PLACEHOLDERS = Pattern.compile("<(owner|id|npc)>");
     private static boolean PLACEHOLDERAPI_ENABLED = true;
     private static Pattern PLAYER_MATCHER = Pattern.compile("<player>|<p>");
+    private static Pattern WORLD_MATCHER = Pattern.compile("<world>");
 }
