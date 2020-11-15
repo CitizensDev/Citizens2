@@ -18,18 +18,23 @@ public class Placeholders {
             return text;
         }
         Matcher matcher = CITIZENS_PLACEHOLDERS.matcher(text);
-        StringBuffer sb = new StringBuffer(text.length());
+        StringBuffer sb = null;
         while (matcher.find()) {
-            String match = matcher.group(1);
-            if (match.equals("owner")) {
-                matcher.appendReplacement(sb, npc.getOrAddTrait(Owner.class).getOwner());
-            } else if (match.equals("npc")) {
-                matcher.appendReplacement(sb, npc.getName());
-            } else if (match.equals("id")) {
-                matcher.appendReplacement(sb, Integer.toString(npc.getId()));
+            if (sb == null) {
+                sb = new StringBuffer(text.length());
             }
+            String match = matcher.group(1);
+            String replacement = null;
+            if (match.equals("owner")) {
+                replacement = npc.getOrAddTrait(Owner.class).getOwner();
+            } else if (match.equals("npc")) {
+                replacement = npc.getName();
+            } else if (match.equals("id")) {
+                replacement = Integer.toString(npc.getId());
+            }
+            matcher.appendReplacement(sb, replacement);
         }
-        return matcher.appendTail(sb).toString();
+        return sb == null ? text : matcher.appendTail(sb).toString();
     }
 
     public static String replace(String text, OfflinePlayer player) {
