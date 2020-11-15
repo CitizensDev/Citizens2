@@ -333,17 +333,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)
-        if (getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-            @Override
-            public void run() {
-                saves.loadInto(npcRegistry);
-                Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, Iterables.size(npcRegistry), "?");
-                startMetrics();
-                scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
-                Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
-                new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
-            }
-        }, 1) == -1) {
+        if (getServer().getScheduler().scheduleSyncDelayedTask(this, new CitizensLoadTask(), 1) == -1) {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
             Bukkit.getPluginManager().disablePlugin(this);
         }
@@ -401,13 +391,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void scheduleSaveTask(int delay) {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            @Override
-            public void run() {
-                storeNPCs();
-                saves.saveToDisk();
-            }
-        }, delay, delay);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CitizensSaveTask(), delay, delay);
     }
 
     @Override
@@ -508,5 +492,25 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return true;
         }
         return false;
+    }
+
+    private class CitizensLoadTask implements Runnable {
+        @Override
+        public void run() {
+            saves.loadInto(npcRegistry);
+            Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, Iterables.size(npcRegistry), "?");
+            startMetrics();
+            scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
+            Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
+            new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
+        }
+    }
+
+    private class CitizensSaveTask implements Runnable {
+        @Override
+        public void run() {
+            storeNPCs();
+            saves.saveToDisk();
+        }
     }
 }
