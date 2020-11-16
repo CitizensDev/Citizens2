@@ -202,6 +202,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return in.name().contains("DOOR") && !in.name().contains("TRAPDOOR");
     }
 
+    public static boolean isGate(Material in) {
+        return in.name().contains("GATE") && !in.name().contains("GATEWAY");
+    }
+
     public static boolean isLiquid(Material... materials) {
         for (Material mat : materials) {
             if (LIQUIDS.contains(mat)) {
