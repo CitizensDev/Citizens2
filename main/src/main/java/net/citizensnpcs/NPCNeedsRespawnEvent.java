@@ -1,10 +1,10 @@
 package net.citizensnpcs;
 
-import net.citizensnpcs.api.event.NPCEvent;
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.Location;
 import org.bukkit.event.HandlerList;
+
+import net.citizensnpcs.api.event.NPCEvent;
+import net.citizensnpcs.api.npc.NPC;
 
 public class NPCNeedsRespawnEvent extends NPCEvent {
     private final Location spawn;
@@ -20,12 +20,12 @@ public class NPCNeedsRespawnEvent extends NPCEvent {
     }
 
     public Location getSpawnLocation() {
-        return spawn;
+        return spawn.clone();
     }
-
-    private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    private static final HandlerList handlers = new HandlerList();
 }

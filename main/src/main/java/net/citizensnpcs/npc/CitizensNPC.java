@@ -238,7 +238,6 @@ public class CitizensNPC extends AbstractNPC {
             Messaging.debug("Tried to spawn", getId(), "but the world was null. SpawnReason." + reason);
             return false;
         }
-        data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
         at = at.clone();
 
         if (reason == SpawnReason.CHUNK_LOAD || reason == SpawnReason.COMMAND) {
@@ -246,20 +245,12 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         getOrAddTrait(CurrentLocation.class).setLocation(at);
-        entityController.spawn(at, this);
-
-        getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+        entityController.spawn(at.clone(), this);
 
         boolean loaded = Util.isLoaded(at);
         boolean couldSpawn = !loaded ? false : NMS.addEntityToWorld(getEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
 
-        // send skin packets, if applicable, before other NMS packets are sent
-        if (couldSpawn) {
-            SkinnableEntity skinnable = getEntity() instanceof SkinnableEntity ? ((SkinnableEntity) getEntity()) : null;
-            if (skinnable != null) {
-                skinnable.getSkinTracker().onSpawnNPC();
-            }
-        } else {
+        if (!couldSpawn) {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Retrying spawn of", getId(), "later, SpawnReason." + reason + ". Was loaded", loaded,
                         "is loaded", Util.isLoaded(at));
@@ -268,6 +259,12 @@ public class CitizensNPC extends AbstractNPC {
             entityController.remove();
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
+        }
+        getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+        // send skin packets, if applicable, before other NMS packets are sent
+        SkinnableEntity skinnable = getEntity() instanceof SkinnableEntity ? ((SkinnableEntity) getEntity()) : null;
+        if (skinnable != null) {
+            skinnable.getSkinTracker().onSpawnNPC();
         }
         getEntity().teleport(at);
 
