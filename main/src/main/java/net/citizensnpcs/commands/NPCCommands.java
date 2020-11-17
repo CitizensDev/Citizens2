@@ -1727,7 +1727,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "select|sel [id|name] (--r range)",
+            usage = "select|sel [id|name] (--r range) (--registry [name])",
             desc = "Select a NPC with the given ID or name",
             modifiers = { "select", "sel" },
             min = 1,
@@ -1746,6 +1746,8 @@ public class NPCCommands {
                 Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
             }
         };
+        NPCRegistry registry = args.hasValueFlag("registry") ? CitizensAPI.getNamedNPCRegistry(args.getFlag("registry"))
+                : CitizensAPI.getNPCRegistry();
         if (args.argsLength() <= 1) {
             if (!(sender instanceof Player))
                 throw new ServerCommandException();
@@ -1761,15 +1763,14 @@ public class NPCCommands {
                 }
             });
             for (Entity possibleNPC : search) {
-                NPC test = CitizensAPI.getNPCRegistry().getNPC(possibleNPC);
+                NPC test = registry.getNPC(possibleNPC);
                 if (test == null)
                     continue;
                 callback.run(test);
                 break;
             }
         } else {
-            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
-                    args.getString(1));
+            NPCCommandSelector.startWithCallback(callback, registry, sender, args, args.getString(1));
         }
     }
 
