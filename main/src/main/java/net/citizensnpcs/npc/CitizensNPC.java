@@ -231,11 +231,11 @@ public class CitizensNPC extends AbstractNPC {
         Preconditions.checkNotNull(at, "location cannot be null");
         Preconditions.checkNotNull(reason, "reason cannot be null");
         if (isSpawned()) {
-            Messaging.debug("Tried to spawn", getId(), "while already spawned.");
+            Messaging.debug("Tried to spawn", getId(), "while already spawned. SpawnReason." + reason);
             return false;
         }
         if (at.getWorld() == null) {
-            Messaging.debug("Tried to spawn", getId(), "but the world was null.");
+            Messaging.debug("Tried to spawn", getId(), "but the world was null. SpawnReason." + reason);
             return false;
         }
         data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
@@ -261,8 +261,8 @@ public class CitizensNPC extends AbstractNPC {
             }
         } else {
             if (Messaging.isDebugging()) {
-                Messaging.debug("Retrying spawn of", getId(), "later. Was loaded", loaded, "is loaded",
-                        Util.isLoaded(at));
+                Messaging.debug("Retrying spawn of", getId(), "later, SpawnReason." + reason + ". Was loaded", loaded,
+                        "is loaded", Util.isLoaded(at));
             }
             // we need to wait before trying to spawn
             entityController.remove();
@@ -283,7 +283,7 @@ public class CitizensNPC extends AbstractNPC {
 
         if (spawnEvent.isCancelled()) {
             entityController.remove();
-            Messaging.debug("Couldn't spawn", getId(), "due to event cancellation.");
+            Messaging.debug("Couldn't spawn", getId(), "SpawnReason." + reason + " due to event cancellation.");
             return false;
         }
 
