@@ -2,6 +2,7 @@ package net.citizensnpcs.trait;
 
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -16,6 +17,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.util.NMS;
 
@@ -162,7 +164,7 @@ public class HologramTrait extends Trait {
                         TeleportCause.PLUGIN);
             }
             String text = lines.get(i);
-            if (text != null && !text.isEmpty()) {
+            if (text != null && !ChatColor.stripColor(Colorizer.parseColors(text)).isEmpty()) {
                 hologramNPC.setName(Placeholders.replace(text, null, npc));
                 hologramNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, true);
             } else {
