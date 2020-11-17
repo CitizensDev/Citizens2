@@ -73,6 +73,14 @@ public class Age extends Trait implements Toggleable {
         }
     }
 
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+        if (isAgeable()) {
+            ageable.setAgeLock(locked);
+        }
+
+    }
+
     /**
      * Toggles the age lock variable and returns whether the age is currently locked.
      */
