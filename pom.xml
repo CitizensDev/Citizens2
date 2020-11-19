@@ -8,13 +8,23 @@
 	<groupId>net.citizensnpcs</groupId>
 	<artifactId>citizens-parent</artifactId>
 	<version>2.0.27-SNAPSHOT</version>
+	
 	<properties>
 		<BUILD_NUMBER>Unknown</BUILD_NUMBER>
 		<CITIZENS_VERSION>2.0.27</CITIZENS_VERSION>
 	</properties>
+	
+	<repositories>
+		<repository>
+			<id>nms-repo</id>
+			<url>https://repo.codemc.io/repository/nms/</url>
+		</repository>
+	</repositories>
+	
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
 	</build>
+	
 	<modules>
 		<module>main</module>
 		<module>v1_8_R3</module>
