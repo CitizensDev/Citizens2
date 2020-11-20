@@ -177,9 +177,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
 
         if (npc.getEntity().getType() != EntityType.ENDER_DRAGON) {
             NMS.setVerticalMovement(npc.getEntity(), 0.5);
-            float newYaw = current.getYaw() + normalisedTargetYaw;
-            current.setYaw(newYaw);
-            NMS.setHeadYaw(npc.getEntity(), newYaw);
+            NMS.setHeadYaw(npc.getEntity(), current.getYaw() + normalisedTargetYaw);
         }
         parameters.run();
         plan.run(npc);

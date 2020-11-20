@@ -34,8 +34,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         this.parameters = params;
         this.handle = npc.getEntity();
         this.target = target;
-        TargetNavigator nav = NMS.getTargetNavigator(npc.getEntity(), target, params);
-        this.targetNavigator = nav != null && !params.useNewPathfinder() ? nav : new AStarTargeter();
+        TargetNavigator nms = NMS.getTargetNavigator(npc.getEntity(), target, params);
+        this.targetNavigator = nms != null && !params.useNewPathfinder() ? nms : new AStarTargeter();
         this.aggro = aggro;
     }
 

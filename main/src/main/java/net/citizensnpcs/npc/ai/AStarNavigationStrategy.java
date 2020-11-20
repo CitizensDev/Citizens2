@@ -135,7 +135,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         Location currLoc = npc.getEntity().getLocation(NPC_LOCATION);
         Vector destVector = new Vector(vector.getX() + 0.5, vector.getY(), vector.getZ() + 0.5);
         /* Proper door movement - gets stuck on corners at times
-        
+
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
           if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();
@@ -164,10 +164,6 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double distance = xzDistance + dY * dY;
 
         if (npc.getEntity() instanceof LivingEntity) {
-            if (distance > 0 && dY >= NMS.getStepHeight(npc.getEntity()) && xzDistance <= 2.75) {
-                NMS.setShouldJump(npc.getEntity());
-            }
-
             NMS.setDestination(npc.getEntity(), destVector.getX(), destVector.getY(), destVector.getZ(),
                     params.speed());
         } else {
