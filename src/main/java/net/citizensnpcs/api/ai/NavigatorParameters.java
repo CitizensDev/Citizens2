@@ -20,7 +20,7 @@ public class NavigatorParameters implements Cloneable {
     private AttackStrategy attackStrategy;
     private boolean avoidWater;
     private float baseSpeed = 1F;
-    private List<NavigatorCallback> callbacks = Lists.newArrayListWithExpectedSize(3);
+    private List<NavigatorCallback> callbacks = Lists.newArrayList();
     private boolean debug;
     private AttackStrategy defaultStrategy;
     private double distanceMargin = 2F;
@@ -29,9 +29,10 @@ public class NavigatorParameters implements Cloneable {
     private Function<Entity, Location> mapper;
     private double pathDistanceMargin = 1F;
     private float range;
-    private List<Runnable> runCallbacks = Lists.newArrayListWithExpectedSize(3);
+    private List<Runnable> runCallbacks = Lists.newArrayList();
     private float speedModifier = 1F;
     private int stationaryTicks = -1;
+    private float straightLineTargetingDistance;
     private StuckAction stuckAction;
     private int updatePathRate;
     private boolean useNewPathfinder;
@@ -447,6 +448,26 @@ public class NavigatorParameters implements Cloneable {
      */
     public NavigatorParameters stationaryTicks(int ticks) {
         stationaryTicks = ticks;
+        return this;
+    }
+
+    /**
+     * @see #straightLineTargetingDistance(float)
+     * @return The distance
+     */
+    public float straightLineTargetingDistance() {
+        return straightLineTargetingDistance;
+    }
+
+    /**
+     * Sets the distance (in blocks) at which the entity targeter will switch to simply following a straight line to the
+     * target instead of pathfinding.
+     *
+     * @param distance
+     *            The distance (in blocks)
+     */
+    public NavigatorParameters straightLineTargetingDistance(float distance) {
+        straightLineTargetingDistance = distance;
         return this;
     }
 
