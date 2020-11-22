@@ -95,6 +95,16 @@ public interface Navigator {
     void setTarget(Entity target, boolean aggressive);
 
     /**
+     * Sets the current navigation to an entity target.
+     *
+     * @param target
+     *            The {@link Entity} to path towards
+     * @param aggressive
+     *            Whether to attack the target when close enough
+     */
+    void setTarget(Entity target, boolean aggressive, PathStrategy strategy);
+
+    /**
      * Sets the current navigation using a list of {@link Vector}s which will be followed in turn.
      *
      * @param path
@@ -108,5 +118,21 @@ public interface Navigator {
      * @param target
      *            The destination
      */
+    void setTarget(Iterable<Vector> path, PathStrategy strategy);
+
+    /**
+     * Sets the current navigation to a {@link Location} destination.
+     *
+     * @param target
+     *            The destination
+     */
     void setTarget(Location target);
+
+    /**
+     * Sets the current navigation to a {@link Location} destination.
+     *
+     * @param target
+     *            The destination
+     */
+    void setTarget(Location target, PathStrategy strategy);
 }

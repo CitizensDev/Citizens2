@@ -31,7 +31,7 @@ public class NPCSpawnEvent extends NPCEvent implements Cancellable {
      * @return Location where the NPC was spawned
      */
     public Location getLocation() {
-        return location;
+        return location.clone();
     }
 
     /**
