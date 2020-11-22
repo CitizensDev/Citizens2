@@ -89,6 +89,7 @@ public class Settings {
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", true),
         DEFAULT_REALISTIC_LOOKING("npc.default.realistic-looking", false),
         DEFAULT_STATIONARY_TICKS("npc.default.stationary-ticks", -1),
+        DEFAULT_STRAIGHT_LINE_TARGETING_DISTANCE("npc.pathfinding.straight-line-targeting-distance", 5),
         DEFAULT_TALK_CLOSE("npc.default.talk-close.enabled", false),
         DEFAULT_TALK_CLOSE_RANGE("npc.default.talk-close.range", 5),
         DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!") {
