@@ -190,6 +190,8 @@ public class HologramTrait extends Trait {
 
     public void setLineHeight(double height) {
         lineHeight = height;
+        unload();
+        load();
     }
 
     private void unload() {
