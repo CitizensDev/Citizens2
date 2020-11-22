@@ -16,12 +16,12 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
-public class SimpleNavigationStrategy extends AbstractPathStrategy {
+public class StraightLineNavigationStrategy extends AbstractPathStrategy {
     private final Location destination;
     private final NPC npc;
     private final NavigatorParameters params;
 
-    public SimpleNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
+    public StraightLineNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
         this.params = params;
         this.destination = dest;

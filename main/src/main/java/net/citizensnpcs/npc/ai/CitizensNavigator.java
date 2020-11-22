@@ -215,6 +215,11 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public void setTarget(Entity target, boolean aggressive) {
+        setTarget(target, aggressive, new MCTargetStrategy(npc, target, aggressive, localParams));
+    }
+
+    @Override
+    public void setTarget(Entity target, boolean aggressive, PathStrategy strategy) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
         if (target == null) {
@@ -223,20 +228,13 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         switchParams();
         updatePathfindingRange();
-        PathStrategy newStrategy = new MCTargetStrategy(npc, target, aggressive, localParams);
-        switchStrategyTo(newStrategy);
+        switchStrategyTo(strategy);
     }
 
     @Override
     public void setTarget(Iterable<Vector> path) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
-        if (path == null || Iterables.size(path) == 0) {
-            cancelNavigation();
-            return;
-        }
-        switchParams();
-        updatePathfindingRange();
         PathStrategy newStrategy;
         if (npc.isFlyable()) {
             newStrategy = new FlyingAStarNavigationStrategy(npc, path, localParams);
@@ -246,20 +244,26 @@ public class CitizensNavigator implements Navigator, Runnable {
         } else {
             newStrategy = new MCNavigationStrategy(npc, path, localParams);
         }
-        switchStrategyTo(newStrategy);
+        setTarget(path, newStrategy);
+    }
+
+    @Override
+    public void setTarget(Iterable<Vector> path, PathStrategy strategy) {
+        if (!npc.isSpawned())
+            throw new IllegalStateException("npc is not spawned");
+        if (path == null || Iterables.size(path) == 0) {
+            cancelNavigation();
+            return;
+        }
+        switchParams();
+        updatePathfindingRange();
+        switchStrategyTo(strategy);
     }
 
     @Override
     public void setTarget(Location target) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
-        if (target == null) {
-            cancelNavigation();
-            return;
-        }
-        target = target.clone();
-        switchParams();
-        updatePathfindingRange();
         PathStrategy newStrategy;
         if (npc.isFlyable()) {
             newStrategy = new FlyingAStarNavigationStrategy(npc, target, localParams);
@@ -269,7 +273,21 @@ public class CitizensNavigator implements Navigator, Runnable {
         } else {
             newStrategy = new MCNavigationStrategy(npc, target, localParams);
         }
-        switchStrategyTo(newStrategy);
+        setTarget(target, newStrategy);
+    }
+
+    @Override
+    public void setTarget(Location target, PathStrategy strategy) {
+        if (!npc.isSpawned())
+            throw new IllegalStateException("npc is not spawned");
+        if (target == null) {
+            cancelNavigation();
+            return;
+        }
+        target = target.clone();
+        switchParams();
+        updatePathfindingRange();
+        switchStrategyTo(strategy);
     }
 
     private void stopNavigating() {
