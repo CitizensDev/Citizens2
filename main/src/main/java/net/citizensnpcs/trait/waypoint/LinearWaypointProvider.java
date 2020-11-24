@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -534,7 +535,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 SourceDestinationPair key = new SourceDestinationPair(npcLoc, currentDestination);
                 Iterable<Vector> cached = cachedPaths.get(key);
                 if (cached != null) {
-                    if (!key.verify(npcLoc.getWorld(), cached)) {
+                    if (Iterables.size(cached) == 0 || !key.verify(npcLoc.getWorld(), cached)) {
                         cachedPaths.remove(key);
                     } else {
                         getNavigator().setTarget(cached);
@@ -552,8 +553,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                                     Setting.DEFAULT_DISTANCE_MARGIN.asDouble() + 1)) {
                         currentDestination.onReach(npc);
                         if (cachePaths && cancelReason == null) {
-                            cachedPaths.put(new SourceDestinationPair(npcLoc, currentDestination),
-                                    getNavigator().getPathStrategy().getPath());
+                            Iterable<Vector> path = getNavigator().getPathStrategy().getPath();
+                            if (Iterables.size(path) > 0) {
+                                cachedPaths.put(new SourceDestinationPair(npcLoc, currentDestination), path);
+                            }
                         }
                     }
                     selector.finish();
