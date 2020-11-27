@@ -246,6 +246,7 @@ public class CitizensNPC extends AbstractNPC {
 
         getOrAddTrait(CurrentLocation.class).setLocation(at);
         entityController.spawn(at.clone(), this);
+        getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         boolean loaded = Util.isLoaded(at);
         boolean couldSpawn = !loaded ? false : NMS.addEntityToWorld(getEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
@@ -260,7 +261,6 @@ public class CitizensNPC extends AbstractNPC {
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
         }
-        getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
         // send skin packets, if applicable, before other NMS packets are sent
         SkinnableEntity skinnable = getEntity() instanceof SkinnableEntity ? ((SkinnableEntity) getEntity()) : null;
         if (skinnable != null) {
