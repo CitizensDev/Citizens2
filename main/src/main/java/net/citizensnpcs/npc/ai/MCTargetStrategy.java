@@ -231,6 +231,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
                 }
             }
             active = null;
+            fallback.setPath();
         }
 
         @Override
@@ -245,8 +246,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         public void update() {
             if (active != null) {
                 active.update();
+            } else {
+                fallback.update();
             }
-            fallback.update();
         }
     }
 
