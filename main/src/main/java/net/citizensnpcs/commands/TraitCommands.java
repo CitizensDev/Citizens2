@@ -100,7 +100,7 @@ public class TraitCommands {
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         List<String> removed = Lists.newArrayList();
         List<String> failed = Lists.newArrayList();
-        for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
+        for (String traitName : Splitter.on(',').split(args.getJoinedStrings(1))) {
             if (!sender.hasPermission("citizens.npc.trait." + traitName)
                     && !sender.hasPermission("citizens.npc.trait.*")) {
                 failed.add(String.format("%s: No permission", traitName));
