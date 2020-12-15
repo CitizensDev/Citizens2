@@ -57,7 +57,7 @@ public class PlayerControllerMove extends ControllerMove {
             float movement = (float) (this.e * speed.getValue());
             this.a.o(movement);
             this.a.bd = movement;
-            if (shouldSlimeJump() || ((d2 > 0.0D) && (d0 * d0 + d1 * d1 < 1.0D))) {
+            if (shouldSlimeJump() || ((d2 >= NMS.getStepHeight(a.getBukkitEntity())) && (d0 * d0 + d1 * d1 < 1.0D))) {
                 this.h = cg();
                 this.h /= 3;
                 if (this.a instanceof EntityHumanNPC) {
