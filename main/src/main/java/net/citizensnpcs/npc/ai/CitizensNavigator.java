@@ -409,8 +409,9 @@ public class CitizensNavigator implements Navigator, Runnable {
                 stopNavigating(CancelReason.STUCK);
                 return true;
             }
-        } else
+        } else {
             stationaryTicks = 0;
+        }
         lastX = current.getBlockX();
         lastY = current.getBlockY();
         lastZ = current.getBlockZ();

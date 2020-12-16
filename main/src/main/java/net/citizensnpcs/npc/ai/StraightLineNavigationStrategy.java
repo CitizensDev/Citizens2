@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -17,9 +18,18 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 public class StraightLineNavigationStrategy extends AbstractPathStrategy {
-    private final Location destination;
+    private Location destination;
     private final NPC npc;
     private final NavigatorParameters params;
+    private Entity target;
+
+    public StraightLineNavigationStrategy(NPC npc, Entity target, NavigatorParameters params) {
+        super(TargetType.LOCATION);
+        this.params = params;
+        this.target = target;
+        this.npc = npc;
+        this.destination = params.entityTargetLocationMapper().apply(target);
+    }
 
     public StraightLineNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
@@ -50,6 +60,9 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
         Location currLoc = npc.getEntity().getLocation(NPC_LOCATION);
         if (currLoc.distance(destination) <= params.distanceMargin()) {
             return true;
+        }
+        if (target != null) {
+            destination = params.entityTargetLocationMapper().apply(target);
         }
         Vector destVector = npc.getStoredLocation().toVector()
                 .add(destination.toVector().subtract(npc.getStoredLocation().toVector()).normalize());

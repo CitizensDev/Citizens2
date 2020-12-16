@@ -226,7 +226,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             if (parameters.straightLineTargetingDistance() > 0) {
                 double distance = npc.getStoredLocation().distance(location);
                 if (distance < parameters.straightLineTargetingDistance()) {
-                    active = new StraightLineNavigationStrategy(npc, location, parameters);
+                    if (active == null) {
+                        active = new StraightLineNavigationStrategy(npc, target, parameters);
+                    }
                     return;
                 }
             }
