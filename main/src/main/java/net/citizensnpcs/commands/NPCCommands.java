@@ -312,7 +312,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | cost) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | cost [cost]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
@@ -333,10 +333,10 @@ public class NPCCommands {
             if (args.hasValueFlag("permissions")) {
                 perms.addAll(Arrays.asList(args.getFlag("permissions").split(",")));
             }
-            int id = commands.addCommand(
-                    new NPCCommandBuilder(command, hand).addPerms(perms).player(args.hasFlag('p') || args.hasFlag('o'))
-                            .op(args.hasFlag('o')).cooldown(args.getFlagInteger("cooldown", 0))
-                            .n(args.getFlagInteger("n", -1)).delay(args.getFlagInteger("delay", 0)));
+            int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
+                    .player(args.hasFlag('p') || args.hasFlag('o')).op(args.hasFlag('o'))
+                    .cooldown(args.getFlagInteger("cooldown", 0)).globalCooldown(args.getFlagInteger("gcooldown", 0))
+                    .n(args.getFlagInteger("n", -1)).delay(args.getFlagInteger("delay", 0)));
             Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
         } else if (args.getString(1).equalsIgnoreCase("sequential")) {
             commands.setExecutionMode(commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? ExecutionMode.LINEAR

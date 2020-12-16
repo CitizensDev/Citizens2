@@ -127,6 +127,8 @@ public class Settings {
                 "You don't have permission to do that."),
         NPC_COMMAND_NOT_ENOUGH_MONEY_MESSAGE("npc.commands.error-messages.not-enough-money", "You need at least ${0}."),
         NPC_COMMAND_ON_COOLDOWN_MESSAGE("npc.commands.error-messages.on-cooldown", "Please wait {0} more seconds."),
+        NPC_COMMAND_ON_GLOBAL_COOLDOWN_MESSAGE("npc.commands.error-messages.on-global-cooldown",
+                "Please wait {0} more seconds."),
         NPC_COST("economy.npc.cost", 100D),
         NPC_SKIN_RETRY_DELAY("npc.skins.retry-delay", 120),
         NPC_SKIN_ROTATION_UPDATE_DEGREES("npc.skins.rotation-update-degrees", 90f),

@@ -53,6 +53,8 @@ public class CommandTrait extends Trait {
     @Persist
     private ExecutionMode executionMode = ExecutionMode.LINEAR;
     @Persist
+    private final Map<String, Long> globalCooldowns = Maps.newHashMap();
+    @Persist
     private final List<String> temporaryPermissions = Lists.newArrayList();
 
     public CommandTrait() {
@@ -265,7 +267,8 @@ public class CommandTrait extends Trait {
         MAXIMUM_TIMES_USED(Setting.NPC_COMMAND_MAXIMUM_TIMES_USED_MESSAGE),
         MISSING_MONEY(Setting.NPC_COMMAND_NOT_ENOUGH_MONEY_MESSAGE),
         NO_PERMISSION(Setting.NPC_COMMAND_NO_PERMISSION_MESSAGE),
-        ON_COOLDOWN(Setting.NPC_COMMAND_ON_COOLDOWN_MESSAGE);
+        ON_COOLDOWN(Setting.NPC_COMMAND_ON_COOLDOWN_MESSAGE),
+        ON_GLOBAL_COOLDOWN(Setting.NPC_COMMAND_ON_GLOBAL_COOLDOWN_MESSAGE);
 
         private final Setting setting;
 
@@ -291,6 +294,7 @@ public class CommandTrait extends Trait {
         String command;
         int cooldown;
         int delay;
+        int globalCooldown;
         Hand hand;
         int id;
         int n;
@@ -299,7 +303,7 @@ public class CommandTrait extends Trait {
         boolean player;
 
         public NPCCommand(int id, String command, Hand hand, boolean player, boolean op, int cooldown,
-                List<String> perms, int n, int delay) {
+                List<String> perms, int n, int delay, int globalCooldown) {
             this.id = id;
             this.command = command;
             this.hand = hand;
@@ -309,6 +313,7 @@ public class CommandTrait extends Trait {
             this.perms = perms;
             this.n = n;
             this.delay = delay;
+            this.globalCooldown = globalCooldown;
             List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().splitToList(command);
             this.bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
         }
@@ -352,6 +357,7 @@ public class CommandTrait extends Trait {
         String command;
         int cooldown;
         int delay;
+        private int globalCooldown;
         Hand hand;
         int n = -1;
         boolean op;
@@ -374,7 +380,7 @@ public class CommandTrait extends Trait {
         }
 
         private NPCCommand build(int id) {
-            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay);
+            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay, globalCooldown);
         }
 
         public NPCCommandBuilder command(String command) {
@@ -389,6 +395,11 @@ public class CommandTrait extends Trait {
 
         public NPCCommandBuilder delay(int delay) {
             this.delay = delay;
+            return this;
+        }
+
+        public NPCCommandBuilder globalCooldown(int cooldown) {
+            this.globalCooldown = cooldown;
             return this;
         }
 
@@ -421,7 +432,7 @@ public class CommandTrait extends Trait {
             return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
                     Hand.valueOf(root.getString("hand")), Boolean.valueOf(root.getString("player")),
                     Boolean.valueOf(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
-                    root.getInt("delay"));
+                    root.getInt("delay"), root.getInt("globalcooldown"));
         }
 
         @Override
@@ -431,6 +442,7 @@ public class CommandTrait extends Trait {
             root.setBoolean("player", instance.player);
             root.setBoolean("op", instance.op);
             root.setInt("cooldown", instance.cooldown);
+            root.setInt("globalcooldown", instance.globalCooldown);
             root.setInt("n", instance.n);
             root.setInt("delay", instance.delay);
             for (int i = 0; i < instance.perms.size(); i++) {
@@ -474,6 +486,15 @@ public class CommandTrait extends Trait {
                 }
                 lastUsed.remove(commandKey);
             }
+            if (command.globalCooldown > 0 && trait.globalCooldowns.containsKey(commandKey)) {
+                long lastUsedSec = trait.globalCooldowns.get(commandKey);
+                if (currentTimeSec < lastUsedSec + command.cooldown) {
+                    trait.sendErrorMessage(player, CommandTraitMessages.ON_GLOBAL_COOLDOWN,
+                            (lastUsedSec + command.cooldown) - currentTimeSec);
+                    return false;
+                }
+                trait.globalCooldowns.remove(commandKey);
+            }
             int previouslyUsed = nUsed.getOrDefault(commandKey, 0);
             if (command.n > 0 && command.n <= previouslyUsed) {
                 trait.sendErrorMessage(player, CommandTraitMessages.MAXIMUM_TIMES_USED, command.n);
@@ -484,6 +505,9 @@ public class CommandTrait extends Trait {
             }
             if (command.n > 0) {
                 nUsed.put(commandKey, previouslyUsed + 1);
+            }
+            if (command.globalCooldown > 0) {
+                trait.globalCooldowns.put(commandKey, currentTimeSec);
             }
             lastUsedId = command.id;
             return true;
