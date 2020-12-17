@@ -1828,8 +1828,18 @@ public class NMSImpl implements NMSBridge {
             return;
         if (npc.useMinecraftAI()) {
             NMSImpl.restoreGoals(npc, entity.goalSelector, entity.targetSelector);
+            if (npc.data().has("behavior-map")) {
+                TreeMap behavior = npc.data().get("behavior-map");
+                getBehaviorMap(entity).putAll(behavior);
+                npc.data().remove("behavior-map");
+            }
         } else {
             NMSImpl.clearGoals(npc, entity.goalSelector, entity.targetSelector);
+            TreeMap behaviorMap = getBehaviorMap(entity);
+            if (behaviorMap.size() > 0) {
+                npc.data().set("behavior-map", new TreeMap(behaviorMap));
+                behaviorMap.clear();
+            }
         }
     }
 

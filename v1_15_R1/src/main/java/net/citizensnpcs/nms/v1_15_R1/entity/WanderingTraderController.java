@@ -1,10 +1,8 @@
 package net.citizensnpcs.nms.v1_15_R1.entity;
 
 import java.util.List;
-import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftWanderingTrader;
@@ -25,6 +23,7 @@ import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityHuman;
 import net.minecraft.server.v1_15_R1.EntityLightning;
+import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.EntityVillagerTrader;
 import net.minecraft.server.v1_15_R1.EnumHand;
@@ -46,7 +45,6 @@ public class WanderingTraderController extends MobEntityController {
     }
 
     public static class EntityWanderingTraderNPC extends EntityVillagerTrader implements NPCHolder {
-        private TreeMap<?, ?> behaviorMap;
         private boolean blockingATrade;
         private boolean blockTrades = true;
         boolean calledNMSHeight = false;
@@ -234,12 +232,6 @@ public class WanderingTraderController extends MobEntityController {
         @Override
         public void mobTick() {
             if (npc != null) {
-                if (this.behaviorMap == null) {
-                    this.behaviorMap = NMSImpl.getBehaviorMap(this);
-                }
-                if (this.behaviorMap.size() > 0) {
-                    this.behaviorMap.clear();
-                }
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
             super.mobTick();

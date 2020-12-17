@@ -380,8 +380,9 @@ public class Commands {
         String output = "";
         if (args.hasFlag('r')) {
             trait.setRearing(!trait.isRearing());
-            output += Messaging
-                    .tr(trait.isRearing() ? Messages.POLAR_BEAR_REARING : Messages.POLAR_BEAR_STOPPED_REARING);
+            output += Messaging.tr(
+                    trait.isRearing() ? Messages.POLAR_BEAR_REARING : Messages.POLAR_BEAR_STOPPED_REARING,
+                    npc.getName());
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);

@@ -191,14 +191,7 @@ public class PiglinBruteController extends MobEntityController {
         @Override
         public void mobTick() {
             if (npc != null) {
-                if (this.behaviorMap == null || this.previousBehaviorController != this.getBehaviorController()) {
-                    this.behaviorMap = NMSImpl.getBehaviorMap(this);
-                    this.previousBehaviorController = this.getBehaviorController();
-                }
-                if (this.behaviorMap.size() > 0) {
-                    this.behaviorMap.clear();
-                    NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-                }
+                NMSImpl.updateMinecraftAIState(npc, this);
                 setImmuneToZombification(npc.isProtected());
             }
             super.mobTick();

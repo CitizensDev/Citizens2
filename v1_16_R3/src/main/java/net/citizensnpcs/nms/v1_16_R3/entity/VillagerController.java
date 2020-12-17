@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
 import java.util.List;
-import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
@@ -17,7 +16,6 @@ import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_16_R3.BehaviorController;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.DataWatcherObject;
@@ -50,12 +48,10 @@ public class VillagerController extends MobEntityController {
     }
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
-        private TreeMap<?, ?> behaviorMap;
         private boolean blockingATrade;
         private boolean blockTrades = true;
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
-        private BehaviorController<EntityVillager> previousBehaviorController;
 
         public EntityVillagerNPC(EntityTypes<? extends EntityVillager> types, World world) {
             this(types, world, null);
@@ -240,14 +236,7 @@ public class VillagerController extends MobEntityController {
         @Override
         public void mobTick() {
             if (npc != null) {
-                if (this.behaviorMap == null || this.previousBehaviorController != this.getBehaviorController()) {
-                    this.behaviorMap = NMSImpl.getBehaviorMap(this);
-                    this.previousBehaviorController = this.getBehaviorController();
-                }
-                if (this.behaviorMap.size() > 0) {
-                    this.behaviorMap.clear();
-                    NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-                }
+                NMSImpl.updateMinecraftAIState(npc, this);
             }
             super.mobTick();
             if (npc != null) {

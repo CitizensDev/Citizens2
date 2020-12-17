@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
 import java.util.List;
-import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
@@ -48,7 +47,6 @@ public class WanderingTraderController extends MobEntityController {
     }
 
     public static class EntityWanderingTraderNPC extends EntityVillagerTrader implements NPCHolder {
-        private TreeMap<?, ?> behaviorMap;
         private boolean blockingATrade;
         private boolean blockTrades = true;
         boolean calledNMSHeight = false;
@@ -236,12 +234,6 @@ public class WanderingTraderController extends MobEntityController {
         @Override
         public void mobTick() {
             if (npc != null) {
-                if (this.behaviorMap == null) {
-                    this.behaviorMap = NMSImpl.getBehaviorMap(this);
-                }
-                if (this.behaviorMap.size() > 0) {
-                    this.behaviorMap.clear();
-                }
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
             super.mobTick();

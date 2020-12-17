@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
-import java.util.TreeMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
@@ -16,7 +14,6 @@ import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_16_R3.BehaviorController;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.Entity;
@@ -41,9 +38,7 @@ public class PiglinController extends MobEntityController {
     }
 
     public static class EntityPiglinNPC extends EntityPiglin implements NPCHolder {
-        private TreeMap<?, ?> behaviorMap;
         private final CitizensNPC npc;
-        private BehaviorController<EntityPiglin> previousBehaviorController;
 
         public EntityPiglinNPC(EntityTypes<? extends EntityPiglin> types, World world) {
             this(types, world, null);
@@ -191,14 +186,7 @@ public class PiglinController extends MobEntityController {
         @Override
         public void mobTick() {
             if (npc != null) {
-                if (this.behaviorMap == null || this.previousBehaviorController != this.getBehaviorController()) {
-                    this.behaviorMap = NMSImpl.getBehaviorMap(this);
-                    this.previousBehaviorController = this.getBehaviorController();
-                }
-                if (this.behaviorMap.size() > 0) {
-                    this.behaviorMap.clear();
-                    NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-                }
+                NMSImpl.updateMinecraftAIState(npc, this);
                 setImmuneToZombification(npc.isProtected());
             }
             super.mobTick();
