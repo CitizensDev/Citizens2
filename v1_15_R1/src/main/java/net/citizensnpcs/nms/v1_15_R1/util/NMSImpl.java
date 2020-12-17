@@ -190,6 +190,7 @@ import net.citizensnpcs.trait.versioned.MushroomCowTrait;
 import net.citizensnpcs.trait.versioned.PandaTrait;
 import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
+import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
@@ -232,6 +233,7 @@ import net.minecraft.server.v1_15_R1.EntityLiving;
 import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_15_R1.EntityPanda;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
+import net.minecraft.server.v1_15_R1.EntityPolarBear;
 import net.minecraft.server.v1_15_R1.EntityPose;
 import net.minecraft.server.v1_15_R1.EntityPufferFish;
 import net.minecraft.server.v1_15_R1.EntityRabbit;
@@ -723,6 +725,7 @@ public class NMSImpl implements NMSBridge {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PandaTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PolarBearTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SnowmanTrait.class));
@@ -1145,6 +1148,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPolarBearRearing(org.bukkit.entity.Entity entity, boolean rearing) {
+        ((EntityPolarBear) getHandle(entity)).r(rearing);
+    }
+
+    @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
         if (SKULL_PROFILE_FIELD == null) {
             SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
@@ -1429,11 +1437,12 @@ public class NMSImpl implements NMSBridge {
     public static void clearGoals(NPC npc, PathfinderGoalSelector... goalSelectors) {
         if (GOAL_SET_FIELD == null || goalSelectors == null)
             return;
+        int i = 0;
         for (PathfinderGoalSelector selector : goalSelectors) {
             try {
                 Collection<?> list = (Collection<?>) GOAL_SET_FIELD.invoke(selector);
                 if (!list.isEmpty()) {
-                    npc.data().set("goal-selector", Lists.newArrayList(list));
+                    npc.data().set("selector" + i, Lists.newArrayList(list));
                 }
                 list.clear();
             } catch (Exception e) {
@@ -1441,6 +1450,7 @@ public class NMSImpl implements NMSBridge {
             } catch (Throwable e) {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
             }
+            i++;
         }
     }
 
@@ -1717,11 +1727,12 @@ public class NMSImpl implements NMSBridge {
     public static void restoreGoals(NPC npc, PathfinderGoalSelector... goalSelectors) {
         if (GOAL_SET_FIELD == null || goalSelectors == null)
             return;
+        int i = 0;
         for (PathfinderGoalSelector selector : goalSelectors) {
             try {
                 Collection<Object> list = (Collection<Object>) GOAL_SET_FIELD.invoke(selector);
                 list.clear();
-                Collection<Object> old = npc.data().get("goal-selector");
+                Collection<Object> old = npc.data().get("selector" + i);
                 if (old != null) {
                     list.addAll(old);
                 }
@@ -1730,6 +1741,7 @@ public class NMSImpl implements NMSBridge {
             } catch (Throwable e) {
                 Messaging.logTr(Messages.ERROR_RESTORING_GOALS, e.getLocalizedMessage());
             }
+            i++;
         }
     }
 

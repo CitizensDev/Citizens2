@@ -175,6 +175,7 @@ import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.LlamaTrait;
 import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
+import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
@@ -663,6 +664,7 @@ public class NMSImpl implements NMSBridge {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SnowmanTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PolarBearTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TropicalFishTrait.class));
         manager.register(Commands.class);
@@ -1078,6 +1080,11 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
         ((EntityShulker) getHandle(shulker)).a((byte) peek);
+    }
+
+    @Override
+    public void setPolarBearRearing(org.bukkit.entity.Entity entity, boolean rearing) {
+        ((EntityPolarBear) getHandle(entity)).s(rearing);
     }
 
     @Override

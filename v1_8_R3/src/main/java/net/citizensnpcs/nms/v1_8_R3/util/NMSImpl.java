@@ -906,6 +906,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPolarBearRearing(org.bukkit.entity.Entity entity, boolean rearing) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
         if (SKULL_PROFILE_FIELD == null) {
             try {

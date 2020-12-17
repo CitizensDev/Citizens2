@@ -188,6 +188,8 @@ public class Messages {
     public static final String LEASHABLE_STOPPED = "citizens.commands.npc.leashable.stopped";
     public static final String LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT = "citizens.editors.waypoints.linear.added-waypoint";
     public static final String LINEAR_WAYPOINT_EDITOR_BEGIN = "citizens.editors.waypoints.linear.begin";
+    public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_SET = "citizens.editors.waypoints.linear.cycle-set";
+    public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET = "citizens.editors.waypoints.linear.cycle-unset";
     public static final String LINEAR_WAYPOINT_EDITOR_END = "citizens.editors.waypoints.linear.end";
     public static final String LINEAR_WAYPOINT_EDITOR_NOT_SHOWING_MARKERS = "citizens.editors.waypoints.linear.not-showing-markers";
     public static final String LINEAR_WAYPOINT_EDITOR_RANGE_EXCEEDED = "citizens.editors.waypoints.linear.range-exceeded";
@@ -268,6 +270,8 @@ public class Messages {
     public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
     public static final String PHANTOM_STATE_SET = "citizens.commands.npc.phantom.phantom-set";
     public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";
+    public static final String POLAR_BEAR_REARING = "citizens.commands.npc.polarbear.rearing-set";
+    public static final String POLAR_BEAR_STOPPED_REARING = "citizens.commands.npc.polarbear.rearing-unset";
     public static final String POSE_ADDED = "citizens.commands.npc.pose.added";
     public static final String POSE_ALREADY_EXISTS = "citizens.commands.npc.pose.already-exists";
     public static final String POSE_MISSING = "citizens.commands.npc.pose.missing";
@@ -381,8 +385,6 @@ public class Messages {
     public static final String WANDER_WAYPOINTS_REGION_EDITING_START = "citizens.editors.waypoints.wander.editing-regions";
     public static final String WANDER_WAYPOINTS_REMOVED_REGION = "citizens.editors.waypoints.wander.removed-region";
     public static final String WAYPOINT_ADDED = "citizens.commands.waypoints.add.waypoint-added";
-    public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_SET = "citizens.editors.waypoints.linear.cycle-set";
-    public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET = "citizens.editors.waypoints.linear.cycle-unset";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
     public static final String WAYPOINT_TRIGGER_ADD_PROMPT = "citizens.editors.waypoints.triggers.add.prompt";

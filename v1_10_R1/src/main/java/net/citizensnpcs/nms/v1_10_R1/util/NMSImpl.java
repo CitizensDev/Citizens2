@@ -145,6 +145,7 @@ import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
+import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.util.Messages;
@@ -595,6 +596,7 @@ public class NMSImpl implements NMSBridge {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BossBarTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SnowmanTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PolarBearTrait.class));
         commands.register(Commands.class);
     }
 
@@ -977,6 +979,11 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
         ((EntityShulker) getHandle(shulker)).a((byte) peek);
+    }
+
+    @Override
+    public void setPolarBearRearing(org.bukkit.entity.Entity entity, boolean rearing) {
+        ((EntityPolarBear) getHandle(entity)).p(rearing);
     }
 
     @Override

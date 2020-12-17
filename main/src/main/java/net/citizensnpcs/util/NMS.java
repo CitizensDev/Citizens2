@@ -428,6 +428,10 @@ public class NMS {
         BRIDGE.setPeekShulker(entity, peek);
     }
 
+    public static void setPolarBearRearing(Entity entity, boolean rearing) {
+        BRIDGE.setPolarBearRearing(entity, rearing);
+    }
+
     public static void setProfile(SkullMeta meta, GameProfile profile) {
         BRIDGE.setProfile(meta, profile);
     }

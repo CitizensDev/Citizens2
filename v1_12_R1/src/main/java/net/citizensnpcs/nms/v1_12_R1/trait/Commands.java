@@ -24,6 +24,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.LlamaTrait;
 import net.citizensnpcs.trait.versioned.ParrotTrait;
+import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.util.Messages;
@@ -117,6 +118,31 @@ public class Commands {
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "polarbear (-r)",
+            desc = "Sets polarbear modifiers.",
+            modifiers = { "polarbear" },
+            min = 1,
+            max = 1,
+            flags = "r",
+            permission = "citizens.npc.polarbear")
+    @Requirements(selected = true, ownership = true, types = { EntityType.POLAR_BEAR })
+    public void polarbear(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        PolarBearTrait trait = npc.getOrAddTrait(PolarBearTrait.class);
+        String output = "";
+        if (args.hasFlag('r')) {
+            trait.setRearing(!trait.isRearing());
+            output += Messaging
+                    .tr(trait.isRearing() ? Messages.POLAR_BEAR_REARING : Messages.POLAR_BEAR_STOPPED_REARING);
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output);
+        } else {
+            throw new CommandUsageException();
         }
     }
 

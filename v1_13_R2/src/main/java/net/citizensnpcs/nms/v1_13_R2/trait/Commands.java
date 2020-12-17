@@ -26,6 +26,7 @@ import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.LlamaTrait;
 import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
+import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
@@ -152,6 +153,31 @@ public class Commands {
 
     @Command(
             aliases = { "npc" },
+            usage = "polarbear (-r)",
+            desc = "Sets polarbear modifiers.",
+            modifiers = { "polarbear" },
+            min = 1,
+            max = 1,
+            flags = "r",
+            permission = "citizens.npc.polarbear")
+    @Requirements(selected = true, ownership = true, types = { EntityType.POLAR_BEAR })
+    public void polarbear(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        PolarBearTrait trait = npc.getOrAddTrait(PolarBearTrait.class);
+        String output = "";
+        if (args.hasFlag('r')) {
+            trait.setRearing(!trait.isRearing());
+            output += Messaging
+                    .tr(trait.isRearing() ? Messages.POLAR_BEAR_REARING : Messages.POLAR_BEAR_STOPPED_REARING);
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output);
+        } else {
+            throw new CommandUsageException();
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "pufferfish (--state state)",
             desc = "Sets pufferfish modifiers",
             modifiers = { "pufferfish" },
@@ -207,6 +233,29 @@ public class Commands {
 
     @Command(
             aliases = { "npc" },
+            usage = "snowman (-d[erp])",
+            desc = "Sets snowman modifiers.",
+            modifiers = { "snowman" },
+            min = 1,
+            max = 1,
+            flags = "d",
+            permission = "citizens.npc.snowman")
+    @Requirements(selected = true, ownership = true, types = { EntityType.SNOWMAN })
+    public void snowman(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        SnowmanTrait trait = npc.getOrAddTrait(SnowmanTrait.class);
+        boolean hasArg = false;
+        if (args.hasFlag('d')) {
+            boolean isDerp = trait.toggleDerp();
+            Messaging.sendTr(sender, isDerp ? Messages.SNOWMAN_DERP_SET : Messages.SNOWMAN_DERP_STOPPED, npc.getName());
+            hasArg = true;
+        }
+        if (!hasArg) {
+            throw new CommandUsageException();
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "tfish (--body color) (--pattern pattern) (--patterncolor color)",
             desc = "Sets tropical fish modifiers",
             modifiers = { "tfish" },
@@ -247,29 +296,6 @@ public class Commands {
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
         } else {
-            throw new CommandUsageException();
-        }
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "snowman (-d[erp])",
-            desc = "Sets snowman modifiers.",
-            modifiers = { "snowman" },
-            min = 1,
-            max = 1,
-            flags = "d",
-            permission = "citizens.npc.snowman")
-    @Requirements(selected = true, ownership = true, types = { EntityType.SNOWMAN })
-    public void snowman(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        SnowmanTrait trait = npc.getOrAddTrait(SnowmanTrait.class);
-        boolean hasArg = false;
-        if (args.hasFlag('d')) {
-            boolean isDerp = trait.toggleDerp();
-            Messaging.sendTr(sender, isDerp ? Messages.SNOWMAN_DERP_SET : Messages.SNOWMAN_DERP_STOPPED, npc.getName());
-            hasArg = true;
-        }
-        if (!hasArg) {
             throw new CommandUsageException();
         }
     }

@@ -38,7 +38,7 @@ public class Anchor {
         if (object.getClass() != getClass())
             return false;
 
-        Anchor op = (Anchor) object;
+        final Anchor op = (Anchor) object;
         return new EqualsBuilder().append(name, op.name).isEquals();
     }
 
@@ -77,10 +77,10 @@ public class Anchor {
      */
     public boolean load() {
         try {
-            String[] parts = getUnloadedValue();
+            final String[] parts = getUnloadedValue();
             this.location = new Location(Bukkit.getWorld(parts[0]), Double.valueOf(parts[1]), Double.valueOf(parts[2]),
                     Double.valueOf(parts[3]));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // Still not able to be loaded
         }
         return location != null;
@@ -95,7 +95,7 @@ public class Anchor {
 
     @Override
     public String toString() {
-        String[] parts = getUnloadedValue();
+        final String[] parts = getUnloadedValue();
         return "Anchor{Name='" + name + "';World='" + parts[0] + "';Location='" + parts[1] + ',' + parts[2] + ','
                 + parts[3] + "';}";
     }
