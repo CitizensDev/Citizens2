@@ -318,7 +318,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             boolean onGround = NMS.isOnGround(npc.getEntity());
             float speedMod = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
-            if (!Util.isHorse(npc.getEntity().getType())) {
+            if (!Util.isHorse(npc.getEntity().getType()) || npc.getEntity().getType().name().equals("LLAMA") || npc.getEntity().getType().name().equals("TRADER_LLAMA")) {
                 // just use minecraft horse physics
                 speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, speedMod);
             }
