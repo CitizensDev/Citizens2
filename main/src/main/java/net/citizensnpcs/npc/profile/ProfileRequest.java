@@ -33,7 +33,8 @@ public class ProfileRequest {
      * @param handler
      *            Optional handler to handle the result for the profile. Handler always invoked from the main thread.
      */
-    ProfileRequest(String playerName, @Nullable ProfileFetchHandler handler) {
+
+    public ProfileRequest(String playerName, ProfileFetchHandler handler) {
         Preconditions.checkNotNull(playerName);
 
         this.playerName = playerName;

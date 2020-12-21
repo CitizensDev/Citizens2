@@ -155,9 +155,9 @@ public class Skin {
             }
             return;
         }
-        if (this.skinName.length() < 3) {
+        if (skinName.length() < 3 || skinName.length() > 16) {
             if (Messaging.isDebugging()) {
-                Messaging.debug("Skin name too short '" + skinName + "'");
+                Messaging.debug("Skin name invalid length '" + skinName + "'");
             }
             return;
         }
@@ -208,9 +208,9 @@ public class Skin {
             }
             return;
         }
-        if (this.skinName.length() < 3) {
+        if (skinName.length() < 3 || skinName.length() > 16) {
             if (Messaging.isDebugging()) {
-                Messaging.debug("Skin name too short '" + skinName + "'");
+                Messaging.debug("Skin name invalid length '" + skinName + "'");
             }
             return;
         }
