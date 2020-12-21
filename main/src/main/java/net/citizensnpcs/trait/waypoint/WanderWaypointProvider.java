@@ -21,6 +21,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 
 import ch.ethz.globis.phtree.PhTreeSolid;
 import net.citizensnpcs.api.CitizensAPI;
@@ -45,10 +48,13 @@ public class WanderWaypointProvider
     @Persist
     public int delay = -1;
     private NPC npc;
-    private volatile boolean paused;
+    private boolean paused;
     @Persist
     private final List<Location> regionCentres = Lists.newArrayList();
     private PhTreeSolid<Boolean> tree = PhTreeSolid.create(3);
+    @Persist
+    private String worldguardRegion;
+    private Object worldguardRegionCache;
     @Persist
     public int xrange = DEFAULT_XRANGE;
     @Persist
@@ -195,6 +201,31 @@ public class WanderWaypointProvider
                             }
                         });
                     }
+                } else if (message.startsWith("worldguardregion")) {
+                    event.setCancelled(true);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                        @Override
+                        public void run() {
+                            Object region = null;
+                            String regionId = message.replace("worldguardregion ", "");
+                            try {
+                                RegionManager manager = WorldGuard.getInstance().getPlatform().getRegionContainer()
+                                        .get(BukkitAdapter.adapt(npc.getStoredLocation().getWorld()));
+                                region = manager.getRegion(regionId);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (region == null) {
+                                Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_WORLDGUARD_REGION_NOT_FOUND);
+                                return;
+                            }
+                            WanderWaypointProvider.this.worldguardRegion = regionId;
+                            if (currentGoal != null) {
+                                currentGoal.setWorldGuardRegion(region);
+                            }
+                            Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_WORLDGUARD_REGION_SET, regionId);
+                        }
+                    });
                 }
             }
 
@@ -246,6 +277,23 @@ public class WanderWaypointProvider
         return new RecalculateList();
     }
 
+    public Object getWorldGuardRegion() {
+        if (worldguardRegion == null) {
+            return null;
+        }
+        if (worldguardRegionCache != null) {
+            return worldguardRegionCache;
+        }
+        try {
+            RegionManager manager = WorldGuard.getInstance().getPlatform().getRegionContainer()
+                    .get(BukkitAdapter.adapt(npc.getStoredLocation().getWorld()));
+            return worldguardRegionCache = manager.getRegion(worldguardRegion);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public boolean isPaused() {
         return paused;
@@ -265,8 +313,8 @@ public class WanderWaypointProvider
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {
-            currentGoal = WanderGoal.createWithNPCAndRangeAndTreeAndFallback(npc, xrange, yrange,
-                    WanderWaypointProvider.this, WanderWaypointProvider.this);
+            currentGoal = WanderGoal.createWithNPCAndRangeAndTreeAndFallbackAndRegion(npc, xrange, yrange,
+                    WanderWaypointProvider.this, WanderWaypointProvider.this, getWorldGuardRegion());
             currentGoal.setDelay(delay);
         }
         Iterator<GoalEntry> itr = npc.getDefaultGoalController().iterator();
