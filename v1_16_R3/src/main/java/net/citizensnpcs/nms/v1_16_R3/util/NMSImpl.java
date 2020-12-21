@@ -517,13 +517,14 @@ public class NMSImpl implements NMSBridge {
     @Override
     public String getSound(String flag) throws CommandException {
         try {
+            Sound sound = Sound.valueOf(flag.toUpperCase());
             if (CRAFTSOUND_GETSOUND != null) {
-                String ret = (String) CRAFTSOUND_GETSOUND.invoke(CraftSound.class, Sound.valueOf(flag.toUpperCase()));
+                String ret = (String) CRAFTSOUND_GETSOUND.invoke(sound);
                 if (ret == null)
                     throw new CommandException(Messages.INVALID_SOUND);
                 return ret;
             } else {
-                SoundEffect effect = CraftSound.getSoundEffect(Sound.valueOf(flag.toUpperCase()));
+                SoundEffect effect = CraftSound.getSoundEffect(sound);
                 if (effect == null)
                     throw new CommandException(Messages.INVALID_SOUND);
                 MinecraftKey key = (MinecraftKey) SOUNDEFFECT_KEY.invoke(effect);
