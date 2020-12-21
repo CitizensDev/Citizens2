@@ -517,11 +517,19 @@ public class NMSImpl implements NMSBridge {
     @Override
     public String getSound(String flag) throws CommandException {
         try {
-            String ret = CraftSound.getSound(Sound.valueOf(flag.toUpperCase()));
-            if (ret == null)
-                throw new CommandException(Messages.INVALID_SOUND);
-            return ret;
-        } catch (Exception e) {
+            if (CRAFTSOUND_GETSOUND != null) {
+                String ret = (String) CRAFTSOUND_GETSOUND.invoke(CraftSound.class, Sound.valueOf(flag.toUpperCase()));
+                if (ret == null)
+                    throw new CommandException(Messages.INVALID_SOUND);
+                return ret;
+            } else {
+                SoundEffect effect = CraftSound.getSoundEffect(Sound.valueOf(flag.toUpperCase()));
+                if (effect == null)
+                    throw new CommandException(Messages.INVALID_SOUND);
+                MinecraftKey key = (MinecraftKey) SOUNDEFFECT_KEY.invoke(effect);
+                return key.getKey();
+            }
+        } catch (Throwable e) {
             throw new CommandException(Messages.INVALID_SOUND);
         }
     }
@@ -1849,14 +1857,18 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
             "advancementDataPlayer");
+
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
+
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "e");
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
+    private static MethodHandle CRAFTSOUND_GETSOUND = NMS.getMethodHandle(CraftSound.class, "getSound", false,
+            Sound.class);
     private static final float DEFAULT_SPEED = 1F;
     private static final MethodHandle ENDERDRAGON_BATTLE_FIELD = NMS.getGetter(EntityEnderDragon.class, "bF");
     private static DataWatcherObject<Boolean> ENDERMAN_ANGRY = null;
@@ -1890,6 +1902,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
     private static Field SKULL_PROFILE_FIELD;
+    private static MethodHandle SOUNDEFFECT_KEY = NMS.getGetter(SoundEffect.class, "b");
     private static MethodHandle TEAM_FIELD;
 
     static {

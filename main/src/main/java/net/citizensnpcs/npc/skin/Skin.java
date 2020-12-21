@@ -155,6 +155,12 @@ public class Skin {
             }
             return;
         }
+        if (this.skinName.length() < 3) {
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Skin name too short '" + skinName + "'");
+            }
+            return;
+        }
         fetching = true;
 
         ProfileFetcher.fetch(this.skinName, new ProfileFetchHandler() {
@@ -199,6 +205,12 @@ public class Skin {
         if (maxRetries > -1 && fetchRetries >= maxRetries) {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Reached max skin fetch retries for '" + skinName + "'");
+            }
+            return;
+        }
+        if (this.skinName.length() < 3) {
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Skin name too short '" + skinName + "'");
             }
             return;
         }
