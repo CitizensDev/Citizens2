@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryType;
 
 /**
  * Defines a GUI inventory menu. Can be linked to a {@link InventoryMenuPattern} or simply at the class level.
@@ -13,7 +14,6 @@ import org.bukkit.event.inventory.ClickType;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface Menu {
-
     /**
      * The dimensions of the menu, if supported.
      */
@@ -28,4 +28,9 @@ public @interface Menu {
      * The menu title.
      */
     String title() default "";
+
+    /**
+     * The inventory type.
+     */
+    InventoryType type() default InventoryType.CHEST;
 }

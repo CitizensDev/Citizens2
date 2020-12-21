@@ -11,6 +11,8 @@ import org.bukkit.event.Listener;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.regions.Region;
 
 import ch.ethz.globis.phtree.PhTreeSolid;
 import net.citizensnpcs.api.CitizensAPI;
@@ -33,12 +35,14 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private final NPC npc;
     private boolean paused;
     private final Supplier<PhTreeSolid<Boolean>> tree;
+    private Object worldguardRegion;
     private int xrange;
     private int yrange;
 
     private WanderGoal(NPC npc, int xrange, int yrange, Supplier<PhTreeSolid<Boolean>> tree,
-            Function<NPC, Location> fallback) {
+            Function<NPC, Location> fallback, Object worldguardRegion) {
         this.npc = npc;
+        this.worldguardRegion = worldguardRegion;
         this.xrange = xrange;
         this.yrange = yrange;
         this.tree = tree;
@@ -48,15 +52,27 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private Location findRandomPosition() {
         Location found = MinecraftBlockExaminer.findRandomValidLocation(npc.getEntity().getLocation(NPC_LOCATION),
                 xrange, yrange, new Function<Block, Boolean>() {
+
                     @Override
                     public Boolean apply(Block block) {
                         if ((block.getRelative(BlockFace.UP).isLiquid() || block.getRelative(0, 2, 0).isLiquid())
                                 && npc.getNavigator().getDefaultParameters().avoidWater()) {
                             return false;
                         }
-                        long[] pt = { block.getX(), block.getY(), block.getZ() };
-                        if (tree != null && tree.get() != null && !tree.get().queryIntersect(pt, pt).hasNext()) {
-                            return false;
+                        if (worldguardRegion != null) {
+                            try {
+                                if (!((Region) worldguardRegion)
+                                        .contains(BukkitAdapter.asBlockVector(block.getLocation())))
+                                    return false;
+                            } catch (Throwable t) {
+                                t.printStackTrace();
+                            }
+                        }
+                        if (tree != null) {
+                            long[] pt = { block.getX(), block.getY(), block.getZ() };
+                            if (tree.get() != null && !tree.get().queryIntersect(pt, pt).hasNext()) {
+                                return false;
+                            }
                         }
                         return true;
                     }
@@ -96,6 +112,10 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         this.delayedTicks = delay;
     }
 
+    public void setWorldGuardRegion(Object region) {
+        this.worldguardRegion = region;
+    }
+
     public void setXYRange(int xrange, int yrange) {
         this.xrange = xrange;
         this.yrange = yrange;
@@ -133,6 +153,11 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         return createWithNPCAndRangeAndTreeAndFallback(npc, xrange, yrange, tree, null);
     }
 
+    public static WanderGoal createWithNPCAndRangeAndTreeAndFallback(NPC npc, int xrange, int yrange,
+            Supplier<PhTreeSolid<Boolean>> tree, Function<NPC, Location> fallback) {
+        return new WanderGoal(npc, xrange, yrange, tree, fallback, null);
+    }
+
     /**
      * The full builder method.
      *
@@ -146,11 +171,13 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
      *            an optional {@link PhTreeSolid} supplier to allow only wandering within a certain {@link PhTreeSolid}
      * @param fallback
      *            an optional fallback location
+     * @param worldguardRegion
+     *            the optional region
      * @return the built goal
      */
-    public static WanderGoal createWithNPCAndRangeAndTreeAndFallback(NPC npc, int xrange, int yrange,
-            Supplier<PhTreeSolid<Boolean>> tree, Function<NPC, Location> fallback) {
-        return new WanderGoal(npc, xrange, yrange, tree, fallback);
+    public static WanderGoal createWithNPCAndRangeAndTreeAndFallbackAndRegion(NPC npc, int xrange, int yrange,
+            Supplier<PhTreeSolid<Boolean>> tree, Function<NPC, Location> fallback, Object worldguardRegion) {
+        return new WanderGoal(npc, xrange, yrange, tree, fallback, worldguardRegion);
     }
 
     private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);

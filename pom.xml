@@ -13,6 +13,7 @@
 		<bukkit.version>1.16.4-R0.1-SNAPSHOT</bukkit.version>
 		<powermock.version>1.4.12</powermock.version>
 		<placeholderapi.version>2.10.4</placeholderapi.version>
+		<worldguard.version>7.0.4</worldguard.version>
 		<build.number>Unknown</build.number>
 	</properties>
 
@@ -21,9 +22,13 @@
 			<id>placeholderapi</id>
 			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
+		<repository>
+			<id>sk89q-repo</id>
+			<url>https://maven.enginehub.org/repo/</url>
+		</repository>
 	</repositories>
 
-	<dependencies> 
+	<dependencies>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
@@ -51,6 +56,12 @@
 			<groupId>me.clip</groupId>
 			<artifactId>placeholderapi</artifactId>
 			<version>${placeholderapi.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sk89q.worldguard</groupId>
+			<artifactId>worldguard-bukkit</artifactId>
+			<version>${worldguard.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
