@@ -116,7 +116,6 @@ public class Skin {
                 return false;
             }
         }
-
         setNPCSkinData(entity, skinName, skinId, skinData);
 
         return true;

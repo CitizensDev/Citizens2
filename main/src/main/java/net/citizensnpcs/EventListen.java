@@ -502,7 +502,8 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        skinUpdateTracker.updatePlayer(event.getPlayer(), 6 * 20, true);
+        skinUpdateTracker.updatePlayer(event.getPlayer(), Setting.INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY_TICKS.asInt(),
+                true);
 
         if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             Util.updateNPCTeams(event.getPlayer(), 0);

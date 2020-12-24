@@ -107,6 +107,7 @@ public class Settings {
         ERROR_COLOUR("general.color-scheme.message-error", "<c>"),
         FOLLOW_ACROSS_WORLDS("npc.follow.teleport-across-worlds", true),
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<e>"),
+        INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY_TICKS("npc.skins.player-join-update-delay-ticks", 3 * 20),
         KEEP_CHUNKS_LOADED("npc.chunks.always-keep-loaded", false),
         LOCALE("general.translation.locale", ""),
         MAX_CONTROLLABLE_GROUND_SPEED("npc.controllable.max-ground-speed", 0.5),
