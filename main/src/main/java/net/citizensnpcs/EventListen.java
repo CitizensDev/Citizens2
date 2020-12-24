@@ -156,6 +156,9 @@ public class EventListen implements Listener {
                 respawnAllFromCoord(coord, event);
             }
         };
+        if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
+            new Exception().printStackTrace();
+        }
         if (event instanceof Cancellable) {
             runnable.run();
         } else {
@@ -196,7 +199,13 @@ public class EventListen implements Listener {
                 Messaging.debug("Despawned id", npc.getId(), "due to chunk unload at", coord);
             }
         }
+        if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
+            new Exception().printStackTrace();
+        }
         if (loadChunk) {
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Loading chunk in 10 ticks due to forced chunk load at", coord);
+            }
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
