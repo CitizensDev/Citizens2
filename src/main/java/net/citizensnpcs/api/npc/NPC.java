@@ -369,6 +369,7 @@ public interface NPC extends Agent, Cloneable {
      * Whether the NPC is 'protected' i.e. invulnerable to damage. Boolean.
      */
     public static final String DEFAULT_PROTECTED_METADATA = "protected";
+    public static final String DISABLE_DEFAULT_STUCK_ACTION_METADATA = "disable-default-stuck-action";
     /**
      * Whether the NPC drops its inventory after death. Boolean.
      */

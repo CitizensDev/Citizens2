@@ -35,8 +35,8 @@ public class InventoryMenu {
         for (int i = 0; i < info.slots.length; i++) {
             Bindable<MenuSlot> slotInfo = info.slots[i];
             int pos = slotInfo.data.value()[0] * dim[0] + slotInfo.data.value()[1];
-            InventoryMenuSlot slot = getSlot(pos);
             slotInfo.data.value();
+            InventoryMenuSlot slot = getSlot(pos);
         }
         for (int i = 0; i < info.patterns.length; i++) {
             Bindable<MenuPattern> patternInfo = info.patterns[i];
