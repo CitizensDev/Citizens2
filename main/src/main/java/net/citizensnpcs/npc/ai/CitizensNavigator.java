@@ -56,6 +56,9 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     public CitizensNavigator(NPC npc) {
         this.npc = npc;
+        if (npc.data().get(NPC.DISABLE_DEFAULT_STUCK_ACTION_METADATA, false)) {
+            defaultParams.stuckAction(null);
+        }
         defaultParams.examiner(new SwimmingExaminer(npc));
     }
 

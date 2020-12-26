@@ -59,6 +59,7 @@ public class WaypointCommands {
             permission = "citizens.waypoints.disableteleport")
     public void disableTeleporting(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         npc.getNavigator().getDefaultParameters().stuckAction(null);
+        npc.data().setPersistent(NPC.DISABLE_DEFAULT_STUCK_ACTION_METADATA, true);
         Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_DISABLED);
     }
 
