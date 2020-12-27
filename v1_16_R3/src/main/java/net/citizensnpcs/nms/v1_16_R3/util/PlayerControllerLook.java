@@ -29,7 +29,7 @@ public class PlayerControllerLook {
             this.d = false;
             this.a.pitch = this.a(this.a.pitch, this.g(), this.c);
             this.a.aC = this.a(this.a.aC, this.h(), this.b);
-            this.a.yaw = this.a.aC;
+            this.a.yaw = this.a(this.a.aC, this.h(), this.b);
             while (this.a.aC >= 180F) {
                 this.a.aC -= 360F;
             }

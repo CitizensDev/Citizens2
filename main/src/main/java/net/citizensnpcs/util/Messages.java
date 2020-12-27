@@ -383,6 +383,7 @@ public class Messages {
     public static final String WANDER_WAYPOINTS_INVALID_DELAY = "citizens.editors.waypoints.wander.invalid-delay";
     public static final String WANDER_WAYPOINTS_RANGE_SET = "citizens.editors.waypoints.wander.range-set";
     public static final String WANDER_WAYPOINTS_REGION_EDITING_START = "citizens.editors.waypoints.wander.editing-regions";
+    public static final String WANDER_WAYPOINTS_REGION_EDITING_STOP = "citizens.editors.waypoints.wander.editing-regions-stop";
     public static final String WANDER_WAYPOINTS_REMOVED_REGION = "citizens.editors.waypoints.wander.removed-region";
     public static final String WANDER_WAYPOINTS_WORLDGUARD_REGION_NOT_FOUND = "citizens.editors.waypoints.wander.worldguard-region-not-found";
     public static final String WANDER_WAYPOINTS_WORLDGUARD_REGION_SET = "citizens.editors.waypoints.wander.worldguard-region-set";

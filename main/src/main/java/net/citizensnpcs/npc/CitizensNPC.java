@@ -48,6 +48,7 @@ import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
 
@@ -222,6 +223,15 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public void setName(String name) {
+        super.setName(name);
+
+        if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
+            addTrait(HologramTrait.class);
+        }
+    }
+
+    @Override
     public boolean spawn(Location at) {
         return spawn(at, SpawnReason.PLUGIN);
     }
@@ -261,6 +271,7 @@ public class CitizensNPC extends AbstractNPC {
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
         }
+
         // send skin packets, if applicable, before other NMS packets are sent
         SkinnableEntity skinnable = getEntity() instanceof SkinnableEntity ? ((SkinnableEntity) getEntity()) : null;
         if (skinnable != null) {
@@ -309,6 +320,12 @@ public class CitizensNPC extends AbstractNPC {
             if (getEntity() instanceof Player) {
                 NMS.replaceTrackerEntry((Player) getEntity());
                 PlayerUpdateTask.registerPlayer(getEntity());
+                Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
+                    @Override
+                    public void run() {
+                        PlayerAnimation.ARM_SWING.play((Player) getEntity());
+                    }
+                }, Setting.TABLIST_REMOVE_PACKET_DELAY.asLong());
             }
         }
 

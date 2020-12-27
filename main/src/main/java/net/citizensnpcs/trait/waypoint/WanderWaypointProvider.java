@@ -176,6 +176,7 @@ public class WanderWaypointProvider
                                 Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_REGION_EDITING_START);
                             } else {
                                 markers.destroyMarkers();
+                                Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_REGION_EDITING_STOP);
                             }
                         }
                     });
@@ -187,7 +188,6 @@ public class WanderWaypointProvider
                             currentGoal.setDelay(delay);
                         }
                         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-
                             @Override
                             public void run() {
                                 Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay);
