@@ -48,7 +48,6 @@ import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
 
@@ -320,12 +319,6 @@ public class CitizensNPC extends AbstractNPC {
             if (getEntity() instanceof Player) {
                 NMS.replaceTrackerEntry((Player) getEntity());
                 PlayerUpdateTask.registerPlayer(getEntity());
-                Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        PlayerAnimation.ARM_SWING.play((Player) getEntity());
-                    }
-                }, Setting.TABLIST_REMOVE_PACKET_DELAY.asLong());
             }
         }
 
