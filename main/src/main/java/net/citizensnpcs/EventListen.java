@@ -305,6 +305,7 @@ public class EventListen implements Listener {
         int delay = npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1);
         if (delay < 0)
             return;
+        int deathAnimationTicks = event.getEntity() instanceof LivingEntity ? 10 : 2;
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
@@ -312,7 +313,7 @@ public class EventListen implements Listener {
                     npc.spawn(location, SpawnReason.TIMED_RESPAWN);
                 }
             }
-        }, delay + 2);
+        }, delay + deathAnimationTicks);
     }
 
     @EventHandler

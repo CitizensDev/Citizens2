@@ -156,7 +156,30 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public Iterator<NPC> iterator() {
-        return npcs.valueCollection().iterator();
+        return new Iterator<NPC>() {
+            Iterator<NPC> itr = npcs.valueCollection().iterator();
+            NPC npc;
+
+            @Override
+            public boolean hasNext() {
+                return itr.hasNext();
+            }
+
+            @Override
+            public NPC next() {
+                npc = itr.next();
+                return npc;
+            }
+
+            @Override
+            public void remove() {
+                itr.remove();
+                if (npc != null) {
+                    uniqueNPCs.remove(npc.getUniqueId());
+                    npc = null;
+                }
+            }
+        };
     }
 
     @Override
