@@ -7,23 +7,38 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.md_5.bungee.api.ChatColor;
 
 @TraitName("skintrait")
 public class SkinTrait extends Trait {
     @Persist
     private boolean fetchDefaultSkin = true;
+    private String filledPlaceholder;
     @Persist
     private String signature;
     @Persist
     private String skinName;
     @Persist
     private String textureRaw;
+    private int timer;
     @Persist
     private boolean updateSkins = Setting.NPC_SKIN_USE_LATEST.asBoolean();
 
     public SkinTrait() {
         super("skintrait");
+    }
+
+    private void checkPlaceholder(boolean update) {
+        String filled = ChatColor.stripColor(Placeholders.replace(skinName, null, npc).toLowerCase());
+        if (!filled.equalsIgnoreCase(skinName)) {
+            filledPlaceholder = filled;
+            if (update) {
+                onSkinChange(true);
+            }
+        }
     }
 
     /**
@@ -53,7 +68,7 @@ public class SkinTrait extends Trait {
      * @return The skin name if set, or null (i.e. using the NPC's name)
      */
     public String getSkinName() {
-        return skinName;
+        return filledPlaceholder != null && skinName != null ? filledPlaceholder : skinName;
     }
 
     /**
@@ -61,6 +76,11 @@ public class SkinTrait extends Trait {
      */
     public String getTexture() {
         return textureRaw;
+    }
+
+    @Override
+    public void load(DataKey key) {
+        checkPlaceholder(false);
     }
 
     @SuppressWarnings("deprecation")
@@ -100,6 +120,12 @@ public class SkinTrait extends Trait {
     @Override
     public void run() {
         migrate();
+        if (timer-- > 0)
+            return;
+        timer = Setting.PLACEHOLDER_SKIN_UPDATE_FREQUENCY.asInt();
+        if (filledPlaceholder == null)
+            return;
+        checkPlaceholder(true);
     }
 
     /**
@@ -137,8 +163,19 @@ public class SkinTrait extends Trait {
      */
     public void setSkinName(String name, boolean forceUpdate) {
         Preconditions.checkNotNull(name);
-        this.skinName = name.toLowerCase();
+        setSkinNameInternal(name);
         onSkinChange(forceUpdate);
+    }
+
+    private void setSkinNameInternal(String name) {
+        skinName = ChatColor.stripColor(name.toLowerCase());
+        checkPlaceholder(false);
+        String filled = ChatColor.stripColor(Placeholders.replace(skinName, null, npc).toLowerCase());
+        if (!filled.equalsIgnoreCase(skinName)) {
+            filledPlaceholder = filled;
+        } else {
+            filledPlaceholder = null;
+        }
     }
 
     /**
@@ -156,7 +193,7 @@ public class SkinTrait extends Trait {
         Preconditions.checkNotNull(signature);
         Preconditions.checkNotNull(data);
 
-        this.skinName = skinName.toLowerCase();
+        setSkinNameInternal(skinName);
         this.signature = signature;
         this.textureRaw = data;
         this.updateSkins = false;
