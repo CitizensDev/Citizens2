@@ -12,6 +12,7 @@ import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EntityTrackerEntry;
+import net.minecraft.server.v1_16_R3.PacketPlayOutAnimation;
 import net.minecraft.server.v1_16_R3.PlayerChunkMap;
 import net.minecraft.server.v1_16_R3.PlayerChunkMap.EntityTracker;
 
@@ -40,6 +41,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
+                NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new PacketPlayOutAnimation(tracker, 0));
                 NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
             }
         }, Setting.TABLIST_REMOVE_PACKET_DELAY.asInt());
