@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.command.Command;
@@ -14,6 +15,7 @@ import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.waypoint.LinearWaypointProvider;
 import net.citizensnpcs.trait.waypoint.Waypoint;
 import net.citizensnpcs.trait.waypoint.WaypointProvider;
@@ -97,6 +99,9 @@ public class WaypointCommands {
                 Messaging.sendTr(sender, Messages.CURRENT_WAYPOINT_PROVIDER, waypoints.getCurrentProviderName());
             }
             return;
+        }
+        if (sender instanceof Player && Editor.hasEditor(((Player) sender))) {
+            Editor.leave(((Player) sender));
         }
         boolean success = waypoints.setWaypointProvider(args.getString(1));
         if (!success)

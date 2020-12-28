@@ -36,11 +36,6 @@ public class Waypoints extends Trait {
         }
     }
 
-    @Override
-    public void onAttach() {
-        provider = new LinearWaypointProvider(npc);
-    }
-
     public void describeProviders(CommandSender sender) {
         Messaging.sendTr(sender, Messages.AVAILABLE_WAYPOINT_PROVIDERS);
         for (String name : PROVIDERS.keySet()) {
@@ -84,6 +79,11 @@ public class Waypoints extends Trait {
             provider.onSpawn(npc);
         }
         PersistenceLoader.load(provider, key.getRelative(providerName));
+    }
+
+    @Override
+    public void onAttach() {
+        provider = new LinearWaypointProvider(npc);
     }
 
     @Override
