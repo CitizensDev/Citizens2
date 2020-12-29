@@ -32,6 +32,8 @@ public class SkinTrait extends Trait {
     }
 
     private void checkPlaceholder(boolean update) {
+        if (skinName == null)
+            return;
         String filled = ChatColor.stripColor(Placeholders.replace(skinName, null, npc).toLowerCase());
         if (!filled.equalsIgnoreCase(skinName)) {
             filledPlaceholder = filled;
