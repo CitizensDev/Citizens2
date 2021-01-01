@@ -24,11 +24,11 @@ public class Placeholders {
             return setPlaceholderAPIPlaceholders(text, player);
         }
         if (player instanceof Entity && ((Entity) player).isValid()) {
-            text = StringUtils.replaceEach(text, PLAYER_WORLD_PLACEHOLDERS,
-                    new String[] { player.getName(), player.getName(), ((Entity) player).getWorld().getName() });
+            text = StringUtils.replaceEach(text, PLAYER_WORLD_PLACEHOLDERS, new String[] { player.getName(),
+                    player.getName(), player.getName(), player.getName(), ((Entity) player).getWorld().getName() });
         } else {
             text = StringUtils.replaceEach(text, PLAYER_PLACEHOLDERS,
-                    new String[] { player.getName(), player.getName() });
+                    new String[] { player.getName(), player.getName(), player.getName(), player.getName() });
         }
         return setPlaceholderAPIPlaceholders(text, player);
     }
@@ -46,8 +46,7 @@ public class Placeholders {
     }
 
     private static final String[] CITIZENS_PLACEHOLDERS = { "<id>", "<npc>", "<owner>" };
-
     private static boolean PLACEHOLDERAPI_ENABLED = true;
     private static final String[] PLAYER_PLACEHOLDERS = { "<player>", "<p>", "@p", "%player%" };
-    private static final String[] PLAYER_WORLD_PLACEHOLDERS = { "<player>", "<p>", "<world>" };
+    private static final String[] PLAYER_WORLD_PLACEHOLDERS = { "<player>", "<p>", "@p", "%player%", "<world>" };
 }
