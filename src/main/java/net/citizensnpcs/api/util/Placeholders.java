@@ -48,6 +48,6 @@ public class Placeholders {
     private static final String[] CITIZENS_PLACEHOLDERS = { "<id>", "<npc>", "<owner>" };
 
     private static boolean PLACEHOLDERAPI_ENABLED = true;
-    private static final String[] PLAYER_PLACEHOLDERS = { "<player>", "<p>", };
+    private static final String[] PLAYER_PLACEHOLDERS = { "<player>", "<p>", "@p", "%player%" };
     private static final String[] PLAYER_WORLD_PLACEHOLDERS = { "<player>", "<p>", "<world>" };
 }

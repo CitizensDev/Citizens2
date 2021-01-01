@@ -10,50 +10,69 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
 public class InventoryMenu {
-    private final Inventory inventory;
+    private final MenuContext currentContext;
     private InventoryMenuPage page;
     private final InventoryMenuPattern[] patterns;
-    private final InventoryMenuSlot[] slots;
     private final InventoryMenuTransition[] transitions;
 
     public InventoryMenu(InventoryMenuInfo info) {
         int[] dim = info.menuAnnotation.dimensions();
         int size = dim[0] * dim[1];
+        Inventory inventory;
         if (info.menuAnnotation.type() == InventoryType.CHEST || info.menuAnnotation.type() == null) {
-            this.inventory = Bukkit.createInventory(null, size, info.menuAnnotation.title());
+            inventory = Bukkit.createInventory(null, size, info.menuAnnotation.title());
         } else {
-            this.inventory = Bukkit.createInventory(null, info.menuAnnotation.type(), info.menuAnnotation.title());
+            inventory = Bukkit.createInventory(null, info.menuAnnotation.type(), info.menuAnnotation.title());
         }
-        this.slots = new InventoryMenuSlot[this.inventory.getSize()];
+        InventoryMenuSlot[] slots = new InventoryMenuSlot[inventory.getSize()];
         this.patterns = new InventoryMenuPattern[info.patterns.length];
         this.transitions = new InventoryMenuTransition[info.transitions.length];
         try {
             this.page = info.constructor.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+        currentContext = new MenuContext(this, slots, inventory);
         for (int i = 0; i < info.slots.length; i++) {
             Bindable<MenuSlot> slotInfo = info.slots[i];
-            int pos = slotInfo.data.value()[0] * dim[0] + slotInfo.data.value()[1];
-            slotInfo.data.value();
-            InventoryMenuSlot slot = getSlot(pos);
+            int pos = posToIndex(dim, slotInfo.data.value());
+            InventoryMenuSlot slot = currentContext.getSlot(pos);
+            slot.initialise(slotInfo.data);
+            slotInfo.bind(slot);
         }
         for (int i = 0; i < info.patterns.length; i++) {
             Bindable<MenuPattern> patternInfo = info.patterns[i];
-            InventoryMenuPattern c = new InventoryMenuPattern();
+            InventoryMenuPattern pat = new InventoryMenuPattern(currentContext, patternInfo.data);
+            patternInfo.bind(pat);
+            this.patterns[i] = pat;
         }
         for (int i = 0; i < info.transitions.length; i++) {
             Bindable<MenuTransition> transitionInfo = info.transitions[i];
+            int pos = posToIndex(dim, transitionInfo.data.pos());
+            InventoryMenuSlot slot = currentContext.getSlot(pos);
+            InventoryMenuTransition transition = new InventoryMenuTransition(this, slot, transitionInfo.data.value());
+            transitionInfo.bind(transition);
+            this.transitions[i] = transition;
         }
     }
 
-    private InventoryMenuSlot getSlot(int i) {
-        return slots[i] == null ? slots[i] = new InventoryMenuSlot(this, i) : slots[i];
+    private int posToIndex(int[] dim, int[] pos) {
+        return pos[0] * dim[1] + pos[1];
     }
 
     private static class Bindable<T> {
         MethodHandle bind;
         T data;
+
+        public void bind(Object slot) {
+            if (bind == null)
+                return;
+            try {
+                bind.invoke(slot);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static class InventoryMenuInfo {
