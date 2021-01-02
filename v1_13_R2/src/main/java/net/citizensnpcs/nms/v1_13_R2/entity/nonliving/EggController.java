@@ -1,16 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
 
-import net.citizensnpcs.api.event.NPCPushEvent;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.npc.AbstractEntityController;
-import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_13_R2.EntityEgg;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.World;
-import net.minecraft.server.v1_13_R2.WorldServer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
@@ -20,6 +9,16 @@ import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
+
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.npc.AbstractEntityController;
+import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_13_R2.EntityEgg;
+import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.World;
+import net.minecraft.server.v1_13_R2.WorldServer;
 
 public class EggController extends AbstractEntityController {
     public EggController() {
@@ -86,24 +85,10 @@ public class EggController extends AbstractEntityController {
 
         @Override
         public void f(double x, double y, double z) {
-            if (npc == null) {
-                super.f(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.f(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
         }
 
         @Override

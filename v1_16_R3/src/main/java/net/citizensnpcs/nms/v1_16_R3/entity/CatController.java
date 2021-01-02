@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftCat;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
@@ -9,8 +8,8 @@ import org.bukkit.entity.Cat;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
-import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -21,6 +20,7 @@ import net.minecraft.server.v1_16_R3.DataWatcherObject;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityBoat;
 import net.minecraft.server.v1_16_R3.EntityCat;
+import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.IBlockData;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
@@ -38,17 +38,9 @@ public class CatController extends MobEntityController {
         return (Cat) super.getBukkitEntity();
     }
 
-    public static class CatNPC extends CraftCat implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class CatNPC extends CraftCat implements ForwardingNPCHolder {
         public CatNPC(EntityCatNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 
@@ -116,15 +108,6 @@ public class CatController extends MobEntityController {
         }
 
         @Override
-        public void g(Vec3D vec3d) {
-            if (npc == null || !npc.isFlyable()) {
-                super.g(vec3d);
-            } else {
-                NMSImpl.flyingMoveLogic(this, vec3d);
-            }
-        }
-
-        @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
             if (npc == null) {
                 super.enderTeleportTo(d0, d1, d2);
@@ -134,6 +117,15 @@ public class CatController extends MobEntityController {
             Bukkit.getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
                 super.enderTeleportTo(d0, d1, d2);
+            }
+        }
+
+        @Override
+        public void g(Vec3D vec3d) {
+            if (npc == null || !npc.isFlyable()) {
+                super.g(vec3d);
+            } else {
+                NMSImpl.flyingMoveLogic(this, vec3d);
             }
         }
 
@@ -167,24 +159,10 @@ public class CatController extends MobEntityController {
 
         @Override
         public void i(double x, double y, double z) {
-            if (npc == null) {
-                super.i(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.i(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
         }
 
         @Override

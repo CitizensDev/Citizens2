@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftWither;
@@ -9,8 +8,8 @@ import org.bukkit.entity.Wither;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
-import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -18,6 +17,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityBoat;
+import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.EntityWither;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
@@ -113,24 +113,10 @@ public class WitherController extends MobEntityController {
 
         @Override
         public void i(double x, double y, double z) {
-            if (npc == null) {
-                super.i(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.i(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
         }
 
         @Override
@@ -173,17 +159,9 @@ public class WitherController extends MobEntityController {
         }
     }
 
-    public static class WitherNPC extends CraftWither implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class WitherNPC extends CraftWither implements ForwardingNPCHolder {
         public WitherNPC(EntityWitherNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

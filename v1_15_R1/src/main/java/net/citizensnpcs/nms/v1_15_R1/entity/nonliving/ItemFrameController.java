@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;
 
-import net.citizensnpcs.nms.v1_15_R1.entity.MobEntityController;
-import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,9 +11,10 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.DespawnReason;
-import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.entity.MobEntityController;
+import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
@@ -75,24 +73,10 @@ public class ItemFrameController extends MobEntityController {
 
         @Override
         public void h(double x, double y, double z) {
-            if (npc == null) {
-                super.h(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.h(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
                 super.h(vector.getX(), vector.getY(), vector.getZ());
             }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
         }
 
         @Override

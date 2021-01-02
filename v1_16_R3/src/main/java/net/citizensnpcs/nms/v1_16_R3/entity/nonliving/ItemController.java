@@ -13,7 +13,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.DespawnReason;
-import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
@@ -81,28 +80,6 @@ public class ItemController extends AbstractEntityController {
         }
 
         @Override
-        public void i(double x, double y, double z) {
-            if (npc == null) {
-                super.i(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.i(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
-                super.i(vector.getX(), vector.getY(), vector.getZ());
-            }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new ItemNPC(this));
@@ -113,6 +90,14 @@ public class ItemController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public void i(double x, double y, double z) {
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
+                super.i(vector.getX(), vector.getY(), vector.getZ());
+            }
         }
 
         @Override

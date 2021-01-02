@@ -10,8 +10,8 @@ import org.bukkit.entity.PiglinBrute;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
-import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -145,25 +145,10 @@ public class PiglinBruteController extends MobEntityController {
 
         @Override
         public void i(double x, double y, double z) {
-            if (npc == null) {
-                super.i(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
-                    super.i(x, y, z);
-                }
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
         }
 
         @Override
@@ -209,17 +194,9 @@ public class PiglinBruteController extends MobEntityController {
         }
     }
 
-    public static class PiglinBruteNPC extends CraftPiglinBrute implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class PiglinBruteNPC extends CraftPiglinBrute implements ForwardingNPCHolder {
         public PiglinBruteNPC(EntityPiglinBruteNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

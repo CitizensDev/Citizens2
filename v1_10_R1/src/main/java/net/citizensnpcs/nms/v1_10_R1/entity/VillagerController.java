@@ -8,7 +8,6 @@ import org.bukkit.entity.Villager;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
-import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_10_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -16,6 +15,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_10_R1.BlockPosition;
 import net.minecraft.server.v1_10_R1.EntityHuman;
+import net.minecraft.server.v1_10_R1.EntityLightning;
 import net.minecraft.server.v1_10_R1.EntityVillager;
 import net.minecraft.server.v1_10_R1.EnumHand;
 import net.minecraft.server.v1_10_R1.IBlockData;
@@ -23,7 +23,6 @@ import net.minecraft.server.v1_10_R1.ItemStack;
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import net.minecraft.server.v1_10_R1.SoundEffect;
 import net.minecraft.server.v1_10_R1.World;
-import net.minecraft.server.v1_10_R1.EntityLightning;
 
 public class VillagerController extends MobEntityController {
     public VillagerController() {
@@ -132,24 +131,10 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public void g(double x, double y, double z) {
-            if (npc == null) {
-                super.g(x, y, z);
-                return;
-            }
-            if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true))
-                    super.g(x, y, z);
-                return;
-            }
-            Vector vector = new Vector(x, y, z);
-            NPCPushEvent event = Util.callPushEvent(npc, vector);
-            if (!event.isCancelled()) {
-                vector = event.getCollisionVector();
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
                 super.g(vector.getX(), vector.getY(), vector.getZ());
             }
-            // when another entity collides, this method is called to push the
-            // NPC so we prevent it from doing anything if the event is
-            // cancelled.
         }
 
         @Override
