@@ -779,7 +779,7 @@ public class NPCCommands {
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
             }
             int idx = Math.max(0, args.getInteger(2));
-            if (idx > trait.getLines().size()) {
+            if (idx >= trait.getLines().size()) {
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
             }
             trait.removeLine(idx);

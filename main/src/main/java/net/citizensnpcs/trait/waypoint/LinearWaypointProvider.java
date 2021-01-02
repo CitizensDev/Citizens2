@@ -234,10 +234,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             return selectedWaypoint == null ? waypoints.get(waypoints.size() - 1) : selectedWaypoint;
         }
 
-        private Location getPreviousWaypoint() {
+        private Location getLastWaypoint() {
             if (waypoints.size() <= 1)
                 return null;
-            return waypoints.get(waypoints.size() - 2).getLocation();
+            return waypoints.get(waypoints.size() - 1).getLocation();
         }
 
         @EventHandler
@@ -312,7 +312,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                     return;
                 event.setCancelled(true);
                 Location at = event.getClickedBlock().getLocation();
-                Location prev = getPreviousWaypoint();
+                Location prev = getLastWaypoint();
 
                 if (prev != null && prev.getWorld() == at.getWorld()) {
                     double distance = at.distance(prev);
