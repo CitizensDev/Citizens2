@@ -25,7 +25,6 @@ import com.mojang.datafixers.util.Pair;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
-import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.nms.v1_16_R3.network.EmptyNetHandler;
@@ -257,25 +256,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public void i(double x, double y, double z) {
-        if (npc == null) {
-            super.i(x, y, z);
-            return;
-        }
-        if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-            if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
-                super.i(x, y, z);
-            }
-            return;
-        }
-        Vector vector = new Vector(x, y, z);
-        NPCPushEvent event = Util.callPushEvent(npc, vector);
-        if (!event.isCancelled()) {
-            vector = event.getCollisionVector();
+        Vector vector = Util.callPushEvent(npc, x, y, z);
+        if (vector != null) {
             super.i(vector.getX(), vector.getY(), vector.getZ());
         }
-        // when another entity collides, this method is called to push the
-        // NPC so we prevent it from doing anything if the event is
-        // cancelled.
     }
 
     @Override

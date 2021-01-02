@@ -46,12 +46,26 @@ public class Util {
         }
     }
 
-    public static NPCPushEvent callPushEvent(NPC npc, Vector vector) {
+    public static Vector callPushEvent(NPC npc, double x, double y, double z) {
+        if (npc == null) {
+            return new Vector(x, y, z);
+        }
+        boolean allowed = !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)
+                || !npc.data().get(NPC.COLLIDABLE_METADATA, true);
+        if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
+            if (allowed) {
+                return new Vector(x, y, z);
+            }
+            return allowed ? new Vector(x, y, z) : null;
+        }
+        // when another entity collides, this method is called to push the
+        // NPC so we prevent it from doing anything if the event is
+        // cancelled.
+        Vector vector = new Vector(x, y, z);
         NPCPushEvent event = new NPCPushEvent(npc, vector);
-        event.setCancelled(
-                npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true) || !npc.data().get(NPC.COLLIDABLE_METADATA, true));
+        event.setCancelled(allowed);
         Bukkit.getPluginManager().callEvent(event);
-        return event;
+        return !event.isCancelled() ? event.getCollisionVector() : null;
     }
 
     public static float clampYaw(float yaw) {
