@@ -1251,7 +1251,10 @@ public class NPCCommands {
     public void npc(CommandContext args, CommandSender sender, final NPC npc) {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
-        Messaging.send(sender, "    <a>Type: <e>" + npc.getOrAddTrait(MobType.class).getType());
+        EntityType type = npc.getOrAddTrait(MobType.class).getType();
+        Messaging.send(sender,
+                "    <a>UUID: <e>" + npc.getUniqueId() + (npc.isSpawned() && type == EntityType.PLAYER ? "(v4)" : ""));
+        Messaging.send(sender, "    <a>Type: <e>" + type);
         if (npc.isSpawned()) {
             Location loc = npc.getEntity().getLocation();
             String format = "    <a>Spawned at <e>%d, %d, %d <a>in world<e> %s";

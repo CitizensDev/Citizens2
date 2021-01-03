@@ -53,14 +53,10 @@ public class Util {
         boolean allowed = !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)
                 || !npc.data().get(NPC.COLLIDABLE_METADATA, true);
         if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
-            if (allowed) {
-                return new Vector(x, y, z);
-            }
             return allowed ? new Vector(x, y, z) : null;
         }
-        // when another entity collides, this method is called to push the
-        // NPC so we prevent it from doing anything if the event is
-        // cancelled.
+        // when another entity collides, this method is called to push the NPC so we prevent it from
+        // doing anything if the event is cancelled.
         Vector vector = new Vector(x, y, z);
         NPCPushEvent event = new NPCPushEvent(npc, vector);
         event.setCancelled(allowed);
