@@ -172,7 +172,7 @@ public class HoglinController extends MobEntityController {
         public void mobTick() {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                setImmuneToZombification(npc.isProtected());
+                setImmuneToZombification(true);
             }
             super.mobTick();
             if (npc != null) {
