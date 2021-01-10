@@ -1,6 +1,8 @@
 package net.citizensnpcs.trait;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
+import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
@@ -196,6 +198,10 @@ public class SkinTrait extends Trait {
         Preconditions.checkNotNull(data);
 
         setSkinNameInternal(skinName);
+        String json = new String(BaseEncoding.base64().decode(textureRaw), Charsets.UTF_8);
+        if (!json.contains("textures")) {
+            throw new IllegalArgumentException("Invalid texture data");
+        }
         this.signature = signature;
         this.textureRaw = data;
         this.updateSkins = false;
