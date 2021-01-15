@@ -198,7 +198,7 @@ public class SkinTrait extends Trait {
         Preconditions.checkNotNull(data);
 
         setSkinNameInternal(skinName);
-        String json = new String(BaseEncoding.base64().decode(textureRaw), Charsets.UTF_8);
+        String json = new String(BaseEncoding.base64().decode(data), Charsets.UTF_8);
         if (!json.contains("textures")) {
             throw new IllegalArgumentException("Invalid texture data");
         }

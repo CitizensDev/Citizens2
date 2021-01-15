@@ -1851,8 +1851,12 @@ public class NPCCommands {
                         Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
                             @Override
                             public void run() {
-                                trait.setSkinPersistent(uuid, signature, textureEncoded);
-                                Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url);
+                                try {
+                                    trait.setSkinPersistent(uuid, signature, textureEncoded);
+                                    Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url);
+                                } catch (IllegalArgumentException e) {
+                                    Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url);
+                                }
                             }
                         });
                     } catch (Throwable t) {

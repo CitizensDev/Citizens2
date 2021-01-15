@@ -1,5 +1,9 @@
 package net.citizensnpcs.npc.ai.speech;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.Talkable;
@@ -8,10 +12,6 @@ import net.citizensnpcs.api.ai.speech.event.SpeechBystanderEvent;
 import net.citizensnpcs.api.ai.speech.event.SpeechTargetedEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 public class TalkableEntity implements Talkable {
     Entity entity;
@@ -66,9 +66,9 @@ public class TalkableEntity implements Talkable {
         }
     }
 
-    private void talk(String message) {
+    private void talk(NPC npc, String message) {
         if (entity instanceof Player && !CitizensAPI.getNPCRegistry().isNPC(entity)) {
-            Messaging.send((Player) entity, message);
+            Messaging.sendWithNPC(entity, message, npc);
         }
     }
 
@@ -78,7 +78,8 @@ public class TalkableEntity implements Talkable {
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
-        talk(event.getMessage());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getContext().getTalker().getEntity());
+        talk(npc, event.getMessage());
     }
 
     @Override
@@ -87,7 +88,8 @@ public class TalkableEntity implements Talkable {
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
-        talk(event.getMessage());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getContext().getTalker().getEntity());
+        talk(npc, event.getMessage());
     }
 
 }
