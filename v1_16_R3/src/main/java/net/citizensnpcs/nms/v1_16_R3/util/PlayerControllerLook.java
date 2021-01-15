@@ -10,6 +10,7 @@ public class PlayerControllerLook {
     private final EntityHumanNPC a;
     protected float b;
     protected float c;
+    private final PlayerBodyControl control;
     protected boolean d;
     protected double e;
     protected double f;
@@ -17,6 +18,7 @@ public class PlayerControllerLook {
 
     public PlayerControllerLook(EntityHumanNPC entityinsentient) {
         this.a = entityinsentient;
+        this.control = new PlayerBodyControl(this.a);
     }
 
     public void a() {
@@ -35,7 +37,7 @@ public class PlayerControllerLook {
             while (this.a.aC < -180F) {
                 this.a.aC += 360F;
             }
-            double d = this.a.aC - 45;
+            double d = this.a.aC - 40;
             while (d >= 180F) {
                 d -= 360F;
             }
@@ -45,15 +47,17 @@ public class PlayerControllerLook {
             if (d > this.a.yaw) {
                 this.a.yaw = (float) d;
             }
-            d = this.a.aC + 45;
-            while (d >= 180F) {
-                d -= 360F;
-            }
-            while (d < -180F) {
-                d += 360F;
-            }
-            if (d < this.a.yaw) {
-                this.a.yaw = (float) d;
+            if (d != this.a.yaw) {
+                d = this.a.aC + 40;
+                while (d >= 180F) {
+                    d -= 360F;
+                }
+                while (d < -180F) {
+                    d += 360F;
+                }
+                if (d < this.a.yaw) {
+                    this.a.yaw = (float) d;
+                }
             }
             // this.a.yaw = this.a(this.a.aC, this.h(), this.b);
         } else {

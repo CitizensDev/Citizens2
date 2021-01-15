@@ -3,8 +3,10 @@ package net.citizensnpcs.trait;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -50,6 +52,7 @@ public class CommandTrait extends Trait {
     private final Map<String, PlayerNPCCommand> cooldowns = Maps.newHashMap();
     @Persist
     private double cost = -1;
+    private final Map<String, Set<CommandTraitMessages>> executionErrors = Maps.newHashMap();
     @Persist
     private ExecutionMode executionMode = ExecutionMode.LINEAR;
     @Persist
@@ -165,6 +168,9 @@ public class CommandTrait extends Trait {
                     });
                     max = commandList.size() > 0 ? commandList.get(commandList.size() - 1).id : -1;
                 }
+                if (executionMode == ExecutionMode.LINEAR) {
+                    executionErrors.put(player.getUniqueId().toString(), EnumSet.noneOf(CommandTraitMessages.class));
+                }
                 for (NPCCommand command : commandList) {
                     if (executionMode == ExecutionMode.SEQUENTIAL) {
                         PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
@@ -244,6 +250,12 @@ public class CommandTrait extends Trait {
     }
 
     private void sendErrorMessage(Player player, CommandTraitMessages msg, Object... objects) {
+        Set<CommandTraitMessages> sent = executionErrors.get(player.getUniqueId().toString());
+        if (sent != null) {
+            if (sent.contains(msg))
+                return;
+            sent.add(msg);
+        }
         String messageRaw = msg.setting.asString();
         if (messageRaw != null && messageRaw.trim().length() > 0) {
             Messaging.send(player, Translator.format(messageRaw, objects));
