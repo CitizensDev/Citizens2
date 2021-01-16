@@ -59,7 +59,7 @@ public class Util {
         // doing anything if the event is cancelled.
         Vector vector = new Vector(x, y, z);
         NPCPushEvent event = new NPCPushEvent(npc, vector);
-        event.setCancelled(allowed);
+        event.setCancelled(!allowed);
         Bukkit.getPluginManager().callEvent(event);
         return !event.isCancelled() ? event.getCollisionVector() : null;
     }
