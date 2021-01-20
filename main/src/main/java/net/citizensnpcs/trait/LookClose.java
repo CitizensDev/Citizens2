@@ -79,7 +79,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             if (location.getWorld() != NPC_LOCATION.getWorld())
                 continue;
             double dist = location.distanceSquared(NPC_LOCATION);
-            if (dist > range || CitizensAPI.getNPCRegistry().getNPC(entity) != null || isInvisible(player))
+            if (dist > range * range || CitizensAPI.getNPCRegistry().getNPC(entity) != null || isInvisible(player))
                 continue;
             nearby.add(player);
         }
