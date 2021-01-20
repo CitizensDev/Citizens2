@@ -75,9 +75,11 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
                 continue;
 
             Player player = (Player) entity;
-            if (CitizensAPI.getNPCRegistry().getNPC(entity) != null || player.getGameMode() == GameMode.SPECTATOR
-                    || entity.getLocation(CACHE_LOCATION).getWorld() != NPC_LOCATION.getWorld()
-                    || player.hasPotionEffect(PotionEffectType.INVISIBILITY) || isPluginVanished((Player) entity))
+            Location location = player.getLocation(CACHE_LOCATION);
+            if (location.getWorld() != NPC_LOCATION.getWorld())
+                continue;
+            double dist = location.distanceSquared(NPC_LOCATION);
+            if (dist > range || CitizensAPI.getNPCRegistry().getNPC(entity) != null || isInvisible(player))
                 continue;
             nearby.add(player);
         }
@@ -91,7 +93,6 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
                 }
                 return Double.compare(l1.distanceSquared(NPC_LOCATION), l2.distanceSquared(NPC_LOCATION));
             });
-
             lookingAt = nearby.get(0);
         }
     }
@@ -119,7 +120,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     private boolean hasInvalidTarget() {
         if (lookingAt == null)
             return true;
-        if (!lookingAt.isOnline() || lookingAt.getWorld() != npc.getEntity().getWorld()
+        if (!lookingAt.isOnline() || !lookingAt.isValid() || lookingAt.getWorld() != npc.getEntity().getWorld()
+                || isInvisible(lookingAt)
                 || lookingAt.getLocation(PLAYER_LOCATION).distanceSquared(NPC_LOCATION) > range * range) {
             lookingAt = null;
         }
@@ -128,6 +130,11 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     private boolean isEqual(float[] array) {
         return Math.abs(array[0] - array[1]) < 0.001;
+    }
+
+    private boolean isInvisible(Player player) {
+        return player.getGameMode() == GameMode.SPECTATOR || player.hasPotionEffect(PotionEffectType.INVISIBILITY)
+                || isPluginVanished(player);
     }
 
     private boolean isPluginVanished(Player player) {
