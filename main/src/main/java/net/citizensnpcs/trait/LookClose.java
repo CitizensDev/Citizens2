@@ -43,6 +43,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     private double range = Setting.DEFAULT_LOOK_CLOSE_RANGE.asDouble();
     @Persist("realisticlooking")
     private boolean realisticLooking = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
+    @Persist("disable-while-navigating")
+    private boolean disableWhileNavigating = Setting.DISABLE_LOOKCLOSE_WHILE_NAVIGATING.asBoolean();
     private int t;
 
     public LookClose() {
@@ -179,7 +181,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         if (!enabled || !npc.isSpawned()) {
             return;
         }
-        if (npc.getNavigator().isNavigating() && Setting.DISABLE_LOOKCLOSE_WHILE_NAVIGATING.asBoolean()) {
+        if (disableWhileNavigating && npc.getNavigator().isNavigating()) {
             return;
         }
         npc.getEntity().getLocation(NPC_LOCATION);
@@ -271,6 +273,14 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     public boolean useRealisticLooking() {
         return realisticLooking;
+    }
+
+    public boolean isDisableWhileNavigating() {
+        return disableWhileNavigating;
+    }
+
+    public void setDisableWhileNavigating(boolean disableWhileNavigating) {
+        this.disableWhileNavigating = disableWhileNavigating;
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
