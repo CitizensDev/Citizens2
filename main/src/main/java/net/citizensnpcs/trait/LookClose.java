@@ -1,7 +1,5 @@
 package net.citizensnpcs.trait;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import org.bukkit.GameMode;
@@ -69,7 +67,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
      * Finds a new look-close target
      */
     public void findNewTarget() {
-        List<Player> nearby = new ArrayList<>();
+        double min = Integer.MAX_VALUE;
         for (Entity entity : npc.getEntity().getNearbyEntities(range, range, range)) {
             if (!(entity instanceof Player))
                 continue;
@@ -81,19 +79,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             double dist = location.distanceSquared(NPC_LOCATION);
             if (dist > range * range || CitizensAPI.getNPCRegistry().getNPC(entity) != null || isInvisible(player))
                 continue;
-            nearby.add(player);
-        }
-
-        if (!nearby.isEmpty()) {
-            nearby.sort((o1, o2) -> {
-                Location l1 = o1.getLocation(CACHE_LOCATION);
-                Location l2 = o2.getLocation(CACHE_LOCATION2);
-                if (!NPC_LOCATION.getWorld().equals(l1.getWorld()) || !NPC_LOCATION.getWorld().equals(l2.getWorld())) {
-                    return -1;
-                }
-                return Double.compare(l1.distanceSquared(NPC_LOCATION), l2.distanceSquared(NPC_LOCATION));
-            });
-            lookingAt = nearby.get(0);
+            if (dist < min) {
+                min = dist;
+                lookingAt = player;
+            }
         }
     }
 
