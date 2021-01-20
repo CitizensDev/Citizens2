@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -54,6 +55,10 @@ public class InventoryMenuSlot {
         }
         inventory.setItem(index, defaultItem);
         setClickFilter(Arrays.asList(data.filter()));
+    }
+
+    public void onClick(InventoryClickEvent event) {
+        // TODO
     }
 
     public void setClickFilter(Collection<ClickType> filter) {

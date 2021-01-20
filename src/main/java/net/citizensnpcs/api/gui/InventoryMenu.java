@@ -2,18 +2,27 @@ package net.citizensnpcs.api.gui;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Constructor;
+import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+
+import com.google.common.collect.Lists;
 
 public class InventoryMenu {
     private final MenuContext currentContext;
     private InventoryMenuPage page;
     private final InventoryMenuPattern[] patterns;
     private final InventoryMenuTransition[] transitions;
+    private final Collection<InventoryView> views = Lists.newArrayList();
 
     public InventoryMenu(InventoryMenuInfo info) {
         int[] dim = info.menuAnnotation.dimensions();
@@ -56,8 +65,31 @@ public class InventoryMenu {
         }
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!event.getInventory().equals(currentContext.getInventory()))
+            return;
+        InventoryMenuSlot slot = currentContext.getSlot(event.getSlot());
+        page.onClick(slot, event);
+        slot.onClick(event);
+        // TODO: check for transitions
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (!event.getInventory().equals(currentContext.getInventory()))
+            return;
+        page.onClose(event.getPlayer());
+        // TODO: transition upwards if required
+    }
+
     private int posToIndex(int[] dim, int[] pos) {
         return pos[0] * dim[1] + pos[1];
+    }
+
+    public void present(Player player) {
+        InventoryView view = player.openInventory(currentContext.getInventory());
+        views.add(view);
     }
 
     private static class Bindable<T> {

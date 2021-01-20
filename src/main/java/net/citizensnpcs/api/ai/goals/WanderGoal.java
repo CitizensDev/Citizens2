@@ -52,7 +52,6 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private Location findRandomPosition() {
         Location found = MinecraftBlockExaminer.findRandomValidLocation(npc.getEntity().getLocation(NPC_LOCATION),
                 xrange, yrange, new Function<Block, Boolean>() {
-
                     @Override
                     public Boolean apply(Block block) {
                         if ((block.getRelative(BlockFace.UP).isLiquid() || block.getRelative(0, 2, 0).isLiquid())
