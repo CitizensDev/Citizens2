@@ -61,7 +61,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     @Override
     public void configure(CommandContext args) {
-        range = args.getFlagDouble("range", args.getFlagDouble("r", range));
+        try {
+            range = args.getFlagDouble("range", args.getFlagDouble("r", range));
+        } catch (NumberFormatException ignore) {
+        }
         realisticLooking = args.hasFlag('r');
     }
 
