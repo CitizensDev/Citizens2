@@ -61,7 +61,7 @@ public class PlayerAnimationImpl {
 
                     @Override
                     public void run() {
-                        if (player.dead || !player.valid
+                        if (player.dead || !player.valid || !player.getBukkitEntity().hasMetadata("citizens.sitting")
                                 || !player.getBukkitEntity().getMetadata("citizens.sitting").get(0).asBoolean()) {
                             cancel();
                             return;
@@ -137,9 +137,9 @@ public class PlayerAnimationImpl {
         NMSImpl.sendPacketNearby(player.getBukkitEntity(), player.getBukkitEntity().getLocation(), packet, radius);
     }
 
+    private static EnumMap<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);
     private static final MethodHandle ENTITY_SETPOSE_METHOD = NMS.getMethodHandle(Entity.class, "setPose", true,
             EntityPose.class);
-    private static EnumMap<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);
     static {
         DEFAULTS.put(PlayerAnimation.ARM_SWING, 0);
         DEFAULTS.put(PlayerAnimation.HURT, 1);

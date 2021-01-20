@@ -62,7 +62,7 @@ public class PlayerAnimationImpl {
 
                     @Override
                     public void run() {
-                        if (player.dead || !player.valid
+                        if (player.dead || !player.valid || !player.getBukkitEntity().hasMetadata("citizens.sitting")
                                 || !player.getBukkitEntity().getMetadata("citizens.sitting").get(0).asBoolean()) {
                             cancel();
                             return;
