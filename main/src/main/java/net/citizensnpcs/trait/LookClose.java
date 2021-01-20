@@ -54,9 +54,14 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
      * is true.
      */
     public boolean canSeeTarget() {
-        return realisticLooking && npc.getEntity() instanceof LivingEntity
-                ? ((LivingEntity) npc.getEntity()).hasLineOfSight(lookingAt)
-                : lookingAt != null && lookingAt.isValid();
+        return canSeeTarget(lookingAt);
+    }
+
+    private boolean canSeeTarget(Player player) {
+        return !realisticLooking ||
+                (npc.getEntity() instanceof LivingEntity
+                        ? ((LivingEntity) npc.getEntity()).hasLineOfSight(player)
+                        : lookingAt != null);
     }
 
     @Override
@@ -120,7 +125,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     private boolean isInvisible(Player player) {
         return player.getGameMode() == GameMode.SPECTATOR || player.hasPotionEffect(PotionEffectType.INVISIBILITY)
-                || isPluginVanished(player);
+                || isPluginVanished(player) || !canSeeTarget(player);
     }
 
     private boolean isPluginVanished(Player player) {
@@ -193,7 +198,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             t = randomLookDelay;
         }
         t--;
-        if (lookingAt != null && canSeeTarget()) {
+        if (lookingAt != null) {
             Util.faceEntity(npc.getEntity(), lookingAt);
             if (npc.getEntity().getType().name().equals("SHULKER")) {
                 NMS.setPeekShulker(npc.getEntity(), 100 - (int) Math
