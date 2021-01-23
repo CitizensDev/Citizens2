@@ -87,6 +87,9 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         if (old != lookingAt) {
             NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, old, lookingAt);
             Bukkit.getPluginManager().callEvent(event);
+            if (lookingAt != event.getNewTarget() && event.getNewTarget() != null && !isValid(event.getNewTarget())) {
+                return;
+            }
             lookingAt = event.getNewTarget();
         }
     }
@@ -111,19 +114,6 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         return lookingAt;
     }
 
-    private boolean tryInvalidateTarget() {
-        if (lookingAt == null)
-            return true;
-        if (!lookingAt.isOnline() || !lookingAt.isValid() || lookingAt.getWorld() != npc.getEntity().getWorld()
-                || isInvisible(lookingAt)
-                || lookingAt.getLocation(PLAYER_LOCATION).distanceSquared(NPC_LOCATION) > range * range) {
-            NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, lookingAt, null);
-            Bukkit.getPluginManager().callEvent(event);
-            lookingAt = event.getNewTarget();
-        }
-        return lookingAt == null;
-    }
-
     private boolean isEqual(float[] array) {
         return Math.abs(array[0] - array[1]) < 0.001;
     }
@@ -146,6 +136,12 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         return enableRandomLook;
     }
 
+    private boolean isValid(Player entity) {
+        return entity.isOnline() && entity.isValid() && entity.getWorld() == npc.getEntity().getWorld()
+                && !isInvisible(entity)
+                && entity.getLocation(PLAYER_LOCATION).distanceSquared(NPC_LOCATION) < range * range;
+    }
+
     @Override
     public void load(DataKey key) {
         range = key.getDouble("range");
@@ -162,7 +158,11 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     public void onDespawn() {
         NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, lookingAt, null);
         Bukkit.getPluginManager().callEvent(event);
-        lookingAt = event.getNewTarget();
+        if (event.getNewTarget() != null && isValid(event.getNewTarget())) {
+            lookingAt = event.getNewTarget();
+        } else {
+            lookingAt = null;
+        }
     }
 
     private void randomLook() {
@@ -254,12 +254,26 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         return "LookClose{" + enabled + "}";
     }
 
+    private boolean tryInvalidateTarget() {
+        if (lookingAt == null)
+            return true;
+        if (!isValid(lookingAt)) {
+            NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, lookingAt, null);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.getNewTarget() != null && isValid(event.getNewTarget())) {
+                lookingAt = event.getNewTarget();
+            } else {
+                lookingAt = null;
+            }
+        }
+        return lookingAt == null;
+    }
+
     public boolean useRealisticLooking() {
         return realisticLooking;
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location CACHE_LOCATION2 = new Location(null, 0, 0, 0);
     private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
     private static final Location PLAYER_LOCATION = new Location(null, 0, 0, 0);
 }
