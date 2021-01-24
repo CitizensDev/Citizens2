@@ -1,15 +1,20 @@
 package net.citizensnpcs.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
+import net.citizensnpcs.api.gui.InventoryMenu;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.CopierEditor;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.editor.EquipmentEditor;
+import net.citizensnpcs.editor.EquipmentGUI;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 
@@ -36,6 +41,12 @@ public class EditorCommands {
             max = 1,
             permission = "citizens.npc.edit.equip")
     public void equip(CommandContext args, Player player, NPC npc) {
+        if (Messaging.isDebugging() && false) {
+            InventoryMenu create = InventoryMenu.create(EquipmentGUI.class);
+            Bukkit.getPluginManager().registerEvents(create, CitizensAPI.getPlugin());
+            create.present(player);
+            return;
+        }
         Editor.enterOrLeave(player, new EquipmentEditor(player, npc));
     }
 
