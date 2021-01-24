@@ -439,7 +439,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         boolean itemChanged = false;
         for (EnumItemSlot slot : EnumItemSlot.values()) {
             ItemStack equipment = getEquipment(slot);
-            if (!ItemStack.equals(equipmentCache.get(slot), equipment)) {
+            ItemStack cache = equipmentCache.get(slot);
+            if (!(cache == null && equipment == null)
+                    && (cache == null ^ equipment == null || !ItemStack.equals(cache, equipment))) {
                 itemChanged = true;
             }
             equipmentCache.put(slot, equipment);
