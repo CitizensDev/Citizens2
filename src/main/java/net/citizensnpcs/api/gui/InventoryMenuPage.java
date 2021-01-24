@@ -6,7 +6,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 public abstract class InventoryMenuPage {
     public abstract void create(MenuContext ctx);
 
-    public abstract void onClick(InventoryMenuSlot slot, InventoryClickEvent event);
+    public void onClick(InventoryMenuSlot slot, InventoryClickEvent event) {
+    }
 
-    public abstract void onClose(HumanEntity player);
+    public void onClose(HumanEntity player) {
+    }
 }

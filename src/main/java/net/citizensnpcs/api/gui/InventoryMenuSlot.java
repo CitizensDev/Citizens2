@@ -62,6 +62,6 @@ public class InventoryMenuSlot {
     }
 
     public void setClickFilter(Collection<ClickType> filter) {
-        this.clickFilter = EnumSet.copyOf(filter);
+        this.clickFilter = filter == null || filter.isEmpty() ? EnumSet.allOf(ClickType.class) : EnumSet.copyOf(filter);
     }
 }

@@ -27,5 +27,5 @@ public @interface MenuTransition {
     /**
      * The next sub-menu class to transition to.
      */
-    Class<?> value();
+    Class<? extends InventoryMenuPage> value();
 }
