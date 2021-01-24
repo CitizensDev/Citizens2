@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.mojang.authlib.GameProfile;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
@@ -46,6 +47,7 @@ import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.EnumProtocolDirection;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.ItemStack;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.NavigationAbstract;
 import net.minecraft.server.v1_8_R3.NetworkManager;
@@ -59,12 +61,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private PlayerControllerJump controllerJump;
     private PlayerControllerLook controllerLook;
     private PlayerControllerMove controllerMove;
+    private final TIntObjectHashMap<ItemStack> equipmentCache = new TIntObjectHashMap<ItemStack>();
     private int jumpTicks = 0;
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private final SkinPacketTracker skinTracker;
     private PlayerlistTrackerEntry trackerEntry;
+
     private int updateCounter = 0;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
@@ -402,7 +406,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     private void updatePackets(boolean navigating) {
-        if (updateCounter++ <= Setting.PACKET_UPDATE_DELAY.asInt())
+        updateCounter++;
+        boolean itemChanged = false;
+        for (int slot = 0; slot < this.inventory.armor.length; slot++) {
+            ItemStack equipment = getEquipment(slot);
+            if (!ItemStack.equals(equipmentCache.get(slot), equipment)) {
+                itemChanged = true;
+            }
+            equipmentCache.put(slot, equipment);
+        }
+        if (updateCounter++ <= Setting.PACKET_UPDATE_DELAY.asInt() && !itemChanged)
             return;
         updateCounter = 0;
         Location current = getBukkitEntity().getLocation(packetLocationCache);
