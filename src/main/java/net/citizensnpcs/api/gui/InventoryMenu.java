@@ -28,6 +28,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
+// TODO: check inventory
 public class InventoryMenu implements Listener {
     private PageContext page;
     private final Queue<PageContext> stack = Queues.newArrayDeque();
@@ -37,23 +38,35 @@ public class InventoryMenu implements Listener {
         transition(info);
     }
 
-    private InventoryMenuSlot createSlot(int[] dim, MenuSlot slotInfo) {
-        int pos = posToIndex(dim, slotInfo.value());
+    private InventoryMenuSlot createSlot(int pos, MenuSlot slotInfo) {
         InventoryMenuSlot slot = page.ctx.getSlot(pos);
         slot.initialise(slotInfo);
         return slot;
     }
 
-    private InventoryMenuTransition createTransition(int[] dim, MenuTransition transitionInfo) {
-        int pos = posToIndex(dim, transitionInfo.pos());
+    private InventoryMenuTransition createTransition(int pos, MenuTransition transitionInfo) {
         InventoryMenuSlot slot = page.ctx.getSlot(pos);
         InventoryMenuTransition transition = new InventoryMenuTransition(this, slot, transitionInfo.value());
         return transition;
     }
 
+    private int getInventorySize(InventoryType type, int[] dim) {
+        switch (type) {
+            case CHEST:
+                int size = dim[0] * dim[1];
+                System.out.println(size + " " + size % 9);
+                if (size % 9 != 0) {
+                    size += 9 - (size % 9);
+                }
+                return Math.min(54, size);
+            default:
+                throw new UnsupportedOperationException(); // TODO
+        }
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!event.getInventory().equals(page.ctx.getInventory()))
+        if (page == null || !event.getInventory().equals(page.ctx.getInventory()))
             return;
         switch (event.getAction()) {
             case COLLECT_TO_CURSOR:
@@ -80,7 +93,7 @@ public class InventoryMenu implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (!event.getInventory().equals(page.ctx.getInventory()))
+        if (page == null || !event.getInventory().equals(page.ctx.getInventory()))
             return;
         page.page.onClose(event.getPlayer());
         page = stack.poll();
@@ -109,7 +122,7 @@ public class InventoryMenu implements Listener {
         }
         page = new PageContext();
         int[] dim = info.menuAnnotation.dimensions();
-        int size = dim[0] * dim[1];
+        int size = getInventorySize(info.menuAnnotation.type(), dim);
         Inventory inventory;
         if (info.menuAnnotation.type() == InventoryType.CHEST || info.menuAnnotation.type() == null) {
             inventory = Bukkit.createInventory(null, size, info.menuAnnotation.title());
@@ -127,12 +140,14 @@ public class InventoryMenu implements Listener {
         page.ctx = new MenuContext(this, slots, inventory);
         for (int i = 0; i < info.slots.length; i++) {
             Bindable<MenuSlot> slotInfo = info.slots[i];
-            InventoryMenuSlot slot = createSlot(dim, slotInfo.data);
+            int pos = posToIndex(dim, slotInfo.data.value());
+            InventoryMenuSlot slot = createSlot(pos, slotInfo.data);
             slotInfo.bind(page.page, slot);
         }
         for (int i = 0; i < info.transitions.length; i++) {
             Bindable<MenuTransition> transitionInfo = info.transitions[i];
-            InventoryMenuTransition transition = createTransition(dim, transitionInfo.data);
+            int pos = posToIndex(dim, transitionInfo.data.pos());
+            InventoryMenuTransition transition = createTransition(pos, transitionInfo.data);
             transitionInfo.bind(page.page, transition);
             transitions.add(transition);
         }
@@ -141,10 +156,12 @@ public class InventoryMenu implements Listener {
             Collection<InventoryMenuSlot> patternSlots = Lists.newArrayList();
             Collection<InventoryMenuTransition> patternTransitions = Lists.newArrayList();
             for (MenuSlot slot : patternInfo.data.slots) {
-                patternSlots.add(createSlot(dim, slot));
+                int pos = posToIndex(dim, slot.value());
+                patternSlots.add(createSlot(pos, slot));
             }
             for (MenuTransition transition : patternInfo.data.transitions) {
-                InventoryMenuTransition concreteTransition = createTransition(dim, transition);
+                int pos = posToIndex(dim, transition.pos());
+                InventoryMenuTransition concreteTransition = createTransition(pos, transition);
                 patternTransitions.add(concreteTransition);
                 transitions.add(concreteTransition);
             }
@@ -242,16 +259,18 @@ public class InventoryMenu implements Listener {
 
         private Bindable<MenuPatternInfo> getPatternBindable(MethodHandle bind, AccessibleObject object) {
             MenuPattern[] annotation = object.getAnnotationsByType(MenuPattern.class);
+            if (annotation.length != 1)
+                return null;
             MenuPattern pattern = annotation[0];
             Collection<MenuSlot> slots = Lists.newArrayList();
             for (MenuSlot slot : object.getAnnotationsByType(MenuSlot.class)) {
-                if (pattern.value().contains(Character.toString(slot.pat()))) {
+                if (slot.pat() != '0' && pattern.value().contains(Character.toString(slot.pat()))) {
                     slots.add(slot);
                 }
             }
             Collection<MenuTransition> transitions = Lists.newArrayList();
             for (MenuTransition transition : object.getAnnotationsByType(MenuTransition.class)) {
-                if (pattern.value().contains(Character.toString(transition.pat()))) {
+                if (transition.pat() != '0' && pattern.value().contains(Character.toString(transition.pat()))) {
                     transitions.add(transition);
                 }
             }
@@ -265,13 +284,13 @@ public class InventoryMenu implements Listener {
             MenuPattern pattern = annotation[0];
             Collection<MenuSlot> slots = Lists.newArrayList();
             for (MenuSlot slot : object.getAnnotationsByType(MenuSlot.class)) {
-                if (pattern.value().contains(Character.toString(slot.pat()))) {
+                if (slot.pat() != '0' && pattern.value().contains(Character.toString(slot.pat()))) {
                     slots.add(slot);
                 }
             }
             Collection<MenuTransition> transitions = Lists.newArrayList();
             for (MenuTransition transition : object.getAnnotationsByType(MenuTransition.class)) {
-                if (pattern.value().contains(Character.toString(transition.pat()))) {
+                if (transition.pat() != '0' && pattern.value().contains(Character.toString(transition.pat()))) {
                     transitions.add(transition);
                 }
             }

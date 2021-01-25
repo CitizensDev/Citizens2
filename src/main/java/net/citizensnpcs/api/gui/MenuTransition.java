@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.gui;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.ClickType;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.FIELD })
+@Repeatable(MenuTransitions.class)
 public @interface MenuTransition {
     /**
      * Whitelist the allowed clicktypes for transition (empty = all allowed).
@@ -22,7 +24,7 @@ public @interface MenuTransition {
     /**
      * For use with patterns.
      */
-    char pat();
+    char pat() default '0';
 
     /**
      * The position of the slot within the inventory.

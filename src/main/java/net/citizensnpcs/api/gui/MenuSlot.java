@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.gui;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.ClickType;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.FIELD })
+@Repeatable(MenuSlots.class)
 public @interface MenuSlot {
     /**
      * The amount of the itemstack to display.
@@ -32,7 +34,7 @@ public @interface MenuSlot {
     /**
      * For use with patterns.
      */
-    char pat() default ' ';
+    char pat() default '0';
 
     /**
      * The position of the slot within the inventory.
