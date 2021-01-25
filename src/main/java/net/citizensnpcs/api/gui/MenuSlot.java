@@ -32,7 +32,7 @@ public @interface MenuSlot {
     /**
      * For use with patterns.
      */
-    char pat();
+    char pat() default ' ';
 
     /**
      * The position of the slot within the inventory.
