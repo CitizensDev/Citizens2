@@ -304,7 +304,7 @@ public class InventoryMenu implements Listener {
                 bindables.add(getPatternBindable(null, object));
             }
             bindables.add(getPatternBindable(null, clazz));
-            return Collections2.filter(bindables, Predicates.notNull()).toArray(new Bindable[bindables.size()]);
+            return Collections2.filter(bindables, Predicates.notNull()).toArray(new Bindable[0]);
         }
 
         private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
