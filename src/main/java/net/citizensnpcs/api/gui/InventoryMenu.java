@@ -17,29 +17,55 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
 public class InventoryMenu implements Listener {
     private PageContext page;
     private final Queue<PageContext> stack = Queues.newArrayDeque();
-    private final Collection<InventoryView> views = Lists.newArrayList();
+    private Collection<InventoryView> views = Lists.newArrayList();
 
     public InventoryMenu(InventoryMenuInfo info) {
         transition(info);
     }
 
+    private InventoryMenuSlot createSlot(int[] dim, MenuSlot slotInfo) {
+        int pos = posToIndex(dim, slotInfo.value());
+        InventoryMenuSlot slot = page.ctx.getSlot(pos);
+        slot.initialise(slotInfo);
+        return slot;
+    }
+
+    private InventoryMenuTransition createTransition(int[] dim, MenuTransition transitionInfo) {
+        int pos = posToIndex(dim, transitionInfo.pos());
+        InventoryMenuSlot slot = page.ctx.getSlot(pos);
+        InventoryMenuTransition transition = new InventoryMenuTransition(this, slot, transitionInfo.value());
+        return transition;
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!event.getInventory().equals(page.ctx.getInventory()) || event.getAction() == InventoryAction.NOTHING)
+        if (!event.getInventory().equals(page.ctx.getInventory()))
             return;
+        switch (event.getAction()) {
+            case COLLECT_TO_CURSOR:
+                event.setCancelled(true);
+            case NOTHING:
+            case UNKNOWN:
+            case DROP_ONE_CURSOR:
+            case DROP_ALL_CURSOR:
+                return;
+            default:
+                break;
+        }
         InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
         page.page.onClick(slot, event);
         slot.onClick(event);
@@ -58,6 +84,7 @@ public class InventoryMenu implements Listener {
             return;
         page.page.onClose(event.getPlayer());
         page = stack.poll();
+        transitionViewersToInventory(page.ctx.getInventory());
     }
 
     private int posToIndex(int[] dim, int[] pos) {
@@ -89,9 +116,9 @@ public class InventoryMenu implements Listener {
         } else {
             inventory = Bukkit.createInventory(null, info.menuAnnotation.type(), info.menuAnnotation.title());
         }
+        List<InventoryMenuTransition> transitions = Lists.newArrayList();
         InventoryMenuSlot[] slots = new InventoryMenuSlot[inventory.getSize()];
         page.patterns = new InventoryMenuPattern[info.patterns.length];
-        page.transitions = new InventoryMenuTransition[info.transitions.length];
         try {
             page.page = info.constructor.newInstance();
         } catch (Exception e) {
@@ -100,24 +127,44 @@ public class InventoryMenu implements Listener {
         page.ctx = new MenuContext(this, slots, inventory);
         for (int i = 0; i < info.slots.length; i++) {
             Bindable<MenuSlot> slotInfo = info.slots[i];
-            int pos = posToIndex(dim, slotInfo.data.value());
-            InventoryMenuSlot slot = page.ctx.getSlot(pos);
-            slot.initialise(slotInfo.data);
-            slotInfo.bind(slot);
-        }
-        for (int i = 0; i < info.patterns.length; i++) {
-            Bindable<MenuPattern> patternInfo = info.patterns[i];
-            InventoryMenuPattern pat = new InventoryMenuPattern(page.ctx, patternInfo.data);
-            patternInfo.bind(pat);
-            page.patterns[i] = pat;
+            InventoryMenuSlot slot = createSlot(dim, slotInfo.data);
+            slotInfo.bind(page.page, slot);
         }
         for (int i = 0; i < info.transitions.length; i++) {
             Bindable<MenuTransition> transitionInfo = info.transitions[i];
-            int pos = posToIndex(dim, transitionInfo.data.pos());
-            InventoryMenuSlot slot = page.ctx.getSlot(pos);
-            InventoryMenuTransition transition = new InventoryMenuTransition(this, slot, transitionInfo.data.value());
-            transitionInfo.bind(transition);
-            page.transitions[i] = transition;
+            InventoryMenuTransition transition = createTransition(dim, transitionInfo.data);
+            transitionInfo.bind(page.page, transition);
+            transitions.add(transition);
+        }
+        for (int i = 0; i < info.patterns.length; i++) {
+            Bindable<MenuPatternInfo> patternInfo = info.patterns[i];
+            Collection<InventoryMenuSlot> patternSlots = Lists.newArrayList();
+            Collection<InventoryMenuTransition> patternTransitions = Lists.newArrayList();
+            for (MenuSlot slot : patternInfo.data.slots) {
+                patternSlots.add(createSlot(dim, slot));
+            }
+            for (MenuTransition transition : patternInfo.data.transitions) {
+                InventoryMenuTransition concreteTransition = createTransition(dim, transition);
+                patternTransitions.add(concreteTransition);
+                transitions.add(concreteTransition);
+            }
+            InventoryMenuPattern pat = new InventoryMenuPattern(patternInfo.data.info, patternSlots,
+                    patternTransitions);
+            patternInfo.bind(page.page, pat);
+            page.patterns[i] = pat;
+        }
+        page.transitions = transitions.toArray(new InventoryMenuTransition[transitions.size()]);
+        transitionViewersToInventory(inventory);
+    }
+
+    private void transitionViewersToInventory(Inventory inventory) {
+        Collection<InventoryView> old = views;
+        views = Lists.newArrayListWithExpectedSize(old.size());
+        for (InventoryView view : old) {
+            view.close();
+            if (!view.getPlayer().isValid() || inventory == null)
+                continue;
+            views.add(view.getPlayer().openInventory(inventory));
         }
     }
 
@@ -130,11 +177,11 @@ public class InventoryMenu implements Listener {
             this.data = data;
         }
 
-        public void bind(Object instance) {
+        public void bind(Object instance, Object value) {
             if (bind == null)
                 return;
             try {
-                bind.invoke(instance);
+                bind.invoke(instance, value);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -144,12 +191,12 @@ public class InventoryMenu implements Listener {
     private static class InventoryMenuInfo {
         Constructor<? extends InventoryMenuPage> constructor;
         Menu menuAnnotation;
-        Bindable<MenuPattern>[] patterns;
+        Bindable<MenuPatternInfo>[] patterns;
         Bindable<MenuSlot>[] slots;
         Bindable<MenuTransition>[] transitions;
 
         public InventoryMenuInfo(Class<?> clazz) {
-            patterns = getBindables(clazz, MenuPattern.class, InventoryMenuPattern.class);
+            patterns = getPatternBindables(clazz);
             slots = getBindables(clazz, MenuSlot.class, InventoryMenuSlot.class);
             transitions = getBindables(clazz, MenuTransition.class, InventoryMenuTransition.class);
         }
@@ -160,6 +207,8 @@ public class InventoryMenu implements Listener {
             List<Bindable<T>> bindables = Lists.newArrayList();
             for (Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
+                if (field.getAnnotationsByType(MenuPattern.class).length != 0)
+                    continue;
                 T[] annotations = field.getAnnotationsByType(annotationType);
                 MethodHandle bind = null;
                 if (field.getType() == concreteType) {
@@ -179,6 +228,8 @@ public class InventoryMenu implements Listener {
             reflect.addAll(Arrays.asList(clazz.getDeclaredMethods()));
             for (AccessibleObject object : reflect) {
                 object.setAccessible(true);
+                if (object.getAnnotationsByType(MenuPattern.class).length != 0)
+                    continue;
                 for (T t : object.getAnnotationsByType(annotationType)) {
                     bindables.add(new Bindable<T>(null, t));
                 }
@@ -189,7 +240,86 @@ public class InventoryMenu implements Listener {
             return bindables.toArray(new Bindable[bindables.size()]);
         }
 
+        private Bindable<MenuPatternInfo> getPatternBindable(MethodHandle bind, AccessibleObject object) {
+            MenuPattern[] annotation = object.getAnnotationsByType(MenuPattern.class);
+            MenuPattern pattern = annotation[0];
+            Collection<MenuSlot> slots = Lists.newArrayList();
+            for (MenuSlot slot : object.getAnnotationsByType(MenuSlot.class)) {
+                if (pattern.value().contains(Character.toString(slot.pat()))) {
+                    slots.add(slot);
+                }
+            }
+            Collection<MenuTransition> transitions = Lists.newArrayList();
+            for (MenuTransition transition : object.getAnnotationsByType(MenuTransition.class)) {
+                if (pattern.value().contains(Character.toString(transition.pat()))) {
+                    transitions.add(transition);
+                }
+            }
+            return new Bindable<MenuPatternInfo>(bind, new MenuPatternInfo(pattern, slots, transitions));
+        }
+
+        private Bindable<MenuPatternInfo> getPatternBindable(MethodHandle bind, Class<?> object) {
+            MenuPattern[] annotation = object.getAnnotationsByType(MenuPattern.class);
+            if (annotation.length != 1)
+                return null;
+            MenuPattern pattern = annotation[0];
+            Collection<MenuSlot> slots = Lists.newArrayList();
+            for (MenuSlot slot : object.getAnnotationsByType(MenuSlot.class)) {
+                if (pattern.value().contains(Character.toString(slot.pat()))) {
+                    slots.add(slot);
+                }
+            }
+            Collection<MenuTransition> transitions = Lists.newArrayList();
+            for (MenuTransition transition : object.getAnnotationsByType(MenuTransition.class)) {
+                if (pattern.value().contains(Character.toString(transition.pat()))) {
+                    transitions.add(transition);
+                }
+            }
+            return new Bindable<MenuPatternInfo>(bind, new MenuPatternInfo(pattern, slots, transitions));
+        }
+
+        @SuppressWarnings({ "unchecked" })
+        private Bindable<MenuPatternInfo>[] getPatternBindables(Class<?> clazz) {
+            Collection<Bindable<MenuPatternInfo>> bindables = Lists.newArrayList();
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                MethodHandle bind = null;
+                if (field.getType() == InventoryMenuPattern.class) {
+                    try {
+                        bind = LOOKUP.unreflectSetter(field);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+                bindables.add(getPatternBindable(bind, field));
+            }
+
+            List<AccessibleObject> reflect = Lists.newArrayList();
+            reflect.addAll(Arrays.asList(clazz.getDeclaredConstructors()));
+            reflect.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+            for (AccessibleObject object : reflect) {
+                object.setAccessible(true);
+                if (object.getAnnotationsByType(MenuPattern.class).length != 0)
+                    continue;
+                bindables.add(getPatternBindable(null, object));
+            }
+            bindables.add(getPatternBindable(null, clazz));
+            return Collections2.filter(bindables, Predicates.notNull()).toArray(new Bindable[bindables.size()]);
+        }
+
         private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+    }
+
+    private static class MenuPatternInfo {
+        MenuPattern info;
+        Collection<MenuSlot> slots = Lists.newArrayList();
+        Collection<MenuTransition> transitions = Lists.newArrayList();
+
+        public MenuPatternInfo(MenuPattern info, Collection<MenuSlot> slots, Collection<MenuTransition> transitions) {
+            this.info = info;
+            this.slots = slots;
+            this.transitions = transitions;
+        }
     }
 
     private static class PageContext {

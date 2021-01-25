@@ -20,6 +20,11 @@ public @interface MenuTransition {
     ClickType[] filter() default {};
 
     /**
+     * For use with patterns.
+     */
+    char pat();
+
+    /**
      * The position of the slot within the inventory.
      */
     int[] pos() default { 0, 0 };

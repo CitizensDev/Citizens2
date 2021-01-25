@@ -58,7 +58,9 @@ public class InventoryMenuSlot {
     }
 
     public void onClick(InventoryClickEvent event) {
-        // TODO
+        if (!clickFilter.contains(event.getClick())) {
+            event.setCancelled(true);
+        }
     }
 
     public void setClickFilter(Collection<ClickType> filter) {

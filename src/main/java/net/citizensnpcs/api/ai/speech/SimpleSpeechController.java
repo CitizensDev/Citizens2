@@ -9,7 +9,7 @@ import net.citizensnpcs.api.trait.trait.Speech;
 
 /**
  * Simple implementation of {@link SpeechController} which allows a NPC to speak with any registered {@link VocalChord}.
- * 
+ *
  */
 public class SimpleSpeechController implements SpeechController {
     NPC npc;
@@ -32,5 +32,4 @@ public class SimpleSpeechController implements SpeechController {
             return;
         CitizensAPI.getSpeechFactory().getVocalChord(event.getVocalChordName()).talk(context);
     }
-
 }

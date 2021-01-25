@@ -30,6 +30,11 @@ public @interface MenuSlot {
     Material material() default Material.AIR;
 
     /**
+     * For use with patterns.
+     */
+    char pat();
+
+    /**
      * The position of the slot within the inventory.
      */
     int[] value() default { 0, 0 };
