@@ -197,12 +197,12 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             t = randomLookDelay;
         }
         t--;
-        if (lookingAt != null && canSeeTarget()) {
-            Util.faceEntity(npc.getEntity(), lookingAt);
-            if (npc.getEntity().getType().name().equals("SHULKER")) {
-                NMS.setPeekShulker(npc.getEntity(), 100 - (int) Math
-                        .floor(npc.getStoredLocation().distanceSquared(lookingAt.getLocation(PLAYER_LOCATION))));
-            }
+        if (lookingAt == null)
+            return;
+        Util.faceEntity(npc.getEntity(), lookingAt);
+        if (npc.getEntity().getType().name().equals("SHULKER")) {
+            NMS.setPeekShulker(npc.getEntity(), 100 - (int) Math
+                    .floor(npc.getStoredLocation().distanceSquared(lookingAt.getLocation(PLAYER_LOCATION))));
         }
     }
 
