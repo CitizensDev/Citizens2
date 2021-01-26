@@ -6,6 +6,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +18,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -26,9 +29,10 @@ import org.bukkit.inventory.InventoryView;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 
-// TODO: check inventory
+// TODO: fix dim
 public class InventoryMenu implements Listener {
     private PageContext page;
     private final Queue<PageContext> stack = Queues.newArrayDeque();
@@ -36,6 +40,15 @@ public class InventoryMenu implements Listener {
 
     public InventoryMenu(InventoryMenuInfo info) {
         transition(info);
+    }
+
+    private boolean acceptFilter(ClickType needle, ClickType[] haystack) {
+        for (ClickType type : haystack) {
+            if (needle == type) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private InventoryMenuSlot createSlot(int pos, MenuSlot slotInfo) {
@@ -54,11 +67,40 @@ public class InventoryMenu implements Listener {
         switch (type) {
             case CHEST:
                 int size = dim[0] * dim[1];
-                System.out.println(size + " " + size % 9);
                 if (size % 9 != 0) {
                     size += 9 - (size % 9);
                 }
                 return Math.min(54, size);
+            case ANVIL:
+            case BLAST_FURNACE:
+            case CARTOGRAPHY:
+            case FURNACE:
+            case GRINDSTONE:
+            case SMITHING:
+            case SMOKER:
+                return 3;
+            case BARREL:
+            case ENDER_CHEST:
+            case SHULKER_BOX:
+                return 27;
+            case BEACON:
+            case LECTERN:
+                return 1;
+            case BREWING:
+            case HOPPER:
+                return 5;
+            case DISPENSER:
+            case DROPPER:
+                return 9;
+            case ENCHANTING:
+            case STONECUTTER:
+                return 2;
+            case LOOM:
+                return 4;
+            case PLAYER:
+                return 41;
+            case WORKBENCH:
+                return 10;
             default:
                 throw new UnsupportedOperationException(); // TODO
         }
@@ -66,7 +108,14 @@ public class InventoryMenu implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (page == null || !event.getInventory().equals(page.ctx.getInventory()))
+        if (page == null)
+            return;
+        Inventory clicked = event.getClickedInventory() != null ? event.getClickedInventory() : event.getInventory();
+        if (event.getInventory().equals(page.ctx.getInventory())
+                && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+            event.setCancelled(true); // TODO: treat this as a move-to-slot click event
+        }
+        if (page == null || !clicked.equals(page.ctx.getInventory()))
             return;
         switch (event.getAction()) {
             case COLLECT_TO_CURSOR:
@@ -81,6 +130,12 @@ public class InventoryMenu implements Listener {
         }
         InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
         page.page.onClick(slot, event);
+        for (Invokable<ClickHandler> invokable : page.clickHandlers) {
+            int idx = posToIndex(page.dim, invokable.data.slot());
+            if (event.getSlot() == idx && acceptFilter(event.getClick(), invokable.data.value())) {
+                invokable.invoke(page.page);
+            }
+        }
         slot.onClick(event);
         for (InventoryMenuTransition transition : page.transitions) {
             Class<? extends InventoryMenuPage> next = transition.accept(slot);
@@ -97,7 +152,51 @@ public class InventoryMenu implements Listener {
             return;
         page.page.onClose(event.getPlayer());
         page = stack.poll();
-        transitionViewersToInventory(page.ctx.getInventory());
+        transitionViewersToInventory(page == null ? null : page.ctx.getInventory());
+    }
+
+    private InventoryMenuPattern parsePattern(int[] dim, List<InventoryMenuTransition> transitions,
+            Bindable<MenuPatternInfo> patternInfo) {
+        String pattern = patternInfo.data.info.value();
+        Map<Character, MenuSlot> slotMap = Maps.newHashMap();
+        for (MenuSlot slot : patternInfo.data.slots) {
+            slotMap.put(slot.pat(), slot);
+        }
+        Map<Character, MenuTransition> transitionMap = Maps.newHashMap();
+        for (MenuTransition transition : patternInfo.data.transitions) {
+            transitionMap.put(transition.pat(), transition);
+        }
+
+        Collection<InventoryMenuSlot> patternSlots = Lists.newArrayList();
+        Collection<InventoryMenuTransition> patternTransitions = Lists.newArrayList();
+        int row = 0;
+        int col = 0;
+        for (int i = 0; i < pattern.length(); i++) {
+            char c = pattern.charAt(i);
+            if (c == '\n' || (c == '\\' && i + 1 < pattern.length() && pattern.charAt(i + 1) == 'n')) {
+                i++;
+                row++;
+                col = 0;
+                continue;
+            }
+            int[] pos = patternInfo.data.info.offset();
+            pos[0] += row;
+            pos[1] += col;
+
+            MenuSlot slot = slotMap.get(c);
+            if (slot != null) {
+                patternSlots.add(createSlot(posToIndex(dim, pos), slot));
+            }
+            MenuTransition transition = transitionMap.get(c);
+            if (transition != null) {
+                InventoryMenuTransition concreteTransition = createTransition(posToIndex(dim, pos), transition);
+                patternTransitions.add(concreteTransition);
+                transitions.add(concreteTransition);
+            }
+            col++;
+        }
+
+        return new InventoryMenuPattern(patternInfo.data.info, patternSlots, patternTransitions);
     }
 
     private int posToIndex(int[] dim, int[] pos) {
@@ -122,12 +221,13 @@ public class InventoryMenu implements Listener {
         }
         page = new PageContext();
         int[] dim = info.menuAnnotation.dimensions();
-        int size = getInventorySize(info.menuAnnotation.type(), dim);
+        InventoryType type = info.menuAnnotation.type();
+        int size = getInventorySize(type, dim);
         Inventory inventory;
-        if (info.menuAnnotation.type() == InventoryType.CHEST || info.menuAnnotation.type() == null) {
+        if (type == InventoryType.CHEST || type == null) {
             inventory = Bukkit.createInventory(null, size, info.menuAnnotation.title());
         } else {
-            inventory = Bukkit.createInventory(null, info.menuAnnotation.type(), info.menuAnnotation.title());
+            inventory = Bukkit.createInventory(null, type, info.menuAnnotation.title());
         }
         List<InventoryMenuTransition> transitions = Lists.newArrayList();
         InventoryMenuSlot[] slots = new InventoryMenuSlot[inventory.getSize()];
@@ -137,6 +237,7 @@ public class InventoryMenu implements Listener {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        page.dim = dim;
         page.ctx = new MenuContext(this, slots, inventory);
         for (int i = 0; i < info.slots.length; i++) {
             Bindable<MenuSlot> slotInfo = info.slots[i];
@@ -153,24 +254,12 @@ public class InventoryMenu implements Listener {
         }
         for (int i = 0; i < info.patterns.length; i++) {
             Bindable<MenuPatternInfo> patternInfo = info.patterns[i];
-            Collection<InventoryMenuSlot> patternSlots = Lists.newArrayList();
-            Collection<InventoryMenuTransition> patternTransitions = Lists.newArrayList();
-            for (MenuSlot slot : patternInfo.data.slots) {
-                int pos = posToIndex(dim, slot.value());
-                patternSlots.add(createSlot(pos, slot));
-            }
-            for (MenuTransition transition : patternInfo.data.transitions) {
-                int pos = posToIndex(dim, transition.pos());
-                InventoryMenuTransition concreteTransition = createTransition(pos, transition);
-                patternTransitions.add(concreteTransition);
-                transitions.add(concreteTransition);
-            }
-            InventoryMenuPattern pat = new InventoryMenuPattern(patternInfo.data.info, patternSlots,
-                    patternTransitions);
-            patternInfo.bind(page.page, pat);
-            page.patterns[i] = pat;
+            InventoryMenuPattern pattern = parsePattern(dim, transitions, patternInfo);
+            patternInfo.bind(page.page, pattern);
+            page.patterns[i] = pattern;
         }
         page.transitions = transitions.toArray(new InventoryMenuTransition[transitions.size()]);
+        page.clickHandlers = info.clickHandlers;
         transitionViewersToInventory(inventory);
     }
 
@@ -206,6 +295,7 @@ public class InventoryMenu implements Listener {
     }
 
     private static class InventoryMenuInfo {
+        Invokable<ClickHandler>[] clickHandlers;
         Constructor<? extends InventoryMenuPage> constructor;
         Menu menuAnnotation;
         Bindable<MenuPatternInfo>[] patterns;
@@ -216,6 +306,7 @@ public class InventoryMenu implements Listener {
             patterns = getPatternBindables(clazz);
             slots = getBindables(clazz, MenuSlot.class, InventoryMenuSlot.class);
             transitions = getBindables(clazz, MenuTransition.class, InventoryMenuTransition.class);
+            clickHandlers = getHandlers(clazz);
         }
 
         @SuppressWarnings({ "unchecked" })
@@ -255,6 +346,24 @@ public class InventoryMenu implements Listener {
                 bindables.add(new Bindable<T>(null, t));
             }
             return bindables.toArray(new Bindable[bindables.size()]);
+        }
+
+        @SuppressWarnings("unchecked")
+        private Invokable<ClickHandler>[] getHandlers(Class<?> clazz) {
+            List<Invokable<ClickHandler>> invokables = Lists.newArrayList();
+            for (Method method : clazz.getDeclaredMethods()) {
+                method.setAccessible(true);
+                ClickHandler handler = method.getAnnotation(ClickHandler.class);
+                if (handler == null) {
+                    continue;
+                }
+                try {
+                    invokables.add(new Invokable<ClickHandler>(handler, LOOKUP.unreflect(method)));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            return invokables.toArray(new Invokable[invokables.size()]);
         }
 
         private Bindable<MenuPatternInfo> getPatternBindable(MethodHandle bind, AccessibleObject object) {
@@ -329,6 +438,24 @@ public class InventoryMenu implements Listener {
         private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     }
 
+    private static class Invokable<T> {
+        private final T data;
+        private final MethodHandle invoke;
+
+        public Invokable(T data, MethodHandle invoke) {
+            this.data = data;
+            this.invoke = invoke;
+        }
+
+        public void invoke(Object instance) {
+            try {
+                invoke.invoke(instance);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private static class MenuPatternInfo {
         MenuPattern info;
         Collection<MenuSlot> slots = Lists.newArrayList();
@@ -342,7 +469,9 @@ public class InventoryMenu implements Listener {
     }
 
     private static class PageContext {
+        private Invokable<ClickHandler>[] clickHandlers;
         private MenuContext ctx;
+        public int[] dim;
         private InventoryMenuPage page;
         private InventoryMenuPattern[] patterns;
         private InventoryMenuTransition[] transitions;

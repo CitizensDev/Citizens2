@@ -13,4 +13,16 @@ public class InventoryMenuPattern {
         this.slots = slots;
         this.transitions = transitions;
     }
+
+    public String getPattern() {
+        return info.value();
+    }
+
+    public Collection<InventoryMenuSlot> getSlots() {
+        return slots;
+    }
+
+    public Collection<InventoryMenuTransition> getTransitions() {
+        return transitions;
+    }
 }

@@ -12,6 +12,11 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.FIELD })
 public @interface MenuPattern {
     /**
+     * The offset position to start the pattern at.
+     */
+    int[] offset();
+
+    /**
      * The pattern string. 0 = AIR
      */
     String value();

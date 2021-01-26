@@ -14,6 +14,11 @@ import org.bukkit.event.inventory.ClickType;
 @Target({ ElementType.METHOD })
 public @interface ClickHandler {
     /**
+     * The slot position to handle clicks for.
+     */
+    int[] slot();
+
+    /**
      * An optional filter for specific click types.
      */
     ClickType[] value() default {};
