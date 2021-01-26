@@ -32,7 +32,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 
-// TODO: fix dim
 public class InventoryMenu implements Listener {
     private PageContext page;
     private final Queue<PageContext> stack = Queues.newArrayDeque();
@@ -70,6 +69,8 @@ public class InventoryMenu implements Listener {
                 if (size % 9 != 0) {
                     size += 9 - (size % 9);
                 }
+                dim[0] = Math.min(54, size) / 9;
+                dim[1] = 9;
                 return Math.min(54, size);
             case ANVIL:
             case BLAST_FURNACE:
@@ -78,28 +79,46 @@ public class InventoryMenu implements Listener {
             case GRINDSTONE:
             case SMITHING:
             case SMOKER:
+                dim[0] = 0;
+                dim[1] = 3;
                 return 3;
             case BARREL:
             case ENDER_CHEST:
             case SHULKER_BOX:
+                dim[0] = 3;
+                dim[1] = 9;
                 return 27;
             case BEACON:
             case LECTERN:
+                dim[0] = 0;
+                dim[1] = 1;
                 return 1;
             case BREWING:
             case HOPPER:
+                dim[0] = 0;
+                dim[1] = 5;
                 return 5;
             case DISPENSER:
             case DROPPER:
+                dim[0] = 0;
+                dim[1] = 9;
                 return 9;
             case ENCHANTING:
             case STONECUTTER:
+                dim[0] = 0;
+                dim[1] = 2;
                 return 2;
             case LOOM:
+                dim[0] = 0;
+                dim[1] = 4;
                 return 4;
             case PLAYER:
+                dim[0] = 4;
+                dim[1] = 9;
                 return 41;
             case WORKBENCH:
+                dim[0] = 0;
+                dim[1] = 10;
                 return 10;
             default:
                 throw new UnsupportedOperationException(); // TODO
@@ -130,7 +149,6 @@ public class InventoryMenu implements Listener {
         }
         InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
         page.page.onClick(slot, event);
-        System.out.println(page.clickHandlers.length);
         for (Invokable<ClickHandler> invokable : page.clickHandlers) {
             int idx = posToIndex(page.dim, invokable.data.slot());
             if (event.getSlot() == idx && acceptFilter(event.getClick(), invokable.data.value())) {
@@ -180,7 +198,9 @@ public class InventoryMenu implements Listener {
         for (int i = 0; i < pattern.length(); i++) {
             char c = pattern.charAt(i);
             if (c == '\n' || (c == '\\' && i + 1 < pattern.length() && pattern.charAt(i + 1) == 'n')) {
-                i++;
+                if (c != '\n') {
+                    i++;
+                }
                 row++;
                 col = 0;
                 continue;
