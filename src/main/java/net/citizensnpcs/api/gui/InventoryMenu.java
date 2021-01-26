@@ -48,7 +48,7 @@ public class InventoryMenu implements Listener {
                 return true;
             }
         }
-        return false;
+        return haystack.length == 0;
     }
 
     private InventoryMenuSlot createSlot(int pos, MenuSlot slotInfo) {
@@ -130,10 +130,16 @@ public class InventoryMenu implements Listener {
         }
         InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
         page.page.onClick(slot, event);
+        System.out.println(page.clickHandlers.length);
         for (Invokable<ClickHandler> invokable : page.clickHandlers) {
             int idx = posToIndex(page.dim, invokable.data.slot());
             if (event.getSlot() == idx && acceptFilter(event.getClick(), invokable.data.value())) {
-                invokable.invoke(page.page);
+                try {
+                    // TODO: bind optional args?
+                    invokable.method.invoke(page.page, slot, event);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
         }
         slot.onClick(event);
@@ -440,19 +446,11 @@ public class InventoryMenu implements Listener {
 
     private static class Invokable<T> {
         private final T data;
-        private final MethodHandle invoke;
+        private final MethodHandle method;
 
         public Invokable(T data, MethodHandle invoke) {
             this.data = data;
-            this.invoke = invoke;
-        }
-
-        public void invoke(Object instance) {
-            try {
-                invoke.invoke(instance);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+            this.method = invoke;
         }
     }
 
