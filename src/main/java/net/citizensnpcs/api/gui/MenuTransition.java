@@ -13,7 +13,7 @@ import org.bukkit.event.inventory.ClickType;
  * class level.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.FIELD })
+@Target({ ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.METHOD })
 @Repeatable(MenuTransitions.class)
 public @interface MenuTransition {
     /**

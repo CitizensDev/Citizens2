@@ -13,7 +13,7 @@ import org.bukkit.event.inventory.ClickType;
  * Defines a slot with a certain item. Can be linked to a {@link InventoryMenuSlot} or simply at the class level.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.FIELD })
+@Target({ ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.METHOD })
 @Repeatable(MenuSlots.class)
 public @interface MenuSlot {
     /**

@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.ai;
 
+import java.util.function.Function;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
@@ -102,7 +104,7 @@ public interface Navigator {
      * @param aggressive
      *            Whether to attack the target when close enough
      */
-    void setTarget(Entity target, boolean aggressive, PathStrategy strategy);
+    void setTarget(Entity target, boolean aggressive, Function<NavigatorParameters, PathStrategy> strategy);
 
     /**
      * Sets the current navigation using a list of {@link Vector}s which will be followed in turn.
@@ -118,7 +120,7 @@ public interface Navigator {
      * @param target
      *            The destination
      */
-    void setTarget(Iterable<Vector> path, PathStrategy strategy);
+    void setTarget(Iterable<Vector> path, Function<NavigatorParameters, PathStrategy> strategy);
 
     /**
      * Sets the current navigation to a {@link Location} destination.
@@ -134,5 +136,5 @@ public interface Navigator {
      * @param target
      *            The destination
      */
-    void setTarget(Location target, PathStrategy strategy);
+    void setTarget(Location target, Function<NavigatorParameters, PathStrategy> strategy);
 }

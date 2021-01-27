@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.METHOD })
-public @interface MenuTransitions {
-    MenuTransition[] value();
+public @interface MenuPatterns {
+    MenuPattern[] value();
 }
