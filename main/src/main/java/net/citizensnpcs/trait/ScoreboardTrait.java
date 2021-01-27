@@ -20,6 +20,7 @@ import net.citizensnpcs.util.Util;
 public class ScoreboardTrait extends Trait {
     @Persist
     private ChatColor color;
+    private boolean justSpawned;
     private ChatColor previousGlowingColor;
     @Persist
     private final Set<String> tags = new HashSet<String>();
@@ -33,17 +34,22 @@ public class ScoreboardTrait extends Trait {
     }
 
     public void apply(Team team, boolean nameVisibility) {
+        boolean changed = false;
         Set<String> newTags = new HashSet<String>(tags);
         if (SUPPORT_TAGS) {
             try {
-                for (Iterator<String> iterator = npc.getEntity().getScoreboardTags().iterator(); iterator.hasNext();) {
-                    String oldTag = iterator.next();
-                    if (!newTags.remove(oldTag)) {
-                        iterator.remove();
+                if (!npc.getEntity().getScoreboardTags().equals(tags)) {
+                    changed = true;
+                    for (Iterator<String> iterator = npc.getEntity().getScoreboardTags().iterator(); iterator
+                            .hasNext();) {
+                        String oldTag = iterator.next();
+                        if (!newTags.remove(oldTag)) {
+                            iterator.remove();
+                        }
                     }
-                }
-                for (String tag : newTags) {
-                    npc.getEntity().addScoreboardTag(tag);
+                    for (String tag : newTags) {
+                        npc.getEntity().addScoreboardTag(tag);
+                    }
                 }
             } catch (NoSuchMethodError e) {
                 SUPPORT_TAGS = false;
@@ -52,7 +58,11 @@ public class ScoreboardTrait extends Trait {
 
         if (SUPPORT_TEAM_SETOPTION) {
             try {
-                team.setOption(Option.NAME_TAG_VISIBILITY, nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER);
+                OptionStatus visibility = nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER;
+                if (visibility != team.getOption(Option.NAME_TAG_VISIBILITY)) {
+                    changed = true;
+                }
+                team.setOption(Option.NAME_TAG_VISIBILITY, visibility);
             } catch (NoSuchMethodError e) {
                 SUPPORT_TEAM_SETOPTION = false;
             } catch (NoClassDefFoundError e) {
@@ -77,6 +87,7 @@ public class ScoreboardTrait extends Trait {
                             || (previousGlowingColor != null && color != previousGlowingColor)) {
                         team.setColor(color);
                         previousGlowingColor = color;
+                        changed = true;
                     }
                 } catch (NoSuchMethodError err) {
                     SUPPORT_GLOWING_COLOR = false;
@@ -87,10 +98,14 @@ public class ScoreboardTrait extends Trait {
                                 && !team.getPrefix().equals(previousGlowingColor.toString()))) {
                     team.setPrefix(color.toString());
                     previousGlowingColor = color;
+                    changed = true;
                 }
             }
         }
-        Util.sendTeamPacketToOnlinePlayers(team, 2);
+        if (changed || justSpawned) {
+            Util.sendTeamPacketToOnlinePlayers(team, 2);
+            justSpawned = false;
+        }
     }
 
     public ChatColor getColor() {
@@ -99,6 +114,11 @@ public class ScoreboardTrait extends Trait {
 
     public Set<String> getTags() {
         return tags;
+    }
+
+    @Override
+    public void onSpawn() {
+        justSpawned = true;
     }
 
     public void removeTag(String tag) {

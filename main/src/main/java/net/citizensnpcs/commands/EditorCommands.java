@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.Maps;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
@@ -42,7 +44,7 @@ public class EditorCommands {
             permission = "citizens.npc.edit.equip")
     public void equip(CommandContext args, Player player, NPC npc) {
         if (Messaging.isDebugging() && false) {
-            InventoryMenu create = InventoryMenu.create(EquipmentGUI.class);
+            InventoryMenu create = InventoryMenu.createWithContext(EquipmentGUI.class, Maps.newHashMap());
             Bukkit.getPluginManager().registerEvents(create, CitizensAPI.getPlugin());
             create.present(player);
             return;

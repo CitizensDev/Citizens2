@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.ai;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -219,11 +220,16 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public void setTarget(Entity target, boolean aggressive) {
-        setTarget(target, aggressive, new MCTargetStrategy(npc, target, aggressive, localParams));
+        setTarget(target, aggressive, new Function<NavigatorParameters, PathStrategy>() {
+            @Override
+            public PathStrategy apply(NavigatorParameters params) {
+                return new MCTargetStrategy(npc, target, aggressive, params);
+            }
+        });
     }
 
     @Override
-    public void setTarget(Entity target, boolean aggressive, PathStrategy strategy) {
+    public void setTarget(Entity target, boolean aggressive, Function<NavigatorParameters, PathStrategy> strategy) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
         if (target == null) {
@@ -231,28 +237,30 @@ public class CitizensNavigator implements Navigator, Runnable {
             return;
         }
         switchParams();
-        updatePathfindingRange();
-        switchStrategyTo(strategy);
+        switchStrategyTo(strategy.apply(localParams));
     }
 
     @Override
     public void setTarget(Iterable<Vector> path) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
-        PathStrategy newStrategy;
-        if (npc.isFlyable()) {
-            newStrategy = new FlyingAStarNavigationStrategy(npc, path, localParams);
-        } else if (localParams.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)
-                || npc.getEntity() instanceof ArmorStand) {
-            newStrategy = new AStarNavigationStrategy(npc, path, localParams);
-        } else {
-            newStrategy = new MCNavigationStrategy(npc, path, localParams);
-        }
-        setTarget(path, newStrategy);
+        setTarget(path, new Function<NavigatorParameters, PathStrategy>() {
+            @Override
+            public PathStrategy apply(NavigatorParameters params) {
+                if (npc.isFlyable()) {
+                    return new FlyingAStarNavigationStrategy(npc, path, params);
+                } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)
+                        || npc.getEntity() instanceof ArmorStand) {
+                    return new AStarNavigationStrategy(npc, path, params);
+                } else {
+                    return new MCNavigationStrategy(npc, path, params);
+                }
+            }
+        });
     }
 
     @Override
-    public void setTarget(Iterable<Vector> path, PathStrategy strategy) {
+    public void setTarget(Iterable<Vector> path, Function<NavigatorParameters, PathStrategy> strategy) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
         if (path == null || Iterables.size(path) == 0) {
@@ -260,28 +268,31 @@ public class CitizensNavigator implements Navigator, Runnable {
             return;
         }
         switchParams();
-        updatePathfindingRange();
-        switchStrategyTo(strategy);
+        switchStrategyTo(strategy.apply(localParams));
     }
 
     @Override
-    public void setTarget(Location target) {
+    public void setTarget(Location targetIn) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
-        PathStrategy newStrategy;
-        if (npc.isFlyable()) {
-            newStrategy = new FlyingAStarNavigationStrategy(npc, target, localParams);
-        } else if (localParams.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)
-                || npc.getEntity() instanceof ArmorStand) {
-            newStrategy = new AStarNavigationStrategy(npc, target, localParams);
-        } else {
-            newStrategy = new MCNavigationStrategy(npc, target, localParams);
-        }
-        setTarget(target, newStrategy);
+        final Location target = targetIn.clone();
+        setTarget(target, new Function<NavigatorParameters, PathStrategy>() {
+            @Override
+            public PathStrategy apply(NavigatorParameters params) {
+                if (npc.isFlyable()) {
+                    return new FlyingAStarNavigationStrategy(npc, target, params);
+                } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)
+                        || npc.getEntity() instanceof ArmorStand) {
+                    return new AStarNavigationStrategy(npc, target, params);
+                } else {
+                    return new MCNavigationStrategy(npc, target, params);
+                }
+            }
+        });
     }
 
     @Override
-    public void setTarget(Location target, PathStrategy strategy) {
+    public void setTarget(Location target, Function<NavigatorParameters, PathStrategy> strategy) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
         if (target == null) {
@@ -290,8 +301,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         target = target.clone();
         switchParams();
-        updatePathfindingRange();
-        switchStrategyTo(strategy);
+        switchStrategyTo(strategy.apply(localParams));
     }
 
     private void stopNavigating() {
@@ -359,6 +369,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private void switchStrategyTo(PathStrategy newStrategy) {
+        updatePathfindingRange();
         if (executing != null) {
             Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
         }
