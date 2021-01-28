@@ -7,9 +7,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 /**
- * Defines a click handler.
+ * Annotates a method as a click handler that will accept inventory click events. Currently, each listener must take
+ * {@link InventoryMenuSlot} and {@link InventoryClickEvent} arguments.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
@@ -21,7 +23,7 @@ public @interface ClickHandler {
     int[] slot();
 
     /**
-     * An optional filter for specific click types.
+     * An optional filter for specific click types. Default = handle all clicks
      */
     ClickType[] value() default {};
 }

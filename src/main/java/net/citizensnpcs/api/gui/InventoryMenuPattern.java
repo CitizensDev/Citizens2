@@ -2,6 +2,10 @@ package net.citizensnpcs.api.gui;
 
 import java.util.Collection;
 
+/**
+ * The concrete instance of a {@link MenuPattern}. Defines a (possibly multiline) pattern with bound slots/transitions
+ * depending on the pattern.
+ */
 public class InventoryMenuPattern {
     private final MenuPattern info;
     private final Collection<InventoryMenuSlot> slots;

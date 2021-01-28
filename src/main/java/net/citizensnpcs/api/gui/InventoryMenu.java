@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.WeakHashMap;
 
+import javax.inject.Inject;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,13 +32,34 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 
-// TODO: injection, documentation
+// TODO: injection
+/**
+ * A container class for Inventory GUIs. Expects {@link #onInventoryClick(InventoryClickEvent)} and
+ * {@link #onInventoryClose(InventoryCloseEvent)} to be called by the user (or registered with the event listener
+ * system).
+ *
+ * Inventory GUIs are defined as a stack of {@link InventoryMenuPage}s, each of which represents a distinct inventory
+ * that is transitioned between using either code or user clicks using the {@link InventoryMenuTransition} class. Each
+ * {@link InventoryMenuPage} should define a {@link Menu} annotation at the class level.
+ *
+ * Each page has a number of {@link InventoryMenuSlot}s which define attributes such as default slot item,
+ * interactibility, etc.
+ *
+ * You can define sets of slots and transitions using {@link InventoryMenuPattern}.
+ *
+ * For each concrete class of slot/transition/pattern there is a corresponding annotation that is defined.
+ * {@link InventoryMenuPage}s can either annotate specific instances of these concrete classes which will be injected at
+ * runtime or simply place them at the method/class level.
+ *
+ * Instances of global/contextual variables can be injected dynamically via {@link javax.inject.Inject} which sources
+ * variables from the {@link MenuContext}.
+ */
 public class InventoryMenu implements Listener {
     private PageContext page;
     private final Queue<PageContext> stack = Queues.newArrayDeque();
     private Collection<InventoryView> views = Lists.newArrayList();
 
-    public InventoryMenu(InventoryMenuInfo info, Map<String, Object> context) {
+    private InventoryMenu(InventoryMenuInfo info, Map<String, Object> context) {
         transition(info, context);
     }
 
@@ -174,7 +197,12 @@ public class InventoryMenu implements Listener {
         if (page == null || !event.getInventory().equals(page.ctx.getInventory()))
             return;
         page.page.onClose(event.getPlayer());
+        Map<String, Object> data = page.ctx.data();
         page = stack.poll();
+        if (page != null) {
+            page.ctx.data().putAll(data);
+        }
+        data.clear();
         transitionViewersToInventory(page == null ? null : page.ctx.getInventory());
     }
 
@@ -228,15 +256,27 @@ public class InventoryMenu implements Listener {
         return pos[0] * dim[1] + pos[1];
     }
 
+    /**
+     * Display the menu to the given player. Multiple players can be shown the same menu, but transitions will affect
+     * all players and the inventory is shared.
+     */
     public void present(Player player) {
         InventoryView view = player.openInventory(page.ctx.getInventory());
         views.add(view);
     }
 
+    /**
+     * Transition to another page. Adds the previous page to a stack which will be returned to when the current page is
+     * closed.
+     */
     public void transition(Class<? extends InventoryMenuPage> clazz) {
         transition(clazz, Maps.newHashMap());
     }
 
+    /**
+     * Transition to another page with context. Adds the previous page to a stack which will be returned to when the
+     * current page is closed.
+     */
     public void transition(Class<? extends InventoryMenuPage> clazz, Map<String, Object> context) {
         if (!CACHED_INFOS.containsKey(clazz)) {
             cacheInfo(clazz);
@@ -247,6 +287,7 @@ public class InventoryMenu implements Listener {
     private void transition(InventoryMenuInfo info, Map<String, Object> context) {
         if (page != null) {
             context.putAll(page.ctx.data());
+            page.ctx.data().clear();
             stack.add(page);
         }
         page = new PageContext();
@@ -290,6 +331,8 @@ public class InventoryMenu implements Listener {
         }
         page.transitions = transitions.toArray(new InventoryMenuTransition[transitions.size()]);
         page.clickHandlers = info.clickHandlers;
+        info.inject(page.page, page.ctx.data());
+        page.page.initialise(page.ctx);
         transitionViewersToInventory(inventory);
     }
 
@@ -325,18 +368,20 @@ public class InventoryMenu implements Listener {
     }
 
     private static class InventoryMenuInfo {
-        Invokable<ClickHandler>[] clickHandlers;
+        final Invokable<ClickHandler>[] clickHandlers;
         Constructor<? extends InventoryMenuPage> constructor;
+        final Map<String, MethodHandle> injectables;
         Menu menuAnnotation;
-        Bindable<MenuPattern>[] patterns;
-        Bindable<MenuSlot>[] slots;
-        Bindable<MenuTransition>[] transitions;
+        final Bindable<MenuPattern>[] patterns;
+        final Bindable<MenuSlot>[] slots;
+        final Bindable<MenuTransition>[] transitions;
 
         public InventoryMenuInfo(Class<?> clazz) {
             patterns = getBindables(clazz, MenuPattern.class, InventoryMenuPattern.class);
             slots = getBindables(clazz, MenuSlot.class, InventoryMenuSlot.class);
             transitions = getBindables(clazz, MenuTransition.class, InventoryMenuTransition.class);
             clickHandlers = getClickHandlers(clazz);
+            injectables = getInjectables(clazz);
         }
 
         @SuppressWarnings({ "unchecked" })
@@ -390,6 +435,34 @@ public class InventoryMenu implements Listener {
             return invokables.toArray(new Invokable[invokables.size()]);
         }
 
+        private Map<String, MethodHandle> getInjectables(Class<?> clazz) {
+            Map<String, MethodHandle> injectables = Maps.newHashMap();
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                if (!field.isAnnotationPresent(Inject.class))
+                    continue;
+                try {
+                    injectables.put(field.getName(), LOOKUP.unreflectSetter(field));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            return injectables;
+        }
+
+        public void inject(Object instance, Map<String, Object> data) {
+            for (Map.Entry<String, MethodHandle> entry : injectables.entrySet()) {
+                Object raw = data.get(entry.getKey());
+                if (raw != null) {
+                    try {
+                        entry.getValue().invoke(instance, raw);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
         private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     }
 
@@ -428,10 +501,16 @@ public class InventoryMenu implements Listener {
         CACHED_INFOS.put(clazz, info);
     }
 
+    /**
+     * Create an inventory menu instance starting at the given page.
+     */
     public static InventoryMenu create(Class<? extends InventoryMenuPage> clazz) {
         return createWithContext(clazz, Maps.newHashMap());
     }
 
+    /**
+     * Create an inventory menu instance starting at the given page and with the initial context.
+     */
     public static InventoryMenu createWithContext(Class<? extends InventoryMenuPage> clazz,
             Map<String, Object> context) {
         if (!CACHED_INFOS.containsKey(clazz)) {
