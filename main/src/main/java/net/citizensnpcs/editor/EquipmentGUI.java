@@ -25,7 +25,7 @@ import net.citizensnpcs.api.util.Messaging;
 @MenuPattern(offset = { 0, 6 }, slots = { @MenuSlot(filter = ClickType.UNKNOWN, pat = 'x') }, value = "xxx\nxxx")
 public class EquipmentGUI extends InventoryMenuPage {
     @Override
-    public void create(MenuContext ctx) {
+    public void initialise(MenuContext ctx) {
     }
 
     @Override
