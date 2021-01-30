@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -17,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.gui.InventoryMenu;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
@@ -25,6 +28,7 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
 public class EquipmentEditor extends Editor {
+    private InventoryMenu menu;
     private final NPC npc;
     private final Player player;
 
@@ -35,12 +39,39 @@ public class EquipmentEditor extends Editor {
 
     @Override
     public void begin() {
+        if (!EQUIPPERS.containsKey(npc.getEntity().getType())) {
+            Map<String, Object> ctx = Maps.newHashMap();
+            ctx.put("npc", npc);
+            menu = InventoryMenu.createWithContext(EquipmentGUI.class, ctx);
+            menu.present(player);
+            return;
+        }
         Messaging.sendTr(player, Messages.EQUIPMENT_EDITOR_BEGIN);
     }
 
     @Override
     public void end() {
+        if (menu != null) {
+            menu.close();
+            menu = null;
+            return;
+        }
         Messaging.sendTr(player, Messages.EQUIPMENT_EDITOR_END);
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (menu != null && event.getWhoClicked().equals(player)) {
+            menu.onInventoryClick(event);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (menu != null && event.getPlayer().equals(player)) {
+            menu.onInventoryClose(event);
+            Editor.leave((Player) event.getPlayer());
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

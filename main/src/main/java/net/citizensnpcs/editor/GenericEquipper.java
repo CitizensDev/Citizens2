@@ -17,7 +17,6 @@ import net.citizensnpcs.util.Messages;
 public class GenericEquipper implements Equipper {
     @Override
     public void equip(Player equipper, NPC toEquip) {
-        // TODO: migrate to an inventory-GUI system
         ItemStack hand = equipper.getInventory().getItemInHand();
         Equipment trait = toEquip.getOrAddTrait(Equipment.class);
         EquipmentSlot slot = EquipmentSlot.HAND;
