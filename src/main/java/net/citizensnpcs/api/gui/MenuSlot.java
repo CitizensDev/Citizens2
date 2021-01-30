@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.bukkit.Material;
-import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 
 /**
  * Defines a slot with a certain item. Can be linked to a {@link InventoryMenuSlot} or simply at the class level.
@@ -22,9 +22,14 @@ public @interface MenuSlot {
     int amount() default 1;
 
     /**
-     * Whitelist the allowed clicktypes (empty = all allowed).
+     * Whitelist the allowed actions (empty = all allowed).
      */
-    ClickType[] filter() default {};
+    InventoryAction[] filter() default {};
+
+    /**
+     * The lore of the inventory item, newline-delimited.
+     */
+    String lore() default "";
 
     /**
      * The material to display (defaults to AIR). For extra customisation see {@link InventoryMenuSlot}.
@@ -39,5 +44,10 @@ public @interface MenuSlot {
     /**
      * The position of the slot within the inventory.
      */
-    int[] value() default { 0, 0 };
+    int[] slot() default { 0, 0 };
+
+    /**
+     * The display name of the inventory item.
+     */
+    String title() default "";
 }

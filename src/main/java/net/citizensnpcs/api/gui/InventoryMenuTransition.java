@@ -1,18 +1,26 @@
 package net.citizensnpcs.api.gui;
 
+/**
+ * The concrete class of {@link MenuTransition}. Defines a transition from one {@link InventoryMenuPage} to another when
+ * clicked.
+ */
 public class InventoryMenuTransition {
-    private final InventoryMenu menu;
     private final InventoryMenuSlot slot;
     private final Class<? extends InventoryMenuPage> transition;
 
-    public InventoryMenuTransition(InventoryMenu menu, InventoryMenuSlot slot,
-            Class<? extends InventoryMenuPage> transition) {
-        this.menu = menu;
+    public InventoryMenuTransition(InventoryMenuSlot slot, Class<? extends InventoryMenuPage> transition) {
         this.slot = slot;
         this.transition = transition;
     }
 
-    public Class<? extends InventoryMenuPage> accept(InventoryMenuSlot accept) {
+    Class<? extends InventoryMenuPage> accept(InventoryMenuSlot accept) {
         return accept.equals(slot) ? transition : null;
+    }
+
+    /**
+     * @return The slot holding the transition
+     */
+    public InventoryMenuSlot getSlot() {
+        return slot;
     }
 }

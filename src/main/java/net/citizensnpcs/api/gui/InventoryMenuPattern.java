@@ -18,14 +18,24 @@ public class InventoryMenuPattern {
         this.transitions = transitions;
     }
 
+    /**
+     * @return The pattern string.
+     */
     public String getPattern() {
         return info.value();
     }
 
+    /**
+     * @return The set of {@link InventoryMenuSlot}s that this pattern refers to.
+     */
     public Collection<InventoryMenuSlot> getSlots() {
         return slots;
     }
 
+    /**
+     *
+     * @return The set of {@link InventoryMenuTransition}s that this pattern refers to.
+     */
     public Collection<InventoryMenuTransition> getTransitions() {
         return transitions;
     }

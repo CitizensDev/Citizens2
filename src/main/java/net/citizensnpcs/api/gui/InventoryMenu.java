@@ -14,13 +14,12 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.WeakHashMap;
 
-import javax.inject.Inject;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -32,7 +31,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 
-// TODO: injection
+import net.citizensnpcs.api.util.Colorizer;
+
+// TODO: class-based injection? runnables? sub-inventory pages
 /**
  * A container class for Inventory GUIs. Expects {@link #onInventoryClick(InventoryClickEvent)} and
  * {@link #onInventoryClose(InventoryCloseEvent)} to be called by the user (or registered with the event listener
@@ -51,7 +52,7 @@ import com.google.common.collect.Queues;
  * {@link InventoryMenuPage}s can either annotate specific instances of these concrete classes which will be injected at
  * runtime or simply place them at the method/class level.
  *
- * Instances of global/contextual variables can be injected dynamically via {@link javax.inject.Inject} which sources
+ * Instances of global/contextual variables can be injected dynamically via {@link InjectContext} which sources
  * variables from the {@link MenuContext}.
  */
 public class InventoryMenu implements Listener {
@@ -59,17 +60,32 @@ public class InventoryMenu implements Listener {
     private final Queue<PageContext> stack = Queues.newArrayDeque();
     private Collection<InventoryView> views = Lists.newArrayList();
 
-    private InventoryMenu(InventoryMenuInfo info, Map<String, Object> context) {
-        transition(info, context);
+    public InventoryMenu(InventoryMenuInfo info, InventoryMenuPage instance) {
+        transition(info, instance, Maps.newHashMap());
     }
 
-    private boolean acceptFilter(ClickType needle, ClickType[] haystack) {
-        for (ClickType type : haystack) {
+    private InventoryMenu(InventoryMenuInfo info, Map<String, Object> context) {
+        transition(info, info.createInstance(), context);
+    }
+
+    private boolean acceptFilter(InventoryAction needle, InventoryAction[] haystack) {
+        for (InventoryAction type : haystack) {
             if (needle == type) {
                 return true;
             }
         }
         return haystack.length == 0;
+    }
+
+    /**
+     * Closes the GUI and all associated viewer inventories.
+     */
+    public void close() {
+        HandlerList.unregisterAll(this);
+        for (InventoryView view : views) {
+            page.page.onClose(view.getPlayer());
+            view.close();
+        }
     }
 
     private InventoryMenuSlot createSlot(int pos, MenuSlot slotInfo) {
@@ -80,7 +96,7 @@ public class InventoryMenu implements Listener {
 
     private InventoryMenuTransition createTransition(int pos, MenuTransition transitionInfo) {
         InventoryMenuSlot slot = page.ctx.getSlot(pos);
-        InventoryMenuTransition transition = new InventoryMenuTransition(this, slot, transitionInfo.value());
+        InventoryMenuTransition transition = new InventoryMenuTransition(slot, transitionInfo.value());
         return transition;
     }
 
@@ -170,19 +186,28 @@ public class InventoryMenu implements Listener {
                 break;
         }
         InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
+        slot.onClick(event);
+        if (event.isCancelled()) {
+            return;
+        }
         page.page.onClick(slot, event);
         for (Invokable<ClickHandler> invokable : page.clickHandlers) {
             int idx = posToIndex(page.dim, invokable.data.slot());
-            if (event.getSlot() == idx && acceptFilter(event.getClick(), invokable.data.value())) {
+            if (event.getSlot() != idx)
+                continue;
+            if (acceptFilter(event.getAction(), invokable.data.filter())) {
                 try {
                     // TODO: bind optional args?
                     invokable.method.invoke(page.page, slot, event);
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
+            } else {
+                event.setCancelled(true);
+                event.setResult(Result.DENY);
+                return;
             }
         }
-        slot.onClick(event);
         for (InventoryMenuTransition transition : page.transitions) {
             Class<? extends InventoryMenuPage> next = transition.accept(slot);
             if (next != null) {
@@ -281,10 +306,11 @@ public class InventoryMenu implements Listener {
         if (!CACHED_INFOS.containsKey(clazz)) {
             cacheInfo(clazz);
         }
-        transition(CACHED_INFOS.get(clazz), context);
+        InventoryMenuInfo info = CACHED_INFOS.get(clazz);
+        transition(info, info.createInstance(), context);
     }
 
-    private void transition(InventoryMenuInfo info, Map<String, Object> context) {
+    private void transition(InventoryMenuInfo info, InventoryMenuPage instance, Map<String, Object> context) {
         if (page != null) {
             context.putAll(page.ctx.data());
             page.ctx.data().clear();
@@ -296,23 +322,19 @@ public class InventoryMenu implements Listener {
         int size = getInventorySize(type, dim);
         Inventory inventory;
         if (type == InventoryType.CHEST || type == null) {
-            inventory = Bukkit.createInventory(null, size, info.menuAnnotation.title());
+            inventory = Bukkit.createInventory(null, size, Colorizer.parseColors(info.menuAnnotation.title()));
         } else {
-            inventory = Bukkit.createInventory(null, type, info.menuAnnotation.title());
+            inventory = Bukkit.createInventory(null, type, Colorizer.parseColors(info.menuAnnotation.title()));
         }
         List<InventoryMenuTransition> transitions = Lists.newArrayList();
         InventoryMenuSlot[] slots = new InventoryMenuSlot[inventory.getSize()];
         page.patterns = new InventoryMenuPattern[info.patterns.length];
-        try {
-            page.page = info.constructor.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        page.page = instance;
         page.dim = dim;
         page.ctx = new MenuContext(this, slots, inventory, context);
         for (int i = 0; i < info.slots.length; i++) {
             Bindable<MenuSlot> slotInfo = info.slots[i];
-            int pos = posToIndex(dim, slotInfo.data.value());
+            int pos = posToIndex(dim, slotInfo.data.slot());
             InventoryMenuSlot slot = createSlot(pos, slotInfo.data);
             slotInfo.bind(page.page, slot);
         }
@@ -334,6 +356,27 @@ public class InventoryMenu implements Listener {
         info.inject(page.page, page.ctx.data());
         page.page.initialise(page.ctx);
         transitionViewersToInventory(inventory);
+    }
+
+    /**
+     * Transition to another page. Adds the previous page to a stack which will be returned to when the current page is
+     * closed.
+     */
+    public void transition(InventoryMenuPage instance) {
+        transition(instance, Maps.newHashMap());
+    }
+
+    /**
+     * Transition to another page with context. Adds the previous page to a stack which will be returned to when the
+     * current page is closed.
+     */
+    public void transition(InventoryMenuPage instance, Map<String, Object> context) {
+        Class<? extends InventoryMenuPage> clazz = instance.getClass();
+        if (!CACHED_INFOS.containsKey(clazz)) {
+            cacheInfo(clazz);
+        }
+        InventoryMenuInfo info = CACHED_INFOS.get(clazz);
+        transition(info, instance, context);
     }
 
     private void transitionViewersToInventory(Inventory inventory) {
@@ -382,6 +425,14 @@ public class InventoryMenu implements Listener {
             transitions = getBindables(clazz, MenuTransition.class, InventoryMenuTransition.class);
             clickHandlers = getClickHandlers(clazz);
             injectables = getInjectables(clazz);
+        }
+
+        public InventoryMenuPage createInstance() {
+            try {
+                return constructor.newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @SuppressWarnings({ "unchecked" })
@@ -439,7 +490,7 @@ public class InventoryMenu implements Listener {
             Map<String, MethodHandle> injectables = Maps.newHashMap();
             for (Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
-                if (!field.isAnnotationPresent(Inject.class))
+                if (!field.isAnnotationPresent(InjectContext.class))
                     continue;
                 try {
                     injectables.put(field.getName(), LOOKUP.unreflectSetter(field));
@@ -506,6 +557,17 @@ public class InventoryMenu implements Listener {
      */
     public static InventoryMenu create(Class<? extends InventoryMenuPage> clazz) {
         return createWithContext(clazz, Maps.newHashMap());
+    }
+
+    /**
+     * Create an inventory menu instance starting at the given page.
+     */
+    public static InventoryMenu create(InventoryMenuPage instance) {
+        Class<? extends InventoryMenuPage> clazz = instance.getClass();
+        if (!CACHED_INFOS.containsKey(clazz)) {
+            cacheInfo(clazz);
+        }
+        return new InventoryMenu(CACHED_INFOS.get(clazz), instance);
     }
 
     /**

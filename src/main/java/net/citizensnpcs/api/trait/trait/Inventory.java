@@ -222,6 +222,9 @@ public class Inventory extends Trait {
     }
 
     public void setItem(int slot, ItemStack item) {
+        if (item != null) {
+            item = item.clone();
+        }
         if (view != null && view.getSize() > slot) {
             view.setItem(slot, item);
         } else if (contents.length > slot) {
@@ -235,6 +238,9 @@ public class Inventory extends Trait {
     }
 
     void setItemInHand(ItemStack item) {
+        if (item != null) {
+            item = item.clone();
+        }
         if (view != null && view.getSize() > 0) {
             view.setItem(0, item);
         } else if (contents.length > 0) {

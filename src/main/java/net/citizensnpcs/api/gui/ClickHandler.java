@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 /**
@@ -18,12 +18,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 @Repeatable(ClickHandlers.class)
 public @interface ClickHandler {
     /**
+     * An optional filter for specific actions. Default = handle all clicks
+     */
+    InventoryAction[] filter() default {};
+
+    /**
      * The slot position to handle clicks for.
      */
     int[] slot();
-
-    /**
-     * An optional filter for specific click types. Default = handle all clicks
-     */
-    ClickType[] value() default {};
 }

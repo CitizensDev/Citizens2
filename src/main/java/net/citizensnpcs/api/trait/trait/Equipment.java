@@ -172,6 +172,9 @@ public class Equipment extends Trait {
      */
     @SuppressWarnings("deprecation")
     public void set(int slot, ItemStack item) {
+        if (item != null) {
+            item = item.clone();
+        }
         equipment[slot] = item;
         if (slot == 0) {
             npc.getOrAddTrait(Inventory.class).setItemInHand(item);

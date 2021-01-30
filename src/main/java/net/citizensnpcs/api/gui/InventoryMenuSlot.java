@@ -5,17 +5,25 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import net.citizensnpcs.api.util.Colorizer;
+
+/**
+ * Represents a single inventory slot in a {@link InventoryMenu}.
+ */
 public class InventoryMenuSlot {
-    private Set<ClickType> clickFilter = EnumSet.allOf(ClickType.class);
+    private Set<InventoryAction> actionFilter = EnumSet.allOf(InventoryAction.class);
     private final int index;
     private final Inventory inventory;
 
-    public InventoryMenuSlot(MenuContext menu, int i) {
+    InventoryMenuSlot(MenuContext menu, int i) {
         this.inventory = menu.getInventory();
         this.index = i;
     }
@@ -42,28 +50,63 @@ public class InventoryMenuSlot {
         return true;
     }
 
+    /**
+     * @return The set of {@link InventoryAction}s that will be allowed
+     */
+    public Collection<InventoryAction> getFilter() {
+        return actionFilter;
+    }
+
     @Override
     public int hashCode() {
         int result = 31 + index;
         return 31 * result + ((inventory == null) ? 0 : inventory.hashCode());
     }
 
-    public void initialise(MenuSlot data) {
+    void initialise(MenuSlot data) {
         ItemStack defaultItem = null;
         if (data.material() != null) {
             defaultItem = new ItemStack(data.material(), data.amount());
         }
+        if (defaultItem != null) {
+            ItemMeta meta = defaultItem.getItemMeta();
+            if (!data.lore().isEmpty()) {
+                meta.setLore(Arrays.asList(Colorizer.parseColors(data.lore()).split("\\n|\n")));
+            }
+            if (!data.title().isEmpty()) {
+                meta.setDisplayName(Colorizer.parseColors(data.title()));
+            }
+            defaultItem.setItemMeta(meta);
+        }
         inventory.setItem(index, defaultItem);
-        setClickFilter(Arrays.asList(data.filter()));
+        setFilter(Arrays.asList(data.filter()));
     }
 
-    public void onClick(InventoryClickEvent event) {
-        if (!clickFilter.contains(event.getClick())) {
+    void onClick(InventoryClickEvent event) {
+        if (!actionFilter.contains(event.getAction())) {
             event.setCancelled(true);
+            event.setResult(Result.DENY);
         }
     }
 
-    public void setClickFilter(Collection<ClickType> filter) {
-        this.clickFilter = filter == null || filter.isEmpty() ? EnumSet.allOf(ClickType.class) : EnumSet.copyOf(filter);
+    /**
+     * Sets a new {@link ClickType} filter that will only accept clicks with the given type. An empty set is equivalent
+     * to allowing all click types.
+     *
+     * @param filter
+     *            The new filter
+     */
+    public void setFilter(Collection<InventoryAction> filter) {
+        this.actionFilter = filter == null || filter.isEmpty() ? EnumSet.allOf(InventoryAction.class)
+                : EnumSet.copyOf(filter);
+    }
+
+    /**
+     * Manually set the {@link ItemStack} for this slot
+     *
+     * @param stack
+     */
+    public void setItemStack(ItemStack stack) {
+        inventory.setItem(index, stack);
     }
 }
