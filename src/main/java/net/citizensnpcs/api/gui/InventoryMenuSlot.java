@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.Messaging;
 
 /**
  * Represents a single inventory slot in a {@link InventoryMenu}.
@@ -70,11 +71,11 @@ public class InventoryMenuSlot {
         }
         if (defaultItem != null) {
             ItemMeta meta = defaultItem.getItemMeta();
-            if (!data.lore().isEmpty()) {
-                meta.setLore(Arrays.asList(Colorizer.parseColors(data.lore()).split("\\n|\n")));
+            if (!data.lore().equals("EMPTY")) {
+                meta.setLore(Arrays.asList(Colorizer.parseColors(Messaging.tryTranslate(data.lore())).split("\\n|\n")));
             }
-            if (!data.title().isEmpty()) {
-                meta.setDisplayName(Colorizer.parseColors(data.title()));
+            if (!data.title().equals("EMPTY")) {
+                meta.setDisplayName(Colorizer.parseColors(Messaging.tryTranslate(data.title())));
             }
             defaultItem.setItemMeta(meta);
         }

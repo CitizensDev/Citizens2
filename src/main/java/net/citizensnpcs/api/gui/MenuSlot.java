@@ -29,7 +29,7 @@ public @interface MenuSlot {
     /**
      * The lore of the inventory item, newline-delimited.
      */
-    String lore() default "";
+    String lore() default "EMPTY";
 
     /**
      * The material to display (defaults to AIR). For extra customisation see {@link InventoryMenuSlot}.
@@ -49,5 +49,5 @@ public @interface MenuSlot {
     /**
      * The display name of the inventory item.
      */
-    String title() default "";
+    String title() default "EMPTY";
 }

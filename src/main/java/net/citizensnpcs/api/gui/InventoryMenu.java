@@ -32,8 +32,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 
 import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.Messaging;
 
-// TODO: class-based injection? runnables? sub-inventory pages
+// TODO: class-based injection? runnables? translations for titles/lore etc. sub-inventory pages
 /**
  * A container class for Inventory GUIs. Expects {@link #onInventoryClick(InventoryClickEvent)} and
  * {@link #onInventoryClose(InventoryCloseEvent)} to be called by the user (or registered with the event listener
@@ -109,7 +110,7 @@ public class InventoryMenu implements Listener {
                 }
                 dim[0] = Math.min(54, size) / 9;
                 dim[1] = 9;
-                return Math.min(54, size);
+                return Math.max(9, Math.min(54, size));
             case ANVIL:
             case BLAST_FURNACE:
             case CARTOGRAPHY:
@@ -197,8 +198,8 @@ public class InventoryMenu implements Listener {
                 continue;
             if (acceptFilter(event.getAction(), invokable.data.filter())) {
                 try {
-                    // TODO: bind optional args?
-                    invokable.method.invoke(page.page, slot, event);
+                    // TODO: optional args?
+                    invokable.method.invoke(page.page, slot, new CitizensInventoryClickEvent(event));
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -319,17 +320,22 @@ public class InventoryMenu implements Listener {
         page = new PageContext();
         int[] dim = info.menuAnnotation.dimensions();
         InventoryType type = info.menuAnnotation.type();
+        page.page = instance;
+        if (instance.getInventoryType() != null) {
+            type = instance.getInventoryType();
+        }
         int size = getInventorySize(type, dim);
         Inventory inventory;
         if (type == InventoryType.CHEST || type == null) {
-            inventory = Bukkit.createInventory(null, size, Colorizer.parseColors(info.menuAnnotation.title()));
+            inventory = Bukkit.createInventory(null, size,
+                    Colorizer.parseColors(Messaging.tryTranslate(info.menuAnnotation.title())));
         } else {
-            inventory = Bukkit.createInventory(null, type, Colorizer.parseColors(info.menuAnnotation.title()));
+            inventory = Bukkit.createInventory(null, type,
+                    Colorizer.parseColors(Messaging.tryTranslate(info.menuAnnotation.title())));
         }
         List<InventoryMenuTransition> transitions = Lists.newArrayList();
         InventoryMenuSlot[] slots = new InventoryMenuSlot[inventory.getSize()];
         page.patterns = new InventoryMenuPattern[info.patterns.length];
-        page.page = instance;
         page.dim = dim;
         page.ctx = new MenuContext(this, slots, inventory, context);
         for (int i = 0; i < info.slots.length; i++) {
