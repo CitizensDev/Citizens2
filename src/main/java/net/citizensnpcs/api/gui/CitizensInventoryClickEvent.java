@@ -35,7 +35,8 @@ public class CitizensInventoryClickEvent extends InventoryClickEvent {
     }
 
     private ItemStack getResult(InventoryClickEvent event) {
-        ItemStack stack = event.getCurrentItem() == null ? new ItemStack(event.getCursor().getType(), 0)
+        ItemStack stack = event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR
+                ? new ItemStack(event.getCursor().getType(), 0)
                 : event.getCurrentItem().clone();
         switch (event.getAction()) {
             case PICKUP_ONE:

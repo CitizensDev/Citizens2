@@ -15,6 +15,7 @@ import java.util.Queue;
 import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -26,6 +27,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -34,11 +36,11 @@ import com.google.common.collect.Queues;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 
-// TODO: class-based injection? runnables? translations for titles/lore etc. sub-inventory pages
+// TODO: class-based injection? sub-inventory pages
 /**
  * A container class for Inventory GUIs. Expects {@link #onInventoryClick(InventoryClickEvent)} and
  * {@link #onInventoryClose(InventoryCloseEvent)} to be called by the user (or registered with the event listener
- * system).
+ * system). Optionally, {@link #run()} can also be called every tick.
  *
  * Inventory GUIs are defined as a stack of {@link InventoryMenuPage}s, each of which represents a distinct inventory
  * that is transitioned between using either code or user clicks using the {@link InventoryMenuTransition} class. Each
@@ -56,7 +58,7 @@ import net.citizensnpcs.api.util.Messaging;
  * Instances of global/contextual variables can be injected dynamically via {@link InjectContext} which sources
  * variables from the {@link MenuContext}.
  */
-public class InventoryMenu implements Listener {
+public class InventoryMenu implements Listener, Runnable {
     private PageContext page;
     private final Queue<PageContext> stack = Queues.newArrayDeque();
     private Collection<InventoryView> views = Lists.newArrayList();
@@ -172,8 +174,46 @@ public class InventoryMenu implements Listener {
         if (event.getInventory().equals(page.ctx.getInventory())
                 && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
             event.setCancelled(true); // TODO: treat this as a move-to-slot click event
+            if (false && (event.getCursor() == null || event.getCursor().getType() == Material.AIR)) {
+                int amount = event.getCurrentItem().getAmount();
+                ItemStack merging = new ItemStack(event.getCurrentItem().clone());
+                ItemStack[] contents = page.ctx.getInventory().getContents();
+                for (int i = 0; i < page.ctx.getInventory().getSize(); i++) {
+                    if (contents[i] == null || contents[i].getType() == Material.AIR) {
+                        merging.setAmount(amount);
+                        event.getView().setCursor(merging);
+                        InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(), i,
+                                event.getClick(), InventoryAction.PLACE_ALL);
+                        onInventoryClick(e);
+                        event.getView().setCursor(null);
+                        if (!e.isCancelled() && e.getResult() != Result.DENY) {
+                            page.ctx.getInventory().setItem(i, merging);
+                            event.setCurrentItem(null);
+                            break;
+                        }
+                    } else if (contents[i].getType() == event.getCurrentItem().getType()) {
+                        ItemStack stack = contents[i].clone();
+                        merging.setAmount(Math.min(amount, stack.getType().getMaxStackSize() - stack.getAmount()));
+                        event.getView().setCursor(merging);
+                        InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(), i,
+                                event.getClick(), amount - merging.getAmount() <= 0 ? InventoryAction.PLACE_ALL
+                                        : InventoryAction.PLACE_SOME);
+                        onInventoryClick(e);
+                        event.getView().setCursor(null);
+                        if (!e.isCancelled() && e.getResult() != Result.DENY) {
+                            stack.setAmount(stack.getAmount() + merging.getAmount());
+                            page.ctx.getInventory().setItem(i, stack);
+                            amount -= merging.getAmount();
+                            event.getCurrentItem().setAmount(amount);
+                            if (amount <= 0) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
-        if (page == null || !clicked.equals(page.ctx.getInventory()))
+        if (!clicked.equals(page.ctx.getInventory()))
             return;
         switch (event.getAction()) {
             case COLLECT_TO_CURSOR:
@@ -289,6 +329,11 @@ public class InventoryMenu implements Listener {
     public void present(Player player) {
         InventoryView view = player.openInventory(page.ctx.getInventory());
         views.add(view);
+    }
+
+    @Override
+    public void run() {
+        page.page.run();
     }
 
     /**

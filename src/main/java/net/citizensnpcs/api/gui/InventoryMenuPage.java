@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryType;
  *
  * @see InventoryMenu
  */
-public abstract class InventoryMenuPage {
+public abstract class InventoryMenuPage implements Runnable {
     public InventoryType getInventoryType() {
         return null;
     }
@@ -21,5 +21,9 @@ public abstract class InventoryMenuPage {
     }
 
     public void onClose(HumanEntity player) {
+    }
+
+    @Override
+    public void run() {
     }
 }
