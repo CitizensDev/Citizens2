@@ -67,6 +67,7 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.PlayerCloneNPCEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.event.SpawnReason;
+import net.citizensnpcs.api.gui.InventoryMenu;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
@@ -87,6 +88,7 @@ import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.CommandTrait.ExecutionMode;
+import net.citizensnpcs.trait.CommandTrait.ItemRequirementGUI;
 import net.citizensnpcs.trait.CommandTrait.NPCCommandBuilder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
@@ -365,6 +367,10 @@ public class NPCCommands {
                     commands.getExecutionMode() == ExecutionMode.RANDOM ? ExecutionMode.LINEAR : ExecutionMode.RANDOM);
             Messaging.sendTr(sender, commands.getExecutionMode() == ExecutionMode.RANDOM ? Messages.COMMANDS_RANDOM_SET
                     : Messages.COMMANDS_RANDOM_UNSET);
+        } else if (args.getString(1).equalsIgnoreCase("itemcost")) {
+            if (!(sender instanceof Player))
+                throw new CommandException(Messages.COMMAND_MUST_BE_INGAME);
+            InventoryMenu.create(new ItemRequirementGUI(commands)).present(((Player) sender));
         } else {
             throw new CommandUsageException();
         }
