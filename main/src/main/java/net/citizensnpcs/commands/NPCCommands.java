@@ -86,6 +86,7 @@ import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.CommandTrait.ExecutionMode;
 import net.citizensnpcs.trait.CommandTrait.ItemRequirementGUI;
@@ -1775,6 +1776,9 @@ public class NPCCommands {
                 NPC test = registry.getNPC(possibleNPC);
                 if (test == null)
                     continue;
+                if (test.hasTrait(ClickRedirectTrait.class)) {
+                    test = test.getTraitNullable(ClickRedirectTrait.class).getRedirectNPC();
+                }
                 callback.run(test);
                 break;
             }
