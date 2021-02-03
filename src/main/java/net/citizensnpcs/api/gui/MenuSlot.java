@@ -22,6 +22,12 @@ public @interface MenuSlot {
     int amount() default 1;
 
     /**
+     * For compatibility with old Minecraft versions - a two String array {intended material name, fallback material
+     * name} e.g. {"SHIELD", "AIR"}
+     */
+    String[] compatMaterial() default {};
+
+    /**
      * Whitelist the allowed actions (empty = all allowed).
      */
     InventoryAction[] filter() default {};

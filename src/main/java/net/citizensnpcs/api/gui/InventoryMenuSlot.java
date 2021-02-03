@@ -5,11 +5,13 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.bukkit.Material;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -66,11 +68,18 @@ public class InventoryMenuSlot {
 
     void initialise(MenuSlot data) {
         ItemStack defaultItem = null;
-        if (data.material() != null) {
+        if (data.compatMaterial().length == 2) {
+            Material mat = Material.getMaterial(data.compatMaterial()[0]);
+            if (mat == null) {
+                mat = Material.getMaterial(data.compatMaterial()[1]);
+            }
+            defaultItem = new ItemStack(mat, data.amount());
+        } else if (data.material() != null) {
             defaultItem = new ItemStack(data.material(), data.amount());
         }
         if (defaultItem != null) {
             ItemMeta meta = defaultItem.getItemMeta();
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             if (!data.lore().equals("EMPTY")) {
                 meta.setLore(Arrays.asList(Colorizer.parseColors(Messaging.tryTranslate(data.lore())).split("\\n|\n")));
             }
