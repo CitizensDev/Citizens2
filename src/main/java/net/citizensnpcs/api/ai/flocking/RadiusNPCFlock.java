@@ -39,10 +39,9 @@ public class RadiusNPCFlock implements NPCFlock {
     public Collection<NPC> getNearby(NPC npc) {
         if (cached != null && cacheTicks++ < maxCacheTicks) {
             return cached;
-        } else {
-            cached = null;
-            cacheTicks = 0;
         }
+        cached = null;
+        cacheTicks = 0;
         Collection<NPC> ret = Lists.newArrayList();
         for (Entity entity : npc.getEntity().getNearbyEntities(radius, radius, radius)) {
             NPC npc2 = CitizensAPI.getNPCRegistry().getNPC(entity);
@@ -50,7 +49,6 @@ public class RadiusNPCFlock implements NPCFlock {
                 ret.add(npc2);
             }
         }
-        this.cached = ret;
-        return ret;
+        return this.cached = ret;
     }
 }

@@ -13,11 +13,15 @@ import net.citizensnpcs.api.npc.NPC;
  *      "https://en.wikipedia.org/wiki/Flocking_(behavior)">https://en.wikipedia.org/wiki/Flocking_(behavior)</a>
  */
 public class SeparationBehavior implements FlockBehavior {
-    private final double decayCoef = 0.5D;
-    private final double maxAcceleration = 2D;
+    private double separation = 0.5;
     private final double weight;
 
     public SeparationBehavior(double weight) {
+        this.weight = weight;
+    }
+
+    public SeparationBehavior(double weight, double separation) {
+        this.separation = separation;
         this.weight = weight;
     }
 
@@ -25,21 +29,20 @@ public class SeparationBehavior implements FlockBehavior {
     public Vector getVector(NPC npc, Collection<NPC> nearby) {
         Vector steering = new Vector(0, 0, 0);
         Vector pos = npc.getEntity().getLocation().toVector();
-        // int c = 0;
+        int count = 0;
         for (NPC neighbor : nearby) {
             if (!neighbor.isSpawned())
                 continue;
-            double dist = neighbor.getEntity().getLocation().toVector().distanceSquared(pos);
-            double strength = decayCoef / dist;
-            if (strength > maxAcceleration)
-                strength = maxAcceleration;
-            steering = steering.add(steering.multiply(strength / Math.sqrt(dist)));
-            // Vector repulse = pos.subtract(neighbor.getEntity().getLocation().toVector()).normalize()
-            // .divide(new Vector(dist, dist, dist));
-            // steering = repulse.add(steering);
-            // c++;
+            Vector diff = pos.subtract(neighbor.getEntity().getLocation().toVector()).setY(0);
+            double dist = diff.length();
+            if (dist > separation) {
+                continue;
+            }
+            steering = steering.add(diff.normalize().multiply(1 / (dist * 50)));
+            count++;
         }
-        // steering = steering.divide(new Vector(c, c, c));
-        return steering.subtract(npc.getEntity().getVelocity()).multiply(weight);
+        count = Math.max(1, count);
+        steering = steering.divide(new Vector(count, count, count));
+        return steering.setY(0).multiply(weight);
     }
 }
