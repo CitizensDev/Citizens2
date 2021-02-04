@@ -21,7 +21,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
  */
 public class EntityMarkers<T> {
     private final Map<T, Entity> markers = Maps.newHashMap();
-    private final NPCRegistry registry = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
+    private final NPCRegistry registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
     private EntityType type;
 
     public EntityMarkers() {

@@ -35,7 +35,7 @@ public class HologramTrait extends Trait {
     @Persist
     private final List<String> lines = Lists.newArrayList();
     private NPC nameNPC;
-    private final NPCRegistry registry = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
+    private final NPCRegistry registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
 
     public HologramTrait() {
         super("hologramtrait");

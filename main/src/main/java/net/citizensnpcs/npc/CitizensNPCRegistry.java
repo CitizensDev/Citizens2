@@ -99,6 +99,20 @@ public class CitizensNPCRegistry implements NPCRegistry {
         }
     }
 
+    @Override
+    public void despawnNPCs(DespawnReason reason) {
+        Iterator<NPC> itr = iterator();
+        while (itr.hasNext()) {
+            NPC npc = itr.next();
+            try {
+                npc.despawn(reason);
+            } catch (Throwable e) {
+                e.printStackTrace(); // ensure that all entities are despawned
+            }
+            itr.remove();
+        }
+    }
+
     private int generateUniqueId() {
         return saves.createUniqueNPCId(this);
     }
@@ -180,6 +194,12 @@ public class CitizensNPCRegistry implements NPCRegistry {
                 }
             }
         };
+    }
+
+    @Override
+    public void saveToStore() {
+        saves.storeAll(this);
+        saves.saveToDiskImmediate();
     }
 
     @Override

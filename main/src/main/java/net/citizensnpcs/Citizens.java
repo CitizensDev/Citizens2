@@ -1,6 +1,7 @@
 package net.citizensnpcs;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -73,6 +74,7 @@ import net.milkbowl.vault.economy.Economy;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final List<NPCRegistry> anonymousRegistries = Lists.newArrayList();
+    private final List<NPCRegistry> citizensBackedRegistries = Lists.newArrayList();
     private final CommandManager commands = new CommandManager();
     private boolean compatible;
     private Settings config;
@@ -106,6 +108,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
+    public NPCRegistry createCitizensBackedNPCRegistry(NPCDataStore store) {
+        CitizensNPCRegistry anon = new CitizensNPCRegistry(store, "anonymous-citizens-" + UUID.randomUUID().toString());
+        citizensBackedRegistries.add(anon);
+        return anon;
+    }
+
+    @Override
     public NPCRegistry createNamedNPCRegistry(String name, NPCDataStore store) {
         NPCRegistry created = new CitizensNPCRegistry(store, name);
         storedRegistries.put(name, created);
@@ -127,17 +136,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return SimpleNPCDataStore.create(saves);
     }
 
-    private void despawnNPCs() {
-        Iterator<NPC> itr = npcRegistry.iterator();
-        while (itr.hasNext()) {
-            NPC npc = itr.next();
-            try {
-                npc.despawn(DespawnReason.RELOAD);
-            } catch (Throwable e) {
-                e.printStackTrace();
-                // ensure that all entities are despawned
+    private void despawnNPCs(boolean save) {
+        for (NPCRegistry reg : Iterables.concat(Arrays.asList(npcRegistry), citizensBackedRegistries)) {
+            if (save) {
+                reg.saveToStore();
             }
-            itr.remove();
+            reg.despawnNPCs(DespawnReason.RELOAD);
         }
     }
 
@@ -204,7 +208,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     @Override
                     public NPCRegistry next() {
                         if (stored == null) {
-                            stored = Iterables.concat(storedRegistries.values(), anonymousRegistries).iterator();
+                            stored = Iterables
+                                    .concat(storedRegistries.values(), anonymousRegistries, citizensBackedRegistries)
+                                    .iterator();
                             return npcRegistry;
                         }
                         return stored.next();
@@ -275,9 +281,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Editor.leaveAll();
 
         if (compatible) {
-            saves.storeAll(npcRegistry);
-            saves.saveToDiskImmediate();
-            despawnNPCs();
+            despawnNPCs(true);
             npcRegistry = null;
             NMS.shutdown();
         }
@@ -374,7 +378,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void reload() throws NPCLoadException {
         Editor.leaveAll();
         config.reload();
-        despawnNPCs();
+        despawnNPCs(false);
         ProfileFetcher.reset();
         Skin.clearCache();
         getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
@@ -399,13 +403,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (store == null) {
             throw new IllegalArgumentException("must be non-null");
         }
-        if (saves != null) {
-            saves.storeAll(npcRegistry);
-            saves.saveToDiskImmediate();
-            despawnNPCs();
-        }
+        despawnNPCs(true);
         this.saves = store;
         this.npcRegistry = new CitizensNPCRegistry(saves, "citizens-global-" + UUID.randomUUID().toString());
+        saves.loadInto(npcRegistry);
     }
 
     private void setupEconomy() {
