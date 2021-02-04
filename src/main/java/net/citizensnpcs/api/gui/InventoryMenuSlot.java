@@ -79,14 +79,17 @@ public class InventoryMenuSlot {
         }
         if (defaultItem != null) {
             ItemMeta meta = defaultItem.getItemMeta();
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            if (!data.lore().equals("EMPTY")) {
-                meta.setLore(Arrays.asList(Colorizer.parseColors(Messaging.tryTranslate(data.lore())).split("\\n|\n")));
+            if (meta != null) {
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                if (!data.lore().equals("EMPTY")) {
+                    meta.setLore(
+                            Arrays.asList(Colorizer.parseColors(Messaging.tryTranslate(data.lore())).split("\\n|\n")));
+                }
+                if (!data.title().equals("EMPTY")) {
+                    meta.setDisplayName(Colorizer.parseColors(Messaging.tryTranslate(data.title())));
+                }
+                defaultItem.setItemMeta(meta);
             }
-            if (!data.title().equals("EMPTY")) {
-                meta.setDisplayName(Colorizer.parseColors(Messaging.tryTranslate(data.title())));
-            }
-            defaultItem.setItemMeta(meta);
         }
         inventory.setItem(index, defaultItem);
         setFilter(Arrays.asList(data.filter()));
