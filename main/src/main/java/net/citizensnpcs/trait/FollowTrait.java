@@ -12,6 +12,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.ai.flocking.Flocker;
+import net.citizensnpcs.api.ai.flocking.RadiusNPCFlock;
+import net.citizensnpcs.api.ai.flocking.SeparationBehavior;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -23,6 +26,7 @@ import net.citizensnpcs.api.trait.TraitName;
 public class FollowTrait extends Trait {
     @Persist("active")
     private boolean enabled = false;
+    private Flocker flock;
     @Persist
     private UUID followingUUID;
     private Player player;
@@ -46,6 +50,11 @@ public class FollowTrait extends Trait {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public void onAttach() {
+        flock = new Flocker(npc, new RadiusNPCFlock(4, 20), new SeparationBehavior(1));
     }
 
     @EventHandler
@@ -83,6 +92,8 @@ public class FollowTrait extends Trait {
         }
         if (!npc.getNavigator().isNavigating()) {
             npc.getNavigator().setTarget(player, false);
+        } else {
+            flock.run();
         }
     }
 
