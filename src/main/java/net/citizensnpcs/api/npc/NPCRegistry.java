@@ -5,6 +5,8 @@ import java.util.UUID;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
+import net.citizensnpcs.api.event.DespawnReason;
+
 /**
  * Controls the registration and lookup of a set of {@link NPC}s.
  */
@@ -46,6 +48,14 @@ public interface NPCRegistry extends Iterable<NPC> {
      * Deregisters all {@link NPC}s from this registry. {@link #deregister(NPC)}
      */
     public void deregisterAll();
+
+    /**
+     * Despawn all NPCs within the registry.
+     *
+     * @param reload
+     *            The reason to despawn
+     */
+    public void despawnNPCs(DespawnReason reason);
 
     /**
      * Gets the {@link NPC} with the given ID if it exists.
@@ -96,6 +106,11 @@ public interface NPCRegistry extends Iterable<NPC> {
      * @return Whether the given entity is an NPC
      */
     public boolean isNPC(Entity entity);
+
+    /**
+     * Saves the NPCs to the internal {@link NPCDataStore}
+     */
+    public void saveToStore();
 
     /**
      * Returns a <em>sorted</em> view of this registry, sorted by NPC id.

@@ -19,6 +19,15 @@ public interface CitizensPlugin extends Plugin {
     public NPCRegistry createAnonymousNPCRegistry(NPCDataStore store);
 
     /**
+     * Creates a new <em>anonymous</em> {@link NPCRegistry} that is "Citizens-backed" i.e. will reload and unload at the
+     * same time that Citizens reloads and unloads.
+     *
+     * @param store
+     *            The {@link NPCDataStore} to use with the registry
+     */
+    public NPCRegistry createCitizensBackedNPCRegistry(NPCDataStore store);
+
+    /**
      * @param name
      *            The plugin name
      * @param store

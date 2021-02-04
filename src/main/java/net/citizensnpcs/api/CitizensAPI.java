@@ -35,6 +35,17 @@ public final class CitizensAPI {
     }
 
     /**
+     * Creates a new <em>anonymous</em> {@link NPCRegistry} that is "Citizens-backed" i.e. will reload and unload at the
+     * same time that Citizens reloads and unloads.
+     *
+     * @param store
+     *            The {@link NPCDataStore} to use with the registry
+     */
+    public static NPCRegistry createCitizensBackedNPCRegistry(NPCDataStore store) {
+        return getImplementation().createCitizensBackedNPCRegistry(store);
+    }
+
+    /**
      * Creates a new {@link NPCRegistry} with its own set of {@link NPC}s. This is stored in memory with the Citizens
      * plugin, and can be accessed via {@link #getNamedNPCRegistry(String)}.
      *
