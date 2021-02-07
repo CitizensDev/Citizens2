@@ -3,17 +3,20 @@ package net.citizensnpcs.api.gui;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.bukkit.Material;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
@@ -23,12 +26,23 @@ import net.citizensnpcs.api.util.Messaging;
  */
 public class InventoryMenuSlot {
     private Set<InventoryAction> actionFilter = EnumSet.allOf(InventoryAction.class);
+    private final List<Consumer<CitizensInventoryClickEvent>> handlers = Lists.newArrayList();
     private final int index;
     private final Inventory inventory;
 
     InventoryMenuSlot(MenuContext menu, int i) {
         this.inventory = menu.getInventory();
         this.index = i;
+    }
+
+    /**
+     * Adds a click handler to this slot.
+     *
+     * @param func
+     *            The click handler to run
+     */
+    public void addClickHandler(Consumer<CitizensInventoryClickEvent> func) {
+        handlers.add(func);
     }
 
     @Override
@@ -51,6 +65,10 @@ public class InventoryMenuSlot {
             return false;
         }
         return true;
+    }
+
+    public ItemStack getCurrentItem() {
+        return inventory.getItem(index);
     }
 
     /**
@@ -95,10 +113,13 @@ public class InventoryMenuSlot {
         setFilter(Arrays.asList(data.filter()));
     }
 
-    void onClick(InventoryClickEvent event) {
+    void onClick(CitizensInventoryClickEvent event) {
         if (!actionFilter.contains(event.getAction())) {
             event.setCancelled(true);
             event.setResult(Result.DENY);
+        }
+        for (Consumer<CitizensInventoryClickEvent> runnable : handlers) {
+            runnable.accept(event);
         }
     }
 
@@ -121,5 +142,13 @@ public class InventoryMenuSlot {
      */
     public void setItemStack(ItemStack stack) {
         inventory.setItem(index, stack);
+    }
+
+    public void setItemStack(ItemStack item, String description) {
+        ItemMeta meta = item.getItemMeta();
+        meta.setLore(Arrays.asList(Colorizer.parseColors(description).split("\n")));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        item.setItemMeta(meta);
+        inventory.setItem(index, item);
     }
 }

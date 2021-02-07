@@ -21,6 +21,11 @@ public @interface Persist {
     Class<?> collectionType() default Collection.class;
 
     /**
+     * Whether to use PersistenceLoader to load/save the value of this class.
+     */
+    boolean reify() default false;
+
+    /**
      * Whether a value must be present at load time. If a value for the field could not be loaded,
      * {@link PersistenceLoader#load(Object, DataKey)} will return null.
      */

@@ -33,6 +33,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 
@@ -59,6 +60,7 @@ import net.citizensnpcs.api.util.Messaging;
  * variables from the {@link MenuContext}.
  */
 public class InventoryMenu implements Listener, Runnable {
+    private final List<Runnable> closeCallbacks = Lists.newArrayList();
     private PageContext page;
     private final Queue<PageContext> stack = Queues.newArrayDeque();
     private Collection<InventoryView> views = Lists.newArrayList();
@@ -78,6 +80,10 @@ public class InventoryMenu implements Listener, Runnable {
             }
         }
         return haystack.length == 0;
+    }
+
+    private void addCloseCallback(Runnable run) {
+        closeCallbacks.add(run);
     }
 
     /**
@@ -227,7 +233,8 @@ public class InventoryMenu implements Listener, Runnable {
                 break;
         }
         InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
-        slot.onClick(event);
+        CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(event);
+        slot.onClick(ev);
         if (event.isCancelled()) {
             return;
         }
@@ -239,7 +246,7 @@ public class InventoryMenu implements Listener, Runnable {
             if (acceptFilter(event.getAction(), invokable.data.filter())) {
                 try {
                     // TODO: optional args?
-                    invokable.method.invoke(page.page, slot, new CitizensInventoryClickEvent(event));
+                    invokable.method.invoke(page.page, slot, ev);
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -270,6 +277,11 @@ public class InventoryMenu implements Listener, Runnable {
         }
         data.clear();
         transitionViewersToInventory(page == null ? null : page.ctx.getInventory());
+        if (page == null) {
+            for (Runnable callback : closeCallbacks) {
+                callback.run();
+            }
+        }
     }
 
     private InventoryMenuPattern parsePattern(int[] dim, List<InventoryMenuTransition> transitions,
@@ -619,6 +631,28 @@ public class InventoryMenu implements Listener, Runnable {
             cacheInfo(clazz);
         }
         return new InventoryMenu(CACHED_INFOS.get(clazz), instance);
+    }
+
+    /**
+     * Creates an inventory menu instance starting at the given page that registers events and deregisters events when
+     * the menu is closed.
+     */
+    public static InventoryMenu createSelfRegistered(Class<? extends InventoryMenuPage> clazz) {
+        InventoryMenu menu = create(clazz);
+        Bukkit.getPluginManager().registerEvents(menu, CitizensAPI.getPlugin());
+        menu.addCloseCallback(() -> HandlerList.unregisterAll(menu));
+        return menu;
+    }
+
+    /**
+     * Creates an inventory menu instance starting at the given page that registers events and deregisters events when
+     * the menu is closed.
+     */
+    public static InventoryMenu createSelfRegistered(InventoryMenuPage instance) {
+        InventoryMenu menu = create(instance);
+        Bukkit.getPluginManager().registerEvents(menu, CitizensAPI.getPlugin());
+        menu.addCloseCallback(() -> HandlerList.unregisterAll(menu));
+        return menu;
     }
 
     /**

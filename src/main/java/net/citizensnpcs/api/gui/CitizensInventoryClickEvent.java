@@ -1,8 +1,14 @@
 package net.citizensnpcs.api.gui;
 
+import java.util.Arrays;
+
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import net.citizensnpcs.api.util.Colorizer;
 
 public class CitizensInventoryClickEvent extends InventoryClickEvent {
     private final InventoryClickEvent event;
@@ -82,6 +88,13 @@ public class CitizensInventoryClickEvent extends InventoryClickEvent {
     @Override
     public void setCurrentItem(ItemStack item) {
         event.setCurrentItem(item);
+    }
+
+    public void setCurrentItemDescription(String description) {
+        ItemMeta meta = getCurrentItem().getItemMeta();
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        meta.setLore(Arrays.asList(Colorizer.parseColors(description).split("\n")));
+        event.getCurrentItem().setItemMeta(meta);
     }
 
     @Override

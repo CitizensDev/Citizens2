@@ -32,6 +32,25 @@ import net.citizensnpcs.api.util.DataKey;
  * @see #registerPersistDelegate(Class, Class)
  */
 public class PersistenceLoader {
+    private static class GenericPersister implements Persister<Object> {
+        private final Class<?> clazz;
+
+        private GenericPersister(Class<?> clazz) {
+            this.clazz = clazz;
+        }
+
+        @Override
+        public Object create(DataKey root) {
+            return PersistenceLoader.load(clazz, root);
+        }
+
+        @Override
+        public void save(Object instance, DataKey root) {
+            PersistenceLoader.save(instance, root);
+        }
+
+    }
+
     private static class PersistField {
         private final Persister<?> delegate;
         private final Field field;
@@ -48,7 +67,7 @@ public class PersistenceLoader {
             if (field.getGenericType() instanceof ParameterizedType) {
                 fallback = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             }
-            this.delegate = getDelegate(field, fallback);
+            this.delegate = persistAnnotation.reify() ? new GenericPersister(fallback) : getDelegate(field, fallback);
             this.instance = instance;
         }
 
@@ -288,7 +307,6 @@ public class PersistenceLoader {
         }
         Object deserialised = field.delegate == null ? root.getRaw("") : field.delegate.create(root);
         return deserialised;
-
     }
 
     private static void ensureDelegateLoaded(Class<? extends Persister<?>> delegateClass) {
@@ -308,16 +326,10 @@ public class PersistenceLoader {
         DelegatePersistence delegate = field.getAnnotation(DelegatePersistence.class);
         Persister<?> persister;
         if (delegate == null) {
-            persister = loadedDelegates.get(persistRedirects.get(fallback));
-            if (persister == null)
-                return null;
-        } else {
-            persister = loadedDelegates.get(delegate.value());
+            return loadedDelegates.get(persistRedirects.get(fallback));
         }
-        if (persister == null) {
-            persister = loadedDelegates.get(persistRedirects.get(fallback));
-        }
-        return persister;
+        persister = loadedDelegates.get(delegate.value());
+        return persister == null ? loadedDelegates.get(persistRedirects.get(fallback)) : persister;
     }
 
     private static Field[] getFields(Class<?> clazz) {
