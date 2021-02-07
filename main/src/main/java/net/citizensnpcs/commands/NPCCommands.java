@@ -93,6 +93,7 @@ import net.citizensnpcs.trait.CommandTrait.ItemRequirementGUI;
 import net.citizensnpcs.trait.CommandTrait.NPCCommandBuilder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.DropsTrait;
 import net.citizensnpcs.trait.EndermanTrait;
 import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.GameModeTrait;
@@ -310,7 +311,6 @@ public class NPCCommands {
         Messaging.sendTr(sender,
                 npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
                 npc.getName());
-
     }
 
     @Command(
@@ -606,6 +606,20 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "drops",
+            desc = "Edit an NPC's drops",
+            modifiers = { "drops" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.drops")
+    @Requirements(ownership = true, selected = true)
+    public void drops(CommandContext args, Player sender, NPC npc) throws CommandException {
+        DropsTrait trait = npc.getOrAddTrait(DropsTrait.class);
+        trait.displayEditor(sender);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "enderman -a[ngry]",
             desc = "Set enderman modifiers",
             flags = "a",
@@ -644,7 +658,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "follow (player name) (-p[rotect])",
+            usage = "follow (player name|NPC id) (-p[rotect])",
             desc = "Toggles NPC following you",
             flags = "p",
             modifiers = { "follow" },
@@ -657,9 +671,30 @@ public class NPCCommands {
         if (args.argsLength() > 1) {
             name = args.getString(1);
         }
+
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
         if (player == null) {
-            throw new CommandException();
+            NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
+                @Override
+                public void run(NPC followingNPC) throws CommandException {
+                    if (followingNPC == null)
+                        throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
+                    if (!(sender instanceof ConsoleCommandSender)
+                            && !followingNPC.getOrAddTrait(Owner.class).isOwnedBy(sender))
+                        throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
+                    if (followingNPC.getEntity() instanceof Player) {
+                        boolean following = followingNPC.getOrAddTrait(FollowTrait.class)
+                                .toggle((Player) followingNPC.getEntity(), protect);
+                        Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
+                                followingNPC.getName());
+                    } else {
+                        throw new CommandException();
+                    }
+                }
+            };
+            NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
+                    args.getString(1));
+            return;
         }
         boolean following = npc.getOrAddTrait(FollowTrait.class).toggle(player, protect);
         Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),

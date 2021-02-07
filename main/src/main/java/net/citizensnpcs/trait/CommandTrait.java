@@ -37,7 +37,6 @@ import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.DelegatePersistence;
 import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.persistence.Persister;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -55,8 +54,7 @@ public class CommandTrait extends Trait {
     @Persist
     @DelegatePersistence(NPCCommandPersister.class)
     private final Map<String, NPCCommand> commands = Maps.newHashMap();
-    @Persist
-    @DelegatePersistence(PlayerNPCCommandPersister.class)
+    @Persist(reify = true)
     private final Map<String, PlayerNPCCommand> cooldowns = Maps.newHashMap();
     @Persist
     private double cost = -1;
@@ -597,21 +595,6 @@ public class CommandTrait extends Trait {
 
         public static boolean requiresTracking(NPCCommand command) {
             return command.cooldown > 0 || command.n > 0 || (command.perms != null && command.perms.size() > 0);
-        }
-    }
-
-    private static class PlayerNPCCommandPersister implements Persister<PlayerNPCCommand> {
-        public PlayerNPCCommandPersister() {
-        }
-
-        @Override
-        public PlayerNPCCommand create(DataKey root) {
-            return PersistenceLoader.load(PlayerNPCCommand.class, root);
-        }
-
-        @Override
-        public void save(PlayerNPCCommand instance, DataKey root) {
-            PersistenceLoader.save(instance, root);
         }
     }
 }
