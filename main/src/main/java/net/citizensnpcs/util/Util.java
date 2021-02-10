@@ -107,6 +107,14 @@ public class Util {
         return entity instanceof LivingEntity ? ((LivingEntity) entity).getEyeLocation() : entity.getLocation();
     }
 
+    public static Material getFallbackMaterial(String first, String second) {
+        try {
+            return Material.valueOf(first);
+        } catch (IllegalArgumentException e) {
+            return Material.valueOf(second);
+        }
+    }
+
     public static Random getFastRandom() {
         return new XORShiftRNG();
     }

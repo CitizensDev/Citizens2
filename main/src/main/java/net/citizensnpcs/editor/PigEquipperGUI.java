@@ -30,7 +30,7 @@ import net.citizensnpcs.trait.Saddle;
         slots = { @MenuSlot(
                 filter = InventoryAction.UNKNOWN,
                 pat = 'x',
-                material = Material.GLASS_PANE,
+                compatMaterial = { "GLASS_PANE", "FIRE" },
                 title = "<4>Unused") },
         value = "xxx")
 public class PigEquipperGUI extends InventoryMenuPage {

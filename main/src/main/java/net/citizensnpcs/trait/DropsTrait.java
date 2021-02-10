@@ -88,7 +88,8 @@ public class DropsTrait extends Trait {
                         ctx.getInventory().setItem(islot, drop.drop.clone());
                     }
                     InventoryMenuSlot slot = ctx.getSlot(i * 9 + j);
-                    slot.setItemStack(new ItemStack(Material.GLASS_PANE), "Drop chance <e>" + chance + "%");
+                    slot.setItemStack(new ItemStack(Util.getFallbackMaterial("GLASS_PANE", "FIRE")),
+                            "Drop chance <e>" + chance + "%");
                     slot.addClickHandler(new PercentageSlotHandler((pct) -> {
                         if (chances.containsKey(islot)) {
                             chances.put(islot, pct / 100.0);
