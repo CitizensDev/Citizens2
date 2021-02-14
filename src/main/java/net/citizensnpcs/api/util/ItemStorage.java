@@ -353,7 +353,7 @@ public class ItemStorage {
         }
         key.setInt("amount", item.getAmount());
         key.setInt("durability", item.getDurability());
-        if (item.getData() != null && !SpigotUtil.isUsing1_13API()) {
+        if (!SpigotUtil.isUsing1_13API() && item.getData() != null) {
             key.setInt("mdata", item.getData().getData());
         } else {
             key.removeKey("mdata");

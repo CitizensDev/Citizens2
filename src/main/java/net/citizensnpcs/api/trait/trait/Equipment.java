@@ -17,6 +17,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 /**
  * Represents an NPC's equipment.
@@ -114,7 +115,11 @@ public class Equipment extends Trait {
         if (npc.getEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getEntity();
             if (equipment[0] != null) {
-                enderman.setCarriedMaterial(equipment[0].getData());
+                if (SpigotUtil.isUsing1_13API()) {
+                    enderman.setCarriedBlock(equipment[0].getType().createBlockData());
+                } else {
+                    enderman.setCarriedMaterial(equipment[0].getData());
+                }
             }
         } else {
             EntityEquipment equip = getEquipmentFromEntity(npc.getEntity());
@@ -184,7 +189,11 @@ public class Equipment extends Trait {
         if (npc.getEntity() instanceof Enderman) {
             if (slot != 0)
                 throw new UnsupportedOperationException("Slot can only be 0 for enderman");
-            ((Enderman) npc.getEntity()).setCarriedMaterial(item.getData());
+            if (SpigotUtil.isUsing1_13API()) {
+                ((Enderman) npc.getEntity()).setCarriedBlock(item.getType().createBlockData());
+            } else {
+                ((Enderman) npc.getEntity()).setCarriedMaterial(item.getData());
+            }
         } else {
             EntityEquipment equip = getEquipmentFromEntity(npc.getEntity());
             switch (slot) {
