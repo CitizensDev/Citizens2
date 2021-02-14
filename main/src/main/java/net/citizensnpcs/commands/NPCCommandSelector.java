@@ -63,7 +63,7 @@ public class NPCCommandSelector extends NumericPrompt {
         } catch (WrappedCommandException ex) {
             ex.getCause().printStackTrace();
         } catch (CommandException ex) {
-            Messaging.sendError(sender, ex.getMessage());
+            Messaging.sendError(sender, Messaging.tryTranslate(ex.getMessage()));
         } catch (NumberFormatException ex) {
             Messaging.sendErrorTr(sender, CommandMessages.INVALID_NUMBER);
         }
