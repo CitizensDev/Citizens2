@@ -353,8 +353,10 @@ public class ItemStorage {
         }
         key.setInt("amount", item.getAmount());
         key.setInt("durability", item.getDurability());
-        if (item.getData() != null) {
+        if (item.getData() != null && !SpigotUtil.isUsing1_13API()) {
             key.setInt("mdata", item.getData().getData());
+        } else {
+            key.removeKey("mdata");
         }
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
