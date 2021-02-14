@@ -54,7 +54,11 @@ public class Path implements Plan {
     public void debug() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             for (PathEntry entry : path) {
-                player.sendBlockChange(entry.vector.toLocation(player.getWorld()), YELLOW_FLOWER, (byte) 0);
+                if (SpigotUtil.isUsing1_13API()) {
+                    player.sendBlockChange(entry.vector.toLocation(player.getWorld()), YELLOW_FLOWER.createBlockData());
+                } else {
+                    player.sendBlockChange(entry.vector.toLocation(player.getWorld()), YELLOW_FLOWER, (byte) 0);
+                }
             }
         }
     }
@@ -63,7 +67,11 @@ public class Path implements Plan {
         for (Player player : Bukkit.getOnlinePlayers()) {
             for (PathEntry entry : path) {
                 Block block = entry.vector.toLocation(player.getWorld()).getBlock();
-                player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
+                if (SpigotUtil.isUsing1_13API()) {
+                    player.sendBlockChange(block.getLocation(), block.getBlockData());
+                } else {
+                    player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
+                }
             }
         }
     }
