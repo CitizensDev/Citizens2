@@ -172,4 +172,9 @@ public class MemoryDataKey extends DataKey {
     public void setString(String key, String value) {
         set(key, value);
     }
+
+    @Override
+    public String toString() {
+        return "MemoryDataKey[" + path + "]";
+    }
 }

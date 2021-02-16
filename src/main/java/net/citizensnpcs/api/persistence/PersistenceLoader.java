@@ -65,7 +65,8 @@ public class PersistenceLoader {
             this.key = persistAnnotation.value().equals("UNINITIALISED") ? field.getName() : persistAnnotation.value();
             Class<?> fallback = field.getType();
             if (field.getGenericType() instanceof ParameterizedType) {
-                fallback = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+                int index = Map.class.isAssignableFrom(field.getType()) ? 1 : 0;
+                fallback = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[index];
             }
             this.delegate = persistAnnotation.reify() ? new GenericPersister(fallback) : getDelegate(field, fallback);
             this.instance = instance;

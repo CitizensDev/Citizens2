@@ -9,6 +9,7 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,6 +83,12 @@ public class PersistenceLoaderTest {
         yamlRoot.getStorage().load();
         PersistenceLoader.load(load, yamlRoot);
         assertEquals(load.term, 3);
+    }
+
+    @Test
+    public void mapReify() {
+        root.setInt("enabled.test.integer", 5);
+        assertThat(PersistenceLoader.load(TestMapReify.class, root).enabled.get("test").integer, is(5));
     }
 
     @Test
@@ -218,5 +225,10 @@ public class PersistenceLoaderTest {
     public static class TestMap {
         @Persist(value = "enabled", collectionType = ConcurrentHashMap.class)
         private final Map<String, Boolean> enabled = new ConcurrentHashMap<String, Boolean>();
+    }
+
+    public static class TestMapReify {
+        @Persist(reify = true, valueType = SuperclassTest.class)
+        private final Map<String, SuperclassTest> enabled = new HashMap<String, SuperclassTest>();
     }
 }
