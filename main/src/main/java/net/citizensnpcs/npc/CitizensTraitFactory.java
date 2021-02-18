@@ -29,6 +29,7 @@ import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.DropsTrait;
+import net.citizensnpcs.trait.EnderCrystalTrait;
 import net.citizensnpcs.trait.EndermanTrait;
 import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.GameModeTrait;
@@ -68,6 +69,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Controllable.class));
         registerTrait(TraitInfo.create(CurrentLocation.class));
         registerTrait(TraitInfo.create(DropsTrait.class));
+        registerTrait(TraitInfo.create(EnderCrystalTrait.class));
         registerTrait(TraitInfo.create(EndermanTrait.class));
         registerTrait(TraitInfo.create(Equipment.class));
         registerTrait(TraitInfo.create(FollowTrait.class));

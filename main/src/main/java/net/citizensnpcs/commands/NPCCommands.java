@@ -94,6 +94,7 @@ import net.citizensnpcs.trait.CommandTrait.NPCCommandBuilder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.DropsTrait;
+import net.citizensnpcs.trait.EnderCrystalTrait;
 import net.citizensnpcs.trait.EndermanTrait;
 import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.GameModeTrait;
@@ -616,6 +617,28 @@ public class NPCCommands {
     public void drops(CommandContext args, Player sender, NPC npc) throws CommandException {
         DropsTrait trait = npc.getOrAddTrait(DropsTrait.class);
         trait.displayEditor(sender);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "endercrystal -b",
+            desc = "Edit endercrystal modifiers",
+            modifiers = { "endercrystal" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.endercrystal")
+    @Requirements(ownership = true, selected = true, types = EntityType.ENDER_CRYSTAL)
+    public void endercrystal(CommandContext args, Player sender, NPC npc) throws CommandException {
+        if (args.hasFlag('b')) {
+            EnderCrystalTrait trait = npc.getOrAddTrait(EnderCrystalTrait.class);
+            boolean showing = !trait.isShowBase();
+            trait.setShowBase(showing);
+            Messaging.sendTr(sender,
+                    showing ? Messages.ENDERCRYSTAL_SHOWING_BOTTOM : Messages.ENDERCRYSTAL_NOT_SHOWING_BOTTOM,
+                    npc.getName());
+            return;
+        }
+        throw new CommandException();
     }
 
     @Command(

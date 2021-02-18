@@ -84,6 +84,8 @@ public class Messages {
     public static final String DELAY_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.delay.prompt";
     public static final String ELDER_SET = "citizens.commands.npc.guardian.elder-set";
     public static final String ELDER_UNSET = "citizens.commands.npc.guardian.elder-unset";
+    public static final String ENDERCRYSTAL_NOT_SHOWING_BOTTOM = "citizens.commands.npc.endercrystal.not-showing-bottom";
+    public static final String ENDERCRYSTAL_SHOWING_BOTTOM = "citizens.commands.npc.endercrystal.showing-bottom";
     public static final String ENDERMAN_ANGRY_SET = "citizens.commands.npc.enderman.angry-set";
     public static final String ENDERMAN_ANGRY_UNSET = "citizens.commands.npc.enderman.angry-unset";
     public static final String ENTITY_TYPE_SET = "citizens.commands.npc.type.set";
