@@ -449,7 +449,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent)) --at [x:y:z:world] --type [type] --trait ['trait1, trait2...'] --b [behaviours])",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent)) --at [x:y:z:world] --type [type] --trait ['trait1, trait2...'] --registry [registry name])",
             desc = "Create a new NPC",
             flags = "bus",
             modifiers = { "create" },
@@ -480,8 +480,14 @@ public class NPCCommands {
         if (!sender.hasPermission("citizens.npc.create.*") && !sender.hasPermission("citizens.npc.createall")
                 && !sender.hasPermission("citizens.npc.create." + type.name().toLowerCase().replace("_", "")))
             throw new NoPermissionsException();
-
-        npc = CitizensAPI.getNPCRegistry().createNPC(type, name);
+        NPCRegistry registry = CitizensAPI.getNPCRegistry();
+        if (args.hasValueFlag("registry")) {
+            registry = CitizensAPI.getNamedNPCRegistry(args.getFlag("registry"));
+            if (registry == null) {
+                throw new CommandException("Unknown NPC registry name");
+            }
+        }
+        npc = registry.createNPC(type, name);
         String msg = "You created [[" + npc.getName() + "]] (ID [[" + npc.getId() + "]])";
 
         int age = 0;
