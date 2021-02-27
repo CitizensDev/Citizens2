@@ -68,6 +68,7 @@ import net.citizensnpcs.api.event.PlayerCloneNPCEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.gui.InventoryMenu;
+import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
@@ -127,9 +128,11 @@ import net.citizensnpcs.util.Util;
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
     private final NPCSelector selector;
+    private final NPCRegistry temporaryRegistry;
 
     public NPCCommands(Citizens plugin) {
         selector = plugin.getNPCSelector();
+        temporaryRegistry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
     }
 
     @Command(
@@ -449,9 +452,9 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent)) --at [x:y:z:world] --type [type] --trait ['trait1, trait2...'] --registry [registry name])",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary)) --at [x:y:z:world] --type [type] --trait ['trait1, trait2...'] --registry [registry name])",
             desc = "Create a new NPC",
-            flags = "bus",
+            flags = "bust",
             modifiers = { "create" },
             min = 2,
             permission = "citizens.npc.create")
@@ -484,9 +487,14 @@ public class NPCCommands {
         if (args.hasValueFlag("registry")) {
             registry = CitizensAPI.getNamedNPCRegistry(args.getFlag("registry"));
             if (registry == null) {
-                throw new CommandException("Unknown NPC registry name");
+                registry = CitizensAPI.createNamedNPCRegistry(name, new MemoryNPCDataStore());
+                Messaging.send(sender, "An in-memory registry has been created named [[" + name + "]].");
             }
         }
+        if (args.hasFlag('t')) {
+            registry = temporaryRegistry;
+        }
+
         npc = registry.createNPC(type, name);
         String msg = "You created [[" + npc.getName() + "]] (ID [[" + npc.getId() + "]])";
 
