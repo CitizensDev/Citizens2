@@ -172,7 +172,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     public Iterator<NPC> iterator() {
         return new Iterator<NPC>() {
             Iterator<NPC> itr = npcs.valueCollection().iterator();
-            NPC npc;
+            UUID lastUUID;
 
             @Override
             public boolean hasNext() {
@@ -181,16 +181,19 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
             @Override
             public NPC next() {
-                npc = itr.next();
+                NPC npc = itr.next();
+                if (npc != null && npc.getUniqueId() != null) {
+                    lastUUID = npc.getUniqueId();
+                }
                 return npc;
             }
 
             @Override
             public void remove() {
                 itr.remove();
-                if (npc != null) {
-                    uniqueNPCs.remove(npc.getUniqueId());
-                    npc = null;
+                if (lastUUID != null) {
+                    uniqueNPCs.remove(lastUUID);
+                    lastUUID = null;
                 }
             }
         };
