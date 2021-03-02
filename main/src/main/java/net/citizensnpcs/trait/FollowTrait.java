@@ -53,8 +53,8 @@ public class FollowTrait extends Trait {
     }
 
     @Override
-    public void onAttach() {
-        flock = new Flocker(npc, new RadiusNPCFlock(4, 20), new SeparationBehavior(1));
+    public void onDespawn() {
+        flock = null;
     }
 
     @EventHandler
@@ -69,6 +69,11 @@ public class FollowTrait extends Trait {
             }
             npc.getNavigator().setTarget(damager, true);
         }
+    }
+
+    @Override
+    public void onSpawn() {
+        flock = new Flocker(npc, new RadiusNPCFlock(4, 0), new SeparationBehavior(1));
     }
 
     @Override
