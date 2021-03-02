@@ -49,6 +49,9 @@ public class RadiusNPCFlock implements NPCFlock {
                 ret.add(npc2);
             }
         }
+        if (maxCacheTicks <= 0) {
+            return ret;
+        }
         return this.cached = ret;
     }
 }
