@@ -159,7 +159,7 @@ public class Messaging {
         if (possible == null)
             return "";
         String message = possible.toString();
-        return TRANSLATION_MATCHER.matcher(message).matches() ? tr(message) : message;
+        return TRANSLATION_MATCHER.matcher(message).find() ? tr(message) : message;
     }
 
     private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|\\n", Pattern.MULTILINE);
@@ -171,5 +171,5 @@ public class Messaging {
     private static Logger LOGGER = Logger.getLogger("Citizens");
     private static String MESSAGE_COLOUR = ChatColor.GREEN.toString();
     private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
-    private static final Pattern TRANSLATION_MATCHER = Pattern.compile("[a-zA-Z0-9]+\\.[a-zA-Z0-9]+\\.[a-zA-Z0-9.]+");
+    private static final Pattern TRANSLATION_MATCHER = Pattern.compile("^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+\\.[a-zA-Z0-9.]+");
 }

@@ -10,7 +10,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 /**
- * A flock of NPCs that is not static but instead uses NPCs within a certain radius as the 'flock'.
+ * A dynamic flock of NPCs that checks for entity NPCs within a certain block radius.
  */
 public class RadiusNPCFlock implements NPCFlock {
     private Collection<NPC> cached;
@@ -23,7 +23,7 @@ public class RadiusNPCFlock implements NPCFlock {
     }
 
     /**
-     *
+     * 
      * @param radius
      *            the radius to look for nearby NPCs, in blocks @see
      *            {@link Entity#getNearbyEntities(double, double, double)}
