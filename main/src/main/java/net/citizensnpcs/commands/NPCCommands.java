@@ -1308,8 +1308,8 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             modifiers = { "name" },
-            usage = "name",
-            desc = "Toggle nameplate visibility",
+            usage = "name (-h(over))",
+            desc = "Toggle nameplate visibility, or only show names on hover",
             min = 1,
             max = 1,
             flags = "h",

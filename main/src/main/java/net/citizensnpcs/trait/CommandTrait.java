@@ -7,7 +7,10 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
+import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -86,7 +89,7 @@ public class CommandTrait extends Trait {
                 if (provider != null && provider.getProvider() != null) {
                     Economy economy = provider.getProvider();
                     if (!economy.has(player, cost)) {
-                        sendErrorMessage(player, CommandTraitMessages.MISSING_MONEY, cost);
+                        sendErrorMessage(player, CommandTraitMessages.MISSING_MONEY, null, cost);
                         return false;
                     }
                     economy.withdrawPlayer(player, cost);
@@ -105,7 +108,7 @@ public class CommandTrait extends Trait {
                 if (tempInventory.containsAtLeast(stack, stack.getAmount())) {
                     tempInventory.removeItem(stack);
                 } else {
-                    sendErrorMessage(player, CommandTraitMessages.MISSING_ITEM, Util.prettyEnum(stack.getType()),
+                    sendErrorMessage(player, CommandTraitMessages.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
                             stack.getAmount());
                     return false;
                 }
@@ -276,7 +279,8 @@ public class CommandTrait extends Trait {
         commands.remove(String.valueOf(id));
     }
 
-    private void sendErrorMessage(Player player, CommandTraitMessages msg, Object... objects) {
+    private void sendErrorMessage(Player player, CommandTraitMessages msg, Function<String, String> transform,
+            Object... objects) {
         Set<CommandTraitMessages> sent = executionErrors.get(player.getUniqueId().toString());
         if (sent != null) {
             if (sent.contains(msg))
@@ -284,6 +288,9 @@ public class CommandTrait extends Trait {
             sent.add(msg);
         }
         String messageRaw = msg.setting.asString();
+        if (transform != null) {
+            messageRaw = transform.apply(messageRaw);
+        }
         if (messageRaw != null && messageRaw.trim().length() > 0) {
             Messaging.send(player, Translator.format(messageRaw, objects));
         }
@@ -545,7 +552,7 @@ public class CommandTrait extends Trait {
         public boolean canUse(CommandTrait trait, Player player, NPCCommand command) {
             for (String perm : command.perms) {
                 if (!player.hasPermission(perm)) {
-                    trait.sendErrorMessage(player, CommandTraitMessages.NO_PERMISSION);
+                    trait.sendErrorMessage(player, CommandTraitMessages.NO_PERMISSION, null);
                     return false;
                 }
             }
@@ -560,8 +567,9 @@ public class CommandTrait extends Trait {
             }
             if (lastUsed.containsKey(commandKey)) {
                 if (currentTimeSec < lastUsed.get(commandKey) + command.cooldown) {
+                    long seconds = (lastUsed.get(commandKey) + command.cooldown) - currentTimeSec;
                     trait.sendErrorMessage(player, CommandTraitMessages.ON_COOLDOWN,
-                            (lastUsed.get(commandKey) + command.cooldown) - currentTimeSec);
+                            new TimeVariableFormatter(seconds, TimeUnit.SECONDS), seconds);
                     return false;
                 }
                 lastUsed.remove(commandKey);
@@ -569,15 +577,16 @@ public class CommandTrait extends Trait {
             if (command.globalCooldown > 0 && trait.globalCooldowns.containsKey(commandKey)) {
                 long lastUsedSec = trait.globalCooldowns.get(commandKey);
                 if (currentTimeSec < lastUsedSec + command.cooldown) {
+                    long seconds = (lastUsedSec + command.cooldown) - currentTimeSec;
                     trait.sendErrorMessage(player, CommandTraitMessages.ON_GLOBAL_COOLDOWN,
-                            (lastUsedSec + command.cooldown) - currentTimeSec);
+                            new TimeVariableFormatter(seconds, TimeUnit.SECONDS), seconds);
                     return false;
                 }
                 trait.globalCooldowns.remove(commandKey);
             }
             int previouslyUsed = nUsed.getOrDefault(commandKey, 0);
             if (command.n > 0 && command.n <= previouslyUsed) {
-                trait.sendErrorMessage(player, CommandTraitMessages.MAXIMUM_TIMES_USED, command.n);
+                trait.sendErrorMessage(player, CommandTraitMessages.MAXIMUM_TIMES_USED, null, command.n);
                 return false;
             }
             if (command.cooldown > 0) {
@@ -595,6 +604,29 @@ public class CommandTrait extends Trait {
 
         public static boolean requiresTracking(NPCCommand command) {
             return command.cooldown > 0 || command.n > 0 || (command.perms != null && command.perms.size() > 0);
+        }
+    }
+
+    private static class TimeVariableFormatter implements Function<String, String> {
+        private final Map<String, String> map = Maps.newHashMapWithExpectedSize(5);
+
+        public TimeVariableFormatter(long source, TimeUnit unit) {
+            long seconds = TimeUnit.SECONDS.convert(source, unit);
+            long minutes = TimeUnit.MINUTES.convert(source, unit);
+            long hours = TimeUnit.HOURS.convert(source, unit);
+            long days = TimeUnit.DAYS.convert(source, unit);
+            map.put("seconds", "" + seconds);
+            map.put("seconds_over", "" + (seconds - TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES)));
+            map.put("minutes", "" + minutes);
+            map.put("minutes_over", "" + (minutes - TimeUnit.MINUTES.convert(hours, TimeUnit.HOURS)));
+            map.put("hours", "" + hours);
+            map.put("hours_over", "" + (hours - TimeUnit.HOURS.convert(days, TimeUnit.DAYS)));
+            map.put("days", "" + days);
+        }
+
+        @Override
+        public String apply(String t) {
+            return StrSubstitutor.replace(t, map);
         }
     }
 }
