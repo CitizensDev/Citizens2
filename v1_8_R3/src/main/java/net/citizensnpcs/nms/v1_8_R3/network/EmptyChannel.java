@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_8_R3.network;
 
+import net.citizensnpcs.util.NettyVersion;
+
 import io.netty.channel.AbstractChannel;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelConfig;
@@ -65,7 +67,8 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     public ChannelMetadata metadata() {
-        return null;
+        NettyVersion ver = NettyVersion.getVersion();
+        return ver.isValid && ver.isGreaterThan(4,1,24) ? new ChannelMetadata(true) : null;
     }
 
     @Override
