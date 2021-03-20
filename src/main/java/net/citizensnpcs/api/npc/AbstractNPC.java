@@ -362,7 +362,7 @@ public abstract class AbstractNPC implements NPC {
         if (!metadata.get(NPC.SHOULD_SAVE_METADATA, true))
             return;
         metadata.saveTo(root.getRelative("metadata"));
-        root.setString("name", getFullName());
+        root.setString("name", name);
         root.setString("uuid", uuid.toString());
 
         // Save all existing traits
