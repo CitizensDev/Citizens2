@@ -1,13 +1,10 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.Bukkit;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -87,12 +84,7 @@ public class SkinTrait extends Trait {
 
     @Override
     public void load(DataKey key) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                checkPlaceholder(false);
-            }
-        });
+        checkPlaceholder(false);
     }
 
     @SuppressWarnings("deprecation")
