@@ -325,8 +325,8 @@ public abstract class AbstractNPC implements NPC {
 
     private void loadTrait(Trait trait, DataKey traitKey) {
         try {
-            trait.load(traitKey);
             PersistenceLoader.load(trait, traitKey);
+            trait.load(traitKey);
         } catch (Throwable ex) {
             if (Messaging.isDebugging()) {
                 ex.printStackTrace();
