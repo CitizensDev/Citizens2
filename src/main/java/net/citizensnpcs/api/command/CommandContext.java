@@ -233,8 +233,8 @@ public class CommandContext {
     }
 
     public String[] getSlice(int index) {
-        String[] slice = new String[args.length - index];
-        System.arraycopy(args, index, slice, 0, args.length - index);
+        String[] slice = new String[args.length - index - 1];
+        System.arraycopy(args, index + 1, slice, 0, args.length - index - 1);
         return slice;
     }
 
