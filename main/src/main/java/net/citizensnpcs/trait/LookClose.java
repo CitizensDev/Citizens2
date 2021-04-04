@@ -54,9 +54,11 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     }
 
     private boolean canSee(Player player) {
+        if (player == null || !player.isValid())
+            return false;
         return realisticLooking && npc.getEntity() instanceof LivingEntity
                 ? ((LivingEntity) npc.getEntity()).hasLineOfSight(player)
-                : player != null && player.isValid();
+                : false;
     }
 
     /**
