@@ -67,9 +67,6 @@ public class CitizensNPC extends AbstractNPC {
     public boolean despawn(DespawnReason reason) {
         if (!isSpawned() && reason != DespawnReason.DEATH) {
             Messaging.debug("Tried to despawn", getId(), "while already despawned, DespawnReason." + reason);
-            if (reason == DespawnReason.REMOVAL) {
-                Bukkit.getPluginManager().callEvent(new NPCDespawnEvent(this, reason));
-            }
             if (reason == DespawnReason.RELOAD) {
                 unloadEvents();
             }
@@ -403,14 +400,6 @@ public class CitizensNPC extends AbstractNPC {
         }
     }
 
-    private void updateCustomNameVisibility() {
-        String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
-        if (requiresNameHologram()) {
-            nameplateVisible = "false";
-        }
-        getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
-    }
-
     private void updateCustomName() {
         boolean nameVisibility = false;
         if (!getEntity().isCustomNameVisible()
@@ -434,6 +423,14 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         getOrAddTrait(ScoreboardTrait.class).apply(team, nameVisibility);
+    }
+
+    private void updateCustomNameVisibility() {
+        String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+        if (requiresNameHologram()) {
+            nameplateVisible = "false";
+        }
+        getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
     }
 
     private void updateFlyableState() {

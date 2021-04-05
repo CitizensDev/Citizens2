@@ -82,6 +82,7 @@ import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
+import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.event.NPCVehicleDamageEvent;
@@ -450,6 +451,11 @@ public class EventListen implements Listener {
                 team.removePlayer(player);
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onNPCRemove(NPCRemoveEvent event) {
+        toRespawn.values().remove(event.getNPC());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
