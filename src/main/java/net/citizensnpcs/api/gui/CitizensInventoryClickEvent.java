@@ -44,25 +44,28 @@ public class CitizensInventoryClickEvent extends InventoryClickEvent {
         ItemStack stack = event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR
                 ? event.getCursor().clone()
                 : event.getCurrentItem().clone();
+        int formerAmount = event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR ? 0
+                : event.getCurrentItem().getAmount();
         switch (event.getAction()) {
             case PICKUP_ONE:
-                stack.setAmount(stack.getAmount() - 1);
+                stack.setAmount(formerAmount - 1);
                 break;
             case PICKUP_HALF:
-                stack.setAmount((int) Math.floor(stack.getAmount() / 2.0));
+                stack.setAmount((int) Math.floor(formerAmount / 2.0));
                 break;
             case PICKUP_ALL:
                 stack = null;
                 break;
             case PLACE_ALL:
                 stack.setAmount(
-                        Math.min(stack.getAmount() + event.getCursor().getAmount(), stack.getType().getMaxStackSize()));
+                        Math.min(formerAmount + event.getCursor().getAmount(), stack.getType().getMaxStackSize()));
                 break;
             case PLACE_SOME:
-                stack.setAmount(Math.min(stack.getAmount(), stack.getType().getMaxStackSize()));
+                stack.setAmount(
+                        Math.min(formerAmount + event.getCursor().getAmount(), stack.getType().getMaxStackSize()));
                 break;
             case PLACE_ONE:
-                stack.setAmount(stack.getAmount() + 1);
+                stack.setAmount(formerAmount + 1);
                 break;
             default:
                 event.setCancelled(true);
