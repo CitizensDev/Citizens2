@@ -58,7 +58,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             return false;
         return realisticLooking && npc.getEntity() instanceof LivingEntity
                 ? ((LivingEntity) npc.getEntity()).hasLineOfSight(player)
-                : false;
+                : true;
     }
 
     /**
