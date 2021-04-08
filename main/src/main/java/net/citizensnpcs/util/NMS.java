@@ -291,6 +291,18 @@ public class NMS {
         return BRIDGE.getYaw(entity);
     }
 
+    public static void giveReflectiveAccess(Class<?> clazz, Class<?> to) {
+        try {
+            if (GET_MODULE == null) {
+                Class<?> module = Class.forName("java.lang.Module");
+                GET_MODULE = Class.class.getMethod("getModule");
+                ADD_OPENS = module.getMethod("addOpens", String.class, module);
+            }
+            ADD_OPENS.invoke(GET_MODULE.invoke(clazz), to.getPackage().getName(), GET_MODULE.invoke(to));
+        } catch (Exception e) {
+        }
+    }
+
     public static boolean isOnGround(org.bukkit.entity.Entity entity) {
         return BRIDGE.isOnGround(entity);
     }
@@ -304,6 +316,7 @@ public class NMS {
     }
 
     public static void loadBridge(String rev) throws Exception {
+        giveReflectiveAccess(Class.forName("net.minecraft.server.v" + rev + ".Entity"), NMS.class);
         BRIDGE = (NMSBridge) Class.forName("net.citizensnpcs.nms.v" + rev + ".util.NMSImpl").getConstructor()
                 .newInstance();
     }
@@ -492,7 +505,9 @@ public class NMS {
         BRIDGE.updatePathfindingRange(npc, pathfindingRange);
     }
 
+    private static Method ADD_OPENS;
     private static NMSBridge BRIDGE;
+    private static Method GET_MODULE;
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers", false);
     private static Object UNSAFE;
