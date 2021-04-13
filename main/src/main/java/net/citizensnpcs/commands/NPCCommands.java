@@ -64,6 +64,7 @@ import net.citizensnpcs.api.command.exception.ServerCommandException;
 import net.citizensnpcs.api.event.CommandSenderCloneNPCEvent;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.event.NPCTeleportEvent;
 import net.citizensnpcs.api.event.PlayerCloneNPCEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.event.SpawnReason;
@@ -2305,6 +2306,10 @@ public class NPCCommands {
             to.setZ(to.getZ() + 0.5);
         }
         if (!npc.isSpawned()) {
+            NPCTeleportEvent event = new NPCTeleportEvent(npc, to);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled())
+                return;
             npc.spawn(to, SpawnReason.COMMAND);
         } else {
             npc.teleport(to, TeleportCause.COMMAND);
