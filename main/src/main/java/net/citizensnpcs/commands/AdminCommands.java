@@ -44,7 +44,7 @@ public class AdminCommands {
             max = 1,
             permission = "citizens.admin")
     public void reload(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        if (!Setting.RELOAD_INSTANTLY.asBoolean()) {
+        if (Setting.WARN_ON_RELOAD.asBoolean()) {
             Long timeout = reloadTimeouts.get(sender);
             if (timeout == null || System.currentTimeMillis() > timeout) {
                 Messaging.sendErrorTr(sender, Messages.CITIZENS_RELOAD_WARNING);

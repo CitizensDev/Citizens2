@@ -140,7 +140,7 @@ public class Settings {
         NPC_SKIN_VIEW_DISTANCE("npc.skins.view-distance", 100D),
         PACKET_UPDATE_DELAY("npc.packets.update-delay", 30),
         PLACEHOLDER_SKIN_UPDATE_FREQUENCY("npc.skins.placeholder-update-frequency-ticks", 5 * 60 * 20),
-        RELOAD_INSTANTLY("general.reload-warning-enabled", true),
+        WARN_ON_RELOAD("general.reload-warning-enabled", true),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("npc.player.remove-from-list", true),
         SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
         SELECTION_ITEM("npc.selection.item", "stick"),
