@@ -38,8 +38,8 @@ public class AdminCommands {
     @Command(
             aliases = { "citizens" },
             usage = "reload",
-            desc = "Reload Citizens",
-            modifiers = { "reload" },
+            desc = "Load Citizens fresh from disk, without saving first",
+            modifiers = { "reload", "load" },
             min = 1,
             max = 1,
             permission = "citizens.admin")
