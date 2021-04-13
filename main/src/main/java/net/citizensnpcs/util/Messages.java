@@ -40,6 +40,7 @@ public class Messages {
     public static final String CITIZENS_INCOMPATIBLE = "citizens.notifications.incompatible-version";
     public static final String CITIZENS_INVALID_COMMAND_CLASS = "citizens.commands.invalid.class";
     public static final String CITIZENS_RELOAD_ERROR = "citizens.notifications.error-reloading";
+    public static final String CITIZENS_RELOAD_WARNING = "citizens.notifications.reload-warning";
     public static final String CITIZENS_RELOADED = "citizens.notifications.reloaded";
     public static final String CITIZENS_RELOADING = "citizens.notifications.reloading";
     public static final String CITIZENS_SAVED = "citizens.notifications.saved";

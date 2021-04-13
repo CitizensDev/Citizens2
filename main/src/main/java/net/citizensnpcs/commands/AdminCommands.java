@@ -1,8 +1,12 @@
 package net.citizensnpcs.commands;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 import org.bukkit.command.CommandSender;
 
 import net.citizensnpcs.Citizens;
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
@@ -16,6 +20,7 @@ import net.citizensnpcs.util.StringHelper;
 @Requirements
 public class AdminCommands {
     private final Citizens plugin;
+    private final Map<CommandSender, Long> reloadTimeouts = new WeakHashMap<CommandSender, Long>();
 
     public AdminCommands(Citizens plugin) {
         this.plugin = plugin;
@@ -39,6 +44,14 @@ public class AdminCommands {
             max = 1,
             permission = "citizens.admin")
     public void reload(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (!Setting.RELOAD_INSTANTLY.asBoolean()) {
+            Long timeout = reloadTimeouts.get(sender);
+            if (timeout == null || System.currentTimeMillis() > timeout) {
+                Messaging.sendErrorTr(sender, Messages.CITIZENS_RELOAD_WARNING);
+                reloadTimeouts.put(sender, System.currentTimeMillis() + 5000);
+                return;
+            }
+        }
         Messaging.sendTr(sender, Messages.CITIZENS_RELOADING);
         try {
 
