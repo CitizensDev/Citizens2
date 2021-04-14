@@ -54,7 +54,6 @@ public class AdminCommands {
         }
         Messaging.sendTr(sender, Messages.CITIZENS_RELOADING);
         try {
-
             plugin.reload();
             Messaging.sendTr(sender, Messages.CITIZENS_RELOADED);
         } catch (NPCLoadException ex) {

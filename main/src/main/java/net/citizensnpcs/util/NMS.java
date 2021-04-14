@@ -291,15 +291,16 @@ public class NMS {
         return BRIDGE.getYaw(entity);
     }
 
-    public static void giveReflectiveAccess(Class<?> clazz, Class<?> to) {
+    public static void giveReflectiveAccess(Class<?> from, Class<?> to) {
         try {
             if (GET_MODULE == null) {
                 Class<?> module = Class.forName("java.lang.Module");
                 GET_MODULE = Class.class.getMethod("getModule");
                 ADD_OPENS = module.getMethod("addOpens", String.class, module);
             }
-            ADD_OPENS.invoke(GET_MODULE.invoke(clazz), to.getPackage().getName(), GET_MODULE.invoke(to));
+            ADD_OPENS.invoke(GET_MODULE.invoke(from), from.getPackage().getName(), GET_MODULE.invoke(to));
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -316,7 +317,8 @@ public class NMS {
     }
 
     public static void loadBridge(String rev) throws Exception {
-        giveReflectiveAccess(Class.forName("net.minecraft.server.v" + rev + ".Entity"), NMS.class);
+        Class<?> entity = Class.forName("net.minecraft.server.v" + rev + ".Entity");
+        giveReflectiveAccess(entity, NMS.class);
         BRIDGE = (NMSBridge) Class.forName("net.citizensnpcs.nms.v" + rev + ".util.NMSImpl").getConstructor()
                 .newInstance();
     }
@@ -509,9 +511,14 @@ public class NMS {
     private static NMSBridge BRIDGE;
     private static Method GET_MODULE;
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-    private static Field MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers", false);
+    private static Field MODIFIERS_FIELD;
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
+
+    static {
+        giveReflectiveAccess(Field.class, NMS.class);
+        MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers", false);
+    }
 }
