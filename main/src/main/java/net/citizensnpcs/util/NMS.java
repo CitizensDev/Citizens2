@@ -300,7 +300,6 @@ public class NMS {
             }
             ADD_OPENS.invoke(GET_MODULE.invoke(from), from.getPackage().getName(), GET_MODULE.invoke(to));
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
