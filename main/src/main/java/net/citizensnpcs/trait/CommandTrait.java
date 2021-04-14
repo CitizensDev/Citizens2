@@ -626,7 +626,7 @@ public class CommandTrait extends Trait {
 
         @Override
         public String apply(String t) {
-            return StrSubstitutor.replace(t, map);
+            return StrSubstitutor.replace(t, map, "{", "}");
         }
     }
 }
