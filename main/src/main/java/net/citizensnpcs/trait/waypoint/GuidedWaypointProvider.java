@@ -15,7 +15,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -40,6 +39,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.waypoint.WaypointProvider.EnumerableWaypointProvider;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
@@ -107,8 +107,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 Entity entity = markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
                 if (entity == null)
                     return;
-                entity.setMetadata("citizens.waypointhashcode",
-                        new FixedMetadataValue(CitizensAPI.getPlugin(), element.hashCode()));
+                ((NPCHolder) entity).getNPC().data().setPersistent("waypointhashcode", element.hashCode());
             }
 
             @Override
@@ -172,9 +171,12 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
             @EventHandler(ignoreCancelled = true)
             public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-                if (!event.getRightClicked().hasMetadata("citizens.waypointhashcode") || Util.isOffHand(event))
+                NPC clicked = CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked());
+                if (clicked == null || Util.isOffHand(event))
                     return;
-                int hashcode = event.getRightClicked().getMetadata("citizens.waypointhashcode").get(0).asInt();
+                Integer hashcode = clicked.data().get("waypointhashcode");
+                if (hashcode == null)
+                    return;
                 Iterator<Waypoint> itr = Iterables.concat(available, helpers).iterator();
                 while (itr.hasNext()) {
                     Waypoint point = itr.next();
