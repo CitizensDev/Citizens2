@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -87,7 +86,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         }
         final Player player = (Player) sender;
         return new WaypointEditor() {
-            private final EntityMarkers<Waypoint> markers = new EntityMarkers<Waypoint>(EntityType.ITEM_FRAME);
+            private final EntityMarkers<Waypoint> markers = new EntityMarkers<Waypoint>();
             private boolean showPath;
 
             @Override
@@ -120,14 +119,14 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
             @EventHandler(ignoreCancelled = true)
             public void onPlayerChat(AsyncPlayerChatEvent event) {
-                if (event.getMessage().equalsIgnoreCase("toggle path")) {
+                if (event.getMessage().contains("toggle path")) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                         @Override
                         public void run() {
                             togglePath();
                         }
                     });
-                } else if (event.getMessage().equalsIgnoreCase("clear")) {
+                } else if (event.getMessage().contains("clear")) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                         @Override
                         public void run() {
@@ -178,9 +177,9 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 int hashcode = event.getRightClicked().getMetadata("citizens.waypointhashcode").get(0).asInt();
                 Iterator<Waypoint> itr = Iterables.concat(available, helpers).iterator();
                 while (itr.hasNext()) {
-                    Waypoint next = itr.next();
-                    if (next.hashCode() == hashcode) {
-                        markers.removeMarker(next);
+                    Waypoint point = itr.next();
+                    if (point.hashCode() == hashcode) {
+                        markers.removeMarker(point);
                         itr.remove();
                         break;
                     }
