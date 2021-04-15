@@ -41,7 +41,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
     private boolean canAttack() {
         BoundingBox handleBB = NMS.getBoundingBox(handle), targetBB = NMS.getBoundingBox(target);
-        return attackTicks == 0 && (handleBB.maxY > targetBB.minY && handleBB.minY < targetBB.maxY)
+        return attackTicks <= 0 && (handleBB.maxY > targetBB.minY && handleBB.minY < targetBB.maxY)
                 && closeEnough(distanceSquared()) && hasLineOfSight();
     }
 

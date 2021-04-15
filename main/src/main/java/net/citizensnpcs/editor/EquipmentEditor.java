@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -59,6 +60,13 @@ public class EquipmentEditor extends Editor {
     public void onInventoryClick(InventoryClickEvent event) {
         if (menu != null && event.getWhoClicked().equals(player)) {
             menu.onInventoryClick(event);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryDragEvent event) {
+        if (menu != null && event.getWhoClicked().equals(player)) {
+            menu.onInventoryDrag(event);
         }
     }
 
