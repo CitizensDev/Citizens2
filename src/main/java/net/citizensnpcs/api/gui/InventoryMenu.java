@@ -24,6 +24,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -62,6 +63,7 @@ import net.citizensnpcs.api.util.Messaging;
 public class InventoryMenu implements Listener, Runnable {
     private final List<Runnable> closeCallbacks = Lists.newArrayList();
     private PageContext page;
+    private int pickupAmount = -1;
     private final Queue<PageContext> stack = Queues.newArrayDeque();
     private Collection<InventoryView> views = Lists.newArrayList();
 
@@ -179,36 +181,54 @@ public class InventoryMenu implements Listener, Runnable {
         Inventory clicked = event.getClickedInventory() != null ? event.getClickedInventory() : event.getInventory();
         if (event.getInventory().equals(page.ctx.getInventory())
                 && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-            event.setCancelled(true); // TODO: treat this as a move-to-slot click event
-            if (false && (event.getCursor() == null || event.getCursor().getType() == Material.AIR)) {
+            event.setCancelled(true);
+            Inventory dest = event.getInventory() == event.getClickedInventory() ? event.getWhoClicked().getInventory()
+                    : event.getInventory();
+            boolean toNPC = dest == page.ctx.getInventory();
+            if ((event.getCursor() == null || event.getCursor().getType() == Material.AIR)) {
                 int amount = event.getCurrentItem().getAmount();
                 ItemStack merging = new ItemStack(event.getCurrentItem().clone());
-                ItemStack[] contents = page.ctx.getInventory().getContents();
-                for (int i = 0; i < page.ctx.getInventory().getSize(); i++) {
+                ItemStack[] contents = dest.getContents();
+                for (int i = 0; i < contents.length; i++) {
                     if (contents[i] == null || contents[i].getType() == Material.AIR) {
                         merging.setAmount(amount);
-                        event.getView().setCursor(merging);
-                        InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(), i,
-                                event.getClick(), InventoryAction.PLACE_ALL);
+                        if (toNPC) {
+                            event.getView().setCursor(merging);
+                        }
+                        InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
+                                toNPC ? i : event.getRawSlot(), event.getClick(),
+                                toNPC ? InventoryAction.PLACE_ALL : InventoryAction.PICKUP_ALL);
                         onInventoryClick(e);
-                        event.getView().setCursor(null);
+                        if (toNPC) {
+                            event.getView().setCursor(null);
+                        }
                         if (!e.isCancelled() && e.getResult() != Result.DENY) {
-                            page.ctx.getInventory().setItem(i, merging);
+                            dest.setItem(i, merging);
                             event.setCurrentItem(null);
                             break;
                         }
                     } else if (contents[i].getType() == event.getCurrentItem().getType()) {
                         ItemStack stack = contents[i].clone();
                         merging.setAmount(Math.min(amount, stack.getType().getMaxStackSize() - stack.getAmount()));
-                        event.getView().setCursor(merging);
-                        InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(), i,
-                                event.getClick(), amount - merging.getAmount() <= 0 ? InventoryAction.PLACE_ALL
-                                        : InventoryAction.PLACE_SOME);
+                        InventoryAction action;
+                        if (toNPC) {
+                            event.getView().setCursor(merging);
+                            action = amount - merging.getAmount() <= 0 ? InventoryAction.PLACE_ALL
+                                    : InventoryAction.PLACE_SOME;
+                        } else {
+                            action = amount - merging.getAmount() <= 0 ? InventoryAction.PICKUP_ALL
+                                    : InventoryAction.PICKUP_SOME;
+                            pickupAmount = merging.getAmount();
+                        }
+                        InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
+                                toNPC ? i : event.getRawSlot(), event.getClick(), action);
                         onInventoryClick(e);
-                        event.getView().setCursor(null);
+                        if (toNPC) {
+                            event.getView().setCursor(null);
+                        }
                         if (!e.isCancelled() && e.getResult() != Result.DENY) {
                             stack.setAmount(stack.getAmount() + merging.getAmount());
-                            page.ctx.getInventory().setItem(i, stack);
+                            dest.setItem(i, stack);
                             amount -= merging.getAmount();
                             event.getCurrentItem().setAmount(amount);
                             if (amount <= 0) {
@@ -217,6 +237,7 @@ public class InventoryMenu implements Listener, Runnable {
                         }
                     }
                 }
+                return;
             }
         }
         if (!clicked.equals(page.ctx.getInventory()))
@@ -233,8 +254,9 @@ public class InventoryMenu implements Listener, Runnable {
                 break;
         }
         InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
-        CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(event);
+        CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(event, pickupAmount);
         slot.onClick(ev);
+        pickupAmount = -1;
         if (event.isCancelled()) {
             return;
         }
@@ -281,6 +303,14 @@ public class InventoryMenu implements Listener, Runnable {
             for (Runnable callback : closeCallbacks) {
                 callback.run();
             }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryDrag(InventoryDragEvent event) {
+        // TODO: should this be supported
+        if (page != null && event.getInventory() == page.ctx.getInventory()) {
+            event.setCancelled(true);
         }
     }
 

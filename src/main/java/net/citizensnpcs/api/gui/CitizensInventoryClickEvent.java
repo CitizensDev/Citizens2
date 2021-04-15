@@ -14,11 +14,11 @@ public class CitizensInventoryClickEvent extends InventoryClickEvent {
     private final InventoryClickEvent event;
     private final ItemStack result;
 
-    public CitizensInventoryClickEvent(InventoryClickEvent event) {
+    public CitizensInventoryClickEvent(InventoryClickEvent event, int pickupAmount) {
         super(event.getView(), event.getSlotType(), event.getSlot(), event.getClick(), event.getAction(),
                 event.getHotbarButton());
         this.event = event;
-        this.result = getResult(event);
+        this.result = getResult(event, pickupAmount);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class CitizensInventoryClickEvent extends InventoryClickEvent {
         return event.getCursor() == null ? new ItemStack(Material.AIR, 0) : event.getCursor();
     }
 
-    private ItemStack getResult(InventoryClickEvent event) {
+    private ItemStack getResult(InventoryClickEvent event, int pickupAmount) {
         ItemStack stack = event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR
                 ? event.getCursor().clone()
                 : event.getCurrentItem().clone();
@@ -50,6 +50,9 @@ public class CitizensInventoryClickEvent extends InventoryClickEvent {
             case PICKUP_ONE:
                 stack.setAmount(formerAmount - 1);
                 break;
+            case PICKUP_SOME:
+                stack.setAmount(formerAmount - pickupAmount);
+                break;
             case PICKUP_HALF:
                 stack.setAmount((int) Math.floor(formerAmount / 2.0));
                 break;
@@ -57,15 +60,12 @@ public class CitizensInventoryClickEvent extends InventoryClickEvent {
                 stack = null;
                 break;
             case PLACE_ALL:
-                stack.setAmount(
-                        Math.min(formerAmount + event.getCursor().getAmount(), stack.getType().getMaxStackSize()));
-                break;
             case PLACE_SOME:
                 stack.setAmount(
                         Math.min(formerAmount + event.getCursor().getAmount(), stack.getType().getMaxStackSize()));
                 break;
             case PLACE_ONE:
-                stack.setAmount(formerAmount + 1);
+                stack.setAmount(Math.min(formerAmount + 1, stack.getType().getMaxStackSize()));
                 break;
             default:
                 event.setCancelled(true);
