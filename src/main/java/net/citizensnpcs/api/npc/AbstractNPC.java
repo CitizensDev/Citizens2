@@ -44,6 +44,7 @@ import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
+import net.md_5.bungee.api.ChatColor;
 
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
@@ -354,6 +355,7 @@ public abstract class AbstractNPC implements NPC {
         return getEntityType() != EntityType.ARMOR_STAND
                 && ((name.length() > 16 && getEntityType() == EntityType.PLAYER)
                         || data().get(NPC.ALWAYS_USE_NAME_HOLOGRAM_METADATA, false) || name.contains("&x")
+                        || name.contains(ChatColor.COLOR_CHAR + "x")
                         || !Placeholders.replace(name, null, this).equals(name));
     }
 
