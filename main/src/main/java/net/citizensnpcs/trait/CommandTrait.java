@@ -204,6 +204,10 @@ public class CommandTrait extends Trait {
                 for (NPCCommand command : commandList) {
                     if (executionMode == ExecutionMode.SEQUENTIAL) {
                         PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
+                        if (info != null && info.lastUsedHand != hand) {
+                            info.lastUsedHand = hand;
+                            info.lastUsedId = -1;
+                        }
                         if (info != null && command.id <= info.lastUsedId) {
                             if (info.lastUsedId == max) {
                                 info.lastUsedId = -1;
@@ -541,6 +545,8 @@ public class CommandTrait extends Trait {
     private static class PlayerNPCCommand {
         @Persist(valueType = Long.class)
         Map<String, Long> lastUsed = Maps.newHashMap();
+        @Persist
+        Hand lastUsedHand;
         @Persist
         int lastUsedId = -1;
         @Persist
