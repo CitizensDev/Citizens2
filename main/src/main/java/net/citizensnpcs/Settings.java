@@ -60,7 +60,7 @@ public class Settings {
         ALWAYS_USE_NAME_HOLOGRAM("npc.always-use-name-holograms", false),
         ASTAR_ITERATIONS_PER_TICK("npc.pathfinding.new-finder.iterations-per-tick", 5000),
         AUTH_SERVER_URL("general.authlib.profile-url", "https://sessionserver.mojang.com/session/minecraft/profile/"),
-        CHAT_BYSTANDERS_HEAR_TARGETED_CHAT("npc.chat.options.bystanders-hear-targeted-chat", true),
+        CHAT_BYSTANDERS_HEAR_TARGETED_CHAT("npc.chat.options.bystanders-hear-targeted-chat", false),
         CHAT_FORMAT("npc.chat.format.no-targets", "[<npc>]: <text>"),
         CHAT_FORMAT_TO_BYSTANDERS("npc.chat.format.with-target-to-bystanders", "[<npc>] -> [<target>]: <text>"),
         CHAT_FORMAT_TO_TARGET("npc.chat.format.to-target", "[<npc>] -> You: <text>"),
@@ -140,7 +140,6 @@ public class Settings {
         NPC_SKIN_VIEW_DISTANCE("npc.skins.view-distance", 100D),
         PACKET_UPDATE_DELAY("npc.packets.update-delay", 30),
         PLACEHOLDER_SKIN_UPDATE_FREQUENCY("npc.skins.placeholder-update-frequency-ticks", 5 * 60 * 20),
-        WARN_ON_RELOAD("general.reload-warning-enabled", true),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("npc.player.remove-from-list", true),
         SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
         SELECTION_ITEM("npc.selection.item", "stick"),
@@ -156,7 +155,8 @@ public class Settings {
         TELEPORT_DELAY("npc.teleport-delay", -1),
         USE_BOAT_CONTROLS("npc.controllable.use-boat-controls", true),
         USE_NEW_PATHFINDER("npc.pathfinding.use-new-finder", false),
-        USE_SCOREBOARD_TEAMS("npc.player-scoreboard-teams.enable", true);
+        USE_SCOREBOARD_TEAMS("npc.player-scoreboard-teams.enable", true),
+        WARN_ON_RELOAD("general.reload-warning-enabled", true);
 
         protected String path;
         protected Object value;
