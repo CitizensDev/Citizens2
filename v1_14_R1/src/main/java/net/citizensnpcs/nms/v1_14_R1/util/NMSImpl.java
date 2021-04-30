@@ -241,6 +241,7 @@ import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EntityWither;
 import net.minecraft.server.v1_14_R1.EnumMoveType;
 import net.minecraft.server.v1_14_R1.GenericAttributes;
+import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.IRegistry;
 import net.minecraft.server.v1_14_R1.MathHelper;
 import net.minecraft.server.v1_14_R1.MinecraftKey;
@@ -697,6 +698,12 @@ public class NMSImpl implements NMSBridge {
     @Override
     public boolean isOnGround(org.bukkit.entity.Entity entity) {
         return NMSImpl.getHandle(entity).onGround;
+    }
+
+    @Override
+    public boolean isSolid(org.bukkit.block.Block in) {
+        IBlockData data = ((CraftBlock) in).getNMS();
+        return data.m(((CraftWorld) in.getWorld()).getHandle(), new BlockPosition(in.getX(), in.getY(), in.getZ()));
     }
 
     @Override

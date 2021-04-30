@@ -307,6 +307,10 @@ public class NMS {
         return BRIDGE.isOnGround(entity);
     }
 
+    public static boolean isSolid(Block in) {
+        return BRIDGE.isSolid(in);
+    }
+
     public static boolean isValid(Entity entity) {
         return BRIDGE.isValid(entity);
     }
@@ -514,6 +518,7 @@ public class NMS {
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
+
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {

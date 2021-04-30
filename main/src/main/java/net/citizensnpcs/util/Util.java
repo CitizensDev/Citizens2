@@ -137,7 +137,8 @@ public class Util {
             return false;
         }
         Block in = loc.getBlock();
-        return in.getType().isSolid() && in.getRelative(BlockFace.UP).getType().isSolid();
+        Block above = in.getRelative(BlockFace.UP);
+        return in.getType().isSolid() && above.getType().isSolid() && NMS.isSolid(in) && NMS.isSolid(above);
     }
 
     public static boolean isAlwaysFlyable(EntityType type) {

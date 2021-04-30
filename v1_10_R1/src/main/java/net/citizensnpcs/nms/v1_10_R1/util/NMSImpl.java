@@ -586,6 +586,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public boolean isSolid(org.bukkit.block.Block in) {
+        return in.getType().isSolid();
+    }
+
+    @Override
     public boolean isValid(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         return handle.valid && handle.isAlive();
