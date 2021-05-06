@@ -1330,7 +1330,7 @@ public class NPCCommands {
             max = 1,
             flags = "h",
             permission = "citizens.npc.name")
-    @Requirements(selected = true, ownership = true, livingEntity = true)
+    @Requirements(selected = true, ownership = true)
     public void name(CommandContext args, CommandSender sender, NPC npc) {
         String old = npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
         if (args.hasFlag('h')) {
