@@ -400,6 +400,10 @@ public interface NPC extends Agent, Cloneable {
      */
     public static final String ITEM_ID_METADATA = "item-type-id";
     /**
+     * Whether to keep chunk loaded. Boolean.
+     */
+    public static final String KEEP_CHUNK_LOADED_METADATA = "keep-chunk-loaded";
+    /**
      * Whether the NPC is leashable. Boolean.
      */
     public static final String LEASH_PROTECTED_METADATA = "protected-leash";
