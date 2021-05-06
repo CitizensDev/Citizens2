@@ -74,7 +74,7 @@ public class CitizensNPC extends AbstractNPC {
         }
         NPCDespawnEvent event = new NPCDespawnEvent(this, reason);
         if (reason == DespawnReason.CHUNK_UNLOAD) {
-            event.setCancelled(Setting.KEEP_CHUNKS_LOADED.asBoolean());
+            event.setCancelled(data().get(NPC.KEEP_CHUNK_LOADED_METADATA, Setting.KEEP_CHUNKS_LOADED.asBoolean()));
         }
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() && reason != DespawnReason.DEATH) {

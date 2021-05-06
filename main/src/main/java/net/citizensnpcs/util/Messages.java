@@ -36,6 +36,8 @@ public class Messages {
     public static final String CHAT_TRIGGER_MESSAGE_ADDED = "citizens.editors.waypoints.triggers.chat.message-added";
     public static final String CHAT_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.chat.prompt";
     public static final String CHAT_TRIGGER_RADIUS_SET = "citizens.editors.waypoints.triggers.chat.radius-set";
+    public static final String CHUNKLOAD_SET = "citizens.commands.npc.chunkload.set";
+    public static final String CHUNKLOAD_UNSET = "citizens.commands.npc.chunkload.unset";
     public static final String CITIZENS_IMPLEMENTATION_DISABLED = "citizens.changed-implementation";
     public static final String CITIZENS_INCOMPATIBLE = "citizens.notifications.incompatible-version";
     public static final String CITIZENS_INVALID_COMMAND_CLASS = "citizens.commands.invalid.class";

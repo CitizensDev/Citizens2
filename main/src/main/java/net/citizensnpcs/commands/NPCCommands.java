@@ -304,6 +304,21 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "chunkload",
+            desc = "Toggle the NPC forcing chunks to stay loaded",
+            modifiers = { "chunkload", "cload" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.chunkload")
+    @Requirements(selected = true, ownership = true)
+    public void chunkload(CommandContext args, CommandSender sender, NPC npc) {
+        boolean enabled = !npc.data().get(NPC.KEEP_CHUNK_LOADED_METADATA, Setting.KEEP_CHUNKS_LOADED.asBoolean());
+        npc.data().set(NPC.KEEP_CHUNK_LOADED_METADATA, enabled);
+        Messaging.sendTr(sender, enabled ? Messages.CHUNKLOAD_SET : Messages.CHUNKLOAD_UNSET, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "collidable",
             desc = "Toggles an NPC's collidability",
             modifiers = { "collidable" },
