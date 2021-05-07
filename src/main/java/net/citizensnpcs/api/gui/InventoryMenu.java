@@ -99,6 +99,18 @@ public class InventoryMenu implements Listener, Runnable {
         }
     }
 
+    /**
+     * Closes the GUI for just a specific Player.
+     */
+    public void close(Player player) {
+        for (InventoryView view : views) {
+            if (view.getPlayer() == player) {
+                page.page.onClose(player);
+                view.close();
+            }
+        }
+    }
+
     private InventoryMenuSlot createSlot(int pos, MenuSlot slotInfo) {
         InventoryMenuSlot slot = page.ctx.getSlot(pos);
         slot.initialise(slotInfo);
@@ -171,6 +183,23 @@ public class InventoryMenu implements Listener, Runnable {
                 return 10;
             default:
                 throw new UnsupportedOperationException();
+        }
+    }
+
+    public void transitionBack() {
+        if (page == null)
+            return;
+        Map<String, Object> data = page.ctx.data();
+        page = stack.poll();
+        if (page != null) {
+            page.ctx.data().putAll(data);
+        }
+        data.clear();
+        transitionViewersToInventory(page == null ? null : page.ctx.getInventory());
+        if (page == null) {
+            for (Runnable callback : closeCallbacks) {
+                callback.run();
+            }
         }
     }
 
@@ -292,18 +321,7 @@ public class InventoryMenu implements Listener, Runnable {
         if (page == null || !event.getInventory().equals(page.ctx.getInventory()))
             return;
         page.page.onClose(event.getPlayer());
-        Map<String, Object> data = page.ctx.data();
-        page = stack.poll();
-        if (page != null) {
-            page.ctx.data().putAll(data);
-        }
-        data.clear();
-        transitionViewersToInventory(page == null ? null : page.ctx.getInventory());
-        if (page == null) {
-            for (Runnable callback : closeCallbacks) {
-                callback.run();
-            }
-        }
+        transitionBack();
     }
 
     @EventHandler(ignoreCancelled = true)

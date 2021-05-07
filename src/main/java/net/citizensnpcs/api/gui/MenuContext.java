@@ -13,17 +13,17 @@ import com.google.common.collect.Maps;
 public class MenuContext implements SlotSource {
     private final Map<String, Object> data = Maps.newHashMap();
     private final Inventory inventory;
-    private final InventoryMenu parent;
+    private final InventoryMenu menu;
     private final InventoryMenuSlot[] slots;
 
     public MenuContext(InventoryMenu menu, InventoryMenuSlot[] slots, Inventory inventory) {
         this(menu, slots, inventory, Collections.emptyMap());
     }
 
-    public MenuContext(InventoryMenu parent, InventoryMenuSlot[] slots, Inventory inventory, Map<String, Object> data) {
+    public MenuContext(InventoryMenu menu, InventoryMenuSlot[] slots, Inventory inventory, Map<String, Object> data) {
         this.inventory = inventory;
         this.slots = slots;
-        this.parent = parent;
+        this.menu = menu;
         this.data.putAll(data);
     }
 
@@ -35,8 +35,8 @@ public class MenuContext implements SlotSource {
         return inventory;
     }
 
-    public InventoryMenu getParent() {
-        return parent;
+    public InventoryMenu getMenu() {
+        return menu;
     }
 
     @Override
