@@ -52,7 +52,6 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
@@ -433,24 +432,6 @@ public class EventListen implements Listener {
                     + event.getReason().name());
         }
         skinUpdateTracker.onNPCDespawn(event.getNPC());
-        if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean())
-            return;
-        String teamName = event.getNPC().data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
-        if (teamName.isEmpty())
-            return;
-        Team team = Util.getDummyScoreboard().getTeam(teamName);
-        event.getNPC().data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-        if (team == null || !(event.getNPC().getEntity() instanceof Player))
-            return;
-        Player player = (Player) event.getNPC().getEntity();
-        if (team.hasPlayer(player)) {
-            if (team.getSize() == 1) {
-                Util.sendTeamPacketToOnlinePlayers(team, 1);
-                team.unregister();
-            } else {
-                team.removePlayer(player);
-            }
-        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

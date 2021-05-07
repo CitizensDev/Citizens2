@@ -270,7 +270,6 @@ import net.minecraft.server.v1_16_R3.PlayerChunkMap.EntityTracker;
 import net.minecraft.server.v1_16_R3.RegistryBlocks;
 import net.minecraft.server.v1_16_R3.ReportedException;
 import net.minecraft.server.v1_16_R3.ScoreboardTeam;
-import net.minecraft.server.v1_16_R3.ScoreboardTeamBase.EnumNameTagVisibility;
 import net.minecraft.server.v1_16_R3.SoundEffect;
 import net.minecraft.server.v1_16_R3.TagsFluid;
 import net.minecraft.server.v1_16_R3.Vec3D;
@@ -1237,16 +1236,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setTeamNameTagVisible(Team team, boolean visible) {
-        if (TEAM_FIELD == null) {
-            TEAM_FIELD = NMS.getGetter(team.getClass(), "team");
-        }
-        ScoreboardTeam nmsTeam;
-        try {
-            nmsTeam = (ScoreboardTeam) TEAM_FIELD.invoke(team);
-            nmsTeam.setNameTagVisibility(visible ? EnumNameTagVisibility.ALWAYS : EnumNameTagVisibility.NEVER);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        team.setOption(Team.Option.NAME_TAG_VISIBILITY, visible ? Team.OptionStatus.ALWAYS : Team.OptionStatus.NEVER);
     }
 
     @Override

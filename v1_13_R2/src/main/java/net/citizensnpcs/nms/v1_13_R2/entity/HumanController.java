@@ -7,8 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import com.mojang.authlib.GameProfile;
 
@@ -47,6 +45,10 @@ public class HumanController extends AbstractEntityController {
             name = teamName;
         }
 
+        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+            Util.generateTeamFor(npc, name, teamName);
+        }
+
         final GameProfile profile = new GameProfile(uuid, name);
 
         final EntityHumanNPC handle = new EntityHumanNPC(nmsWorld.getServer().getServer(), nmsWorld, profile,
@@ -66,25 +68,6 @@ public class HumanController extends AbstractEntityController {
                 boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
                         Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
                 NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
-
-                if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-                    Scoreboard scoreboard = Util.getDummyScoreboard();
-
-                    Team team = scoreboard.getTeam(teamName);
-                    int mode = 2;
-                    if (team == null) {
-                        team = scoreboard.registerNewTeam(teamName);
-                        if (npc.requiresNameHologram()) {
-                            team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
-                        }
-                        mode = 0;
-                    }
-                    team.addPlayer(handle.getBukkitEntity());
-
-                    handle.getNPC().data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
-
-                    Util.sendTeamPacketToOnlinePlayers(team, mode);
-                }
             }
         }, 20);
 
@@ -102,6 +85,9 @@ public class HumanController extends AbstractEntityController {
     public void remove() {
         Player entity = getBukkitEntity();
         if (entity != null) {
+            if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+                Util.removeTeamFor(NMS.getNPC(entity), entity.getName());
+            }
             NMS.removeFromWorld(entity);
             SkinnableEntity npc = entity instanceof SkinnableEntity ? (SkinnableEntity) entity : null;
             npc.getSkinTracker().onRemoveNPC();

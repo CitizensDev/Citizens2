@@ -240,7 +240,6 @@ import net.minecraft.server.v1_13_R2.PathfinderGoalSelector;
 import net.minecraft.server.v1_13_R2.RegistryMaterials;
 import net.minecraft.server.v1_13_R2.ReportedException;
 import net.minecraft.server.v1_13_R2.ScoreboardTeam;
-import net.minecraft.server.v1_13_R2.ScoreboardTeamBase.EnumNameTagVisibility;
 import net.minecraft.server.v1_13_R2.SoundEffect;
 import net.minecraft.server.v1_13_R2.SoundEffects;
 import net.minecraft.server.v1_13_R2.Vec3D;
@@ -1140,16 +1139,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setTeamNameTagVisible(Team team, boolean visible) {
-        if (TEAM_FIELD == null) {
-            TEAM_FIELD = NMS.getGetter(team.getClass(), "team");
-        }
-        ScoreboardTeam nmsTeam;
-        try {
-            nmsTeam = (ScoreboardTeam) TEAM_FIELD.invoke(team);
-            nmsTeam.setNameTagVisibility(visible ? EnumNameTagVisibility.ALWAYS : EnumNameTagVisibility.NEVER);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        team.setOption(Team.Option.NAME_TAG_VISIBILITY, visible ? Team.OptionStatus.ALWAYS : Team.OptionStatus.NEVER);
     }
 
     @Override
